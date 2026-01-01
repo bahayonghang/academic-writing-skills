@@ -1,0 +1,1 @@
+import{_ as a,c as i,o as n,ag as e}from"./chunks/framework.DWdSXOaE.js";const o=JSON.parse('{"title":"Usage Guide","description":"","frontmatter":{},"headers":[],"relativePath":"usage.md","filePath":"usage.md"}'),l={name:"usage.md"};function p(t,s,h,r,k,c){return n(),i("div",null,[...s[0]||(s[0]=[e("",123)])])}const u=a(l,[["render",p]]);export{o as __pageData,u as default};

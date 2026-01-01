@@ -1,0 +1,46 @@
+# Academic Writing Skills Documentation
+# Just commands for development and deployment
+
+# Default recipe - show available commands
+default:
+    @just --list
+
+# Install dependencies
+install:
+    npm install
+
+# Start development server
+dev:
+    npm run docs:dev
+
+# Build documentation for production
+build:
+    npm run docs:build
+
+# Preview production build
+preview:
+    npm run docs:preview
+
+# Clean build artifacts
+clean:
+    rm -rf .vitepress/dist .vitepress/cache
+
+# Full rebuild (clean + install + build)
+rebuild: clean install build
+
+# Check for dead links (strict mode)
+check-links:
+    npm run docs:build -- --ignoreDeadLinks false
+
+# Format code (if prettier is installed)
+format:
+    npx prettier --write "**/*.{md,ts,css,json}"
+
+# Serve on custom port
+serve PORT="8080":
+    npm run docs:dev -- --port {{PORT}}
+
+# Deploy to GitHub Pages (requires gh-pages package)
+deploy:
+    npm run docs:build
+    echo "Build complete. Deploy the .vitepress/dist directory to your hosting service."

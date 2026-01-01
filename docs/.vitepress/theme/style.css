@@ -1,0 +1,300 @@
+/**
+ * Academic Design Tokens
+ * Style: Bold Editorial
+ * Purpose: Professional academic documentation
+ *
+ * Philosophy:
+ * - Strong typographic hierarchy
+ * - High contrast for readability
+ * - Generous whitespace
+ * - Minimal color palette (focus on content)
+ * - Clean, geometric shapes
+ */
+
+:root {
+  /* ==================== Color System ==================== */
+  /* Light Mode - Academic White */
+  --color-background: #ffffff;
+  --color-background-soft: #fafafa;
+  --color-background-mute: #f5f5f5;
+
+  --color-surface: #ffffff;
+  --color-surface-subtle: #fafafa;
+  --color-surface-muted: #f0f0f0;
+
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #6a6a6a;
+
+  --color-border: #e0e0e0;
+  --color-border-subtle: #f0f0f0;
+
+  /* Academic Blue - Primary accent */
+  --color-primary: #0066cc;
+  --color-primary-hover: #0052a3;
+  --color-primary-active: #003d7a;
+  --color-primary-subtle: #e6f2ff;
+  --color-primary-foreground: #ffffff;
+
+  /* Academic Green - Success/Secondary */
+  --color-secondary: #2d7d2d;
+  --color-secondary-hover: #246624;
+  --color-secondary-foreground: #ffffff;
+
+  /* Semantic Colors */
+  --color-success: #2d7d2d;
+  --color-warning: #cc7a00;
+  --color-danger: #cc0000;
+  --color-info: #0066cc;
+
+  /* Code & Syntax */
+  --color-code-bg: #f5f5f5;
+  --color-code-border: #e0e0e0;
+  --color-code-text: #1a1a1a;
+
+  /* ==================== Typography Scale ==================== */
+  /* Academic fonts: Serif for headings (authority), Sans for body (clarity) */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading: "Georgia", "Times New Roman", serif;
+  --font-family-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+
+  /* Type Scale - Academic hierarchy */
+  --font-size-xs: 0.75rem;      /* 12px - Captions, footnotes */
+  --font-size-sm: 0.875rem;     /* 14px - Small text, meta */
+  --font-size-base: 1rem;       /* 16px - Body text */
+  --font-size-lg: 1.125rem;     /* 18px - Large body, lead */
+  --font-size-xl: 1.5rem;       /* 24px - H3 */
+  --font-size-2xl: 2rem;        /* 32px - H2 */
+  --font-size-3xl: 2.5rem;      /* 40px - H1 */
+  --font-size-4xl: 3rem;        /* 48px - Display */
+
+  /* Line Heights - Optimized for readability */
+  --line-height-tight: 1.2;
+  --line-height-base: 1.6;
+  --line-height-relaxed: 1.8;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ==================== Spacing Scale (8px system) ==================== */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* ==================== Border Radius ==================== */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ==================== Shadows (Minimal - Editorial style) ==================== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* ==================== Motion ==================== */
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 300ms;
+
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ==================== Layout ==================== */
+  --content-width: 48rem;    /* 768px - Optimal reading width */
+  --content-width-wide: 72rem; /* 1152px - Wide content */
+  --sidebar-width: 16rem;    /* 256px */
+  --navbar-height: 3.5rem;   /* 56px */
+}
+
+/* ==================== Dark Mode ==================== */
+.dark {
+  --color-background: #0a0a0a;
+  --color-background-soft: #141414;
+  --color-background-mute: #1a1a1a;
+
+  --color-surface: #141414;
+  --color-surface-subtle: #1a1a1a;
+  --color-surface-muted: #242424;
+
+  --color-text: #f5f5f5;
+  --color-text-secondary: #b8b8b8;
+  --color-text-muted: #8a8a8a;
+
+  --color-border: #2a2a2a;
+  --color-border-subtle: #1f1f1f;
+
+  --color-primary: #3399ff;
+  --color-primary-hover: #5caeff;
+  --color-primary-active: #1a85ff;
+  --color-primary-subtle: #0d1f33;
+
+  --color-secondary: #4db84d;
+  --color-secondary-hover: #66cc66;
+
+  --color-code-bg: #1a1a1a;
+  --color-code-border: #2a2a2a;
+  --color-code-text: #f5f5f5;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== Base Styles ==================== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  transition: color var(--duration-base) var(--easing-out),
+              background-color var(--duration-base) var(--easing-out);
+}
+
+/* ==================== Typography ==================== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: var(--font-size-xl);
+}
+
+h4 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+p {
+  margin-bottom: var(--space-4);
+  line-height: var(--line-height-relaxed);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--easing-out);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+code {
+  font-family: var(--font-family-mono);
+  font-size: 0.9em;
+  background-color: var(--color-code-bg);
+  border: 1px solid var(--color-code-border);
+  border-radius: var(--radius-sm);
+  padding: 0.125rem 0.375rem;
+}
+
+pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* ==================== VitePress Overrides ==================== */
+.VPDoc {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.vp-doc h1 {
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-4);
+}
+
+.vp-doc h2 {
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: var(--space-3);
+}
+
+/* Custom container styles */
+.custom-block {
+  margin: var(--space-6) 0;
+  padding: var(--space-4) var(--space-6);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-subtle);
+}
+
+.custom-block.tip {
+  border-left-color: var(--color-primary);
+}
+
+.custom-block.warning {
+  border-left-color: var(--color-warning);
+}
+
+.custom-block.danger {
+  border-left-color: var(--color-danger);
+}
+
+/* Code blocks */
+div[class*='language-'] {
+  margin: var(--space-6) 0;
+  border-radius: var(--radius-md);
+  background-color: var(--color-code-bg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+}
