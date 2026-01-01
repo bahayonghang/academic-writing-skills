@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Skill(skill-creator)"
+      "Skill(skill-creator)",
+      "Skill(glm-frontend-design)"
     ]
   }
 }

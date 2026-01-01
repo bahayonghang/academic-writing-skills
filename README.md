@@ -1,8 +1,22 @@
 # Academic Writing Skills for Claude Code
 
-[中文版](README_CN.md)
+[中文版](README_CN.md) | [📚 Documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
 > LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses.
+
+## Documentation
+
+**📖 Full documentation is available in the [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) directory.**
+
+To view the documentation locally:
+
+```bash
+cd docs
+npm install
+npm run docs:dev
+```
+
+Then open http://localhost:5173 in your browser.
 
 ## Features
 
@@ -23,14 +37,28 @@
 
 ## Installation
 
-### Option 1: Copy to Claude Code Skills Directory
+### Quick Install (Recommended)
+
+Install both skills with a single command:
+
+```bash
+# Install English paper skill
+claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+
+# Install Chinese thesis skill
+claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
+```
+
+### Manual Installation
+
+#### Option 1: Copy to Claude Code Skills Directory
 ```bash
 # Copy skill folders to your Claude Code skills directory
 cp -r .claude/skills/latex-paper-en ~/.claude/skills/
 cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 ```
 
-### Option 2: Use .skill Packages
+#### Option 2: Use .skill Packages
 ```bash
 # The packaged skills are in the dist/ directory
 # Import them using Claude Code's skill import feature

@@ -1,8 +1,22 @@
 # Claude Code 学术写作 Skills
 
-[English](README.md)
+[English](README.md) | [📚 文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
 > 基于 Claude Code 的 LaTeX 学术写作助手，支持英文论文和中文学位论文。
+
+## 文档
+
+**📖 完整文档请访问 [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) 目录。**
+
+本地查看文档：
+
+```bash
+cd docs
+npm install
+npm run docs:dev
+```
+
+然后在浏览器中打开 http://localhost:5173。
 
 ## 功能特性
 
@@ -23,14 +37,28 @@
 
 ## 安装方法
 
-### 方式一：复制到 Claude Code Skills 目录
+### 快速安装（推荐）
+
+使用单条命令安装两个技能：
+
+```bash
+# 安装英文论文技能
+claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+
+# 安装中文论文技能
+claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
+```
+
+### 手动安装
+
+#### 方式一：复制到 Claude Code Skills 目录
 ```bash
 # 将 skill 文件夹复制到 Claude Code 的 skills 目录
 cp -r .claude/skills/latex-paper-en ~/.claude/skills/
 cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 ```
 
-### 方式二：使用 .skill 安装包
+#### 方式二：使用 .skill 安装包
 ```bash
 # 打包好的 skills 在 dist/ 目录中
 # 使用 Claude Code 的 skill 导入功能进行安装
