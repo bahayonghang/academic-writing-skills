@@ -5,6 +5,9 @@ export default defineConfig({
   title: "Academic Writing Skills",
   description: "Professional LaTeX academic writing skills for Claude Code",
 
+  // Base URL for GitHub Pages
+  base: '/academic-writing-skills/',
+
   // Ignore dead links for now (guides pages not yet created)
   ignoreDeadLinks: true,
 
