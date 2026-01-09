@@ -37,31 +37,39 @@ Then open http://localhost:5173 in your browser.
 
 ## Installation
 
-### Quick Install (Recommended)
+Copy the skill folders to your Claude Code skills directory:
 
-Install both skills with a single command:
+### Linux / macOS
 
 ```bash
-# Install English paper skill
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+# Create skills directory (if not exists)
+mkdir -p ~/.claude/skills
 
-# Install Chinese thesis skill
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-```
-
-### Manual Installation
-
-#### Option 1: Copy to Claude Code Skills Directory
-```bash
-# Copy skill folders to your Claude Code skills directory
+# Copy skill folders
 cp -r .claude/skills/latex-paper-en ~/.claude/skills/
 cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 ```
 
-#### Option 2: Use .skill Packages
-```bash
-# The packaged skills are in the dist/ directory
-# Import them using Claude Code's skill import feature
+### Windows (PowerShell)
+
+```powershell
+# Create skills directory (if not exists)
+New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
+
+# Copy skill folders
+Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+```
+
+### Windows (CMD)
+
+```cmd
+:: Create skills directory (if not exists)
+mkdir "%USERPROFILE%\.claude\skills"
+
+:: Copy skill folders
+xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
 ```
 
 ## Quick Start
@@ -112,39 +120,42 @@ python scripts/check_consistency.py main.tex
 
 ```
 academic-writing-skills/
-├── .claude/skills/
-│   ├── latex-paper-en/           # English paper skill
-│   │   ├── SKILL.md              # Skill definition
-│   │   ├── scripts/              # Python tools
-│   │   │   ├── compile.py        # Unified compiler
-│   │   │   ├── check_format.py   # ChkTeX wrapper
-│   │   │   ├── verify_bib.py     # BibTeX checker
-│   │   │   └── extract_prose.py  # Text extractor
-│   │   └── references/           # Reference docs
-│   │       ├── STYLE_GUIDE.md
-│   │       ├── COMMON_ERRORS.md
-│   │       ├── VENUES.md
-│   │       └── ...
-│   │
-│   └── latex-thesis-zh/          # Chinese thesis skill
-│       ├── SKILL.md
-│       ├── scripts/
-│       │   ├── compile.py
-│       │   ├── map_structure.py  # Thesis structure mapper
-│       │   ├── check_format.py
-│       │   └── check_consistency.py
-│       └── references/
-│           ├── GB_STANDARD.md
-│           ├── ACADEMIC_STYLE_ZH.md
-│           ├── STRUCTURE_GUIDE.md
-│           └── UNIVERSITIES/
-│               ├── tsinghua.md
-│               ├── pku.md
-│               └── generic.md
+├── .claude/
+│   └── skills/
+│       ├── latex-paper-en/           # English paper skill
+│       │   ├── SKILL.md              # Skill definition
+│       │   ├── scripts/              # Python tools
+│       │   │   ├── compile.py        # Unified compiler
+│       │   │   ├── check_format.py   # ChkTeX wrapper
+│       │   │   ├── verify_bib.py     # BibTeX checker
+│       │   │   └── extract_prose.py  # Text extractor
+│       │   └── references/           # Reference docs
+│       │       ├── STYLE_GUIDE.md
+│       │       ├── COMMON_ERRORS.md
+│       │       ├── VENUES.md
+│       │       └── ...
+│       │
+│       └── latex-thesis-zh/          # Chinese thesis skill
+│           ├── SKILL.md
+│           ├── scripts/
+│           │   ├── compile.py
+│           │   ├── map_structure.py  # Thesis structure mapper
+│           │   ├── check_format.py
+│           │   └── check_consistency.py
+│           └── references/
+│               ├── GB_STANDARD.md
+│               ├── ACADEMIC_STYLE_ZH.md
+│               ├── STRUCTURE_GUIDE.md
+│               └── UNIVERSITIES/
+│                   ├── tsinghua.md
+│                   ├── pku.md
+│                   └── generic.md
 │
-└── dist/                         # Packaged skills
-    ├── latex-paper-en.skill
-    └── latex-thesis-zh.skill
+├── docs/                             # Documentation site
+│
+└── dist/                             # Packaged skills
+    ├── latex-paper-en.skill.zip
+    └── latex-thesis-zh.skill.zip
 ```
 
 ## Requirements

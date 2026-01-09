@@ -37,31 +37,39 @@ npm run docs:dev
 
 ## 安装方法
 
-### 快速安装（推荐）
+将 skill 文件夹复制到 Claude Code 的 skills 目录：
 
-使用单条命令安装两个技能：
+### Linux / macOS
 
 ```bash
-# 安装英文论文技能
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+# 创建 skills 目录（如不存在）
+mkdir -p ~/.claude/skills
 
-# 安装中文论文技能
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-```
-
-### 手动安装
-
-#### 方式一：复制到 Claude Code Skills 目录
-```bash
-# 将 skill 文件夹复制到 Claude Code 的 skills 目录
+# 复制 skill 文件夹
 cp -r .claude/skills/latex-paper-en ~/.claude/skills/
 cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 ```
 
-#### 方式二：使用 .skill 安装包
-```bash
-# 打包好的 skills 在 dist/ 目录中
-# 使用 Claude Code 的 skill 导入功能进行安装
+### Windows (PowerShell)
+
+```powershell
+# 创建 skills 目录（如不存在）
+New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
+
+# 复制 skill 文件夹
+Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+```
+
+### Windows (CMD)
+
+```cmd
+:: 创建 skills 目录（如不存在）
+mkdir "%USERPROFILE%\.claude\skills"
+
+:: 复制 skill 文件夹
+xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
 ```
 
 ## 快速开始
@@ -112,39 +120,42 @@ python scripts/check_consistency.py main.tex
 
 ```
 academic-writing-skills/
-├── .claude/skills/
-│   ├── latex-paper-en/           # 英文论文 skill
-│   │   ├── SKILL.md              # Skill 定义
-│   │   ├── scripts/              # Python 工具
-│   │   │   ├── compile.py        # 统一编译器
-│   │   │   ├── check_format.py   # ChkTeX 包装器
-│   │   │   ├── verify_bib.py     # BibTeX 检查器
-│   │   │   └── extract_prose.py  # 文本提取器
-│   │   └── references/           # 参考文档
-│   │       ├── STYLE_GUIDE.md    # 写作风格指南
-│   │       ├── COMMON_ERRORS.md  # 常见错误
-│   │       ├── VENUES.md         # 期刊/会议规则
-│   │       └── ...
-│   │
-│   └── latex-thesis-zh/          # 中文论文 skill
-│       ├── SKILL.md
-│       ├── scripts/
-│       │   ├── compile.py
-│       │   ├── map_structure.py  # 论文结构映射
-│       │   ├── check_format.py
-│       │   └── check_consistency.py
-│       └── references/
-│           ├── GB_STANDARD.md    # 国标格式规范
-│           ├── ACADEMIC_STYLE_ZH.md  # 中文学术规范
-│           ├── STRUCTURE_GUIDE.md    # 结构指南
-│           └── UNIVERSITIES/     # 学校模板
-│               ├── tsinghua.md   # 清华大学
-│               ├── pku.md        # 北京大学
-│               └── generic.md    # 通用模板
+├── .claude/
+│   └── skills/
+│       ├── latex-paper-en/           # 英文论文 skill
+│       │   ├── SKILL.md              # Skill 定义
+│       │   ├── scripts/              # Python 工具
+│       │   │   ├── compile.py        # 统一编译器
+│       │   │   ├── check_format.py   # ChkTeX 包装器
+│       │   │   ├── verify_bib.py     # BibTeX 检查器
+│       │   │   └── extract_prose.py  # 文本提取器
+│       │   └── references/           # 参考文档
+│       │       ├── STYLE_GUIDE.md    # 写作风格指南
+│       │       ├── COMMON_ERRORS.md  # 常见错误
+│       │       ├── VENUES.md         # 期刊/会议规则
+│       │       └── ...
+│       │
+│       └── latex-thesis-zh/          # 中文论文 skill
+│           ├── SKILL.md
+│           ├── scripts/
+│           │   ├── compile.py
+│           │   ├── map_structure.py  # 论文结构映射
+│           │   ├── check_format.py
+│           │   └── check_consistency.py
+│           └── references/
+│               ├── GB_STANDARD.md    # 国标格式规范
+│               ├── ACADEMIC_STYLE_ZH.md  # 中文学术规范
+│               ├── STRUCTURE_GUIDE.md    # 结构指南
+│               └── UNIVERSITIES/     # 学校模板
+│                   ├── tsinghua.md   # 清华大学
+│                   ├── pku.md        # 北京大学
+│                   └── generic.md    # 通用模板
 │
-└── dist/                         # 打包的 skills
-    ├── latex-paper-en.skill
-    └── latex-thesis-zh.skill
+├── docs/                             # 文档站点
+│
+└── dist/                             # 打包的 skills
+    ├── latex-paper-en.skill.zip
+    └── latex-thesis-zh.skill.zip
 ```
 
 ## 系统要求
