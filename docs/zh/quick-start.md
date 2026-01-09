@@ -4,11 +4,22 @@
 
 ## 安装
 
-使用一条命令安装两个技能：
+将 skill 文件夹复制到 Claude Code 的 skills 目录：
+
+### Linux / macOS
 
 ```bash
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
+mkdir -p ~/.claude/skills
+cp -r .claude/skills/latex-paper-en ~/.claude/skills/
+cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+```
+
+### Windows (PowerShell)
+
+```powershell
+New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
+Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ## 第一次编译

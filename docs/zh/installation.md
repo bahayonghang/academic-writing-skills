@@ -27,53 +27,57 @@ python --version  # 或 python3 --version
 
 ## 安装方法
 
-### 方法 1：一键安装（推荐）
-
-使用单条命令安装两个技能：
-
-```bash
-# 安装英文论文技能
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
-
-# 安装中文论文技能
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-```
-
-### 方法 2：手动安装
-
 1. **克隆仓库**：
    ```bash
    git clone https://github.com/bahayonghang/academic-writing-skills.git
    cd academic-writing-skills
    ```
 
-2. **手动安装技能**：
-   ```bash
-   # 将技能复制到 Claude Code 的技能目录
-   cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-   cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
-   ```
+2. **将技能复制到 Claude Code 的技能目录**：
 
-### 方法 3：从预构建包安装
-
-从 [GitHub Releases](https://github.com/bahayonghang/academic-writing-skills/releases) 下载预构建的技能包：
+### Linux / macOS
 
 ```bash
-# 下载并安装
-wget https://github.com/bahayonghang/academic-writing-skills/releases/latest/download/latex-paper-en.skill.zip
-claude skill install latex-paper-en.skill.zip
+# 创建 skills 目录（如不存在）
+mkdir -p ~/.claude/skills
 
-wget https://github.com/bahayonghang/academic-writing-skills/releases/latest/download/latex-thesis-zh.skill.zip
-claude skill install latex-thesis-zh.skill.zip
+# 复制 skill 文件夹
+cp -r .claude/skills/latex-paper-en ~/.claude/skills/
+cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+```
+
+### Windows (PowerShell)
+
+```powershell
+# 创建 skills 目录（如不存在）
+New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
+
+# 复制 skill 文件夹
+Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+```
+
+### Windows (CMD)
+
+```cmd
+:: 创建 skills 目录（如不存在）
+mkdir "%USERPROFILE%\.claude\skills"
+
+:: 复制 skill 文件夹
+xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
 ```
 
 ## 验证安装
 
-安装后，验证技能是否可用：
+安装后，通过检查目录验证技能是否可用：
 
 ```bash
-# 列出所有已安装的技能
-claude skill list
+# Linux / macOS
+ls ~/.claude/skills/
+
+# Windows (PowerShell)
+Get-ChildItem "$env:USERPROFILE/.claude/skills"
 
 # 您应该看到：
 # - latex-paper-en
@@ -163,25 +167,31 @@ nano ~/.claude/skills/latex-thesis-zh/SKILL.md
 
 ## 更新
 
-更新到最新版本：
+更新到最新版本，重新克隆仓库并再次复制 skill 文件夹：
 
 ```bash
-# 使用一键安装
-claude skill update latex-paper-en
-claude skill update latex-thesis-zh
+git clone https://github.com/bahayonghang/academic-writing-skills.git
+cd academic-writing-skills
 
-# 或手动重新安装
-claude skill uninstall latex-paper-en
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+# 然后使用上面对应平台的命令复制 skills
 ```
 
 ## 卸载
 
 移除技能：
 
+### Linux / macOS
+
 ```bash
-claude skill uninstall latex-paper-en
-claude skill uninstall latex-thesis-zh
+rm -rf ~/.claude/skills/latex-paper-en
+rm -rf ~/.claude/skills/latex-thesis-zh
+```
+
+### Windows (PowerShell)
+
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-paper-en"
+Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 ```
 
 ## 故障排除

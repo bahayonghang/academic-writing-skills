@@ -27,53 +27,57 @@ python --version  # or python3 --version
 
 ## Installation Methods
 
-### Method 1: One-Click Installation (Recommended)
-
-Install both skills with a single command:
-
-```bash
-# Install English paper skill
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
-
-# Install Chinese thesis skill
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-```
-
-### Method 2: Manual Installation
-
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/bahayonghang/academic-writing-skills.git
    cd academic-writing-skills
    ```
 
-2. **Install skills manually**:
-   ```bash
-   # Copy skills to Claude Code's skills directory
-   cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-   cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
-   ```
+2. **Copy skills to Claude Code's skills directory**:
 
-### Method 3: From Pre-Built Packages
-
-Download pre-built skill packages from [GitHub Releases](https://github.com/bahayonghang/academic-writing-skills/releases):
+### Linux / macOS
 
 ```bash
-# Download and install
-wget https://github.com/bahayonghang/academic-writing-skills/releases/latest/download/latex-paper-en.skill.zip
-claude skill install latex-paper-en.skill.zip
+# Create skills directory (if not exists)
+mkdir -p ~/.claude/skills
 
-wget https://github.com/bahayonghang/academic-writing-skills/releases/latest/download/latex-thesis-zh.skill.zip
-claude skill install latex-thesis-zh.skill.zip
+# Copy skill folders
+cp -r .claude/skills/latex-paper-en ~/.claude/skills/
+cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+```
+
+### Windows (PowerShell)
+
+```powershell
+# Create skills directory (if not exists)
+New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
+
+# Copy skill folders
+Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+```
+
+### Windows (CMD)
+
+```cmd
+:: Create skills directory (if not exists)
+mkdir "%USERPROFILE%\.claude\skills"
+
+:: Copy skill folders
+xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
 ```
 
 ## Verifying Installation
 
-After installation, verify the skills are available:
+After installation, verify the skills are available by checking the directory:
 
 ```bash
-# List all installed skills
-claude skill list
+# Linux / macOS
+ls ~/.claude/skills/
+
+# Windows (PowerShell)
+Get-ChildItem "$env:USERPROFILE/.claude/skills"
 
 # You should see:
 # - latex-paper-en
@@ -163,25 +167,31 @@ nano ~/.claude/skills/latex-thesis-zh/SKILL.md
 
 ## Updating
 
-To update to the latest version:
+To update to the latest version, re-clone the repository and copy the skill folders again:
 
 ```bash
-# Using one-click installation
-claude skill update latex-paper-en
-claude skill update latex-thesis-zh
+git clone https://github.com/bahayonghang/academic-writing-skills.git
+cd academic-writing-skills
 
-# Or reinstall manually
-claude skill uninstall latex-paper-en
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
+# Then copy skills using the commands above for your platform
 ```
 
 ## Uninstalling
 
 To remove the skills:
 
+### Linux / macOS
+
 ```bash
-claude skill uninstall latex-paper-en
-claude skill uninstall latex-thesis-zh
+rm -rf ~/.claude/skills/latex-paper-en
+rm -rf ~/.claude/skills/latex-thesis-zh
+```
+
+### Windows (PowerShell)
+
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-paper-en"
+Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 ```
 
 ## Troubleshooting
