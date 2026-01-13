@@ -109,11 +109,11 @@ python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py refs.bib
 python ~/.claude/skills/latex-thesis-zh/scripts/check_consistency.py data/
 ```
 
-## 理解编译配方
+## 理解编译配置
 
-Academic Writing Skills 支持多种编译配方：
+Academic Writing Skills 支持多种编译配置：
 
-| 配方 | 使用场景 | 速度 |
+| 配置 | 使用场景 | 速度 |
 |------|----------|------|
 | `pdflatex` | 纯英文论文，最快 | ⚡⚡⚡ |
 | `xelatex` | Unicode、中文、自定义字体 | ⚡⚡ |
@@ -259,7 +259,7 @@ python compile.py thesis.tex --recipe xelatex
 ## 下一步
 
 - [完整使用指南](/zh/usage) - 详细功能文档
-- [编译配方](/zh/guides/compilation) - 深入了解配方
+- [编译配置](/zh/guides/compilation) - 深入了解配置
 - [格式检查](/zh/guides/format-checking) - 理解格式检查
 - [参考文献管理](/zh/guides/bibliography) - 管理参考文献
 

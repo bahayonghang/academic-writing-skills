@@ -23,7 +23,7 @@ features:
     details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译，以及主流大学模板（清华、北大、中科大、复旦）。
 
   - icon: ⚡
-    title: 多种编译配方
+    title: 多种编译配置
     details: 灵活的编译工作流，包括 xelatex、pdflatex、latexmk，以及完整的参考文献工作流（BibTeX/Biber）。
 
   - icon: 🔍
@@ -65,7 +65,7 @@ claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thes
 - **latex-paper-en**：英文学术论文完整工具包
 - **latex-thesis-zh**：中文论文专业支持
 
-### 编译配方
+### 编译配置
 
 支持所有主流 LaTeX 编译工作流：
 - 单次编译（xelatex、pdflatex）

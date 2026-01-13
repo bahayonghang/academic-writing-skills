@@ -88,9 +88,9 @@ python scripts/compile.py main.tex --recipe pdflatex-biber   # 英文论文推�
 python scripts/compile.py main.tex --watch
 ```
 
-### 编译配方
+### 编译配置
 
-| 配方 | 步骤 | 适用场景 |
+| 配置 | 步骤 | 适用场景 |
 |------|------|----------|
 | `xelatex` | 仅 XeLaTeX | 中文快速编译 |
 | `pdflatex` | 仅 PDFLaTeX | 英文快速编译 |
