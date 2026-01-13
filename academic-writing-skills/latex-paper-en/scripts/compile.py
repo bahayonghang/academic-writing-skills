@@ -113,13 +113,14 @@ class LaTeXCompiler:
 
         return True, "All tools available"
 
-    def compile(self, watch: bool = False, biber: bool = False) -> int:
+    def compile(self, watch: bool = False, biber: bool = False, outdir: Optional[str] = None) -> int:
         """
         Compile the LaTeX document.
 
         Args:
             watch: Enable continuous compilation mode
             biber: Use biber instead of bibtex
+            outdir: Output directory for generated files
 
         Returns:
             Exit code (0 for success)
@@ -132,7 +133,7 @@ class LaTeXCompiler:
 
         # If recipe is specified, use recipe-based compilation
         if self.recipe:
-            return self._compile_with_recipe()
+            return self._compile_with_recipe(outdir)
 
         print(f"[INFO] Compiling {self.tex_file.name} with {self.compiler}")
         print(f"[INFO] Working directory: {self.work_dir}")
@@ -186,7 +187,7 @@ class LaTeXCompiler:
             print(f"[ERROR] {e}")
             return 1
 
-    def _compile_with_recipe(self) -> int:
+    def _compile_with_recipe(self, outdir: Optional[str] = None) -> int:
         """Compile using a predefined recipe (VS Code LaTeX Workshop style)."""
         if self.recipe not in self.RECIPES:
             print(f"[ERROR] Unknown recipe: {self.recipe}")
@@ -203,12 +204,34 @@ class LaTeXCompiler:
         for i, step in enumerate(steps, 1):
             print(f"\n[STEP {i}/{len(steps)}] Running {step}...")
 
+            # Match VS Code LaTeX Workshop tool configurations exactly
             if step == 'latexmk':
-                cmd = ['latexmk', '-pdf', '-interaction=nonstopmode',
-                       '-synctex=1', str(self.tex_file)]
-            elif step in ('pdflatex', 'xelatex', 'lualatex'):
-                cmd = [step, '-interaction=nonstopmode', '-shell-escape',
-                       '-synctex=1', str(self.tex_file)]
+                cmd = [
+                    'latexmk',
+                    '-synctex=1',
+                    '-interaction=nonstopmode',
+                    '-file-line-error',
+                    '-pdf',
+                ]
+                if outdir:
+                    cmd.append(f'-outdir={outdir}')
+                cmd.append(str(self.tex_file))
+            elif step in ('pdflatex', 'xelatex'):
+                cmd = [
+                    step,
+                    '-synctex=1',
+                    '-interaction=nonstopmode',
+                    '-file-line-error',
+                    str(self.tex_file),
+                ]
+            elif step == 'lualatex':
+                cmd = [
+                    'lualatex',
+                    '-synctex=1',
+                    '-interaction=nonstopmode',
+                    '-file-line-error',
+                    str(self.tex_file),
+                ]
             elif step == 'bibtex':
                 cmd = ['bibtex', tex_base]
             elif step == 'biber':
@@ -326,6 +349,10 @@ Examples:
         action='store_true',
         help='Clean all generated files including PDF'
     )
+    parser.add_argument(
+        '--outdir', '-o',
+        help='Output directory for generated files (latexmk only)'
+    )
 
     args = parser.parse_args()
 
@@ -345,7 +372,7 @@ Examples:
     if args.clean or args.clean_all:
         sys.exit(compiler.clean(full=args.clean_all))
     else:
-        sys.exit(compiler.compile(watch=args.watch, biber=args.biber))
+        sys.exit(compiler.compile(watch=args.watch, biber=args.biber, outdir=args.outdir))
 
 
 if __name__ == '__main__':

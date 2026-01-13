@@ -9,14 +9,14 @@ Usage:
     python compile.py main.tex --watch               # Continuous compilation
     python compile.py main.tex --clean               # Clean auxiliary files
 
-Recipes (matching VS Code LaTeX Workshop):
-    xelatex          - XeLaTeX only
-    pdflatex         - PDFLaTeX only
-    latexmk          - LaTeXmk auto
+Recipes (Chinese thesis - XeLaTeX/LuaLaTeX recommended):
+    xelatex          - XeLaTeX only (recommended for Chinese)
+    lualatex         - LuaLaTeX only (alternative)
+    latexmk          - LaTeXmk with XeLaTeX
     xelatex-bibtex   - xelatex -> bibtex -> xelatex*2
-    xelatex-biber    - xelatex -> biber -> xelatex*2
-    pdflatex-bibtex  - pdflatex -> bibtex -> pdflatex*2
-    pdflatex-biber   - pdflatex -> biber -> pdflatex*2
+    xelatex-biber    - xelatex -> biber -> xelatex*2 (recommended)
+    lualatex-bibtex  - lualatex -> bibtex -> lualatex*2
+    lualatex-biber   - lualatex -> biber -> lualatex*2
 """
 
 import argparse
@@ -40,16 +40,17 @@ class LaTeXCompiler:
     }
 
     # Recipes matching VS Code LaTeX Workshop configuration
+    # Chinese thesis: XeLaTeX/LuaLaTeX recommended
     RECIPES = {
         'xelatex': ['xelatex'],
-        'pdflatex': ['pdflatex'],
+        'lualatex': ['lualatex'],
         'bibtex': ['bibtex'],
         'biber': ['biber'],
-        'latexmk': ['latexmk'],
+        'latexmk': ['latexmk-xelatex'],  # Default to XeLaTeX for Chinese
         'xelatex-bibtex': ['xelatex', 'bibtex', 'xelatex', 'xelatex'],
         'xelatex-biber': ['xelatex', 'biber', 'xelatex', 'xelatex'],
-        'pdflatex-bibtex': ['pdflatex', 'bibtex', 'pdflatex', 'pdflatex'],
-        'pdflatex-biber': ['pdflatex', 'biber', 'pdflatex', 'pdflatex'],
+        'lualatex-bibtex': ['lualatex', 'bibtex', 'lualatex', 'lualatex'],
+        'lualatex-biber': ['lualatex', 'biber', 'lualatex', 'lualatex'],
     }
 
     # Patterns indicating Chinese content
@@ -203,10 +204,13 @@ class LaTeXCompiler:
         for i, step in enumerate(steps, 1):
             print(f"\n[STEP {i}/{len(steps)}] Running {step}...")
 
-            if step == 'latexmk':
-                cmd = ['latexmk', '-pdf', '-interaction=nonstopmode',
-                       '-synctex=1', str(self.tex_file)]
-            elif step in ('pdflatex', 'xelatex', 'lualatex'):
+            if step == 'latexmk-xelatex':
+                cmd = ['latexmk', '-xelatex', '-interaction=nonstopmode',
+                       '-synctex=1', '-file-line-error', str(self.tex_file)]
+            elif step == 'latexmk-lualatex':
+                cmd = ['latexmk', '-lualatex', '-interaction=nonstopmode',
+                       '-synctex=1', '-file-line-error', str(self.tex_file)]
+            elif step in ('xelatex', 'lualatex'):
                 cmd = [step, '-interaction=nonstopmode', '-shell-escape',
                        '-synctex=1', str(self.tex_file)]
             elif step == 'bibtex':
@@ -279,14 +283,14 @@ def main():
         description='LaTeX Compilation Script - Unified compiler for pdflatex/xelatex/lualatex',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Recipes (matching VS Code LaTeX Workshop):
-  xelatex          XeLaTeX only
-  pdflatex         PDFLaTeX only
-  latexmk          LaTeXmk auto
+Recipes (Chinese thesis - XeLaTeX/LuaLaTeX recommended):
+  xelatex          XeLaTeX only (recommended)
+  lualatex         LuaLaTeX only
+  latexmk          LaTeXmk with XeLaTeX
   xelatex-bibtex   xelatex -> bibtex -> xelatex*2
-  xelatex-biber    xelatex -> biber -> xelatex*2
-  pdflatex-bibtex  pdflatex -> bibtex -> pdflatex*2
-  pdflatex-biber   pdflatex -> biber -> pdflatex*2
+  xelatex-biber    xelatex -> biber -> xelatex*2 (recommended)
+  lualatex-bibtex  lualatex -> bibtex -> lualatex*2
+  lualatex-biber   lualatex -> biber -> lualatex*2
 
 Examples:
   python compile.py main.tex                        # Auto-detect
@@ -302,9 +306,9 @@ Examples:
     )
     parser.add_argument(
         '--recipe', '-r',
-        choices=['xelatex', 'pdflatex', 'latexmk', 'xelatex-bibtex',
-                 'xelatex-biber', 'pdflatex-bibtex', 'pdflatex-biber'],
-        help='Use predefined recipe (VS Code LaTeX Workshop style)'
+        choices=['xelatex', 'lualatex', 'latexmk', 'xelatex-bibtex',
+                 'xelatex-biber', 'lualatex-bibtex', 'lualatex-biber'],
+        help='Use predefined recipe (XeLaTeX recommended for Chinese)'
     )
     parser.add_argument(
         '--watch', '-w',

@@ -1,141 +1,224 @@
 ---
 name: latex-paper-en
 description: |
-  LaTeX academic paper assistant for English conference/journal papers.
-  Provides: format checking (chktex), compilation (pdflatex/xelatex/lualatex via latexmk),
-  grammar analysis, complex sentence decomposition, and expression restructuring.
+  LaTeX academic paper assistant for English papers (IEEE, ACM, Springer, NeurIPS, ICML).
+  Domains: Deep Learning, Time Series, Industrial Control.
 
-  Use when:
-  - Working with .tex files for English academic papers
-  - User mentions "paper review", "grammar check", "improve writing", "proofread"
-  - User asks to compile LaTeX documents
-  - User mentions venues like IEEE, ACM, Springer, NeurIPS, ICML
-  - User needs help with academic English writing style
-  - User wants to check BibTeX/bibliography formatting
+  Triggers (use ANY module independently):
+  - "compile", "编译", "build latex" → Compilation Module
+  - "format check", "chktex", "格式检查" → Format Check Module
+  - "grammar", "语法", "proofread", "润色" → Grammar Analysis Module
+  - "long sentence", "长句", "simplify" → Sentence Decomposition Module
+  - "academic tone", "学术表达", "improve writing" → Expression Module
+  - "translate", "翻译", "中译英", "Chinese to English" → Translation Module
+  - "bib", "bibliography", "参考文献" → Bibliography Module
 ---
 
 # LaTeX Academic Paper Assistant (English)
 
 ## Critical Rules
 
-**NEVER violate these rules:**
-1. NEVER modify content inside `\cite{}`, `\ref{}`, `\label{}`, `\equation`, `\align`, or math environments
-2. NEVER fabricate bibliography entries - only read from existing .bib files
-3. NEVER change domain-specific terminology without permission (see [FORBIDDEN_TERMS.md](references/FORBIDDEN_TERMS.md))
-4. NEVER apply changes directly - always output in diff-comment format first
-5. ALWAYS run format check before analyzing text content
+1. NEVER modify `\cite{}`, `\ref{}`, `\label{}`, math environments
+2. NEVER fabricate bibliography entries
+3. NEVER change domain terminology without confirmation
+4. ALWAYS output suggestions in diff-comment format first
 
-## Quick Start
+## Modules (Independent, Pick Any)
 
-### Compile Document
+### Module: Compile
+**Trigger**: compile, 编译, build, pdflatex, xelatex
+
+**Tools** (matching VS Code LaTeX Workshop):
+| Tool | Command | Args |
+|------|---------|------|
+| xelatex | `xelatex` | `-synctex=1 -interaction=nonstopmode -file-line-error` |
+| pdflatex | `pdflatex` | `-synctex=1 -interaction=nonstopmode -file-line-error` |
+| latexmk | `latexmk` | `-synctex=1 -interaction=nonstopmode -file-line-error -pdf -outdir=%OUTDIR%` |
+| bibtex | `bibtex` | `%DOCFILE%` |
+| biber | `biber` | `%DOCFILE%` |
+
+**Recipes**:
+| Recipe | Steps |
+|--------|-------|
+| XeLaTeX | xelatex |
+| PDFLaTeX | pdflatex |
+| LaTeXmk | latexmk |
+| xelatex -> bibtex -> xelatex*2 | xelatex → bibtex → xelatex → xelatex |
+| xelatex -> biber -> xelatex*2 | xelatex → biber → xelatex → xelatex |
+| pdflatex -> bibtex -> pdflatex*2 | pdflatex → bibtex → pdflatex → pdflatex |
+| pdflatex -> biber -> pdflatex*2 | pdflatex → biber → pdflatex → pdflatex |
+
+**Usage**:
 ```bash
-# Auto-detect and compile (recommended)
-python scripts/compile.py main.tex
+# Single compiler
+python scripts/compile.py main.tex                          # Auto-detect
+python scripts/compile.py main.tex --recipe xelatex         # XeLaTeX only
+python scripts/compile.py main.tex --recipe pdflatex        # PDFLaTeX only
 
-# Explicit compiler selection
-python scripts/compile.py main.tex --compiler pdflatex
-python scripts/compile.py main.tex --compiler xelatex
-python scripts/compile.py main.tex --compiler lualatex
+# With bibliography (recommended for papers)
+python scripts/compile.py main.tex --recipe xelatex-bibtex  # BibTeX workflow
+python scripts/compile.py main.tex --recipe xelatex-biber   # Biber workflow
+python scripts/compile.py main.tex --recipe pdflatex-bibtex
+python scripts/compile.py main.tex --recipe pdflatex-biber
 
-# Using recipes (VS Code LaTeX Workshop style)
-python scripts/compile.py main.tex --recipe pdflatex          # PDFLaTeX only
-python scripts/compile.py main.tex --recipe xelatex           # XeLaTeX only
-python scripts/compile.py main.tex --recipe latexmk           # LaTeXmk auto
-python scripts/compile.py main.tex --recipe pdflatex-bibtex   # pdflatex -> bibtex -> pdflatex*2
-python scripts/compile.py main.tex --recipe pdflatex-biber    # pdflatex -> biber -> pdflatex*2
-python scripts/compile.py main.tex --recipe xelatex-bibtex    # xelatex -> bibtex -> xelatex*2
-python scripts/compile.py main.tex --recipe xelatex-biber     # xelatex -> biber -> xelatex*2
+# With output directory
+python scripts/compile.py main.tex --recipe latexmk --outdir build
 
-# Continuous compilation (watch mode)
-python scripts/compile.py main.tex --watch
-
-# Clean auxiliary files
-python scripts/compile.py main.tex --clean
+# Utilities
+python scripts/compile.py main.tex --clean                  # Clean aux files
+python scripts/compile.py main.tex --clean-all              # Clean all (incl. PDF)
 ```
 
-### Format Check
-```bash
-# Run chktex linting
-python scripts/check_format.py main.tex
+**Auto-detection**: Script detects Chinese content (ctex, xeCJK, Chinese chars) and auto-selects xelatex.
 
-# Check with specific rules
+---
+
+### Module: Format Check
+**Trigger**: format, chktex, lint, 格式检查
+
+```bash
+python scripts/check_format.py main.tex
 python scripts/check_format.py main.tex --strict
 ```
 
-## Workflow (4-Layer Approach)
+Output: PASS / WARN / FAIL with categorized issues.
 
-### Layer 0: Pre-flight Check (MANDATORY)
-1. Run `python scripts/check_format.py main.tex` for LaTeX linting
-2. Run `python scripts/verify_bib.py references.bib` for BibTeX integrity
-3. Map file structure if multi-file project
+---
 
-**Output**: Format health report (PASS/WARN/FAIL)
+### Module: Grammar Analysis
+**Trigger**: grammar, 语法, proofread, 润色, article usage
 
-### Layer 1: Grammar & Style Analysis (Read-Only)
 Focus areas:
-- Subject-verb agreement, article usage (a/an/the)
+- Subject-verb agreement
+- Article usage (a/an/the)
 - Tense consistency (past for methods, present for results)
-- Chinglish detection (see [COMMON_ERRORS.md](references/COMMON_ERRORS.md))
-- Weak verb replacement: make→construct, do→perform, get→obtain
+- Chinglish detection → See [COMMON_ERRORS.md](references/COMMON_ERRORS.md)
 
-### Layer 2: Complex Sentence Decomposition
-**Trigger**: Sentences >50 words or >3 subordinate clauses
-
-Output analysis format:
+Output format:
 ```latex
-% LONG SENTENCE DETECTED (Line 45, 67 words)
-% Core Clause: [main subject + verb + object]
-% Subordinate Structure:
-% - [Relative] which...
-% - [Purpose] to...
-% Suggested Rewrite: [simplified version]
+% GRAMMAR (Line 23): Article missing
+% Before: We propose method for...
+% After: We propose a method for...
 ```
 
-### Layer 3: Expression Restructuring
-Output as LaTeX-safe diff:
+---
+
+### Module: Sentence Decomposition
+**Trigger**: long sentence, 长句, simplify, decompose, >50 words
+
+Trigger condition: Sentences >50 words OR >3 subordinate clauses
+
+Output format:
 ```latex
-% SUGGESTION (Line 23): Improve academic tone
+% LONG SENTENCE (Line 45, 67 words)
+% Core: [subject + verb + object]
+% Subordinates:
+%   - [Relative] which...
+%   - [Purpose] to...
+% Suggested: [simplified version]
+```
+
+---
+
+### Module: Expression Restructuring
+**Trigger**: academic tone, 学术表达, improve writing, weak verbs
+
+Weak verb replacements:
+- use → employ, utilize, leverage
+- get → obtain, achieve, acquire
+- make → construct, develop, generate
+- show → demonstrate, illustrate, indicate
+
+Output format:
+```latex
+% EXPRESSION (Line 23): Improve academic tone
 % Before: We use machine learning to get better results.
-% After: We employ machine learning techniques to achieve superior performance.
-% Changes: "use"→"employ", "get"→"achieve", "better results"→"superior performance"
+% After: We employ machine learning to achieve superior performance.
 ```
 
-## Output Report Structure
+Style guide: [STYLE_GUIDE.md](references/STYLE_GUIDE.md)
 
+---
+
+### Module: Translation (Chinese → English)
+**Trigger**: translate, 翻译, 中译英, Chinese to English
+
+**Step 1: Domain Selection**
+Identify domain for terminology:
+- Deep Learning: neural networks, attention, loss functions
+- Time Series: forecasting, ARIMA, temporal patterns
+- Industrial Control: PID, fault detection, SCADA
+
+**Step 2: Terminology Confirmation**
 ```markdown
-# LaTeX Paper Review Report
-
-## Executive Summary
-- Status: READY / NEEDS REVISION / MAJOR ISSUES
-- Compilation: [status]
-- Grammar Issues: X found
-- Long Sentences: Y found
-
-## Critical Issues (Must Fix)
-[Format/compilation errors]
-
-## Grammar & Style Improvements
-[Categorized by severity]
-
-## Long Sentence Analysis
-[Each with decomposition]
-
-## Expression Refinements
-[With rationale]
+| 中文 | English | Domain |
+|------|---------|--------|
+| 注意力机制 | attention mechanism | DL |
 ```
+Reference: [TERMINOLOGY.md](references/TERMINOLOGY.md)
+
+**Step 3: Translation with Notes**
+```latex
+% ORIGINAL: 本文提出了一种基于Transformer的方法
+% TRANSLATION: We propose a Transformer-based approach
+% NOTES: "本文提出" → "We propose" (standard academic)
+```
+
+**Step 4: Chinglish Check**
+Reference: [TRANSLATION_GUIDE.md](references/TRANSLATION_GUIDE.md)
+
+Common fixes:
+- "more and more" → "increasingly"
+- "in recent years" → "recently"
+- "play an important role" → "is crucial for"
+
+**Quick Patterns**:
+| 中文 | English |
+|------|---------|
+| 本文提出... | We propose... |
+| 实验结果表明... | Experimental results demonstrate that... |
+| 与...相比 | Compared with... |
+
+---
+
+### Module: Bibliography
+**Trigger**: bib, bibliography, 参考文献, citation
+
+```bash
+python scripts/verify_bib.py references.bib
+python scripts/verify_bib.py references.bib --tex main.tex  # Check citations
+python scripts/verify_bib.py references.bib --standard gb7714
+```
+
+Checks: required fields, duplicate keys, unused entries, missing citations.
+
+---
 
 ## Venue-Specific Rules
 
-Load venue rules from [VENUES.md](references/VENUES.md):
-- **IEEE**: Active voice for contributions, past tense for methods
-- **ACM**: Present tense for general truths, structured abstract
+Load from [VENUES.md](references/VENUES.md):
+- **IEEE**: Active voice, past tense for methods
+- **ACM**: Present tense for general truths
 - **Springer**: Figure captions below, table captions above
-- **NeurIPS/ICML**: Concise (8 pages), specific formatting
+- **NeurIPS/ICML**: 8 pages, specific formatting
+
+---
+
+## Full Workflow (Optional)
+
+If user requests complete review, execute in order:
+1. Format Check → fix critical issues
+2. Grammar Analysis → fix errors
+3. Sentence Decomposition → simplify complex sentences
+4. Expression Restructuring → improve academic tone
+
+---
 
 ## References
 
-- [STYLE_GUIDE.md](references/STYLE_GUIDE.md): Academic writing style rules
-- [COMMON_ERRORS.md](references/COMMON_ERRORS.md): Chinglish and common mistakes
+- [STYLE_GUIDE.md](references/STYLE_GUIDE.md): Academic writing rules
+- [COMMON_ERRORS.md](references/COMMON_ERRORS.md): Chinglish patterns
 - [VENUES.md](references/VENUES.md): Conference/journal requirements
 - [FORBIDDEN_TERMS.md](references/FORBIDDEN_TERMS.md): Protected terminology
-- [COMPILATION.md](references/COMPILATION.md): Detailed compilation guide
+- [TERMINOLOGY.md](references/TERMINOLOGY.md): Domain terminology (DL/TS/IC)
+- [TRANSLATION_GUIDE.md](references/TRANSLATION_GUIDE.md): Translation guide
