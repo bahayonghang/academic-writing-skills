@@ -1,489 +1,224 @@
 # Usage Guide
 
-Comprehensive guide to using Academic Writing Skills with Claude Code.
+Comprehensive guide to using Academic Writing Skills.
 
 ## Overview
 
-Academic Writing Skills provides two complementary skills:
+Academic Writing Skills provides two main skills:
 
-- **latex-paper-en**: For English academic papers (IEEE, ACM, Springer, etc.)
-- **latex-thesis-zh**: For Chinese theses (GB/T 7714, university templates)
+| Skill | Purpose | Key Features |
+|-------|---------|--------------|
+| `latex-paper-en` | English academic papers | Compilation, format check, grammar, translation |
+| `latex-thesis-zh` | Chinese theses | Compilation, GB/T 7714 check, template support |
 
-Each skill includes:
-- Multiple compilation recipes
-- Format checking tools
-- Bibliography verification
-- Style guide references
+## Modular Design
 
-## Skill Invocation
+Each skill uses a modular design where you can use any module independently without following a sequence.
 
-### Method 1: Direct Script Execution
+### latex-paper-en Modules
 
-Run skill scripts directly:
+| Module | Triggers | Function |
+|--------|----------|----------|
+| Compile | compile, 编译, build | LaTeX compilation |
+| Format Check | format, chktex, lint | Format checking |
+| Grammar Analysis | grammar, proofread | Grammar analysis |
+| Sentence Decomposition | long sentence, simplify | Long sentence decomposition |
+| Expression | academic tone, improve writing | Expression optimization |
+| Translation | translate, 翻译, 中译英 | Chinese-English translation |
+| Bibliography | bib, bibliography | Bibliography checking |
 
-```bash
-# English paper compilation
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex
+## Compile Module
 
-# Chinese thesis structure mapping
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
-```
+### Available Tools
 
-### Method 2: Claude Code Integration
+| Tool | Command | Args |
+|------|---------|------|
+| xelatex | `xelatex` | `-synctex=1 -interaction=nonstopmode -file-line-error` |
+| pdflatex | `pdflatex` | `-synctex=1 -interaction=nonstopmode -file-line-error` |
+| latexmk | `latexmk` | `-synctex=1 -interaction=nonstopmode -file-line-error -pdf` |
+| bibtex | `bibtex` | `%DOCFILE%` |
+| biber | `biber` | `%DOCFILE%` |
 
-Use skills through natural language with Claude:
+### Compilation Recipes
 
-```
-You: Compile my LaTeX paper with pdflatex and check for format errors
+| Recipe | Steps | Use Case |
+|--------|-------|----------|
+| XeLaTeX | xelatex | Unicode/Chinese support |
+| PDFLaTeX | pdflatex | English-only, fastest |
+| LaTeXmk | latexmk | Auto dependency handling |
+| xelatex-bibtex | xelatex → bibtex → xelatex × 2 | Chinese + BibTeX |
+| xelatex-biber | xelatex → biber → xelatex × 2 | Chinese + Biber |
+| pdflatex-bibtex | pdflatex → bibtex → pdflatex × 2 | English + BibTeX |
+| pdflatex-biber | pdflatex → biber → pdflatex × 2 | English + Biber |
 
-Claude: [Invokes latex-paper-en skill]
-I'll compile your paper and run format checks.
-
-[Executes compilation and checking]
-
-Claude: Compilation successful! Your paper compiled to paper.pdf.
-Format check found 2 minor issues: ...
-```
-
-### Method 3: Skill Shortcuts
-
-If configured, use skill shortcuts:
-
-```bash
-# If you've set up aliases
-latex-en-compile paper.tex --recipe pdflatex-bibtex
-latex-zh-structure thesis.tex
-```
-
-## Common Tasks
-
-### Task 1: Compile a Paper
-
-**English paper** (simple):
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex
-```
-
-**English paper** (with bibliography):
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdflatex-bibtex
-```
-
-**Chinese thesis**:
-```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/compile.py thesis.tex --recipe xelatex-biber
-```
-
-### Task 2: Check Format
-
-**Quick check** (fast, common issues):
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex --quick
-```
-
-**Full check** (thorough, all issues):
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
-```
-
-**Check specific sections**:
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex --sections introduction,methods
-```
-
-### Task 3: Verify Bibliography
-
-**Check BibTeX format**:
-```bash
-python ~/.claude/skills/latex-paper-en/scripts/verify_bib.py references.bib
-```
-
-**Check GB/T 7714 compliance** (Chinese):
-```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gbt7714
-```
-
-### Task 4: Extract Prose for Grammar Check
-
-Extract text content for grammar checking:
+### Usage Examples
 
 ```bash
-# Extract all prose
-python ~/.claude/skills/latex-paper-en/scripts/extract_prose.py paper.tex
+# Auto-detect compiler
+python scripts/compile.py main.tex
 
-# Extract specific sections
-python ~/.claude/skills/latex-paper-en/scripts/extract_prose.py paper.tex --sections abstract,introduction
+# Specify recipe
+python scripts/compile.py main.tex --recipe xelatex-biber
+
+# Specify output directory
+python scripts/compile.py main.tex --recipe latexmk --outdir build
+
+# Clean auxiliary files
+python scripts/compile.py main.tex --clean
+python scripts/compile.py main.tex --clean-all  # Including PDF
 ```
 
-Use with external grammar tools:
-```bash
-# With Grammarly CLI
-python extract_prose.py paper.tex | grammarly-cli
+## Format Check Module
 
-# With LanguageTool
-python extract_prose.py paper.tex | languagetool
-```
-
-### Task 5: Map Thesis Structure
-
-For Chinese theses, identify structure and template:
+Uses ChkTeX for LaTeX code checking.
 
 ```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
+# Basic check
+python scripts/check_format.py main.tex
+
+# Strict mode
+python scripts/check_format.py main.tex --strict
 ```
 
 Output example:
 ```
-Thesis Structure Analysis
-========================
+============================================================
+LaTeX Format Check Report
+============================================================
+File: main.tex
+Status: WARNING
+Message: Found 3 issues
 
-Template: Tsinghua University (thuthesis)
-Main file: thesis.tex
+[SPACING] (2 issues)
+  Line 42: Interword spacing should perhaps be used.
+  Line 87: Intersentence spacing should perhaps be used.
 
-Structure:
-- 封面 (Cover): data/cover.tex
-- 中文摘要 (Chinese Abstract): data/abstract_zh.tex
-- English Abstract: data/abstract_en.tex
-- 目录 (Contents): auto-generated
-- 第1章 绪论: data/chap01.tex
-- 第2章 相关工作: data/chap02.tex
-- ...
-- 参考文献 (References): ref/refs.bib
-- 致谢 (Acknowledgements): data/ack.tex
+[PUNCTUATION] (1 issue)
+  Line 120: Delete this space to maintain correct pagereferences.
+============================================================
 ```
 
-### Task 6: Check Terminology Consistency
+## Grammar Analysis Module
 
-For Chinese theses, verify consistent terminology usage:
+LLM-based grammar checking without external tools.
+
+Focus areas:
+- Subject-verb agreement
+- Article usage (a/an/the)
+- Tense consistency
+- Chinglish detection
+
+Output format:
+```latex
+% GRAMMAR (Line 23): Article missing
+% Before: We propose method for time series forecasting.
+% After: We propose a method for time series forecasting.
+```
+
+## Translation Module
+
+Supports Chinese academic text to English translation.
+
+### Supported Domains
+
+| Domain | Keywords |
+|--------|----------|
+| Deep Learning | neural networks, attention, loss functions |
+| Time Series | forecasting, ARIMA, sliding window |
+| Industrial Control | PID control, fault detection, SCADA |
+
+### Translation Workflow
+
+1. **Terminology Confirmation** - Identify terms and confirm translations
+2. **Structure Analysis** - Analyze paragraph structure, determine tense
+3. **Sentence Translation** - Translation with annotations
+4. **Chinglish Check** - Detect and fix common errors
+5. **Academic Polish** - Final review
+
+### Usage Example
+
+```
+User: Translate to academic English (Deep Learning):
+本文提出了一种基于 Transformer 的时间序列预测方法。
+
+Assistant:
+## Terminology Confirmation
+| 中文 | English |
+|------|---------|
+| 时间序列预测 | time series forecasting |
+| 基于...的 | ...-based |
+
+## Translation
+We propose a Transformer-based approach for time series forecasting.
+```
+
+## Bibliography Module
+
+Verifies BibTeX file integrity and format.
 
 ```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/check_consistency.py data/
+python scripts/verify_bib.py references.bib
+python scripts/verify_bib.py references.bib --tex main.tex
+python scripts/verify_bib.py references.bib --standard gb7714
 ```
 
-Checks for:
-- Inconsistent translations of technical terms
-- Mixed use of English/Chinese terms
-- Inconsistent punctuation usage
+## Best Practices
 
-## Compilation Recipes
-
-### Available Recipes
-
-| Recipe | Compilers | Use Case |
-|--------|-----------|----------|
-| `pdflatex` | pdflatex ×1 | Quick English-only draft |
-| `xelatex` | xelatex ×1 | Unicode/Chinese draft |
-| `latexmk` | auto-detect | Auto dependency handling |
-| `pdflatex-bibtex` | pdflatex → bibtex → pdflatex ×2 | English + BibTeX |
-| `xelatex-bibtex` | xelatex → bibtex → xelatex ×2 | Chinese + BibTeX |
-| `pdflatex-biber` | pdflatex → biber → pdflatex ×2 | English + modern refs |
-| `xelatex-biber` | xelatex → biber → xelatex ×2 | Chinese + modern refs |
-
-### Recipe Selection Guide
-
-**Choose based on content**:
+### 1. Choose the Right Recipe
 
 ```
-English-only, no refs          → pdflatex
-English-only, with refs        → pdflatex-bibtex or pdflatex-biber
-Unicode/Chinese, no refs       → xelatex
-Unicode/Chinese, with refs     → xelatex-biber
-Complex deps, auto handling    → latexmk
+English papers (no Chinese) → pdflatex or pdflatex-biber
+Contains Chinese/Unicode → xelatex or xelatex-biber
+Complex dependencies → latexmk
 ```
 
-**Choose based on priority**:
-
-```
-Speed (fastest)                → pdflatex
-Modern features                → xelatex or lualatex
-Modern bibliography            → *-biber recipes
-Compatibility (safest)         → *-bibtex recipes
-Automation (easiest)           → latexmk
-```
-
-### Custom Recipes
-
-Define custom recipes in skill configuration:
-
-```yaml
-# In ~/.claude/skills/latex-paper-en/config.yaml
-recipes:
-  my-custom:
-    - xelatex
-    - biber
-    - xelatex
-    - makeindex
-    - xelatex
-```
-
-## Format Checking
-
-### Check Levels
-
-**Level 1: Quick Check** (--quick flag)
-- Citation spacing
-- Common punctuation errors
-- Basic section structure
-- Execution time: ~1-2 seconds
-
-**Level 2: Standard Check** (default)
-- All Level 1 checks
-- ChkTeX integration
-- Reference consistency
-- Label conventions
-- Execution time: ~5-10 seconds
-
-**Level 3: Deep Check** (--deep flag)
-- All Level 2 checks
-- Style guide compliance (IEEE/ACM/Springer)
-- Advanced grammar patterns
-- Cross-reference validation
-- Execution time: ~30-60 seconds
-
-### Common Issues Detected
-
-1. **Citation spacing**:
-   ```latex
-   % Bad
-   word\cite{key}
-
-   % Good
-   word \cite{key}
-   ```
-
-2. **Punctuation in math mode**:
-   ```latex
-   % Bad
-   $x = 1$ .
-
-   % Good
-   $x = 1$.
-   ```
-
-3. **Section capitalization**:
-   ```latex
-   % Bad (IEEE style)
-   \section{introduction and background}
-
-   % Good (IEEE style)
-   \section{Introduction and Background}
-   ```
-
-4. **Label conventions**:
-   ```latex
-   % Bad
-   \label{1}
-
-   % Good
-   \label{sec:introduction}
-   \label{fig:architecture}
-   \label{tab:results}
-   ```
-
-## Bibliography Management
-
-### Verification Features
-
-**Format validation**:
-- Required fields (author, title, year, venue)
-- DOI format
-- URL format
-- Page number format
-
-**Standard compliance**:
-- IEEE citation style
-- ACM citation style
-- GB/T 7714-2015 (Chinese)
-
-**Common issues detected**:
-- Missing required fields
-- Malformed entries
-- Duplicate keys
-- Inconsistent formatting
-
-### BibTeX Best Practices
-
-1. **Use consistent keys**:
-   ```bibtex
-   % Good pattern
-   @article{AuthorYear-keyword,
-     ...
-   }
-   ```
-
-2. **Include DOI when available**:
-   ```bibtex
-   @article{Smith2024-ml,
-     ...
-     doi = {10.1234/journal.2024.001},
-   }
-   ```
-
-3. **Use proper entry types**:
-   ```bibtex
-   @inproceedings{...}  % For conference papers
-   @article{...}         % For journal articles
-   @book{...}            % For books
-   @phdthesis{...}       % For PhD theses
-   ```
-
-## Working with University Templates
-
-### Supported Templates
-
-**Chinese universities**:
-- Tsinghua University (thuthesis)
-- Peking University (pkuthss)
-- USTC (ustcthesis)
-- Fudan University (fduthesis)
-- Generic Chinese thesis template
-
-### Template Detection
-
-The `map_structure.py` script automatically detects:
+### 2. Check Format Frequently
 
 ```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
+python scripts/check_format.py paper.tex
+python scripts/check_format.py paper.tex --strict  # Before submission
 ```
 
-Detection based on:
-- Document class (`\documentclass{thuthesis}`)
-- Package imports
-- File naming conventions
-- Directory structure
+### 3. Confirm Terminology Before Translation
 
-### Template-Specific Features
+When translating specialized content, confirm key terms first.
 
-Each template has specific requirements checked by the skill:
+### 4. Keep Bibliography Clean
 
-**Tsinghua (thuthesis)**:
-- Cover page format
-- Abstract bilingual requirement
-- Chapter naming conventions
-- Bibliography style (GB/T 7714)
-
-**PKU (pkuthss)**:
-- Specific cover fields
-- Declaration page
-- Abstract keywords
-- Bibliography format
-
-## Advanced Usage
-
-### Batch Processing
-
-Process multiple files:
-
-```bash
-# Compile all .tex files
-for file in *.tex; do
-  python ~/.claude/skills/latex-paper-en/scripts/compile.py "$file" --recipe pdflatex
-done
-
-# Check all .tex files
-for file in *.tex; do
-  python ~/.claude/skills/latex-paper-en/scripts/check_format.py "$file"
-done
-```
-
-### Continuous Integration
-
-Use in CI/CD pipelines:
-
-```yaml
-# .github/workflows/latex-check.yml
-name: LaTeX Check
-
-on: [push, pull_request]
-
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install LaTeX
-        run: sudo apt-get install texlive-full
-
-      - name: Check format
-        run: python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
-
-      - name: Compile
-        run: python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdflatex-biber
-```
-
-### Custom Workflows
-
-Create project-specific workflows:
-
-```bash
-#!/bin/bash
-# my-thesis-workflow.sh
-
-echo "Step 1: Structure analysis"
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
-
-echo "Step 2: Format check"
-python ~/.claude/skills/latex-thesis-zh/scripts/check_format.py thesis.tex
-
-echo "Step 3: Bibliography verification"
-python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py refs.bib --standard gbt7714
-
-echo "Step 4: Compilation"
-python ~/.claude/skills/latex-thesis-zh/scripts/compile.py thesis.tex --recipe xelatex-biber
-
-echo "Step 5: Consistency check"
-python ~/.claude/skills/latex-thesis-zh/scripts/check_consistency.py data/
-
-echo "Workflow complete!"
-```
-
-## Configuration
-
-### Skill Configuration Files
-
-Each skill has a configuration file:
-
-```
-~/.claude/skills/latex-paper-en/config.yaml
-~/.claude/skills/latex-thesis-zh/config.yaml
-```
-
-### Customizable Settings
-
-**Compilation**:
-```yaml
-compilation:
-  default_recipe: pdflatex-bibtex
-  timeout: 300  # seconds
-  max_retries: 3
-  clean_auxiliary: true
-```
-
-**Format checking**:
-```yaml
-format_check:
-  chktex_config: ~/.chktexrc
-  max_warnings: 10
-  strict_mode: false
-```
-
-**Bibliography**:
-```yaml
-bibliography:
-  style: ieee  # ieee, acm, springer, gbt7714
-  require_doi: true
-  validate_urls: true
-```
+Run bibliography verification regularly.
 
 ## Troubleshooting
 
-See [Common Errors Reference](/references/common-errors) for detailed troubleshooting.
+### Compilation Fails
+
+**Problem**: `! LaTeX Error: File 'xxx.sty' not found`
+
+**Solution**:
+```bash
+tlmgr install <package>  # TeX Live
+mpm --install=<package>  # MiKTeX
+```
+
+### Chinese Not Displaying
+
+**Problem**: Chinese shows as boxes
+
+**Solution**: Use XeLaTeX:
+```bash
+python scripts/compile.py main.tex --recipe xelatex
+```
+
+### Bibliography Empty
+
+**Problem**: Bibliography section is empty
+
+**Solution**: Use full recipe:
+```bash
+python scripts/compile.py main.tex --recipe xelatex-biber
+```
 
 ## Next Steps
 
-- [Compilation Recipes Guide](/guides/compilation) - Deep dive into recipes
-- [Format Checking Guide](/guides/format-checking) - Understanding checks
-- [Bibliography Guide](/guides/bibliography) - Managing references
-- [English Papers Skill](/skills/latex-paper-en) - Detailed skill docs
-- [Chinese Thesis Skill](/skills/latex-thesis-zh) - Detailed skill docs
+- [Compilation Recipes](/guides/compilation)
+- [Format Checking](/guides/format-checking)
+- [Bibliography Management](/guides/bibliography)

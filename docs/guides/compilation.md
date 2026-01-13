@@ -221,6 +221,37 @@ python compile.py thesis.tex --recipe xelatex-biber
 
 **Recommended for**: All Chinese theses
 
+#### lualatex-biber
+
+**Commands**:
+```
+lualatex document.tex
+biber document
+lualatex document.tex
+lualatex document.tex
+```
+
+**Use case**: Chinese papers with complex font requirements
+
+**Pros**:
+- Full Unicode everywhere
+- Lua scripting capabilities
+- Advanced font handling
+
+**Cons**:
+- Slower than XeLaTeX
+- Less mature ecosystem
+
+**When to use**:
+- Complex font requirements
+- Need Lua scripting
+- Alternative to XeLaTeX
+
+**Example**:
+```bash
+python compile.py thesis.tex --recipe lualatex-biber
+```
+
 ### Automated Recipes
 
 #### latexmk
@@ -302,6 +333,7 @@ Start
 | pdflatex-bibtex | 5-8s | 20-40s | Small |
 | pdflatex-biber | 6-10s | 25-50s | Small |
 | xelatex-biber | 12-20s | 60-120s | Medium |
+| lualatex-biber | 15-25s | 80-150s | Medium |
 | latexmk | Variable | Variable | Variable |
 
 *Times are approximate and depend on document complexity and system performance.*

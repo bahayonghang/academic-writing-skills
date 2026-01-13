@@ -159,7 +159,7 @@ export default defineConfig({
           {
             text: '指南',
             items: [
-              { text: '编译配方', link: '/zh/guides/compilation' },
+              { text: '编译配置', link: '/zh/guides/compilation' },
               { text: '格式检查', link: '/zh/guides/format-checking' },
               { text: '参考文献管理', link: '/zh/guides/bibliography' }
             ]
