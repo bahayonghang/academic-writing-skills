@@ -113,7 +113,7 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 - ✅ "We propose an attention-based mechanism for..."
 
 - ❌ "Experimental results show significant improvements."
-- ✅ "On dataset X, our method reduces MAE by 12% compared to the baseline."
+- ✅ "On dataset X, our method reduces MAE by 12\% compared to the baseline."
 
 - ❌ "This work has important implications for..."
 - ✅ "This method enables real-time forecasting with <10ms latency."
@@ -133,7 +133,7 @@ of our approach.
 
 % ✅ Human-like
 This paper proposes an attention-based mechanism for multivariate time
-series forecasting. Our method reduces MAE by 12% on the UCR archive
+series forecasting. Our method reduces MAE by 12\% on the UCR archive
 compared to the Transformer baseline [1]. Experimental results show that
 the attention mechanism improves long-term dependency capture.
 ```
@@ -171,7 +171,7 @@ Time series forecasting enables proactive decision-making in energy
 management [1] and supply chain optimization [2]. Recent approaches
 based on Transformers [3, 4] show promise but struggle with noisy
 data [5]. This paper proposes a noise-robust attention mechanism that
-reduces prediction error by 12% compared to standard Transformers.
+reduces prediction error by 12\% compared to standard Transformers.
 ```
 
 ---
@@ -277,7 +277,7 @@ on a single NVIDIA V100 GPU.
 
 **Common AI Traps**:
 - ❌ "Our method performs much better than baselines."
-- ✅ "Our method reduces MAE by 12% compared to the best baseline."
+- ✅ "Our method reduces MAE by 12\% compared to the best baseline."
 
 - ❌ "The results demonstrate the effectiveness of our method."
 - ✅ "Table 1 shows that our method achieves lowest MAE on 4/5 datasets."
@@ -302,7 +302,7 @@ results we can see that our method is very effective.
 Table 1 reports MAE for all methods on 5 datasets. Our method
 achieves the lowest MAE on 4 datasets (Electricity, Traffic, Solar,
 Exchange). Compared to the best baseline (Transformer), our method
-reduces MAE by 12% on average.
+reduces MAE by 12\% on average.
 ```
 
 ---
@@ -335,7 +335,7 @@ reduces MAE by 12% on average.
 
 **Common AI Traps**:
 - ❌ "In this paper, we proposed a novel method that achieved significant improvements."
-- ✅ "This paper proposed an attention-based mechanism that reduces MAE by 12%."
+- ✅ "This paper proposed an attention-based mechanism that reduces MAE by 12\%."
 
 - ❌ "Our work has important theoretical and practical value."
 - ✅ "This work enables real-time forecasting with limited computational resources."

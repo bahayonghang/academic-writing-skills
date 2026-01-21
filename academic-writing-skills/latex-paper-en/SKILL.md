@@ -24,6 +24,35 @@ description: |
 3. NEVER change domain terminology without confirmation
 4. ALWAYS output suggestions in diff-comment format first
 
+## Unified Output Protocol (All Modules)
+
+Each suggestion MUST include fixed fields:
+- **Severity**: Critical / Major / Minor
+- **Priority**: P0 (blocking) / P1 (important) / P2 (nice-to-have)
+
+**Default comment template** (diff-comment style):
+```latex
+% <MODULE> (Line <N>) [Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <Issue summary>
+% Before: ...
+% After:  ...
+% Rationale: ...
+% ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
+```
+
+## Failure Handling (Global)
+
+If a tool/script cannot run, respond with a comment block including the reason and a safe next step:
+```latex
+% ERROR [Severity: Critical] [Priority: P0]: <short error>
+% Cause: <missing file/tool or invalid path>
+% Action: <install tool / verify file path / re-run command>
+```
+Common cases:
+- **Script not found**: confirm `scripts/` path and working directory
+- **LaTeX tool missing**: suggest installing TeX Live/MiKTeX or adding to PATH
+- **File not found**: ask user to provide the correct `.tex` path
+If compilation fails, summarize the first error and request the relevant log snippet.
+
 ## Modules (Independent, Pick Any)
 
 ### Module: Compile
@@ -97,9 +126,10 @@ Focus areas:
 
 Output format:
 ```latex
-% GRAMMAR (Line 23): Article missing
+% GRAMMAR (Line 23) [Severity: Major] [Priority: P1]: Article missing
 % Before: We propose method for...
 % After: We propose a method for...
+% Rationale: Missing indefinite article before singular count noun
 ```
 
 ---
@@ -111,7 +141,7 @@ Trigger condition: Sentences >50 words OR >3 subordinate clauses
 
 Output format:
 ```latex
-% LONG SENTENCE (Line 45, 67 words)
+% LONG SENTENCE (Line 45, 67 words) [Severity: Minor] [Priority: P2]
 % Core: [subject + verb + object]
 % Subordinates:
 %   - [Relative] which...
@@ -132,9 +162,10 @@ Weak verb replacements:
 
 Output format:
 ```latex
-% EXPRESSION (Line 23): Improve academic tone
+% EXPRESSION (Line 23) [Severity: Minor] [Priority: P2]: Improve academic tone
 % Before: We use machine learning to get better results.
 % After: We employ machine learning to achieve superior performance.
+% Rationale: Replace weak verbs with academic alternatives
 ```
 
 Style guide: [STYLE_GUIDE.md](references/STYLE_GUIDE.md)
@@ -157,6 +188,7 @@ Identify domain for terminology:
 | 注意力机制 | attention mechanism | DL |
 ```
 Reference: [TERMINOLOGY.md](references/TERMINOLOGY.md)
+If a term is ambiguous or domain-specific, pause and ask for confirmation before translating.
 
 **Step 3: Translation with Notes**
 ```latex
@@ -256,18 +288,17 @@ python scripts/deai_batch.py main.tex --all-sections  # Process entire document
 % DE-AI EDITING (Line 23 - Introduction)
 % ============================================================
 % Original: This method achieves significant performance improvement.
-% Revised: The proposed method reduces prediction error by 12% compared to the baseline.
+% Revised: The proposed method improves performance in the experiments.
 %
 % Changes:
 % 1. Removed vague phrase: "significant" → deleted
-% 2. Added specific metric: "12% error reduction"
-% 3. Added comparison baseline: "compared to the baseline"
+% 2. Kept the claim but avoided adding new metrics or baselines
 %
-% ⚠️ [PENDING VERIFICATION]: Metric needs experimental data support
+% ⚠️ [PENDING VERIFICATION]: Add exact metrics/baselines only if supported by data
 % ============================================================
 
 \section{Introduction}
-The proposed method reduces prediction error by 12% compared to the baseline...
+The proposed method improves performance in the experiments...
 ```
 
 **Section-Specific Guidelines**:
