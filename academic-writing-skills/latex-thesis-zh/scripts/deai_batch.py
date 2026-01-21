@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
 De-AI Batch Processor for Chinese Academic Theses
-
-Batch processes entire LaTeX chapters or documents for de-AI polishing.
-Compatible with doctoral/master thesis style (Mode T).
+Batch processes entire LaTeX/Typst chapters or documents.
 
 Usage:
     python deai_batch.py main.tex --chapter chapter3/introduction.tex
-    python deai_batch.py main.tex --all-sections
+    python deai_batch.py main.typ --all-sections
     python deai_batch.py main.tex --section introduction --output polished/
 """
 
@@ -18,109 +16,28 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from collections import defaultdict
 
+# Import local parsers
+try:
+    from parsers import get_parser
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from parsers import get_parser
+
 
 class ChineseDeAIBatchProcessor:
-    """批量处理中文 LaTeX 文档进行去AI化编辑."""
+    """批量处理中文文档进行去AI化编辑."""
 
-    # Section patterns for splitting (Chinese thesis)
-    SECTION_PATTERNS = {
-        'abstract': r'\\chapter\{摘要\}|\\section\{摘要\}',
-        'introduction': r'\\chapter\{绪论\}|\\chapter\{引言\}|\\section\{绪论\}|\\section\{引言\}',
-        'related': r'\\chapter\{相关工作\}|\\section\{相关工作\}|\\section\{文献综述\}',
-        'method': r'\\chapter\{.*?(?:方法|原理|设计)\}',
-        'experiment': r'\\chapter\{.*?(?:实验|实现|测试)\}|\\section\{.*?(?:实验|实现)\}',
-        'result': r'\\chapter\{.*?(?:结果|性能)\}|\\section\{.*?(?:结果|性能)\}',
-        'discussion': r'\\chapter\{.*?(?:讨论|分析)\}|\\section\{.*?(?:讨论|分析)\}',
-        'conclusion': r'\\chapter\{结论\}|\\chapter\{总结与展望\}|\\section\{结论\}',
-    }
-
-    # LaTeX structure preservation patterns
-    PRESERVE_PATTERNS = [
-        r'\\cite\{[^}]+\}',           # Citations
-        r'\\ref\{[^}]+\}',            # References
-        r'\\label\{[^}]+\}',          # Labels
-        r'\\eqref\{[^}]+\}',          # Equation references
-        r'\\autoref\{[^}]+\}',        # Auto references
-        r'\$\$[^$]+\$\$',            # Display math
-        r'\$[^$]+\$',                # Inline math
-        r'\\begin\{equation\}.*?\\end\{equation\}',  # Equations
-        r'\\begin\{align\}.*?\\end\{align\}',        # Align environments
-        r'\\begin\{.*?\}.*?\\end\{.*?\}',           # Generic environments
-        r'\\includegraphics\[?[^\]]*\]?\{[^}]+\}',  # Images
-        r'\\caption\{[^}]+\}',        # Captions
-    ]
-
-    def __init__(self, tex_file: Path):
-        self.tex_file = tex_file
-        self.content = tex_file.read_text(encoding='utf-8', errors='ignore')
+    def __init__(self, file_path: Path):
+        self.file_path = file_path
+        self.content = file_path.read_text(encoding='utf-8', errors='ignore')
         self.lines = self.content.split('\n')
-        self.sections = self._split_sections()
-
-    def _split_sections(self) -> Dict[str, Tuple[int, int, List[str]]]:
-        """按 LaTeX 结构分割文档为章节."""
-        sections = {}
-        current_section = 'preamble'
-        start_line = 0
-        section_content = []
-
-        for i, line in enumerate(self.lines, 1):
-            matched = False
-            for section_name, pattern in self.SECTION_PATTERNS.items():
-                if re.search(pattern, line, re.IGNORECASE):
-                    if current_section != 'preamble':
-                        sections[current_section] = (start_line, i - 1, section_content)
-                    current_section = section_name
-                    start_line = i
-                    section_content = []
-                    matched = True
-                    break
-
-            section_content.append(line)
-
-        # Last section
-        if section_content:
-            sections[current_section] = (start_line, len(self.lines), section_content)
-
-        return sections
-
-    def extract_visible_text(self, line: str) -> str:
-        """仅提取可见文本，保留 LaTeX 结构标记."""
-        # 保留结构标记
-        preserved = []
-        temp_line = line
-
-        # 查找并标记所有保留模式
-        for pattern in self.PRESERVE_PATTERNS:
-            matches = list(re.finditer(pattern, temp_line, re.DOTALL))
-            for match in reversed(matches):
-                preserved.append({
-                    'start': match.start(),
-                    'end': match.end(),
-                    'text': match.group()
-                })
-                temp_line = temp_line[:match.start()] + ' ' * (match.end() - match.start()) + temp_line[match.end():]
-
-        # 按位置排序保留项
-        preserved.sort(key=lambda x: x['start'])
-
-        # 提取可见文本（排除保留部分）
-        visible_parts = []
-        last_end = 0
-
-        for item in preserved:
-            if item['start'] > last_end:
-                visible_parts.append(temp_line[last_end:item['start']])
-            last_end = item['end']
-
-        if last_end < len(temp_line):
-            visible_parts.append(temp_line[last_end:])
-
-        visible_text = ' '.join(visible_parts).strip()
-        return visible_text
+        self.parser = get_parser(file_path)
+        self.section_ranges = self.parser.split_sections(self.content)
+        self.comment_prefix = self.parser.get_comment_prefix()
 
     def analyze_section(self, section_name: str) -> Dict:
         """分析章节的 AI 痕迹."""
-        if section_name not in self.sections:
+        if section_name not in self.section_ranges:
             return {
                 'section': section_name,
                 'found': False,
@@ -128,19 +45,19 @@ class ChineseDeAIBatchProcessor:
                 'traces': [],
             }
 
-        start, end, content = self.sections[section_name]
+        start, end = self.section_ranges[section_name]
         traces = []
+        
+        section_lines = self.lines[start-1:end]
         line_num = start
 
-        for line in content:
+        for line in section_lines:
             stripped = line.strip()
-            if not stripped or stripped.startswith('%'):
+            if not stripped or stripped.startswith(self.comment_prefix):
                 line_num += 1
                 continue
 
-            visible = self.extract_visible_text(stripped)
-
-            # 检查 AI 模式
+            visible = self.parser.extract_visible_text(stripped)
             ai_patterns = self._check_ai_patterns(visible)
 
             if ai_patterns:
@@ -229,7 +146,7 @@ class ChineseDeAIBatchProcessor:
         report.append("=" * 70)
         report.append("中文博士论文去AI化批量处理报告")
         report.append("=" * 70)
-        report.append(f"源文件: {self.tex_file}")
+        report.append(f"源文件: {self.file_path}")
         report.append("")
 
         total_traces = 0
@@ -275,28 +192,27 @@ class ChineseDeAIBatchProcessor:
             print(f"[错误] 章节文件未找到: {chapter_file}")
             return False
 
-        # 读取章节内容
+        chapter_parser = get_parser(chapter_file)
+        comment_prefix = chapter_parser.get_comment_prefix()
+
         content = chapter_file.read_text(encoding='utf-8')
         lines = content.split('\n')
 
-        # 处理每一行
         processed_lines = []
         modifications = []
 
         for i, line in enumerate(lines, 1):
             stripped = line.strip()
 
-            # 跳过空行和注释
-            if not stripped or stripped.startswith('%'):
+            if not stripped or stripped.startswith(comment_prefix):
                 processed_lines.append(line)
                 continue
 
-            visible = self.extract_visible_text(stripped)
+            visible = chapter_parser.extract_visible_text(stripped)
             patterns = self._check_ai_patterns(visible)
 
             if patterns:
-                # 添加去AI化编辑注释
-                comment = f"% 去AI化: 第{i}行 - {', '.join(patterns)}"
+                comment = f"{comment_prefix} 去AI化: 第{i}行 - {', '.join(patterns)}"
                 processed_lines.append(comment)
                 processed_lines.append(line)
                 modifications.append({
@@ -307,7 +223,6 @@ class ChineseDeAIBatchProcessor:
             else:
                 processed_lines.append(line)
 
-        # 写入输出
         output_file = output_dir / chapter_file.name
         output_file.write_text('\n'.join(processed_lines), encoding='utf-8')
 
@@ -320,22 +235,10 @@ class ChineseDeAIBatchProcessor:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='批量处理中文 LaTeX 文档进行去AI化编辑',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-示例:
-  # 分析所有章节
-  python deai_batch.py thesis.tex --all-sections
-
-  # 处理特定章节文件
-  python deai_batch.py main.tex --chapter chapter3/introduction.tex --output polished/
-
-  # 分析特定章节
-  python deai_batch.py thesis.tex --section introduction
-        """
+        description='批量处理中文 LaTeX/Typst 文档进行去AI化编辑'
     )
 
-    parser.add_argument('tex_file', type=Path, help='主 LaTeX 文件')
+    parser.add_argument('file', type=Path, help='主文件 (.tex/.typ)')
     parser.add_argument('--chapter', type=Path, help='处理特定章节文件')
     parser.add_argument('--all-sections', action='store_true', help='分析所有章节')
     parser.add_argument('--section', type=str, help='分析特定章节')
@@ -344,16 +247,15 @@ def main():
 
     args = parser.parse_args()
 
-    if not args.tex_file.exists():
-        print(f"[错误] 文件未找到: {args.tex_file}", file=sys.stderr)
+    if not args.file.exists():
+        print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
         sys.exit(1)
 
-    processor = ChineseDeAIBatchProcessor(args.tex_file)
+    processor = ChineseDeAIBatchProcessor(args.file)
 
     if args.all_sections:
-        # 分析所有章节
         analyses = {}
-        for section_name in processor.sections.keys():
+        for section_name in processor.section_ranges.keys():
             analyses[section_name] = processor.analyze_section(section_name)
 
         report = processor.generate_batch_report(analyses)
@@ -365,7 +267,6 @@ def main():
             print(report)
 
     elif args.chapter:
-        # 处理特定章节文件
         if not args.output:
             print("[错误] 处理章节文件时需要 --output 参数")
             sys.exit(1)
@@ -376,7 +277,6 @@ def main():
         sys.exit(0 if success else 1)
 
     elif args.section:
-        # 分析特定章节
         analysis = processor.analyze_section(args.section.lower())
 
         if not analysis['found']:
@@ -394,10 +294,9 @@ def main():
             print()
 
     else:
-        # 默认：列出可用章节
-        print(f"[信息] 在 {args.tex_file.name} 中检测到的章节:")
-        for section_name in processor.sections.keys():
-            start, end, _ = processor.sections[section_name]
+        print(f"[信息] 在 {args.file.name} 中检测到的章节:")
+        for section_name in processor.section_ranges.keys():
+            start, end = processor.section_ranges[section_name]
             print(f"  - {section_name}: 第{start}-{end}行")
 
 
