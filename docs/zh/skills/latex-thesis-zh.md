@@ -17,6 +17,7 @@
 | 长难句分析 | `long sentence`, `长句`, `拆解` |
 | 参考文献 | `bib`, `bibliography`, `参考文献` |
 | 模板检测 | `template`, `模板`, `thuthesis` |
+| 去AI化编辑 | `deai`, `去AI化`, `人性化` |
 
 ## 模块说明
 
@@ -134,6 +135,70 @@ python scripts/detect_template.py thesis.tex
 | fduthesis | 复旦大学 |
 | ctexbook | 通用 |
 
+### 去AI化编辑模块
+
+降低 AI 生成文本痕迹，同时保持 LaTeX 语法完整性和技术准确性。
+
+**功能特性**：
+
+- **AI 痕迹检测**：基于模式匹配的智能检测
+- **分章节分析**：生成章节密度评分
+- **批量处理**：支持整章或全文处理
+- **语法保真编辑**：保留 LaTeX 命令、数学公式、引用
+
+**使用方法**：
+
+**交互式分析**（单章节）：
+```bash
+python scripts/deai_check.py thesis.tex --section introduction
+```
+
+**完整文档分析**：
+```bash
+python scripts/deai_check.py thesis.tex --analyze
+```
+
+**批量处理**（整章或全文）：
+```bash
+python scripts/deai_batch.py thesis.tex --all-sections
+python scripts/deai_batch.py thesis.tex --chapter chapter3/introduction.tex --output polished/
+```
+
+**章节密度评分**：
+```bash
+python scripts/deai_check.py thesis.tex --score
+```
+
+**输出示例**：
+
+```
+================================================================================
+中文博士论文去AI化写作痕迹分析报告
+================================================================================
+文件: thesis.tex
+总行数: 1200
+
+--------------------------------------------------------------------------------
+各章节 AI 痕迹密度
+--------------------------------------------------------------------------------
+
+[高] 绪论
+  AI 痕迹密度: 12.3%
+  痕迹数量: 45 / 366 行
+
+[中] 方法
+  AI 痕迹密度: 5.8%
+  痕迹数量: 28 / 482 行
+```
+
+**参考文档**：
+
+详见 `references/DEAI_GUIDE.md`，包含：
+- 常见 AI 痕迹模式及消除方法
+- 分章节写作准则
+- 输出格式规范
+- 快速参考替换表
+
 ## 工作流建议
 
 ### 日常写作
@@ -155,16 +220,19 @@ python scripts/verify_bib.py refs.bib --standard gb7714
 # 1. 结构映射
 python scripts/map_structure.py thesis.tex
 
-# 2. 完整编译
+# 2. 去AI化分析
+python scripts/deai_check.py thesis.tex --analyze
+
+# 3. 完整编译
 python scripts/compile.py thesis.tex --recipe xelatex-biber
 
-# 3. 国标检查
+# 4. 国标检查
 python scripts/verify_bib.py refs.bib --standard gb7714
 
-# 4. 术语一致性
+# 5. 术语一致性
 python scripts/check_consistency.py chapters/
 
-# 5. 清理
+# 6. 清理
 python scripts/compile.py thesis.tex --clean
 ```
 
@@ -188,3 +256,4 @@ python scripts/compile.py thesis.tex --clean
 - [编译配置指南](/zh/guides/compilation)
 - [参考文献管理](/zh/guides/bibliography)
 - [GB/T 7714 标准](/zh/references/gb-standard)
+- [去AI化写作指南](/zh/references/deai-guide)

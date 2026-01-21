@@ -15,6 +15,7 @@ The `latex-paper-en` skill provides comprehensive support for writing English ac
 - **Prose extraction** for grammar checking
 - **Style guide references** (Common Chinglish errors, academic writing best practices)
 - **Chinese-to-English academic translation** (Deep Learning, Time Series, Industrial Control domains)
+- **De-AI writing analysis** for reducing AI-generated text traces
 
 ## Environment Requirements
 
@@ -38,6 +39,7 @@ The skill uses a modular design where each module can be invoked independently:
 | Expression | academic tone, improve writing | Expression optimization |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography | Bibliography checking |
+| De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 
 ## Compile Module
 
@@ -137,6 +139,72 @@ python scripts/verify_bib.py references.bib
 python scripts/verify_bib.py references.bib --tex main.tex
 ```
 
+## De-AI Polishing Module
+
+Reduce AI-generated writing traces while preserving LaTeX syntax and technical accuracy.
+
+### Features
+
+- **AI trace detection** with pattern matching
+- **Section-wise analysis** with density scores
+- **Batch processing** for entire chapters
+- **Syntax-preserving editing** (LaTeX commands, math, citations)
+
+### Usage
+
+**Interactive analysis** (single section):
+```bash
+python scripts/deai_check.py paper.tex --section introduction
+```
+
+**Full document analysis**:
+```bash
+python scripts/deai_check.py paper.tex --analyze
+```
+
+**Batch processing** (entire chapters):
+```bash
+python scripts/deai_batch.py paper.tex --all-sections
+python scripts/deai_batch.py paper.tex --chapter chapter3/introduction.tex --output polished/
+```
+
+**Section-wise density scores**:
+```bash
+python scripts/deai_check.py paper.tex --score
+```
+
+### Output Example
+
+```
+================================================================================
+DE-AI WRITING TRACE ANALYSIS REPORT
+================================================================================
+File: paper.tex
+Total lines: 450
+
+--------------------------------------------------------------------------------
+SECTION-WISE AI TRACE DENSITY
+--------------------------------------------------------------------------------
+
+[HIGH] INTRODUCTION
+  AI trace density: 8.5%
+  Traces found: 12 / 141 lines
+
+[MEDIUM] METHODS
+  AI trace density: 3.2%
+  Traces found: 5 / 156 lines
+```
+
+### Reference Documentation
+
+See `references/DEAI_GUIDE.md` for:
+- Common AI patterns to remove
+- Section-specific guidelines
+- Output format specifications
+- Quick reference replacements
+
+
+
 ## Reference Files
 
 - `references/TERMINOLOGY.md`: Domain terminology (Deep Learning, Time Series, Industrial Control)
@@ -144,6 +212,7 @@ python scripts/verify_bib.py references.bib --tex main.tex
 - `references/STYLE_GUIDE.md`: Academic writing rules
 - `references/COMMON_ERRORS.md`: Common mistakes
 - `references/VENUES.md`: Conference/journal requirements
+- `references/DEAI_GUIDE.md`: De-AI writing guide and AI pattern detection
 
 ## Next Steps
 

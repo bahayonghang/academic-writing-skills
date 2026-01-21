@@ -4,6 +4,8 @@
 
 > LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses.
 
+> **⚠️ Disclaimer**: This is a personal project for my own use. No guarantees are made regarding functionality or stability. If you encounter any issues, please submit them via [Issues](https://github.com/bahayonghang/academic-writing-skills/issues).
+
 ## Documentation
 
 **📖 Full documentation is available in the [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) directory.**

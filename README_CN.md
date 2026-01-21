@@ -4,6 +4,8 @@
 
 > 基于 Claude Code 的 LaTeX 学术写作助手，支持英文论文和中文学位论文。
 
+> **⚠️ 免责声明**:本项目为个人自用状态,不保证功能完善或稳定性。如遇到问题,请通过 [Issues](https://github.com/bahayonghang/academic-writing-skills/issues) 提交反馈。
+
 ## 文档
 
 **📖 完整文档请访问 [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) 目录。**

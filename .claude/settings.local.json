@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Skill(skill-creator)",
-      "Skill(glm-frontend-design)"
+      "Skill(glm-frontend-design)",
+      "mcp__augment-context-engine__codebase-retrieval",
+      "mcp__plugin_serena_serena__list_dir"
     ]
   }
 }
