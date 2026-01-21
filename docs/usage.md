@@ -14,6 +14,30 @@ Academic Writing Skills provides two main skills:
 ## Modular Design
 
 Each skill uses a modular design where you can use any module independently without following a sequence.
+For Chinese theses, **structure mapping should run first** when doing a full review or handling multi-file projects.
+
+## Output Protocol (All Modules)
+
+All suggestions must use diff-comment style and include fixed fields:
+- **Severity**: Critical / Major / Minor
+- **Priority**: P0 / P1 / P2
+
+Minimal template:
+```latex
+% <MODULE> (Line <N>) [Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <Issue summary>
+% Before: ...
+% After:  ...
+% Rationale: ...
+% ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
+```
+
+Short example:
+```latex
+% GRAMMAR (Line 23) [Severity: Major] [Priority: P1]: Article missing
+% Before: We propose method for time series forecasting.
+% After:  We propose a method for time series forecasting.
+% Rationale: Missing indefinite article before singular count noun
+```
 
 ### latex-paper-en Modules
 

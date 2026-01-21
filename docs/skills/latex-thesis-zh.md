@@ -4,7 +4,7 @@ LaTeX assistant for Chinese doctoral/master theses.
 
 ## Overview
 
-The `latex-thesis-zh` skill provides modular support for Chinese thesis writing, with each module independently callable.
+The `latex-thesis-zh` skill provides modular support for Chinese thesis writing. Modules are independently callable, but **structure mapping should run first for full reviews or multi-file theses**.
 
 ### Trigger Words
 
@@ -17,6 +17,24 @@ The `latex-thesis-zh` skill provides modular support for Chinese thesis writing,
 | Long Sentence Analysis | `long sentence`, `长句`, `拆解` |
 | Bibliography | `bib`, `bibliography`, `参考文献` |
 | Template Detection | `template`, `模板`, `thuthesis` |
+| De-AI Polishing | `deai`, `去AI化`, `人性化`, `降低AI痕迹` |
+
+## Output Protocol
+
+All suggestions must use a diff-comment style and include fixed fields:
+- **Severity**: Critical / Major / Minor
+- **Priority**: P0 / P1 / P2
+
+Minimal template:
+```latex
+% <模块>（第<N>行）[Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <问题概述>
+% 原文：...
+% 修改后：...
+% 理由：...
+% ⚠️ 【待补证】：<需要证据/数据时标记>
+```
+
+If a tool fails (missing script/tool or invalid path), respond with an error comment and a safe next step.
 
 ## Modules
 
@@ -59,9 +77,14 @@ python scripts/compile.py thesis.tex --recipe xelatex-biber
 python scripts/compile.py thesis.tex --clean
 ```
 
+**Failure handling**:
+- Missing LaTeX tools: install TeX Live/MiKTeX and ensure PATH is set
+- Missing file/script: verify working directory and `scripts/` path
+- Compilation error: summarize the first error and request the relevant log snippet
+
 ### Structure Mapping Module
 
-Analyze multi-file thesis structure. **Run this first**.
+Analyze multi-file thesis structure. **Run this first for full reviews or multi-file theses**.
 
 ```bash
 python scripts/map_structure.py thesis.tex
@@ -130,6 +153,94 @@ python scripts/detect_template.py thesis.tex
 | ustcthesis | USTC |
 | fduthesis | Fudan University |
 | ctexbook | Generic |
+
+### De-AI Polishing Module
+
+Reduce AI writing traces while preserving LaTeX syntax and technical accuracy.
+
+**Input Requirements**:
+1. **Source type** (required): LaTeX / Typst
+2. **Section** (required): Abstract / Introduction / Related Work / Methods / Experiments / Results / Discussion / Conclusion / Other
+3. **Source snippet** (required): paste directly, keep indentation and line breaks
+
+**Usage Examples**:
+
+Interactive editing (single section):
+```bash
+python scripts/deai_check.py thesis.tex --section introduction
+```
+
+Batch processing (chapter or full document):
+```bash
+python scripts/deai_batch.py thesis.tex --chapter chapter3/introduction.tex
+python scripts/deai_batch.py thesis.tex --all-sections
+```
+
+AI trace density check:
+```bash
+python scripts/deai_check.py thesis.tex --analyze
+```
+
+**Workflow**:
+1. **Syntax structure identification** (preserve all LaTeX/Typst constructs):
+   - Commands: `\command{...}`, `\command[...]{}`
+   - References: `\cite{}`, `\ref{}`, `\label{}`, `\eqref{}`, `\autoref{}`
+   - Environments: `\begin{...}...\end{...}`
+   - Math: `$...$`, `\[...\]`, equation/align environments
+   - Custom macros (unchanged by default)
+2. **AI pattern detection**:
+   - Empty phrases: "significant", "comprehensive", "effective", "important"
+   - Over-confident: "obviously", "necessarily", "completely", "clearly"
+   - Mechanical structures: empty three-part parallelisms
+   - Template expressions: "in recent years", "more and more"
+3. **Text rewriting** (visible text only):
+   - Split long sentences (>50 words)
+   - Adjust word order for natural flow
+   - Replace vague claims with specific statements
+   - Delete redundant phrases
+   - Add required subjects without introducing new facts
+4. **Output generation**:
+   - A. Rewritten source code (minimal invasive edits)
+   - B. Change summary (3-10 bullets)
+   - C. Pending verification marks (claims requiring evidence)
+
+**Hard Constraints**:
+- **Never modify**: `\cite{}`, `\ref{}`, `\label{}`, math environments
+- **Never add**: new data, metrics, comparisons, contributions, experimental settings, citation numbers, or bib keys
+- **Only modify**: visible paragraph text, section titles, caption text
+
+**Output Format**:
+```latex
+% ============================================================
+% DE-AI EDITING (Line 23 - Introduction)
+% ============================================================
+% Original: This method achieves significant performance improvement.
+% Revised: The proposed method improves performance in the experiments.
+%
+% Changes:
+% 1. Removed vague phrase: "significant" → deleted
+% 2. Kept the claim without adding new metrics or baselines
+%
+% ⚠️ [PENDING VERIFICATION]: Add exact metrics/baselines only if supported by data
+% ============================================================
+
+\section{Introduction}
+The proposed method improves performance in the experiments...
+```
+
+**Section-Specific Guidelines**:
+
+| Section | Focus | Constraints |
+|---------|-------|-------------|
+| Abstract | Purpose/Method/Key Results (with numbers)/Conclusion | No generic claims |
+| Introduction | Importance → Gap → Contribution (verifiable) | Restrain claims |
+| Related Work | Group by line, specific differences | Concrete comparisons |
+| Methods | Reproducibility (process, parameters, metrics) | Implementation details |
+| Results | Report facts and numbers only | No interpretation |
+| Discussion | Mechanisms, boundaries, failures, limitations | Critical analysis |
+| Conclusion | Answer research questions, no new experiments | Actionable future work |
+
+Reference: `references/DEAI_GUIDE.md`
 
 ## Workflow Suggestions
 

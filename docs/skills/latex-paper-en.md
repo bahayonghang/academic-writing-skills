@@ -41,6 +41,23 @@ The skill uses a modular design where each module can be invoked independently:
 | Bibliography | bib, bibliography | Bibliography checking |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 
+## Output Protocol
+
+All suggestions must use a diff-comment style and include fixed fields:
+- **Severity**: Critical / Major / Minor
+- **Priority**: P0 / P1 / P2
+
+Minimal template:
+```latex
+% <MODULE> (Line <N>) [Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <Issue>
+% Before: ...
+% After:  ...
+% Rationale: ...
+% ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
+```
+
+If a tool fails (missing script/tool or invalid path), respond with an error comment and a safe next step.
+
 ## Compile Module
 
 ### Tools (matching VS Code LaTeX Workshop)
@@ -84,6 +101,12 @@ python scripts/compile.py main.tex --recipe latexmk --outdir build
 python scripts/compile.py main.tex --clean                  # Clean aux files
 python scripts/compile.py main.tex --clean-all              # Clean all (incl. PDF)
 ```
+
+### Failure Handling
+
+- Missing LaTeX tools: install TeX Live/MiKTeX and ensure PATH is set
+- Missing file/script: verify working directory and `scripts/` path
+- Compilation error: summarize the first error and request the relevant log snippet
 
 ## Format Check Module
 

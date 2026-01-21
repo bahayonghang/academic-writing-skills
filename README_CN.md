@@ -37,6 +37,27 @@ npm run docs:dev
 - **中文学术规范**：口语化表达检测、术语一致性检查
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
 
+## 输出协议
+
+所有建议采用注释式 diff 格式，并包含固定字段：
+- **严重级别**：Critical / Major / Minor
+- **优先级**：P0 / P1 / P2
+
+最小模板：
+```latex
+% <模块>（第<N>行）[Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <问题概述>
+% 原文：...
+% 修改后：...
+% 理由：...
+% ⚠️ 【待补证】：<需要证据/数据时标记>
+```
+
+## 失败处理
+
+- 缺少编译工具：安装 TeX Live/MiKTeX 并加入 PATH
+- 缺少文件/脚本：确认工作目录与 `scripts/` 路径
+- 编译失败：优先给出首个错误摘要并请求日志片段
+
 ## 安装方法
 
 将 skill 文件夹复制到 Claude Code 的 skills 目录：

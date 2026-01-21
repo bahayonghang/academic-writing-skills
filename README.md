@@ -37,6 +37,27 @@ Then open http://localhost:5173 in your browser.
 - **Chinese Academic Style**: Oral expression detection, terminology consistency
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 
+## Output Protocol
+
+All suggestions use diff-comment style and must include fixed fields:
+- **Severity**: Critical / Major / Minor
+- **Priority**: P0 / P1 / P2
+
+Minimal template:
+```latex
+% <MODULE> (Line <N>) [Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <Issue summary>
+% Before: ...
+% After:  ...
+% Rationale: ...
+% ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
+```
+
+## Failure Handling
+
+- Missing LaTeX tools: install TeX Live/MiKTeX and ensure PATH is set
+- Missing file/script: verify working directory and `scripts/` path
+- Compilation error: summarize the first error and request the relevant log snippet
+
 ## Installation
 
 Copy the skill folders to your Claude Code skills directory:
