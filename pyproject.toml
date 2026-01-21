@@ -1,0 +1,44 @@
+[project]
+name = "academic-writing-skills"
+version = "1.1.0"
+description = "LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses with format checking, compilation, grammar analysis, and de-AI polishing"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "Pillow>=12.1.0",
+]
+authors = [
+    { name = "bahayonghang" }
+]
+keywords = [
+    "latex",
+    "academic-writing",
+    "claude-code",
+    "paper-writing",
+    "thesis",
+    "grammar-check",
+    "format-check",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Topic :: Text Processing :: Markup :: LaTeX",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/bahayonghang/academic-writing-skills"
+Documentation = "https://github.com/bahayonghang/academic-writing-skills/tree/main/docs"
+Repository = "https://github.com/bahayonghang/academic-writing-skills"
+Issues = "https://github.com/bahayonghang/academic-writing-skills/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["academic-writing-skills"]
