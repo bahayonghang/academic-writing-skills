@@ -2,7 +2,7 @@
 
 [English](README.md) | [📚 文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
-> 基于 Claude Code 的 LaTeX 学术写作助手，支持英文论文和中文学位论文。
+> 基于 Claude Code 的学术写作助手，支持 LaTeX 和 Typst，涵盖英文论文和中文学位论文。
 
 > **⚠️ 免责声明**:本项目为个人自用状态,不保证功能完善或稳定性。如遇到问题,请通过 [Issues](https://github.com/bahayonghang/academic-writing-skills/issues) 提交反馈。
 
@@ -37,6 +37,15 @@ npm run docs:dev
 - **中文学术规范**：口语化表达检测、术语一致性检查
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
 
+### typst-paper（Typst 学术论文）🆕
+- **快速编译**：毫秒级编译速度
+- **双语支持**：同时支持英文和中文论文
+- **格式检查**：页面设置、文本格式、引用检查
+- **语法分析**：与 LaTeX 版本相同，适配 Typst 语法
+- **去AI化编辑**：降低 AI 写作痕迹
+- **期刊模板**：IEEE、ACM、Springer、NeurIPS 模板
+- **现代语法**：简洁直观的标记语言
+
 ## 输出协议
 
 所有建议采用注释式 diff 格式，并包含固定字段：
@@ -69,8 +78,9 @@ npm run docs:dev
 mkdir -p ~/.claude/skills
 
 # 复制 skill 文件夹
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
@@ -80,8 +90,9 @@ cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # 复制 skill 文件夹
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ### Windows (CMD)
@@ -91,13 +102,16 @@ Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/sk
 mkdir "%USERPROFILE%\.claude\skills"
 
 :: 复制 skill 文件夹
-xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
 ```
 
 ## 快速开始
 
-### 编译文档
+### LaTeX 文档
+
+#### 编译文档
 
 ```bash
 # 自动检测编译器
@@ -111,7 +125,7 @@ python scripts/compile.py main.tex --recipe pdflatex-biber   # 英文论文推�
 python scripts/compile.py main.tex --watch
 ```
 
-### 编译配置
+#### 编译配置
 
 | 配置 | 步骤 | 适用场景 |
 |------|------|----------|
@@ -123,7 +137,7 @@ python scripts/compile.py main.tex --watch
 | `pdflatex-bibtex` | pdflatex → bibtex → pdflatex×2 | 英文 + BibTeX |
 | `pdflatex-biber` | pdflatex → biber → pdflatex×2 | 英文 + Biber |
 
-### 其他工具
+#### 其他工具
 
 ```bash
 # 格式检查
@@ -139,53 +153,116 @@ python scripts/map_structure.py main.tex
 python scripts/check_consistency.py main.tex
 ```
 
+### Typst 文档 🆕
+
+#### 编译文档
+
+```bash
+# 基础编译
+python scripts/compile.py main.typ
+
+# 监视模式（文件变化时自动重新编译）
+python scripts/compile.py main.typ --watch
+
+# 导出为 PNG
+python scripts/compile.py main.typ --format png
+
+# 自定义输出文件名
+python scripts/compile.py main.typ --output paper.pdf
+```
+
+#### 其他工具
+
+```bash
+# 格式检查
+python scripts/check_format.py main.typ
+
+# 期刊特定检查
+python scripts/check_format.py main.typ --venue ieee
+
+# 参考文献验证
+python scripts/verify_bib.py references.bib --typ main.typ
+
+# 列出可用字体
+python scripts/compile.py main.typ --list-fonts
+```
+
+### Typst vs LaTeX
+
+| 特性 | Typst | LaTeX |
+|------|-------|-------|
+| 编译速度 | 毫秒级 ⚡ | 秒级 |
+| 语法 | 简洁直观 | 复杂冗长 |
+| 错误提示 | 清晰友好 | 晦涩难懂 |
+| 学习曲线 | 平缓 | 陡峭 |
+| 实时预览 | 原生支持 | 需要额外工具 |
+
 ## 项目结构
 
 ```
 academic-writing-skills/
-├── .claude/
-│   └── skills/
-│       ├── latex-paper-en/           # 英文论文 skill
-│       │   ├── SKILL.md              # Skill 定义
-│       │   ├── scripts/              # Python 工具
-│       │   │   ├── compile.py        # 统一编译器
-│       │   │   ├── check_format.py   # ChkTeX 包装器
-│       │   │   ├── verify_bib.py     # BibTeX 检查器
-│       │   │   └── extract_prose.py  # 文本提取器
-│       │   └── references/           # 参考文档
-│       │       ├── STYLE_GUIDE.md    # 写作风格指南
-│       │       ├── COMMON_ERRORS.md  # 常见错误
-│       │       ├── VENUES.md         # 期刊/会议规则
-│       │       └── ...
-│       │
-│       └── latex-thesis-zh/          # 中文论文 skill
-│           ├── SKILL.md
-│           ├── scripts/
-│           │   ├── compile.py
-│           │   ├── map_structure.py  # 论文结构映射
-│           │   ├── check_format.py
-│           │   └── check_consistency.py
-│           └── references/
-│               ├── GB_STANDARD.md    # 国标格式规范
-│               ├── ACADEMIC_STYLE_ZH.md  # 中文学术规范
-│               ├── STRUCTURE_GUIDE.md    # 结构指南
-│               └── UNIVERSITIES/     # 学校模板
-│                   ├── tsinghua.md   # 清华大学
-│                   ├── pku.md        # 北京大学
-│                   └── generic.md    # 通用模板
+├── latex-paper-en/                   # 英文论文 skill
+│   ├── SKILL.md                      # Skill 定义
+│   ├── scripts/                      # Python 工具
+│   │   ├── compile.py                # 统一编译器
+│   │   ├── check_format.py           # ChkTeX 包装器
+│   │   ├── verify_bib.py             # BibTeX 检查器
+│   │   └── extract_prose.py          # 文本提取器
+│   └── references/                   # 参考文档
+│       ├── STYLE_GUIDE.md            # 写作风格指南
+│       ├── COMMON_ERRORS.md          # 常见错误
+│       ├── VENUES.md                 # 期刊/会议规则
+│       └── ...
+│
+├── latex-thesis-zh/                  # 中文论文 skill
+│   ├── SKILL.md
+│   ├── scripts/
+│   │   ├── compile.py
+│   │   ├── map_structure.py          # 论文结构映射
+│   │   ├── check_format.py
+│   │   └── check_consistency.py
+│   └── references/
+│       ├── GB_STANDARD.md            # 国标格式规范
+│       ├── ACADEMIC_STYLE_ZH.md      # 中文学术规范
+│       ├── STRUCTURE_GUIDE.md        # 结构指南
+│       └── UNIVERSITIES/             # 学校模板
+│           ├── tsinghua.md           # 清华大学
+│           ├── pku.md                # 北京大学
+│           └── generic.md            # 通用模板
+│
+├── typst-paper/                      # Typst 论文 skill 🆕
+│   ├── SKILL.md                      # Skill 定义
+│   ├── README.md                     # 使用指南
+│   ├── scripts/                      # Python 工具
+│   │   ├── compile.py                # Typst 编译器
+│   │   ├── check_format.py           # 格式检查器
+│   │   └── verify_bib.py             # 参考文献检查器
+│   └── references/                   # 参考文档
+│       ├── STYLE_GUIDE.md            # 写作风格指南
+│       ├── COMMON_ERRORS.md          # 常见错误
+│       ├── DEAI_GUIDE.md             # 去AI化指南
+│       ├── VENUES.md                 # 期刊/会议要求
+│       └── TYPST_SYNTAX.md           # Typst 语法参考
 │
 ├── docs/                             # 文档站点
 │
 └── dist/                             # 打包的 skills
     ├── latex-paper-en.skill.zip
-    └── latex-thesis-zh.skill.zip
+    ├── latex-thesis-zh.skill.zip
+    └── typst-paper.skill.zip
 ```
 
 ## 系统要求
 
+### LaTeX
 - Python 3.8+
 - TeX Live 或 MiKTeX（需包含 latexmk、chktex）
 - 中文文档需要：XeLaTeX 及中文字体（SimSun、SimHei、KaiTi）
+
+### Typst 🆕
+- Python 3.8+
+- Typst CLI（通过 `cargo install typst-cli` 或包管理器安装）
+- 中文文档需要：中文字体（Source Han Serif、Noto Serif CJK SC）
 
 ## 支持的学校模板
 

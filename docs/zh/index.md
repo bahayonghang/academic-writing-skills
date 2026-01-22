@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Claude Code 专业 LaTeX 工具"
-  tagline: "通过智能 LaTeX 编译、格式检查和参考文献管理，简化您的学术写作工作流"
+  text: "Claude Code 专业 LaTeX & Typst 工具"
+  tagline: "通过智能编译、格式检查和参考文献管理，简化您的学术写作工作流"
   actions:
     - theme: brand
       text: 开始使用
@@ -23,20 +23,20 @@ features:
     details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译，以及主流大学模板（清华、北大、中科大、复旦）。
 
   - icon: ⚡
-    title: 多种编译配置
-    details: 灵活的编译工作流，包括 xelatex、pdflatex、latexmk，以及完整的参考文献工作流（BibTeX/Biber）。
+    title: Typst 论文 (typst-paper) 🆕
+    details: 现代化标记语言，毫秒级编译速度，双语支持，提供期刊特定模板（IEEE、ACM、Springer、NeurIPS）。
+
+  - icon: 🚀
+    title: 快速编译
+    details: 灵活的编译工作流，LaTeX 支持 xelatex、pdflatex、latexmk，Typst 提供闪电般的编译速度和监视模式。
 
   - icon: 🔍
     title: 智能格式检查
-    details: 使用 ChkTeX 自动进行 LaTeX 格式检查、参考文献验证和样式指南合规性检查。
+    details: LaTeX 使用 ChkTeX 自动检查，Typst 语法验证，参考文献验证和样式指南合规性检查。
 
   - icon: 🎨
-    title: 样式指南集成
-    details: 内置学术写作样式参考、常见中式英语错误，以及特定期刊会议的格式要求。
-
-  - icon: 🚀
-    title: 一键安装
-    details: 通过命令行一键安装，与 Claude Code 的技能系统无缝集成。
+    title: 去AI化编辑
+    details: 在保持技术准确性的同时降低 AI 写作痕迹。内置学术写作样式参考和常见错误指南。
 ---
 
 ## 快速开始
@@ -44,38 +44,47 @@ features:
 使用单条命令安装技能：
 
 ```bash
-# 同时安装两个技能
+# 安装全部三个技能
 claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
 claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
+claude skill install github:bahayonghang/academic-writing-skills/dist/typst-paper.skill.zip
 ```
 
 ## 为什么选择 Academic Writing Skills？
 
-使用 LaTeX 进行学术写作可能充满挑战，特别是在管理编译工作流、参考文献格式和样式指南合规性时。**Academic Writing Skills** 为您的 LaTeX 工作流带来智能自动化：
+学术写作可能充满挑战，特别是在管理编译工作流、参考文献格式和样式指南合规性时。**Academic Writing Skills** 为您的工作流带来智能自动化：
 
 - **告别编译错误**：智能配方选择和错误诊断
+- **快速编译**：Typst 毫秒级编译 vs LaTeX 秒级编译
 - **样式指南合规**：自动检查 IEEE、ACM、Springer 和 GB/T 7714 标准
 - **节省时间**：专注于内容，而非格式细节
-- **最佳实践**：通过集成参考文档学习正确的 LaTeX 用法
+- **最佳实践**：通过集成参考文档学习正确用法
 
 ## 包含内容
 
 ### 技能
 
-- **latex-paper-en**：英文学术论文完整工具包
-- **latex-thesis-zh**：中文论文专业支持
+- **latex-paper-en**：英文学术论文完整工具包（LaTeX）
+- **latex-thesis-zh**：中文论文专业支持（LaTeX）
+- **typst-paper**：快速学术写作的现代化标记语言 🆕
 
-### 编译配置
+### 编译支持
 
-支持所有主流 LaTeX 编译工作流：
+**LaTeX**：
 - 单次编译（xelatex、pdflatex）
 - 自动依赖处理（latexmk）
 - 完整参考文献工作流（xelatex-biber、pdflatex-bibtex）
 
+**Typst** 🆕：
+- 毫秒级编译速度
+- 监视模式实时预览
+- 多种输出格式（PDF、PNG、SVG）
+
 ### 格式检查
 
 - ChkTeX 集成进行 LaTeX 代码检查
-- 参考文献验证（BibTeX 格式验证）
+- Typst 语法验证
+- 参考文献验证（BibTeX/Hayagriva）
 - 样式指南合规性检查
 
 ### 参考文档
@@ -85,6 +94,7 @@ claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thes
 - IEEE、ACM、Springer、NeurIPS 格式指南
 - GB/T 7714-2015 中文参考文献标准
 - 大学论文模板和要求
+- Typst 语法参考和最佳实践
 
 ## 了解更多
 

@@ -233,7 +233,7 @@ Checks: required fields, duplicate keys, unused entries, missing citations.
 **Purpose**: Reduce AI writing traces while preserving LaTeX syntax and technical accuracy.
 
 **Input Requirements**:
-1. **Source code type** (required): LaTeX / Typst
+1. **Source code type** (required): LaTeX
 2. **Section** (required): Abstract / Introduction / Related Work / Methods / Experiments / Results / Discussion / Conclusion / Other
 3. **Source code snippet** (required): Direct paste (preserve indentation and line breaks)
 
@@ -252,7 +252,7 @@ python scripts/deai_batch.py main.tex --all-sections  # Process entire document
 ```
 
 **Workflow**:
-1. **Syntax Structure Identification**: Detect LaTeX/Typst commands, preserve all:
+1. **Syntax Structure Identification**: Detect LaTeX commands, preserve all:
    - Commands: `\command{...}`, `\command[...]{}`
    - References: `\cite{}`, `\ref{}`, `\label{}`, `\eqref{}`, `\autoref{}`
    - Environments: `\begin{...}...\end{...}`

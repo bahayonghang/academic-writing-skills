@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Professional LaTeX Tools for Claude Code"
-  tagline: "Streamline your academic writing workflow with intelligent LaTeX compilation, format checking, and bibliography management"
+  text: "Professional LaTeX & Typst Tools for Claude Code"
+  tagline: "Streamline your academic writing workflow with intelligent compilation, format checking, and bibliography management"
   actions:
     - theme: brand
       text: Get Started
@@ -23,20 +23,20 @@ features:
     details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
 
   - icon: ⚡
-    title: Multiple Compilation Recipes
-    details: Flexible compilation workflows including xelatex, pdflatex, latexmk, and full bibliography workflows with BibTeX/Biber.
+    title: Typst Papers (typst-paper) 🆕
+    details: Modern markup language with millisecond compilation, bilingual support, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
+
+  - icon: 🚀
+    title: Fast Compilation
+    details: Flexible compilation workflows including xelatex, pdflatex, latexmk for LaTeX, and lightning-fast Typst compilation with watch mode.
 
   - icon: 🔍
     title: Intelligent Format Checking
-    details: Automated LaTeX format checking with ChkTeX, bibliography verification, and style guide compliance checking.
+    details: Automated format checking with ChkTeX for LaTeX, Typst syntax validation, bibliography verification, and style guide compliance.
 
   - icon: 🎨
-    title: Style Guide Integration
-    details: Built-in references for academic writing styles, common Chinglish errors, and venue-specific formatting requirements.
-
-  - icon: 🚀
-    title: Easy Installation
-    details: One-click installation via command line, seamless integration with Claude Code's skill system.
+    title: De-AI Editing
+    details: Reduce AI writing traces while preserving technical accuracy. Built-in references for academic writing styles and common errors.
 ---
 
 ## Quick Start
@@ -44,38 +44,47 @@ features:
 Install the skills with a single command:
 
 ```bash
-# Install both skills at once
+# Install all three skills
 claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
 claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
+claude skill install github:bahayonghang/academic-writing-skills/dist/typst-paper.skill.zip
 ```
 
 ## Why Academic Writing Skills?
 
-Academic writing with LaTeX can be challenging, especially when managing compilation workflows, bibliography formatting, and style guide compliance. **Academic Writing Skills** brings intelligent automation to your LaTeX workflow:
+Academic writing can be challenging, especially when managing compilation workflows, bibliography formatting, and style guide compliance. **Academic Writing Skills** brings intelligent automation to your workflow:
 
 - **No More Compilation Errors**: Intelligent recipe selection and error diagnosis
+- **Fast Compilation**: Typst compiles in milliseconds vs LaTeX's seconds
 - **Style Guide Compliance**: Automated checking against IEEE, ACM, Springer, and GB/T 7714 standards
 - **Time-Saving**: Focus on content, not formatting details
-- **Best Practices**: Learn proper LaTeX usage through integrated references
+- **Best Practices**: Learn proper usage through integrated references
 
 ## What's Included
 
 ### Skills
 
-- **latex-paper-en**: Complete toolkit for English academic papers
-- **latex-thesis-zh**: Specialized support for Chinese theses
+- **latex-paper-en**: Complete toolkit for English academic papers (LaTeX)
+- **latex-thesis-zh**: Specialized support for Chinese theses (LaTeX)
+- **typst-paper**: Modern markup language for fast academic writing 🆕
 
-### Compilation Recipes
+### Compilation Support
 
-Support for all major LaTeX compilation workflows:
+**LaTeX**:
 - Single-pass compilation (xelatex, pdflatex)
 - Automated dependency handling (latexmk)
 - Full bibliography workflows (xelatex-biber, pdflatex-bibtex)
 
+**Typst** 🆕:
+- Millisecond-level compilation
+- Watch mode for live preview
+- Multiple output formats (PDF, PNG, SVG)
+
 ### Format Checking
 
 - ChkTeX integration for LaTeX linting
-- Bibliography verification (BibTeX format validation)
+- Typst syntax validation
+- Bibliography verification (BibTeX/Hayagriva)
 - Style guide compliance checking
 
 ### References
@@ -85,6 +94,7 @@ Built-in documentation for:
 - IEEE, ACM, Springer, NeurIPS formatting guidelines
 - GB/T 7714-2015 Chinese bibliography standard
 - University thesis templates and requirements
+- Typst syntax reference and best practices
 
 ## Learn More
 

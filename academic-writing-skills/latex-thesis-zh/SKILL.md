@@ -248,7 +248,7 @@ python scripts/detect_template.py main.tex
 **目标**：在保持 LaTeX 语法和技术准确性的前提下，降低 AI 写作痕迹。
 
 **输入要求**：
-1. **源码类型**（必填）：LaTeX / Typst
+1. **源码类型**（必填）：LaTeX
 2. **章节**（必填）：摘要 / 引言 / 相关工作 / 方法 / 实验 / 结果 / 讨论 / 结论 / 其他
 3. **源码片段**（必填）：直接粘贴（保留原缩进与换行）
 
@@ -267,7 +267,7 @@ python scripts/deai_batch.py main.tex --all-sections  # 处理整个文档
 ```
 
 **工作流程**：
-1. **语法结构识别**：检测 LaTeX/Typst 命令，完整保留：
+1. **语法结构识别**：检测 LaTeX 命令，完整保留：
    - 命令：`\command{...}`、`\command[...]{}`
    - 引用：`\cite{}`、`\ref{}`、`\label{}`、`\eqref{}`、`\autoref{}`
    - 环境：`\begin{...\end{...}`

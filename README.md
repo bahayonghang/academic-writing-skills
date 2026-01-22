@@ -2,7 +2,7 @@
 
 [中文版](README_CN.md) | [📚 Documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
-> LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses.
+> Academic writing assistant skills for Claude Code, supporting LaTeX and Typst for both English papers and Chinese theses.
 
 > **⚠️ Disclaimer**: This is a personal project for my own use. No guarantees are made regarding functionality or stability. If you encounter any issues, please submit them via [Issues](https://github.com/bahayonghang/academic-writing-skills/issues).
 
@@ -37,6 +37,15 @@ Then open http://localhost:5173 in your browser.
 - **Chinese Academic Style**: Oral expression detection, terminology consistency
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 
+### typst-paper (Typst Academic Papers) 🆕
+- **Fast Compilation**: Millisecond-level compilation speed
+- **Bilingual Support**: Both English and Chinese papers
+- **Format Checking**: Page settings, text formatting, citations
+- **Grammar Analysis**: Same as LaTeX version with Typst syntax
+- **De-AI Editing**: Reduce AI writing traces
+- **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
+- **Modern Syntax**: Simple, intuitive markup language
+
 ## Output Protocol
 
 All suggestions use diff-comment style and must include fixed fields:
@@ -69,8 +78,9 @@ Copy the skill folders to your Claude Code skills directory:
 mkdir -p ~/.claude/skills
 
 # Copy skill folders
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
@@ -80,8 +90,9 @@ cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # Copy skill folders
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ### Windows (CMD)
@@ -91,13 +102,16 @@ Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/sk
 mkdir "%USERPROFILE%\.claude\skills"
 
 :: Copy skill folders
-xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
 ```
 
 ## Quick Start
 
-### Compile Documents
+### LaTeX Documents
+
+#### Compile Documents
 
 ```bash
 # Auto-detect compiler
@@ -111,7 +125,7 @@ python scripts/compile.py main.tex --recipe pdflatex-biber   # English paper
 python scripts/compile.py main.tex --watch
 ```
 
-### Available Recipes
+#### Available Recipes
 
 | Recipe | Steps | Use Case |
 |--------|-------|----------|
@@ -123,7 +137,7 @@ python scripts/compile.py main.tex --watch
 | `pdflatex-bibtex` | pdflatex → bibtex → pdflatex×2 | English + BibTeX |
 | `pdflatex-biber` | pdflatex → biber → pdflatex×2 | English + Biber |
 
-### Other Tools
+#### Other Tools
 
 ```bash
 # Format check
@@ -139,53 +153,116 @@ python scripts/map_structure.py main.tex
 python scripts/check_consistency.py main.tex
 ```
 
+### Typst Documents 🆕
+
+#### Compile Documents
+
+```bash
+# Basic compilation
+python scripts/compile.py main.typ
+
+# Watch mode (auto-recompile on changes)
+python scripts/compile.py main.typ --watch
+
+# Export as PNG
+python scripts/compile.py main.typ --format png
+
+# Custom output name
+python scripts/compile.py main.typ --output paper.pdf
+```
+
+#### Other Tools
+
+```bash
+# Format check
+python scripts/check_format.py main.typ
+
+# Venue-specific check
+python scripts/check_format.py main.typ --venue ieee
+
+# Bibliography verification
+python scripts/verify_bib.py references.bib --typ main.typ
+
+# List available fonts
+python scripts/compile.py main.typ --list-fonts
+```
+
+### Typst vs LaTeX
+
+| Feature | Typst | LaTeX |
+|---------|-------|-------|
+| Compilation Speed | Milliseconds ⚡ | Seconds |
+| Syntax | Simple, intuitive | Complex, verbose |
+| Error Messages | Clear, helpful | Cryptic |
+| Learning Curve | Gentle | Steep |
+| Live Preview | Native support | Requires tools |
+
 ## Project Structure
 
 ```
 academic-writing-skills/
-├── .claude/
-│   └── skills/
-│       ├── latex-paper-en/           # English paper skill
-│       │   ├── SKILL.md              # Skill definition
-│       │   ├── scripts/              # Python tools
-│       │   │   ├── compile.py        # Unified compiler
-│       │   │   ├── check_format.py   # ChkTeX wrapper
-│       │   │   ├── verify_bib.py     # BibTeX checker
-│       │   │   └── extract_prose.py  # Text extractor
-│       │   └── references/           # Reference docs
-│       │       ├── STYLE_GUIDE.md
-│       │       ├── COMMON_ERRORS.md
-│       │       ├── VENUES.md
-│       │       └── ...
-│       │
-│       └── latex-thesis-zh/          # Chinese thesis skill
-│           ├── SKILL.md
-│           ├── scripts/
-│           │   ├── compile.py
-│           │   ├── map_structure.py  # Thesis structure mapper
-│           │   ├── check_format.py
-│           │   └── check_consistency.py
-│           └── references/
-│               ├── GB_STANDARD.md
-│               ├── ACADEMIC_STYLE_ZH.md
-│               ├── STRUCTURE_GUIDE.md
-│               └── UNIVERSITIES/
-│                   ├── tsinghua.md
-│                   ├── pku.md
-│                   └── generic.md
+├── latex-paper-en/                   # English paper skill
+│   ├── SKILL.md                      # Skill definition
+│   ├── scripts/                      # Python tools
+│   │   ├── compile.py                # Unified compiler
+│   │   ├── check_format.py           # ChkTeX wrapper
+│   │   ├── verify_bib.py             # BibTeX checker
+│   │   └── extract_prose.py          # Text extractor
+│   └── references/                   # Reference docs
+│       ├── STYLE_GUIDE.md
+│       ├── COMMON_ERRORS.md
+│       ├── VENUES.md
+│       └── ...
+│
+├── latex-thesis-zh/                  # Chinese thesis skill
+│   ├── SKILL.md
+│   ├── scripts/
+│   │   ├── compile.py
+│   │   ├── map_structure.py          # Thesis structure mapper
+│   │   ├── check_format.py
+│   │   └── check_consistency.py
+│   └── references/
+│       ├── GB_STANDARD.md
+│       ├── ACADEMIC_STYLE_ZH.md
+│       ├── STRUCTURE_GUIDE.md
+│       └── UNIVERSITIES/
+│           ├── tsinghua.md
+│           ├── pku.md
+│           └── generic.md
+│
+├── typst-paper/                      # Typst paper skill 🆕
+│   ├── SKILL.md                      # Skill definition
+│   ├── README.md                     # Usage guide
+│   ├── scripts/                      # Python tools
+│   │   ├── compile.py                # Typst compiler
+│   │   ├── check_format.py           # Format checker
+│   │   └── verify_bib.py             # Bibliography checker
+│   └── references/                   # Reference docs
+│       ├── STYLE_GUIDE.md
+│       ├── COMMON_ERRORS.md
+│       ├── DEAI_GUIDE.md
+│       ├── VENUES.md
+│       └── TYPST_SYNTAX.md
 │
 ├── docs/                             # Documentation site
 │
 └── dist/                             # Packaged skills
     ├── latex-paper-en.skill.zip
-    └── latex-thesis-zh.skill.zip
+    ├── latex-thesis-zh.skill.zip
+    └── typst-paper.skill.zip
 ```
 
 ## Requirements
 
+### For LaTeX
 - Python 3.8+
 - TeX Live or MiKTeX (with latexmk, chktex)
 - For Chinese documents: XeLaTeX with CJK fonts
+
+### For Typst 🆕
+- Python 3.8+
+- Typst CLI (install via `cargo install typst-cli` or package manager)
+- For Chinese documents: Chinese fonts (Source Han Serif, Noto Serif CJK SC)
 
 ## License
 
