@@ -26,6 +26,33 @@ The `latex-paper-en` skill provides comprehensive support for writing English ac
 
 Required tools: `pdflatex`, `xelatex`, `latexmk`, `biber`, `chktex`
 
+## Using the Skill in Claude Code
+
+This skill is designed to work with Claude Code and similar AI assistants. Simply mention the relevant trigger words in your conversation, and the assistant will activate the appropriate module.
+
+### Example Usage
+
+**Compile your paper**:
+```
+Please compile my LaTeX paper main.tex using xelatex with bibtex
+```
+
+**Check format**:
+```
+Can you check the format of my paper for IEEE conference submission?
+```
+
+**Translate to English**:
+```
+Translate this Chinese text to academic English (Deep Learning domain):
+本文提出了一种基于Transformer的方法...
+```
+
+**De-AI polishing**:
+```
+Please reduce AI writing traces in my introduction section
+```
+
 ## Modular Design
 
 The skill uses a modular design where each module can be invoked independently:
@@ -82,25 +109,31 @@ If a tool fails (missing script/tool or invalid path), respond with an error com
 | pdflatex -> bibtex -> pdflatex*2 | pdflatex → bibtex → pdflatex → pdflatex |
 | pdflatex -> biber -> pdflatex*2 | pdflatex → biber → pdflatex → pdflatex |
 
-### Usage
+### Usage in Claude Code
 
-```bash
-# Single compiler
-python scripts/compile.py main.tex                          # Auto-detect
-python scripts/compile.py main.tex --recipe xelatex         # XeLaTeX only
-python scripts/compile.py main.tex --recipe pdflatex        # PDFLaTeX only
+Simply ask the assistant to compile your paper with specific requirements:
 
-# With bibliography (recommended for papers)
-python scripts/compile.py main.tex --recipe xelatex-bibtex  # BibTeX workflow
-python scripts/compile.py main.tex --recipe xelatex-biber   # Biber workflow
-
-# With output directory
-python scripts/compile.py main.tex --recipe latexmk --outdir build
-
-# Utilities
-python scripts/compile.py main.tex --clean                  # Clean aux files
-python scripts/compile.py main.tex --clean-all              # Clean all (incl. PDF)
+**Basic compilation**:
 ```
+Compile main.tex using xelatex
+```
+
+**With bibliography** (recommended for papers):
+```
+Compile main.tex with xelatex and bibtex workflow
+```
+
+**With custom output directory**:
+```
+Compile main.tex using latexmk and output to build directory
+```
+
+**Clean auxiliary files**:
+```
+Clean auxiliary files for main.tex
+```
+
+The assistant will execute the appropriate compilation commands based on your request.
 
 ### Failure Handling
 
@@ -110,10 +143,19 @@ python scripts/compile.py main.tex --clean-all              # Clean all (incl. P
 
 ## Format Check Module
 
-```bash
-python scripts/check_format.py main.tex
-python scripts/check_format.py main.tex --strict
+### Usage in Claude Code
+
+Ask the assistant to check your paper format:
+
 ```
+Check the format of main.tex
+```
+
+```
+Check main.tex format with strict mode for IEEE submission
+```
+
+The assistant will analyze your paper and provide format suggestions.
 
 ## Grammar Analysis Module
 
@@ -122,6 +164,18 @@ LLM-based grammar checking focusing on:
 - Article usage (a/an/the)
 - Tense consistency
 - Chinglish detection
+
+### Usage in Claude Code
+
+Ask the assistant to check grammar:
+
+```
+Check the grammar in my introduction section
+```
+
+```
+Proofread the methods section and fix Chinglish errors
+```
 
 ## Translation Module (Chinese → English)
 
@@ -157,10 +211,23 @@ Translate the following for IEEE Transactions format:
 
 ## Bibliography Module
 
-```bash
-python scripts/verify_bib.py references.bib
-python scripts/verify_bib.py references.bib --tex main.tex
+### Usage in Claude Code
+
+Ask the assistant to verify your bibliography:
+
 ```
+Verify references.bib for format errors
+```
+
+```
+Check references.bib against main.tex for unused entries
+```
+
+The assistant will check for:
+- Required field completeness
+- Duplicate entries
+- Unused entries
+- Citation format consistency
 
 ## De-AI Polishing Module
 
@@ -173,27 +240,26 @@ Reduce AI-generated writing traces while preserving LaTeX syntax and technical a
 - **Batch processing** for entire chapters
 - **Syntax-preserving editing** (LaTeX commands, math, citations)
 
-### Usage
+### Usage in Claude Code
 
 **Interactive analysis** (single section):
-```bash
-python scripts/deai_check.py paper.tex --section introduction
+```
+Analyze AI writing traces in my introduction section
 ```
 
 **Full document analysis**:
-```bash
-python scripts/deai_check.py paper.tex --analyze
+```
+Check AI trace density across all sections in paper.tex
 ```
 
-**Batch processing** (entire chapters):
-```bash
-python scripts/deai_batch.py paper.tex --all-sections
-python scripts/deai_batch.py paper.tex --chapter chapter3/introduction.tex --output polished/
+**Reduce AI traces**:
+```
+Reduce AI writing traces in the methods section while preserving technical accuracy
 ```
 
-**Section-wise density scores**:
-```bash
-python scripts/deai_check.py paper.tex --score
+**Batch processing**:
+```
+Process all sections in paper.tex to reduce AI traces
 ```
 
 ### Output Example

@@ -6,6 +6,32 @@
 
 `latex-thesis-zh` 技能专为中文学位论文设计，采用模块化架构，支持独立调用各功能模块。完整审查或多文件场景建议先执行结构映射。
 
+## 在 Claude Code 中使用技能
+
+本技能设计用于 Claude Code 等 AI 助手。只需在对话中提及相关触发词，助手就会激活相应模块。
+
+### 使用示例
+
+**编译论文**：
+```
+使用 xelatex 和 biber 编译 thesis.tex
+```
+
+**映射结构**：
+```
+映射我的论文结构以检查完整性
+```
+
+**检查国标格式**：
+```
+检查 thesis.tex 是否符合 GB/T 7714-2015 标准
+```
+
+**降低AI痕迹**：
+```
+降低引言章节的 AI 写作痕迹
+```
+
 ### 触发词
 
 | 模块 | 触发词 |
@@ -68,25 +94,36 @@
 | lualatex-bibtex | lualatex → bibtex → lualatex×2 | LuaLaTeX + BibTeX |
 | lualatex-biber | lualatex → biber → lualatex×2 | LuaLaTeX + Biber |
 
-**使用示例**：
+**在 Claude Code 中使用**：
 
-```bash
-# 快速编译
-python scripts/compile.py thesis.tex --recipe xelatex
+向助手请求编译论文：
 
-# 完整编译（推荐）
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-
-# 清理辅助文件
-python scripts/compile.py thesis.tex --clean
 ```
+使用 xelatex 编译 thesis.tex
+```
+
+```
+使用 xelatex 和 biber 工作流编译 thesis.tex
+```
+
+```
+清理 thesis.tex 的辅助文件
+```
+
+助手会执行相应的编译命令。
 
 ### 结构映射模块
 
 分析多文件论文结构。**完整审查或多文件场景建议首先执行**。
 
-```bash
-python scripts/map_structure.py thesis.tex
+**在 Claude Code 中使用**：
+
+```
+映射 thesis.tex 的结构
+```
+
+```
+分析我的论文结构以检查缺失章节
 ```
 
 **论文结构要求**：
@@ -101,9 +138,14 @@ python scripts/map_structure.py thesis.tex
 
 检查 GB/T 7714-2015 规范合规性。
 
-```bash
-python scripts/check_format.py thesis.tex
-python scripts/check_format.py thesis.tex --strict
+**在 Claude Code 中使用**：
+
+```
+检查 thesis.tex 的国标格式合规性
+```
+
+```
+以严格模式检查 thesis.tex 格式
 ```
 
 **检查项目**：
@@ -135,15 +177,26 @@ python scripts/check_format.py thesis.tex --strict
 
 ### 参考文献模块
 
-```bash
-python scripts/verify_bib.py refs.bib
-python scripts/verify_bib.py refs.bib --standard gb7714
+**在 Claude Code 中使用**：
+
+```
+验证 refs.bib 是否符合 GB7714 标准
+```
+
+```
+检查 refs.bib 与 thesis.tex 的格式错误
 ```
 
 ### 模板检测模块
 
-```bash
-python scripts/detect_template.py thesis.tex
+**在 Claude Code 中使用**：
+
+```
+检测 thesis.tex 使用的模板
+```
+
+```
+识别我的论文使用的是哪个大学的模板
 ```
 
 **支持的模板**：
@@ -165,22 +218,25 @@ python scripts/detect_template.py thesis.tex
 2. **章节**（必填）：摘要 / 引言 / 相关工作 / 方法 / 实验 / 结果 / 讨论 / 结论 / 其他
 3. **源码片段**（必填）：直接粘贴（保留原缩进与换行）
 
-**使用示例**：
+**在 Claude Code 中使用**：
 
 **交互式编辑**（单章节）：
-```bash
-python scripts/deai_check.py thesis.tex --section introduction
+```
+分析 thesis.tex 引言部分的 AI 写作痕迹
 ```
 
 **批量处理**（整章或全文）：
-```bash
-python scripts/deai_batch.py thesis.tex --chapter chapter3/introduction.tex
-python scripts/deai_batch.py thesis.tex --all-sections
+```
+处理 chapter3/introduction.tex 以降低 AI 痕迹
+```
+
+```
+处理 thesis.tex 的所有章节以降低 AI 痕迹
 ```
 
 **AI 痕迹密度检测**：
-```bash
-python scripts/deai_check.py thesis.tex --analyze
+```
+分析 thesis.tex 所有章节的 AI 痕迹密度
 ```
 
 **工作流程**：
@@ -254,37 +310,29 @@ python scripts/deai_check.py thesis.tex --analyze
 
 ### 日常写作
 
-```bash
-python scripts/compile.py thesis.tex --recipe xelatex
+向助手请求：
+```
+使用 xelatex 编译 thesis.tex
 ```
 
 ### 章节完成时
 
-```bash
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-python scripts/verify_bib.py refs.bib --standard gb7714
+向助手请求：
+```
+使用 xelatex 和 biber 编译 thesis.tex，然后验证 refs.bib 是否符合 GB7714 标准
 ```
 
 ### 最终提交前
 
-```bash
-# 1. 结构映射
-python scripts/map_structure.py thesis.tex
-
-# 2. 去AI化分析
-python scripts/deai_check.py thesis.tex --analyze
-
-# 3. 完整编译
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-
-# 4. 国标检查
-python scripts/verify_bib.py refs.bib --standard gb7714
-
-# 5. 术语一致性
-python scripts/check_consistency.py chapters/
-
-# 6. 清理
-python scripts/compile.py thesis.tex --clean
+向助手请求进行完整审查：
+```
+请对论文进行完整审查：
+1. 映射 thesis.tex 的结构
+2. 分析 AI 痕迹密度
+3. 使用 xelatex 和 biber 完整编译
+4. 检查 refs.bib 的 GB7714 合规性
+5. 检查各章节术语一致性
+6. 清理辅助文件
 ```
 
 ## 常见问题

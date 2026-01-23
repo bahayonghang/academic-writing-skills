@@ -6,6 +6,32 @@ LaTeX assistant for Chinese doctoral/master theses.
 
 The `latex-thesis-zh` skill provides modular support for Chinese thesis writing. Modules are independently callable, but **structure mapping should run first for full reviews or multi-file theses**.
 
+## Using the Skill in Claude Code
+
+This skill is designed to work with Claude Code and similar AI assistants. Simply mention the relevant trigger words in your conversation, and the assistant will activate the appropriate module.
+
+### Example Usage
+
+**Compile thesis**:
+```
+Compile thesis.tex using xelatex with biber
+```
+
+**Map structure**:
+```
+Map the structure of my thesis to check completeness
+```
+
+**Check GB/T format**:
+```
+Check thesis.tex for GB/T 7714-2015 compliance
+```
+
+**Reduce AI traces**:
+```
+Reduce AI writing traces in the introduction chapter
+```
+
 ### Trigger Words
 
 | Module | Triggers |
@@ -64,18 +90,23 @@ XeLaTeX-focused compilation for Chinese documents.
 | lualatex-bibtex | lualatex → bibtex → lualatex×2 | LuaLaTeX + BibTeX |
 | lualatex-biber | lualatex → biber → lualatex×2 | LuaLaTeX + Biber |
 
-**Usage**:
+**Usage in Claude Code**:
 
-```bash
-# Quick compile
-python scripts/compile.py thesis.tex --recipe xelatex
+Ask the assistant to compile your thesis:
 
-# Full compile (recommended)
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-
-# Clean auxiliary files
-python scripts/compile.py thesis.tex --clean
 ```
+Compile thesis.tex using xelatex
+```
+
+```
+Compile thesis.tex with xelatex and biber workflow
+```
+
+```
+Clean auxiliary files for thesis.tex
+```
+
+The assistant will execute the appropriate compilation commands.
 
 **Failure handling**:
 - Missing LaTeX tools: install TeX Live/MiKTeX and ensure PATH is set
@@ -86,8 +117,14 @@ python scripts/compile.py thesis.tex --clean
 
 Analyze multi-file thesis structure. **Run this first for full reviews or multi-file theses**.
 
-```bash
-python scripts/map_structure.py thesis.tex
+**Usage in Claude Code**:
+
+```
+Map the structure of thesis.tex
+```
+
+```
+Analyze the structure of my thesis to check for missing sections
 ```
 
 **Thesis Structure Requirements**:
@@ -102,9 +139,14 @@ python scripts/map_structure.py thesis.tex
 
 Verify GB/T 7714-2015 compliance.
 
-```bash
-python scripts/check_format.py thesis.tex
-python scripts/check_format.py thesis.tex --strict
+**Usage in Claude Code**:
+
+```
+Check thesis.tex for GB/T format compliance
+```
+
+```
+Check thesis.tex format with strict mode
 ```
 
 **Checks**:
@@ -133,15 +175,26 @@ Output: Core extraction, modifier analysis, rewrite suggestions
 
 ### Bibliography Module
 
-```bash
-python scripts/verify_bib.py refs.bib
-python scripts/verify_bib.py refs.bib --standard gb7714
+**Usage in Claude Code**:
+
+```
+Verify refs.bib for GB7714 standard compliance
+```
+
+```
+Check refs.bib against thesis.tex for format errors
 ```
 
 ### Template Detection Module
 
-```bash
-python scripts/detect_template.py thesis.tex
+**Usage in Claude Code**:
+
+```
+Detect the template used in thesis.tex
+```
+
+```
+Identify which university template my thesis is using
 ```
 
 **Supported Templates**:
@@ -163,22 +216,25 @@ Reduce AI writing traces while preserving LaTeX syntax and technical accuracy.
 2. **Section** (required): Abstract / Introduction / Related Work / Methods / Experiments / Results / Discussion / Conclusion / Other
 3. **Source snippet** (required): paste directly, keep indentation and line breaks
 
-**Usage Examples**:
+**Usage in Claude Code**:
 
-Interactive editing (single section):
-```bash
-python scripts/deai_check.py thesis.tex --section introduction
+**Interactive editing** (single section):
+```
+Analyze AI writing traces in the introduction section of thesis.tex
 ```
 
-Batch processing (chapter or full document):
-```bash
-python scripts/deai_batch.py thesis.tex --chapter chapter3/introduction.tex
-python scripts/deai_batch.py thesis.tex --all-sections
+**Batch processing** (chapter or full document):
+```
+Process chapter3/introduction.tex to reduce AI traces
 ```
 
-AI trace density check:
-```bash
-python scripts/deai_check.py thesis.tex --analyze
+```
+Process all sections in thesis.tex to reduce AI traces
+```
+
+**AI trace density check**:
+```
+Analyze AI trace density across all sections in thesis.tex
 ```
 
 **Workflow**:
@@ -246,34 +302,28 @@ Reference: `references/DEAI_GUIDE.md`
 
 ### Daily Writing
 
-```bash
-python scripts/compile.py thesis.tex --recipe xelatex
+Ask the assistant:
+```
+Compile thesis.tex using xelatex
 ```
 
 ### Chapter Completion
 
-```bash
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-python scripts/verify_bib.py refs.bib --standard gb7714
+Ask the assistant:
+```
+Compile thesis.tex with xelatex and biber, then verify refs.bib for GB7714 compliance
 ```
 
 ### Final Submission
 
-```bash
-# 1. Structure mapping
-python scripts/map_structure.py thesis.tex
-
-# 2. Full compile
-python scripts/compile.py thesis.tex --recipe xelatex-biber
-
-# 3. GB/T check
-python scripts/verify_bib.py refs.bib --standard gb7714
-
-# 4. Consistency check
-python scripts/check_consistency.py chapters/
-
-# 5. Clean
-python scripts/compile.py thesis.tex --clean
+Ask the assistant to perform a complete review:
+```
+Please perform a complete thesis review:
+1. Map the structure of thesis.tex
+2. Compile with xelatex and biber
+3. Check refs.bib for GB7714 compliance
+4. Check consistency across chapters
+5. Clean auxiliary files
 ```
 
 ## Common Issues

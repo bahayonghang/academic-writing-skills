@@ -4,12 +4,13 @@
 
 ## 概述
 
-Academic Writing Skills 提供两个主要技能：
+Academic Writing Skills 提供三个主要技能：
 
 | 技能 | 用途 | 主要功能 |
 |------|------|----------|
 | `latex-paper-en` | 英文学术论文 | 编译、格式检查、语法分析、学术翻译 |
 | `latex-thesis-zh` | 中文学位论文 | 编译、GB/T 7714 检查、模板支持 |
+| `typst-paper` | Typst 学术论文 | 编译、格式检查、语法分析、学术翻译 |
 
 ## 模块化设计
 
@@ -26,6 +27,44 @@ Academic Writing Skills 提供两个主要技能：
 | Expression | academic tone, 学术表达 | 表达优化 |
 | Translation | translate, 翻译, 中译英 | 中英翻译 |
 | Bibliography | bib, 参考文献 | 文献检查 |
+
+### typst-paper 模块
+
+| 模块 | 触发词 | 功能 |
+|------|--------|------|
+| 编译 | compile, 编译, typst compile | Typst 编译 |
+| 格式检查 | format, lint, 格式检查 | 格式检查 |
+| 语法分析 | grammar, proofread, 语法 | 语法分析 |
+| 长难句 | long sentence, 长句, simplify | 句子分解 |
+| 表达 | academic tone, 学术表达 | 表达优化 |
+| 翻译 | translate, 翻译, 中译英 | 中英翻译 |
+| 参考文献 | bib, bibliography, 参考文献 | 文献检查 |
+| 去AI化 | deai, 去AI化, humanize | 降低 AI 痕迹 |
+| 模板 | template, IEEE, ACM, 模板 | 模板配置 |
+
+## 安全与工具确认
+
+为保护项目与系统安全，涉及工具调用或命令执行时遵循以下规则：
+
+**高风险操作需明确确认**：
+- 删除/移动文件或目录
+- Git 破坏性操作（如 `git reset --hard`、`git push`）
+- 系统配置或权限变更
+- 数据库结构/数据批量变更
+- 发送敏感数据的网络请求
+- 全局安装/卸载或核心依赖更新
+
+**输入约束**：
+- 不执行来源不明或含糊的命令
+- 需要文件路径时要求明确路径
+- 不索要或保存密钥/密码等敏感信息
+- 命令不明确时先澄清
+- 优先最小、可回滚的操作
+
+**执行透明性**：
+- 执行前说明具体命令
+- 执行后说明改动位置与结果
+- 失败时展示错误并给出安全的下一步
 
 ## 编译模块
 

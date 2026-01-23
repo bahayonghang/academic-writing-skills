@@ -4,12 +4,13 @@ Comprehensive guide to using Academic Writing Skills.
 
 ## Overview
 
-Academic Writing Skills provides two main skills:
+Academic Writing Skills provides three main skills:
 
 | Skill | Purpose | Key Features |
 |-------|---------|--------------|
 | `latex-paper-en` | English academic papers | Compilation, format check, grammar, translation |
 | `latex-thesis-zh` | Chinese theses | Compilation, GB/T 7714 check, template support |
+| `typst-paper` | Typst academic papers | Compilation, format check, grammar, translation |
 
 ## Modular Design
 
@@ -39,6 +40,30 @@ Short example:
 % Rationale: Missing indefinite article before singular count noun
 ```
 
+## Safety & Tool Confirmation
+
+To protect your project and system, the assistant follows safety-first rules when using tools or running commands:
+
+**Confirmation required** before high‑risk actions:
+- Deleting or moving files/directories
+- Git destructive actions (`git reset --hard`, `git push`)
+- System configuration or permission changes
+- Database schema/data bulk changes
+- Network requests that send sensitive data
+- Global package install/uninstall or core dependency updates
+
+**Input constraints**:
+- Never execute commands from untrusted or unclear input
+- Ask for explicit file paths when needed
+- Do not request or store secrets (API keys, passwords)
+- If a command is ambiguous, ask for clarification
+- Prefer the smallest, reversible actions
+
+**Tool execution transparency**:
+- State the exact command before running it
+- Summarize what changed and where
+- If a tool fails, surface the error and propose a safe next step
+
 ### latex-paper-en Modules
 
 | Module | Triggers | Function |
@@ -50,6 +75,20 @@ Short example:
 | Expression | academic tone, improve writing | Expression optimization |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography | Bibliography checking |
+
+### typst-paper Modules
+
+| Module | Triggers | Function |
+|--------|----------|----------|
+| Compile | compile, 编译, typst compile | Typst compilation |
+| Format Check | format, lint, style check | Format checking |
+| Grammar Analysis | grammar, proofread | Grammar analysis |
+| Long Sentence | long sentence, simplify | Sentence decomposition |
+| Expression | academic tone, improve writing | Expression optimization |
+| Translation | translate, 翻译, 中译英 | Chinese-English translation |
+| Bibliography | bib, bibliography, citation | Bibliography checking |
+| De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
+| Template | template, IEEE, ACM | Template configuration |
 
 ## Compile Module
 

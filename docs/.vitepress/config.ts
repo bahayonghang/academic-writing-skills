@@ -38,7 +38,8 @@ export default defineConfig({
         text: 'Skills',
         items: [
           { text: 'English Papers (latex-paper-en)', link: '/skills/latex-paper-en' },
-          { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' }
+          { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' },
+          { text: 'Typst Papers (typst-paper)', link: '/skills/typst-paper' }
         ]
       },
       {
@@ -53,6 +54,7 @@ export default defineConfig({
         text: 'References',
         items: [
           { text: 'Common Errors', link: '/references/common-errors' },
+          { text: 'GB/T Standard', link: '/references/gb-standard' },
           { text: 'Style Guide', link: '/references/style-guide' },
           { text: 'Venues', link: '/references/venues' }
         ]
@@ -107,7 +109,8 @@ export default defineConfig({
             text: 'Skills',
             items: [
               { text: 'English Papers (latex-paper-en)', link: '/skills/latex-paper-en' },
-              { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' }
+              { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' },
+              { text: 'Typst Papers (typst-paper)', link: '/skills/typst-paper' }
             ]
           },
           {
@@ -153,7 +156,8 @@ export default defineConfig({
             text: '技能',
             items: [
               { text: '英文论文 (latex-paper-en)', link: '/zh/skills/latex-paper-en' },
-              { text: '中文论文 (latex-thesis-zh)', link: '/zh/skills/latex-thesis-zh' }
+              { text: '中文论文 (latex-thesis-zh)', link: '/zh/skills/latex-thesis-zh' },
+              { text: 'Typst 论文 (typst-paper)', link: '/zh/skills/typst-paper' }
             ]
           },
           {
@@ -168,6 +172,7 @@ export default defineConfig({
             text: '参考',
             items: [
               { text: '常见错误', link: '/zh/references/common-errors' },
+              { text: '国标规范', link: '/zh/references/gb-standard' },
               { text: '写作规范', link: '/zh/references/style-guide' },
               { text: '期刊会议', link: '/zh/references/venues' }
             ]

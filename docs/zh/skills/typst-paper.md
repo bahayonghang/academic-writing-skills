@@ -1,66 +1,82 @@
----
-name: typst-paper
-description: |
-  Typst 学术论文助手（支持中英文论文、会议/期刊投稿）。
-  领域：深度学习、时间序列、工业控制、计算机科学。
-  
-  触发词（可独立调用任意模块）：
-  - "compile", "编译", "typst compile" → 编译模块
-  - "format", "格式检查", "lint" → 格式检查模块
-  - "grammar", "语法", "proofread", "润色" → 语法分析模块
-  - "long sentence", "长句", "simplify", "拆解" → 长难句分析模块
-  - "academic tone", "学术表达", "improve writing" → 学术表达模块
-  - "translate", "翻译", "中译英" → 翻译模块
-  - "bib", "bibliography", "参考文献" → 参考文献模块
-  - "deai", "去AI化", "humanize", "降低AI痕迹" → 去AI化编辑模块
-  - "template", "模板", "IEEE", "ACM" → 模板配置模块
----
+# Typst 学术论文 (typst-paper)
 
-# Typst 学术论文助手
+现代化的 Typst 学术论文写作助手。
 
-## 核心原则
+## 概述
 
-1. 绝不修改 `@cite`、`@ref`、`@label`、数学环境内的内容
-2. 绝不凭空捏造参考文献条目
-3. 绝不在未经许可的情况下修改专业术语
-4. 始终先以注释形式输出修改建议
-5. Typst 编译速度快（毫秒级），适合实时预览
+`typst-paper` 技能为使用 Typst 进行学术论文写作提供全面支持。Typst 是一个现代化的排版系统，编译速度达到毫秒级。支持中英文论文及主流出版场所。
 
-## 统一输出协议（全部模块）
+### 主要功能
 
-每条建议必须包含固定字段：
-- **严重级别**：Critical / Major / Minor
-- **优先级**：P0（阻断）/ P1（重要）/ P2（可改进）
+- **闪电般的编译速度**（毫秒级 vs LaTeX 的秒级）
+- **简洁直观的语法**（比 LaTeX 更易学习）
+- **实时预览**支持监视模式
+- **格式检查**支持特定场所规则
+- **语法分析**用于英文论文
+- **学术表达优化**支持中英文
+- **中英学术翻译**（深度学习、时间序列、工业控制）
+- **去AI化编辑**降低 AI 生成文本痕迹
+- **模板支持**（IEEE、ACM、Springer、NeurIPS 等）
 
-**默认注释模板**（diff-comment 风格）：
-```typst
-// <模块>（第<N>行）[Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <问题概述>
-// 原文：...
-// 修改后：...
-// 理由：...
-// ⚠️ 【待补证】：<需要证据/数据时标记>
+## 环境要求
+
+**安装**：
+```bash
+# 使用 Cargo（Rust 包管理器）
+cargo install typst-cli
+
+# 使用 Homebrew（macOS）
+brew install typst
+
+# 使用包管理器（Linux）
+sudo pacman -S typst  # Arch Linux
 ```
 
-## 失败处理（全局）
-
-工具/脚本无法执行时，输出包含原因与建议的注释块：
-```typst
-// ERROR [Severity: Critical] [Priority: P0]: <简要错误>
-// 原因：<缺少工具或路径无效>
-// 建议：<安装工具/核对路径/重试命令>
+**验证安装**：
+```bash
+typst --version
 ```
 
-常见情况：
-- **Typst 未安装**：建议通过 `cargo install typst-cli` 或包管理器安装
-- **字体缺失**：使用 `typst fonts` 查看可用字体
-- **文件不存在**：请用户提供正确 `.typ` 路径
+## 在 Claude Code 中使用技能
 
-## 模块（独立调用）
+本技能设计用于 Claude Code 等 AI 助手。只需在对话中提及相关触发词，助手就会激活相应模块。
 
-### 模块：编译
-**触发词**: compile, 编译, build, typst compile, typst watch
+### 触发词
 
-**Typst 编译命令**:
+| 模块 | 触发词 | 功能 |
+|------|--------|------|
+| 编译 | compile, 编译, typst compile | Typst 编译 |
+| 格式检查 | format, lint, 格式检查 | 格式检查 |
+| 语法分析 | grammar, proofread, 语法 | 语法分析 |
+| 长难句 | long sentence, 长句, simplify | 句子分解 |
+| 表达 | academic tone, 学术表达 | 表达优化 |
+| 翻译 | translate, 翻译, 中译英 | 中英翻译 |
+| 参考文献 | bib, bibliography, 参考文献 | 文献检查 |
+| 去AI化 | deai, 去AI化, humanize | 降低 AI 痕迹 |
+| 模板 | template, IEEE, ACM, 模板 | 模板配置 |
+
+### 使用示例
+
+**编译论文**：
+```
+请编译我的 Typst 论文 main.typ
+```
+
+**检查语法**：
+```
+能帮我检查引言部分的语法吗？
+```
+
+**翻译成英文**：
+```
+将以下中文翻译为学术英文（深度学习领域）：
+本文提出了一种基于Transformer的方法...
+```
+
+## 编译模块
+
+### 基本命令
+
 | 命令 | 用途 | 说明 |
 |------|------|------|
 | `typst compile main.typ` | 单次编译 | 生成 PDF 文件 |
@@ -69,7 +85,8 @@ description: |
 | `typst compile --format png main.typ` | 其他格式 | 支持 PNG、SVG 等格式 |
 | `typst fonts` | 字体列表 | 查看系统可用字体 |
 
-**使用示例**:
+### 使用示例
+
 ```bash
 # 基础编译（推荐）
 typst compile main.typ
@@ -90,12 +107,14 @@ typst fonts
 typst compile --font-path ./fonts main.typ
 ```
 
-**编译速度优势**:
+### 编译速度优势
+
 - Typst 编译速度通常在毫秒级（vs LaTeX 的秒级）
 - 增量编译：只重新编译修改的部分
 - 适合实时预览和快速迭代
 
-**中文支持**:
+### 中文支持
+
 ```typst
 // 中文字体配置示例
 #set text(
@@ -105,12 +124,10 @@ typst compile --font-path ./fonts main.typ
 )
 ```
 
----
+## 格式检查模块
 
-### 模块：格式检查
-**触发词**: format, 格式检查, lint, style check
+### 检查项目
 
-**检查项目**:
 | 类别 | 检查内容 | 标准 |
 |------|----------|------|
 | 页边距 | 上下左右边距 | 通常 1 英寸（2.54cm）|
@@ -120,7 +137,8 @@ typst compile --font-path ./fonts main.typ
 | 图表 | 标题位置与格式 | 图下表上，编号连续 |
 | 引用 | 引用格式一致性 | 数字/作者-年份格式 |
 
-**Typst 格式检查要点**:
+### Typst 格式配置
+
 ```typst
 // 页面设置
 #set page(
@@ -146,49 +164,32 @@ typst compile --font-path ./fonts main.typ
 #set heading(numbering: "1.1")
 ```
 
-**常见格式问题**:
-- ❌ 页边距不一致
-- ❌ 字体混用（中英文字体未分离）
-- ❌ 图表编号不连续
-- ❌ 引用格式不统一
+## 语法分析模块
 
----
-
-### 模块：语法分析（英文）
-**触发词**: grammar, 语法, proofread, 润色, article usage
-
-**重点检查领域**:
+基于 LLM 的语法检查，重点关注：
 - 主谓一致
 - 冠词使用（a/an/the）
 - 时态一致性（方法用过去时，结果用现在时）
-- Chinglish 检测
+- 中式英语检测
 
-**输出格式**:
-```typst
-// GRAMMAR（第23行）[Severity: Major] [Priority: P1]: 冠词缺失
-// 原文：We propose method for...
-// 修改后：We propose a method for...
-// 理由：单数可数名词前缺少不定冠词
-```
+### 常见语法错误
 
-**常见语法错误**:
 | 错误类型 | 示例 | 修正 |
 |----------|------|------|
 | 冠词缺失 | propose method | propose a method |
 | 主谓不一致 | The data shows | The data show |
 | 时态混乱 | We proposed... The results shows | We proposed... The results show |
-| Chinglish | more and more | increasingly |
+| 中式英语 | more and more | increasingly |
 
----
+## 长难句分析模块
 
-### 模块：长难句分析
-**触发词**: long sentence, 长句, simplify, decompose, 拆解
+### 触发条件
 
-**触发条件**:
 - 英文：句子 >50 词 或 >3 个从句
 - 中文：句子 >60 字 或 >3 个分句
 
-**输出格式**:
+### 输出格式
+
 ```typst
 // 长难句检测（第45行，共67词）[Severity: Minor] [Priority: P2]
 // 主干：[主语 + 谓语 + 宾语]
@@ -198,18 +199,10 @@ typst compile --font-path ./fonts main.typ
 // 建议改写：[简化版本]
 ```
 
-**拆分策略**:
-1. 识别主干结构
-2. 提取修饰成分
-3. 拆分为多个短句
-4. 保持逻辑连贯性
+## 学术表达模块
 
----
+### 英文学术表达
 
-### 模块：学术表达
-**触发词**: academic tone, 学术表达, improve writing, weak verbs
-
-**英文学术表达**:
 | ❌ 弱动词 | ✅ 学术替代 |
 |----------|------------|
 | use | employ, utilize, leverage |
@@ -217,7 +210,8 @@ typst compile --font-path ./fonts main.typ
 | make | construct, develop, generate |
 | show | demonstrate, illustrate, indicate |
 
-**中文学术表达**:
+### 中文学术表达
+
 | ❌ 口语化 | ✅ 学术化 |
 |----------|----------|
 | 很多研究表明 | 大量研究表明 |
@@ -225,50 +219,26 @@ typst compile --font-path ./fonts main.typ
 | 我们使用 | 本文采用 |
 | 可以看出 | 由此可见 |
 
-**输出格式**:
-```typst
-// EXPRESSION（第23行）[Severity: Minor] [Priority: P2]: 提升学术语气
-// 原文：We use machine learning to get better results.
-// 修改后：We employ machine learning to achieve superior performance.
-// 理由：用学术替代词替换弱动词
-```
+## 翻译模块（中译英）
 
----
+### 支持领域
 
-### 模块：翻译（中译英）
-**触发词**: translate, 翻译, 中译英, Chinese to English
+| 领域 | 关键词 |
+|------|--------|
+| 深度学习 | 神经网络、注意力机制、损失函数 |
+| 时间序列 | 时序预测、ARIMA、时间模式 |
+| 工业控制 | PID、故障检测、SCADA |
 
-**翻译流程**:
+### 翻译流程
 
-**步骤 1：领域识别**
-确定专业领域术语：
-- 深度学习：neural networks, attention, loss functions
-- 时间序列：forecasting, ARIMA, temporal patterns
-- 工业控制：PID, fault detection, SCADA
+1. **领域识别** - 确定专业领域术语
+2. **术语确认** - 确认翻译
+3. **翻译并注释** - 带注释的翻译
+4. **中式英语检查** - 检测并修正常见错误
+5. **学术润色** - 最终审查
 
-**步骤 2：术语确认**
-```markdown
-| 中文 | English | 领域 |
-|------|---------|------|
-| 注意力机制 | attention mechanism | DL |
-| 时间序列预测 | time series forecasting | TS |
-```
+### 常用学术句式
 
-**步骤 3：翻译并注释**
-```typst
-// 原文：本文提出了一种基于Transformer的方法
-// 译文：We propose a Transformer-based approach
-// 注释："本文提出" → "We propose"（学术标准表达）
-```
-
-**步骤 4：Chinglish 检查**
-| 中式英语 | 地道表达 |
-|----------|----------|
-| more and more | increasingly |
-| in recent years | recently |
-| play an important role | is crucial for |
-
-**常用学术句式**:
 | 中文 | English |
 |------|---------|
 | 本文提出... | We propose... / This paper presents... |
@@ -276,12 +246,9 @@ typst compile --font-path ./fonts main.typ
 | 与...相比 | Compared with... / In comparison to... |
 | 综上所述 | In summary / In conclusion |
 
----
+## 参考文献模块
 
-### 模块：参考文献
-**触发词**: bib, bibliography, 参考文献, citation, 引用
-
-**Typst 参考文献管理**:
+### Typst 参考文献管理
 
 **方法 1：使用 BibTeX 文件**
 ```typst
@@ -293,14 +260,16 @@ typst compile --font-path ./fonts main.typ
 #bibliography("references.yml", style: "apa")
 ```
 
-**支持的引用样式**:
+### 支持的引用样式
+
 - `ieee` - IEEE 数字引用
 - `apa` - APA 作者-年份
 - `chicago-author-date` - 芝加哥作者-年份
 - `mla` - MLA 人文学科
 - `gb-7714-2015` - 中国国标
 
-**引用示例**:
+### 引用示例
+
 ```typst
 // 文中引用
 According to @smith2020, the method...
@@ -310,25 +279,17 @@ Recent studies @smith2020 @jones2021 show...
 #bibliography("references.bib", style: "ieee")
 ```
 
-**检查项目**:
-- 必填字段完整性
-- 重复条目检测
-- 未使用条目
-- 引用格式一致性
+## 去AI化编辑模块
 
----
+在保持 Typst 语法和技术准确性的前提下，降低 AI 写作痕迹。
 
-### 模块：去AI化编辑
-**触发词**: deai, 去AI化, humanize, reduce AI traces, 降低AI痕迹
+### 输入要求
 
-**目标**：在保持 Typst 语法和技术准确性的前提下，降低 AI 写作痕迹。
-
-**输入要求**：
 1. **源码类型**（必填）：Typst
 2. **章节**（必填）：Abstract / Introduction / Related Work / Methods / Experiments / Results / Discussion / Conclusion
-3. **源码片段**（必填）：直接粘贴（保留原缩进与换行）
+3. **源码片段**（必填）：直接粘贴（保留原缩进）
 
-**工作流程**：
+### 工作流程
 
 **1. 语法结构识别**
 检测 Typst 语法，完整保留：
@@ -338,7 +299,8 @@ Recent studies @smith2020 @jones2021 show...
 - 标记：`*bold*`, `_italic_`, `` `code` ``
 - 自定义函数（默认不改）
 
-**2. AI 痕迹检测**:
+**2. AI 痕迹检测**：
+
 | 类型 | 示例 | 问题 |
 |------|------|------|
 | 空话口号 | significant, comprehensive, effective | 缺乏具体性 |
@@ -372,12 +334,14 @@ Recent studies @smith2020 @jones2021 show...
 The proposed method improves performance in the experiments...
 ```
 
-**硬性约束**：
+### 硬性约束
+
 - **绝不修改**：`@cite`, `@ref`, `@label`, 数学环境
 - **绝不新增**：事实、数据、结论、指标、实验设置、引用编号
 - **仅修改**：普通段落文字、标题文本
 
-**分章节准则**：
+### 分章节准则
+
 | 章节 | 重点 | 约束 |
 |------|------|------|
 | Abstract | 目的/方法/关键结果（带数字）/结论 | 禁泛泛贡献 |
@@ -388,14 +352,10 @@ The proposed method improves performance in the experiments...
 | Discussion | 讲机制、边界、失败、局限 | 批判性分析 |
 | Conclusion | 回答研究问题，不引入新实验 | 可执行未来工作 |
 
----
+## 模板配置模块
 
-### 模块：模板配置
-**触发词**: template, 模板, IEEE, ACM, Springer, NeurIPS
+### IEEE 模板
 
-**Typst 学术模板**:
-
-**IEEE 模板**:
 ```typst
 #import "@preview/charged-ieee:0.1.0": ieee
 
@@ -420,9 +380,10 @@ The proposed method improves performance in the experiments...
 // Your content here
 ```
 
-**ACM 模板**:
+### ACM 模板
+
 ```typst
-// 使用 ACM 两栏格式
+// ACM 两栏格式
 #set page(
   paper: "us-letter",
   margin: (x: 0.75in, y: 1in),
@@ -434,7 +395,8 @@ The proposed method improves performance in the experiments...
 #set par(justify: true)
 ```
 
-**通用学术论文模板**:
+### 通用学术论文模板
+
 ```typst
 #set page(
   paper: "a4",
@@ -479,7 +441,8 @@ Your abstract here...
 Your content here...
 ```
 
-**中文论文模板**:
+### 中文论文模板
+
 ```typst
 #set page(
   paper: "a4",
@@ -527,19 +490,104 @@ Your content here...
 正文内容...
 ```
 
----
+## 期刊/会议特定规则
 
-## 参考与扩展
+### IEEE
 
-为保持 SKILL 精简且易维护，详细示例与扩展内容移至参考文档：
+- 两栏格式，列间距 0.33 英寸
+- Times New Roman 10pt
+- 主动语态，方法用过去时
+- 图表编号：Fig. 1, Table I
 
-- 期刊/会议规则：`references/VENUES.md`
-- Typst 语法与排版：`references/TYPST_SYNTAX.md`
-- 写作风格与常见错误：`references/STYLE_GUIDE.md`、`references/COMMON_ERRORS.md`
-- 去AI化策略：`references/DEAI_GUIDE.md`
+### ACM
 
-## 注意事项
+- 两栏格式，A4 或 US Letter
+- 现在时表述一般真理
+- 引用格式：数字或作者-年份
 
-1. **字体问题**：确保系统安装所需字体（中文建议 Source Han Serif 或 Noto Serif CJK）
-2. **模板兼容性**：部分期刊可能仍要求 LaTeX 模板
-3. **数学公式**：Typst 数学语法与 LaTeX 略有差异，需要适应
+### Springer
+
+- 图标题在下，表标题在上
+- 参考文献按字母顺序排列
+
+### NeurIPS/ICML
+
+- 8 页限制（不含参考文献）
+- 匿名提交（双盲评审）
+- 特定格式要求
+
+## Typst 优势总结
+
+### vs LaTeX
+
+| 特性 | Typst | LaTeX |
+|------|-------|-------|
+| 编译速度 | 毫秒级 | 秒级 |
+| 语法 | 简洁直观 | 复杂冗长 |
+| 错误提示 | 清晰友好 | 晦涩难懂 |
+| 学习曲线 | 平缓 | 陡峭 |
+| 实时预览 | 原生支持 | 需要额外工具 |
+
+### 适用场景
+
+- ✅ 快速原型和草稿
+- ✅ 需要频繁修改的文档
+- ✅ 团队协作（语法简单）
+- ✅ 中小型论文（<100 页）
+- ⚠️ 复杂数学公式（LaTeX 更成熟）
+- ⚠️ 特定期刊模板（可能需要 LaTeX）
+
+## 快速开始
+
+**安装 Typst**：
+```bash
+# 使用 Cargo（Rust 包管理器）
+cargo install typst-cli
+
+# 使用 Homebrew（macOS）
+brew install typst
+
+# 使用包管理器（Linux）
+sudo pacman -S typst  # Arch Linux
+```
+
+**创建第一个论文**：
+```bash
+# 从模板初始化
+typst init @preview/charged-ieee
+
+# 编译
+typst compile main.typ
+
+# 监视模式（推荐）
+typst watch main.typ
+```
+
+**常用命令**：
+```bash
+# 查看帮助
+typst --help
+
+# 查看可用字体
+typst fonts
+
+# 指定输出格式
+typst compile --format png main.typ
+
+# 使用自定义字体
+typst compile --font-path ./fonts main.typ
+```
+
+## 参考文件
+
+- `references/TYPST_SYNTAX.md`：Typst 语法指南
+- `references/STYLE_GUIDE.md`：学术写作规范
+- `references/COMMON_ERRORS.md`：常见错误
+- `references/VENUES.md`：期刊会议要求
+- `references/DEAI_GUIDE.md`：去AI化写作指南
+
+## 下一步
+
+- [编译配置指南](/zh/guides/compilation)
+- [格式检查指南](/zh/guides/format-checking)
+- [参考文献指南](/zh/guides/bibliography)

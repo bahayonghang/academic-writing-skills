@@ -25,6 +25,33 @@
 
 必需工具：`pdflatex`、`xelatex`、`latexmk`、`biber`、`chktex`
 
+## 在 Claude Code 中使用技能
+
+本技能设计用于 Claude Code 等 AI 助手。只需在对话中提及相关触发词，助手就会激活相应模块。
+
+### 使用示例
+
+**编译论文**：
+```
+请使用 xelatex 和 bibtex 编译我的 LaTeX 论文 main.tex
+```
+
+**检查格式**：
+```
+能帮我检查论文格式是否符合 IEEE 会议投稿要求吗？
+```
+
+**翻译成英文**：
+```
+将以下中文翻译为学术英文（深度学习领域）：
+本文提出了一种基于Transformer的方法...
+```
+
+**去AI化润色**：
+```
+请降低引言部分的 AI 写作痕迹
+```
+
 ## 模块化设计
 
 技能采用模块化设计，每个模块可独立调用：
@@ -63,32 +90,47 @@
 | pdflatex -> bibtex -> pdflatex*2 | pdflatex → bibtex → pdflatex → pdflatex |
 | pdflatex -> biber -> pdflatex*2 | pdflatex → biber → pdflatex → pdflatex |
 
-### 使用示例
+### 在 Claude Code 中使用
 
-```bash
-# 单编译器
-python scripts/compile.py main.tex                          # 自动检测
-python scripts/compile.py main.tex --recipe xelatex         # 仅 XeLaTeX
-python scripts/compile.py main.tex --recipe pdflatex        # 仅 PDFLaTeX
+只需向助手提出具体的编译需求：
 
-# 带参考文献（推荐用于论文）
-python scripts/compile.py main.tex --recipe xelatex-bibtex  # BibTeX 工作流
-python scripts/compile.py main.tex --recipe xelatex-biber   # Biber 工作流
-
-# 指定输出目录
-python scripts/compile.py main.tex --recipe latexmk --outdir build
-
-# 清理
-python scripts/compile.py main.tex --clean                  # 清理辅助文件
-python scripts/compile.py main.tex --clean-all              # 清理所有（含 PDF）
+**基本编译**：
 ```
+使用 xelatex 编译 main.tex
+```
+
+**带参考文献**（推荐用于论文）：
+```
+使用 xelatex 和 bibtex 工作流编译 main.tex
+```
+
+**指定输出目录**：
+```
+使用 latexmk 编译 main.tex 并输出到 build 目录
+```
+
+**清理辅助文件**：
+```
+清理 main.tex 的辅助文件
+```
+
+助手会根据您的请求执行相应的编译命令。
 
 ## 格式检查模块
 
-```bash
-python scripts/check_format.py main.tex
-python scripts/check_format.py main.tex --strict
+### 在 Claude Code 中使用
+
+向助手请求检查论文格式：
+
 ```
+检查 main.tex 的格式
+```
+
+```
+以严格模式检查 main.tex 格式，用于 IEEE 投稿
+```
+
+助手会分析您的论文并提供格式建议。
 
 ## 语法分析模块
 
@@ -97,6 +139,18 @@ python scripts/check_format.py main.tex --strict
 - 冠词使用 (a/an/the)
 - 时态一致性
 - 中式英语检测
+
+### 在 Claude Code 中使用
+
+向助手请求语法检查：
+
+```
+检查引言部分的语法
+```
+
+```
+润色方法部分并修正中式英语错误
+```
 
 ## 翻译模块
 
@@ -132,10 +186,23 @@ python scripts/check_format.py main.tex --strict
 
 ## 参考文献模块
 
-```bash
-python scripts/verify_bib.py references.bib
-python scripts/verify_bib.py references.bib --tex main.tex
+### 在 Claude Code 中使用
+
+向助手请求验证参考文献：
+
 ```
+验证 references.bib 的格式错误
+```
+
+```
+检查 references.bib 与 main.tex 的未使用条目
+```
+
+助手会检查：
+- 必填字段完整性
+- 重复条目
+- 未使用条目
+- 引用格式一致性
 
 ## 参考文件
 
