@@ -4,114 +4,136 @@ Get up and running with Academic Writing Skills in minutes.
 
 ## Installation
 
-Copy skill folders to your Claude Code skills directory:
+Copy skill folders to Claude Code's skills directory:
 
 ### Linux / macOS
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ## Your First Compilation
 
-### English Paper
+### English Paper (LaTeX)
 
 1. **Open your LaTeX project** in Claude Code
-2. **Compile your paper**:
-   ```bash
-   # Simple compilation with pdfLaTeX
-   python ~/.claude/skills/latex-paper-en/scripts/compile.py main.tex
-
-   # Or with XeLaTeX
-   python ~/.claude/skills/latex-paper-en/scripts/compile.py main.tex --recipe xelatex
-
-   # Full workflow with bibliography
-   python ~/.claude/skills/latex-paper-en/scripts/compile.py main.tex --recipe pdflatex-bibtex
+2. **Ask Claude to compile**:
+   ```
+   Please compile main.tex using pdflatex with bibtex
    ```
 
 3. **Check format**:
-   ```bash
-   python ~/.claude/skills/latex-paper-en/scripts/check_format.py main.tex
+   ```
+   Check the format of main.tex for IEEE submission
    ```
 
-### Chinese Thesis
+### Chinese Thesis (LaTeX)
 
 1. **Open your LaTeX project** in Claude Code
 2. **Map thesis structure**:
-   ```bash
-   python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py main.tex
+   ```
+   Map the structure of thesis.tex to check completeness
    ```
 
 3. **Compile with XeLaTeX**:
-   ```bash
-   python ~/.claude/skills/latex-thesis-zh/scripts/compile.py main.tex --recipe xelatex-biber
+   ```
+   Compile thesis.tex using xelatex with biber
    ```
 
 4. **Check GB/T 7714 compliance**:
+   ```
+   Verify references.bib for GB7714 compliance
+   ```
+
+### Typst Paper 🆕
+
+1. **Install Typst** (if not already installed):
    ```bash
-   python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py references.bib
+   # Using Cargo
+   cargo install typst-cli
+   
+   # Using Homebrew (macOS)
+   brew install typst
+   ```
+
+2. **Ask Claude to compile**:
+   ```
+   Compile main.typ using Typst
+   ```
+
+3. **Use watch mode for live preview**:
+   ```
+   Start Typst watch mode for main.typ
+   ```
+
+4. **Check format**:
+   ```
+   Check the format of main.typ for IEEE conference submission
    ```
 
 ## Common Workflows
 
-### Workflow 1: Quick Paper Draft
+### Workflow 1: Quick Paper Draft (LaTeX)
 
 Perfect for rapid iteration:
 
-```bash
-# Compile with pdfLaTeX (fastest)
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdflatex
-
-# Check for common errors
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
+```
+Compile paper.tex with pdflatex and check for common errors
 ```
 
-### Workflow 2: Final Submission
+### Workflow 2: Quick Paper Draft (Typst) 🆕
+
+Lightning-fast compilation:
+
+```
+Compile paper.typ with Typst and check format
+```
+
+### Workflow 3: Final Submission (LaTeX)
 
 For publication-ready output:
 
-```bash
-# Full compilation with bibliography
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdflatex-biber
-
-# Format check
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
-
-# Bibliography verification
-python ~/.claude/skills/latex-paper-en/scripts/verify_bib.py references.bib
+```
+Compile paper.tex with pdflatex and biber, then check format and verify bibliography
 ```
 
-### Workflow 3: Chinese Thesis
+### Workflow 4: Final Submission (Typst) 🆕
+
+Modern workflow:
+
+```
+Compile paper.typ with Typst, check format for IEEE submission, and verify bibliography
+```
+
+### Workflow 5: Chinese Thesis
 
 Complete thesis workflow:
 
-```bash
-# 1. Map structure (identifies template and chapters)
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
-
-# 2. Compile with XeLaTeX and Biber
-python ~/.claude/skills/latex-thesis-zh/scripts/compile.py thesis.tex --recipe xelatex-biber
-
-# 3. Check GB/T 7714 compliance
-python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py refs.bib
-
-# 4. Check terminology consistency
-python ~/.claude/skills/latex-thesis-zh/scripts/check_consistency.py data/
+```
+Please perform a complete thesis review:
+1. Map the structure of thesis.tex
+2. Compile with xelatex and biber
+3. Check refs.bib for GB7714 compliance
+4. Check consistency across chapters
 ```
 
-## Understanding Compilation Recipes
+## Understanding Compilation Options
 
-Academic Writing Skills supports multiple compilation recipes:
+Academic Writing Skills supports multiple compilation options:
+
+### LaTeX Recipes
 
 | Recipe | Use Case | Speed |
 |--------|----------|-------|
@@ -121,11 +143,19 @@ Academic Writing Skills supports multiple compilation recipes:
 | `pdflatex-bibtex` | English + BibTeX refs | ⚡⚡ |
 | `xelatex-biber` | Chinese + modern refs | ⚡ |
 
+### Typst Compilation 🆕
+
+| Command | Use Case | Speed |
+|---------|----------|-------|
+| `typst compile` | Single compilation | ⚡⚡⚡⚡ (milliseconds) |
+| `typst watch` | Live preview | ⚡⚡⚡⚡ (auto-recompile) |
+| `typst compile --format png` | Export as image | ⚡⚡⚡ |
+
 Choose based on your needs:
-- **Speed**: pdflatex
-- **Unicode/Chinese**: xelatex or lualatex
-- **Modern bibliography**: biber
-- **Auto dependencies**: latexmk
+- **Speed**: Typst > pdflatex > xelatex
+- **Unicode/Chinese**: xelatex, lualatex, or Typst
+- **Modern bibliography**: biber (LaTeX) or Hayagriva (Typst)
+- **Live preview**: Typst watch mode
 
 ## Working with Claude Code
 
@@ -133,10 +163,11 @@ Choose based on your needs:
 
 Use skills interactively within Claude Code:
 
+**LaTeX Example**:
 ```
 You: Compile my paper with XeLaTeX and check for format errors
 
-Claude: I'll compile your paper using the xelatex recipe and run format checks.
+Claude: I'll compile your paper using xelatex and run format checks.
 
 [Runs compilation and format checking]
 
@@ -146,60 +177,78 @@ Claude: Compilation successful! Found 3 minor format issues:
 3. Line 120: Missing space after period
 ```
 
+**Typst Example** 🆕:
+```
+You: Compile my Typst paper and start watch mode
+
+Claude: I'll compile your paper with Typst and start watch mode for live preview.
+
+[Runs compilation]
+
+Claude: Compilation successful in 15ms! Watch mode started - your paper will auto-recompile on changes.
+```
+
 ### Automated Workflows
 
-Create automated workflows for common tasks:
+Simply ask Claude to perform multi-step workflows:
 
-```bash
-# Create a compilation script
-cat > compile_all.sh << 'EOF'
-#!/bin/bash
-echo "Compiling paper..."
-python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdflatex-biber
+**LaTeX workflow**:
+```
+Please compile paper.tex with pdflatex and biber, check format, and verify bibliography
+```
 
-echo "Checking format..."
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
-
-echo "Verifying bibliography..."
-python ~/.claude/skills/latex-paper-en/scripts/verify_bib.py references.bib
-
-echo "Done!"
-EOF
-
-chmod +x compile_all.sh
-./compile_all.sh
+**Typst workflow** 🆕:
+```
+Please compile paper.typ with Typst, check format for ACM submission, and verify citations
 ```
 
 ## Tips for Success
 
-### 1. Use the Right Recipe
+### 1. Choose the Right Tool
 
-**English papers**:
+**LaTeX**:
+- Mature ecosystem with extensive packages
+- Required by some journals/conferences
+- Slower compilation (seconds)
+
+**Typst** 🆕:
+- Modern syntax, easier to learn
+- Lightning-fast compilation (milliseconds)
+- Great for rapid iteration
+- Growing ecosystem
+
+### 2. Use the Right Compilation Method
+
+**English papers (LaTeX)**:
 - Start with `pdflatex` for speed
 - Switch to `xelatex` if you need Unicode characters
 
-**Chinese thesis**:
+**Chinese thesis (LaTeX)**:
 - Always use `xelatex` or `lualatex`
 - Use `biber` for modern bibliography (GB/T 7714)
 
-### 2. Check Early, Check Often
+**Any paper (Typst)** 🆕:
+- Use `typst compile` for single compilation
+- Use `typst watch` for live preview during writing
 
-Run format checks frequently to catch issues early:
+### 3. Check Early, Check Often
 
-```bash
-# Quick format check (fast)
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex --quick
+Ask Claude to check your work frequently:
 
-# Full format check (thorough)
-python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
+```
+Check the format of my paper
 ```
 
-### 3. Understand Your Template
+```
+Proofread my introduction section for grammar errors
+```
+
+### 4. Understand Your Template
 
 For Chinese theses, map the structure first:
 
-```bash
-python ~/.claude/skills/latex-thesis-zh/scripts/map_structure.py thesis.tex
+```
+Map the structure of thesis.tex
 ```
 
 This helps identify:
@@ -207,21 +256,21 @@ This helps identify:
 - Main file and chapter structure
 - Required vs. optional components
 
-### 4. Keep Bibliography Clean
+### 5. Keep Bibliography Clean
 
 Verify bibliography format before final submission:
 
-```bash
-# Check BibTeX format
-python ~/.claude/skills/latex-paper-en/scripts/verify_bib.py references.bib
+```
+Verify references.bib for format errors
+```
 
-# Check GB/T 7714 compliance (Chinese)
-python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gbt7714
+```
+Check refs.bib for GB7714 compliance
 ```
 
 ## Common Issues
 
-### Compilation Fails
+### LaTeX Compilation Fails
 
 **Error**: `! LaTeX Error: File 'xxx.sty' not found`
 
@@ -234,27 +283,50 @@ tlmgr install <package-name>
 mpm --install=<package-name>
 ```
 
-### Bibliography Not Showing
+### Typst Not Found 🆕
+
+**Error**: `typst: command not found`
+
+**Solution**: Install Typst:
+```bash
+# Using Cargo
+cargo install typst-cli
+
+# Using Homebrew (macOS)
+brew install typst
+
+# Using package manager (Linux)
+sudo pacman -S typst  # Arch Linux
+```
+
+### Bibliography Not Showing (LaTeX)
 
 **Error**: Bibliography section is empty
 
-**Solution**: Use the correct full recipe:
-```bash
-# For BibTeX
-python compile.py paper.tex --recipe pdflatex-bibtex
-
-# For Biber
-python compile.py paper.tex --recipe xelatex-biber
+**Solution**: Ask Claude to compile with the full workflow:
+```
+Compile paper.tex with pdflatex and bibtex workflow
 ```
 
-### Chinese Characters Not Displaying
+### Chinese Characters Not Displaying (LaTeX)
 
 **Error**: Chinese text shows as boxes or errors
 
-**Solution**: Use XeLaTeX or LuaLaTeX:
-```bash
-python compile.py thesis.tex --recipe xelatex
+**Solution**: Use XeLaTeX:
 ```
+Compile thesis.tex using xelatex
+```
+
+### Typst Font Issues 🆕
+
+**Error**: Font not found
+
+**Solution**: Check available fonts:
+```bash
+typst fonts
+```
+
+Then configure your document to use available fonts.
 
 ## Next Steps
 

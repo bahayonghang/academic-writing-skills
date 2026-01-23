@@ -4,22 +4,24 @@
 
 ## 安装
 
-将 skill 文件夹复制到 Claude Code 的 skills 目录：
+将 skill 文件夹复制到 Claude Code 的技能目录：
 
 ### Linux / macOS
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ## 第一次编译
@@ -62,6 +64,28 @@ Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/sk
    python ~/.claude/skills/latex-thesis-zh/scripts/verify_bib.py references.bib
    ```
 
+### Typst 论文 🆕
+
+1. **确认已安装 Typst**（未安装请先安装）：
+   ```bash
+   typst --version
+   ```
+
+2. **编译论文**：
+   ```bash
+   typst compile main.typ
+   ```
+
+3. **监视模式（实时预览）**：
+   ```bash
+   typst watch main.typ
+   ```
+
+4. **检查格式**：
+   ```
+   检查 main.typ 的格式是否符合 IEEE 会议要求
+   ```
+
 ## 常见工作流
 
 ### 工作流 1：快速论文草稿
@@ -76,7 +100,15 @@ python ~/.claude/skills/latex-paper-en/scripts/compile.py paper.tex --recipe pdf
 python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
 ```
 
-### 工作流 2：最终提交
+### 工作流 2：Typst 快速草稿 🆕
+
+适合快速迭代：
+
+```
+编译 paper.typ 并进行格式检查
+```
+
+### 工作流 3：最终提交
 
 用于发表就绪的输出：
 
@@ -91,7 +123,7 @@ python ~/.claude/skills/latex-paper-en/scripts/check_format.py paper.tex
 python ~/.claude/skills/latex-paper-en/scripts/verify_bib.py references.bib
 ```
 
-### 工作流 3：中文论文
+### 工作流 4：中文论文
 
 完整的论文工作流：
 

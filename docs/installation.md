@@ -9,7 +9,7 @@ Before installing Academic Writing Skills, ensure you have:
    - **macOS**: [MacTeX](https://www.tug.org/mactex/)
    - **Windows**: [MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/)
    - **Linux**: TeX Live (via package manager)
-3. **Python 3.6+**: Required for skill scripts
+3. **Python 3.8+**: Required for skill scripts
 
 ### Verifying Prerequisites
 
@@ -42,8 +42,9 @@ python --version  # or python3 --version
 mkdir -p ~/.claude/skills
 
 # Copy skill folders
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
@@ -53,8 +54,9 @@ cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # Copy skill folders
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ### Windows (CMD)
@@ -64,8 +66,9 @@ Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/sk
 mkdir "%USERPROFILE%\.claude\skills"
 
 :: Copy skill folders
-xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
 ```
 
 ## Verifying Installation
@@ -82,6 +85,7 @@ Get-ChildItem "$env:USERPROFILE/.claude/skills"
 # You should see:
 # - latex-paper-en
 # - latex-thesis-zh
+# - typst-paper
 ```
 
 ## Installing Optional Dependencies
@@ -196,15 +200,6 @@ Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 
 ## Troubleshooting
 
-### "Skill not found" error
-
-**Problem**: `claude skill install` fails with "skill not found"
-
-**Solution**:
-1. Verify your internet connection
-2. Check that the GitHub URL is correct
-3. Try downloading the `.skill.zip` file manually and installing locally
-
 ### "LaTeX not found" error
 
 **Problem**: Compilation fails with "command not found: pdflatex"
@@ -225,7 +220,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 **Problem**: Skill scripts fail with "python: command not found"
 
 **Solution**:
-1. Install Python 3.6+
+1. Install Python 3.8+
 2. Create a symlink: `ln -s /usr/bin/python3 /usr/local/bin/python`
 3. Or use `python3` explicitly in skill scripts
 

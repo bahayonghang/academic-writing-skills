@@ -109,23 +109,9 @@ xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\
 
 ## Quick Start
 
-### LaTeX Documents
+Simply chat with Claude Code and mention your needs. The skills will be automatically triggered based on keywords.
 
-#### Compile Documents
-
-```bash
-# Auto-detect compiler
-python scripts/compile.py main.tex
-
-# Use specific recipe (VS Code LaTeX Workshop style)
-python scripts/compile.py main.tex --recipe xelatex-biber    # Chinese thesis
-python scripts/compile.py main.tex --recipe pdflatex-biber   # English paper
-
-# Watch mode (continuous compilation)
-python scripts/compile.py main.tex --watch
-```
-
-#### Available Recipes
+### Available Recipes
 
 | Recipe | Steps | Use Case |
 |--------|-------|----------|
@@ -137,65 +123,49 @@ python scripts/compile.py main.tex --watch
 | `pdflatex-bibtex` | pdflatex → bibtex → pdflatex×2 | English + BibTeX |
 | `pdflatex-biber` | pdflatex → biber → pdflatex×2 | English + Biber |
 
-#### Other Tools
+### Common Use Cases
 
-```bash
-# Format check
-python scripts/check_format.py main.tex
+**Compilation**
+- "compile my paper with xelatex-biber"
+- "build the LaTeX document"
+- "编译我的论文"
 
-# BibTeX verification
-python scripts/verify_bib.py references.bib
+**Translation (Chinese → English)**
+- "translate this section to English"
+- "中译英这段文字"
+- Automatically detects domain terminology (Deep Learning, Time Series, Industrial Control)
+- Checks for Chinglish patterns and suggests improvements
 
-# Thesis structure mapping (Chinese thesis only)
-python scripts/map_structure.py main.tex
+**De-AI Editing (Reduce AI Writing Traces)**
+- "deai check my introduction"
+- "去AI化这段文字"
+- "humanize this paragraph"
+- Removes empty phrases, over-confident expressions, and mechanical structures
+- Preserves all LaTeX/Typst syntax and citations
 
-# Terminology consistency check (Chinese thesis only)
-python scripts/check_consistency.py main.tex
-```
+**Grammar & Style**
+- "check grammar in abstract"
+- "improve academic tone"
+- "检查语法错误"
+- Detects subject-verb agreement, article usage, tense consistency
+- Suggests academic expression improvements
 
-### Typst Documents 🆕
+**Format Checking**
+- "check format compliance"
+- "verify GB/T 7714 standard" (Chinese thesis)
+- "格式检查"
 
-#### Compile Documents
+**Bibliography**
+- "verify my bibliography"
+- "check citation consistency"
+- "检查参考文献"
 
-```bash
-# Basic compilation
-python scripts/compile.py main.typ
+**Long Sentence Analysis**
+- "simplify this complex sentence"
+- "拆解长难句"
+- Automatically triggers for sentences >50 words (English) or >60 characters (Chinese)
 
-# Watch mode (auto-recompile on changes)
-python scripts/compile.py main.typ --watch
-
-# Export as PNG
-python scripts/compile.py main.typ --format png
-
-# Custom output name
-python scripts/compile.py main.typ --output paper.pdf
-```
-
-#### Other Tools
-
-```bash
-# Format check
-python scripts/check_format.py main.typ
-
-# Venue-specific check
-python scripts/check_format.py main.typ --venue ieee
-
-# Bibliography verification
-python scripts/verify_bib.py references.bib --typ main.typ
-
-# List available fonts
-python scripts/compile.py main.typ --list-fonts
-```
-
-### Typst vs LaTeX
-
-| Feature | Typst | LaTeX |
-|---------|-------|-------|
-| Compilation Speed | Milliseconds ⚡ | Seconds |
-| Syntax | Simple, intuitive | Complex, verbose |
-| Error Messages | Clear, helpful | Cryptic |
-| Learning Curve | Gentle | Steep |
-| Live Preview | Native support | Requires tools |
+**📖 For detailed usage and examples, see the [documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs).**
 
 ## Project Structure
 
@@ -244,12 +214,7 @@ academic-writing-skills/
 │       ├── VENUES.md
 │       └── TYPST_SYNTAX.md
 │
-├── docs/                             # Documentation site
-│
-└── dist/                             # Packaged skills
-    ├── latex-paper-en.skill.zip
-    ├── latex-thesis-zh.skill.zip
-    └── typst-paper.skill.zip
+└── docs/                             # Documentation site
 ```
 
 ## Requirements

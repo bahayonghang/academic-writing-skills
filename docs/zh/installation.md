@@ -9,7 +9,7 @@
    - **macOS**：[MacTeX](https://www.tug.org/mactex/)
    - **Windows**：[MiKTeX](https://miktex.org/) 或 [TeX Live](https://www.tug.org/texlive/)
    - **Linux**：TeX Live（通过包管理器）
-3. **Python 3.6+**：技能脚本所需
+3. **Python 3.8+**：技能脚本所需
 
 ### 验证前置要求
 
@@ -42,8 +42,9 @@ python --version  # 或 python3 --version
 mkdir -p ~/.claude/skills
 
 # 复制 skill 文件夹
-cp -r .claude/skills/latex-paper-en ~/.claude/skills/
-cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
+cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
+cp -r academic-writing-skills/typst-paper ~/.claude/skills/
 ```
 
 ### Windows (PowerShell)
@@ -53,8 +54,9 @@ cp -r .claude/skills/latex-thesis-zh ~/.claude/skills/
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # 复制 skill 文件夹
-Copy-Item -Recurse ".claude/skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ### Windows (CMD)
@@ -64,8 +66,9 @@ Copy-Item -Recurse ".claude/skills/latex-thesis-zh" "$env:USERPROFILE/.claude/sk
 mkdir "%USERPROFILE%\.claude\skills"
 
 :: 复制 skill 文件夹
-xcopy /E /I ".claude\skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I ".claude\skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
+xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
+xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
 ```
 
 ## 验证安装
@@ -82,6 +85,7 @@ Get-ChildItem "$env:USERPROFILE/.claude/skills"
 # 您应该看到：
 # - latex-paper-en
 # - latex-thesis-zh
+# - typst-paper
 ```
 
 ## 安装可选依赖
@@ -196,15 +200,6 @@ Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 
 ## 故障排除
 
-### "Skill not found" 错误
-
-**问题**：`claude skill install` 失败，提示 "skill not found"
-
-**解决方案**：
-1. 验证您的网络连接
-2. 检查 GitHub URL 是否正确
-3. 尝试手动下载 `.skill.zip` 文件并本地安装
-
 ### "LaTeX not found" 错误
 
 **问题**：编译失败，提示 "command not found: pdflatex"
@@ -225,7 +220,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/latex-thesis-zh"
 **问题**：技能脚本失败，提示 "python: command not found"
 
 **解决方案**：
-1. 安装 Python 3.6+
+1. 安装 Python 3.8+
 2. 创建符号链接：`ln -s /usr/bin/python3 /usr/local/bin/python`
 3. 或在技能脚本中显式使用 `python3`
 

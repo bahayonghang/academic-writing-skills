@@ -109,23 +109,9 @@ xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\
 
 ## 快速开始
 
-### LaTeX 文档
+直接与 Claude Code 对话并提出需求，技能会根据关键词自动触发。
 
-#### 编译文档
-
-```bash
-# 自动检测编译器
-python scripts/compile.py main.tex
-
-# 使用指定配方（VS Code LaTeX Workshop 风格）
-python scripts/compile.py main.tex --recipe xelatex-biber    # 中文论文推荐
-python scripts/compile.py main.tex --recipe pdflatex-biber   # 英文论文推荐
-
-# 监视模式（持续编译）
-python scripts/compile.py main.tex --watch
-```
-
-#### 编译配置
+### 编译配置
 
 | 配置 | 步骤 | 适用场景 |
 |------|------|----------|
@@ -137,65 +123,51 @@ python scripts/compile.py main.tex --watch
 | `pdflatex-bibtex` | pdflatex → bibtex → pdflatex×2 | 英文 + BibTeX |
 | `pdflatex-biber` | pdflatex → biber → pdflatex×2 | 英文 + Biber |
 
-#### 其他工具
+### 常见使用场景
 
-```bash
-# 格式检查
-python scripts/check_format.py main.tex
+**编译文档**
+- "用 xelatex-biber 编译我的论文"
+- "编译 LaTeX 文档"
+- "compile my paper"
 
-# BibTeX 验证
-python scripts/verify_bib.py references.bib
+**翻译（中译英）**
+- "翻译这段文字为英文"
+- "中译英这个章节"
+- "translate this section to English"
+- 自动识别领域术语（深度学习、时间序列、工业控制）
+- 检测中式英语并提供改进建议
 
-# 论文结构映射（仅中文论文）
-python scripts/map_structure.py main.tex
+**去AI化编辑（降低AI写作痕迹）**
+- "去AI化这段引言"
+- "降低这段文字的AI痕迹"
+- "deai check my introduction"
+- 删除空话口号、过度确定表达、机械排比结构
+- 完整保留所有 LaTeX/Typst 语法和引用
 
-# 术语一致性检查（仅中文论文）
-python scripts/check_consistency.py main.tex
-```
+**语法与风格**
+- "检查摘要的语法"
+- "提升学术语气"
+- "check grammar in abstract"
+- 检测主谓一致、冠词使用、时态一致性
+- 建议学术表达改进
 
-### Typst 文档 🆕
+**格式检查**
+- "检查格式规范"
+- "验证国标格式" (中文论文)
+- "check format compliance"
 
-#### 编译文档
+**参考文献**
+- "验证参考文献"
+- "检查引用一致性"
+- "verify my bibliography"
 
-```bash
-# 基础编译
-python scripts/compile.py main.typ
+**长难句分析**
+- "简化这个复杂句子"
+- "拆解长难句"
+- "simplify this complex sentence"
+- 自动触发：英文句子 >50 词或中文句子 >60 字
 
-# 监视模式（文件变化时自动重新编译）
-python scripts/compile.py main.typ --watch
-
-# 导出为 PNG
-python scripts/compile.py main.typ --format png
-
-# 自定义输出文件名
-python scripts/compile.py main.typ --output paper.pdf
-```
-
-#### 其他工具
-
-```bash
-# 格式检查
-python scripts/check_format.py main.typ
-
-# 期刊特定检查
-python scripts/check_format.py main.typ --venue ieee
-
-# 参考文献验证
-python scripts/verify_bib.py references.bib --typ main.typ
-
-# 列出可用字体
-python scripts/compile.py main.typ --list-fonts
-```
-
-### Typst vs LaTeX
-
-| 特性 | Typst | LaTeX |
-|------|-------|-------|
-| 编译速度 | 毫秒级 ⚡ | 秒级 |
-| 语法 | 简洁直观 | 复杂冗长 |
-| 错误提示 | 清晰友好 | 晦涩难懂 |
-| 学习曲线 | 平缓 | 陡峭 |
-| 实时预览 | 原生支持 | 需要额外工具 |
+**📖 详细使用方法和示例请查看[文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)。**
 
 ## 项目结构
 
@@ -244,12 +216,7 @@ academic-writing-skills/
 │       ├── VENUES.md                 # 期刊/会议要求
 │       └── TYPST_SYNTAX.md           # Typst 语法参考
 │
-├── docs/                             # 文档站点
-│
-└── dist/                             # 打包的 skills
-    ├── latex-paper-en.skill.zip
-    ├── latex-thesis-zh.skill.zip
-    └── typst-paper.skill.zip
+└── docs/                             # 文档站点
 ```
 
 ## 系统要求
