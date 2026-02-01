@@ -1,2 +1,75 @@
+# AI Assistant Configs
 .claude/
 .serena/
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Tools Cache
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.pytype/
+.pyright/
+
+# Coverage Reports
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+.temp/
+.tmp/
+tmp/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+!.env.*.example

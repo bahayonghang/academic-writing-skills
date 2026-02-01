@@ -3,7 +3,7 @@ name = "academic-writing-skills"
 version = "1.1.0"
 description = "LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses with format checking, compilation, grammar analysis, and de-AI polishing"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "Pillow>=12.1.0",
 ]
@@ -27,12 +27,16 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "pyright>=1.1.390",
 ]
 
 [project.urls]
@@ -47,3 +51,40 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["academic-writing-skills"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501", # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["academic-writing-skills"]
+
+[tool.pyright]
+include = ["academic-writing-skills", "tests"]
+exclude = [
+    "**/__pycache__",
+    "**/node_modules",
+    ".venv",
+    "docs",
+]
+pythonVersion = "3.10"
+typeCheckingMode = "off"
+reportMissingImports = false
+reportMissingModuleSource = false
+reportMissingTypeStubs = false
