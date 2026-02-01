@@ -159,65 +159,7 @@ See [DEAI_GUIDE.md](references/DEAI_GUIDE.md) for details.
 
 ## Templates
 
-### IEEE Template
-```typst
-#import "@preview/charged-ieee:0.1.0": ieee
-
-#show: ieee.with(
-  title: [Your Paper Title],
-  authors: (
-    (
-      name: "Author Name",
-      department: [Department],
-      organization: [University],
-      location: [City, Country],
-      email: "author@email.com"
-    ),
-  ),
-  abstract: [Your abstract here...],
-  index-terms: ("Keyword1", "Keyword2"),
-  bibliography: bibliography("refs.bib"),
-)
-
-= Introduction
-Your content here...
-```
-
-### ACM Template
-```typst
-#set page(
-  paper: "us-letter",
-  margin: (x: 0.75in, y: 1in),
-  columns: 2,
-  column-gutter: 0.33in
-)
-
-#set text(font: "Linux Libertine", size: 9pt)
-#set par(justify: true)
-```
-
-### Chinese Paper Template
-```typst
-#set page(
-  paper: "a4",
-  margin: (x: 3.17cm, y: 2.54cm)
-)
-
-#set text(
-  font: ("Source Han Serif", "Noto Serif CJK SC"),
-  size: 12pt,
-  lang: "zh",
-  region: "cn"
-)
-
-#set par(
-  justify: true,
-  leading: 1em,
-  first-line-indent: 2em
-)
-
-#set heading(numbering: "1.1")
-```
+See `references/TEMPLATES.md` for IEEE/ACM/Chinese templates and usage notes.
 
 ## Venue-Specific Requirements
 
@@ -247,6 +189,7 @@ See [VENUES.md](references/VENUES.md) for detailed requirements.
 - [COMMON_ERRORS.md](references/COMMON_ERRORS.md): Common Chinglish errors
 - [DEAI_GUIDE.md](references/DEAI_GUIDE.md): De-AI writing guide
 - [VENUES.md](references/VENUES.md): Venue-specific requirements
+- [TEMPLATES.md](references/TEMPLATES.md): Typst template examples
 - [TYPST_SYNTAX.md](references/TYPST_SYNTAX.md): Typst syntax reference
 
 ## Resources

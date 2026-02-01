@@ -1,19 +1,36 @@
 ---
 name: typst-paper
+version: 1.1.0
+category: academic-writing
+tags:
+  - typst
+  - paper
+  - chinese
+  - english
+  - conference
+  - journal
+  - deep-learning
+  - compilation
+  - grammar
+  - bibliography
 description: |
   Typst 学术论文助手（支持中英文论文、会议/期刊投稿）。
   领域：深度学习、时间序列、工业控制、计算机科学。
-  
+
   触发词（可独立调用任意模块）：
   - "compile", "编译", "typst compile" → 编译模块
   - "format", "格式检查", "lint" → 格式检查模块
   - "grammar", "语法", "proofread", "润色" → 语法分析模块
   - "long sentence", "长句", "simplify", "拆解" → 长难句分析模块
   - "academic tone", "学术表达", "improve writing" → 学术表达模块
+  - "logic", "coherence", "逻辑", "衔接", "methodology", "方法论" → 逻辑衔接与方法论深度模块
   - "translate", "翻译", "中译英" → 翻译模块
   - "bib", "bibliography", "参考文献" → 参考文献模块
   - "deai", "去AI化", "humanize", "降低AI痕迹" → 去AI化编辑模块
+  - "title", "标题", "title optimization", "create title" → 标题优化模块
   - "template", "模板", "IEEE", "ACM" → 模板配置模块
+argument-hint: "[main.typ] [--section <section>] [--module <module>]"
+allowed-tools: Read, Glob, Grep, Bash(python *), Bash(typst *)
 ---
 
 # Typst 学术论文助手
@@ -25,6 +42,17 @@ description: |
 3. 绝不在未经许可的情况下修改专业术语
 4. 始终先以注释形式输出修改建议
 5. Typst 编译速度快（毫秒级），适合实时预览
+
+## 参数约定（$ARGUMENTS）
+
+- `$ARGUMENTS` 用于接收主 `.typ` 路径、目标章节、模块选择等关键信息。
+- 若 `$ARGUMENTS` 缺失或含糊，先询问：主 `.typ` 路径、目标范围、所需模块。
+- 路径按字面处理，不推断或补全未提供的路径。
+
+## 执行约束
+
+- 仅在用户明确要求时执行脚本/编译命令。
+- 涉及清理或覆盖输出文件的操作前先确认。
 
 ## 统一输出协议（全部模块）
 
@@ -51,9 +79,11 @@ description: |
 ```
 
 常见情况：
+- **脚本不存在**：确认 `scripts/` 路径与工作目录
 - **Typst 未安装**：建议通过 `cargo install typst-cli` 或包管理器安装
 - **字体缺失**：使用 `typst fonts` 查看可用字体
 - **文件不存在**：请用户提供正确 `.typ` 路径
+- **编译失败**：优先定位首个错误并请求日志片段
 
 ## 模块（独立调用）
 
@@ -235,6 +265,79 @@ typst compile --font-path ./fonts main.typ
 
 ---
 
+### 模块：逻辑衔接与方法论深度
+**触发词**: logic, coherence, 逻辑, 衔接, methodology, 方法论, 论证, argument
+
+**目标**：确保段落间逻辑流畅，强化方法论的严谨性。
+
+**重点检查领域**：
+
+**1. 段落级逻辑衔接（AXES 模型）**：
+| 组成部分 | 说明 | 示例 |
+|----------|------|------|
+| **A**ssertion（主张） | 清晰的主题句，陈述核心观点 | "注意力机制能够提升序列建模效果。" |
+| **X**ample（例证） | 支撑主张的具体证据或数据 | "实验中，注意力机制达到95%准确率。" |
+| **E**xplanation（解释） | 分析证据为何支撑主张 | "这一提升源于其捕获长程依赖的能力。" |
+| **S**ignificance（意义） | 与更广泛论点或下一段的联系 | "这一发现为本文架构设计提供了依据。" |
+
+**2. 过渡信号词**：
+| 关系类型 | 中文信号词 | 英文对应 |
+|----------|------------|----------|
+| 递进 | 此外、进一步、更重要的是 | furthermore, moreover |
+| 转折 | 然而、但是、相反 | however, nevertheless |
+| 因果 | 因此、由此可见、故而 | therefore, consequently |
+| 顺序 | 首先、随后、最后 | first, subsequently, finally |
+| 举例 | 例如、具体而言、特别是 | for instance, specifically |
+
+**3. 方法论深度检查清单**：
+- [ ] 每个主张都有证据支撑（数据、引用或逻辑推理）
+- [ ] 方法选择有充分理由（为何选此方法而非其他？）
+- [ ] 明确承认研究局限性
+- [ ] 清晰陈述前提假设
+- [ ] 可复现性细节充分（参数、数据集、评估指标）
+
+**4. 常见问题**：
+| 问题类型 | 表现 | 修正方法 |
+|----------|------|----------|
+| 逻辑断层 | 段落间缺乏衔接 | 添加过渡句说明段落关系 |
+| 无据主张 | 断言缺乏证据支撑 | 补充引用、数据或推理 |
+| 方法论浅薄 | "本文采用X"但无理由 | 解释为何X适合本问题 |
+| 隐含假设 | 前提条件未明示 | 显式陈述假设条件 |
+
+**输出格式**：
+```typst
+// 逻辑衔接（第45行）[Severity: Major] [Priority: P1]: 段落间逻辑断层
+// 问题：从问题描述直接跳转到解决方案，缺乏过渡
+// 原文：数据存在噪声。本文提出一种滤波方法。
+// 修改后：数据存在噪声，这对后续分析造成干扰。因此，本文提出一种滤波方法以解决该问题。
+// 理由：添加因果过渡，连接问题与解决方案
+
+// 方法论深度（第78行）[Severity: Major] [Priority: P1]: 方法选择缺乏论证
+// 问题：方法选择未说明理由
+// 原文：本文采用ResNet作为骨干网络。
+// 修改后：本文采用ResNet作为骨干网络，其残差连接结构能有效缓解梯度消失问题，且在特征提取任务中表现优异。
+// 理由：用技术原理论证架构选择
+```
+
+**分章节指南**：
+| 章节 | 逻辑衔接重点 | 方法论深度重点 |
+|------|--------------|----------------|
+| Abstract | 目的→方法→结果→结论的流畅衔接 | 突出核心贡献 |
+| Introduction | 问题→空白→贡献的流畅衔接 | 论证研究意义 |
+| Related Work | 按主题分组，显式对比 | 定位与前人工作的关系 |
+| Methods | 步骤间逻辑递进 | 论证每个设计选择 |
+| Experiments | 设置→结果→分析的流程 | 解释评估指标选择 |
+| Discussion | 发现→启示→局限的衔接 | 承认研究边界 |
+
+**最佳实践**（参考 [Elsevier](https://elsevier.blog/logical-academic-writing/)、[Proof-Reading-Service](https://www.proof-reading-service.com/blogs/academic-publishing/a-guide-to-creating-clear-and-well-structured-scholarly-arguments)）：
+1. **一段一主题**：每段聚焦单一核心观点
+2. **主题句先行**：段首即陈述本段主张
+3. **证据链完整**：每个主张都需支撑（数据、引用或逻辑）
+4. **显式过渡**：使用信号词标明段落关系
+5. **论证而非描述**：解释"为何"，而非仅陈述"是什么"
+
+---
+
 ### 模块：翻译（中译英）
 **触发词**: translate, 翻译, 中译英, Chinese to English
 
@@ -390,142 +493,326 @@ The proposed method improves performance in the experiments...
 
 ---
 
+### 模块：标题优化
+**触发词**: title, 标题, title optimization, create title, improve title
+
+**目标**：根据 IEEE/ACM/Springer/NeurIPS 最佳实践，生成和优化学术论文标题。
+
+**使用示例**：
+
+**根据内容生成标题**：
+```bash
+python scripts/optimize_title.py main.typ --generate
+# 分析摘要/引言，提出 3-5 个标题候选方案
+```
+
+**优化现有标题**：
+```bash
+python scripts/optimize_title.py main.typ --optimize
+# 分析当前标题并提供改进建议
+```
+
+**检查标题质量**：
+```bash
+python scripts/optimize_title.py main.typ --check
+# 根据最佳实践评估标题（评分 0-100）
+```
+
+**标题质量标准**（基于 IEEE Author Center 及顶级会议/期刊）：
+
+| 标准 | 权重 | 说明 |
+|------|------|------|
+| **简洁性** | 25% | 删除 "A Study of", "Research on", "Novel", "New" |
+| **可搜索性** | 30% | 核心术语（方法+问题）在前 65 字符内 |
+| **长度** | 15% | 最佳：10-15 词（英文）/ 15-25 字（中文）|
+| **具体性** | 20% | 具体方法/问题名称，避免泛泛而谈 |
+| **规范性** | 10% | 避免生僻缩写（除 AI, LSTM, DNA 等通识缩写）|
+
+**标题生成工作流**：
+
+**步骤 1：内容分析**
+从摘要/引言中提取：
+- **研究问题**：解决什么挑战？
+- **研究方法**：提出什么方法？
+- **应用领域**：什么应用场景？
+- **核心贡献**：主要成果是什么？（可选）
+
+**步骤 2：关键词提取**
+识别 3-5 个核心关键词：
+- 方法关键词："Transformer", "Graph Neural Network", "Reinforcement Learning"
+- 问题关键词："Time Series Forecasting", "Fault Detection", "Image Segmentation"
+- 领域关键词："Industrial Control", "Medical Imaging", "Autonomous Driving"
+
+**步骤 3：标题模板选择**
+顶级会议/期刊常用模式：
+
+| 模式 | 示例（英文） | 示例（中文） | 适用场景 |
+|------|-------------|-------------|----------|
+| Method for Problem | "Transformer for Time Series Forecasting" | "时间序列预测的Transformer方法" | 通用研究 |
+| Method: Problem in Domain | "Graph Neural Networks: Fault Detection in Industrial Systems" | "图神经网络：工业系统故障检测" | 领域专项 |
+| Problem via Method | "Time Series Forecasting via Attention Mechanisms" | "基于注意力机制的时间序列预测" | 方法聚焦 |
+| Method + Key Feature | "Lightweight Transformer for Real-Time Detection" | "轻量级Transformer实时检测方法" | 性能聚焦 |
+
+**步骤 4：生成标题候选**
+生成 3-5 个不同侧重的候选标题：
+1. 方法侧重型
+2. 问题侧重型
+3. 应用侧重型
+4. 平衡型（推荐）
+5. 简洁变体
+
+**步骤 5：质量评分**
+每个候选标题获得：
+- 总体评分（0-100）
+- 各标准细分评分
+- 具体改进建议
+
+**标题优化规则**：
+
+**❌ 删除无效词汇**：
+
+**英文**：
+| 避免使用 | 原因 |
+|----------|------|
+| A Study of | Redundant (all papers are studies) |
+| Research on | Redundant (all papers are research) |
+| Novel / New | Implied by publication |
+| Improved / Enhanced | Vague without specifics |
+| Based on | Often unnecessary |
+| Using / Utilizing | Can be replaced with prepositions |
+
+**中文**：
+| 避免使用 | 原因 |
+|----------|------|
+| 关于...的研究 | 冗余（所有论文都是研究） |
+| ...的探索 | 冗余且不具体 |
+| 新型 / 新颖的 | 发表即意味着新颖 |
+| 改进的 / 优化的 | 不具体，需说明如何改进 |
+| 基于...的 | 可简化为直接表述 |
+
+**✅ 推荐结构**：
+
+**英文示例**：
+```
+Good: "Transformer for Time Series Forecasting in Industrial Control"
+Bad:  "A Novel Study on Improved Time Series Forecasting Using Transformers"
+
+Good: "Graph Neural Networks for Fault Detection"
+Bad:  "Research on Novel Fault Detection Based on GNNs"
+
+Good: "Attention-Based LSTM for Multivariate Time Series Prediction"
+Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
+```
+
+**中文示例**：
+```
+好：工业控制系统时间序列预测的Transformer方法
+差：关于基于Transformer的工业控制系统时间序列预测的研究
+
+好：图神经网络故障检测方法及其工业应用
+差：新型改进的基于图神经网络的故障检测方法研究
+
+好：注意力机制的多变量时间序列预测方法
+差：基于注意力机制的改进型多变量时间序列预测模型研究
+```
+
+**关键词布局策略**：
+- **前 65 字符（英文）/ 前 20 字（中文）**：最重要的关键词（方法+问题）
+- **避免开头**：Articles (A, An, The) / "关于"、"对于"
+- **优先使用**：名词和技术术语，而非动词和形容词
+
+**缩写使用准则**：
+| ✅ 可接受 | ❌ 标题中避免 |
+|----------|--------------|
+| AI, ML, DL | Obscure domain-specific acronyms |
+| LSTM, GRU, CNN | Chemical formulas (unless very common) |
+| IoT, 5G, GPS | Lab-specific abbreviations |
+| DNA, RNA, MRI | Non-standard method names |
+
+**会议/期刊特殊要求**：
+
+**IEEE Transactions**：
+- 避免带下标的公式（除非很简单，如 "Nd–Fe–B"）
+- 使用 Title Case（主要词首字母大写）
+- 典型长度：10-15 词
+- 示例："Deep Learning for Predictive Maintenance in Smart Manufacturing"
+
+**ACM Conferences**：
+- 可使用更有创意的标题
+- 可使用冒号添加副标题
+- 典型长度：8-12 词
+- 示例："AttentionFlow: Visualizing Attention Mechanisms in Neural Networks"
+
+**Springer Journals**：
+- 偏好描述性而非创意性
+- 可稍长（最多 20 词）
+- 示例："A Comprehensive Framework for Real-Time Anomaly Detection in Industrial IoT Systems"
+
+**NeurIPS/ICML**：
+- 简洁有力（8-12 词）
+- 方法名通常突出
+- 示例："Transformers Learn In-Context by Gradient Descent"
+
+**输出格式**：
+
+**英文论文**：
+```typst
+// ============================================================
+// TITLE OPTIMIZATION REPORT
+// ============================================================
+// Current Title: "A Novel Study on Time Series Forecasting Using Deep Learning"
+// Quality Score: 45/100
+//
+// Issues Detected:
+// 1. [Critical] Contains "Novel Study" (remove ineffective words)
+// 2. [Major] Vague method description ("Deep Learning" too broad)
+// 3. [Minor] Length acceptable (9 words) but could be more specific
+//
+// Recommended Titles (Ranked):
+//
+// 1. "Transformer-Based Time Series Forecasting for Industrial Control" [Score: 92/100]
+//    - Concise: ✅ (8 words)
+//    - Searchable: ✅ (Method + Problem in first 50 chars)
+//    - Specific: ✅ (Transformer, not just "Deep Learning")
+//    - Domain: ✅ (Industrial Control)
+//
+// 2. "Attention Mechanisms for Multivariate Time Series Prediction" [Score: 88/100]
+//    - Concise: ✅ (7 words)
+//    - Searchable: ✅ (Key terms upfront)
+//    - Specific: ✅ (Attention, Multivariate)
+//    - Note: Consider adding domain if space allows
+//
+// 3. "Deep Learning Approach to Time Series Forecasting in Smart Manufacturing" [Score: 78/100]
+//    - Concise: ⚠️ (10 words, acceptable)
+//    - Searchable: ✅
+//    - Specific: ⚠️ ("Deep Learning" still broad)
+//    - Domain: ✅ (Smart Manufacturing)
+//
+// Keyword Analysis:
+// - Primary: Transformer, Time Series, Forecasting
+// - Secondary: Industrial Control, Attention, LSTM
+// - Searchability: "Transformer Time Series" appears in 1,234 papers (good balance)
+//
+// Suggested Typst Update:
+// #align(center)[
+//   #text(size: 18pt, weight: "bold")[
+//     Transformer-Based Time Series Forecasting for Industrial Control
+//   ]
+// ]
+// ============================================================
+```
+
+**中文论文**：
+```typst
+// ============================================================
+// 标题优化报告
+// ============================================================
+// 当前标题："关于基于深度学习的时间序列预测的研究"
+// 质量评分：48/100
+//
+// 检测到的问题：
+// 1. [严重] 包含"关于...的研究"（删除冗余词汇）
+// 2. [重要] 方法描述过于宽泛（"深度学习"太笼统）
+// 3. [次要] 长度可接受（18字）但可更具体
+//
+// 推荐标题（按评分排序）：
+//
+// 1. "工业控制系统时间序列预测的Transformer方法" [评分: 94/100]
+//    - 简洁性：✅ (19字)
+//    - 可搜索性：✅ (方法+问题在前15字)
+//    - 具体性：✅ (Transformer，而非"深度学习")
+//    - 领域性：✅ (工业控制系统)
+//
+// 2. "多变量时间序列预测的注意力机制研究" [评分: 89/100]
+//    - 简洁性：✅ (17字)
+//    - 可搜索性：✅ (核心术语靠前)
+//    - 具体性：✅ (注意力机制、多变量)
+//    - 建议：可考虑添加应用领域
+//
+// Suggested Typst Update:
+// #align(center)[
+//   #text(size: 18pt, weight: "bold")[
+//     工业控制系统时间序列预测的Transformer方法
+//   ]
+// ]
+// ============================================================
+```
+
+**交互式模式**（推荐）：
+```bash
+python scripts/optimize_title.py main.typ --interactive
+# 逐步引导式标题创建，包含用户输入
+```
+
+**批量模式**（多篇论文）：
+```bash
+python scripts/optimize_title.py papers/*.typ --batch --output title_report.txt
+```
+
+**标题对比测试**（可选）：
+```bash
+python scripts/optimize_title.py main.typ --compare "Title A" "Title B" "Title C"
+# 对比多个标题候选，提供详细评分
+```
+
+**最佳实践总结**：
+
+**英文论文**：
+1. **关键词前置**：Method + Problem 放在前 10 词
+2. **具体明确**："Transformer" > "Deep Learning" > "Machine Learning"
+3. **删除冗余**：去掉 "Novel", "Study", "Research", "Based on"
+4. **控制长度**：目标 10-15 词
+5. **测试可搜索性**：用这些关键词能找到你的论文吗？
+6. **避免生僻**：除非是广泛认可的缩写（AI, LSTM, CNN）
+7. **匹配会议风格**：IEEE（描述性）、ACM（创意性）、NeurIPS（简洁性）
+
+**中文论文**：
+1. **关键词前置**：方法+问题放在前 20 字
+2. **具体明确**："Transformer" > "深度学习" > "机器学习"
+3. **删除冗余**：去掉"关于"、"研究"、"新型"、"基于"
+4. **控制长度**：目标 15-25 字
+5. **测试可搜索性**：用这些关键词能找到你的论文吗？
+6. **避免生僻**：除非是广泛认可的术语（AI、LSTM、CNN）
+7. **中英对照**：确保英文标题与中文标题对应
+
+**Typst 标题设置示例**：
+
+**英文论文**：
+```typst
+#align(center)[
+  #text(size: 18pt, weight: "bold")[
+    Transformer-Based Time Series Forecasting for Industrial Control
+  ]
+]
+```
+
+**中文论文**：
+```typst
+#align(center)[
+  #text(size: 18pt, weight: "bold", font: "Source Han Serif")[
+    工业控制系统时间序列预测的Transformer方法
+  ]
+  
+  #v(0.5em)
+  
+  #text(size: 14pt, font: "Times New Roman")[
+    Transformer-Based Time Series Forecasting for Industrial Control Systems
+  ]
+]
+```
+
+参考资源：
+- [IEEE Author Center](https://conferences.ieeeauthorcenter.ieee.org/)
+- [Royal Society Blog on Title Optimization](https://royalsociety.org/blog/2025/01/title-abstract-and-keywords-a-practical-guide-to-maximizing-the-visibility-and-impact-of-your-papers/)
+- [Academic Search Engine Optimization](https://openjournalsystems.com/academic-search-engine-optimization/)
+
+---
+
 ### 模块：模板配置
 **触发词**: template, 模板, IEEE, ACM, Springer, NeurIPS
 
-**Typst 学术模板**:
-
-**IEEE 模板**:
-```typst
-#import "@preview/charged-ieee:0.1.0": ieee
-
-#show: ieee.with(
-  title: [Your Paper Title],
-  authors: (
-    (
-      name: "Author Name",
-      department: [Department],
-      organization: [University],
-      location: [City, Country],
-      email: "author@email.com"
-    ),
-  ),
-  abstract: [
-    Your abstract here...
-  ],
-  index-terms: ("Machine Learning", "Deep Learning"),
-  bibliography: bibliography("references.bib"),
-)
-
-// Your content here
-```
-
-**ACM 模板**:
-```typst
-// 使用 ACM 两栏格式
-#set page(
-  paper: "us-letter",
-  margin: (x: 0.75in, y: 1in),
-  columns: 2,
-  column-gutter: 0.33in
-)
-
-#set text(font: "Linux Libertine", size: 9pt)
-#set par(justify: true)
-```
-
-**通用学术论文模板**:
-```typst
-#set page(
-  paper: "a4",
-  margin: (x: 2.5cm, y: 2.5cm)
-)
-
-#set text(
-  font: "Times New Roman",
-  size: 11pt,
-  lang: "en"
-)
-
-#set par(
-  justify: true,
-  leading: 0.65em,
-  first-line-indent: 1.5em
-)
-
-#set heading(numbering: "1.1")
-
-// 标题
-#align(center)[
-  #text(size: 16pt, weight: "bold")[Your Paper Title]
-  
-  #v(0.5em)
-  
-  Author Name#super[1], Co-author Name#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10pt)[
-    #super[1]University Name, #super[2]Institution Name
-  ]
-]
-
-// 摘要
-#heading(outlined: false, numbering: none)[Abstract]
-Your abstract here...
-
-// 正文
-= Introduction
-Your content here...
-```
-
-**中文论文模板**:
-```typst
-#set page(
-  paper: "a4",
-  margin: (x: 3.17cm, y: 2.54cm)
-)
-
-#set text(
-  font: ("Source Han Serif", "Noto Serif CJK SC"),
-  size: 12pt,
-  lang: "zh",
-  region: "cn"
-)
-
-#set par(
-  justify: true,
-  leading: 1em,
-  first-line-indent: 2em
-)
-
-#set heading(numbering: "1.1")
-
-// 标题
-#align(center)[
-  #text(size: 18pt, weight: "bold")[论文标题]
-  
-  #v(0.5em)
-  
-  作者姓名#super[1]，合作者姓名#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10.5pt)[
-    #super[1]大学名称，#super[2]机构名称
-  ]
-]
-
-// 摘要
-#heading(outlined: false, numbering: none)[摘要]
-摘要内容...
-
-*关键词*：关键词1；关键词2；关键词3
-
-// 正文
-= 引言
-正文内容...
-```
+模板配置示例与用法已移至参考文档：
+- [TEMPLATES.md](references/TEMPLATES.md)
 
 ---
 
@@ -537,6 +824,33 @@ Your content here...
 - Typst 语法与排版：`references/TYPST_SYNTAX.md`
 - 写作风格与常见错误：`references/STYLE_GUIDE.md`、`references/COMMON_ERRORS.md`
 - 去AI化策略：`references/DEAI_GUIDE.md`
+- 模板示例与配置：`references/TEMPLATES.md`
+
+## 最佳实践
+
+本技能遵循 Claude Code Skills 最佳实践：
+
+### 技能设计原则 / Skill Design Principles
+1. **职责单一 / Focused Responsibility**：每个模块处理一项特定任务（KISS 原则）
+2. **最小权限 / Minimal Permissions**：仅请求必要的工具访问权限
+3. **明确触发 / Clear Triggers**：使用特定关键词调用模块
+4. **结构化输出 / Structured Output**：所有建议使用统一的 diff-comment 格式
+
+### 使用指南 / Usage Guidelines
+1. **先检查编译 / Start with Compilation**：在进行其他检查前，确保文档能正常编译
+2. **迭代优化 / Iterative Refinement**：每次只应用一个模块，便于控制修改范围
+3. **保护关键元素 / Preserve Protected Elements**：绝不修改 `@cite`、`@ref`、`@label`、数学环境
+4. **提交前验证 / Verify Before Commit**：接受修改前仔细审查所有建议
+
+### 与其他工具集成 / Integration with Other Tools
+- 配合版本控制（git）跟踪修改历史
+- 使用 `typst watch` 实现实时预览（毫秒级编译）
+- 导出建议与合作者共同审阅
+
+### Typst 特有优势 / Typst-Specific Advantages
+- **编译速度**：毫秒级编译，适合实时预览和快速迭代
+- **现代语法**：比 LaTeX 更简洁直观的标记语言
+- **增量编译**：只重新编译修改的部分，提高效率
 
 ## 注意事项
 
