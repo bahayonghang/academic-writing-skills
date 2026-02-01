@@ -18,7 +18,6 @@ Features:
 """
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
@@ -30,7 +29,7 @@ from typing import Optional
 class TypstCompiler:
     """Unified Typst compilation with multiple output formats."""
 
-    SUPPORTED_FORMATS = ['pdf', 'png', 'svg']
+    SUPPORTED_FORMATS = ["pdf", "png", "svg"]
 
     def __init__(self, typ_file: str):
         self.typ_file = Path(typ_file).resolve()
@@ -38,7 +37,7 @@ class TypstCompiler:
 
     def _check_typst(self) -> tuple[bool, str]:
         """Check if Typst is installed."""
-        if not shutil.which('typst'):
+        if not shutil.which("typst"):
             return False, (
                 "Typst not found. Install it using:\n"
                 "  - Cargo: cargo install typst-cli\n"
@@ -51,9 +50,9 @@ class TypstCompiler:
     def compile(
         self,
         output: Optional[str] = None,
-        format: str = 'pdf',
+        format: str = "pdf",
         font_path: Optional[str] = None,
-        watch: bool = False
+        watch: bool = False,
     ) -> int:
         """
         Compile the Typst document.
@@ -81,12 +80,12 @@ class TypstCompiler:
 
         # Build command
         if watch:
-            cmd = ['typst', 'watch']
+            cmd = ["typst", "watch"]
             print(f"[INFO] Watch mode enabled for {self.typ_file.name}")
             print("[INFO] File will be recompiled automatically on changes")
             print("[INFO] Press Ctrl+C to stop")
         else:
-            cmd = ['typst', 'compile']
+            cmd = ["typst", "compile"]
             print(f"[INFO] Compiling {self.typ_file.name}")
 
         # Add input file
@@ -97,17 +96,17 @@ class TypstCompiler:
             cmd.append(output)
         elif not watch:
             # Default output name
-            default_output = self.typ_file.with_suffix(f'.{format}')
+            default_output = self.typ_file.with_suffix(f".{format}")
             cmd.append(str(default_output))
 
         # Add format option (only for compile, not watch)
-        if not watch and format != 'pdf':
-            cmd.insert(2, '--format')
+        if not watch and format != "pdf":
+            cmd.insert(2, "--format")
             cmd.insert(3, format)
 
         # Add font path if specified
         if font_path:
-            cmd.extend(['--font-path', font_path])
+            cmd.extend(["--font-path", font_path])
 
         print(f"[INFO] Working directory: {self.work_dir}")
         print(f"[INFO] Command: {' '.join(cmd)}")
@@ -124,7 +123,7 @@ class TypstCompiler:
 
             if result.returncode == 0:
                 if not watch:
-                    output_file = output or self.typ_file.with_suffix(f'.{format}')
+                    output_file = output or self.typ_file.with_suffix(f".{format}")
                     print(f"\n[SUCCESS] Output generated: {output_file}")
                     print(f"[INFO] Compilation time: {elapsed:.3f}s")
             else:
@@ -149,7 +148,7 @@ class TypstCompiler:
         print("[INFO] Listing available fonts...")
         try:
             result = subprocess.run(
-                ['typst', 'fonts'],
+                ["typst", "fonts"],
                 cwd=self.work_dir,
                 capture_output=False,
             )
@@ -168,7 +167,7 @@ class TypstCompiler:
         print(f"[INFO] Querying: {selector}")
         try:
             result = subprocess.run(
-                ['typst', 'query', str(self.typ_file), selector],
+                ["typst", "query", str(self.typ_file), selector],
                 cwd=self.work_dir,
                 capture_output=False,
             )
@@ -180,7 +179,7 @@ class TypstCompiler:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Typst Compilation Script - Fast compilation for Typst documents',
+        description="Typst Compilation Script - Fast compilation for Typst documents",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -201,37 +200,32 @@ Installation:
   - Homebrew (macOS): brew install typst
   - Package manager (Linux): check your distro
   - Download: https://github.com/typst/typst/releases
-        """
+        """,
     )
-    parser.add_argument('typ_file', help='Main .typ file to compile')
+    parser.add_argument("typ_file", help="Main .typ file to compile")
     parser.add_argument(
-        '--output', '-o',
-        help='Output file path (default: same name as input with appropriate extension)'
-    )
-    parser.add_argument(
-        '--format', '-f',
-        choices=['pdf', 'png', 'svg'],
-        default='pdf',
-        help='Output format (default: pdf)'
+        "--output",
+        "-o",
+        help="Output file path (default: same name as input with appropriate extension)",
     )
     parser.add_argument(
-        '--font-path',
-        help='Custom font directory'
+        "--format",
+        "-f",
+        choices=["pdf", "png", "svg"],
+        default="pdf",
+        help="Output format (default: pdf)",
+    )
+    parser.add_argument("--font-path", help="Custom font directory")
+    parser.add_argument(
+        "--watch",
+        "-w",
+        action="store_true",
+        help="Enable watch mode (auto-recompile on file changes)",
     )
     parser.add_argument(
-        '--watch', '-w',
-        action='store_true',
-        help='Enable watch mode (auto-recompile on file changes)'
+        "--list-fonts", action="store_true", help="List available fonts in the system"
     )
-    parser.add_argument(
-        '--list-fonts',
-        action='store_true',
-        help='List available fonts in the system'
-    )
-    parser.add_argument(
-        '--query', '-q',
-        help='Query document metadata (e.g., "<heading>")'
-    )
+    parser.add_argument("--query", "-q", help='Query document metadata (e.g., "<heading>")')
 
     args = parser.parse_args()
 
@@ -241,7 +235,7 @@ Installation:
         print(f"[ERROR] File not found: {args.typ_file}")
         sys.exit(1)
 
-    if not typ_path.suffix == '.typ':
+    if typ_path.suffix != ".typ":
         print(f"[WARNING] File does not have .typ extension: {args.typ_file}")
 
     # Create compiler instance
@@ -253,13 +247,12 @@ Installation:
     elif args.query:
         sys.exit(compiler.query(args.query))
     else:
-        sys.exit(compiler.compile(
-            output=args.output,
-            format=args.format,
-            font_path=args.font_path,
-            watch=args.watch
-        ))
+        sys.exit(
+            compiler.compile(
+                output=args.output, format=args.format, font_path=args.font_path, watch=args.watch
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -2,118 +2,168 @@
 """
 LaTeX Compilation Script - Unified compiler for pdflatex/xelatex/lualatex
 
+Default Behavior:
+    Uses latexmk which automatically handles all dependencies (bibtex/biber,
+    cross-references, indexes, glossaries) and determines the optimal number
+    of compilation passes. This is the recommended approach for most use cases.
+
 Usage:
-    python compile.py main.tex                       # Auto-detect compiler
+    python compile.py main.tex                       # Default: latexmk auto
     python compile.py main.tex --compiler xelatex    # Explicit compiler
-    python compile.py main.tex --recipe xelatex-bibtex  # Use recipe
+    python compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
+    python compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
     python compile.py main.tex --watch               # Continuous compilation
     python compile.py main.tex --clean               # Clean auxiliary files
 
 Recipes (matching VS Code LaTeX Workshop):
-    xelatex          - XeLaTeX only
-    pdflatex         - PDFLaTeX only
-    latexmk          - LaTeXmk auto
+    latexmk          - LaTeXmk auto (DEFAULT - recommended)
+    pdflatex         - PDFLaTeX single pass
+    xelatex          - XeLaTeX single pass
+    pdflatex-bibtex  - pdflatex -> bibtex -> pdflatex*2 (traditional)
+    pdflatex-biber   - pdflatex -> biber -> pdflatex*2 (modern biblatex)
     xelatex-bibtex   - xelatex -> bibtex -> xelatex*2
     xelatex-biber    - xelatex -> biber -> xelatex*2
-    pdflatex-bibtex  - pdflatex -> bibtex -> pdflatex*2
-    pdflatex-biber   - pdflatex -> biber -> pdflatex*2
 """
 
 import argparse
-import os
 import re
 import shutil
 import subprocess
 import sys
-import time
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 
 class LaTeXCompiler:
     """Unified LaTeX compilation with multiple recipes."""
 
-    COMPILERS = {
-        'pdflatex': ['-pdf', '-pdflatex=pdflatex -interaction=nonstopmode -shell-escape %O %S'],
-        'xelatex': ['-xelatex', '-pdfxe', '-xelatex=xelatex -interaction=nonstopmode -shell-escape %O %S'],
-        'lualatex': ['-lualatex', '-pdflua', '-lualatex=lualatex -interaction=nonstopmode -shell-escape %O %S'],
-    }
+    COMPILERS = {"pdflatex", "xelatex", "lualatex"}
+
+    # Default recipe: latexmk handles dependencies automatically (best practice)
+    # latexmk auto-detects bibtex/biber needs and runs the correct number of passes
+    DEFAULT_RECIPE = "latexmk"
 
     # Recipes matching VS Code LaTeX Workshop configuration
+    # Recommended workflow:
+    #   - latexmk (default): Auto-detect and handle all dependencies intelligently
+    #   - pdflatex-bibtex: Traditional BibTeX workflow (legacy .bst styles)
+    #   - pdflatex-biber: Modern biblatex + biber workflow (recommended for new projects)
     RECIPES = {
-        'xelatex': ['xelatex'],
-        'pdflatex': ['pdflatex'],
-        'bibtex': ['bibtex'],
-        'biber': ['biber'],
-        'latexmk': ['latexmk'],
-        'xelatex-bibtex': ['xelatex', 'bibtex', 'xelatex', 'xelatex'],
-        'xelatex-biber': ['xelatex', 'biber', 'xelatex', 'xelatex'],
-        'pdflatex-bibtex': ['pdflatex', 'bibtex', 'pdflatex', 'pdflatex'],
-        'pdflatex-biber': ['pdflatex', 'biber', 'pdflatex', 'pdflatex'],
+        # Single compilation (quick builds)
+        "xelatex": ["xelatex"],
+        "pdflatex": ["pdflatex"],
+        "latexmk": ["latexmk"],  # Default: auto-handles bibtex/biber
+        # Full workflows (explicit control over compilation steps)
+        "xelatex-bibtex": ["xelatex", "bibtex", "xelatex", "xelatex"],
+        "xelatex-biber": ["xelatex", "biber", "xelatex", "xelatex"],
+        "pdflatex-bibtex": ["pdflatex", "bibtex", "pdflatex", "pdflatex"],
+        "pdflatex-biber": ["pdflatex", "biber", "pdflatex", "pdflatex"],
     }
 
     # Patterns indicating Chinese content
     CHINESE_PATTERNS = [
-        r'\\usepackage.*{ctex}',
-        r'\\usepackage.*{xeCJK}',
-        r'\\documentclass.*{ctexart}',
-        r'\\documentclass.*{ctexbook}',
-        r'\\documentclass.*{ctexrep}',
-        r'\\documentclass.*{thuthesis}',
-        r'\\documentclass.*{pkuthss}',
-        r'\\documentclass.*{ustcthesis}',
-        r'\\documentclass.*{fduthesis}',
-        r'[\u4e00-\u9fff]',  # Chinese characters
+        r"\\usepackage.*{ctex}",
+        r"\\usepackage.*{xeCJK}",
+        r"\\documentclass.*{ctexart}",
+        r"\\documentclass.*{ctexbook}",
+        r"\\documentclass.*{ctexrep}",
+        r"\\documentclass.*{thuthesis}",
+        r"\\documentclass.*{pkuthss}",
+        r"\\documentclass.*{ustcthesis}",
+        r"\\documentclass.*{fduthesis}",
+        r"[\u4e00-\u9fff]",  # Chinese characters
     ]
 
-    def __init__(self, tex_file: str, compiler: Optional[str] = None, recipe: Optional[str] = None):
+    def __init__(
+        self,
+        tex_file: str,
+        compiler: Optional[str] = None,
+        recipe: Optional[str] = None,
+        shell_escape: bool = False,
+    ):
         self.tex_file = Path(tex_file).resolve()
         self.work_dir = self.tex_file.parent
         self.compiler = compiler or self._detect_compiler()
         self.recipe = recipe
+        self.shell_escape = shell_escape
 
     def _detect_compiler(self) -> str:
         """Auto-detect appropriate compiler based on document content."""
         try:
-            content = self.tex_file.read_text(encoding='utf-8', errors='ignore')
+            content = self.tex_file.read_text(encoding="utf-8", errors="ignore")
         except Exception:
-            return 'pdflatex'  # Default fallback
+            return "pdflatex"  # Default fallback
 
         # Check for Chinese content
         for pattern in self.CHINESE_PATTERNS:
             if re.search(pattern, content):
-                print(f"[INFO] Detected Chinese content, using xelatex")
-                return 'xelatex'
+                print("[INFO] Detected Chinese content, using xelatex")
+                return "xelatex"
 
         # Check for explicit engine specification
-        if re.search(r'%\s*!TEX\s+program\s*=\s*xelatex', content, re.IGNORECASE):
-            return 'xelatex'
-        if re.search(r'%\s*!TEX\s+program\s*=\s*lualatex', content, re.IGNORECASE):
-            return 'lualatex'
-        if re.search(r'%\s*!TEX\s+program\s*=\s*pdflatex', content, re.IGNORECASE):
-            return 'pdflatex'
+        if re.search(r"%\s*!TEX\s+program\s*=\s*xelatex", content, re.IGNORECASE):
+            return "xelatex"
+        if re.search(r"%\s*!TEX\s+program\s*=\s*lualatex", content, re.IGNORECASE):
+            return "lualatex"
+        if re.search(r"%\s*!TEX\s+program\s*=\s*pdflatex", content, re.IGNORECASE):
+            return "pdflatex"
 
         # Check for fontspec (requires xelatex or lualatex)
-        if re.search(r'\\usepackage.*{fontspec}', content):
-            print(f"[INFO] Detected fontspec package, using xelatex")
-            return 'xelatex'
+        if re.search(r"\\usepackage.*{fontspec}", content):
+            print("[INFO] Detected fontspec package, using xelatex")
+            return "xelatex"
 
-        return 'pdflatex'
+        return "pdflatex"
 
-    def _check_tools(self) -> Tuple[bool, str]:
-        """Check if required tools are available."""
-        # Check latexmk
-        if not shutil.which('latexmk'):
+    def _check_tools_for_compiler(self) -> tuple[bool, str]:
+        """Check tools required for latexmk-based compilation."""
+        if not shutil.which("latexmk"):
             return False, "latexmk not found. Install TeX Live or MiKTeX."
 
-        # Check selected compiler
         compiler_cmd = self.compiler
         if not shutil.which(compiler_cmd):
             return False, f"{compiler_cmd} not found. Install TeX Live or MiKTeX."
 
         return True, "All tools available"
 
-    def compile(self, watch: bool = False, biber: bool = False, outdir: Optional[str] = None) -> int:
+    def _check_tools_for_recipe(self) -> tuple[bool, str]:
+        """Check tools required by a recipe."""
+        steps = self.RECIPES.get(self.recipe, [])
+        required = []
+        for step in steps:
+            if step == "latexmk":
+                required.append("latexmk")
+            elif step in ("pdflatex", "xelatex", "lualatex", "bibtex", "biber"):
+                required.append(step)
+
+        for tool in dict.fromkeys(required):
+            if not shutil.which(tool):
+                return False, f"{tool} not found. Install TeX Live or MiKTeX."
+
+        return True, "All tools available"
+
+    def _latexmk_engine_args(self) -> list[str]:
+        """Build latexmk engine args with optional shell-escape."""
+        if self.compiler not in self.COMPILERS:
+            return ["-pdf"]
+
+        engine = self.compiler
+        if self.shell_escape:
+            engine = f"{engine} -shell-escape"
+
+        if self.compiler == "pdflatex":
+            return ["-pdf", f"-pdflatex={engine} %O %S"]
+        if self.compiler == "xelatex":
+            return ["-xelatex", "-pdfxe", f"-xelatex={engine} %O %S"]
+        return ["-lualatex", "-pdflua", f"-lualatex={engine} %O %S"]
+
+    def _maybe_warn_shell_escape(self) -> None:
+        if self.shell_escape:
+            print("[WARNING] Shell escape enabled. Only use with trusted sources.")
+
+    def compile(
+        self, watch: bool = False, biber: bool = False, outdir: Optional[str] = None
+    ) -> int:
         """
         Compile the LaTeX document.
 
@@ -126,7 +176,10 @@ class LaTeXCompiler:
             Exit code (0 for success)
         """
         # Check tools
-        ok, msg = self._check_tools()
+        if self.recipe:
+            ok, msg = self._check_tools_for_recipe()
+        else:
+            ok, msg = self._check_tools_for_compiler()
         if not ok:
             print(f"[ERROR] {msg}")
             return 1
@@ -137,30 +190,30 @@ class LaTeXCompiler:
 
         print(f"[INFO] Compiling {self.tex_file.name} with {self.compiler}")
         print(f"[INFO] Working directory: {self.work_dir}")
+        self._maybe_warn_shell_escape()
 
         # Build latexmk command
-        cmd = ['latexmk']
+        cmd = ["latexmk"]
 
         # Add compiler-specific options
-        if self.compiler in self.COMPILERS:
-            cmd.extend(self.COMPILERS[self.compiler])
-        else:
-            cmd.append('-pdf')
+        cmd.extend(self._latexmk_engine_args())
 
         # Add common options
-        cmd.extend([
-            '-interaction=nonstopmode',
-            '-file-line-error',
-            '-synctex=1',
-        ])
+        cmd.extend(
+            [
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-synctex=1",
+            ]
+        )
 
         # Biber support
         if biber:
-            cmd.append('-bibtex')
+            cmd.append("-bibtex")
 
         # Watch mode
         if watch:
-            cmd.append('-pvc')
+            cmd.append("-pvc")
             print("[INFO] Watch mode enabled. Press Ctrl+C to stop.")
 
         # Add input file
@@ -174,7 +227,7 @@ class LaTeXCompiler:
                 capture_output=False,
             )
             if result.returncode == 0:
-                pdf_file = self.tex_file.with_suffix('.pdf')
+                pdf_file = self.tex_file.with_suffix(".pdf")
                 print(f"\n[SUCCESS] PDF generated: {pdf_file}")
             else:
                 print(f"\n[ERROR] Compilation failed with exit code {result.returncode}")
@@ -198,6 +251,7 @@ class LaTeXCompiler:
         print(f"[INFO] Using recipe: {self.recipe}")
         print(f"[INFO] Steps: {' -> '.join(steps)}")
         print(f"[INFO] Working directory: {self.work_dir}")
+        self._maybe_warn_shell_escape()
 
         tex_base = self.tex_file.stem
 
@@ -205,37 +259,43 @@ class LaTeXCompiler:
             print(f"\n[STEP {i}/{len(steps)}] Running {step}...")
 
             # Match VS Code LaTeX Workshop tool configurations exactly
-            if step == 'latexmk':
+            if step == "latexmk":
                 cmd = [
-                    'latexmk',
-                    '-synctex=1',
-                    '-interaction=nonstopmode',
-                    '-file-line-error',
-                    '-pdf',
+                    "latexmk",
+                    "-synctex=1",
+                    "-interaction=nonstopmode",
+                    "-file-line-error",
+                    "-pdf",
                 ]
+                if self.shell_escape:
+                    cmd.append("-shell-escape")
                 if outdir:
-                    cmd.append(f'-outdir={outdir}')
+                    cmd.append(f"-outdir={outdir}")
                 cmd.append(str(self.tex_file))
-            elif step in ('pdflatex', 'xelatex'):
+            elif step in ("pdflatex", "xelatex"):
                 cmd = [
                     step,
-                    '-synctex=1',
-                    '-interaction=nonstopmode',
-                    '-file-line-error',
-                    str(self.tex_file),
+                    "-synctex=1",
+                    "-interaction=nonstopmode",
+                    "-file-line-error",
                 ]
-            elif step == 'lualatex':
+                if self.shell_escape:
+                    cmd.append("-shell-escape")
+                cmd.append(str(self.tex_file))
+            elif step == "lualatex":
                 cmd = [
-                    'lualatex',
-                    '-synctex=1',
-                    '-interaction=nonstopmode',
-                    '-file-line-error',
-                    str(self.tex_file),
+                    "lualatex",
+                    "-synctex=1",
+                    "-interaction=nonstopmode",
+                    "-file-line-error",
                 ]
-            elif step == 'bibtex':
-                cmd = ['bibtex', tex_base]
-            elif step == 'biber':
-                cmd = ['biber', tex_base]
+                if self.shell_escape:
+                    cmd.append("-shell-escape")
+                cmd.append(str(self.tex_file))
+            elif step == "bibtex":
+                cmd = ["bibtex", tex_base]
+            elif step == "biber":
+                cmd = ["biber", tex_base]
             else:
                 print(f"[ERROR] Unknown step: {step}")
                 return 1
@@ -248,7 +308,7 @@ class LaTeXCompiler:
                 )
                 if result.returncode != 0:
                     # bibtex/biber may return non-zero for warnings, continue anyway
-                    if step not in ('bibtex', 'biber'):
+                    if step not in ("bibtex", "biber"):
                         print(f"[ERROR] Step {step} failed with exit code {result.returncode}")
                         return result.returncode
                     else:
@@ -261,7 +321,7 @@ class LaTeXCompiler:
                 print(f"[ERROR] {e}")
                 return 1
 
-        pdf_file = self.tex_file.with_suffix('.pdf')
+        pdf_file = self.tex_file.with_suffix(".pdf")
         if pdf_file.exists():
             print(f"\n[SUCCESS] PDF generated: {pdf_file}")
             return 0
@@ -281,9 +341,9 @@ class LaTeXCompiler:
         """
         print(f"[INFO] Cleaning auxiliary files in {self.work_dir}")
 
-        cmd = ['latexmk', '-c']
+        cmd = ["latexmk", "-c"]
         if full:
-            cmd = ['latexmk', '-C']
+            cmd = ["latexmk", "-C"]
 
         cmd.append(str(self.tex_file))
 
@@ -299,59 +359,68 @@ class LaTeXCompiler:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='LaTeX Compilation Script - Unified compiler for pdflatex/xelatex/lualatex',
+        description="LaTeX Compilation Script - Unified compiler for pdflatex/xelatex/lualatex",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+Default Behavior:
+  Uses latexmk which automatically handles all dependencies (bibtex/biber,
+  cross-references, etc.) and determines the optimal number of compilation passes.
+  This is the recommended approach for most use cases.
+
 Recipes (matching VS Code LaTeX Workshop):
-  xelatex          XeLaTeX only
-  pdflatex         PDFLaTeX only
-  latexmk          LaTeXmk auto
+  latexmk          LaTeXmk auto (DEFAULT - recommended)
+  pdflatex         PDFLaTeX single pass
+  xelatex          XeLaTeX single pass
+  pdflatex-bibtex  pdflatex -> bibtex -> pdflatex*2 (traditional workflow)
+  pdflatex-biber   pdflatex -> biber -> pdflatex*2 (modern biblatex)
   xelatex-bibtex   xelatex -> bibtex -> xelatex*2
   xelatex-biber    xelatex -> biber -> xelatex*2
-  pdflatex-bibtex  pdflatex -> bibtex -> pdflatex*2
-  pdflatex-biber   pdflatex -> biber -> pdflatex*2
 
 Examples:
-  python compile.py main.tex                        # Auto-detect
-  python compile.py main.tex --recipe xelatex-biber # Full workflow
+  python compile.py main.tex                        # Default: latexmk auto
+  python compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
+  python compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
   python compile.py main.tex --watch                # Watch mode
-        """
+        """,
     )
-    parser.add_argument('tex_file', help='Main .tex file to compile')
+    parser.add_argument("tex_file", help="Main .tex file to compile")
     parser.add_argument(
-        '--compiler', '-c',
-        choices=['pdflatex', 'xelatex', 'lualatex'],
-        help='Compiler to use (auto-detected if not specified)'
-    )
-    parser.add_argument(
-        '--recipe', '-r',
-        choices=['xelatex', 'pdflatex', 'latexmk', 'xelatex-bibtex',
-                 'xelatex-biber', 'pdflatex-bibtex', 'pdflatex-biber'],
-        help='Use predefined recipe (VS Code LaTeX Workshop style)'
+        "--compiler",
+        "-c",
+        choices=["pdflatex", "xelatex", "lualatex"],
+        help="Compiler to use (auto-detected if not specified)",
     )
     parser.add_argument(
-        '--watch', '-w',
-        action='store_true',
-        help='Enable continuous compilation (watch mode)'
+        "--recipe",
+        "-r",
+        choices=[
+            "xelatex",
+            "pdflatex",
+            "latexmk",
+            "xelatex-bibtex",
+            "xelatex-biber",
+            "pdflatex-bibtex",
+            "pdflatex-biber",
+        ],
+        help="Use predefined recipe (VS Code LaTeX Workshop style)",
     )
     parser.add_argument(
-        '--biber', '-b',
-        action='store_true',
-        help='Use biber for bibliography processing'
+        "--watch", "-w", action="store_true", help="Enable continuous compilation (watch mode)"
     )
     parser.add_argument(
-        '--clean',
-        action='store_true',
-        help='Clean auxiliary files'
+        "--biber", "-b", action="store_true", help="Use biber for bibliography processing"
     )
     parser.add_argument(
-        '--clean-all',
-        action='store_true',
-        help='Clean all generated files including PDF'
+        "--shell-escape",
+        action="store_true",
+        help="Enable shell-escape (use with trusted sources only)",
+    )
+    parser.add_argument("--clean", action="store_true", help="Clean auxiliary files")
+    parser.add_argument(
+        "--clean-all", action="store_true", help="Clean all generated files including PDF"
     )
     parser.add_argument(
-        '--outdir', '-o',
-        help='Output directory for generated files (latexmk only)'
+        "--outdir", "-o", help="Output directory for generated files (latexmk only)"
     )
 
     args = parser.parse_args()
@@ -362,18 +431,29 @@ Examples:
         print(f"[ERROR] File not found: {args.tex_file}")
         sys.exit(1)
 
-    if not tex_path.suffix == '.tex':
+    if tex_path.suffix != ".tex":
         print(f"[WARNING] File does not have .tex extension: {args.tex_file}")
 
     # Create compiler instance
-    compiler = LaTeXCompiler(args.tex_file, args.compiler, args.recipe)
+    compiler = LaTeXCompiler(
+        args.tex_file,
+        args.compiler,
+        args.recipe,
+        shell_escape=args.shell_escape,
+    )
 
     # Execute requested action
     if args.clean or args.clean_all:
         sys.exit(compiler.clean(full=args.clean_all))
     else:
-        sys.exit(compiler.compile(watch=args.watch, biber=args.biber, outdir=args.outdir))
+        sys.exit(
+            compiler.compile(
+                watch=args.watch,
+                biber=args.biber,
+                outdir=args.outdir,
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

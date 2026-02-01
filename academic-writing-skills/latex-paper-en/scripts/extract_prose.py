@@ -12,7 +12,6 @@ Usage:
 import argparse
 import sys
 from pathlib import Path
-from typing import List
 
 # Import local parsers
 try:
@@ -33,39 +32,34 @@ class ProseExtractor:
     def extract(self, keep_structure: bool = False) -> str:
         """Extract prose from file."""
         try:
-            content = self.file_path.read_text(encoding='utf-8', errors='ignore')
+            content = self.file_path.read_text(encoding="utf-8", errors="ignore")
         except Exception as e:
-            raise RuntimeError(f"Cannot read file: {e}")
+            raise RuntimeError(f"Cannot read file: {e}") from e
 
         return self.parser.clean_text(content, keep_structure)
 
-    def extract_sentences(self) -> List[str]:
+    def extract_sentences(self) -> list[str]:
         """Extract individual sentences."""
         text = self.extract(keep_structure=False)
         # Simple split, consistent with original implementation
         import re
-        sentences = re.split(r'(?<=[.!?])\s+', text)
+
+        sentences = re.split(r"(?<=[.!?])\s+", text)
         return [s.strip() for s in sentences if s.strip()]
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Prose Extractor (LaTeX/Typst)'
-    )
-    parser.add_argument('file', help='File to extract from (.tex or .typ)')
+    parser = argparse.ArgumentParser(description="Prose Extractor (LaTeX/Typst)")
+    parser.add_argument("file", help="File to extract from (.tex or .typ)")
+    parser.add_argument("--output", "-o", help="Output file (default: stdout)")
     parser.add_argument(
-        '--output', '-o',
-        help='Output file (default: stdout)'
-    )
-    parser.add_argument(
-        '--keep-structure', '-k',
-        action='store_true',
-        help='Preserve paragraph and section structure'
+        "--keep-structure",
+        "-k",
+        action="store_true",
+        help="Preserve paragraph and section structure",
     )
     parser.add_argument(
-        '--sentences', '-s',
-        action='store_true',
-        help='Output as list of sentences'
+        "--sentences", "-s", action="store_true", help="Output as list of sentences"
     )
 
     args = parser.parse_args()
@@ -79,7 +73,7 @@ def main():
     try:
         if args.sentences:
             sentences = extractor.extract_sentences()
-            output = '\n'.join(f"{i+1}. {s}" for i, s in enumerate(sentences))
+            output = "\n".join(f"{i + 1}. {s}" for i, s in enumerate(sentences))
         else:
             output = extractor.extract(keep_structure=args.keep_structure)
     except Exception as e:
@@ -87,11 +81,11 @@ def main():
         sys.exit(1)
 
     if args.output:
-        Path(args.output).write_text(output, encoding='utf-8')
+        Path(args.output).write_text(output, encoding="utf-8")
         print(f"[SUCCESS] Extracted prose written to {args.output}")
     else:
         print(output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -13,8 +13,6 @@ import argparse
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
-from collections import defaultdict
 
 # Import local parsers
 try:
@@ -29,20 +27,20 @@ class DeAIBatchProcessor:
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
-        self.content = file_path.read_text(encoding='utf-8', errors='ignore')
-        self.lines = self.content.split('\n')
+        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
+        self.lines = self.content.split("\n")
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
 
-    def analyze_section(self, section_name: str) -> Dict:
+    def analyze_section(self, section_name: str) -> dict:
         """Analyze a section for AI traces."""
         if section_name not in self.section_ranges:
             return {
-                'section': section_name,
-                'found': False,
-                'lines': 0,
-                'traces': [],
+                "section": section_name,
+                "found": False,
+                "lines": 0,
+                "traces": [],
             }
 
         start, end = self.section_ranges[section_name]
@@ -50,7 +48,7 @@ class DeAIBatchProcessor:
 
         # Get lines for this section
         # Convert 1-based lines to 0-based index
-        section_lines = self.lines[start-1:end]
+        section_lines = self.lines[start - 1 : end]
         line_num = start
 
         for line in section_lines:
@@ -63,76 +61,78 @@ class DeAIBatchProcessor:
             ai_patterns = self._check_ai_patterns(visible)
 
             if ai_patterns:
-                traces.append({
-                    'line': line_num,
-                    'original': stripped,
-                    'visible': visible,
-                    'patterns': ai_patterns,
-                })
+                traces.append(
+                    {
+                        "line": line_num,
+                        "original": stripped,
+                        "visible": visible,
+                        "patterns": ai_patterns,
+                    }
+                )
 
             line_num += 1
 
         return {
-            'section': section_name,
-            'found': True,
-            'lines': end - start + 1,
-            'traces': traces,
+            "section": section_name,
+            "found": True,
+            "lines": end - start + 1,
+            "traces": traces,
         }
 
-    def _check_ai_patterns(self, text: str) -> List[str]:
+    def _check_ai_patterns(self, text: str) -> list[str]:
         """Check text for AI writing patterns."""
         patterns = []
 
         # Empty phrases
         empty_phrases = [
-            r'significant (?:improvement|performance|gain)',
-            r'comprehensive (?:analysis|study)',
-            r'effective (?:solution|method)',
-            r'important (?:contribution|role)',
-            r'robust performance',
-            r'novel approach',
-            r'state-of-the-art',
+            r"significant (?:improvement|performance|gain)",
+            r"comprehensive (?:analysis|study)",
+            r"effective (?:solution|method)",
+            r"important (?:contribution|role)",
+            r"robust performance",
+            r"novel approach",
+            r"state-of-the-art",
         ]
 
         # Over-confident
         over_confident = [
-            r'\bobviously\b',
-            r'\bclearly\b',
-            r'\bcertainly\b',
-            r'\bundoubtedly\b',
+            r"\bobviously\b",
+            r"\bclearly\b",
+            r"\bcertainly\b",
+            r"\bundoubtedly\b",
         ]
 
         # Vague quantifiers
         vague_quantifiers = [
-            r'\bmany studies\b',
-            r'\bnumerous experiments\b',
-            r'\bvarious methods\b',
-            r'\bseveral approaches\b',
+            r"\bmany studies\b",
+            r"\bnumerous experiments\b",
+            r"\bvarious methods\b",
+            r"\bseveral approaches\b",
         ]
 
         # Template expressions
         template_exprs = [
-            r'\bin recent years\b',
-            r'\bmore and more\b',
-            r'\bplays? an important role\b',
-            r'\bwith the (?:rapid )?development of\b',
+            r"\bin recent years\b",
+            r"\bmore and more\b",
+            r"\bplays? an important role\b",
+            r"\bwith the (?:rapid )?development of\b",
         ]
 
         all_checks = [
-            ('empty_phrase', empty_phrases),
-            ('over_confident', over_confident),
-            ('vague_quantifier', vague_quantifiers),
-            ('template_expr', template_exprs),
+            ("empty_phrase", empty_phrases),
+            ("over_confident", over_confident),
+            ("vague_quantifier", vague_quantifiers),
+            ("template_expr", template_exprs),
         ]
 
         for category, pattern_list in all_checks:
             for pattern in pattern_list:
                 if re.search(pattern, text, re.IGNORECASE):
-                    patterns.append(f'{category}: {pattern}')
+                    patterns.append(f"{category}: {pattern}")
 
         return patterns
 
-    def generate_batch_report(self, analyses: Dict[str, Dict]) -> str:
+    def generate_batch_report(self, analyses: dict[str, dict]) -> str:
         """Generate batch processing report."""
         report = []
         report.append("=" * 70)
@@ -145,14 +145,14 @@ class DeAIBatchProcessor:
         total_lines = 0
 
         for section_name, analysis in analyses.items():
-            if not analysis['found']:
+            if not analysis["found"]:
                 continue
 
-            trace_count = len(analysis['traces'])
+            trace_count = len(analysis["traces"])
             total_traces += trace_count
-            total_lines += analysis['lines']
+            total_lines += analysis["lines"]
 
-            density = (trace_count / analysis['lines'] * 100) if analysis['lines'] > 0 else 0
+            density = (trace_count / analysis["lines"] * 100) if analysis["lines"] > 0 else 0
 
             report.append(f"\n{'─' * 70}")
             report.append(f"SECTION: {section_name.upper()}")
@@ -162,8 +162,8 @@ class DeAIBatchProcessor:
             report.append(f"Density: {density:.1f}%")
 
             if trace_count > 0:
-                report.append(f"\nTraces (first 5):")
-                for i, trace in enumerate(analysis['traces'][:5], 1):
+                report.append("\nTraces (first 5):")
+                for i, trace in enumerate(analysis["traces"][:5], 1):
                     report.append(f"\n  [{i}] Line {trace['line']}")
                     report.append(f"      Patterns: {', '.join(trace['patterns'])}")
                     report.append(f"      Visible: {trace['visible'][:100]}")
@@ -188,8 +188,8 @@ class DeAIBatchProcessor:
         chapter_parser = get_parser(chapter_file)
         comment_prefix = chapter_parser.get_comment_prefix()
 
-        content = chapter_file.read_text(encoding='utf-8')
-        lines = content.split('\n')
+        content = chapter_file.read_text(encoding="utf-8")
+        lines = content.split("\n")
 
         processed_lines = []
         modifications = []
@@ -208,16 +208,18 @@ class DeAIBatchProcessor:
                 comment = f"{comment_prefix} DE-AI: Line {i} - {', '.join(patterns)}"
                 processed_lines.append(comment)
                 processed_lines.append(line)
-                modifications.append({
-                    'line': i,
-                    'patterns': patterns,
-                    'original': stripped,
-                })
+                modifications.append(
+                    {
+                        "line": i,
+                        "patterns": patterns,
+                        "original": stripped,
+                    }
+                )
             else:
                 processed_lines.append(line)
 
         output_file = output_dir / chapter_file.name
-        output_file.write_text('\n'.join(processed_lines), encoding='utf-8')
+        output_file.write_text("\n".join(processed_lines), encoding="utf-8")
 
         print(f"[SUCCESS] Processed: {chapter_file.name}")
         print(f"         Output: {output_file}")
@@ -227,16 +229,14 @@ class DeAIBatchProcessor:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Batch process Typst documents for de-AI editing'
-    )
+    parser = argparse.ArgumentParser(description="Batch process Typst documents for de-AI editing")
 
-    parser.add_argument('file', type=Path, help='Main Typst file (.typ)')
-    parser.add_argument('--chapter', type=Path, help='Process specific chapter file')
-    parser.add_argument('--all-sections', action='store_true', help='Analyze all sections')
-    parser.add_argument('--section', type=str, help='Analyze specific section')
-    parser.add_argument('--output', type=Path, help='Output directory for processed files')
-    parser.add_argument('--report', type=Path, help='Save report to file')
+    parser.add_argument("file", type=Path, help="Main Typst file (.typ)")
+    parser.add_argument("--chapter", type=Path, help="Process specific chapter file")
+    parser.add_argument("--all-sections", action="store_true", help="Analyze all sections")
+    parser.add_argument("--section", type=str, help="Analyze specific section")
+    parser.add_argument("--output", type=Path, help="Output directory for processed files")
+    parser.add_argument("--report", type=Path, help="Save report to file")
 
     args = parser.parse_args()
 
@@ -244,20 +244,20 @@ def main():
         print(f"[ERROR] File not found: {args.file}", file=sys.stderr)
         sys.exit(1)
 
-    if not str(args.file).lower().endswith('.typ'):
+    if not str(args.file).lower().endswith(".typ"):
         print(f"[WARNING] Expected .typ file, got: {args.file}", file=sys.stderr)
 
     processor = DeAIBatchProcessor(args.file)
 
     if args.all_sections:
         analyses = {}
-        for section_name in processor.section_ranges.keys():
+        for section_name in processor.section_ranges:
             analyses[section_name] = processor.analyze_section(section_name)
 
         report = processor.generate_batch_report(analyses)
 
         if args.report:
-            args.report.write_text(report, encoding='utf-8')
+            args.report.write_text(report, encoding="utf-8")
             print(f"[SUCCESS] Report saved to: {args.report}")
         else:
             print(report)
@@ -274,7 +274,7 @@ def main():
     elif args.section:
         analysis = processor.analyze_section(args.section.lower())
 
-        if not analysis['found']:
+        if not analysis["found"]:
             print(f"[WARNING] Section not found: {args.section}")
             sys.exit(1)
 
@@ -282,7 +282,7 @@ def main():
         print(f"Lines: {analysis['lines']}")
         print(f"AI traces: {len(analysis['traces'])}\n")
 
-        for trace in analysis['traces'][:10]:
+        for trace in analysis["traces"][:10]:
             print(f"Line {trace['line']}:")
             print(f"  Patterns: {', '.join(trace['patterns'])}")
             print(f"  Text: {trace['visible'][:100]}")
@@ -290,7 +290,7 @@ def main():
 
     else:
         print(f"[INFO] Available sections in {args.file.name}:")
-        for section_name in processor.section_ranges.keys():
+        for section_name in processor.section_ranges:
             start, end = processor.section_ranges[section_name]
             print(f"  - {section_name}: lines {start}-{end}")
         print()
@@ -299,5 +299,5 @@ def main():
         print("[INFO] Use --chapter <file> --output <dir> to process chapter")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
