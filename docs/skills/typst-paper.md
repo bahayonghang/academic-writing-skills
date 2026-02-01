@@ -41,6 +41,20 @@ typst --version
 
 This skill is designed to work with Claude Code and similar AI assistants. Simply mention the relevant trigger words in your conversation, and the assistant will activate the appropriate module.
 
+### Argument Conventions
+
+Provide clear inputs in your request:
+- **Main `.typ` path** (required for tool execution)
+- **Target scope** (section/chapter or full document)
+- **Module choice** (compile / format / grammar / template / etc.)
+
+If any of these are missing or ambiguous, the assistant will ask for clarification instead of guessing.
+
+### Execution Guardrails
+
+- Tools/scripts run **only** when you explicitly request execution.
+- Operations that overwrite outputs require explicit confirmation.
+
 ### Trigger Words
 
 | Module | Triggers | Function |
@@ -50,10 +64,12 @@ This skill is designed to work with Claude Code and similar AI assistants. Simpl
 | Grammar Analysis | grammar, proofread | Grammar analysis |
 | Long Sentence | long sentence, simplify | Sentence decomposition |
 | Expression | academic tone, improve writing | Expression optimization |
+| Logic & Methodology | logic, coherence, 逻辑, 衔接, methodology | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography, citation | Bibliography checking |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Template | template, IEEE, ACM | Template configuration |
+| Title Optimization | title, 标题, title optimization 🆕 | Generate and optimize titles |
 
 ### Example Usage
 
@@ -71,6 +87,32 @@ Can you check the grammar in my introduction section?
 ```
 Translate this Chinese text to academic English (Deep Learning domain):
 本文提出了一种基于Transformer的方法...
+```
+
+### Quick Examples by Module
+
+```
+Check format compliance for main.typ
+```
+
+```
+Simplify long sentences in the introduction section
+```
+
+```
+Improve academic tone in the abstract
+```
+
+```
+Verify references.bib and check citations in main.typ
+```
+
+```
+Reduce AI writing traces in the methods section
+```
+
+```
+Provide an IEEE template setup for Typst
 ```
 
 ## Compilation Module
@@ -219,6 +261,60 @@ LLM-based grammar checking focusing on:
 | 我们使用 | 本文采用 |
 | 可以看出 | 由此可见 |
 
+## Logic & Methodology Module
+
+Ensure logical flow between paragraphs and strengthen methodological rigor in academic writing.
+
+### AXES Model for Paragraph Coherence
+
+| Component | Description | Example |
+|-----------|-------------|---------|
+| **A**ssertion | Clear topic sentence stating the main claim | "Attention mechanisms improve sequence modeling." |
+| **X**ample | Concrete evidence or data supporting the claim | "In our experiments, attention achieved 95% accuracy." |
+| **E**xplanation | Analysis of why the evidence supports the claim | "This improvement stems from the ability to capture long-range dependencies." |
+| **S**ignificance | Connection to broader argument or next paragraph | "This finding motivates our proposed architecture." |
+
+### Transition Signals
+
+| Relationship | English Signals | Chinese Signals |
+|--------------|-----------------|-----------------|
+| Addition | furthermore, moreover | 此外、进一步 |
+| Contrast | however, nevertheless | 然而、但是 |
+| Cause-Effect | therefore, consequently | 因此、由此可见 |
+| Sequence | first, subsequently, finally | 首先、随后、最后 |
+| Example | for instance, specifically | 例如、具体而言 |
+
+### Methodological Depth Checklist
+
+- Each claim is supported by evidence (data, citation, or logical reasoning)
+- Method choices are justified (why this approach over alternatives?)
+- Limitations are acknowledged explicitly
+- Assumptions are stated clearly
+- Reproducibility details are sufficient (parameters, datasets, metrics)
+
+### Common Issues
+
+| Issue | Problem | Fix |
+|-------|---------|-----|
+| Logical gap | Missing connection between paragraphs | Add transition sentence |
+| Unsupported claim | Assertion without evidence | Add citation, data, or reasoning |
+| Shallow methodology | "We use X" without justification | Explain why X is appropriate |
+| Hidden assumptions | Implicit prerequisites | State assumptions explicitly |
+
+### Usage in Claude Code
+
+```
+Check logical coherence in my introduction section
+```
+
+```
+Analyze methodological depth in the methods section
+```
+
+```
+Add transition signals between paragraphs
+```
+
 ## Translation Module (Chinese → English)
 
 ### Supported Domains
@@ -354,141 +450,8 @@ The proposed method improves performance in the experiments...
 
 ## Template Configuration Module
 
-### IEEE Template
-
-```typst
-#import "@preview/charged-ieee:0.1.0": ieee
-
-#show: ieee.with(
-  title: [Your Paper Title],
-  authors: (
-    (
-      name: "Author Name",
-      department: [Department],
-      organization: [University],
-      location: [City, Country],
-      email: "author@email.com"
-    ),
-  ),
-  abstract: [
-    Your abstract here...
-  ],
-  index-terms: ("Machine Learning", "Deep Learning"),
-  bibliography: bibliography("references.bib"),
-)
-
-// Your content here
-```
-
-### ACM Template
-
-```typst
-// ACM two-column format
-#set page(
-  paper: "us-letter",
-  margin: (x: 0.75in, y: 1in),
-  columns: 2,
-  column-gutter: 0.33in
-)
-
-#set text(font: "Linux Libertine", size: 9pt)
-#set par(justify: true)
-```
-
-### Generic Academic Paper Template
-
-```typst
-#set page(
-  paper: "a4",
-  margin: (x: 2.5cm, y: 2.5cm)
-)
-
-#set text(
-  font: "Times New Roman",
-  size: 11pt,
-  lang: "en"
-)
-
-#set par(
-  justify: true,
-  leading: 0.65em,
-  first-line-indent: 1.5em
-)
-
-#set heading(numbering: "1.1")
-
-// Title
-#align(center)[
-  #text(size: 16pt, weight: "bold")[Your Paper Title]
-  
-  #v(0.5em)
-  
-  Author Name#super[1], Co-author Name#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10pt)[
-    #super[1]University Name, #super[2]Institution Name
-  ]
-]
-
-// Abstract
-#heading(outlined: false, numbering: none)[Abstract]
-Your abstract here...
-
-// Main content
-= Introduction
-Your content here...
-```
-
-### Chinese Paper Template
-
-```typst
-#set page(
-  paper: "a4",
-  margin: (x: 3.17cm, y: 2.54cm)
-)
-
-#set text(
-  font: ("Source Han Serif", "Noto Serif CJK SC"),
-  size: 12pt,
-  lang: "zh",
-  region: "cn"
-)
-
-#set par(
-  justify: true,
-  leading: 1em,
-  first-line-indent: 2em
-)
-
-#set heading(numbering: "1.1")
-
-// Title
-#align(center)[
-  #text(size: 18pt, weight: "bold")[论文标题]
-  
-  #v(0.5em)
-  
-  作者姓名#super[1]，合作者姓名#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10.5pt)[
-    #super[1]大学名称，#super[2]机构名称
-  ]
-]
-
-// Abstract
-#heading(outlined: false, numbering: none)[摘要]
-摘要内容...
-
-*关键词*：关键词1；关键词2；关键词3
-
-// Main content
-= 引言
-正文内容...
-```
+Template examples are maintained in:
+- `references/TEMPLATES.md`
 
 ## Venue-Specific Rules
 
@@ -585,6 +548,147 @@ typst compile --font-path ./fonts main.typ
 - `references/COMMON_ERRORS.md`: Common mistakes
 - `references/VENUES.md`: Conference/journal requirements
 - `references/DEAI_GUIDE.md`: De-AI writing guide
+- `references/TEMPLATES.md`: Typst template examples
+
+## Title Optimization Module
+
+Generate and optimize paper titles for both English and Chinese papers following best practices.
+
+### Key Principles
+
+Based on IEEE/ACM/Springer/NeurIPS guidelines and GB/T 7713.1-2006 (for Chinese):
+
+**English Papers**:
+1. **Conciseness**: Remove "A Study of", "Research on", "Novel", "New"
+2. **Searchability**: Key terms (Method + Problem) in first 65 characters
+3. **Length**: Optimal 10-15 words
+4. **Specificity**: Concrete method/problem names
+5. **Jargon-Free**: Avoid obscure abbreviations
+
+**Chinese Papers**:
+1. **简洁性**: Remove "关于...的研究", "新型", "改进的"
+2. **可搜索性**: Key terms in first 20 characters
+3. **长度**: Optimal 15-25 characters
+4. **具体性**: Concrete terms
+5. **规范性**: Follow standards
+
+### Quality Scoring
+
+Each title receives a score (0-100) based on five criteria with language-specific thresholds.
+
+### Usage in Claude Code
+
+**Check existing title**:
+```
+Check the quality of my paper title
+检查我的论文标题质量
+```
+
+**Generate title candidates**:
+```
+Generate title candidates for my paper
+根据摘要生成标题候选方案
+```
+
+**Optimize existing title**:
+```
+Optimize my paper title to follow IEEE best practices
+优化我的论文标题
+```
+
+The assistant will:
+- Auto-detect language (English/Chinese)
+- Provide quality score with breakdown
+- Generate multiple ranked candidates
+- Suggest Typst code for the best title
+
+### Title Patterns
+
+**English**:
+- Method for Problem: "Transformer for Time Series Forecasting"
+- Method: Problem in Domain: "Graph Neural Networks: Fault Detection in Industrial Systems"
+- Problem via Method: "Time Series Forecasting via Attention Mechanisms"
+
+**Chinese**:
+- 问题的方法: "时间序列预测的Transformer方法"
+- 方法及应用: "注意力机制及其在工业控制中的应用"
+- 面向领域的方法: "面向智能制造的深度学习方法"
+
+### Good vs Bad Examples
+
+**English**:
+```
+Good: "Transformer for Time Series Forecasting in Industrial Control"
+Bad:  "A Novel Study on Improved Time Series Forecasting Using Transformers"
+```
+
+**Chinese**:
+```
+好：工业控制系统时间序列预测的Transformer方法
+差：关于基于Transformer的工业控制系统时间序列预测的研究
+```
+
+### Typst Title Configuration
+
+**English Paper**:
+```typst
+#align(center)[
+  #text(size: 18pt, weight: "bold")[
+    Transformer-Based Time Series Forecasting for Industrial Control
+  ]
+]
+```
+
+**Chinese Paper**:
+```typst
+#align(center)[
+  #text(size: 18pt, weight: "bold", font: "Source Han Serif")[
+    工业控制系统时间序列预测的Transformer方法
+  ]
+  
+  #v(0.5em)
+  
+  #text(size: 14pt, font: "Times New Roman")[
+    Transformer-Based Time Series Forecasting for Industrial Control Systems
+  ]
+]
+```
+
+### Best Practices
+
+**English**:
+1. Start with keywords (Method + Problem in first 10 words)
+2. Be specific ("Transformer" > "Deep Learning")
+3. Remove fluff ("Novel", "Study", "Research")
+4. Target 10-15 words
+5. Match venue style
+
+**Chinese**:
+1. 关键词前置（方法+问题在前20字）
+2. 具体明确（"Transformer" > "深度学习"）
+3. 删除冗余（"关于"、"研究"、"新型"）
+4. 目标 15-25 字
+5. 符合规范
+
+### References
+
+- [IEEE Author Center](https://conferences.ieeeauthorcenter.ieee.org/)
+- [Royal Society Blog on Title Optimization](https://royalsociety.org/blog/2025/01/title-abstract-and-keywords-a-practical-guide-to-maximizing-the-visibility-and-impact-of-your-papers/)
+- GB/T 7713.1-2006 (Chinese thesis standards)
+
+## Recommended Workflows
+
+### Fast Iteration (Drafting)
+1. Compile or watch mode
+2. Format check (basic)
+3. Grammar analysis (abstract + intro)
+
+### Pre-Submission Pass
+1. Format check (venue-specific)
+2. Expression optimization
+3. De-AI polishing
+4. Bibliography verification
+5. Template check (if required by venue)
 
 ## Next Steps
 

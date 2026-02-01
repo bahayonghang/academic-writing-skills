@@ -41,6 +41,20 @@ typst --version
 
 本技能设计用于 Claude Code 等 AI 助手。只需在对话中提及相关触发词，助手就会激活相应模块。
 
+### 参数约定
+
+请求中请尽量包含：
+- **主 `.typ` 路径**（执行脚本时必需）
+- **目标范围**（章节/段落或全文）
+- **模块选择**（编译/格式/语法/模板等）
+
+如信息缺失或含糊，助手会先确认，不会猜测路径或范围。
+
+### 执行约束
+
+- 仅在您明确要求时执行脚本/编译命令。
+- 覆盖输出或清理类操作前先确认。
+
 ### 触发词
 
 | 模块 | 触发词 | 功能 |
@@ -50,10 +64,12 @@ typst --version
 | 语法分析 | grammar, proofread, 语法 | 语法分析 |
 | 长难句 | long sentence, 长句, simplify | 句子分解 |
 | 表达 | academic tone, 学术表达 | 表达优化 |
+| 逻辑衔接与方法论 | logic, coherence, 逻辑, 衔接, methodology, 方法论 | 逻辑衔接与方法论深度 |
 | 翻译 | translate, 翻译, 中译英 | 中英翻译 |
 | 参考文献 | bib, bibliography, 参考文献 | 文献检查 |
 | 去AI化 | deai, 去AI化, humanize | 降低 AI 痕迹 |
 | 模板 | template, IEEE, ACM, 模板 | 模板配置 |
+| 标题优化 | title, 标题, title optimization | 标题生成与优化 🆕 |
 
 ### 使用示例
 
@@ -71,6 +87,53 @@ typst --version
 ```
 将以下中文翻译为学术英文（深度学习领域）：
 本文提出了一种基于Transformer的方法...
+```
+
+## 输出协议
+
+所有建议采用注释式 diff 格式，并包含固定字段：
+- **严重级别**：Critical / Major / Minor
+- **优先级**：P0 / P1 / P2
+
+最小模板：
+```typst
+// <模块>（第<N>行）[Severity: <Critical|Major|Minor>] [Priority: <P0|P1|P2>]: <问题概述>
+// 原文：...
+// 修改后：...
+// 理由：...
+// ⚠️ 【待补证】：<需要证据/数据时标记>
+```
+
+## 失败处理
+
+- 缺少 Typst：安装 `typst-cli` 并加入 PATH
+- 缺少文件/脚本：确认工作目录与 `scripts/` 路径
+- 编译失败：优先给出首个错误摘要并请求日志片段
+
+## 模块快速示例
+
+```
+检查 main.typ 的格式合规性
+```
+
+```
+拆解引言中的长句
+```
+
+```
+提升摘要的学术表达
+```
+
+```
+验证 references.bib 并检查 main.typ 的引用
+```
+
+```
+去AI化方法部分并保持事实不变
+```
+
+```
+提供 Typst 的 IEEE 模板配置
 ```
 
 ## 编译模块
@@ -219,6 +282,60 @@ typst compile --font-path ./fonts main.typ
 | 我们使用 | 本文采用 |
 | 可以看出 | 由此可见 |
 
+## 逻辑衔接与方法论深度模块
+
+确保段落间逻辑流畅，强化方法论的严谨性。
+
+### AXES 模型（段落级逻辑衔接）
+
+| 组成部分 | 说明 | 示例 |
+|----------|------|------|
+| **A**ssertion（主张） | 清晰的主题句，陈述核心观点 | "注意力机制能够提升序列建模效果。" |
+| **X**ample（例证） | 支撑主张的具体证据或数据 | "实验中，注意力机制达到95%准确率。" |
+| **E**xplanation（解释） | 分析证据为何支撑主张 | "这一提升源于其捕获长程依赖的能力。" |
+| **S**ignificance（意义） | 与更广泛论点或下一段的联系 | "这一发现为本文架构设计提供了依据。" |
+
+### 过渡信号词
+
+| 关系类型 | 中文信号词 | 英文对应 |
+|----------|------------|----------|
+| 递进 | 此外、进一步、更重要的是 | furthermore, moreover |
+| 转折 | 然而、但是、相反 | however, nevertheless |
+| 因果 | 因此、由此可见、故而 | therefore, consequently |
+| 顺序 | 首先、随后、最后 | first, subsequently, finally |
+| 举例 | 例如、具体而言、特别是 | for instance, specifically |
+
+### 方法论深度检查清单
+
+- 每个主张都有证据支撑（数据、引用或逻辑推理）
+- 方法选择有充分理由（为何选此方法而非其他？）
+- 明确承认研究局限性
+- 清晰陈述前提假设
+- 可复现性细节充分（参数、数据集、评估指标）
+
+### 常见问题
+
+| 问题类型 | 表现 | 修正方法 |
+|----------|------|----------|
+| 逻辑断层 | 段落间缺乏衔接 | 添加过渡句说明段落关系 |
+| 无据主张 | 断言缺乏证据支撑 | 补充引用、数据或推理 |
+| 方法论浅薄 | "本文采用X"但无理由 | 解释为何X适合本问题 |
+| 隐含假设 | 前提条件未明示 | 显式陈述假设条件 |
+
+### 在 Claude Code 中使用
+
+```
+检查引言部分的逻辑衔接
+```
+
+```
+分析方法部分的方法论深度
+```
+
+```
+在段落之间添加过渡信号词
+```
+
 ## 翻译模块（中译英）
 
 ### 支持领域
@@ -354,140 +471,106 @@ The proposed method improves performance in the experiments...
 
 ## 模板配置模块
 
-### IEEE 模板
+模板示例与用法请参考 `references/TEMPLATES.md`。
 
-```typst
-#import "@preview/charged-ieee:0.1.0": ieee
+## 标题优化模块
 
-#show: ieee.with(
-  title: [Your Paper Title],
-  authors: (
-    (
-      name: "Author Name",
-      department: [Department],
-      organization: [University],
-      location: [City, Country],
-      email: "author@email.com"
-    ),
-  ),
-  abstract: [
-    Your abstract here...
-  ],
-  index-terms: ("Machine Learning", "Deep Learning"),
-  bibliography: bibliography("references.bib"),
-)
+根据 IEEE/ACM/Springer/NeurIPS 最佳实践，生成和优化学术论文标题。
 
-// Your content here
+### 核心原则
+
+基于 IEEE Author Center 及顶级会议/期刊指南：
+
+**英文论文**：
+1. **简洁性**：删除 "A Study of", "Research on", "Novel", "New"
+2. **可搜索性**：核心术语（方法+问题）在前 65 字符内
+3. **长度**：最佳 10-15 词
+4. **具体性**：具体方法/问题名称
+5. **规范性**：避免生僻缩写
+
+**中文论文**：
+1. **简洁性**：删除"关于...的研究"、"新型"、"改进的"
+2. **可搜索性**：核心术语在前 20 字内
+3. **长度**：最佳 15-25 字
+4. **具体性**：具体术语
+5. **规范性**：符合规范
+
+### 质量评分
+
+每个标题获得 0-100 分，基于五个标准：
+- 简洁性 (25%)
+- 可搜索性 (30%)
+- 长度 (15%)
+- 具体性 (20%)
+- 规范性 (10%)
+
+### 在 Claude Code 中使用
+
+**检查现有标题**：
+```
+检查我的论文标题质量
 ```
 
-### ACM 模板
-
-```typst
-// ACM 两栏格式
-#set page(
-  paper: "us-letter",
-  margin: (x: 0.75in, y: 1in),
-  columns: 2,
-  column-gutter: 0.33in
-)
-
-#set text(font: "Linux Libertine", size: 9pt)
-#set par(justify: true)
+**生成标题候选**：
+```
+根据摘要生成标题候选方案
 ```
 
-### 通用学术论文模板
+**优化现有标题**：
+```
+优化我的论文标题，符合 IEEE 最佳实践
+```
 
+### 标题模式
+
+**英文**：
+- Method for Problem: "Transformer for Time Series Forecasting"
+- Method: Problem in Domain: "Graph Neural Networks: Fault Detection in Industrial Systems"
+- Problem via Method: "Time Series Forecasting via Attention Mechanisms"
+
+**中文**：
+- 问题的方法: "时间序列预测的Transformer方法"
+- 方法及应用: "注意力机制及其在工业控制中的应用"
+- 面向领域的方法: "面向智能制造的深度学习方法"
+
+### 好与差的示例
+
+**英文**：
+```
+Good: "Transformer for Time Series Forecasting in Industrial Control"
+Bad:  "A Novel Study on Improved Time Series Forecasting Using Transformers"
+```
+
+**中文**：
+```
+好：工业控制系统时间序列预测的Transformer方法
+差：关于基于Transformer的工业控制系统时间序列预测的研究
+```
+
+### Typst 标题配置
+
+**英文论文**：
 ```typst
-#set page(
-  paper: "a4",
-  margin: (x: 2.5cm, y: 2.5cm)
-)
-
-#set text(
-  font: "Times New Roman",
-  size: 11pt,
-  lang: "en"
-)
-
-#set par(
-  justify: true,
-  leading: 0.65em,
-  first-line-indent: 1.5em
-)
-
-#set heading(numbering: "1.1")
-
-// 标题
 #align(center)[
-  #text(size: 16pt, weight: "bold")[Your Paper Title]
-  
-  #v(0.5em)
-  
-  Author Name#super[1], Co-author Name#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10pt)[
-    #super[1]University Name, #super[2]Institution Name
+  #text(size: 18pt, weight: "bold")[
+    Transformer-Based Time Series Forecasting for Industrial Control
   ]
 ]
-
-// 摘要
-#heading(outlined: false, numbering: none)[Abstract]
-Your abstract here...
-
-// 正文
-= Introduction
-Your content here...
 ```
 
-### 中文论文模板
-
+**中文论文**：
 ```typst
-#set page(
-  paper: "a4",
-  margin: (x: 3.17cm, y: 2.54cm)
-)
-
-#set text(
-  font: ("Source Han Serif", "Noto Serif CJK SC"),
-  size: 12pt,
-  lang: "zh",
-  region: "cn"
-)
-
-#set par(
-  justify: true,
-  leading: 1em,
-  first-line-indent: 2em
-)
-
-#set heading(numbering: "1.1")
-
-// 标题
 #align(center)[
-  #text(size: 18pt, weight: "bold")[论文标题]
-  
+  #text(size: 18pt, weight: "bold", font: "Source Han Serif")[
+    工业控制系统时间序列预测的Transformer方法
+  ]
+
   #v(0.5em)
-  
-  作者姓名#super[1]，合作者姓名#super[2]
-  
-  #v(0.3em)
-  
-  #text(size: 10.5pt)[
-    #super[1]大学名称，#super[2]机构名称
+
+  #text(size: 14pt, font: "Times New Roman")[
+    Transformer-Based Time Series Forecasting for Industrial Control Systems
   ]
 ]
-
-// 摘要
-#heading(outlined: false, numbering: none)[摘要]
-摘要内容...
-
-*关键词*：关键词1；关键词2；关键词3
-
-// 正文
-= 引言
-正文内容...
 ```
 
 ## 期刊/会议特定规则
@@ -578,6 +661,20 @@ typst compile --format png main.typ
 typst compile --font-path ./fonts main.typ
 ```
 
+## 推荐工作流
+
+### 草稿快速迭代
+1. 编译或监视模式
+2. 基础格式检查
+3. 语法分析（摘要 + 引言）
+
+### 投稿前检查
+1. 期刊/会议格式检查
+2. 学术表达优化
+3. 去AI化编辑
+4. 参考文献验证
+5. 模板配置核对（如期刊要求）
+
 ## 参考文件
 
 - `references/TYPST_SYNTAX.md`：Typst 语法指南
@@ -585,6 +682,7 @@ typst compile --font-path ./fonts main.typ
 - `references/COMMON_ERRORS.md`：常见错误
 - `references/VENUES.md`：期刊会议要求
 - `references/DEAI_GUIDE.md`：去AI化写作指南
+- `references/TEMPLATES.md`：Typst 模板示例
 
 ## 下一步
 

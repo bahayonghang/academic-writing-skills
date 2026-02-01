@@ -28,6 +28,7 @@ Then open http://localhost:5173 in your browser.
 - **Grammar Analysis**: Chinglish detection, weak verb replacement
 - **Sentence Analysis**: Complex sentence decomposition
 - **Expression Restructuring**: Academic tone improvements
+- **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices 🆕
 - **Venue Support**: IEEE, ACM, Springer, NeurIPS, ICML guidelines
 
 ### latex-thesis-zh (Chinese Theses)
@@ -35,6 +36,7 @@ Then open http://localhost:5173 in your browser.
 - **GB/T 7714 Compliance**: Chinese national bibliography standard
 - **Template Detection**: Support for thuthesis, pkuthss, ustcthesis, fduthesis
 - **Chinese Academic Style**: Oral expression detection, terminology consistency
+- **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards 🆕
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 
 ### typst-paper (Typst Academic Papers) 🆕
@@ -43,6 +45,7 @@ Then open http://localhost:5173 in your browser.
 - **Format Checking**: Page settings, text formatting, citations
 - **Grammar Analysis**: Same as LaTeX version with Typst syntax
 - **De-AI Editing**: Reduce AI writing traces
+- **Title Optimization**: Bilingual title generation and optimization (English/Chinese) 🆕
 - **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
 - **Modern Syntax**: Simple, intuitive markup language
 
@@ -165,6 +168,16 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 - "拆解长难句"
 - Automatically triggers for sentences >50 words (English) or >60 characters (Chinese)
 
+**Title Optimization** 🆕
+- "optimize my paper title"
+- "generate title candidates"
+- "优化论文标题"
+- "生成标题方案"
+- Follows IEEE/ACM/Springer/NeurIPS best practices
+- Removes ineffective words ("Novel", "A Study of", "Research on")
+- Ensures key terms (Method + Problem) appear in first 65 characters (English) or 20 characters (Chinese)
+- Provides multiple candidates with quality scores (0-100)
+
 **📖 For detailed usage and examples, see the [documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs).**
 
 ## Project Structure
@@ -177,6 +190,7 @@ academic-writing-skills/
 │   │   ├── compile.py                # Unified compiler
 │   │   ├── check_format.py           # ChkTeX wrapper
 │   │   ├── verify_bib.py             # BibTeX checker
+│   │   ├── optimize_title.py         # Title optimizer 🆕
 │   │   └── extract_prose.py          # Text extractor
 │   └── references/                   # Reference docs
 │       ├── STYLE_GUIDE.md
@@ -190,7 +204,10 @@ academic-writing-skills/
 │   │   ├── compile.py
 │   │   ├── map_structure.py          # Thesis structure mapper
 │   │   ├── check_format.py
-│   │   └── check_consistency.py
+│   │   ├── check_consistency.py
+│   │   ├── verify_bib.py             # BibTeX checker
+│   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   └── detect_template.py        # Template detector
 │   └── references/
 │       ├── GB_STANDARD.md
 │       ├── ACADEMIC_STYLE_ZH.md
@@ -198,6 +215,7 @@ academic-writing-skills/
 │       └── UNIVERSITIES/
 │           ├── tsinghua.md
 │           ├── pku.md
+│           ├── yanshan.md
 │           └── generic.md
 │
 ├── typst-paper/                      # Typst paper skill 🆕
@@ -206,12 +224,14 @@ academic-writing-skills/
 │   ├── scripts/                      # Python tools
 │   │   ├── compile.py                # Typst compiler
 │   │   ├── check_format.py           # Format checker
-│   │   └── verify_bib.py             # Bibliography checker
+│   │   ├── verify_bib.py             # Bibliography checker
+│   │   └── optimize_title.py         # Title optimizer 🆕
 │   └── references/                   # Reference docs
 │       ├── STYLE_GUIDE.md
 │       ├── COMMON_ERRORS.md
 │       ├── DEAI_GUIDE.md
 │       ├── VENUES.md
+│       ├── TEMPLATES.md
 │       └── TYPST_SYNTAX.md
 │
 └── docs/                             # Documentation site

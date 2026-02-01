@@ -28,6 +28,7 @@ npm run docs:dev
 - **语法分析**：中式英语检测、弱动词替换建议
 - **长难句分析**：复杂句子拆解与重构建议
 - **表达优化**：学术语气改进
+- **标题优化**：根据 IEEE/ACM/Springer 最佳实践生成和优化论文标题 🆕
 - **期刊适配**：IEEE、ACM、Springer、NeurIPS、ICML 格式指南
 
 ### latex-thesis-zh（中文学位论文）
@@ -35,6 +36,7 @@ npm run docs:dev
 - **国标检查**：符合 GB/T 7714-2015 参考文献规范
 - **模板检测**：支持 thuthesis、pkuthss、ustcthesis、fduthesis 等模板
 - **中文学术规范**：口语化表达检测、术语一致性检查
+- **标题优化**：根据 GB/T 7713.1-2006 规范生成和优化学位论文标题 🆕
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
 
 ### typst-paper（Typst 学术论文）🆕
@@ -43,6 +45,7 @@ npm run docs:dev
 - **格式检查**：页面设置、文本格式、引用检查
 - **语法分析**：与 LaTeX 版本相同，适配 Typst 语法
 - **去AI化编辑**：降低 AI 写作痕迹
+- **标题优化**：双语标题生成和优化（中英文） 🆕
 - **期刊模板**：IEEE、ACM、Springer、NeurIPS 模板
 - **现代语法**：简洁直观的标记语言
 
@@ -167,6 +170,16 @@ xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\
 - "simplify this complex sentence"
 - 自动触发：英文句子 >50 词或中文句子 >60 字
 
+**标题优化** 🆕
+- "优化我的论文标题"
+- "生成标题候选方案"
+- "optimize my paper title"
+- "generate title candidates"
+- 遵循 IEEE/ACM/Springer/NeurIPS 最佳实践
+- 删除无效词汇（"新型"、"关于...的研究"、"Novel"、"A Study of"）
+- 确保关键词（方法+问题）出现在前 65 字符（英文）或前 20 字（中文）
+- 提供多个候选方案并评分（0-100 分）
+
 **📖 详细使用方法和示例请查看[文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)。**
 
 ## 项目结构
@@ -179,6 +192,7 @@ academic-writing-skills/
 │   │   ├── compile.py                # 统一编译器
 │   │   ├── check_format.py           # ChkTeX 包装器
 │   │   ├── verify_bib.py             # BibTeX 检查器
+│   │   ├── optimize_title.py         # 标题优化器 🆕
 │   │   └── extract_prose.py          # 文本提取器
 │   └── references/                   # 参考文档
 │       ├── STYLE_GUIDE.md            # 写作风格指南
@@ -192,7 +206,10 @@ academic-writing-skills/
 │   │   ├── compile.py
 │   │   ├── map_structure.py          # 论文结构映射
 │   │   ├── check_format.py
-│   │   └── check_consistency.py
+│   │   ├── check_consistency.py
+│   │   ├── verify_bib.py             # BibTeX 检查器
+│   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   └── detect_template.py        # 模板检测器
 │   └── references/
 │       ├── GB_STANDARD.md            # 国标格式规范
 │       ├── ACADEMIC_STYLE_ZH.md      # 中文学术规范
@@ -200,6 +217,7 @@ academic-writing-skills/
 │       └── UNIVERSITIES/             # 学校模板
 │           ├── tsinghua.md           # 清华大学
 │           ├── pku.md                # 北京大学
+│           ├── yanshan.md            # 燕山大学
 │           └── generic.md            # 通用模板
 │
 ├── typst-paper/                      # Typst 论文 skill 🆕
@@ -208,12 +226,14 @@ academic-writing-skills/
 │   ├── scripts/                      # Python 工具
 │   │   ├── compile.py                # Typst 编译器
 │   │   ├── check_format.py           # 格式检查器
-│   │   └── verify_bib.py             # 参考文献检查器
+│   │   ├── verify_bib.py             # 参考文献检查器
+│   │   └── optimize_title.py         # 标题优化器 🆕
 │   └── references/                   # 参考文档
 │       ├── STYLE_GUIDE.md            # 写作风格指南
 │       ├── COMMON_ERRORS.md          # 常见错误
 │       ├── DEAI_GUIDE.md             # 去AI化指南
 │       ├── VENUES.md                 # 期刊/会议要求
+│       ├── TEMPLATES.md              # 模板示例
 │       └── TYPST_SYNTAX.md           # Typst 语法参考
 │
 └── docs/                             # 文档站点

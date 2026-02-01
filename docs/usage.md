@@ -17,6 +17,15 @@ Academic Writing Skills provides three main skills:
 Each skill uses a modular design where you can use any module independently without following a sequence.
 For Chinese theses, **structure mapping should run first** when doing a full review or handling multi-file projects.
 
+## Argument Conventions
+
+For reliable execution, include these in your request:
+- **Main file path** (`.tex` / `.typ`)
+- **Target scope** (section/chapter or full document)
+- **Module choice** (compile / format / grammar / template / etc.)
+
+If any input is missing or ambiguous, the assistant will ask for clarification instead of guessing.
+
 ## Output Protocol (All Modules)
 
 All suggestions must use diff-comment style and include fixed fields:
@@ -59,6 +68,10 @@ To protect your project and system, the assistant follows safety-first rules whe
 - If a command is ambiguous, ask for clarification
 - Prefer the smallest, reversible actions
 
+**Execution guardrails**:
+- Tools/scripts run only on explicit request
+- Destructive cleanup (`--clean`, `--clean-all`) requires confirmation
+
 **Tool execution transparency**:
 - State the exact command before running it
 - Summarize what changed and where
@@ -73,8 +86,26 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Grammar Analysis | grammar, proofread | Grammar analysis |
 | Sentence Decomposition | long sentence, simplify | Long sentence decomposition |
 | Expression | academic tone, improve writing | Expression optimization |
+| Logic & Methodology | logic, coherence, methodology, argument | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography | Bibliography checking |
+| De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
+| Title Optimization | title, 标题, title optimization | Generate and optimize titles |
+
+### latex-thesis-zh Modules
+
+| Module | Triggers | Function |
+|--------|----------|----------|
+| Compile | compile, 编译, xelatex | LaTeX compilation |
+| Structure Mapping | structure, 结构, 映射 | Thesis structure analysis |
+| GB/T Format Check | format, 格式, 国标, GB/T | GB/T 7714 compliance |
+| Academic Expression | expression, 表达, 润色 | Academic expression |
+| Logic & Methodology | logic, coherence, 逻辑, 衔接, methodology | Logical coherence & methodological depth |
+| Long Sentence Analysis | long sentence, 长句, 拆解 | Long sentence analysis |
+| Bibliography | bib, bibliography, 参考文献 | Bibliography checking |
+| Template Detection | template, 模板, thuthesis | Template detection |
+| De-AI Polishing | deai, 去AI化, 降低AI痕迹 | Reduce AI writing traces |
+| Title Optimization | title, 标题, 标题优化 | Generate and optimize titles |
 
 ### typst-paper Modules
 
@@ -85,10 +116,12 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Grammar Analysis | grammar, proofread | Grammar analysis |
 | Long Sentence | long sentence, simplify | Sentence decomposition |
 | Expression | academic tone, improve writing | Expression optimization |
+| Logic & Methodology | logic, coherence, 逻辑, 衔接, methodology | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography, citation | Bibliography checking |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Template | template, IEEE, ACM | Template configuration |
+| Title Optimization | title, 标题, title optimization | Generate and optimize titles |
 
 ## Compile Module
 
@@ -224,6 +257,39 @@ python scripts/verify_bib.py references.bib
 python scripts/verify_bib.py references.bib --tex main.tex
 python scripts/verify_bib.py references.bib --standard gb7714
 ```
+
+## Template Detection Module (latex-thesis-zh)
+
+Detects the university template and summarizes key requirements from `references/UNIVERSITIES/`.
+
+```bash
+python scripts/detect_template.py main.tex
+```
+
+## Recommended Workflows
+
+### English Paper Full Review
+1. Format check (strict)
+2. Grammar analysis
+3. De-AI polishing
+4. Sentence decomposition
+5. Expression optimization
+6. Bibliography verification
+
+### Chinese Thesis Full Review
+1. Structure mapping (first)
+2. GB/T format check
+3. Template detection + key requirements
+4. De-AI polishing
+5. Academic expression cleanup
+6. Long sentence analysis
+7. Bibliography verification
+
+### Typst Rapid Iteration
+1. Compile or watch mode
+2. Format check (basic)
+3. Grammar analysis
+4. Template check (if required by venue)
 
 ## Best Practices
 

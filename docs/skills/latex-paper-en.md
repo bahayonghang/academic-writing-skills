@@ -30,6 +30,20 @@ Required tools: `pdflatex`, `xelatex`, `latexmk`, `biber`, `chktex`
 
 This skill is designed to work with Claude Code and similar AI assistants. Simply mention the relevant trigger words in your conversation, and the assistant will activate the appropriate module.
 
+### Argument Conventions
+
+Provide clear inputs in your request:
+- **Main `.tex` path** (required for tool execution)
+- **Target scope** (section/chapter or full document)
+- **Module choice** (compile / format / grammar / translation / etc.)
+
+If any of these are missing or ambiguous, the assistant will ask for clarification instead of guessing.
+
+### Execution Guardrails
+
+- Tools/scripts run **only** when you explicitly request execution.
+- Destructive operations (`--clean`, `--clean-all`) require explicit confirmation.
+
 ### Example Usage
 
 **Compile your paper**:
@@ -64,9 +78,11 @@ The skill uses a modular design where each module can be invoked independently:
 | Grammar Analysis | grammar, proofread | Grammar analysis |
 | Sentence Decomposition | long sentence, simplify | Long sentence decomposition |
 | Expression | academic tone, improve writing | Expression optimization |
+| Logic & Methodology | logic, coherence, methodology, argument | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography | Bibliography checking |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
+| Title Optimization | title, 标题, title optimization | Generate and optimize titles 🆕 |
 
 ## Output Protocol
 
@@ -175,6 +191,88 @@ Check the grammar in my introduction section
 
 ```
 Proofread the methods section and fix Chinglish errors
+```
+
+## Sentence Decomposition Module
+
+Decompose long sentences (>50 words or >3 clauses) to improve readability.
+
+### Usage in Claude Code
+
+```
+Simplify the long sentence in Section 3
+```
+
+```
+Split sentences longer than 50 words in my introduction
+```
+
+## Expression Module
+
+Improve academic tone by replacing weak verbs and colloquial phrasing.
+
+### Usage in Claude Code
+
+```
+Improve academic tone in the abstract
+```
+
+```
+Replace weak verbs in the related work section
+```
+
+## Logic & Methodology Module
+
+Ensure logical flow between paragraphs and strengthen methodological rigor in academic writing.
+
+### AXES Model for Paragraph Coherence
+
+| Component | Description | Example |
+|-----------|-------------|---------|
+| **A**ssertion | Clear topic sentence stating the main claim | "Attention mechanisms improve sequence modeling." |
+| **X**ample | Concrete evidence or data supporting the claim | "In our experiments, attention achieved 95% accuracy." |
+| **E**xplanation | Analysis of why the evidence supports the claim | "This improvement stems from the ability to capture long-range dependencies." |
+| **S**ignificance | Connection to broader argument or next paragraph | "This finding motivates our proposed architecture." |
+
+### Transition Signals
+
+| Relationship | Signals |
+|--------------|---------|
+| Addition | furthermore, moreover, in addition, additionally |
+| Contrast | however, nevertheless, in contrast, conversely |
+| Cause-Effect | therefore, consequently, as a result, thus |
+| Sequence | first, subsequently, finally, meanwhile |
+| Example | for instance, specifically, in particular |
+
+### Methodological Depth Checklist
+
+- Each claim is supported by evidence (data, citation, or logical reasoning)
+- Method choices are justified (why this approach over alternatives?)
+- Limitations are acknowledged explicitly
+- Assumptions are stated clearly
+- Reproducibility details are sufficient (parameters, datasets, metrics)
+
+### Common Issues
+
+| Issue | Problem | Fix |
+|-------|---------|-----|
+| Logical gap | Missing connection between paragraphs | Add transition sentence explaining the relationship |
+| Unsupported claim | Assertion without evidence | Add citation, data, or reasoning |
+| Shallow methodology | "We use X" without justification | Explain why X is appropriate for this problem |
+| Hidden assumptions | Implicit prerequisites | State assumptions explicitly |
+
+### Usage in Claude Code
+
+```
+Check logical coherence in my introduction section
+```
+
+```
+Analyze methodological depth in the methods section
+```
+
+```
+Add transition signals between paragraphs in Section 3
 ```
 
 ## Translation Module (Chinese → English)
@@ -302,6 +400,149 @@ See `references/DEAI_GUIDE.md` for:
 - `references/COMMON_ERRORS.md`: Common mistakes
 - `references/VENUES.md`: Conference/journal requirements
 - `references/DEAI_GUIDE.md`: De-AI writing guide and AI pattern detection
+
+## Title Optimization Module
+
+Generate and optimize paper titles following IEEE/ACM/Springer/NeurIPS best practices.
+
+### Key Principles
+
+Based on IEEE Author Center and top-tier venue guidelines:
+
+1. **Conciseness**: Remove "A Study of", "Research on", "Novel", "New", "Improved"
+2. **Searchability**: Place key terms (Method + Problem) in first 65 characters
+3. **Length**: Optimal 10-15 words; acceptable 8-20 words
+4. **Specificity**: Use concrete method/problem names, avoid vague terms
+5. **Jargon-Free**: Avoid obscure abbreviations (except AI, LSTM, DNA, etc.)
+
+### Quality Scoring
+
+Each title receives a score (0-100) based on:
+- Conciseness (25%): No ineffective words
+- Searchability (30%): Key terms in first 65 characters
+- Length (15%): Within optimal range
+- Specificity (20%): Concrete vs vague terms
+- Jargon-Free (10%): No obscure abbreviations
+
+### Usage in Claude Code
+
+**Check existing title**:
+```
+Check the quality of my paper title
+```
+
+**Generate title candidates**:
+```
+Generate title candidates for my paper based on the abstract
+```
+
+**Optimize existing title**:
+```
+Optimize my paper title to follow IEEE best practices
+```
+
+The assistant will analyze your title and provide:
+- Quality score with breakdown
+- Specific issues detected
+- Multiple improved candidates (ranked by score)
+- Suggested LaTeX code
+
+### Title Generation Workflow
+
+1. **Content Analysis**: Extract problem, method, domain, key results from abstract/introduction
+2. **Keyword Extraction**: Identify 3-5 core keywords (method + problem + domain)
+3. **Template Selection**: Choose appropriate pattern (Method for Problem, Problem via Method, etc.)
+4. **Candidate Generation**: Create 3-5 variants with different emphasis
+5. **Quality Scoring**: Rank candidates by quality score
+
+### Common Title Patterns
+
+| Pattern | Example | Use Case |
+|---------|---------|----------|
+| Method for Problem | "Transformer for Time Series Forecasting" | General research |
+| Method: Problem in Domain | "Graph Neural Networks: Fault Detection in Industrial Systems" | Domain-specific |
+| Problem via Method | "Time Series Forecasting via Attention Mechanisms" | Method-focused |
+| Method + Feature | "Lightweight Transformer for Real-Time Detection" | Performance-focused |
+
+### Ineffective Words to Remove
+
+| Avoid | Reason |
+|-------|--------|
+| A Study of | Redundant (all papers are studies) |
+| Research on | Redundant (all papers are research) |
+| Novel / New | Implied by publication |
+| Improved / Enhanced | Vague without specifics |
+| Based on | Often unnecessary |
+| Using / Utilizing | Can be replaced with prepositions |
+
+### Good vs Bad Examples
+
+```
+Good: "Transformer for Time Series Forecasting in Industrial Control"
+Bad:  "A Novel Study on Improved Time Series Forecasting Using Transformers"
+
+Good: "Graph Neural Networks for Fault Detection"
+Bad:  "Research on Novel Fault Detection Based on GNNs"
+
+Good: "Attention-Based LSTM for Multivariate Time Series Prediction"
+Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
+```
+
+### Venue-Specific Guidelines
+
+**IEEE Transactions**:
+- Avoid formulas with subscripts (except simple ones)
+- Use title case (capitalize major words)
+- Typical length: 10-15 words
+
+**ACM Conferences**:
+- More flexible with creative titles
+- Can use colons for subtitles
+- Typical length: 8-12 words
+
+**Springer Journals**:
+- Prefer descriptive over creative
+- Can be slightly longer (up to 20 words)
+
+**NeurIPS/ICML**:
+- Concise and impactful (8-12 words)
+- Method name often prominent
+
+### Best Practices
+
+1. **Start with keywords**: Put Method + Problem in first 10 words
+2. **Be specific**: "Transformer" > "Deep Learning" > "Machine Learning"
+3. **Remove fluff**: Delete "Novel", "Study", "Research", "Based on"
+4. **Check length**: Aim for 10-15 words (English)
+5. **Test searchability**: Would you find this paper with these keywords?
+6. **Avoid jargon**: Unless widely recognized (AI, LSTM, CNN)
+7. **Match venue style**: IEEE (descriptive), ACM (creative), NeurIPS (concise)
+
+### References
+
+- [IEEE Author Center](https://conferences.ieeeauthorcenter.ieee.org/)
+- [Royal Society Blog on Title Optimization](https://royalsociety.org/blog/2025/01/title-abstract-and-keywords-a-practical-guide-to-maximizing-the-visibility-and-impact-of-your-papers/)
+
+## Recommended Workflows
+
+### Fast Pre-Submission Check
+1. Format check (strict mode)
+2. Grammar analysis (abstract + introduction)
+3. Bibliography verification
+
+### Full Quality Pass
+1. Format check → fix critical issues
+2. Grammar analysis
+3. De-AI polishing
+4. Sentence decomposition
+5. Expression restructuring
+6. Bibliography verification
+
+### Translation Pipeline
+1. Terminology confirmation
+2. Translation with annotations
+3. Chinglish check
+4. Academic polish
 
 ## Next Steps
 
