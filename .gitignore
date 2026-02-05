@@ -73,3 +73,5 @@ tmp/
 .env.*
 !.env.example
 !.env.*.example
+
+.kiro/
