@@ -28,7 +28,9 @@ npm run docs:dev
 - **语法分析**：中式英语检测、弱动词替换建议
 - **长难句分析**：复杂句子拆解与重构建议
 - **表达优化**：学术语气改进
-- **标题优化**：根据 IEEE/ACM/Springer 最佳实践生成和优化论文标题 🆕
+- **逻辑衔接与方法论**：段落衔接（AXES 模型）、过渡信号词、方法论深度检查 🆕
+- **标题优化**：根据 IEEE/ACM/Springer 最佳实践生成和优化论文标题
+- **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **期刊适配**：IEEE、ACM、Springer、NeurIPS、ICML 格式指南
 
 ### latex-thesis-zh（中文学位论文）
@@ -36,16 +38,19 @@ npm run docs:dev
 - **国标检查**：符合 GB/T 7714-2015 参考文献规范
 - **模板检测**：支持 thuthesis、pkuthss、ustcthesis、fduthesis 等模板
 - **中文学术规范**：口语化表达检测、术语一致性检查
-- **标题优化**：根据 GB/T 7713.1-2006 规范生成和优化学位论文标题 🆕
+- **逻辑衔接与方法论**：段落衔接（AXES 模型）、过渡信号词、方法论深度检查 🆕
+- **标题优化**：根据 GB/T 7713.1-2006 规范生成和优化学位论文标题
+- **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
 
-### typst-paper（Typst 学术论文）🆕
+### typst-paper（Typst 学术论文）
 - **快速编译**：毫秒级编译速度
 - **双语支持**：同时支持英文和中文论文
 - **格式检查**：页面设置、文本格式、引用检查
 - **语法分析**：与 LaTeX 版本相同，适配 Typst 语法
+- **逻辑衔接与方法论**：段落衔接（AXES 模型）、过渡信号词、方法论深度检查 🆕
 - **去AI化编辑**：降低 AI 写作痕迹
-- **标题优化**：双语标题生成和优化（中英文） 🆕
+- **标题优化**：双语标题生成和优化（中英文）
 - **期刊模板**：IEEE、ACM、Springer、NeurIPS 模板
 - **现代语法**：简洁直观的标记语言
 
@@ -170,7 +175,15 @@ xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\
 - "simplify this complex sentence"
 - 自动触发：英文句子 >50 词或中文句子 >60 字
 
-**标题优化** 🆕
+**逻辑衔接与方法论** 🆕
+- "检查引言的逻辑衔接"
+- "分析方法论深度"
+- "check logical coherence"
+- "analyze methodological depth"
+- 使用 AXES 模型（主张、例证、解释、意义）检查段落衔接
+- 检查过渡信号词和方法论严谨性
+
+**标题优化**
 - "优化我的论文标题"
 - "生成标题候选方案"
 - "optimize my paper title"

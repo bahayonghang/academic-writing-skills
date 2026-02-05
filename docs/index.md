@@ -16,15 +16,15 @@ hero:
 features:
   - icon: 📝
     title: English Papers (latex-paper-en)
-    details: Comprehensive support for English academic papers with ChkTeX format checking, pdfLaTeX/XeLaTeX compilation, and IEEE/ACM/Springer style guides.
+    details: Comprehensive support for English academic papers with ChkTeX format checking, pdfLaTeX/XeLaTeX compilation, logic & methodology analysis, and IEEE/ACM/Springer style guides.
 
   - icon: 📚
     title: Chinese Thesis (latex-thesis-zh)
-    details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
+    details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, logic & methodology analysis, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
 
   - icon: ⚡
-    title: Typst Papers (typst-paper) 🆕
-    details: Modern markup language with millisecond compilation, bilingual support, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
+    title: Typst Papers (typst-paper)
+    details: Modern markup language with millisecond compilation, bilingual support, logic & methodology analysis, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
 
   - icon: 🚀
     title: Fast Compilation

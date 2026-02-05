@@ -28,7 +28,9 @@ Then open http://localhost:5173 in your browser.
 - **Grammar Analysis**: Chinglish detection, weak verb replacement
 - **Sentence Analysis**: Complex sentence decomposition
 - **Expression Restructuring**: Academic tone improvements
-- **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices 🆕
+- **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
+- **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices
+- **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Venue Support**: IEEE, ACM, Springer, NeurIPS, ICML guidelines
 
 ### latex-thesis-zh (Chinese Theses)
@@ -36,16 +38,19 @@ Then open http://localhost:5173 in your browser.
 - **GB/T 7714 Compliance**: Chinese national bibliography standard
 - **Template Detection**: Support for thuthesis, pkuthss, ustcthesis, fduthesis
 - **Chinese Academic Style**: Oral expression detection, terminology consistency
-- **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards 🆕
+- **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
+- **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards
+- **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 
-### typst-paper (Typst Academic Papers) 🆕
+### typst-paper (Typst Academic Papers)
 - **Fast Compilation**: Millisecond-level compilation speed
 - **Bilingual Support**: Both English and Chinese papers
 - **Format Checking**: Page settings, text formatting, citations
 - **Grammar Analysis**: Same as LaTeX version with Typst syntax
+- **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **De-AI Editing**: Reduce AI writing traces
-- **Title Optimization**: Bilingual title generation and optimization (English/Chinese) 🆕
+- **Title Optimization**: Bilingual title generation and optimization (English/Chinese)
 - **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
 - **Modern Syntax**: Simple, intuitive markup language
 
@@ -168,7 +173,15 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 - "拆解长难句"
 - Automatically triggers for sentences >50 words (English) or >60 characters (Chinese)
 
-**Title Optimization** 🆕
+**Logic & Methodology** 🆕
+- "check logical coherence in my introduction"
+- "analyze methodological depth"
+- "检查逻辑衔接"
+- "分析方法论深度"
+- Uses AXES model (Assertion, eXample, Explanation, Significance) for paragraph coherence
+- Checks transition signals and methodological rigor
+
+**Title Optimization**
 - "optimize my paper title"
 - "generate title candidates"
 - "优化论文标题"

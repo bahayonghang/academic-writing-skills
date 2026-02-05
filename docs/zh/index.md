@@ -16,15 +16,15 @@ hero:
 features:
   - icon: 📝
     title: 英文论文 (latex-paper-en)
-    details: 全面支持英文学术论文，包含 ChkTeX 格式检查、pdfLaTeX/XeLaTeX 编译，以及 IEEE/ACM/Springer 样式指南。
+    details: 全面支持英文学术论文，包含 ChkTeX 格式检查、pdfLaTeX/XeLaTeX 编译、逻辑衔接与方法论分析，以及 IEEE/ACM/Springer 样式指南。
 
   - icon: 📚
     title: 中文论文 (latex-thesis-zh)
-    details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译，以及主流大学模板（清华、北大、中科大、复旦）。
+    details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译、逻辑衔接与方法论分析，以及主流大学模板（清华、北大、中科大、复旦）。
 
   - icon: ⚡
-    title: Typst 论文 (typst-paper) 🆕
-    details: 现代化标记语言，毫秒级编译速度，双语支持，提供期刊特定模板（IEEE、ACM、Springer、NeurIPS）。
+    title: Typst 论文 (typst-paper)
+    details: 现代化标记语言，毫秒级编译速度，双语支持，逻辑衔接与方法论分析，提供期刊特定模板（IEEE、ACM、Springer、NeurIPS）。
 
   - icon: 🚀
     title: 快速编译
