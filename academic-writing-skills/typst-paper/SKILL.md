@@ -255,7 +255,17 @@ typst compile --font-path ./fonts main.typ
 | 我们使用 | 本文采用 |
 | 可以看出 | 由此可见 |
 
-**输出格式**:
+**使用方式**：用户提供段落源码，Agent 分析并返回润色版本及对比表格。
+
+**输出格式**（Markdown 对比表格）:
+```markdown
+| Original / 原文 | Revised / 改进版本 | Issue Type / 问题类型 | Rationale / 优化理由 |
+|-----------------|---------------------|----------------------|---------------------|
+| We use machine learning to get better results. | We employ machine learning to achieve superior performance. | Weak verbs | Replace "use" → "employ", "get" → "achieve" for academic tone |
+| 我们使用了深度学习方法。 | 本文采用深度学习方法进行特征提取。 | 口语化表达 | "我们使用" → "本文采用"（学术规范）；补充方法用途 |
+```
+
+**备选格式**（源码内注释）:
 ```typst
 // EXPRESSION（第23行）[Severity: Minor] [Priority: P2]: 提升学术语气
 // 原文：We use machine learning to get better results.

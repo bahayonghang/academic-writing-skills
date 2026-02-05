@@ -159,7 +159,18 @@ Focus areas:
 - Tense consistency (past for methods, present for results)
 - Chinglish detection → See [COMMON_ERRORS.md](references/COMMON_ERRORS.md)
 
-Output format:
+**Usage**: User provides paragraph source code, agent analyzes and returns polished version with comparison table.
+
+**Output format** (Markdown comparison table):
+```markdown
+| Original | Revised | Issue Type | Rationale |
+|----------|---------|------------|-----------|
+| We propose method for time series forecasting. | We propose a method for time series forecasting. | Grammar: Article missing | Singular count noun requires indefinite article "a" |
+| The data shows significant improvement. | The data show significant improvement. | Grammar: Subject-verb agreement | "Data" is plural, requires "show" not "shows" |
+| This approach get better results. | This approach achieves superior performance. | Grammar + Expression | Verb agreement error; replace weak verb "get" with academic alternative |
+```
+
+**Alternative format** (for inline comments in source):
 ```latex
 % GRAMMAR (Line 23) [Severity: Major] [Priority: P1]: Article missing
 % Original: We propose method for...
