@@ -1,5 +1,37 @@
 # Common Chinglish Errors in Academic Writing
 
+
+## Table of Contents
+
+- [Category 1: Sentence Structure](#category-1-sentence-structure)
+  - [1.1 Topic-Prominent Structure](#11-topic-prominent-structure)
+  - [1.2 Run-on Sentences](#12-run-on-sentences)
+  - [1.3 Missing Articles](#13-missing-articles)
+- [Category 2: Word Choice](#category-2-word-choice)
+  - [2.1 Weak Verbs](#21-weak-verbs)
+  - [2.2 Informal Expressions](#22-informal-expressions)
+  - [2.3 Redundant Expressions](#23-redundant-expressions)
+- [Category 3: Hedging (避免绝对化)](#category-3-hedging-避免绝对化)
+  - [Forbidden Absolute Words](#forbidden-absolute-words)
+  - [Academic Hedging](#academic-hedging)
+- [Category 4: Tense Usage](#category-4-tense-usage)
+  - [Abstract](#abstract)
+  - [Introduction](#introduction)
+  - [Methods](#methods)
+  - [Results](#results)
+  - [Discussion](#discussion)
+- [Category 5: Common Phrase Errors](#category-5-common-phrase-errors)
+  - [Preposition Errors](#preposition-errors)
+  - [Collocation Errors](#collocation-errors)
+- [Category 6: Chinese-English Translation Patterns](#category-6-chinese-english-translation-patterns)
+  - [6.1 Direct Translation Errors](#61-direct-translation-errors)
+  - [6.2 Academic Expression Patterns](#62-academic-expression-patterns)
+- [Typst-Specific Notes](#typst-specific-notes)
+  - [Comment Syntax](#comment-syntax)
+  - [Common Typst Errors](#common-typst-errors)
+
+---
+
 ## Category 1: Sentence Structure
 
 ### 1.1 Topic-Prominent Structure

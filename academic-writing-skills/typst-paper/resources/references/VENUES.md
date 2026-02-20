@@ -1,5 +1,58 @@
 # Venue-Specific Requirements for Typst Papers
 
+
+## Table of Contents
+
+- [IEEE Conferences and Journals](#ieee-conferences-and-journals)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+  - [Writing Style](#writing-style)
+  - [Citation Style](#citation-style)
+  - [Template](#template)
+- [ACM Conferences and Journals](#acm-conferences-and-journals)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+  - [Writing Style](#writing-style)
+  - [Citation Styles](#citation-styles)
+- [Springer Journals](#springer-journals)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+  - [Writing Style](#writing-style)
+  - [Special Requirements](#special-requirements)
+- [NeurIPS / ICML / ICLR (Machine Learning Conferences)](#neurips-icml-iclr-machine-learning-conferences)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+  - [Writing Style](#writing-style)
+  - [Special Requirements](#special-requirements)
+- [CVPR / ICCV / ECCV (Computer Vision Conferences)](#cvpr-iccv-eccv-computer-vision-conferences)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+  - [Writing Style](#writing-style)
+- [AAAI / IJCAI (AI Conferences)](#aaai-ijcai-ai-conferences)
+  - [Format Requirements](#format-requirements)
+  - [Typst Configuration](#typst-configuration)
+- [Nature / Science (High-Impact Journals)](#nature-science-high-impact-journals)
+  - [Format Requirements](#format-requirements)
+  - [Writing Style](#writing-style)
+- [Chinese Journals (中文期刊)](#chinese-journals-中文期刊)
+  - [GB/T 7714-2015 Standard](#gbt-7714-2015-standard)
+- [Comparison Table](#comparison-table)
+- [General Tips for All Venues](#general-tips-for-all-venues)
+  - [Before Submission](#before-submission)
+  - [Common Mistakes to Avoid](#common-mistakes-to-avoid)
+  - [Typst Advantages for Venue Compliance](#typst-advantages-for-venue-compliance)
+- [Conference Quick Reference Table](#conference-quick-reference-table)
+- [Pre-Submission Checklist](#pre-submission-checklist)
+  - [Universal (All Venues)](#universal-all-venues)
+- [Resubmission Format Conversion](#resubmission-format-conversion)
+  - [Common Conversion Paths](#common-conversion-paths)
+  - [Content Migration Principles](#content-migration-principles)
+- [Figure and Table Specifications](#figure-and-table-specifications)
+  - [Tables (Typst)](#tables-typst)
+  - [Figures](#figures)
+
+---
+
 ## IEEE Conferences and Journals
 
 ### Format Requirements
@@ -339,3 +392,80 @@
 - ✅ Consistent formatting across document
 - ✅ Built-in support for multiple citation styles
 - ✅ Simple figure and table management
+
+---
+
+## Conference Quick Reference Table
+
+| Conference | Page Limit | Extra (Camera-Ready) | Key Requirement |
+|------------|------------|---------------------|-----------------|
+| **NeurIPS 2025** | 9 pages | +0 | Mandatory checklist, lay summary |
+| **ICML 2026** | 8 pages | +1 | Broader Impact Statement |
+| **ICLR 2026** | 9 pages | +1 | LLM disclosure, reciprocal review |
+| **ACL 2025** | 8 pages (long) | varies | Limitations section mandatory |
+| **AAAI 2026** | 7 pages | +1 | Strict style file adherence |
+| **COLM 2025** | 9 pages | +1 | Language model focus |
+
+**Note**: While some conferences require LaTeX, Typst submissions may be accepted as PDF. Check venue-specific requirements.
+
+---
+
+## Pre-Submission Checklist
+
+### Universal (All Venues)
+- [ ] Document compiles without errors (`typst compile`)
+- [ ] All figures referenced in text
+- [ ] All tables referenced in text
+- [ ] No orphaned citations
+- [ ] No placeholder text (TODO, FIXME, XXX)
+- [ ] Anonymous submission (remove author info)
+- [ ] Page limit respected
+- [ ] Consistent notation throughout
+- [ ] All acronyms defined on first use
+- [ ] Limitations section included
+
+---
+
+## Resubmission Format Conversion
+
+### Common Conversion Paths
+
+| From → To | Page Change | Key Adjustments |
+|-----------|-------------|-----------------|
+| NeurIPS → ICML | 9 → 8 | Cut 1 page, add Broader Impact |
+| ICML → ICLR | 8 → 9 | Expand experiments, add LLM disclosure |
+| NeurIPS → ACL | 9 → 8 | Restructure for NLP, add Limitations |
+| ICLR → AAAI | 9 → 7 | Significant cuts, strict style |
+
+### Content Migration Principles
+1. **Start fresh with target template** — don't merge preambles
+2. **Copy content sections only** (text, figures, tables, bibliography)
+3. When cutting: move proofs to appendix, condense related work
+4. When expanding: add ablations, expand limitations
+
+---
+
+## Figure and Table Specifications
+
+### Tables (Typst)
+```typst
+// Professional table with booktabs-style rules
+#table(
+  columns: (auto, auto, auto),
+  stroke: none,
+  table.hline(),
+  table.header(
+    [*Method*], [*Accuracy ↑*], [*Latency ↓*],
+  ),
+  table.hline(stroke: 0.5pt),
+  [Baseline], [85.2], [45ms],
+  [**Ours**], [**92.1**], [38ms],
+  table.hline(),
+)
+```
+
+### Figures
+- **Vector formats** preferred (SVG for Typst)
+- **Colorblind-safe palettes**: Okabe-Ito or Paul Tol
+- **Grayscale readability**: Verify figures work without color
+- **Self-contained captions**: Reader should understand without main text

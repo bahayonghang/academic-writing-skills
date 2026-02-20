@@ -46,6 +46,21 @@ class BibChecker:
         self.issues = []
         self.warnings = []
 
+    @staticmethod
+    def _extract_balanced_brace(content: str, start_idx: int) -> str:
+        """Extract content within balanced braces starting at start_idx."""
+        if start_idx >= len(content) or content[start_idx] != "{":
+            return ""
+        depth = 0
+        for i in range(start_idx, len(content)):
+            if content[i] == "{":
+                depth += 1
+            elif content[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    return content[start_idx + 1 : i]
+        return ""
+
     def load_bibtex(self) -> bool:
         """Load and parse BibTeX file."""
         try:
@@ -54,21 +69,29 @@ class BibChecker:
             print(f"[ERROR] Failed to read file: {e}")
             return False
 
-        # Parse BibTeX entries
-        entry_pattern = r"@(\w+)\s*\{\s*([^,]+)\s*,([^}]+)\}"
-        matches = re.finditer(entry_pattern, content, re.DOTALL)
+        # Find entry starts: @type{key,
+        entry_starts = list(re.finditer(r"@(\w+)\s*\{\s*([^,\s]+)\s*,", content))
 
-        for match in matches:
+        for match in entry_starts:
             entry_type = match.group(1).lower()
             key = match.group(2).strip()
-            fields_str = match.group(3)
 
-            # Parse fields
+            # Skip @comment, @string, @preamble
+            if entry_type in ("comment", "string", "preamble"):
+                continue
+
+            # Find the balanced closing brace for this entry
+            brace_start = match.start() + content[match.start() :].index("{")
+            body = self._extract_balanced_brace(content, brace_start)
+            if not body:
+                continue
+
+            # Parse fields from body (supports nested braces in values)
             fields = {}
-            field_pattern = r'(\w+)\s*=\s*[{"](.*?)[}"]'
-            for field_match in re.finditer(field_pattern, fields_str, re.DOTALL):
+            field_pattern = r'(\w+)\s*=\s*(?:\{((?:[^{}]|\{[^{}]*\})*)\}|"([^"]*)")'
+            for field_match in re.finditer(field_pattern, body, re.DOTALL):
                 field_name = field_match.group(1).lower()
-                field_value = field_match.group(2).strip()
+                field_value = (field_match.group(2) or field_match.group(3) or "").strip()
                 fields[field_name] = field_value
 
             self.entries[key] = {"type": entry_type, "fields": fields}
@@ -148,11 +171,16 @@ class BibChecker:
             print(f"[ERROR] Failed to read Typst file: {e}")
             return
 
-        # Find all citations in Typst file
+        # Find all @key citations in Typst file
         citations = set(re.findall(r"@(\w+)", content))
 
-        # Remove special Typst references (figures, tables, etc.)
-        citations = {c for c in citations if not c.startswith(("fig:", "tab:", "eq:", "sec:"))}
+        # Filter out non-citation @ matches (packages, imports, label prefixes)
+        non_citation_prefixes = ("fig", "tab", "eq", "sec", "preview", "import")
+        citations = {
+            c
+            for c in citations
+            if not c.startswith(non_citation_prefixes)
+        }
 
         print(f"  ✓ Found {len(citations)} unique citations in Typst file")
 
@@ -172,6 +200,26 @@ class BibChecker:
             )
         else:
             print("  ✓ All bibliography entries are cited")
+
+    def check_identifiers(self):
+        """Check for missing DOI/URL identifiers."""
+        missing_id = []
+        for key, entry in self.entries.items():
+            fields = entry["fields"]
+            if "doi" not in fields and "url" not in fields:
+                missing_id.append(key)
+
+        if missing_id:
+            self.warnings.append(
+                f"{len(missing_id)} entries missing DOI/URL: "
+                + ", ".join(missing_id[:5])
+                + (f" and {len(missing_id) - 5} more" if len(missing_id) > 5 else "")
+            )
+            self.warnings.append(
+                "TIP: AI-generated citations have ~40% error rate. "
+                "Verify entries without DOI/URL using Semantic Scholar API. "
+                "See references/CITATION_VERIFICATION.md"
+            )
 
     def check_style(self):
         """Check style-specific requirements."""
@@ -223,6 +271,7 @@ class BibChecker:
         self.check_duplicates()
         self.check_citations()
         self.check_style()
+        self.check_identifiers()
 
         # Print summary
         print("\n" + "=" * 60)

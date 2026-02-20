@@ -1,5 +1,38 @@
 # De-AI Writing Guide for Typst Academic Papers
 
+
+## 目录
+
+- [目的 (Purpose)](#目的-purpose)
+- [核心原则 (Core Principles)](#核心原则-core-principles)
+  - [1. Syntax Fidelity (语法保真优先)](#1-syntax-fidelity-语法保真优先)
+  - [2. Zero Fabrication (零捏造)](#2-zero-fabrication-零捏造)
+  - [3. Information Density (提高信息密度)](#3-information-density-提高信息密度)
+  - [4. Academic Restraint (克制措辞)](#4-academic-restraint-克制措辞)
+- [Common AI Writing Patterns to Remove](#common-ai-writing-patterns-to-remove)
+  - [Category 1: Empty Phrases (空话口号)](#category-1-empty-phrases-空话口号)
+  - [Category 2: Over-Confident Language (过度确定)](#category-2-over-confident-language-过度确定)
+  - [Category 3: Mechanical Structures (机械排比)](#category-3-mechanical-structures-机械排比)
+  - [Category 4: Vague Quantification (模糊量化)](#category-4-vague-quantification-模糊量化)
+  - [Category 5: Template Introductions (模板引言)](#category-5-template-introductions-模板引言)
+- [Section-Specific Guidelines](#section-specific-guidelines)
+  - [Abstract (摘要)](#abstract-摘要)
+  - [Introduction (引言)](#introduction-引言)
+  - [Related Work (相关工作)](#related-work-相关工作)
+  - [Methods (方法)](#methods-方法)
+  - [Results (结果)](#results-结果)
+  - [Discussion (讨论)](#discussion-讨论)
+  - [Conclusion (结论)](#conclusion-结论)
+- [Output Format for De-AI Editing](#output-format-for-de-ai-editing)
+- [Change Categories](#change-categories)
+- [Typst-Specific Syntax Preservation](#typst-specific-syntax-preservation)
+  - [Protected Elements (NEVER Modify)](#protected-elements-never-modify)
+  - [Modifiable Elements (Text Only)](#modifiable-elements-text-only)
+- [Quick Reference: Common Replacements](#quick-reference-common-replacements)
+- [Bibliography](#bibliography)
+
+---
+
 ## 目的 (Purpose)
 
 This guide helps reduce AI-generated writing traces while maintaining technical accuracy and Typst syntax integrity.

@@ -1,5 +1,55 @@
 # Typst Syntax Reference for Academic Writing
 
+
+## Table of Contents
+
+- [Basic Syntax](#basic-syntax)
+  - [Text Formatting](#text-formatting)
+  - [Headings](#headings)
+  - [Paragraphs](#paragraphs)
+  - [Lists](#lists)
+- [Math](#math)
+  - [Inline Math](#inline-math)
+  - [Display Math](#display-math)
+  - [Common Math Symbols](#common-math-symbols)
+- [Figures and Tables](#figures-and-tables)
+  - [Figures](#figures)
+  - [Tables](#tables)
+- [Citations and References](#citations-and-references)
+  - [Citations](#citations)
+  - [Bibliography](#bibliography)
+  - [Citation Styles](#citation-styles)
+- [Page Setup](#page-setup)
+  - [Basic Page Configuration](#basic-page-configuration)
+  - [Two-Column Layout](#two-column-layout)
+  - [Headers and Footers](#headers-and-footers)
+- [Text Formatting](#text-formatting)
+  - [Font Settings](#font-settings)
+  - [Paragraph Settings](#paragraph-settings)
+  - [Heading Settings](#heading-settings)
+- [Cross-References](#cross-references)
+  - [Labels](#labels)
+  - [References](#references)
+- [Functions and Variables](#functions-and-variables)
+  - [Define Variables](#define-variables)
+  - [Define Functions](#define-functions)
+  - [Conditional Content](#conditional-content)
+- [Show Rules (Styling)](#show-rules-styling)
+  - [Style Headings](#style-headings)
+  - [Style Links](#style-links)
+  - [Style Figures](#style-figures)
+- [Comments](#comments)
+- [Special Characters](#special-characters)
+- [Code Blocks](#code-blocks)
+- [Common Patterns for Academic Papers](#common-patterns-for-academic-papers)
+  - [Title and Authors](#title-and-authors)
+  - [Abstract](#abstract)
+  - [Acknowledgments](#acknowledgments)
+- [Tips for Academic Writing](#tips-for-academic-writing)
+- [Resources](#resources)
+
+---
+
 ## Basic Syntax
 
 ### Text Formatting

@@ -1,5 +1,49 @@
 # Academic Writing Style Guide (Typst)
 
+
+## Table of Contents
+
+- [Core Principles](#core-principles)
+  - [1. Clarity Over Complexity](#1-clarity-over-complexity)
+  - [2. Precision Over Vagueness](#2-precision-over-vagueness)
+  - [3. Active Voice (When Appropriate)](#3-active-voice-when-appropriate)
+- [Sentence Length Guidelines](#sentence-length-guidelines)
+- [Paragraph Structure](#paragraph-structure)
+  - [Topic Sentence](#topic-sentence)
+  - [Supporting Sentences](#supporting-sentences)
+  - [Transition](#transition)
+- [Academic Vocabulary](#academic-vocabulary)
+  - [Reporting Verbs (Neutral)](#reporting-verbs-neutral)
+  - [Reporting Verbs (Strong Agreement)](#reporting-verbs-strong-agreement)
+  - [Reporting Verbs (Tentative)](#reporting-verbs-tentative)
+  - [Reporting Verbs (Critical)](#reporting-verbs-critical)
+- [Transition Words](#transition-words)
+  - [Addition](#addition)
+  - [Contrast](#contrast)
+  - [Cause/Effect](#causeeffect)
+  - [Example](#example)
+  - [Sequence](#sequence)
+- [Citation Integration (Typst Syntax)](#citation-integration-typst-syntax)
+  - [Integral (Author as Subject)](#integral-author-as-subject)
+  - [Non-Integral (Content Focus)](#non-integral-content-focus)
+  - [Paraphrase (Preferred)](#paraphrase-preferred)
+  - [Direct Quote (Sparingly)](#direct-quote-sparingly)
+- [Common Section Patterns](#common-section-patterns)
+  - [Introduction](#introduction)
+  - [Related Work](#related-work)
+  - [Methodology](#methodology)
+  - [Results](#results)
+  - [Conclusion](#conclusion)
+- [Typst-Specific Formatting](#typst-specific-formatting)
+  - [Headings](#headings)
+  - [Emphasis](#emphasis)
+  - [Lists](#lists)
+  - [Math](#math)
+  - [Figures and Tables](#figures-and-tables)
+  - [Cross-references](#cross-references)
+
+---
+
 ## Core Principles
 
 ### 1. Clarity Over Complexity

@@ -9,6 +9,7 @@ A comprehensive toolkit for writing academic papers in Typst, supporting both En
 - 🌍 **Bilingual Support**: English and Chinese academic writing
 - 🎯 **Venue-Specific**: IEEE, ACM, Springer, NeurIPS, CVPR templates
 - 🔧 **Automated Scripts**: Python scripts for common tasks
+- 🧠 **Comprehensive Analysis**: Logic, methodology, workflow, and reviewer perspective
 
 ## Quick Start
 
@@ -36,132 +37,126 @@ A comprehensive toolkit for writing academic papers in Typst, supporting both En
 
 1. **Compile a paper**:
    ```bash
-   python scripts/compile.py main.typ
+   typst compile main.typ
    ```
 
-2. **Watch mode** (auto-recompile on changes):
-   ```bash
-   python scripts/compile.py main.typ --watch
-   ```
-
-3. **Check formatting**:
+2. **Check formatting**:
    ```bash
    python scripts/check_format.py main.typ
    ```
 
-4. **Verify bibliography**:
+3. **Verify bibliography**:
    ```bash
-   python scripts/verify_bib.py references.bib --typ main.typ
+   python scripts/verify_bib.py refs.bib
    ```
 
 ## Modules
 
 ### 1. Compilation Module
-**Triggers**: `compile`, `编译`, `typst compile`
+**Triggers**: `compile`, `编译`, `build`, `typst compile`
 
-Fast compilation with multiple output formats:
+Fast compilation with Typst CLI:
 ```bash
-# Basic compilation
-python scripts/compile.py main.typ
-
-# Watch mode
-python scripts/compile.py main.typ --watch
-
-# Export as PNG
-python scripts/compile.py main.typ --format png
-
-# Custom output name
-python scripts/compile.py main.typ --output paper.pdf
-
-# Custom fonts
-python scripts/compile.py main.typ --font-path ./fonts
+typst compile main.typ
 ```
+See [COMPILE.md](resources/modules/COMPILE.md).
 
 ### 2. Format Check Module
-**Triggers**: `format`, `格式检查`, `lint`
+**Triggers**: `format`, `lint`, `格式检查`
 
 Validate paper formatting:
 ```bash
-# Basic check
 python scripts/check_format.py main.typ
-
-# Strict mode
-python scripts/check_format.py main.typ --strict
-
-# Venue-specific check
-python scripts/check_format.py main.typ --venue ieee
 ```
+See [FORMAT.md](resources/modules/FORMAT.md).
 
 ### 3. Grammar Analysis Module
 **Triggers**: `grammar`, `语法`, `proofread`
 
 Check for common grammar errors:
-- Subject-verb agreement
-- Article usage (a/an/the)
-- Tense consistency
-- Chinglish patterns
-
-See [COMMON_ERRORS.md](references/COMMON_ERRORS.md) for details.
+```bash
+python scripts/analyze_grammar.py main.typ
+```
+See [GRAMMAR.md](resources/modules/GRAMMAR.md).
 
 ### 4. Long Sentence Analysis Module
-**Triggers**: `long sentence`, `长句`, `simplify`
+**Triggers**: `long sentence`, `长句`
 
 Detect and simplify long sentences:
-- English: >50 words or >3 clauses
-- Chinese: >60 characters or >3 clauses
+```bash
+python scripts/analyze_sentences.py main.typ
+```
+See [SENTENCES.md](resources/modules/SENTENCES.md).
 
 ### 5. Academic Expression Module
-**Triggers**: `academic tone`, `学术表达`, `improve writing`
+**Triggers**: `academic tone`, `学术表达`
 
 Improve academic writing style:
-- Replace weak verbs
-- Enhance academic tone
-- Fix informal expressions
+```bash
+python scripts/improve_expression.py main.typ
+```
+See [EXPRESSION.md](resources/modules/EXPRESSION.md).
 
-See [STYLE_GUIDE.md](references/STYLE_GUIDE.md) for details.
+### 6. Logic Analysis Module
+**Triggers**: `logic`, `coherence`, `methodology`
 
-### 6. Translation Module
+Analyze logic coherence and methodology depth:
+```bash
+python scripts/analyze_logic.py main.typ
+```
+See [LOGIC.md](resources/modules/LOGIC.md).
+
+### 7. Translation Module
 **Triggers**: `translate`, `翻译`, `中译英`
 
 Translate Chinese to English with domain-specific terminology:
-- Deep Learning
-- Time Series
-- Industrial Control
+```bash
+python scripts/translate_academic.py "text"
+```
+See [TRANSLATION.md](resources/modules/TRANSLATION.md).
 
-### 7. Bibliography Module
+### 8. Bibliography Module
 **Triggers**: `bib`, `bibliography`, `参考文献`
 
 Verify bibliography files:
 ```bash
-# Check BibTeX file
-python scripts/verify_bib.py references.bib
-
-# Check Hayagriva file
-python scripts/verify_bib.py references.yml
-
-# Check citations
-python scripts/verify_bib.py references.bib --typ main.typ
-
-# Check style
-python scripts/verify_bib.py references.bib --style ieee
+python scripts/verify_bib.py refs.bib
 ```
+See [BIBLIOGRAPHY.md](resources/modules/BIBLIOGRAPHY.md).
 
-### 8. De-AI Editing Module
+### 9. De-AI Editing Module
 **Triggers**: `deai`, `去AI化`, `humanize`
 
 Reduce AI writing traces while preserving technical accuracy:
-- Remove empty phrases
-- Replace vague claims with specific statements
-- Add appropriate hedging
-- Improve natural flow
+```bash
+python scripts/deai_check.py main.typ
+```
+See [DEAI.md](resources/modules/DEAI.md).
 
-See [DEAI_GUIDE.md](references/DEAI_GUIDE.md) for details.
+### 10. Title Optimization Module
+**Triggers**: `title`, `标题`
 
-## Templates
+Optimize or generate paper titles based on best practices:
+```bash
+python scripts/optimize_title.py main.typ
+```
+See [TITLE.md](resources/modules/TITLE.md).
 
-See `references/TEMPLATES.md` for IEEE/ACM/Chinese templates and usage notes.
+### 11. Reviewer Perspective Module
+**Triggers**: `reviewer`, `审稿`, `checklist`
 
-## Venue-Specific Requirements
+Review paper from an academic peer reviewer's perspective.
+See [REVIEWER_PERSPECTIVE.md](resources/references/REVIEWER_PERSPECTIVE.md).
+
+### 12. Workflow Module
+**Triggers**: `workflow`, `full review`
+
+Execute the full review pipeline.
+See [WORKFLOW.md](resources/modules/WORKFLOW.md).
+
+## Templates & Venues
+
+See [VENUES.md](resources/references/VENUES.md) for detailed requirements on venues.
 
 | Venue | Columns | Font Size | Page Limit | Citation Style |
 |-------|---------|-----------|------------|----------------|
@@ -171,8 +166,6 @@ See `references/TEMPLATES.md` for IEEE/ACM/Chinese templates and usage notes.
 | NeurIPS | 1 | 10pt | 8 pages | Numeric [1] |
 | CVPR | 2 | 10pt | 8 pages | Numeric [1] |
 
-See [VENUES.md](references/VENUES.md) for detailed requirements.
-
 ## Typst vs LaTeX
 
 | Feature | Typst | LaTeX |
@@ -181,23 +174,27 @@ See [VENUES.md](references/VENUES.md) for detailed requirements.
 | Syntax | Simple, intuitive | Complex, verbose |
 | Error Messages | Clear, helpful | Cryptic, difficult |
 | Learning Curve | Gentle | Steep |
-| Live Preview | Native support | Requires tools |
+
+See [TYPST_SYNTAX.md](resources/references/TYPST_SYNTAX.md) for details.
 
 ## Reference Documents
 
-- [STYLE_GUIDE.md](references/STYLE_GUIDE.md): Academic writing style guide
-- [COMMON_ERRORS.md](references/COMMON_ERRORS.md): Common Chinglish errors
-- [DEAI_GUIDE.md](references/DEAI_GUIDE.md): De-AI writing guide
-- [VENUES.md](references/VENUES.md): Venue-specific requirements
-- [TEMPLATES.md](references/TEMPLATES.md): Typst template examples
-- [TYPST_SYNTAX.md](references/TYPST_SYNTAX.md): Typst syntax reference
+- [STYLE_GUIDE.md](resources/references/STYLE_GUIDE.md): Academic writing rules
+- [COMMON_ERRORS.md](resources/references/COMMON_ERRORS.md): Chinglish patterns
+- [VENUES.md](resources/references/VENUES.md): Conference/journal requirements
+- [TERMINOLOGY.md](resources/references/TERMINOLOGY.md): Domain terminology (DL/TS/IC)
+- [TRANSLATION_GUIDE.md](resources/references/TRANSLATION_GUIDE.md): Translation guide
+- [DEAI_GUIDE.md](resources/references/DEAI_GUIDE.md): De-AI writing guide and patterns
+- [WRITING_PHILOSOPHY.md](resources/references/WRITING_PHILOSOPHY.md): Writing philosophy
+- [REVIEWER_PERSPECTIVE.md](resources/references/REVIEWER_PERSPECTIVE.md): Reviewer checklist
+- [CITATION_VERIFICATION.md](resources/references/CITATION_VERIFICATION.md): Citation verification
+- [TYPST_SYNTAX.md](resources/references/TYPST_SYNTAX.md): Typst notes and syntax advantages
+- [BEST_PRACTICES.md](resources/references/BEST_PRACTICES.md): General workflow recommendations
 
 ## Resources
 
 - [Typst Official Website](https://typst.app/)
 - [Typst Documentation](https://typst.app/docs/)
-- [Typst Universe](https://typst.app/universe/) - Templates and packages
-- [Typst Tutorial](https://typst.app/docs/tutorial/)
 
 ## FAQ
 
@@ -209,12 +206,6 @@ A: Use `#set text(lang: "zh", region: "cn")` and configure Chinese fonts (e.g., 
 
 **Q: Which citation style should I use?**
 A: Choose based on your target venue. Typst supports IEEE, APA, MLA, GB7714, and more.
-
-**Q: Is compilation really that fast?**
-A: Yes! Typst typically compiles in milliseconds, making it ideal for live preview.
-
-**Q: How to collaborate with others?**
-A: Use Typst Web App for online collaboration, or Git for version control (Typst files are plain text).
 
 ## License
 
