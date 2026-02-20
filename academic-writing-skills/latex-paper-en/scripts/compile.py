@@ -19,10 +19,13 @@ Recipes (matching VS Code LaTeX Workshop):
     latexmk          - LaTeXmk auto (DEFAULT - recommended)
     pdflatex         - PDFLaTeX single pass
     xelatex          - XeLaTeX single pass
+    lualatex         - LuaLaTeX single pass
     pdflatex-bibtex  - pdflatex -> bibtex -> pdflatex*2 (traditional)
     pdflatex-biber   - pdflatex -> biber -> pdflatex*2 (modern biblatex)
     xelatex-bibtex   - xelatex -> bibtex -> xelatex*2
     xelatex-biber    - xelatex -> biber -> xelatex*2
+    lualatex-bibtex  - lualatex -> bibtex -> lualatex*2
+    lualatex-biber   - lualatex -> biber -> lualatex*2
 """
 
 import argparse
@@ -52,12 +55,15 @@ class LaTeXCompiler:
         # Single compilation (quick builds)
         "xelatex": ["xelatex"],
         "pdflatex": ["pdflatex"],
+        "lualatex": ["lualatex"],
         "latexmk": ["latexmk"],  # Default: auto-handles bibtex/biber
         # Full workflows (explicit control over compilation steps)
         "xelatex-bibtex": ["xelatex", "bibtex", "xelatex", "xelatex"],
         "xelatex-biber": ["xelatex", "biber", "xelatex", "xelatex"],
         "pdflatex-bibtex": ["pdflatex", "bibtex", "pdflatex", "pdflatex"],
         "pdflatex-biber": ["pdflatex", "biber", "pdflatex", "pdflatex"],
+        "lualatex-bibtex": ["lualatex", "bibtex", "lualatex", "lualatex"],
+        "lualatex-biber": ["lualatex", "biber", "lualatex", "lualatex"],
     }
 
     # Patterns indicating Chinese content
@@ -175,8 +181,20 @@ class LaTeXCompiler:
         Returns:
             Exit code (0 for success)
         """
-        # Check tools
-        if self.recipe:
+        effective_recipe = self.recipe
+        if not effective_recipe and biber:
+            effective_recipe = f"{self.compiler}-biber"
+            if effective_recipe not in self.RECIPES:
+                print(
+                    f"[WARNING] Unsupported compiler for biber recipe: {self.compiler}. "
+                    "Falling back to pdflatex-biber."
+                )
+                effective_recipe = "pdflatex-biber"
+            print(f"[INFO] --biber enabled, forcing recipe: {effective_recipe}")
+
+        # Check tools for the actual execution path
+        if effective_recipe:
+            self.recipe = effective_recipe
             ok, msg = self._check_tools_for_recipe()
         else:
             ok, msg = self._check_tools_for_compiler()
@@ -184,7 +202,7 @@ class LaTeXCompiler:
             print(f"[ERROR] {msg}")
             return 1
 
-        # If recipe is specified, use recipe-based compilation
+        # If recipe is specified (or forced), use recipe-based compilation
         if self.recipe:
             return self._compile_with_recipe(outdir)
 
@@ -207,9 +225,9 @@ class LaTeXCompiler:
             ]
         )
 
-        # Biber support
-        if biber:
-            cmd.append("-bibtex")
+        # Optional output directory (default latexmk path)
+        if outdir:
+            cmd.append(f"-outdir={outdir}")
 
         # Watch mode
         if watch:
@@ -371,15 +389,20 @@ Recipes (matching VS Code LaTeX Workshop):
   latexmk          LaTeXmk auto (DEFAULT - recommended)
   pdflatex         PDFLaTeX single pass
   xelatex          XeLaTeX single pass
+  lualatex         LuaLaTeX single pass
   pdflatex-bibtex  pdflatex -> bibtex -> pdflatex*2 (traditional workflow)
   pdflatex-biber   pdflatex -> biber -> pdflatex*2 (modern biblatex)
   xelatex-bibtex   xelatex -> bibtex -> xelatex*2
   xelatex-biber    xelatex -> biber -> xelatex*2
+  lualatex-bibtex  lualatex -> bibtex -> lualatex*2
+  lualatex-biber   lualatex -> biber -> lualatex*2
 
 Examples:
   python compile.py main.tex                        # Default: latexmk auto
   python compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
   python compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
+  python compile.py main.tex --biber               # Force detected-compiler biber flow
+  python compile.py main.tex --outdir build        # Set output directory (latexmk path)
   python compile.py main.tex --watch                # Watch mode
         """,
     )
@@ -396,11 +419,14 @@ Examples:
         choices=[
             "xelatex",
             "pdflatex",
+            "lualatex",
             "latexmk",
             "xelatex-bibtex",
             "xelatex-biber",
             "pdflatex-bibtex",
             "pdflatex-biber",
+            "lualatex-bibtex",
+            "lualatex-biber",
         ],
         help="Use predefined recipe (VS Code LaTeX Workshop style)",
     )
@@ -408,7 +434,10 @@ Examples:
         "--watch", "-w", action="store_true", help="Enable continuous compilation (watch mode)"
     )
     parser.add_argument(
-        "--biber", "-b", action="store_true", help="Use biber for bibliography processing"
+        "--biber",
+        "-b",
+        action="store_true",
+        help="Force explicit <compiler>-biber recipe when --recipe is not provided",
     )
     parser.add_argument(
         "--shell-escape",

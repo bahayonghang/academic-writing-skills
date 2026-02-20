@@ -9,6 +9,7 @@ A comprehensive toolkit for writing academic papers in LaTeX, focused on English
 - **Translation support**: Chinese to English with domain terminology
 - **Bibliography verification**: citation consistency and BibTeX validation
 - **De-AI editing**: reduce AI writing traces while preserving LaTeX syntax
+- **Logic analysis**: paragraph coherence and methodology justification checks
 - **Venue-specific guidance**: IEEE, ACM, Springer, NeurIPS, ICML rules
 - **Automated scripts**: Python tools for common tasks
 
@@ -36,7 +37,12 @@ A comprehensive toolkit for writing academic papers in LaTeX, focused on English
    python scripts/verify_bib.py references.bib --tex main.tex
    ```
 
-4. **De-AI editing (interactive)**:
+4. **Grammar analysis**:
+   ```bash
+   python scripts/analyze_grammar.py main.tex --section introduction
+   ```
+
+5. **De-AI editing (analysis)**:
    ```bash
    python scripts/deai_check.py main.tex --section introduction
    ```
@@ -58,6 +64,7 @@ python scripts/compile.py main.tex --recipe latexmk --outdir build
 # With bibliography
 python scripts/compile.py main.tex --recipe xelatex-bibtex
 python scripts/compile.py main.tex --recipe xelatex-biber
+python scripts/compile.py main.tex --biber
 ```
 
 ### 2. Format Check Module
@@ -71,29 +78,39 @@ python scripts/check_format.py main.tex --strict
 ### 3. Grammar Analysis Module
 **Triggers**: `grammar`, `语法`, `proofread`, `润色`
 
-Focus areas:
-- Subject-verb agreement
-- Article usage (a/an/the)
-- Tense consistency
-- Chinglish patterns
-
-See [COMMON_ERRORS.md](references/COMMON_ERRORS.md) for details.
+```bash
+python scripts/analyze_grammar.py main.tex
+python scripts/analyze_grammar.py main.tex --section introduction
+```
 
 ### 4. Sentence Decomposition Module
 **Triggers**: `long sentence`, `长句`, `simplify`
 
-Detect and simplify long sentences (>50 words or >3 clauses).
+```bash
+python scripts/analyze_sentences.py main.tex
+python scripts/analyze_sentences.py main.tex --section methods --max-words 45
+```
 
 ### 5. Academic Expression Module
 **Triggers**: `academic tone`, `学术表达`, `improve writing`
 
-Improve academic tone and replace weak verbs.
+```bash
+python scripts/improve_expression.py main.tex
+python scripts/improve_expression.py main.tex --section related
+```
+
+Improve academic tone and replace weak verbs.  
 See [STYLE_GUIDE.md](references/STYLE_GUIDE.md) for details.
 
 ### 6. Translation Module
 **Triggers**: `translate`, `翻译`, `中译英`, `Chinese to English`
 
-Translate with domain-specific terminology (Deep Learning, Time Series, Industrial Control).
+```bash
+python scripts/translate_academic.py "本文提出了一种基于Transformer的方法" --domain deep-learning
+python scripts/translate_academic.py input_zh.txt --domain industrial-control --output translation_report.md
+```
+
+Translate with domain-specific terminology (Deep Learning, Time Series, Industrial Control).  
 See [TERMINOLOGY.md](references/TERMINOLOGY.md) and [TRANSLATION_GUIDE.md](references/TRANSLATION_GUIDE.md).
 
 ### 7. Bibliography Module
@@ -103,13 +120,36 @@ See [TERMINOLOGY.md](references/TERMINOLOGY.md) and [TRANSLATION_GUIDE.md](refer
 python scripts/verify_bib.py references.bib
 python scripts/verify_bib.py references.bib --tex main.tex
 python scripts/verify_bib.py references.bib --standard gb7714
+python scripts/verify_bib.py references.bib --tex main.tex --json
 ```
+
+Key result fields: `missing_in_bib`, `unused_in_tex`.
 
 ### 8. De-AI Polishing Module
 **Triggers**: `deai`, `去AI化`, `humanize`, `reduce AI traces`
 
 Reduce AI writing traces while preserving LaTeX syntax.
 See [DEAI_GUIDE.md](references/DEAI_GUIDE.md) for details.
+
+### 9. Logic & Methodology Module
+**Triggers**: `logic`, `coherence`, `methodology`
+
+```bash
+python scripts/analyze_logic.py main.tex
+python scripts/analyze_logic.py main.tex --section methods
+```
+
+### 10. Title Optimization Module
+**Triggers**: `title`, `标题`, `title optimization`
+
+```bash
+python scripts/optimize_title.py main.tex --check
+python scripts/optimize_title.py main.tex --generate
+python scripts/optimize_title.py main.tex --optimize
+python scripts/optimize_title.py main.tex --compare "Title A" "Title B" "Title C"
+python scripts/optimize_title.py "papers/*.tex" --batch --output title_report.json
+python scripts/optimize_title.py main.tex --interactive
+```
 
 ## Venue-Specific Requirements
 

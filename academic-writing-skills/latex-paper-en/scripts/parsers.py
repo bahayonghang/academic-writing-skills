@@ -308,3 +308,127 @@ def get_parser(file_path: Any) -> DocumentParser:
     if path_str.endswith(".typ"):
         return TypstParser()
     return LatexParser()
+
+
+def _normalize_whitespace(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _extract_balanced_block(content: str, start_idx: int, opener: str, closer: str) -> str:
+    """Extract a balanced block body from content starting at opener index."""
+    if start_idx < 0 or start_idx >= len(content) or content[start_idx] != opener:
+        return ""
+
+    depth = 0
+    block_start = -1
+
+    for i in range(start_idx, len(content)):
+        char = content[i]
+        if char == opener:
+            depth += 1
+            if depth == 1:
+                block_start = i + 1
+        elif char == closer:
+            depth -= 1
+            if depth == 0 and block_start >= 0:
+                return content[block_start:i]
+            if depth < 0:
+                return ""
+    return ""
+
+
+def _strip_typst_markup(text: str) -> str:
+    """Strip lightweight Typst markup for title/abstract extraction."""
+    cleaned = text
+    cleaned = re.sub(r"#\w+\([^)]*\)", " ", cleaned)
+
+    # Collapse simple bracket macros repeatedly (e.g., #emph[Paper], nested forms).
+    while True:
+        collapsed = re.sub(r"#\w+\[([^\[\]]*)\]", r"\1", cleaned)
+        if collapsed == cleaned:
+            break
+        cleaned = collapsed
+
+    cleaned = re.sub(r"[\[\]]", " ", cleaned)
+    return _normalize_whitespace(cleaned)
+
+
+def _strip_latex_markup(text: str) -> str:
+    """Strip lightweight LaTeX markup for title/abstract extraction."""
+    cleaned = text
+    cleaned = re.sub(r"(?<!\\)%.*", "", cleaned)
+    cleaned = re.sub(r"\$[^$]*\$", " ", cleaned)
+    cleaned = re.sub(r"\\[a-zA-Z]+\*?(?:\[[^\]]*\])?{([^{}]*)}", r"\1", cleaned)
+    cleaned = re.sub(r"\\[a-zA-Z]+\*?", " ", cleaned)
+    cleaned = re.sub(r"[{}]", " ", cleaned)
+    return _normalize_whitespace(cleaned)
+
+
+def extract_title(content: str) -> str:
+    """Extract document title from LaTeX/Typst source content."""
+    # LaTeX: \title{...}
+    latex_match = re.search(r"\\title(?:\[[^\]]*\])?\{(.+?)\}", content, re.DOTALL)
+    if latex_match:
+        return _strip_latex_markup(latex_match.group(1))
+
+    # Typst common: #set document(title: "...")
+    typst_str = re.search(
+        r"#set\s+document\s*\(\s*title\s*:\s*\"([^\"]+)\"",
+        content,
+        re.DOTALL,
+    )
+    if typst_str:
+        return _normalize_whitespace(typst_str.group(1))
+
+    # Typst bracket style: #set document(title: [ ... ])
+    typst_block = re.search(r"#set\s+document\s*\(\s*title\s*:\s*\[", content, re.DOTALL)
+    if typst_block:
+        bracket_idx = typst_block.end() - 1
+        text = _extract_balanced_block(content, bracket_idx, "[", "]")
+        if text:
+            return _strip_typst_markup(text)
+
+    return ""
+
+
+def extract_abstract(content: str) -> str:
+    """Extract abstract text from LaTeX/Typst source content."""
+    # LaTeX abstract environment
+    latex_abs = re.search(r"\\begin{abstract}(.*?)\\end{abstract}", content, re.DOTALL)
+    if latex_abs:
+        return _strip_latex_markup(latex_abs.group(1))
+
+    # LaTeX section-based abstract
+    sec_abs = re.search(
+        r"\\section\*?\{Abstract\}(.*?)(?=\\section\*?\{|\\end\{document\}|\Z)",
+        content,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if sec_abs:
+        return _strip_latex_markup(sec_abs.group(1))
+
+    # Typst: #abstract[...]
+    typst_abs = re.search(r"#abstract\[", content, re.DOTALL)
+    if typst_abs:
+        bracket_idx = typst_abs.end() - 1
+        text = _extract_balanced_block(content, bracket_idx, "[", "]")
+        if text:
+            return _strip_typst_markup(text)
+
+    return ""
+
+
+def extract_latex_citation_keys(content: str) -> set[str]:
+    """
+    Extract citation keys from LaTeX source.
+    Supports \\cite, \\citep, \\citet, \\nocite and variants with optional arguments.
+    """
+    keys: set[str] = set()
+    pattern = re.compile(r"\\(?:cite\w*|nocite)\*?(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
+    for match in pattern.finditer(content):
+        raw = match.group(1)
+        for key in raw.split(","):
+            normalized = key.strip()
+            if normalized:
+                keys.add(normalized)
+    return keys

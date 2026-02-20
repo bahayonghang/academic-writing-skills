@@ -15,7 +15,10 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - runtime fallback
+    Image = None
 
 try:
     from parsers import get_parser
@@ -52,7 +55,7 @@ class FigureChecker:
         lines = self.content.split("\n")
 
         # LaTeX pattern: \includegraphics[options]{path}
-        latex_pattern = r"\\includegraphics(?:\\[.*?\])?\{([^}]+)\}"
+        latex_pattern = r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}"
         # Typst pattern: #figure(image("path", ...)) or image("path")
         typst_pattern = r'image\("([^"]+)"'
 
@@ -111,6 +114,12 @@ class FigureChecker:
             issues.append(f"Raster format ({ext}) used. Prefer Vector (PDF/EPS).")
 
             # DPI check for raster images
+            if Image is None:
+                issues.append(
+                    "Pillow not installed; skipped DPI analysis (install Pillow for DPI checks)."
+                )
+                return issues
+
             try:
                 with Image.open(path) as img:
                     width, height = img.size

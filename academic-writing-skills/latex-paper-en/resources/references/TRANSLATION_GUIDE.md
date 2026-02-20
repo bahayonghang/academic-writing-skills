@@ -1,5 +1,42 @@
 # Academic Translation Guide
 
+
+## 目录
+
+- [Overview / 概述](#overview-概述)
+- [1. Translation Principles / 翻译原则](#1-translation-principles-翻译原则)
+  - [1.1 Core Principles / 核心原则](#11-core-principles-核心原则)
+  - [1.2 Academic Tone / 学术语气](#12-academic-tone-学术语气)
+- [2. Common Chinglish Corrections / 常见中式英语修正](#2-common-chinglish-corrections-常见中式英语修正)
+  - [2.1 Redundant Expressions / 冗余表达](#21-redundant-expressions-冗余表达)
+  - [2.2 Verb Improvements / 动词改进](#22-verb-improvements-动词改进)
+  - [2.3 Structure Improvements / 结构改进](#23-structure-improvements-结构改进)
+- [3. Section-Specific Guidelines / 各章节翻译指南](#3-section-specific-guidelines-各章节翻译指南)
+  - [3.1 Abstract / 摘要](#31-abstract-摘要)
+  - [3.2 Introduction / 引言](#32-introduction-引言)
+  - [3.3 Related Work / 相关工作](#33-related-work-相关工作)
+  - [3.4 Method / 方法](#34-method-方法)
+  - [3.5 Experiments / 实验](#35-experiments-实验)
+  - [3.6 Conclusion / 结论](#36-conclusion-结论)
+- [4. Tense Usage Summary / 时态使用总结](#4-tense-usage-summary-时态使用总结)
+- [5. Translation Workflow / 翻译工作流](#5-translation-workflow-翻译工作流)
+  - [Step 1: Terminology Extraction / 术语提取](#step-1-terminology-extraction-术语提取)
+  - [Step 2: Structure Mapping / 结构映射](#step-2-structure-mapping-结构映射)
+  - [Step 3: Sentence Translation / 句子翻译](#step-3-sentence-translation-句子翻译)
+  - [Step 4: Polish & Review / 润色审查](#step-4-polish-review-润色审查)
+- [6. Quick Reference Patterns / 快速参考模板](#6-quick-reference-patterns-快速参考模板)
+  - [6.1 Proposing Method / 提出方法](#61-proposing-method-提出方法)
+  - [6.2 Describing Results / 描述结果](#62-describing-results-描述结果)
+  - [6.3 Comparing Methods / 比较方法](#63-comparing-methods-比较方法)
+  - [6.4 Analyzing Results / 分析结果](#64-analyzing-results-分析结果)
+- [7. Domain-Specific Notes / 领域特定说明](#7-domain-specific-notes-领域特定说明)
+  - [Deep Learning Papers](#deep-learning-papers)
+  - [Time Series Papers](#time-series-papers)
+  - [Industrial Control Papers](#industrial-control-papers)
+- [Checklist / 检查清单](#checklist-检查清单)
+
+---
+
 > 中英学术翻译指南 - 从中文草稿到英文论文
 
 ## Overview / 概述
