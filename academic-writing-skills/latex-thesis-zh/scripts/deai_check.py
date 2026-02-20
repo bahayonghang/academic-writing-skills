@@ -66,11 +66,11 @@ class ChineseAITraceChecker:
     TEMPLATE_EXPRESSIONS = {
         r"近年来": "specific_time",
         r"越来越多的": "increasingly",
-        r"发挥(?:?:着)?重要(?:?:的)?作用": "specific_impact",
-        r"随着(?:?:?:科技|技术)(?:?:的)?(?:?:快速|飞速)?发展": "context_direct",
-        r"被广泛(?:?:?:应用|使用)": "cite_examples",
-        r"引起了(?:?:?:广泛|众多)关注": "cite_examples",
-        r"蓬勃(?:?:?:发展|兴起)": "growth_data",
+        r"发挥(?:着)?重要(?:的)?作用": "specific_impact",
+        r"随着(?:科技|技术)(?:的)?(?:快速|飞速)?发展": "context_direct",
+        r"被广泛(?:应用|使用)": "cite_examples",
+        r"引起了(?:广泛|众多)关注": "cite_examples",
+        r"蓬勃(?:发展|兴起)": "growth_data",
     }
 
     def __init__(self, file_path: Path):

@@ -18,8 +18,8 @@ from pathlib import Path
 class ConsistencyChecker:
     """Check terminology and abbreviation consistency across thesis files."""
 
-    # Common term variations (Chinese)
-    TERM_GROUPS_ZH = [
+    # Built-in example term groups (common CS/AI terms)
+    DEFAULT_TERM_GROUPS_ZH = [
         ["深度学习", "深度神经网络", "深层学习"],
         ["机器学习", "机器智能"],
         ["卷积神经网络", "卷积网络", "CNN"],
@@ -31,8 +31,7 @@ class ConsistencyChecker:
         ["强化学习", "RL"],
     ]
 
-    # Common term variations (English)
-    TERM_GROUPS_EN = [
+    DEFAULT_TERM_GROUPS_EN = [
         ["deep learning", "deep neural network"],
         ["machine learning", "ML"],
         ["convolutional neural network", "CNN"],
@@ -42,9 +41,29 @@ class ConsistencyChecker:
         ["natural language processing", "NLP"],
     ]
 
-    def __init__(self, tex_files: list[str]):
+    def __init__(self, tex_files: list[str], custom_terms_file: str | None = None):
         self.tex_files = [Path(f).resolve() for f in tex_files]
         self.content_cache: dict[Path, str] = {}
+        self.term_groups_zh = list(self.DEFAULT_TERM_GROUPS_ZH)
+        self.term_groups_en = list(self.DEFAULT_TERM_GROUPS_EN)
+        if custom_terms_file:
+            self._load_custom_terms(custom_terms_file)
+
+    def _load_custom_terms(self, path: str) -> None:
+        """Load custom term groups from a JSON file.
+
+        Expected format: {"zh": [["termA", "termB"], ...], "en": [["termC", "termD"], ...]}
+        """
+        import json
+
+        try:
+            data = json.loads(Path(path).read_text(encoding="utf-8"))
+            if "zh" in data:
+                self.term_groups_zh.extend(data["zh"])
+            if "en" in data:
+                self.term_groups_en.extend(data["en"])
+        except Exception as e:
+            print(f"[WARNING] Failed to load custom terms: {e}", file=sys.stderr)
 
     def _load_content(self, tex_file: Path) -> str:
         """Load and cache file content."""
@@ -65,7 +84,7 @@ class ConsistencyChecker:
                 continue
 
             # Check each term group
-            all_groups = self.TERM_GROUPS_ZH + self.TERM_GROUPS_EN
+            all_groups = self.term_groups_zh + self.term_groups_en
 
             for group in all_groups:
                 for term in group:
@@ -82,7 +101,7 @@ class ConsistencyChecker:
         inconsistencies = []
         checked_groups: set[frozenset] = set()
 
-        all_groups = self.TERM_GROUPS_ZH + self.TERM_GROUPS_EN
+        all_groups = self.term_groups_zh + self.term_groups_en
 
         for group in all_groups:
             group_set = frozenset(group)
@@ -243,12 +262,13 @@ def main():
         "--abbreviations", "-a", action="store_true", help="Check only abbreviation consistency"
     )
     parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
+    parser.add_argument("--custom-terms", type=str, help="JSON file with custom term groups")
 
     args = parser.parse_args()
 
     # Find tex files
     if Path(args.tex_file).is_dir():
-        tex_files = list(Path(args.tex_file).rglob("*.tex"))
+        tex_files = [str(p) for p in Path(args.tex_file).rglob("*.tex")]
     else:
         if not Path(args.tex_file).exists():
             print(f"[ERROR] File not found: {args.tex_file}", file=sys.stderr)
@@ -262,7 +282,7 @@ def main():
     print(f"[INFO] Checking {len(tex_files)} files...")
 
     # Run checks
-    checker = ConsistencyChecker(tex_files)
+    checker = ConsistencyChecker(tex_files, custom_terms_file=args.custom_terms)
 
     if args.terms:
         result = checker.check_terms()

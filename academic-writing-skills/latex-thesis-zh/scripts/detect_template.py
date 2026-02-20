@@ -14,7 +14,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from map_structure import ThesisStructureMapper
+try:
+    from map_structure import ThesisStructureMapper
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from map_structure import ThesisStructureMapper
 
 TEMPLATE_REFERENCE_FILES = {
     "thuthesis": "tsinghua.md",
