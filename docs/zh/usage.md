@@ -343,6 +343,6 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 
 ## 下一步
 
-- [编译配置详解](/zh/guides/compilation)
-- [格式检查指南](/zh/guides/format-checking)
-- [参考文献管理](/zh/guides/bibliography)
+- [英文论文核心模块](/zh/skills/latex-paper-en/)
+- [中文论文指南](/zh/skills/latex-thesis-zh/)
+- [Typst 论文模块](/zh/skills/typst-paper/)

@@ -1,1 +1,0 @@
-import{_ as a,c as s,o as i,ag as t}from"./chunks/framework.C7XlpCvu.js";const m=JSON.parse('{"title":"Usage Guide","description":"","frontmatter":{},"headers":[],"relativePath":"usage.md","filePath":"usage.md"}'),n={name:"usage.md"};function l(r,e,p,o,d,h){return i(),s("div",null,[...e[0]||(e[0]=[t("",97)])])}const u=a(n,[["render",l]]);export{m as __pageData,u as default};

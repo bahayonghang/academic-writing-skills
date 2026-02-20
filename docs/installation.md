@@ -241,7 +241,7 @@ sudo claude skill install ...
 
 - [Quick Start Guide](/quick-start) - Get started in minutes
 - [Usage Guide](/usage) - Learn how to use the skills
-- [Compilation Recipes](/guides/compilation) - Understand compilation workflows
+- [Skills Overview](/skills/latex-paper-en/) - Understand available skills and workflows
 
 ## Getting Help
 

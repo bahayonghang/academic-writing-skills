@@ -291,9 +291,9 @@ python compile.py thesis.tex --recipe xelatex
 ## 下一步
 
 - [完整使用指南](/zh/usage) - 详细功能文档
-- [编译配置](/zh/guides/compilation) - 深入了解配置
-- [格式检查](/zh/guides/format-checking) - 理解格式检查
-- [参考文献管理](/zh/guides/bibliography) - 管理参考文献
+- [英文论文模块](/zh/skills/latex-paper-en/) - LaTeX 英文论文工作流与核心模块
+- [中文论文资源](/zh/skills/latex-thesis-zh/) - 中文学位论文结构要求与国标指南
+- [Typst 论文模块](/zh/skills/typst-paper/) - Typst 论文工作流与核心模块
 
 ## 需要帮助？
 

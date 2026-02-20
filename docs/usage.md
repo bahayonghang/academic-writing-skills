@@ -348,6 +348,6 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 
 ## Next Steps
 
-- [Compilation Recipes](/guides/compilation)
-- [Format Checking](/guides/format-checking)
-- [Bibliography Management](/guides/bibliography)
+- [English Paper Modules](/skills/latex-paper-en/)
+- [Chinese Thesis Resources](/skills/latex-thesis-zh/)
+- [Typst Paper Modules](/skills/typst-paper/)

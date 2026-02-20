@@ -3,13 +3,13 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Academic Writing Skills",
-  description: "Professional LaTeX academic writing skills for Claude Code",
+  description: "Professional LaTeX and Typst academic writing skills for Claude Code",
 
   // Base URL for GitHub Pages
   base: '/academic-writing-skills/',
 
-  // Ignore dead links for now (guides pages not yet created)
-  ignoreDeadLinks: true,
+  // Check dead links natively
+  ignoreDeadLinks: false,
 
   // Theme configuration
   themeConfig: {
@@ -35,28 +35,99 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Skills',
+        text: 'English Papers (latex-paper-en)',
+        collapsed: false,
         items: [
-          { text: 'English Papers (latex-paper-en)', link: '/skills/latex-paper-en' },
-          { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' },
-          { text: 'Typst Papers (typst-paper)', link: '/skills/typst-paper' }
+          { text: 'Overview', link: '/skills/latex-paper-en/' },
+          {
+            text: 'Modules', collapsed: true, items: [
+              { text: 'Compile', link: '/skills/latex-paper-en/resources/modules/COMPILE' },
+              { text: 'Format Check', link: '/skills/latex-paper-en/resources/modules/FORMAT' },
+              { text: 'Grammar', link: '/skills/latex-paper-en/resources/modules/GRAMMAR' },
+              { text: 'Long Sentences', link: '/skills/latex-paper-en/resources/modules/SENTENCES' },
+              { text: 'Academic Expression', link: '/skills/latex-paper-en/resources/modules/EXPRESSION' },
+              { text: 'Translation', link: '/skills/latex-paper-en/resources/modules/TRANSLATION' },
+              { text: 'Bibliography', link: '/skills/latex-paper-en/resources/modules/BIBLIOGRAPHY' },
+              { text: 'De-AI Polishing', link: '/skills/latex-paper-en/resources/modules/DEAI' },
+              { text: 'Logic & Methodology', link: '/skills/latex-paper-en/resources/modules/LOGIC' },
+              { text: 'Title Optimization', link: '/skills/latex-paper-en/resources/modules/TITLE' },
+              { text: 'Workflow', link: '/skills/latex-paper-en/resources/modules/WORKFLOW' }
+            ]
+          },
+          {
+            text: 'References', collapsed: true, items: [
+              { text: 'Style Guide', link: '/skills/latex-paper-en/resources/references/STYLE_GUIDE' },
+              { text: 'Common Errors', link: '/skills/latex-paper-en/resources/references/COMMON_ERRORS' },
+              { text: 'Venues', link: '/skills/latex-paper-en/resources/references/VENUES' },
+              { text: 'Forbidden Terms', link: '/skills/latex-paper-en/resources/references/FORBIDDEN_TERMS' },
+              { text: 'Terminology', link: '/skills/latex-paper-en/resources/references/TERMINOLOGY' },
+              { text: 'Translation Guide', link: '/skills/latex-paper-en/resources/references/TRANSLATION_GUIDE' },
+              { text: 'De-AI Guide', link: '/skills/latex-paper-en/resources/references/DEAI_GUIDE' },
+              { text: 'Compilation', link: '/skills/latex-paper-en/resources/references/COMPILATION' },
+              { text: 'Citation Verification', link: '/skills/latex-paper-en/resources/references/CITATION_VERIFICATION' },
+              { text: 'Reviewer Perspective', link: '/skills/latex-paper-en/resources/references/REVIEWER_PERSPECTIVE' },
+              { text: 'Writing Philosophy', link: '/skills/latex-paper-en/resources/references/WRITING_PHILOSOPHY' },
+              { text: 'Best Practices', link: '/skills/latex-paper-en/resources/references/BEST_PRACTICES' }
+            ]
+          }
         ]
       },
       {
-        text: 'Guides',
+        text: 'Chinese Thesis (latex-thesis-zh)',
+        collapsed: false,
         items: [
-          { text: 'Compilation Recipes', link: '/guides/compilation' },
-          { text: 'Format Checking', link: '/guides/format-checking' },
-          { text: 'Bibliography Management', link: '/guides/bibliography' }
+          { text: 'Overview', link: '/skills/latex-thesis-zh/' },
+          {
+            text: 'Resources', collapsed: true, items: [
+              { text: 'Academic Style (ZH)', link: '/skills/latex-thesis-zh/resources/ACADEMIC_STYLE_ZH' },
+              { text: 'Compilation', link: '/skills/latex-thesis-zh/resources/COMPILATION' },
+              { text: 'De-AI (ZH)', link: '/skills/latex-thesis-zh/resources/DEAI_GUIDE' },
+              { text: 'Forbidden Terms', link: '/skills/latex-thesis-zh/resources/FORBIDDEN_TERMS' },
+              { text: 'GB/T 7714 Format', link: '/skills/latex-thesis-zh/resources/GB_STANDARD' },
+              { text: 'Logic & Coherence', link: '/skills/latex-thesis-zh/resources/LOGIC_COHERENCE' },
+              { text: 'Structure Guide', link: '/skills/latex-thesis-zh/resources/STRUCTURE_GUIDE' },
+              { text: 'Title Optimization', link: '/skills/latex-thesis-zh/resources/TITLE_OPTIMIZATION' },
+              { text: 'Writing Philosophy (ZH)', link: '/skills/latex-thesis-zh/resources/WRITING_PHILOSOPHY_ZH' }
+            ]
+          }
         ]
       },
       {
-        text: 'References',
+        text: 'Typst Papers (typst-paper)',
+        collapsed: false,
         items: [
-          { text: 'Common Errors', link: '/references/common-errors' },
-          { text: 'GB/T Standard', link: '/references/gb-standard' },
-          { text: 'Style Guide', link: '/references/style-guide' },
-          { text: 'Venues', link: '/references/venues' }
+          { text: 'Overview', link: '/skills/typst-paper/' },
+          {
+            text: 'Modules', collapsed: true, items: [
+              { text: 'Compile', link: '/skills/typst-paper/resources/modules/COMPILE' },
+              { text: 'Format Check', link: '/skills/typst-paper/resources/modules/FORMAT' },
+              { text: 'Grammar', link: '/skills/typst-paper/resources/modules/GRAMMAR' },
+              { text: 'Long Sentences', link: '/skills/typst-paper/resources/modules/SENTENCES' },
+              { text: 'Academic Expression', link: '/skills/typst-paper/resources/modules/EXPRESSION' },
+              { text: 'Translation', link: '/skills/typst-paper/resources/modules/TRANSLATION' },
+              { text: 'Bibliography', link: '/skills/typst-paper/resources/modules/BIBLIOGRAPHY' },
+              { text: 'De-AI Polishing', link: '/skills/typst-paper/resources/modules/DEAI' },
+              { text: 'Logic & Methodology', link: '/skills/typst-paper/resources/modules/LOGIC' },
+              { text: 'Title Optimization', link: '/skills/typst-paper/resources/modules/TITLE' },
+              { text: 'Workflow', link: '/skills/typst-paper/resources/modules/WORKFLOW' }
+            ]
+          },
+          {
+            text: 'References', collapsed: true, items: [
+              { text: 'Typst Syntax', link: '/skills/typst-paper/resources/references/TYPST_SYNTAX' },
+              { text: 'Templates', link: '/skills/typst-paper/resources/references/TEMPLATES' },
+              { text: 'Style Guide', link: '/skills/typst-paper/resources/references/STYLE_GUIDE' },
+              { text: 'Common Errors', link: '/skills/typst-paper/resources/references/COMMON_ERRORS' },
+              { text: 'Venues', link: '/skills/typst-paper/resources/references/VENUES' },
+              { text: 'Terminology', link: '/skills/typst-paper/resources/references/TERMINOLOGY' },
+              { text: 'Translation Guide', link: '/skills/typst-paper/resources/references/TRANSLATION_GUIDE' },
+              { text: 'De-AI Guide', link: '/skills/typst-paper/resources/references/DEAI_GUIDE' },
+              { text: 'Citation Verification', link: '/skills/typst-paper/resources/references/CITATION_VERIFICATION' },
+              { text: 'Reviewer Perspective', link: '/skills/typst-paper/resources/references/REVIEWER_PERSPECTIVE' },
+              { text: 'Writing Philosophy', link: '/skills/typst-paper/resources/references/WRITING_PHILOSOPHY' },
+              { text: 'Best Practices', link: '/skills/typst-paper/resources/references/BEST_PRACTICES' }
+            ]
+          }
         ]
       }
     ],
@@ -88,49 +159,7 @@ export default defineConfig({
   locales: {
     root: {
       label: 'English',
-      lang: 'en',
-      themeConfig: {
-        nav: [
-          { text: 'Home', link: '/' },
-          { text: 'Installation', link: '/installation' },
-          { text: 'Usage', link: '/usage' },
-          { text: 'GitHub', link: 'https://github.com/bahayonghang/academic-writing-skills' }
-        ],
-        sidebar: [
-          {
-            text: 'Getting Started',
-            items: [
-              { text: 'Introduction', link: '/' },
-              { text: 'Installation', link: '/installation' },
-              { text: 'Quick Start', link: '/quick-start' }
-            ]
-          },
-          {
-            text: 'Skills',
-            items: [
-              { text: 'English Papers (latex-paper-en)', link: '/skills/latex-paper-en' },
-              { text: 'Chinese Thesis (latex-thesis-zh)', link: '/skills/latex-thesis-zh' },
-              { text: 'Typst Papers (typst-paper)', link: '/skills/typst-paper' }
-            ]
-          },
-          {
-            text: 'Guides',
-            items: [
-              { text: 'Compilation Recipes', link: '/guides/compilation' },
-              { text: 'Format Checking', link: '/guides/format-checking' },
-              { text: 'Bibliography Management', link: '/guides/bibliography' }
-            ]
-          },
-          {
-            text: 'References',
-            items: [
-              { text: 'Common Errors', link: '/references/common-errors' },
-              { text: 'Style Guide', link: '/references/style-guide' },
-              { text: 'Venues', link: '/references/venues' }
-            ]
-          }
-        ]
-      }
+      lang: 'en'
     },
     zh: {
       label: '简体中文',
@@ -153,28 +182,99 @@ export default defineConfig({
             ]
           },
           {
-            text: '技能',
+            text: '英文论文 (latex-paper-en)',
+            collapsed: false,
             items: [
-              { text: '英文论文 (latex-paper-en)', link: '/zh/skills/latex-paper-en' },
-              { text: '中文论文 (latex-thesis-zh)', link: '/zh/skills/latex-thesis-zh' },
-              { text: 'Typst 论文 (typst-paper)', link: '/zh/skills/typst-paper' }
+              { text: '概览', link: '/zh/skills/latex-paper-en/' },
+              {
+                text: '核心模块', collapsed: true, items: [
+                  { text: '编译', link: '/zh/skills/latex-paper-en/resources/modules/COMPILE' },
+                  { text: '格式检查', link: '/zh/skills/latex-paper-en/resources/modules/FORMAT' },
+                  { text: '语法', link: '/zh/skills/latex-paper-en/resources/modules/GRAMMAR' },
+                  { text: '长难句', link: '/zh/skills/latex-paper-en/resources/modules/SENTENCES' },
+                  { text: '学术表达', link: '/zh/skills/latex-paper-en/resources/modules/EXPRESSION' },
+                  { text: '学术翻译', link: '/zh/skills/latex-paper-en/resources/modules/TRANSLATION' },
+                  { text: '参考文献', link: '/zh/skills/latex-paper-en/resources/modules/BIBLIOGRAPHY' },
+                  { text: '去AI化', link: '/zh/skills/latex-paper-en/resources/modules/DEAI' },
+                  { text: '逻辑与方法论', link: '/zh/skills/latex-paper-en/resources/modules/LOGIC' },
+                  { text: '标题优化', link: '/zh/skills/latex-paper-en/resources/modules/TITLE' },
+                  { text: '完整工作流', link: '/zh/skills/latex-paper-en/resources/modules/WORKFLOW' }
+                ]
+              },
+              {
+                text: '参考资料', collapsed: true, items: [
+                  { text: '学术写作规范', link: '/zh/skills/latex-paper-en/resources/references/STYLE_GUIDE' },
+                  { text: '常见中式英语', link: '/zh/skills/latex-paper-en/resources/references/COMMON_ERRORS' },
+                  { text: '期刊与会议要求', link: '/zh/skills/latex-paper-en/resources/references/VENUES' },
+                  { text: '禁用术语', link: '/zh/skills/latex-paper-en/resources/references/FORBIDDEN_TERMS' },
+                  { text: '专业词汇表', link: '/zh/skills/latex-paper-en/resources/references/TERMINOLOGY' },
+                  { text: '学术翻译指南', link: '/zh/skills/latex-paper-en/resources/references/TRANSLATION_GUIDE' },
+                  { text: '去AI化指南', link: '/zh/skills/latex-paper-en/resources/references/DEAI_GUIDE' },
+                  { text: '编译指南', link: '/zh/skills/latex-paper-en/resources/references/COMPILATION' },
+                  { text: '引用核实验证', link: '/zh/skills/latex-paper-en/resources/references/CITATION_VERIFICATION' },
+                  { text: '审稿人视角', link: '/zh/skills/latex-paper-en/resources/references/REVIEWER_PERSPECTIVE' },
+                  { text: '写作哲学', link: '/zh/skills/latex-paper-en/resources/references/WRITING_PHILOSOPHY' },
+                  { text: '最佳实践', link: '/zh/skills/latex-paper-en/resources/references/BEST_PRACTICES' }
+                ]
+              }
             ]
           },
           {
-            text: '指南',
+            text: '中文论文 (latex-thesis-zh)',
+            collapsed: false,
             items: [
-              { text: '编译配置', link: '/zh/guides/compilation' },
-              { text: '格式检查', link: '/zh/guides/format-checking' },
-              { text: '参考文献管理', link: '/zh/guides/bibliography' }
+              { text: '概览', link: '/zh/skills/latex-thesis-zh/' },
+              {
+                text: '参考资料', collapsed: true, items: [
+                  { text: '学术表达 (中文)', link: '/zh/skills/latex-thesis-zh/resources/ACADEMIC_STYLE_ZH' },
+                  { text: '编译指南', link: '/zh/skills/latex-thesis-zh/resources/COMPILATION' },
+                  { text: '去AI化指南', link: '/zh/skills/latex-thesis-zh/resources/DEAI_GUIDE' },
+                  { text: '受保护术语', link: '/zh/skills/latex-thesis-zh/resources/FORBIDDEN_TERMS' },
+                  { text: 'GB/T 国标规范', link: '/zh/skills/latex-thesis-zh/resources/GB_STANDARD' },
+                  { text: '逻辑与方法论', link: '/zh/skills/latex-thesis-zh/resources/LOGIC_COHERENCE' },
+                  { text: '结构规范', link: '/zh/skills/latex-thesis-zh/resources/STRUCTURE_GUIDE' },
+                  { text: '标题优化指南', link: '/zh/skills/latex-thesis-zh/resources/TITLE_OPTIMIZATION' },
+                  { text: '写作哲学 (中文)', link: '/zh/skills/latex-thesis-zh/resources/WRITING_PHILOSOPHY_ZH' }
+                ]
+              }
             ]
           },
           {
-            text: '参考',
+            text: 'Typst 论文 (typst-paper)',
+            collapsed: false,
             items: [
-              { text: '常见错误', link: '/zh/references/common-errors' },
-              { text: '国标规范', link: '/zh/references/gb-standard' },
-              { text: '写作规范', link: '/zh/references/style-guide' },
-              { text: '期刊会议', link: '/zh/references/venues' }
+              { text: '概览', link: '/zh/skills/typst-paper/' },
+              {
+                text: '核心模块', collapsed: true, items: [
+                  { text: '编译', link: '/zh/skills/typst-paper/resources/modules/COMPILE' },
+                  { text: '格式检查', link: '/zh/skills/typst-paper/resources/modules/FORMAT' },
+                  { text: '语法', link: '/zh/skills/typst-paper/resources/modules/GRAMMAR' },
+                  { text: '长难句', link: '/zh/skills/typst-paper/resources/modules/SENTENCES' },
+                  { text: '学术表达', link: '/zh/skills/typst-paper/resources/modules/EXPRESSION' },
+                  { text: '学术翻译', link: '/zh/skills/typst-paper/resources/modules/TRANSLATION' },
+                  { text: '参考文献', link: '/zh/skills/typst-paper/resources/modules/BIBLIOGRAPHY' },
+                  { text: '去AI化', link: '/zh/skills/typst-paper/resources/modules/DEAI' },
+                  { text: '逻辑与方法论', link: '/zh/skills/typst-paper/resources/modules/LOGIC' },
+                  { text: '标题优化', link: '/zh/skills/typst-paper/resources/modules/TITLE' },
+                  { text: '完整工作流', link: '/zh/skills/typst-paper/resources/modules/WORKFLOW' }
+                ]
+              },
+              {
+                text: '参考资料', collapsed: true, items: [
+                  { text: 'Typst 语法指南', link: '/zh/skills/typst-paper/resources/references/TYPST_SYNTAX' },
+                  { text: '会议/期刊模板', link: '/zh/skills/typst-paper/resources/references/TEMPLATES' },
+                  { text: '学术写作规范', link: '/zh/skills/typst-paper/resources/references/STYLE_GUIDE' },
+                  { text: '常见错误', link: '/zh/skills/typst-paper/resources/references/COMMON_ERRORS' },
+                  { text: '期刊与会议要求', link: '/zh/skills/typst-paper/resources/references/VENUES' },
+                  { text: '专业词汇表', link: '/zh/skills/typst-paper/resources/references/TERMINOLOGY' },
+                  { text: '学术翻译指南', link: '/zh/skills/typst-paper/resources/references/TRANSLATION_GUIDE' },
+                  { text: '去AI化指南', link: '/zh/skills/typst-paper/resources/references/DEAI_GUIDE' },
+                  { text: '引用核实验证', link: '/zh/skills/typst-paper/resources/references/CITATION_VERIFICATION' },
+                  { text: '审稿人视角', link: '/zh/skills/typst-paper/resources/references/REVIEWER_PERSPECTIVE' },
+                  { text: '写作哲学', link: '/zh/skills/typst-paper/resources/references/WRITING_PHILOSOPHY' },
+                  { text: '最佳实践', link: '/zh/skills/typst-paper/resources/references/BEST_PRACTICES' }
+                ]
+              }
             ]
           }
         ],

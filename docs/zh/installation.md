@@ -241,7 +241,7 @@ sudo claude skill install ...
 
 - [快速开始指南](/zh/quick-start) - 几分钟内上手
 - [使用指南](/zh/usage) - 学习如何使用技能
-- [编译配置](/zh/guides/compilation) - 了解编译工作流
+- [核心技能模块](/zh/skills/latex-paper-en/) - 了解可用技能及工作流
 
 ## 获取帮助
 

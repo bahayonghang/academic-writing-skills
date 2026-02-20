@@ -331,9 +331,9 @@ Then configure your document to use available fonts.
 ## Next Steps
 
 - [Full Usage Guide](/usage) - Detailed feature documentation
-- [Compilation Recipes](/guides/compilation) - Deep dive into recipes
-- [Format Checking](/guides/format-checking) - Understanding format checks
-- [Bibliography Management](/guides/bibliography) - Managing references
+- [English Paper Modules](/skills/latex-paper-en/) - LaTeX English paper workflow and core modules
+- [Chinese Thesis Resources](/skills/latex-thesis-zh/) - Chinese thesis structure and format check
+- [Typst Paper Modules](/skills/typst-paper/) - Typst paper workflow and core modules
 
 ## Need Help?
 
