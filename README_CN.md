@@ -201,20 +201,25 @@ xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\
 academic-writing-skills/
 ├── latex-paper-en/                   # 英文论文 skill
 │   ├── SKILL.md                      # Skill 定义
+│   ├── README.md                     # 技能使用说明
 │   ├── scripts/                      # Python 工具
 │   │   ├── compile.py                # 统一编译器
 │   │   ├── check_format.py           # ChkTeX 包装器
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
 │   │   └── extract_prose.py          # 文本提取器
-│   └── references/                   # 参考文档
-│       ├── STYLE_GUIDE.md            # 写作风格指南
-│       ├── COMMON_ERRORS.md          # 常见错误
-│       ├── VENUES.md                 # 期刊/会议规则
-│       └── ...
+│   └── resources/                    # 技能资源
+│       ├── modules/                  # 模块指令
+│       │   ├── COMPILE.md
+│       │   └── ...
+│       └── references/               # 参考文档
+│           ├── STYLE_GUIDE.md        # 写作风格指南
+│           ├── VENUES.md             # 期刊/会议规则
+│           └── ...
 │
 ├── latex-thesis-zh/                  # 中文论文 skill
 │   ├── SKILL.md
+│   ├── README.md
 │   ├── scripts/
 │   │   ├── compile.py
 │   │   ├── map_structure.py          # 论文结构映射
@@ -223,7 +228,7 @@ academic-writing-skills/
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
 │   │   └── detect_template.py        # 模板检测器
-│   └── references/
+│   └── resources/                    # 技能资源
 │       ├── GB_STANDARD.md            # 国标格式规范
 │       ├── ACADEMIC_STYLE_ZH.md      # 中文学术规范
 │       ├── STRUCTURE_GUIDE.md        # 结构指南
@@ -241,13 +246,13 @@ academic-writing-skills/
 │   │   ├── check_format.py           # 格式检查器
 │   │   ├── verify_bib.py             # 参考文献检查器
 │   │   └── optimize_title.py         # 标题优化器 🆕
-│   └── references/                   # 参考文档
-│       ├── STYLE_GUIDE.md            # 写作风格指南
-│       ├── COMMON_ERRORS.md          # 常见错误
-│       ├── DEAI_GUIDE.md             # 去AI化指南
-│       ├── VENUES.md                 # 期刊/会议要求
-│       ├── TEMPLATES.md              # 模板示例
-│       └── TYPST_SYNTAX.md           # Typst 语法参考
+│   └── resources/                    # 技能资源
+│       ├── modules/                  # 模块指令
+│       └── references/               # 参考文档
+│           ├── STYLE_GUIDE.md        # 写作风格指南
+│           ├── DEAI_GUIDE.md         # 去AI化指南
+│           ├── TEMPLATES.md          # 模板示例
+│           └── TYPST_SYNTAX.md       # Typst 语法参考
 │
 └── docs/                             # 文档站点
 ```

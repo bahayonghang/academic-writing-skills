@@ -199,20 +199,26 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 academic-writing-skills/
 ├── latex-paper-en/                   # English paper skill
 │   ├── SKILL.md                      # Skill definition
+│   ├── README.md                     # Skill documentation
 │   ├── scripts/                      # Python tools
 │   │   ├── compile.py                # Unified compiler
 │   │   ├── check_format.py           # ChkTeX wrapper
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
 │   │   └── extract_prose.py          # Text extractor
-│   └── references/                   # Reference docs
-│       ├── STYLE_GUIDE.md
-│       ├── COMMON_ERRORS.md
-│       ├── VENUES.md
-│       └── ...
+│   └── resources/                    # Skill resources
+│       ├── modules/                  # Module instructions
+│       │   ├── COMPILE.md
+│       │   └── ...
+│       └── references/               # Reference docs
+│           ├── STYLE_GUIDE.md
+│           ├── COMMON_ERRORS.md
+│           ├── VENUES.md
+│           └── ...
 │
 ├── latex-thesis-zh/                  # Chinese thesis skill
 │   ├── SKILL.md
+│   ├── README.md
 │   ├── scripts/
 │   │   ├── compile.py
 │   │   ├── map_structure.py          # Thesis structure mapper
@@ -221,7 +227,7 @@ academic-writing-skills/
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
 │   │   └── detect_template.py        # Template detector
-│   └── references/
+│   └── resources/                    # Skill resources
 │       ├── GB_STANDARD.md
 │       ├── ACADEMIC_STYLE_ZH.md
 │       ├── STRUCTURE_GUIDE.md
@@ -239,13 +245,13 @@ academic-writing-skills/
 │   │   ├── check_format.py           # Format checker
 │   │   ├── verify_bib.py             # Bibliography checker
 │   │   └── optimize_title.py         # Title optimizer 🆕
-│   └── references/                   # Reference docs
-│       ├── STYLE_GUIDE.md
-│       ├── COMMON_ERRORS.md
-│       ├── DEAI_GUIDE.md
-│       ├── VENUES.md
-│       ├── TEMPLATES.md
-│       └── TYPST_SYNTAX.md
+│   └── resources/                    # Skill resources
+│       ├── modules/                  # Module instructions
+│       └── references/               # Reference docs
+│           ├── STYLE_GUIDE.md
+│           ├── DEAI_GUIDE.md
+│           ├── TEMPLATES.md
+│           └── TYPST_SYNTAX.md
 │
 └── docs/                             # Documentation site
 ```

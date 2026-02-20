@@ -33,13 +33,22 @@
 - LaTeX 工具链：TeX Live 或 MiKTeX，`latexmk`、`chktex`、`bibtex`/`biber`
 - Typst：`typst-cli`
 
+**Python 执行规范（强制）**
+- 所有 Python 脚本通过 `uv run python ...` 执行，不直接使用 `python ...`
+- 所有测试通过 `uv run python -m pytest ...` 执行
+- 仅在排查环境问题时允许单独运行 `python --version`、`uv --version`
+
 **常用命令**
 ```bash
 uv sync
-ruff check .
-ruff format .
-pyright
-python -m pytest tests/
+uv run ruff check .
+uv run ruff format .
+uv run pyright
+uv run python -m pytest tests/
+
+uv run python academic-writing-skills/latex-paper-en/scripts/compile.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/check_format.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex
 
 cd docs
 npm install
