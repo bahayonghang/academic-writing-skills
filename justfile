@@ -31,7 +31,7 @@ help:
 # 安装开发依赖
 install:
     @echo "📦 Installing development dependencies..."
-    uv pip install -e ".[dev]"
+    uv sync --extra dev
     @echo "✅ Installation complete!"
 
 # 运行所有 CI 检查
@@ -56,36 +56,36 @@ ci:
 # 代码格式化和 lint 检查
 lint:
     @echo "  → 检查代码格式..."
-    @uv run ruff format --check .
+    @uv run --extra dev ruff format --check .
     @echo "  → 检查代码规范..."
-    @uv run ruff check .
+    @uv run --extra dev ruff check .
     @echo "  ✓ Lint 检查通过"
 
 # 自动修复 lint 问题
 fix:
     @echo "🔧 自动修复代码问题..."
     @echo "  → 格式化代码..."
-    @uv run ruff format .
+    @uv run --extra dev ruff format .
     @echo "  → 修复可修复的问题..."
-    @uv run ruff check --fix .
+    @uv run --extra dev ruff check --fix .
     @echo "✅ 修复完成！"
 
 # 仅格式化代码
 format:
     @echo "🎨 格式化代码..."
-    @uv run ruff format .
+    @uv run --extra dev ruff format .
     @echo "✅ 格式化完成！"
 
 # 类型检查
 typecheck:
     @echo "  → 运行 Pyright 类型检查..."
-    @uv run pyright
+    @uv run --extra dev pyright
     @echo "  ✓ 类型检查通过"
 
 # 运行测试
 test:
     @echo "  → 运行单元测试..."
-    @uv run python -m unittest discover -s tests -p "test_*.py"
+    @uv run --extra dev python -m pytest tests/
     @echo "  ✓ 测试通过"
 
 # 清理缓存文件

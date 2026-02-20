@@ -1,6 +1,6 @@
 [project]
 name = "academic-writing-skills"
-version = "1.1.0"
+version = "1.2.0"
 description = "LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses with format checking, compilation, grammar analysis, and de-AI polishing"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,7 +35,8 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.8.0",
+    "pytest>=8.4.2",
+    "ruff>=0.15.0",
     "pyright>=1.1.390",
 ]
 
@@ -88,3 +89,9 @@ typeCheckingMode = "off"
 reportMissingImports = false
 reportMissingModuleSource = false
 reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

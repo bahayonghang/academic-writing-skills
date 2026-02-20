@@ -75,3 +75,5 @@ tmp/
 !.env.*.example
 
 .kiro/
+.omc/
+ref/
