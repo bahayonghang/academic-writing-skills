@@ -129,7 +129,7 @@ Academic Writing Skills 提供三个主要技能：
 # 自动检测编译器
 python scripts/compile.py main.tex
 
-# 指定配方
+# 指定编译配置
 python scripts/compile.py main.tex --recipe xelatex-biber
 
 # 指定输出目录
@@ -336,7 +336,7 @@ python scripts/compile.py main.tex --recipe xelatex
 
 **问题**：参考文献部分为空
 
-**解决**：使用完整配方：
+**解决**：使用完整编译配置：
 ```bash
 python scripts/compile.py main.tex --recipe xelatex-biber
 ```

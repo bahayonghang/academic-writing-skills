@@ -168,7 +168,7 @@ Academic Writing Skills 支持多种编译配置：
 ```
 您：使用 XeLaTeX 编译我的论文并检查格式错误
 
-Claude：我将使用 xelatex 配方编译您的论文并运行格式检查。
+Claude：我将使用 xelatex 编译配置编译您的论文并运行格式检查。
 
 [运行编译和格式检查]
 
@@ -204,7 +204,7 @@ chmod +x compile_all.sh
 
 ## 成功技巧
 
-### 1. 使用正确的配方
+### 1. 使用正确的编译配置
 
 **英文论文**：
 - 从 `pdflatex` 开始以获得速度
@@ -270,7 +270,7 @@ mpm --install=<package-name>
 
 **错误**：参考文献部分为空
 
-**解决方案**：使用正确的完整配方：
+**解决方案**：使用正确的完整编译配置：
 ```bash
 # 对于 BibTeX
 python compile.py paper.tex --recipe pdflatex-bibtex
