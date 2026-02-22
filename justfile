@@ -23,6 +23,10 @@ help:
     @echo "  just fix               - 自动修复格式和代码问题"
     @echo "  just format            - 仅格式化代码"
     @echo ""
+    @echo "📚 文档："
+    @echo "  just doc               - 本地预览文档"
+    @echo "  just doc-build         - 构建文档"
+    @echo ""
     @echo "🧹 清理："
     @echo "  just clean             - 清理缓存文件"
     @echo ""
@@ -96,3 +100,14 @@ clean:
     @find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
     @find . -type f -name "*.pyc" -delete 2>/dev/null || true
     @echo "✅ 清理完成！"
+
+# 本地预览文档
+doc:
+    @echo "📚 启动文档开发服务器..."
+    @cd docs && npm run docs:dev
+
+# 构建文档
+doc-build:
+    @echo "🏗️ 构建文档..."
+    @cd docs && npm run docs:build
+
