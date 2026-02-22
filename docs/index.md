@@ -44,10 +44,13 @@ features:
 Install the skills with a single command:
 
 ```bash
-# Install all three skills
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-claude skill install github:bahayonghang/academic-writing-skills/dist/typst-paper.skill.zip
+# Install specific skill
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+
+# Or install all skills at once
+npx skilks add github.com/bahayonghang/academic-writing-skills
 ```
 
 ## Why Academic Writing Skills?
@@ -105,4 +108,4 @@ Built-in documentation for:
 
 ## License
 
-MIT License - Free for academic and commercial use.
+Academic Use Only - Not for commercial use.

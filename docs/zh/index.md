@@ -44,17 +44,20 @@ features:
 使用单条命令安装技能：
 
 ```bash
-# 安装全部三个技能
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-paper-en.skill.zip
-claude skill install github:bahayonghang/academic-writing-skills/dist/latex-thesis-zh.skill.zip
-claude skill install github:bahayonghang/academic-writing-skills/dist/typst-paper.skill.zip
+# 安装特定技能
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+
+# 或一次性安装所有技能
+npx skilks add github.com/bahayonghang/academic-writing-skills
 ```
 
 ## 为什么选择 Academic Writing Skills？
 
 学术写作可能充满挑战，特别是在管理编译工作流、参考文献格式和样式指南合规性时。**Academic Writing Skills** 为您的工作流带来智能自动化：
 
-- **告别编译错误**：智能配方选择和错误诊断
+- **告别编译错误**：智能编译配置选择和错误诊断
 - **快速编译**：Typst 毫秒级编译 vs LaTeX 秒级编译
 - **样式指南合规**：自动检查 IEEE、ACM、Springer 和 GB/T 7714 标准
 - **节省时间**：专注于内容，而非格式细节
@@ -105,4 +108,4 @@ claude skill install github:bahayonghang/academic-writing-skills/dist/typst-pape
 
 ## 许可证
 
-MIT 许可证 - 可免费用于学术和商业用途。
+仅限学术用途 - 不得用于商业用途。
