@@ -27,6 +27,24 @@ python --version  # 或 python3 --version
 
 ## 安装方法
 
+有两种方式安装这些技能：使用 `skilks`（推荐）或手动安装。
+
+### 方式 1：使用 skilks（推荐）
+
+你可以使用 [skilks](https://github.com/bahayonghang/skilks)（Claude Code 的社区技能管理器）轻松安装：
+
+```bash
+# 安装特定技能
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+
+# 或一次性安装所有技能
+npx skilks add github.com/bahayonghang/academic-writing-skills
+```
+
+### 方式 2：手动安装
+
 1. **克隆仓库**：
    ```bash
    git clone https://github.com/bahayonghang/academic-writing-skills.git
@@ -35,40 +53,28 @@ python --version  # 或 python3 --version
 
 2. **将技能复制到 Claude Code 的技能目录**：
 
-### Linux / macOS
+#### Linux / macOS
 
 ```bash
 # 创建 skills 目录（如不存在）
 mkdir -p ~/.claude/skills
 
 # 复制 skill 文件夹
-cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
-cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
-cp -r academic-writing-skills/typst-paper ~/.claude/skills/
+cp -r latex-paper-en ~/.claude/skills/
+cp -r latex-thesis-zh ~/.claude/skills/
+cp -r typst-paper ~/.claude/skills/
 ```
 
-### Windows (PowerShell)
+#### Windows (PowerShell)
 
 ```powershell
 # 创建 skills 目录（如不存在）
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # 复制 skill 文件夹
-Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
-```
-
-### Windows (CMD)
-
-```cmd
-:: 创建 skills 目录（如不存在）
-mkdir "%USERPROFILE%\.claude\skills"
-
-:: 复制 skill 文件夹
-xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
-xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
+Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
 ## 验证安装
