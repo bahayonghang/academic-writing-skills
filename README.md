@@ -77,43 +77,58 @@ Minimal template:
 
 ## Installation
 
-Copy the skill folders to your Claude Code skills directory:
+There are two ways to install these skills: using `skilks` (recommended) or manual installation.
 
-### Linux / macOS
+### Method 1: Using skilks (Recommended)
+
+You can easily install these skills using [skilks](https://github.com/bahayonghang/skilks), a community skill manager for Claude Code:
+
+```bash
+# Install specific skill
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+
+# Or install all skills at once
+npx skilks add github.com/bahayonghang/academic-writing-skills
+```
+
+### Method 2: Manual Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/bahayonghang/academic-writing-skills.git
+cd academic-writing-skills
+```
+
+2. Copy the skill folders to your Claude Code skills directory:
+
+#### Linux / macOS
 
 ```bash
 # Create skills directory (if not exists)
 mkdir -p ~/.claude/skills
 
 # Copy skill folders
-cp -r academic-writing-skills/latex-paper-en ~/.claude/skills/
-cp -r academic-writing-skills/latex-thesis-zh ~/.claude/skills/
-cp -r academic-writing-skills/typst-paper ~/.claude/skills/
+cp -r latex-paper-en ~/.claude/skills/
+cp -r latex-thesis-zh ~/.claude/skills/
+cp -r typst-paper ~/.claude/skills/
 ```
 
-### Windows (PowerShell)
+#### Windows (PowerShell)
 
 ```powershell
 # Create skills directory (if not exists)
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 
 # Copy skill folders
-Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
 ```
 
-### Windows (CMD)
 
-```cmd
-:: Create skills directory (if not exists)
-mkdir "%USERPROFILE%\.claude\skills"
-
-:: Copy skill folders
-xcopy /E /I "academic-writing-skills\latex-paper-en" "%USERPROFILE%\.claude\skills\latex-paper-en"
-xcopy /E /I "academic-writing-skills\latex-thesis-zh" "%USERPROFILE%\.claude\skills\latex-thesis-zh"
-xcopy /E /I "academic-writing-skills\typst-paper" "%USERPROFILE%\.claude\skills\typst-paper"
-```
 
 ## Quick Start
 
@@ -270,7 +285,7 @@ academic-writing-skills/
 
 ## License
 
-MIT License
+Academic Use Only - Not for commercial use.
 
 ## Contributing
 
