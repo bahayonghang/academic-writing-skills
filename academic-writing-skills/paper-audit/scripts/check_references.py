@@ -33,9 +33,18 @@ _LATEX_REF_RE = re.compile(
     r"|\\hyperref\[([^\]]+)\]\{[^}]*\}"
 )
 _LATEX_CAPTION_RE = re.compile(r"\\caption(?:\[[^\]]*\])?\{")
-_LATEX_FIGURE_ENV_RE = re.compile(r"\\begin\{(figure|table)\*?\}")
-_LATEX_FIGURE_ENV_END_RE = re.compile(r"\\end\{(figure|table)\*?\}")
+# Outer float environments to check for caption presence
+_FLOAT_ENV_NAMES = "figure|table|listing|algorithm|wrapfigure|wraptable"
+_LATEX_FIGURE_ENV_RE = re.compile(rf"\\begin\{{({_FLOAT_ENV_NAMES})\*?\}}")
+_LATEX_FIGURE_ENV_END_RE = re.compile(rf"\\end\{{({_FLOAT_ENV_NAMES})\*?\}}")
+# Inner environments nested inside floats — skip their own caption checks
+_LATEX_INNER_BEGIN_RE = re.compile(r"\\begin\{(?:subfigure|subtable|minipage)\}")
+_LATEX_INNER_END_RE = re.compile(r"\\end\{(?:subfigure|subtable|minipage)\}")
 _LATEX_COMMENT_PREFIX = "%"
+
+# Float and inner environment name sets (for documentation / future use)
+FLOAT_ENVS = frozenset({"figure", "table", "listing", "algorithm", "wrapfigure", "wraptable"})
+SKIP_INNER = frozenset({"subfigure", "subtable", "minipage"})
 
 # ===========================================================================
 # Typst patterns
@@ -237,20 +246,28 @@ class ReferenceChecker:
             self._check_caption_typst(labels)
 
     def _check_caption_latex(self, labels: list[LabelInfo]) -> None:
-        """LaTeX caption check using \\begin{figure}/\\end{figure} delimiters."""
+        """LaTeX caption check — outer-float-only with inner-env depth tracking."""
         assert self._figure_env_end_re is not None
         envs: list[tuple[int, int, str]] = []
         stack: list[tuple[int, str]] = []
+        inner_depth: int = 0  # depth of SKIP_INNER (subfigure/subtable/minipage) envs
 
         for lineno, raw_line in enumerate(self.lines, start=1):
             if self._is_comment_line(raw_line):
                 continue
             line = self._strip_comment(raw_line)
+            # Track inner (non-float) environment depth first
+            if _LATEX_INNER_BEGIN_RE.search(line):
+                inner_depth += 1
+            if _LATEX_INNER_END_RE.search(line) and inner_depth > 0:
+                inner_depth -= 1
+            # Float begin — only push when outside SKIP_INNER envs
             begin_m = self._figure_env_re.search(line)
-            if begin_m:
+            if begin_m and inner_depth == 0:
                 stack.append((lineno, begin_m.group(1)))
+            # Float end — pop and record only outermost spans
             end_m = self._figure_env_end_re.search(line)
-            if end_m and stack:
+            if end_m and stack and inner_depth == 0:
                 start_lineno, env_type = stack.pop()
                 envs.append((start_lineno, lineno, env_type))
 
@@ -276,7 +293,7 @@ class ReferenceChecker:
                 )
 
     def _check_caption_typst(self, labels: list[LabelInfo]) -> None:
-        """Typst caption check using parenthesis-depth tracking for #figure(...)."""
+        """Typst caption check using parenthesis-depth tracking, string-literal aware."""
         figure_spans: list[tuple[int, int]] = []
         content = self.content
 
@@ -284,8 +301,21 @@ class ReferenceChecker:
             open_paren_idx = fig_match.end() - 1
             depth = 0
             end_idx = open_paren_idx
+            in_string = False
+            escape_next = False
             for i in range(open_paren_idx, len(content)):
                 ch = content[i]
+                if escape_next:
+                    escape_next = False
+                    continue
+                if ch == "\\" and in_string:
+                    escape_next = True
+                    continue
+                if ch == '"':
+                    in_string = not in_string
+                    continue
+                if in_string:
+                    continue
                 if ch == "(":
                     depth += 1
                 elif ch == ")":
