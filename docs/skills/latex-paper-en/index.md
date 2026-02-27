@@ -81,6 +81,7 @@ The skill uses a modular design where each module can be invoked independently:
 | Logic & Methodology | logic, coherence, methodology, argument | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography | Bibliography checking |
+| Reference Integrity | ref, label, reference check | Figure/table reference validation 🆕 |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Title Optimization | title, 标题, title optimization | Generate and optimize titles 🆕 |
 
@@ -370,6 +371,9 @@ The assistant will check for:
 python scripts/verify_bib.py references.bib
 python scripts/verify_bib.py references.bib --tex main.tex
 python scripts/verify_bib.py references.bib --tex main.tex --json
+# With online verification (CrossRef + Semantic Scholar)
+python scripts/verify_bib.py references.bib --online
+python scripts/verify_bib.py references.bib --online --email you@example.com
 ```
 
 Result includes `missing_in_bib` and `unused_in_tex` for citation consistency.
@@ -447,6 +451,9 @@ See `references/DEAI_GUIDE.md` for:
 - `references/COMMON_ERRORS.md`: Common mistakes
 - `references/VENUES.md`: Conference/journal requirements
 - `references/DEAI_GUIDE.md`: De-AI writing guide and AI pattern detection
+- `references/CITATION_VERIFICATION.md`: Citation verification workflow
+- `scripts/check_references.py`: Reference integrity checker (standalone)
+- `scripts/online_bib_verify.py`: Online bibliography verifier
 
 ## Title Optimization Module
 

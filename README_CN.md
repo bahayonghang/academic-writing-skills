@@ -32,6 +32,8 @@ npm run docs:dev
 - **标题优化**：根据 IEEE/ACM/Springer 最佳实践生成和优化论文标题
 - **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **期刊适配**：IEEE、ACM、Springer、NeurIPS、ICML 格式指南
+- **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
+- **文献验证**：BibTeX 格式校验，支持可选的 CrossRef/Semantic Scholar 在线验证 🆕
 
 ### latex-thesis-zh（中文学位论文）
 - **结构映射**：多文件论文结构分析
@@ -42,6 +44,8 @@ npm run docs:dev
 - **标题优化**：根据 GB/T 7713.1-2006 规范生成和优化学位论文标题
 - **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
+- **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
+- **文献验证**：BibTeX 格式校验，支持可选的 CrossRef/Semantic Scholar 在线验证 🆕
 
 ### typst-paper（Typst 学术论文）
 - **快速编译**：毫秒级编译速度
@@ -53,6 +57,18 @@ npm run docs:dev
 - **标题优化**：双语标题生成和优化（中英文）
 - **期刊模板**：IEEE、ACM、Springer、NeurIPS 模板
 - **现代语法**：简洁直观的标记语言
+- **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
+- **文献验证**：BibTeX 格式校验，支持可选的 CrossRef/Semantic Scholar 在线验证 🆕
+
+### paper-audit（自动化论文审查）🆕
+- **多格式支持**：接受 `.tex`、`.typ` 和 `.pdf` 文件
+- **三种审查模式**：self-check（全面审查）、review（重点审查）、gate（投稿门控检查）
+- **PDF 视觉排版检查**：页边距溢出、文本/图片块重叠、字体不一致、低分辨率图片、空白页检测
+- **引用完整性检查**：未定义引用、未引用的 label、缺少 caption、引用顺序、编号间隙
+- **ScholarEval 学术评估**：8 维度质量评分（1-10 分），给出投稿可读性标签
+- **在线文献验证**：CrossRef + Semantic Scholar API 验证（无需 API 密钥）
+- **去AI化编辑**：降低 AI 写作痕迹
+- **NeurIPS 对齐评分**：Quality/Clarity/Significance/Originality 1-6 分加权报告
 
 ## 输出协议
 
@@ -88,6 +104,7 @@ npm run docs:dev
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
 
 # 或一次性安装所有技能
 npx skilks add github.com/bahayonghang/academic-writing-skills
@@ -114,6 +131,7 @@ mkdir -p ~/.claude/skills
 cp -r latex-paper-en ~/.claude/skills/
 cp -r latex-thesis-zh ~/.claude/skills/
 cp -r typst-paper ~/.claude/skills/
+cp -r paper-audit ~/.claude/skills/
 ```
 
 #### Windows (PowerShell)
@@ -126,6 +144,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 ```
 
 
@@ -208,6 +227,21 @@ Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
 - 确保关键词（方法+问题）出现在前 65 字符（英文）或前 20 字（中文）
 - 提供多个候选方案并评分（0-100 分）
 
+**论文自动审查** 🆕
+- "帮我全面审查这篇论文"
+- "投稿前检查论文质量"
+- "审查我的 PDF 排版问题"
+- 支持 .tex、.typ、.pdf 文件
+- 三种模式：self-check（全面）、review（重点）、gate（投稿门控）
+- 添加 --online 可通过 CrossRef/Semantic Scholar 验证参考文献
+- 添加 --scholar-eval 可获得 8 维度 ScholarEval 质量评估
+
+**引用完整性检查** 🆕
+- "检查论文的图表引用"
+- "查找未定义的标签"
+- "find undefined labels in my paper"
+- 检测：未定义的 \ref{}、未引用的 \label{}、缺少 caption、前向引用
+
 **📖 详细使用方法和示例请查看[文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)。**
 
 ## 项目结构
@@ -222,6 +256,8 @@ academic-writing-skills/
 │   │   ├── check_format.py           # ChkTeX 包装器
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── check_references.py       # 引用完整性检查 🆕
+│   │   ├── online_bib_verify.py      # 在线文献验证 🆕
 │   │   └── extract_prose.py          # 文本提取器
 │   └── resources/                    # 技能资源
 │       ├── modules/                  # 模块指令
@@ -242,6 +278,8 @@ academic-writing-skills/
 │   │   ├── check_consistency.py
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── check_references.py       # 引用完整性检查 🆕
+│   │   ├── online_bib_verify.py      # 在线文献验证 🆕
 │   │   └── detect_template.py        # 模板检测器
 │   └── resources/                    # 技能资源
 │       ├── GB_STANDARD.md            # 国标格式规范
@@ -260,7 +298,9 @@ academic-writing-skills/
 │   │   ├── compile.py                # Typst 编译器
 │   │   ├── check_format.py           # 格式检查器
 │   │   ├── verify_bib.py             # 参考文献检查器
-│   │   └── optimize_title.py         # 标题优化器 🆕
+│   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── check_references.py       # 引用完整性检查 🆕
+│   │   └── online_bib_verify.py      # 在线文献验证 🆕
 │   └── resources/                    # 技能资源
 │       ├── modules/                  # 模块指令
 │       └── references/               # 参考文档
@@ -268,6 +308,21 @@ academic-writing-skills/
 │           ├── DEAI_GUIDE.md         # 去AI化指南
 │           ├── TEMPLATES.md          # 模板示例
 │           └── TYPST_SYNTAX.md       # Typst 语法参考
+│
+├── paper-audit/                      # 论文审查 skill 🆕
+│   ├── SKILL.md                      # Skill 定义
+│   ├── scripts/                      # Python 工具
+│   │   ├── audit.py                  # 主编排器
+│   │   ├── pdf_parser.py             # PDF 文本提取
+│   │   ├── detect_language.py        # 语言检测
+│   │   ├── report_generator.py       # 报告生成
+│   │   ├── check_references.py       # 引用完整性检查 🆕
+│   │   ├── visual_check.py           # PDF 视觉排版检查 🆕
+│   │   ├── scholar_eval.py           # ScholarEval 评估 🆕
+│   │   └── online_bib_verify.py      # 在线文献验证（通过 audit.py）
+│   └── resources/
+│       └── references/
+│           └── SCHOLAR_EVAL_GUIDE.md # ScholarEval 评分指南 🆕
 │
 └── docs/                             # 文档站点
 ```

@@ -67,6 +67,7 @@ typst --version
 | 逻辑衔接与方法论 | logic, coherence, 逻辑, 衔接, methodology, 方法论 | 逻辑衔接与方法论深度 |
 | 翻译 | translate, 翻译, 中译英 | 中英翻译 |
 | 参考文献 | bib, bibliography, 参考文献 | 文献检查 |
+| 引用完整性 | ref, label, 引用检查, 引用完整性 | 图表引用完整性验证 🆕 |
 | 去AI化 | deai, 去AI化, humanize | 降低 AI 痕迹 |
 | 模板 | template, IEEE, ACM, 模板 | 模板配置 |
 | 标题优化 | title, 标题, title optimization | 标题生成与优化 🆕 |
@@ -396,6 +397,12 @@ Recent studies @smith2020 @jones2021 show...
 #bibliography("references.bib", style: "ieee")
 ```
 
+```bash
+# 在线验证（CrossRef + Semantic Scholar）
+python scripts/verify_bib.py references.bib --online
+python scripts/verify_bib.py references.bib --online --email you@example.com
+```
+
 ## 去AI化编辑模块
 
 在保持 Typst 语法和技术准确性的前提下，降低 AI 写作痕迹。
@@ -683,3 +690,5 @@ typst compile --font-path ./fonts main.typ
 - `references/VENUES.md`：期刊会议要求
 - `references/DEAI_GUIDE.md`：去AI化写作指南
 - `references/TEMPLATES.md`：Typst 模板示例
+- `scripts/check_references.py`：引用完整性检查器（独立运行）
+- `scripts/online_bib_verify.py`：在线文献验证器

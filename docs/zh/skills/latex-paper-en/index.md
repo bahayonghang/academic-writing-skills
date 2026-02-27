@@ -102,6 +102,7 @@
 | Logic & Methodology | logic, coherence, 逻辑, methodology, 论证 | 逻辑衔接与方法论深度 |
 | Translation | translate, 翻译, 中译英 | 中英翻译 |
 | Bibliography | bib, 参考文献 | 文献检查 |
+| 引用完整性 | ref, label, 引用检查 | 图表引用完整性验证 🆕 |
 | De-AI Polishing | deai, 去AI化, humanize | 降低 AI 痕迹 |
 | Title Optimization | title, 标题, title optimization | 标题生成与优化 🆕 |
 
@@ -324,6 +325,12 @@
 - 重复条目
 - 未使用条目
 - 引用格式一致性
+
+```bash
+# 在线验证（CrossRef + Semantic Scholar）
+python scripts/verify_bib.py references.bib --online
+python scripts/verify_bib.py references.bib --online --email you@example.com
+```
 
 ## 去AI化编辑模块
 

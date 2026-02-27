@@ -93,6 +93,13 @@ export default defineConfig({
         ]
       },
       {
+        text: 'Paper Audit (paper-audit)',
+        collapsed: false,
+        items: [
+          { text: 'Overview', link: '/skills/paper-audit/' }
+        ]
+      },
+      {
         text: 'Typst Papers (typst-paper)',
         collapsed: false,
         items: [
@@ -275,6 +282,13 @@ export default defineConfig({
                   { text: '最佳实践', link: '/zh/skills/typst-paper/resources/references/BEST_PRACTICES' }
                 ]
               }
+            ]
+          },
+          {
+            text: '论文审查 (paper-audit)',
+            collapsed: false,
+            items: [
+              { text: '概览', link: '/zh/skills/paper-audit/' }
             ]
           }
         ],

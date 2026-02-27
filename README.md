@@ -32,6 +32,8 @@ Then open http://localhost:5173 in your browser.
 - **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Venue Support**: IEEE, ACM, Springer, NeurIPS, ICML guidelines
+- **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
+- **Bibliography Verification**: BibTeX format validation with optional online CrossRef/Semantic Scholar verification 🆕
 
 ### latex-thesis-zh (Chinese Theses)
 - **Structure Mapping**: Multi-file thesis structure analysis
@@ -42,6 +44,8 @@ Then open http://localhost:5173 in your browser.
 - **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
+- **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
+- **Bibliography Verification**: BibTeX format validation with optional online CrossRef/Semantic Scholar verification 🆕
 
 ### typst-paper (Typst Academic Papers)
 - **Fast Compilation**: Millisecond-level compilation speed
@@ -53,6 +57,18 @@ Then open http://localhost:5173 in your browser.
 - **Title Optimization**: Bilingual title generation and optimization (English/Chinese)
 - **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
 - **Modern Syntax**: Simple, intuitive markup language
+- **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
+- **Bibliography Verification**: BibTeX format validation with optional online CrossRef/Semantic Scholar verification 🆕
+
+### paper-audit (Automated Paper Auditing) 🆕
+- **Multi-format Support**: Accepts `.tex`, `.typ`, and `.pdf` files
+- **Three Audit Modes**: self-check (comprehensive), review (focused), gate (submission-ready check)
+- **PDF Visual Layout Check**: Margin overflow, text/image block overlaps, font inconsistency, low-resolution images, blank pages
+- **Reference Integrity Check**: Undefined references, unreferenced labels, missing captions, numbering gaps
+- **ScholarEval Assessment**: 8-dimension quality scoring (1–10) with publication readiness label
+- **Online Bibliography Verification**: CrossRef + Semantic Scholar API validation (no API key required)
+- **De-AI Editing**: Reduce AI writing traces
+- **NeurIPS-aligned Scoring**: Quality/Clarity/Significance/Originality 1–6 scale with weighted report
 
 ## Output Protocol
 
@@ -88,6 +104,7 @@ You can easily install these skills using [skilks](https://github.com/bahayongha
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
 
 # Or install all skills at once
 npx skilks add github.com/bahayonghang/academic-writing-skills
@@ -114,6 +131,7 @@ mkdir -p ~/.claude/skills
 cp -r latex-paper-en ~/.claude/skills/
 cp -r latex-thesis-zh ~/.claude/skills/
 cp -r typst-paper ~/.claude/skills/
+cp -r paper-audit ~/.claude/skills/
 ```
 
 #### Windows (PowerShell)
@@ -126,6 +144,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 ```
 
 
@@ -206,6 +225,21 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 - Ensures key terms (Method + Problem) appear in first 65 characters (English) or 20 characters (Chinese)
 - Provides multiple candidates with quality scores (0-100)
 
+**Paper Audit (Automated)** 🆕
+- "run a full audit on my paper"
+- "check paper quality before submission"
+- "audit my PDF for layout issues"
+- Supports .tex, .typ, .pdf files
+- Three modes: self-check (full), review (focused), gate (submission gate)
+- Add --online for bibliography verification via CrossRef/Semantic Scholar
+- Add --scholar-eval for 8-dimension ScholarEval quality assessment
+
+**Reference Integrity** 🆕
+- "check figure references in my paper"
+- "find undefined labels"
+- "检查图表引用完整性"
+- Detects: undefined \ref{}, unreferenced \label{}, missing captions, forward references
+
 **📖 For detailed usage and examples, see the [documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs).**
 
 ## Project Structure
@@ -220,6 +254,8 @@ academic-writing-skills/
 │   │   ├── check_format.py           # ChkTeX wrapper
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── check_references.py       # Reference integrity checker 🆕
+│   │   ├── online_bib_verify.py      # Online bibliography verifier 🆕
 │   │   └── extract_prose.py          # Text extractor
 │   └── resources/                    # Skill resources
 │       ├── modules/                  # Module instructions
@@ -241,6 +277,8 @@ academic-writing-skills/
 │   │   ├── check_consistency.py
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── check_references.py       # Reference integrity checker 🆕
+│   │   ├── online_bib_verify.py      # Online bibliography verifier 🆕
 │   │   └── detect_template.py        # Template detector
 │   └── resources/                    # Skill resources
 │       ├── GB_STANDARD.md
@@ -259,7 +297,9 @@ academic-writing-skills/
 │   │   ├── compile.py                # Typst compiler
 │   │   ├── check_format.py           # Format checker
 │   │   ├── verify_bib.py             # Bibliography checker
-│   │   └── optimize_title.py         # Title optimizer 🆕
+│   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── check_references.py       # Reference integrity checker 🆕
+│   │   └── online_bib_verify.py      # Online bibliography verifier 🆕
 │   └── resources/                    # Skill resources
 │       ├── modules/                  # Module instructions
 │       └── references/               # Reference docs
@@ -267,6 +307,21 @@ academic-writing-skills/
 │           ├── DEAI_GUIDE.md
 │           ├── TEMPLATES.md
 │           └── TYPST_SYNTAX.md
+│
+├── paper-audit/                      # Paper audit skill 🆕
+│   ├── SKILL.md                      # Skill definition
+│   ├── scripts/                      # Python tools
+│   │   ├── audit.py                  # Main orchestrator
+│   │   ├── pdf_parser.py             # PDF text extraction
+│   │   ├── detect_language.py        # Language detection
+│   │   ├── report_generator.py       # Report generation
+│   │   ├── check_references.py       # Reference integrity checker 🆕
+│   │   ├── visual_check.py           # PDF visual layout checker 🆕
+│   │   ├── scholar_eval.py           # ScholarEval assessment 🆕
+│   │   └── online_bib_verify.py      # Online bib verification (via audit.py)
+│   └── resources/
+│       └── references/
+│           └── SCHOLAR_EVAL_GUIDE.md # ScholarEval scoring guide 🆕
 │
 └── docs/                             # Documentation site
 ```

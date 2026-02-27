@@ -67,6 +67,7 @@ If any of these are missing or ambiguous, the assistant will ask for clarificati
 | Logic & Methodology | logic, coherence, 逻辑, 衔接, methodology | Logical coherence & methodological depth |
 | Translation | translate, 翻译, 中译英 | Chinese-English translation |
 | Bibliography | bib, bibliography, citation | Bibliography checking |
+| Reference Integrity | ref, label, reference check | Figure/table reference validation 🆕 |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Template | template, IEEE, ACM | Template configuration |
 | Title Optimization | title, 标题, title optimization 🆕 | Generate and optimize titles |
@@ -375,6 +376,12 @@ Recent studies @smith2020 @jones2021 show...
 #bibliography("references.bib", style: "ieee")
 ```
 
+```bash
+# With online verification
+python scripts/verify_bib.py references.bib --online
+python scripts/verify_bib.py references.bib --online --email you@example.com
+```
+
 ## De-AI Polishing Module
 
 Reduce AI writing traces while preserving Typst syntax and technical accuracy.
@@ -549,6 +556,8 @@ typst compile --font-path ./fonts main.typ
 - `references/VENUES.md`: Conference/journal requirements
 - `references/DEAI_GUIDE.md`: De-AI writing guide
 - `references/TEMPLATES.md`: Typst template examples
+- `scripts/check_references.py`: Reference integrity checker (standalone)
+- `scripts/online_bib_verify.py`: Online bibliography verifier
 
 ## Title Optimization Module
 

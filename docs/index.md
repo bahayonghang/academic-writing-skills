@@ -37,6 +37,10 @@ features:
   - icon: 🎨
     title: De-AI Editing
     details: Reduce AI writing traces while preserving technical accuracy. Built-in references for academic writing styles and common errors.
+
+  - icon: 🔬
+    title: Paper Audit (paper-audit)
+    details: Automated multi-mode paper auditing for .tex/.typ/.pdf files. PDF visual layout checking, figure/table reference integrity, ScholarEval 8-dimension quality scoring, and online bibliography verification via CrossRef/Semantic Scholar.
 ---
 
 ## Quick Start
@@ -70,6 +74,7 @@ Academic writing can be challenging, especially when managing compilation workfl
 - **latex-paper-en**: Complete toolkit for English academic papers (LaTeX)
 - **latex-thesis-zh**: Specialized support for Chinese theses (LaTeX)
 - **typst-paper**: Modern markup language for fast academic writing 🆕
+- **paper-audit**: Automated paper auditing with PDF support, visual checks, and ScholarEval 🆕
 
 ### Compilation Support
 
@@ -89,6 +94,8 @@ Academic writing can be challenging, especially when managing compilation workfl
 - Typst syntax validation
 - Bibliography verification (BibTeX/Hayagriva)
 - Style guide compliance checking
+- Reference integrity checking (undefined refs, missing captions)
+- PDF visual layout analysis (margins, overlaps, image DPI)
 
 ### References
 
@@ -98,6 +105,13 @@ Built-in documentation for:
 - GB/T 7714-2015 Chinese bibliography standard
 - University thesis templates and requirements
 - Typst syntax reference and best practices
+
+### Paper Quality Assessment 🆕
+
+- **ScholarEval**: 8-dimension academic quality scoring (1-10 scale)
+- **Publication Readiness Labels**: Strong Accept → Not ready
+- **Online Bibliography Verification**: CrossRef + Semantic Scholar API
+- **PDF Visual Analysis**: Layout issues for camera-ready submissions
 
 ## Learn More
 
