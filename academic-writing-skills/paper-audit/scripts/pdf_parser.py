@@ -41,16 +41,25 @@ class PdfParser(DocumentParser):
         "conclusion": r"(?:结论|总结|结束语)",
     }
 
-    def __init__(self, mode: str = "basic"):
+    def __init__(
+        self,
+        mode: str = "basic",
+        heading_pt: float = 14.0,
+        body_pt: float = 12.0,
+    ):
         """
         Initialize PdfParser.
 
         Args:
             mode: Extraction mode - "basic" (pymupdf) or "enhanced" (pymupdf4llm).
+            heading_pt: Font size threshold (pt) for H2-level headings (default: 14.0).
+            body_pt: Font size threshold (pt) for H3-level headings (default: 12.0).
         """
         if mode not in ("basic", "enhanced"):
             raise ValueError(f"Invalid PDF mode: {mode}. Use 'basic' or 'enhanced'.")
         self.mode = mode
+        self.heading_pt = heading_pt
+        self.body_pt = body_pt
 
     def extract_text_from_file(self, file_path: str) -> str:
         """
@@ -97,10 +106,10 @@ class PdfParser(DocumentParser):
                     if not line_text:
                         continue
 
-                    # Detect headings by font size (>= 14pt typical for section headers)
-                    if max_size >= 14 and len(line_text) < 100:
+                    # Detect headings by font size (configurable thresholds)
+                    if max_size >= self.heading_pt and len(line_text) < 100:
                         page_lines.append(f"## {line_text}")
-                    elif max_size >= 12 and len(line_text) < 100:
+                    elif max_size >= self.body_pt and len(line_text) < 100:
                         page_lines.append(f"### {line_text}")
                     else:
                         page_lines.append(line_text)
