@@ -19,19 +19,25 @@ description: |
   Three modes: self-check (pre-submission), review (peer review simulation),
   gate (quality gate pass/fail).
   Use when user mentions: audit, review, check paper, paper quality,
-  pre-submission check, score paper, or any paper auditing task.
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode self-check|review|gate] [--pdf-mode basic|enhanced]"
-allowed-tools: Read, Glob, Grep, Bash(python *)
+  pre-submission check, score paper, or any paper auditing task,
+  polish paper, deep polish, adversarial review, refine writing.
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode self-check|review|gate|polish] [--pdf-mode basic|enhanced] [--style A|B|C] [--journal <venue>] [--skip-logic] [--online] [--scholar-eval]"
+allowed-tools: Read, Glob, Grep, Bash(python *), Task
 references:
   - resources/references/REVIEW_CRITERIA.md
   - resources/references/CHECKLIST.md
   - resources/references/AUDIT_GUIDE.md
+  - resources/references/POLISH_GUIDE.md
+  - resources/references/SCHOLAR_EVAL_GUIDE.md
 scripts:
   - scripts/audit.py
   - scripts/pdf_parser.py
   - scripts/detect_language.py
   - scripts/report_generator.py
   - scripts/parsers.py
+  - scripts/visual_check.py
+  - scripts/check_references.py
+  - scripts/scholar_eval.py
 ---
 
 # Paper Audit Skill (论文审核)
@@ -62,6 +68,47 @@ Unified academic paper auditing across formats and languages.
 
 **CLI**: `python scripts/audit.py paper.tex --mode self-check`
 
+#### Online Bibliography Verification
+
+Add `--online` to enable CrossRef/Semantic Scholar metadata verification:
+```
+python scripts/audit.py paper.tex --mode self-check --online --email user@example.com
+```
+
+#### ScholarEval 8-Dimension Assessment
+
+Add `--scholar-eval` to enable the 8-dimension evaluation framework:
+```
+python scripts/audit.py paper.tex --mode self-check --scholar-eval
+```
+
+Script-evaluable dimensions (Soundness, Clarity, Presentation, partial Reproducibility) are scored automatically. For complete assessment, supplement with LLM evaluation of Novelty, Significance, Ethics, and Reproducibility. See `SCHOLAR_EVAL_GUIDE.md`.
+
+**ScholarEval LLM Assessment Prompt** (for `review` mode):
+
+Read the full paper and provide 1-10 scores with evidence in JSON format:
+
+```json
+{
+  "novelty": {
+    "score": "<1-10>",
+    "evidence": "<Describe originality and distinction from prior work>"
+  },
+  "significance": {
+    "score": "<1-10>",
+    "evidence": "<Describe potential impact on the field>"
+  },
+  "reproducibility_llm": {
+    "score": "<1-10>",
+    "evidence": "<Assess experimental description completeness, code/data availability>"
+  },
+  "ethics": {
+    "score": "<1-10>",
+    "evidence": "<Assess ethical considerations, conflicts of interest, data privacy>"
+  }
+}
+```
+
 ### Mode: `review` (Peer Review Simulation)
 
 **Trigger keywords**: simulate review, peer review, reviewer perspective, what would reviewers say
@@ -87,6 +134,27 @@ Unified academic paper auditing across formats and languages.
 - Binary PASS/FAIL verdict with blocking issues
 
 **CLI**: `python scripts/audit.py paper.tex --mode gate`
+
+### Mode: `polish` (Adversarial Dual-Agent Deep Polish)
+
+**Trigger keywords**: polish, deep polish, adversarial review, refine writing,
+  improve writing, paragraph polish
+
+**What it does**:
+- Phase 1 (Python): Fast rule-based precheck → .polish-state/precheck.json
+- Phase 2 (Critic Agent): LLM adversarial review → per-section logic/expression scores
+- Phase 3 (Mentor Agent × N): Per-section polish suggestions → Original vs Revised table
+- Outputs: Structured polish report with diff-comment suggestions
+
+**Style options** (`--style`):
+- `A` Plain Precise (default): Short sentences, active voice, technical precision
+- `B` Narrative Fluent: Story-driven, transitions, accessible prose
+- `C` Formal Academic: Passive voice acceptable, formal register, hedge words
+
+**Skip logic**: `--skip-logic` bypasses Critic logic scoring; Mentor runs
+  expression-only polish. Equivalent to `/polish` quick command.
+
+**CLI**: `python scripts/audit.py paper.tex --mode polish --style A --journal neurips`
 
 ## Supported Formats
 
@@ -119,6 +187,8 @@ Force with `--lang en` or `--lang zh`.
 | De-AI Detection | `deai_check.py` | Clarity, Originality | .tex, .typ, .pdf |
 | Bibliography | `verify_bib.py` | Quality | .tex, .typ |
 | Figure/Table Refs | `check_figures.py` | Clarity | .tex |
+| Reference Integrity | `check_references.py` | Clarity, Quality | .tex, .typ |
+| Visual Layout | `visual_check.py` | Clarity | .pdf |
 | Consistency (ZH) | `check_consistency.py` | Clarity | .tex (Chinese only) |
 | GB/T 7714 (ZH) | `verify_bib.py` (GB mode) | Quality | .tex (Chinese only) |
 | Pre-submission Checklist | Built-in | All | All formats |
@@ -173,3 +243,127 @@ For `review` mode, supplement the automated report with LLM analysis of:
 - Key weaknesses (what reviewers would criticize)
 - Questions a reviewer would ask
 - Missing related work or baselines
+
+### Polish Mode Workflow
+
+1. **Run Python precheck**
+   ```
+   python scripts/audit.py <file> --mode polish [--style A|B|C] [--journal <name>] [--skip-logic]
+   ```
+   Read `.polish-state/precheck.json` from the paper's directory.
+
+2. **Check hard blockers**
+   If `precheck.json["blockers"]` is non-empty, display them and STOP.
+   Say: "Fix these Critical issues before polish can proceed:" + list.
+   Do NOT spawn any agent until user confirms fixes.
+
+3. **Handle non-IMRaD structure** (if `precheck.json["non_imrad"] == true`)
+   Show detected sections, ask user: "Proceed with polish on these sections?"
+
+4. **Spawn Critic Agent** via Task:
+
+   Subagent type: `general-purpose`
+   Prompt template:
+   ```
+   You are an adversarial academic reviewer.
+   Paper: {file_path}  |  Language: {lang}  |  Journal: {journal}  |  Style: {style}
+
+   Step 1: Read the paper using the Read tool (file: {file_path}).
+   Step 2: The rule-based precheck found these issues: {precheck_issues_summary}
+   Step 3: Produce a CRITIC REPORT as valid JSON (no markdown fencing):
+   {
+     "global_verdict": "ready_to_polish" | "needs_revision_first" | "major_restructure_needed",
+     "global_rationale": "2-3 sentences",
+     "section_verdicts": [
+       {
+         "section": "<name>",
+         "logic_score": 1-5,
+         "expression_score": 1-5,
+         "blocks_mentor": false,
+         "blocking_reason": "",
+         "top_issues": [{"type": "logic|expression|argument", "description": "..."}]
+       }
+     ],
+     "cross_section_issues": ["..."]
+   }
+   blocks_mentor = true ONLY when logic_score <= 2 or section is structurally absent.
+   ```
+   Save the Critic's JSON output to `.polish-state/critic_report.json` using Bash:
+   ```
+   python -c "import pathlib; pathlib.Path('.polish-state/critic_report.json').write_text('<critic_json_here>', encoding='utf-8')"
+   ```
+
+5. **Display Critic Dashboard and gate**
+   Render the Critic report as a markdown table (see dashboard format).
+   Show blocked sections. Ask:
+   "How to proceed?
+    [1] Polish all sections (override blocks)
+    [2] Skip blocked sections, polish the rest
+    [3] Stop and revise blocked sections first"
+   Wait for response.
+
+6. **Spawn Mentor Agents per section** (sequential, one at a time):
+   For each approved section in IMRaD order:
+
+   Subagent type: `general-purpose`
+   Prompt template:
+   ```
+   You are a writing mentor specializing in academic polish.
+
+   CRITICAL RULES (NEVER VIOLATE):
+   - Never modify \cite{}, \ref{}, \label{}, \eqref{} in LaTeX
+   - Never modify @cite, #cite(), #ref(), <label> in Typst
+   - Never modify math environments: $...$, \begin{equation}..., \begin{align}...
+   - Never add/remove citations
+   - Mark any domain terminology changes as [TERM CHANGE: confirm?]
+
+   Section: {section_name} (lines {start}-{end})
+   Target style: {style} ({style_description from POLISH_GUIDE.md})
+   Critic scores — Logic: {logic_score}/5, Expression: {expression_score}/5
+   Critic top issues: {top_issues}
+   Pre-check expression issues in this section: {filtered_expression_issues}
+
+   Read lines {start}-{end} of {file_path}:
+     Use Read tool with offset={start-1} and limit={end-start+1}.
+
+   Produce MENTOR REPORT in this format:
+
+   ## Section: {section_name}
+
+   ### Polish Suggestions
+   [MENTOR] (Line N) [Severity: Major|Minor] [Priority: P1|P2]: description
+     Original: <exact original text>
+     Revised:  <revised text preserving all LaTeX/Typst commands>
+     Rationale: <one sentence>
+
+   ### Section Summary
+   <2-3 sentences on overall quality and key improvements>
+   ```
+
+   After each Mentor completes:
+   - Display its output
+   - Ask: "Section {name} polish done. Accept and continue to next section?"
+   - Wait for confirmation before spawning next Mentor.
+
+7. **Final status dashboard** (after all sections done):
+   See dashboard format below.
+
+### Polish Status Dashboard Format
+
+Print at end of each phase and at completion:
+
+```
+╭─ 🔴🔵 paper-audit Polish Mode ──────────────────────────╮
+│ 📄 File: {filename} | Style: {A/B/C} | Journal: {venue} │
+│ ⚔️  Critic: {global_verdict}                             │
+│                                                           │
+│ Section      │ Logic │ Expr │ Mentor      │ Suggestions  │
+│ abstract     │  4/5  │ 3/5  │ ✅ Done     │      3       │
+│ introduction │  3/5  │ 2/5  │ ✅ Done     │      7       │
+│ method       │ BLOCK │ 2/5  │ ⏭️  Skipped  │      0       │
+│ experiment   │  4/5  │ 4/5  │ ✅ Done     │      2       │
+│ conclusion   │  5/5  │ 3/5  │ ✅ Done     │      4       │
+│                                                           │
+│ 👉 Next: {明确的下一步指示}                               │
+╰───────────────────────────────────────────────────────────╯
+```

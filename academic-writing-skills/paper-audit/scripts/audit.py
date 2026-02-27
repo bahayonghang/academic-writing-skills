@@ -24,13 +24,16 @@ from report_generator import (
 MODE_CHECKS: dict[str, list[str]] = {
     "self-check": [
         "format", "grammar", "logic", "sentences", "deai", "bib", "figures",
+        "references", "visual",
     ],
     "review": [
         "format", "grammar", "logic", "sentences", "deai", "bib", "figures",
+        "references", "visual",
     ],
     "gate": [
-        "format", "bib", "figures", "checklist",
+        "format", "bib", "figures", "references", "visual", "checklist",
     ],
+    "polish": ["logic", "sentences"],  # Fast rule-based only; agents handle the rest
 }
 
 # Additional checks for Chinese documents
@@ -39,6 +42,7 @@ ZH_EXTRA_CHECKS: list[str] = ["consistency", "gbt7714"]
 # --- Skill Root Resolution ---
 
 SKILLS_ROOT = Path(__file__).resolve().parent.parent.parent
+SCRIPTS_AUDIT = Path(__file__).resolve().parent  # paper-audit's own scripts
 SCRIPTS_EN = SKILLS_ROOT / "latex-paper-en" / "scripts"
 SCRIPTS_ZH = SKILLS_ROOT / "latex-thesis-zh" / "scripts"
 SCRIPTS_TYPST = SKILLS_ROOT / "typst-paper" / "scripts"
@@ -55,11 +59,25 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
         "bib": "verify_bib.py",
         "figures": "check_figures.py",
         "consistency": "check_consistency.py",
+        "references": "check_references.py",
+        "visual": "visual_check.py",
     }
 
     script_name = script_map.get(check_name)
     if not script_name:
         return None
+
+    # visual check lives only in paper-audit's own scripts directory
+    if check_name == "visual":
+        path = SCRIPTS_AUDIT / script_name
+        return path if path.exists() else None
+
+    # references: paper-audit has its own router version; fall through to others
+    if check_name == "references":
+        # Prefer paper-audit's router version first
+        path = SCRIPTS_AUDIT / script_name
+        if path.exists():
+            return path
 
     # Choose script directory based on format and language
     if fmt == ".typ":
@@ -243,12 +261,160 @@ def _run_checklist(
     return items
 
 
+def _find_section_for_line(
+    line_no: int | None,
+    sections: dict[str, tuple[int, int]],
+) -> str:
+    """Map a line number to its enclosing section name."""
+    if line_no is None:
+        return "unknown"
+    for sec_name, (start, end) in sections.items():
+        if start <= line_no <= end:
+            return sec_name
+    return "unknown"
+
+
+def _write_state_file(paper_path: Path, data: dict) -> Path:
+    """Write polish precheck state JSON next to the paper file."""
+    import json
+
+    state_dir = paper_path.parent / ".polish-state"
+    state_dir.mkdir(exist_ok=True)
+    state_file = state_dir / "precheck.json"
+    state_file.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print(f"[polish-precheck] State written to: {state_file}")
+    return state_file
+
+
+def run_polish_precheck(
+    file_path: str,
+    style: str = "A",
+    journal: str = "",
+    lang: str | None = None,
+    skip_logic: bool = False,
+) -> AuditResult:
+    """
+    Fast precheck for polish mode.
+    Writes .polish-state/precheck.json next to the paper file.
+    Returns AuditResult for report rendering.
+    """
+    from datetime import datetime
+
+    path = Path(file_path).resolve()
+    fmt = path.suffix.lower()
+    if fmt == ".pdf":
+        raise ValueError("Polish mode requires .tex or .typ source (not PDF).")
+
+    content = path.read_text(encoding="utf-8")
+    parser = get_parser(file_path)
+
+    if lang is None:
+        clean = parser.clean_text(content)
+        lang = detect_language(clean)
+
+    print(f"[polish-precheck] {path.name} | lang={lang} style={style}")
+
+    # Section map
+    raw_sections = parser.split_sections(content)  # dict[str, tuple[int,int]]
+    lines_list = content.split("\n")
+    sections_meta: dict = {}
+    for sec_name, (start, end) in raw_sections.items():
+        sec_lines = lines_list[start - 1:end]
+        word_count = sum(
+            len(parser.extract_visible_text(ln).split()) for ln in sec_lines
+        )
+        sections_meta[sec_name] = {"start": start, "end": end, "word_count": word_count}
+
+    # Non-IMRaD detection
+    imrad_core = {"abstract", "introduction", "method", "experiment", "conclusion"}
+    non_imrad = len(imrad_core & set(raw_sections)) < 2
+
+    # Rule-based logic check (per-section, skip if --skip-logic)
+    precheck_issues: list[dict] = []
+    if not skip_logic:
+        logic_script = _resolve_script("logic", lang, fmt)
+        if logic_script:
+            for sec_name in raw_sections:
+                rc, stdout, _ = _run_check_script(
+                    logic_script, str(path), ["--section", sec_name]
+                )
+                if rc != -1 and stdout.strip():
+                    for issue in _parse_script_output("logic", stdout):
+                        precheck_issues.append({
+                            "module": issue.module,
+                            "section": sec_name,
+                            "line": issue.line,
+                            "severity": issue.severity,
+                            "priority": issue.priority,
+                            "message": issue.message,
+                        })
+
+    # Expression check (sentences)
+    expression_issues: list[dict] = []
+    sent_script = _resolve_script("sentences", lang, fmt)
+    if sent_script:
+        rc, stdout, _ = _run_check_script(
+            sent_script, str(path), ["--max-words", "60", "--max-clauses", "3"]
+        )
+        if rc != -1 and stdout.strip():
+            for issue in _parse_script_output("sentences", stdout):
+                expression_issues.append({
+                    "module": issue.module,
+                    "section": _find_section_for_line(issue.line, raw_sections),
+                    "line": issue.line,
+                    "severity": issue.severity,
+                    "priority": issue.priority,
+                    "message": issue.message,
+                    "original": issue.original,
+                    "revised": issue.revised,
+                })
+
+    # Hard blockers = Critical severity
+    blockers = [i for i in precheck_issues if i["severity"] == "Critical"]
+
+    precheck_data = {
+        "file_path": str(path),
+        "language": lang,
+        "style": style,
+        "journal": journal,
+        "sections": sections_meta,
+        "precheck_issues": precheck_issues,
+        "expression_issues": expression_issues,
+        "blockers": blockers,
+        "non_imrad": non_imrad,
+        "skip_logic": skip_logic,
+        "generated_at": datetime.now().isoformat(),
+    }
+    _write_state_file(path, precheck_data)
+
+    # Return AuditResult so existing render_report() can display precheck issues
+    all_issues = [
+        AuditIssue(
+            module=i["module"], line=i.get("line"),
+            severity=i["severity"], priority=i["priority"], message=i["message"],
+        )
+        for i in precheck_issues + expression_issues
+    ]
+    return AuditResult(
+        file_path=str(path), language=lang, mode="polish", venue=journal,
+        issues=all_issues,
+    )
+
+
 def run_audit(
     file_path: str,
     mode: str = "self-check",
     pdf_mode: str = "basic",
     venue: str = "",
     lang: str | None = None,
+    style: str = "A",
+    journal: str = "",
+    skip_logic: bool = False,
+    online: bool = False,
+    email: str = "",
+    scholar_eval: bool = False,
 ) -> AuditResult:
     """
     Run a complete paper audit.
@@ -270,6 +436,13 @@ def run_audit(
     fmt = path.suffix.lower()
     if fmt not in (".tex", ".typ", ".pdf"):
         raise ValueError(f"Unsupported format: {fmt}")
+
+    # Polish mode: early dispatch to precheck
+    if mode == "polish":
+        return run_polish_precheck(
+            file_path, style=style, journal=journal,
+            lang=lang, skip_logic=skip_logic,
+        )
 
     # Step 1: Extract text
     parser = get_parser(file_path, pdf_mode=pdf_mode)
@@ -304,8 +477,12 @@ def run_audit(
             continue
 
         # PDF files need special handling — some scripts expect .tex/.typ
-        if fmt == ".pdf" and check_name in ("format", "figures"):
+        if fmt == ".pdf" and check_name in ("format", "figures", "references"):
             print(f"[audit] SKIP {check_name}: not applicable for PDF input")
+            continue
+
+        # Visual check only applies to PDF input
+        if check_name == "visual" and fmt != ".pdf":
             continue
 
         print(f"[audit] Running {check_name}...")
@@ -313,6 +490,10 @@ def run_audit(
         extra_args = []
         if check_name == "sentences":
             extra_args = ["--max-words", "60", "--max-clauses", "3"]
+        if check_name == "bib" and online:
+            extra_args.append("--online")
+            if email:
+                extra_args.extend(["--email", email])
 
         returncode, stdout, stderr = _run_check_script(script, str(path), extra_args)
 
@@ -345,6 +526,22 @@ def run_audit(
         checklist=checklist,
     )
 
+    # Step 7: ScholarEval (optional)
+    if scholar_eval and mode in ("self-check", "review"):
+        try:
+            from scholar_eval import build_result as build_scholar_result
+            from scholar_eval import evaluate_from_audit
+
+            issue_dicts = [
+                {"module": i.module, "severity": i.severity, "message": i.message}
+                for i in all_issues
+            ]
+            script_scores = evaluate_from_audit(issue_dicts)
+            result.scholar_eval_result = build_scholar_result(script_scores)
+            print("[audit] ScholarEval: script-based scores computed")
+        except Exception as exc:
+            print(f"[audit] ScholarEval: failed — {exc}")
+
     return result
 
 
@@ -366,7 +563,7 @@ Examples:
         "file", help="Path to the document (.tex, .typ, or .pdf)"
     )
     parser.add_argument(
-        "--mode", choices=["self-check", "review", "gate"],
+        "--mode", choices=["self-check", "review", "gate", "polish"],
         default="self-check",
         help="Audit mode (default: self-check)",
     )
@@ -385,6 +582,30 @@ Examples:
         help="Force language (auto-detects if not specified)",
     )
     parser.add_argument(
+        "--style", choices=["A", "B", "C"], default="A",
+        help="Polish style: A=plain precise, B=narrative, C=formal academic",
+    )
+    parser.add_argument(
+        "--journal", default="",
+        help="Target journal/venue for polish mode",
+    )
+    parser.add_argument(
+        "--skip-logic", action="store_true",
+        help="Skip logic checking in polish mode (expression only)",
+    )
+    parser.add_argument(
+        "--online", action="store_true",
+        help="Enable online bibliography verification via CrossRef/Semantic Scholar",
+    )
+    parser.add_argument(
+        "--email", default="",
+        help="Email for CrossRef polite pool (faster rate limits)",
+    )
+    parser.add_argument(
+        "--scholar-eval", action="store_true",
+        help="Enable ScholarEval 8-dimension assessment",
+    )
+    parser.add_argument(
         "--output", "-o", default=None,
         help="Output file path (default: stdout)",
     )
@@ -398,6 +619,12 @@ Examples:
             pdf_mode=args.pdf_mode,
             venue=args.venue,
             lang=args.lang,
+            style=getattr(args, "style", "A"),
+            journal=getattr(args, "journal", ""),
+            skip_logic=getattr(args, "skip_logic", False),
+            online=getattr(args, "online", False),
+            email=getattr(args, "email", ""),
+            scholar_eval=getattr(args, "scholar_eval", False),
         )
 
         report = render_report(result)

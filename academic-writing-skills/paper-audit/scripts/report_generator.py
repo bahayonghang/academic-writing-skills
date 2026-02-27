@@ -36,7 +36,7 @@ class AuditResult:
     """Complete audit result from all checks."""
     file_path: str
     language: str                              # "en" or "zh"
-    mode: str                                  # "self-check", "review", "gate"
+    mode: str                                  # "self-check", "review", "gate", "polish"
     venue: str = ""                            # e.g., "neurips", "ieee"
     issues: list[AuditIssue] = field(default_factory=list)
     checklist: list[ChecklistItem] = field(default_factory=list)
@@ -45,6 +45,21 @@ class AuditResult:
     weaknesses: list[str] = field(default_factory=list)
     questions: list[str] = field(default_factory=list)
     summary: str = ""
+    # ScholarEval result (optional, populated when --scholar-eval is used)
+    scholar_eval_result: object | None = None
+
+
+@dataclass
+class PolishSectionVerdict:
+    """Critic's verdict for a single section."""
+    section: str
+    logic_score: int        # 1-5
+    expression_score: int   # 1-5
+    blocks_mentor: bool
+    blocking_reason: str = ""
+    top_issues: list[dict] = field(default_factory=list)
+    mentor_done: bool = False
+    mentor_suggestions_count: int = 0
 
 
 # --- Dimension Mapping & Scoring ---
@@ -60,6 +75,8 @@ DIMENSION_MAP: dict[str, list[str]] = {
     "consistency": ["clarity"],
     "gbt7714":     ["quality"],
     "checklist":   ["quality", "clarity", "significance", "originality"],
+    "references":  ["clarity", "quality"],
+    "visual":      ["clarity"],
 }
 
 DIMENSION_WEIGHTS: dict[str, float] = {
@@ -140,6 +157,44 @@ def _count_issues(issues: list[AuditIssue]) -> str:
     m = sum(1 for i in issues if i.severity == "Major")
     n = sum(1 for i in issues if i.severity == "Minor")
     return f"{c}/{m}/{n}"
+
+
+def render_polish_precheck_report(result: AuditResult, precheck: dict) -> str:
+    """Render precheck summary shown before Critic agent is spawned."""
+    lines = [
+        "# Polish Precheck Report",
+        "",
+        f"**File**: `{result.file_path}` | **Language**: {result.language.upper()} "
+        f"| **Style**: {precheck.get('style', 'A')}",
+    ]
+    if precheck.get("journal"):
+        lines[-1] += f" | **Journal**: {precheck['journal']}"
+    lines += [""]
+
+    # Section map table
+    lines += ["## Detected Sections", "",
+              "| Section | Lines | Words |", "|---------|-------|-------|"]
+    for sec, meta in precheck.get("sections", {}).items():
+        lines.append(f"| {sec} | {meta['start']}-{meta['end']} | {meta['word_count']} |")
+    lines.append("")
+
+    # Blockers
+    blockers = precheck.get("blockers", [])
+    if blockers:
+        lines += ["## Blockers (must fix before polish)", ""]
+        for b in blockers:
+            loc = f"(Line {b['line']}) " if b.get("line") else ""
+            lines.append(f"- **[{b['module']}]** {loc}{b['message']}")
+        lines += ["", "Resolve these Critical issues and re-run before proceeding."]
+    else:
+        lines += ["## Status: Ready for Critic Phase", ""]
+
+    n_logic = len(precheck.get("precheck_issues", []))
+    n_expr = len(precheck.get("expression_issues", []))
+    lines.append(f"**Pre-check findings**: {n_logic} logic, {n_expr} expression issues")
+    if precheck.get("non_imrad"):
+        lines += ["", "> **Note**: Non-standard section structure detected."]
+    return "\n".join(lines)
 
 
 # --- Report Renderers ---
@@ -361,8 +416,21 @@ def render_report(result: AuditResult) -> str:
         Formatted Markdown report string.
     """
     if result.mode == "review":
-        return render_review_report(result)
+        report = render_review_report(result)
     elif result.mode == "gate":
-        return render_gate_report(result)
+        report = render_gate_report(result)
+    elif result.mode == "polish":
+        # For polish mode, render_self_check_report shows precheck issues
+        report = render_self_check_report(result)
     else:
-        return render_self_check_report(result)
+        report = render_self_check_report(result)
+
+    # Append ScholarEval report if available
+    if result.scholar_eval_result is not None:
+        try:
+            from scholar_eval import render_scholar_eval_report
+            report += "\n\n" + render_scholar_eval_report(result.scholar_eval_result)
+        except Exception:
+            pass
+
+    return report
