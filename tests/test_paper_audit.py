@@ -1,5 +1,8 @@
 """Tests for paper-audit skill components."""
 
+import sys
+from pathlib import Path
+
 import pytest
 
 from detect_language import detect_language, _is_cjk
@@ -14,6 +17,11 @@ from report_generator import (
     render_review_report,
     render_gate_report,
 )
+
+# Add latex-paper-en scripts for check_references import
+_scripts_en = Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"
+if str(_scripts_en) not in sys.path:
+    sys.path.insert(0, str(_scripts_en))
 
 
 # ============================================================
@@ -410,3 +418,392 @@ This is clean text with no issues.
         todo_item = next((i for i in items if "TODO" in i.description), None)
         assert todo_item is not None
         assert todo_item.passed
+
+
+# ============================================================
+# P0-3: check_references tests
+# ============================================================
+
+class TestCheckReferences:
+    """Tests for reference integrity checker."""
+
+    def test_find_labels(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+\begin{figure}
+\caption{Architecture}
+\label{fig:arch}
+\end{figure}
+\begin{table}
+\caption{Results}
+\label{tab:results}
+\end{table}
+\label{eq:loss}
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        labels = checker.find_labels()
+        names = {l.name for l in labels}
+        assert "fig:arch" in names
+        assert "tab:results" in names
+        assert "eq:loss" in names
+
+    def test_find_refs(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+As shown in Figure~\ref{fig:arch} and Table~\ref{tab:results}.
+See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        refs = checker.find_refs()
+        names = {r.name for r in refs}
+        assert "fig:arch" in names
+        assert "tab:results" in names
+        assert "eq:loss" in names
+
+    def test_undefined_reference(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+\ref{fig:missing}
+\label{fig:existing}
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        issues = checker.run_all()
+        critical = [i for i in issues if i["severity"] == "Critical"]
+        assert any("fig:missing" in i["message"] for i in critical)
+
+    def test_unreferenced_label(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+\begin{figure}
+\caption{Test}
+\label{fig:unused}
+\end{figure}
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        issues = checker.run_all()
+        minor = [i for i in issues if i["severity"] == "Minor"]
+        assert any("fig:unused" in i["message"] for i in minor)
+
+    def test_missing_caption(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+\begin{figure}
+\label{fig:nocap}
+\end{figure}
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        issues = checker.run_all()
+        major = [i for i in issues if i["severity"] == "Major"]
+        assert any("caption" in i["message"].lower() for i in major)
+
+    def test_all_clean(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+\begin{figure}
+\caption{Good figure}
+\label{fig:good}
+\end{figure}
+See Figure~\ref{fig:good}.
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        issues = checker.run_all()
+        # No critical or major issues
+        critical_major = [i for i in issues if i["severity"] in ("Critical", "Major")]
+        assert len(critical_major) == 0
+
+    def test_skip_commented_lines(self) -> None:
+        from check_references import ReferenceChecker
+        content = r"""
+% \label{fig:commented}
+% \ref{fig:commented}
+\label{fig:real}
+\ref{fig:real}
+"""
+        checker = ReferenceChecker(content, "test.tex")
+        labels = checker.find_labels()
+        names = {l.name for l in labels}
+        assert "fig:commented" not in names
+        assert "fig:real" in names
+
+
+# ============================================================
+# P0-2: visual_check tests
+# ============================================================
+
+class TestVisualCheck:
+    """Tests for visual checker (unit tests without PDF files)."""
+
+    def test_calc_overlap_area(self) -> None:
+        from visual_check import _calc_overlap_area
+        # No overlap
+        assert _calc_overlap_area((0, 0, 10, 10), (20, 20, 30, 30)) == 0
+        # Full overlap
+        assert _calc_overlap_area((0, 0, 10, 10), (0, 0, 10, 10)) == 100
+        # Partial overlap
+        assert _calc_overlap_area((0, 0, 10, 10), (5, 5, 15, 15)) == 25
+
+    def test_calc_overlap_area_edge(self) -> None:
+        from visual_check import _calc_overlap_area
+        # Adjacent (no overlap)
+        assert _calc_overlap_area((0, 0, 10, 10), (10, 0, 20, 10)) == 0
+
+    def test_format_issues_empty(self) -> None:
+        from visual_check import _format_issues
+        result = _format_issues([])
+        assert "No layout issues" in result
+
+    def test_format_issues_json(self) -> None:
+        import json
+        from visual_check import _format_issues
+        issues = [{"module": "VISUAL", "page": 1, "severity": "Major",
+                    "priority": "P1", "message": "Test issue"}]
+        result = _format_issues(issues, as_json=True)
+        parsed = json.loads(result)
+        assert len(parsed) == 1
+        assert parsed[0]["page"] == 1
+
+    def test_format_issues_protocol(self) -> None:
+        from visual_check import _format_issues
+        issues = [{"module": "VISUAL", "page": 3, "severity": "Critical",
+                    "priority": "P0", "message": "Block overlap"}]
+        result = _format_issues(issues)
+        assert "Page 3" in result
+        assert "Severity: Critical" in result
+        assert "Priority: P0" in result
+
+
+# ============================================================
+# P1-1: scholar_eval tests
+# ============================================================
+
+class TestScholarEval:
+    """Tests for ScholarEval evaluation framework."""
+
+    def test_no_issues_perfect_score(self) -> None:
+        from scholar_eval import evaluate_from_audit
+        scores = evaluate_from_audit([])
+        assert scores["soundness"] == 10.0
+        assert scores["clarity"] == 10.0
+        assert scores["presentation"] == 10.0
+
+    def test_deductions(self) -> None:
+        from scholar_eval import evaluate_from_audit
+        issues = [
+            {"module": "LOGIC", "severity": "Critical", "message": "Flaw"},
+            {"module": "LOGIC", "severity": "Major", "message": "Gap"},
+        ]
+        scores = evaluate_from_audit(issues)
+        # 10 - 2.5 - 1.25 = 6.25
+        assert scores["soundness"] == 6.25
+
+    def test_floor_at_one(self) -> None:
+        from scholar_eval import evaluate_from_audit
+        issues = [
+            {"module": "GRAMMAR", "severity": "Critical", "message": f"E{i}"}
+            for i in range(10)
+        ]
+        scores = evaluate_from_audit(issues)
+        assert scores["clarity"] == 1.0
+
+    def test_merge_script_only(self) -> None:
+        from scholar_eval import merge_scores
+        script_scores = {
+            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "reproducibility_partial": 8.5,
+        }
+        merged = merge_scores(script_scores, llm_scores=None)
+        assert merged["soundness"] == 8.0
+        assert merged["novelty"] is None
+        assert merged["overall"] is not None
+
+    def test_merge_with_llm(self) -> None:
+        from scholar_eval import merge_scores
+        script_scores = {
+            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "reproducibility_partial": 7.0,
+        }
+        llm_scores = {
+            "novelty": {"score": 8.0, "evidence": "Novel approach"},
+            "significance": {"score": 7.0, "evidence": "Important"},
+            "reproducibility_llm": {"score": 6.0, "evidence": "Code missing"},
+            "ethics": {"score": 9.0, "evidence": "No concerns"},
+        }
+        merged = merge_scores(script_scores, llm_scores)
+        assert merged["novelty"] == 8.0
+        assert merged["significance"] == 7.0
+        assert merged["ethics"] == 9.0
+        # Reproducibility = avg(7.0, 6.0) = 6.5
+        assert merged["reproducibility"] == 6.5
+        assert merged["overall"] is not None
+
+    def test_readiness_labels(self) -> None:
+        from scholar_eval import get_readiness_label
+        assert "Strong Accept" in get_readiness_label(9.5)
+        assert "Accept" in get_readiness_label(8.5)
+        assert "minor" in get_readiness_label(7.5).lower()
+        assert "Major" in get_readiness_label(6.5)
+        assert "Not ready" in get_readiness_label(3.0)
+        assert "Insufficient" in get_readiness_label(None)
+
+    def test_render_report(self) -> None:
+        from scholar_eval import build_result, render_scholar_eval_report
+        script_scores = {
+            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "reproducibility_partial": 8.0,
+        }
+        result = build_result(script_scores)
+        report = render_scholar_eval_report(result)
+        assert "ScholarEval" in report
+        assert "Soundness" in report
+        assert "Publication Readiness" in report
+
+    def test_dimension_map_new_entries(self) -> None:
+        """Verify DIMENSION_MAP has entries for new modules."""
+        from report_generator import DIMENSION_MAP
+        assert "references" in DIMENSION_MAP
+        assert "visual" in DIMENSION_MAP
+        assert "clarity" in DIMENSION_MAP["references"]
+        assert "quality" in DIMENSION_MAP["references"]
+        assert "clarity" in DIMENSION_MAP["visual"]
+
+
+# ============================================================
+# P1-2: online_bib_verify tests
+# ============================================================
+
+class TestOnlineBibVerify:
+    """Tests for online bibliography verification (unit tests, no network)."""
+
+    def test_data_classes(self) -> None:
+        from online_bib_verify import VerifyResult, EntryVerifyResult
+        vr = VerifyResult(valid=True, metadata={"title": "Test"})
+        assert vr.valid
+        assert vr.metadata["title"] == "Test"
+
+        evr = EntryVerifyResult(
+            status="verified", bib_key="smith2020", confidence=0.9,
+        )
+        assert evr.status == "verified"
+        assert evr.bib_key == "smith2020"
+        assert evr.mismatches == []
+
+    def test_entry_verify_result_mismatch(self) -> None:
+        from online_bib_verify import EntryVerifyResult
+        evr = EntryVerifyResult(
+            status="mismatch", bib_key="doe2021",
+            mismatches=["year: bib='2021' vs api='2020'"],
+            confidence=0.7,
+        )
+        assert evr.status == "mismatch"
+        assert len(evr.mismatches) == 1
+
+    def test_cross_check_match(self) -> None:
+        from online_bib_verify import OnlineBibVerifier
+        verifier = OnlineBibVerifier()
+        result = verifier._cross_check(
+            "test_key",
+            {"year": "2020", "journal": "Nature"},
+            {"year": "2020", "journal": "Nature"},
+        )
+        assert result.status == "verified"
+        assert result.confidence == 0.9
+
+    def test_cross_check_mismatch(self) -> None:
+        from online_bib_verify import OnlineBibVerifier
+        verifier = OnlineBibVerifier()
+        result = verifier._cross_check(
+            "test_key",
+            {"year": "2020", "journal": "Nature"},
+            {"year": "2021", "journal": "Science"},
+        )
+        assert result.status == "mismatch"
+        assert len(result.mismatches) == 2
+
+    def test_match_title_found(self) -> None:
+        from online_bib_verify import OnlineBibVerifier
+        verifier = OnlineBibVerifier()
+        results = [
+            {"title": "A Novel Deep Learning Approach", "externalIds": {"DOI": "10.1234/test"}},
+        ]
+        result = verifier._match_title(
+            "test_key",
+            {"title": "A Novel Deep Learning Approach"},
+            results,
+        )
+        assert result.status == "verified"
+        assert result.suggested_doi == "10.1234/test"
+
+    def test_match_title_not_found(self) -> None:
+        from online_bib_verify import OnlineBibVerifier
+        verifier = OnlineBibVerifier()
+        results = [
+            {"title": "Completely Different Paper", "externalIds": {}},
+        ]
+        result = verifier._match_title(
+            "test_key",
+            {"title": "A Novel Deep Learning Approach"},
+            results,
+        )
+        assert result.status == "not_found"
+
+    def test_parse_bib_entries(self) -> None:
+        import tempfile
+        from online_bib_verify import _parse_bib_entries
+        bib_content = """
+@article{smith2020,
+  author = {John Smith},
+  title = {A Great Paper},
+  journal = {Nature},
+  year = {2020},
+  doi = {10.1234/great}
+}
+@inproceedings{doe2021,
+  author = {Jane Doe},
+  title = {Another Paper},
+  booktitle = {ICML},
+  year = {2021}
+}
+"""
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".bib", delete=False, encoding="utf-8",
+        ) as f:
+            f.write(bib_content)
+            f.flush()
+            entries = _parse_bib_entries(Path(f.name))
+
+        assert len(entries) == 2
+        assert entries[0]["key"] == "smith2020"
+        assert entries[0]["doi"] == "10.1234/great"
+        assert entries[1]["key"] == "doe2021"
+
+
+# ============================================================
+# Integration: audit module configuration
+# ============================================================
+
+class TestAuditModuleUpdated:
+    """Tests for updated audit module configuration."""
+
+    def test_mode_checks_include_references(self) -> None:
+        from audit import MODE_CHECKS
+        assert "references" in MODE_CHECKS["self-check"]
+        assert "references" in MODE_CHECKS["review"]
+        assert "references" in MODE_CHECKS["gate"]
+
+    def test_mode_checks_include_visual(self) -> None:
+        from audit import MODE_CHECKS
+        assert "visual" in MODE_CHECKS["self-check"]
+        assert "visual" in MODE_CHECKS["review"]
+        assert "visual" in MODE_CHECKS["gate"]
+
+    def test_resolve_script_references(self) -> None:
+        from audit import _resolve_script
+        script = _resolve_script("references", "en", ".tex")
+        assert script is not None
+        assert script.name == "check_references.py"
+
+    def test_resolve_script_visual(self) -> None:
+        from audit import _resolve_script
+        script = _resolve_script("visual", "en", ".pdf")
+        assert script is not None
+        assert script.name == "visual_check.py"
