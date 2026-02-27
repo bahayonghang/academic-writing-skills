@@ -38,13 +38,18 @@ class BibChecker:
         "misc": ["title"],
     }
 
-    def __init__(self, bib_file: str, typ_file: str = None, style: str = None):
+    def __init__(self, bib_file: str, typ_file: str = None, style: str = None,
+                 online: bool = False, email: str = None,
+                 online_timeout: float = 10.0):
         self.bib_file = Path(bib_file)
         self.typ_file = Path(typ_file) if typ_file else None
         self.style = style
         self.entries = {}
         self.issues = []
         self.warnings = []
+        self.online = online
+        self.email = email
+        self.online_timeout = online_timeout
 
     @staticmethod
     def _extract_balanced_brace(content: str, start_idx: int) -> str:
@@ -248,6 +253,37 @@ class BibChecker:
             if chinese_entries:
                 print(f"  ✓ Found {len(chinese_entries)} entries with Chinese titles")
 
+    def check_online(self):
+        """Verify entries online via CrossRef/Semantic Scholar."""
+        if not self.online:
+            return
+        try:
+            from online_bib_verify import OnlineBibVerifier
+        except ImportError:
+            print("  [WARNING] online_bib_verify.py not found, skipping online verification")
+            return
+
+        print("\n[CHECK] Online Verification")
+        verifier = OnlineBibVerifier(
+            polite_email=self.email, timeout=self.online_timeout,
+        )
+        verified = 0
+        for key, entry in self.entries.items():
+            entry_dict = {"key": key, **entry.get("fields", {})}
+            result = verifier.verify_entry(entry_dict)
+            if result.status == "mismatch":
+                for m in result.mismatches:
+                    self.issues.append(f"Online mismatch for '{key}': {m}")
+            elif result.status == "not_found":
+                self.warnings.append(f"Entry '{key}' not found in online databases")
+            elif result.status == "verified":
+                verified += 1
+                if result.suggested_doi:
+                    self.warnings.append(
+                        f"Entry '{key}': consider adding DOI: {result.suggested_doi}"
+                    )
+        print(f"  ✓ {verified}/{len(self.entries)} entries verified online")
+
     def run_checks(self) -> int:
         """Run all checks."""
         print(f"[INFO] Checking bibliography: {self.bib_file}")
@@ -272,6 +308,7 @@ class BibChecker:
         self.check_citations()
         self.check_style()
         self.check_identifiers()
+        self.check_online()
 
         # Print summary
         print("\n" + "=" * 60)
@@ -329,6 +366,15 @@ Supported Styles:
         choices=["ieee", "apa", "mla", "chicago", "gb-7714-2015"],
         help="Citation style to check",
     )
+    parser.add_argument(
+        "--online", action="store_true",
+        help="Enable online verification via CrossRef/Semantic Scholar",
+    )
+    parser.add_argument("--email", help="Email for CrossRef polite pool (faster rate limits)")
+    parser.add_argument(
+        "--online-timeout", type=float, default=10.0,
+        help="Timeout per API request in seconds",
+    )
 
     args = parser.parse_args()
 
@@ -339,7 +385,12 @@ Supported Styles:
         sys.exit(1)
 
     # Run checks
-    checker = BibChecker(args.bib_file, args.typ, args.style)
+    checker = BibChecker(
+        args.bib_file, args.typ, args.style,
+        online=getattr(args, "online", False),
+        email=getattr(args, "email", None),
+        online_timeout=getattr(args, "online_timeout", 10.0),
+    )
     sys.exit(checker.run_checks())
 
 

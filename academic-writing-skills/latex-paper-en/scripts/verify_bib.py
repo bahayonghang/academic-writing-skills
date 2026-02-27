@@ -33,12 +33,23 @@ class BibTeXVerifier:
 
     GB7714_RECOMMENDED = ["doi", "url", "urldate"]
 
-    def __init__(self, bib_file: str, standard: str = "default", tex_file: str | None = None):
+    def __init__(
+        self,
+        bib_file: str,
+        standard: str = "default",
+        tex_file: str | None = None,
+        online: bool = False,
+        email: str | None = None,
+        online_timeout: float = 10.0,
+    ):
         self.bib_file = Path(bib_file).resolve()
         self.standard = standard
         self.tex_file = Path(tex_file).resolve() if tex_file else None
         self.entries: list[dict] = []
         self.parse_issues: list[dict] = []
+        self.online = online
+        self.email = email
+        self.online_timeout = online_timeout
 
     def parse(self) -> list[dict]:
         """Parse BibTeX file into entries."""
@@ -133,6 +144,53 @@ class BibTeXVerifier:
             results["missing_in_bib"] = sorted(missing_in_bib)
             results["unused_in_tex"] = sorted(unused_in_tex)
             results["issues"].extend(tex_issues)
+
+        # Online verification (when --online and online_bib_verify is available)
+        if self.online:
+            try:
+                from online_bib_verify import OnlineBibVerifier
+                online_verifier = OnlineBibVerifier(
+                    polite_email=self.email, timeout=self.online_timeout,
+                )
+                for entry_info in results["needs_online_check"]:
+                    entry_dict = {
+                        "key": entry_info["key"],
+                        "title": entry_info.get("title", ""),
+                        "author": entry_info.get("author", ""),
+                    }
+                    # Find full entry fields
+                    for entry in self.entries:
+                        if entry["key"] == entry_info["key"]:
+                            entry_dict.update(entry["fields"])
+                            break
+                    result = online_verifier.verify_entry(entry_dict)
+                    if result.status == "mismatch":
+                        for m in result.mismatches:
+                            results["issues"].append({
+                                "key": result.bib_key,
+                                "type": "metadata_mismatch",
+                                "severity": "error",
+                                "message": f"Online verification mismatch: {m}",
+                            })
+                    elif result.status == "not_found":
+                        results["issues"].append({
+                            "key": result.bib_key,
+                            "type": "not_found_online",
+                            "severity": "warning",
+                            "message": "Entry not found in online databases",
+                        })
+                    elif result.status == "verified" and result.suggested_doi:
+                        results["issues"].append({
+                            "key": result.bib_key,
+                            "type": "doi_suggestion",
+                            "severity": "warning",
+                            "message": f"Consider adding DOI: {result.suggested_doi}",
+                        })
+            except ImportError:
+                print(
+                    "# Warning: online_bib_verify.py not found, "
+                    "skipping online verification"
+                )
 
         if results["issues"]:
             has_error = any(item["severity"] == "error" for item in results["issues"])
@@ -287,6 +345,15 @@ def main() -> int:
     parser.add_argument(
         "--online-check", action="store_true", help="Generate list for online verification"
     )
+    parser.add_argument(
+        "--online", action="store_true",
+        help="Enable online verification via CrossRef/Semantic Scholar",
+    )
+    parser.add_argument("--email", help="Email for CrossRef polite pool (faster rate limits)")
+    parser.add_argument(
+        "--online-timeout", type=float, default=10.0,
+        help="Timeout per API request in seconds",
+    )
     parser.add_argument("--output", help="Output JSON file path")
     parser.add_argument("--json", action="store_true", help="Print full JSON result")
 
@@ -296,7 +363,12 @@ def main() -> int:
         print(f"[ERROR] File not found: {args.bib_file}", file=sys.stderr)
         return 1
 
-    verifier = BibTeXVerifier(args.bib_file, args.standard, args.tex)
+    verifier = BibTeXVerifier(
+        args.bib_file, args.standard, args.tex,
+        online=getattr(args, "online", False),
+        email=getattr(args, "email", None),
+        online_timeout=getattr(args, "online_timeout", 10.0),
+    )
     result = verifier.verify()
 
     if args.online_check:
