@@ -38,7 +38,9 @@ references:
 scripts:
   - scripts/compile.py
   - scripts/check_format.py
+  - scripts/check_references.py
   - scripts/verify_bib.py
+  - scripts/online_bib_verify.py
   - scripts/analyze_grammar.py
   - scripts/analyze_sentences.py
   - scripts/analyze_logic.py
@@ -111,6 +113,7 @@ Common cases:
 | Logic | logic, coherence, methodology | `python scripts/analyze_logic.py main.typ` | [LOGIC.md](resources/modules/LOGIC.md) |
 | Translation | translate, 翻译, 中译英 | `python scripts/translate_academic.py "text"` | [TRANSLATION.md](resources/modules/TRANSLATION.md) |
 | Bibliography | bib, bibliography, 参考文献 | `python scripts/verify_bib.py refs.bib` | [BIBLIOGRAPHY.md](resources/modules/BIBLIOGRAPHY.md) |
+| References | ref check, label check, cross-ref | `python scripts/check_references.py main.typ` | — |
 | De-AI | deai, 去AI化, humanize | `python scripts/deai_check.py main.typ` | [DEAI.md](resources/modules/DEAI.md) |
 | Title | title, 标题 | `python scripts/optimize_title.py main.typ` | [TITLE.md](resources/modules/TITLE.md) |
 | Reviewer | reviewer, 审稿, checklist | — | [REVIEWER_PERSPECTIVE.md](resources/references/REVIEWER_PERSPECTIVE.md) |

@@ -178,9 +178,23 @@ python scripts/check_format.py main.tex --strict
 python scripts/verify_bib.py references.bib
 python scripts/verify_bib.py references.bib --tex main.tex    # 检查引用
 python scripts/verify_bib.py references.bib --standard gb7714 # 国标检查
+python scripts/verify_bib.py references.bib --online           # 在线验证
 ```
 
 检查必填字段完整性、重复条目、未使用条目、缺失引用、GB/T 7714 格式合规。
+
+---
+
+### 模块：引用完整性检查
+**触发词**: ref check, label check, cross-ref, 交叉引用
+
+```bash
+python scripts/check_references.py main.tex
+python scripts/check_references.py main.tex --json
+```
+
+检查未定义引用、未引用的 label、图表缺少 caption、引用顺序、编号间隙。
+支持多文件 `\input{}`/`\include{}` 递归跟踪。
 
 ---
 
