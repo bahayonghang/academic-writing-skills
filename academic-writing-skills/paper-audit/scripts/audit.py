@@ -8,6 +8,7 @@ import argparse
 import re
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from detect_language import detect_language
@@ -16,6 +17,7 @@ from report_generator import (
     AuditIssue,
     AuditResult,
     ChecklistItem,
+    render_json_report,
     render_report,
 )
 
@@ -464,8 +466,9 @@ def run_audit(
     if lang == "zh":
         checks.extend(ZH_EXTRA_CHECKS)
 
-    # Step 4: Run checks
+    # Step 4: Build task list (filter inapplicable checks first)
     all_issues: list[AuditIssue] = []
+    tasks: list[tuple[str, Path, list[str]]] = []
 
     for check_name in checks:
         if check_name == "checklist":
@@ -485,9 +488,7 @@ def run_audit(
         if check_name == "visual" and fmt != ".pdf":
             continue
 
-        print(f"[audit] Running {check_name}...")
-
-        extra_args = []
+        extra_args: list[str] = []
         if check_name == "sentences":
             extra_args = ["--max-words", "60", "--max-clauses", "3"]
         if check_name == "bib" and online:
@@ -495,23 +496,36 @@ def run_audit(
             if email:
                 extra_args.extend(["--email", email])
 
-        returncode, stdout, stderr = _run_check_script(script, str(path), extra_args)
+        tasks.append((check_name, script, extra_args))
 
-        if returncode == -1:
-            print(f"[audit] ERROR {check_name}: {stderr}")
-            all_issues.append(AuditIssue(
-                module=check_name.upper(),
-                line=None,
-                severity="Minor",
-                priority="P2",
-                message=f"Check script failed: {stderr[:100]}",
-            ))
-        elif stdout.strip():
-            issues = _parse_script_output(check_name, stdout)
-            all_issues.extend(issues)
-            print(f"[audit] {check_name}: {len(issues)} issues found")
-        else:
-            print(f"[audit] {check_name}: clean")
+    # Run independent checks in parallel (up to 4 workers)
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_check = {
+            executor.submit(_run_check_script, script, str(path), extra_args): check_name
+            for check_name, script, extra_args in tasks
+        }
+        for future in as_completed(future_to_check):
+            check_name = future_to_check[future]
+            try:
+                returncode, stdout, stderr = future.result()
+            except Exception as exc:
+                returncode, stdout, stderr = -1, "", str(exc)
+
+            if returncode == -1:
+                print(f"[audit] ERROR {check_name}: {stderr}")
+                all_issues.append(AuditIssue(
+                    module=check_name.upper(),
+                    line=None,
+                    severity="Minor",
+                    priority="P2",
+                    message=f"Check script failed: {stderr[:100]}",
+                ))
+            elif stdout.strip():
+                issues = _parse_script_output(check_name, stdout)
+                all_issues.extend(issues)
+                print(f"[audit] {check_name}: {len(issues)} issues found")
+            else:
+                print(f"[audit] {check_name}: clean")
 
     # Step 5: Run checklist
     checklist = _run_checklist(content, file_path, lang)
@@ -609,6 +623,10 @@ Examples:
         "--output", "-o", default=None,
         help="Output file path (default: stdout)",
     )
+    parser.add_argument(
+        "--format", choices=["md", "json"], default="md",
+        help="Output format: 'md' for Markdown (default) or 'json' for CI/CD integration",
+    )
 
     args = parser.parse_args()
 
@@ -627,7 +645,10 @@ Examples:
             scholar_eval=getattr(args, "scholar_eval", False),
         )
 
-        report = render_report(result)
+        if args.format == "json":
+            report = render_json_report(result)
+        else:
+            report = render_report(result)
 
         if args.output:
             Path(args.output).write_text(report, encoding="utf-8")

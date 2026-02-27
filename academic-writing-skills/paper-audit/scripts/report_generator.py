@@ -405,6 +405,51 @@ def render_gate_report(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
+def render_json_report(result: AuditResult) -> str:
+    """
+    Export audit result as structured JSON for CI/CD integration.
+
+    Args:
+        result: Complete audit result.
+
+    Returns:
+        Formatted JSON string with file metadata, scores, verdict, issues, and checklist.
+    """
+    import json
+
+    scores = calculate_scores(result.issues)
+    data = {
+        "file": result.file_path,
+        "language": result.language,
+        "mode": result.mode,
+        "venue": result.venue,
+        "generated_at": datetime.now().isoformat(),
+        "scores": {k: round(v, 2) for k, v in scores.items()},
+        "verdict": _score_label(scores["overall"]),
+        "issues": [
+            {
+                "module": i.module,
+                "line": i.line,
+                "severity": i.severity,
+                "priority": i.priority,
+                "message": i.message,
+                "original": i.original,
+                "revised": i.revised,
+            }
+            for i in result.issues
+        ],
+        "checklist": [
+            {
+                "description": c.description,
+                "passed": c.passed,
+                "details": c.details,
+            }
+            for c in result.checklist
+        ],
+    }
+    return json.dumps(data, indent=2, ensure_ascii=False)
+
+
 def render_report(result: AuditResult) -> str:
     """
     Render the appropriate report based on audit mode.
