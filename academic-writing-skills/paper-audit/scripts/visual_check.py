@@ -17,6 +17,14 @@ import json
 import sys
 from pathlib import Path
 
+# Module-level availability check — safe to import as library without pymupdf installed
+try:
+    import pymupdf as _pymupdf_module
+    _PYMUPDF_AVAILABLE = True
+except ImportError:
+    _pymupdf_module = None  # type: ignore[assignment]
+    _PYMUPDF_AVAILABLE = False
+
 
 def _calc_overlap_area(r1: tuple, r2: tuple) -> float:
     """Calculate overlap area between two rectangles (x0, y0, x1, y1)."""
@@ -33,17 +41,29 @@ class VisualChecker:
         pdf_path: str,
         margin_pt: float = 72.0,
         min_dpi: int = 150,
+        margin_tolerance: float = 5.0,
+        overlap_threshold: float = 100.0,
     ) -> None:
-        import pymupdf
-
-        self.doc = pymupdf.open(pdf_path)
+        if not _PYMUPDF_AVAILABLE:
+            raise ImportError(
+                "visual_check requires pymupdf: pip install pymupdf"
+            )
+        self.doc = _pymupdf_module.open(pdf_path)  # type: ignore[union-attr]
         self.margin = margin_pt
         self.min_dpi = min_dpi
+        self.margin_tolerance = margin_tolerance
+        self.overlap_threshold = overlap_threshold
         self.issues: list[dict] = []
+
+    def __enter__(self) -> "VisualChecker":
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
 
     def check_margins(self) -> None:
         """Detect text blocks overflowing page margins."""
-        tolerance = 5  # 5pt tolerance
+        tolerance = self.margin_tolerance
         for page_num, page in enumerate(self.doc):
             blocks = page.get_text("dict")["blocks"]
             rect = page.rect
@@ -75,17 +95,21 @@ class VisualChecker:
                     )
 
     def check_overlaps(self) -> None:
-        """Detect overlapping text/image blocks."""
+        """Detect overlapping text/image blocks (sorted X-axis with early exit)."""
         for page_num, page in enumerate(self.doc):
             blocks = page.get_text("dict")["blocks"]
             rects = [
                 b["bbox"] for b in blocks
                 if b.get("type") in (0, 1)  # 0=text, 1=image
             ]
-            for i in range(len(rects)):
-                for j in range(i + 1, len(rects)):
-                    overlap_area = _calc_overlap_area(rects[i], rects[j])
-                    if overlap_area > 100:  # > 100 sq pt threshold
+            # Sort by x0: once b2.x0 > b1.x1, no further overlap is possible on X axis
+            rects.sort(key=lambda r: r[0])
+            for i, r1 in enumerate(rects):
+                for r2 in rects[i + 1:]:
+                    if r2[0] > r1[2]:  # Early exit: b2 starts after b1 ends
+                        break
+                    overlap_area = _calc_overlap_area(r1, r2)
+                    if overlap_area > self.overlap_threshold:
                         self._add_issue(
                             page_num, "Critical", "P0",
                             f"Block overlap detected: {overlap_area:.0f} sq pt",
@@ -238,18 +262,14 @@ Examples:
         return 1
 
     try:
-        checker = VisualChecker(
+        with VisualChecker(
             str(pdf_path),
             margin_pt=args.margin,
             min_dpi=args.min_dpi,
-        )
-        issues = checker.run_all()
-        checker.close()
-    except ImportError:
-        print(
-            "[ERROR] pymupdf not installed. Install with: pip install pymupdf",
-            file=sys.stderr,
-        )
+        ) as checker:
+            issues = checker.run_all()
+    except ImportError as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
         return 1
     except Exception as e:
         print(f"[ERROR] Failed to process PDF: {e}", file=sys.stderr)
