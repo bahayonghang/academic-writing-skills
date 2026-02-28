@@ -16,15 +16,15 @@ hero:
 features:
   - icon: 📝
     title: English Papers (latex-paper-en)
-    details: Comprehensive support for English academic papers with ChkTeX format checking, pdfLaTeX/XeLaTeX compilation, logic & methodology analysis, and IEEE/ACM/Springer style guides.
+    details: Comprehensive support for English academic papers with ChkTeX format checking, pdfLaTeX/XeLaTeX compilation, logic & methodology analysis, top-tier caption generation, and IEEE/ACM/Springer style guides.
 
   - icon: 📚
     title: Chinese Thesis (latex-thesis-zh)
-    details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, logic & methodology analysis, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
+    details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, logic & methodology analysis, bilingual caption generation, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
 
   - icon: ⚡
     title: Typst Papers (typst-paper)
-    details: Modern markup language with millisecond compilation, bilingual support, logic & methodology analysis, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
+    details: Modern markup language with millisecond compilation, bilingual support, logic & methodology analysis, caption generation, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
 
   - icon: 🚀
     title: Fast Compilation
@@ -40,7 +40,7 @@ features:
 
   - icon: 🔬
     title: Paper Audit (paper-audit)
-    details: Automated multi-mode paper auditing for .tex/.typ/.pdf files. PDF visual layout checking, figure/table reference integrity, ScholarEval 8-dimension quality scoring, and online bibliography verification via CrossRef/Semantic Scholar.
+    details: Automated multi-mode paper auditing for .tex/.typ/.pdf files. PDF visual layout checking, figure/table reference integrity, caption audit, ScholarEval 8-dimension quality scoring, and online bibliography verification via CrossRef/Semantic Scholar.
 ---
 
 ## Quick Start
@@ -94,7 +94,7 @@ Academic writing can be challenging, especially when managing compilation workfl
 - Typst syntax validation
 - Bibliography verification (BibTeX/Hayagriva)
 - Style guide compliance checking
-- Reference integrity checking (undefined refs, missing captions)
+- Reference integrity checking (undefined refs, missing/poor captions)
 - PDF visual layout analysis (margins, overlaps, image DPI)
 
 ### References

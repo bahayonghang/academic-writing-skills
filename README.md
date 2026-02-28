@@ -30,6 +30,7 @@ Then open http://localhost:5173 in your browser.
 - **Expression Restructuring**: Academic tone improvements
 - **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices
+- **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free figure and table captions 🆕
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Venue Support**: IEEE, ACM, Springer, NeurIPS, ICML guidelines
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -42,6 +43,7 @@ Then open http://localhost:5173 in your browser.
 - **Chinese Academic Style**: Oral expression detection, terminology consistency
 - **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards
+- **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free English & bilingual captions 🆕
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -55,6 +57,7 @@ Then open http://localhost:5173 in your browser.
 - **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **De-AI Editing**: Reduce AI writing traces
 - **Title Optimization**: Bilingual title generation and optimization (English/Chinese)
+- **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free bilingual captions 🆕
 - **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
 - **Modern Syntax**: Simple, intuitive markup language
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -65,6 +68,7 @@ Then open http://localhost:5173 in your browser.
 - **Three Audit Modes**: self-check (comprehensive), review (focused), gate (submission-ready check)
 - **PDF Visual Layout Check**: Margin overflow, text/image block overlaps, font inconsistency, low-resolution images, blank pages
 - **Reference Integrity Check**: Undefined references, unreferenced labels, missing captions, numbering gaps
+- **Caption Audit**: Ensure correct casing (Title/Sentence) and remove AI-like redundancy in captions 🆕
 - **ScholarEval Assessment**: 8-dimension quality scoring (1–10) with publication readiness label
 - **Online Bibliography Verification**: CrossRef + Semantic Scholar API validation (no API key required)
 - **De-AI Editing**: Reduce AI writing traces
@@ -224,6 +228,12 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 - Removes ineffective words ("Novel", "A Study of", "Research on")
 - Ensures key terms (Method + Problem) appear in first 65 characters (English) or 20 characters (Chinese)
 - Provides multiple candidates with quality scores (0-100)
+
+**Caption Optimization** 🆕
+- "generate top-tier table captions"
+- "optimize this figure caption"
+- "generate bilingual caption"
+- Follows Title/Sentence case standards and removes redundant AI flavor.
 
 **Paper Audit (Automated)** 🆕
 - "run a full audit on my paper"

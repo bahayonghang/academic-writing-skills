@@ -16,15 +16,15 @@ hero:
 features:
   - icon: 📝
     title: 英文论文 (latex-paper-en)
-    details: 全面支持英文学术论文，包含 ChkTeX 格式检查、pdfLaTeX/XeLaTeX 编译、逻辑衔接与方法论分析，以及 IEEE/ACM/Springer 样式指南。
+    details: 全面支持英文学术论文，包含 ChkTeX 格式检查、pdfLaTeX/XeLaTeX 编译、逻辑衔接与方法论分析、顶会标准图表标题生成，以及 IEEE/ACM/Springer 样式指南。
 
   - icon: 📚
     title: 中文论文 (latex-thesis-zh)
-    details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译、逻辑衔接与方法论分析，以及主流大学模板（清华、北大、中科大、复旦）。
+    details: 专为中文论文设计的工具，支持 GB/T 7714 规范、XeLaTeX 编译、逻辑衔接与方法论分析、双语对照图表标题生成，以及主流大学模板（清华、北大、中科大、复旦）。
 
   - icon: ⚡
     title: Typst 论文 (typst-paper)
-    details: 现代化标记语言，毫秒级编译速度，双语支持，逻辑衔接与方法论分析，提供期刊特定模板（IEEE、ACM、Springer、NeurIPS）。
+    details: 现代化标记语言，毫秒级编译速度，双语支持，逻辑衔接与方法论分析、图表标题生成，提供期刊特定模板（IEEE、ACM、Springer、NeurIPS）。
 
   - icon: 🚀
     title: 快速编译
@@ -40,7 +40,7 @@ features:
 
   - icon: 🔬
     title: 论文审查 (paper-audit)
-    details: 支持 .tex/.typ/.pdf 的自动化多模式论文审查。PDF 视觉排版检测、图表引用完整性检查、ScholarEval 8 维度质量评分，以及通过 CrossRef/Semantic Scholar 进行在线文献验证。
+    details: 支持 .tex/.typ/.pdf 的自动化多模式论文审查。PDF 视觉排版检测、图表引用完整性与标题审查、ScholarEval 8 维度质量评分，以及通过 CrossRef/Semantic Scholar 进行在线文献验证。
 ---
 
 ## 快速开始
@@ -94,7 +94,7 @@ npx skilks add github.com/bahayonghang/academic-writing-skills
 - Typst 语法验证
 - 参考文献验证（BibTeX/Hayagriva）
 - 样式指南合规性检查
-- 引用完整性检查（未定义引用、缺少 caption）
+- 引用完整性检查（未定义引用、缺少或劣质 caption）
 - PDF 视觉排版分析（页边距、重叠、图片分辨率）
 
 ### 参考文档
