@@ -122,21 +122,27 @@ class TestDetectTemplate:
 
     def test_thuthesis_detection(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{thuthesis}\n\\begin{document}\n\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{thuthesis}\n\\begin{document}\n\\end{document}", encoding="utf-8"
+        )
         mapper = map_structure.ThesisStructureMapper(str(tex))
         mapper.map()
         assert mapper.template == "thuthesis"
 
     def test_pkuthss_detection(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{pkuthss}\n\\begin{document}\n\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{pkuthss}\n\\begin{document}\n\\end{document}", encoding="utf-8"
+        )
         mapper = map_structure.ThesisStructureMapper(str(tex))
         mapper.map()
         assert mapper.template == "pkuthss"
 
     def test_ctexbook_detection(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{ctexbook}\n\\begin{document}\n\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{ctexbook}\n\\begin{document}\n\\end{document}", encoding="utf-8"
+        )
         mapper = map_structure.ThesisStructureMapper(str(tex))
         mapper.map()
         assert mapper.template == "ctexbook"
@@ -161,7 +167,9 @@ class TestMapStructure:
 
     def test_template_info(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{thuthesis}\n\\begin{document}\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{thuthesis}\n\\begin{document}\\end{document}", encoding="utf-8"
+        )
         mapper = map_structure.ThesisStructureMapper(str(tex))
         mapper.map()
         info = mapper.get_template_info()
@@ -209,7 +217,9 @@ class TestCheckConsistency:
         checker = check_consistency.ConsistencyChecker([str(tex)])
         result = checker.check_abbreviations()
         # BERT is defined, so no "undefined" issue for it
-        undefined = [i for i in result["issues"] if i["type"] == "undefined" and i["abbreviation"] == "BERT"]
+        undefined = [
+            i for i in result["issues"] if i["type"] == "undefined" and i["abbreviation"] == "BERT"
+        ]
         assert len(undefined) == 0
 
     def test_custom_terms_loading(self, tmp_path: Path):
@@ -217,7 +227,9 @@ class TestCheckConsistency:
         terms_file.write_text('{"zh": [["自编码器", "AE"]], "en": []}', encoding="utf-8")
         tex = tmp_path / "main.tex"
         tex.write_text("自编码器和AE都出现了。", encoding="utf-8")
-        checker = check_consistency.ConsistencyChecker([str(tex)], custom_terms_file=str(terms_file))
+        checker = check_consistency.ConsistencyChecker(
+            [str(tex)], custom_terms_file=str(terms_file)
+        )
         result = checker.check_terms()
         assert result["status"] == "WARNING"
 
@@ -314,7 +326,9 @@ class TestCompileZh:
 
     def test_detect_chinese_content(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{ctexbook}\n\\begin{document}你好\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{ctexbook}\n\\begin{document}你好\\end{document}", encoding="utf-8"
+        )
         compiler = compile_zh.LaTeXCompiler(str(tex))
         assert compiler.compiler == "xelatex"
 
@@ -326,7 +340,9 @@ class TestCompileZh:
 
     def test_recipe_selection(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         tex = tmp_path / "main.tex"
-        tex.write_text("\\documentclass{article}\\begin{document}x\\end{document}", encoding="utf-8")
+        tex.write_text(
+            "\\documentclass{article}\\begin{document}x\\end{document}", encoding="utf-8"
+        )
         tex.with_suffix(".pdf").write_bytes(b"%PDF-1.4\n")
 
         calls: list[list[str]] = []

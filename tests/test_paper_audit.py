@@ -4,22 +4,23 @@ import sys
 from pathlib import Path
 
 import pytest
-
-from detect_language import detect_language, _is_cjk
+from detect_language import _is_cjk, detect_language
 from pdf_parser import PdfParser
 from report_generator import (
     AuditIssue,
     AuditResult,
     ChecklistItem,
     calculate_scores,
-    render_report,
-    render_self_check_report,
-    render_review_report,
     render_gate_report,
+    render_report,
+    render_review_report,
+    render_self_check_report,
 )
 
 # Add latex-paper-en scripts for check_references import
-_scripts_en = Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"
+_scripts_en = (
+    Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"
+)
 if str(_scripts_en) not in sys.path:
     sys.path.insert(0, str(_scripts_en))
 
@@ -27,6 +28,7 @@ if str(_scripts_en) not in sys.path:
 # ============================================================
 # detect_language tests
 # ============================================================
+
 
 class TestDetectLanguage:
     """Tests for language detection module."""
@@ -74,6 +76,7 @@ class TestDetectLanguage:
 # ============================================================
 # PdfParser tests
 # ============================================================
+
 
 class TestPdfParser:
     """Tests for PDF parser module."""
@@ -144,7 +147,9 @@ class TestPdfParser:
         assert "Line 3" in cleaned
 
     def test_split_sections_english(self, basic_parser: PdfParser) -> None:
-        content = "## Abstract\nSome abstract text\n## Introduction\nIntro text\n## Method\nMethod text"
+        content = (
+            "## Abstract\nSome abstract text\n## Introduction\nIntro text\n## Method\nMethod text"
+        )
         sections = basic_parser.split_sections(content)
         assert "abstract" in sections
         assert "introduction" in sections
@@ -163,12 +168,14 @@ class TestPdfParser:
 
     def test_is_document_parser(self, basic_parser: PdfParser) -> None:
         from parsers import DocumentParser
+
         assert isinstance(basic_parser, DocumentParser)
 
 
 # ============================================================
 # report_generator tests
 # ============================================================
+
 
 class TestScoring:
     """Tests for scoring engine."""
@@ -201,10 +208,7 @@ class TestScoring:
 
     def test_floor_at_one(self) -> None:
         # Many critical issues should floor at 1.0
-        issues = [
-            AuditIssue("FORMAT", i, "Critical", "P0", f"Error {i}")
-            for i in range(10)
-        ]
+        issues = [AuditIssue("FORMAT", i, "Critical", "P0", f"Error {i}") for i in range(10)]
         scores = calculate_scores(issues)
         assert scores["clarity"] == 1.0
 
@@ -218,12 +222,12 @@ class TestScoring:
 
     def test_weighted_average(self) -> None:
         issues = [
-            AuditIssue("FORMAT", 1, "Critical", "P0", "E1"),     # clarity -1.5
-            AuditIssue("GRAMMAR", 2, "Major", "P1", "E2"),       # clarity -0.75
-            AuditIssue("SENTENCES", 3, "Minor", "P2", "E3"),     # clarity -0.25
-            AuditIssue("BIB", 4, "Critical", "P0", "E4"),        # quality -1.5
-            AuditIssue("LOGIC", 5, "Major", "P1", "E5"),         # quality -0.75, significance -0.75
-            AuditIssue("DEAI", 6, "Critical", "P0", "E6"),       # clarity -1.5, originality -1.5
+            AuditIssue("FORMAT", 1, "Critical", "P0", "E1"),  # clarity -1.5
+            AuditIssue("GRAMMAR", 2, "Major", "P1", "E2"),  # clarity -0.75
+            AuditIssue("SENTENCES", 3, "Minor", "P2", "E3"),  # clarity -0.25
+            AuditIssue("BIB", 4, "Critical", "P0", "E4"),  # quality -1.5
+            AuditIssue("LOGIC", 5, "Major", "P1", "E5"),  # quality -0.75, significance -0.75
+            AuditIssue("DEAI", 6, "Critical", "P0", "E6"),  # clarity -1.5, originality -1.5
         ]
         scores = calculate_scores(issues)
         # Verify overall equals the weighted sum of dimension scores
@@ -258,8 +262,12 @@ class TestReportRendering:
         self, sample_issues: list[AuditIssue], sample_checklist: list[ChecklistItem]
     ) -> None:
         result = AuditResult(
-            file_path="paper.tex", language="en", mode="self-check",
-            venue="neurips", issues=sample_issues, checklist=sample_checklist,
+            file_path="paper.tex",
+            language="en",
+            mode="self-check",
+            venue="neurips",
+            issues=sample_issues,
+            checklist=sample_checklist,
         )
         report = render_self_check_report(result)
         assert "# Paper Audit Report" in report
@@ -275,7 +283,9 @@ class TestReportRendering:
 
     def test_review_report_structure(self, sample_issues: list[AuditIssue]) -> None:
         result = AuditResult(
-            file_path="paper.tex", language="en", mode="review",
+            file_path="paper.tex",
+            language="en",
+            mode="review",
             issues=sample_issues,
             strengths=["Strong methodology", "Clear writing"],
             weaknesses=["Missing baselines"],
@@ -293,7 +303,9 @@ class TestReportRendering:
 
     def test_gate_report_pass(self) -> None:
         result = AuditResult(
-            file_path="paper.tex", language="en", mode="gate",
+            file_path="paper.tex",
+            language="en",
+            mode="gate",
             issues=[AuditIssue("GRAMMAR", 1, "Minor", "P2", "Typo")],
             checklist=[ChecklistItem("Compiles", True)],
         )
@@ -304,24 +316,29 @@ class TestReportRendering:
 
     def test_gate_report_fail(self) -> None:
         result = AuditResult(
-            file_path="paper.tex", language="en", mode="gate",
+            file_path="paper.tex",
+            language="en",
+            mode="gate",
             issues=[AuditIssue("FORMAT", 1, "Critical", "P0", "Missing ref")],
-            checklist=[ChecklistItem("Compiles", True), ChecklistItem("No TODOs", False, "Found TODO")],
+            checklist=[
+                ChecklistItem("Compiles", True),
+                ChecklistItem("No TODOs", False, "Found TODO"),
+            ],
         )
         report = render_gate_report(result)
         assert "FAIL" in report
         assert "Blocking Issues" in report
 
-    def test_render_report_dispatches_correctly(
-        self, sample_issues: list[AuditIssue]
-    ) -> None:
+    def test_render_report_dispatches_correctly(self, sample_issues: list[AuditIssue]) -> None:
         for mode, expected_title in [
             ("self-check", "Paper Audit Report"),
             ("review", "Peer Review Report"),
             ("gate", "Quality Gate Report"),
         ]:
             result = AuditResult(
-                file_path="paper.tex", language="en", mode=mode,
+                file_path="paper.tex",
+                language="en",
+                mode=mode,
                 issues=sample_issues,
             )
             report = render_report(result)
@@ -329,7 +346,9 @@ class TestReportRendering:
 
     def test_report_with_no_issues(self) -> None:
         result = AuditResult(
-            file_path="paper.tex", language="en", mode="self-check",
+            file_path="paper.tex",
+            language="en",
+            mode="self-check",
         )
         report = render_report(result)
         assert "0 issues" in report
@@ -338,7 +357,9 @@ class TestReportRendering:
 
     def test_report_with_chinese_language(self, sample_issues: list[AuditIssue]) -> None:
         result = AuditResult(
-            file_path="thesis.tex", language="zh", mode="self-check",
+            file_path="thesis.tex",
+            language="zh",
+            mode="self-check",
             issues=sample_issues,
         )
         report = render_report(result)
@@ -349,17 +370,20 @@ class TestReportRendering:
 # Integration: audit module imports
 # ============================================================
 
+
 class TestAuditModule:
     """Tests for audit.py module imports and configuration."""
 
     def test_mode_checks_defined(self) -> None:
         from audit import MODE_CHECKS
+
         assert "self-check" in MODE_CHECKS
         assert "review" in MODE_CHECKS
         assert "gate" in MODE_CHECKS
 
     def test_self_check_has_expected_checks(self) -> None:
         from audit import MODE_CHECKS
+
         checks = MODE_CHECKS["self-check"]
         assert "format" in checks
         assert "grammar" in checks
@@ -368,6 +392,7 @@ class TestAuditModule:
 
     def test_gate_has_minimal_checks(self) -> None:
         from audit import MODE_CHECKS
+
         gate_checks = MODE_CHECKS["gate"]
         assert len(gate_checks) < len(MODE_CHECKS["self-check"])
         assert "format" in gate_checks
@@ -375,21 +400,25 @@ class TestAuditModule:
 
     def test_zh_extra_checks(self) -> None:
         from audit import ZH_EXTRA_CHECKS
+
         assert "consistency" in ZH_EXTRA_CHECKS
 
     def test_resolve_script_english(self) -> None:
         from audit import _resolve_script
+
         script = _resolve_script("grammar", "en", ".tex")
         assert script is not None
         assert script.name == "analyze_grammar.py"
 
     def test_resolve_script_unknown(self) -> None:
         from audit import _resolve_script
+
         script = _resolve_script("nonexistent_check", "en", ".tex")
         assert script is None
 
     def test_run_checklist_basic(self) -> None:
         from audit import _run_checklist
+
         content = r"""
 \documentclass{article}
 \begin{document}
@@ -407,6 +436,7 @@ This is a TODO item.
 
     def test_run_checklist_clean(self) -> None:
         from audit import _run_checklist
+
         content = r"""
 \documentclass{article}
 \begin{document}
@@ -424,11 +454,13 @@ This is clean text with no issues.
 # P0-3: check_references tests
 # ============================================================
 
+
 class TestCheckReferences:
     """Tests for reference integrity checker."""
 
     def test_find_labels(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 \begin{figure}
 \caption{Architecture}
@@ -442,13 +474,14 @@ class TestCheckReferences:
 """
         checker = ReferenceChecker(content, "test.tex")
         labels = checker.find_labels()
-        names = {l.name for l in labels}
+        names = {lbl.name for lbl in labels}
         assert "fig:arch" in names
         assert "tab:results" in names
         assert "eq:loss" in names
 
     def test_find_refs(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 As shown in Figure~\ref{fig:arch} and Table~\ref{tab:results}.
 See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
@@ -462,6 +495,7 @@ See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
 
     def test_undefined_reference(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 \ref{fig:missing}
 \label{fig:existing}
@@ -473,6 +507,7 @@ See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
 
     def test_unreferenced_label(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 \begin{figure}
 \caption{Test}
@@ -486,6 +521,7 @@ See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
 
     def test_missing_caption(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 \begin{figure}
 \label{fig:nocap}
@@ -498,6 +534,7 @@ See also Equation~\eqref{eq:loss} and \autoref{fig:arch}.
 
     def test_all_clean(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 \begin{figure}
 \caption{Good figure}
@@ -513,6 +550,7 @@ See Figure~\ref{fig:good}.
 
     def test_skip_commented_lines(self) -> None:
         from check_references import ReferenceChecker
+
         content = r"""
 % \label{fig:commented}
 % \ref{fig:commented}
@@ -521,7 +559,7 @@ See Figure~\ref{fig:good}.
 """
         checker = ReferenceChecker(content, "test.tex")
         labels = checker.find_labels()
-        names = {l.name for l in labels}
+        names = {lbl.name for lbl in labels}
         assert "fig:commented" not in names
         assert "fig:real" in names
 
@@ -530,11 +568,13 @@ See Figure~\ref{fig:good}.
 # P0-2: visual_check tests
 # ============================================================
 
+
 class TestVisualCheck:
     """Tests for visual checker (unit tests without PDF files)."""
 
     def test_calc_overlap_area(self) -> None:
         from visual_check import _calc_overlap_area
+
         # No overlap
         assert _calc_overlap_area((0, 0, 10, 10), (20, 20, 30, 30)) == 0
         # Full overlap
@@ -544,19 +584,30 @@ class TestVisualCheck:
 
     def test_calc_overlap_area_edge(self) -> None:
         from visual_check import _calc_overlap_area
+
         # Adjacent (no overlap)
         assert _calc_overlap_area((0, 0, 10, 10), (10, 0, 20, 10)) == 0
 
     def test_format_issues_empty(self) -> None:
         from visual_check import _format_issues
+
         result = _format_issues([])
         assert "No layout issues" in result
 
     def test_format_issues_json(self) -> None:
         import json
+
         from visual_check import _format_issues
-        issues = [{"module": "VISUAL", "page": 1, "severity": "Major",
-                    "priority": "P1", "message": "Test issue"}]
+
+        issues = [
+            {
+                "module": "VISUAL",
+                "page": 1,
+                "severity": "Major",
+                "priority": "P1",
+                "message": "Test issue",
+            }
+        ]
         result = _format_issues(issues, as_json=True)
         parsed = json.loads(result)
         assert len(parsed) == 1
@@ -564,8 +615,16 @@ class TestVisualCheck:
 
     def test_format_issues_protocol(self) -> None:
         from visual_check import _format_issues
-        issues = [{"module": "VISUAL", "page": 3, "severity": "Critical",
-                    "priority": "P0", "message": "Block overlap"}]
+
+        issues = [
+            {
+                "module": "VISUAL",
+                "page": 3,
+                "severity": "Critical",
+                "priority": "P0",
+                "message": "Block overlap",
+            }
+        ]
         result = _format_issues(issues)
         assert "Page 3" in result
         assert "Severity: Critical" in result
@@ -576,11 +635,13 @@ class TestVisualCheck:
 # P1-1: scholar_eval tests
 # ============================================================
 
+
 class TestScholarEval:
     """Tests for ScholarEval evaluation framework."""
 
     def test_no_issues_perfect_score(self) -> None:
         from scholar_eval import evaluate_from_audit
+
         scores = evaluate_from_audit([])
         assert scores["soundness"] == 10.0
         assert scores["clarity"] == 10.0
@@ -588,6 +649,7 @@ class TestScholarEval:
 
     def test_deductions(self) -> None:
         from scholar_eval import evaluate_from_audit
+
         issues = [
             {"module": "LOGIC", "severity": "Critical", "message": "Flaw"},
             {"module": "LOGIC", "severity": "Major", "message": "Gap"},
@@ -598,17 +660,20 @@ class TestScholarEval:
 
     def test_floor_at_one(self) -> None:
         from scholar_eval import evaluate_from_audit
+
         issues = [
-            {"module": "GRAMMAR", "severity": "Critical", "message": f"E{i}"}
-            for i in range(10)
+            {"module": "GRAMMAR", "severity": "Critical", "message": f"E{i}"} for i in range(10)
         ]
         scores = evaluate_from_audit(issues)
         assert scores["clarity"] == 1.0
 
     def test_merge_script_only(self) -> None:
         from scholar_eval import merge_scores
+
         script_scores = {
-            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "soundness": 8.0,
+            "clarity": 9.0,
+            "presentation": 7.0,
             "reproducibility_partial": 8.5,
         }
         merged = merge_scores(script_scores, llm_scores=None)
@@ -618,8 +683,11 @@ class TestScholarEval:
 
     def test_merge_with_llm(self) -> None:
         from scholar_eval import merge_scores
+
         script_scores = {
-            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "soundness": 8.0,
+            "clarity": 9.0,
+            "presentation": 7.0,
             "reproducibility_partial": 7.0,
         }
         llm_scores = {
@@ -638,6 +706,7 @@ class TestScholarEval:
 
     def test_readiness_labels(self) -> None:
         from scholar_eval import get_readiness_label
+
         assert "Strong Accept" in get_readiness_label(9.5)
         assert "Accept" in get_readiness_label(8.5)
         assert "minor" in get_readiness_label(7.5).lower()
@@ -647,8 +716,11 @@ class TestScholarEval:
 
     def test_render_report(self) -> None:
         from scholar_eval import build_result, render_scholar_eval_report
+
         script_scores = {
-            "soundness": 8.0, "clarity": 9.0, "presentation": 7.0,
+            "soundness": 8.0,
+            "clarity": 9.0,
+            "presentation": 7.0,
             "reproducibility_partial": 8.0,
         }
         result = build_result(script_scores)
@@ -660,6 +732,7 @@ class TestScholarEval:
     def test_dimension_map_new_entries(self) -> None:
         """Verify DIMENSION_MAP has entries for new modules."""
         from report_generator import DIMENSION_MAP
+
         assert "references" in DIMENSION_MAP
         assert "visual" in DIMENSION_MAP
         assert "clarity" in DIMENSION_MAP["references"]
@@ -671,17 +744,21 @@ class TestScholarEval:
 # P1-2: online_bib_verify tests
 # ============================================================
 
+
 class TestOnlineBibVerify:
     """Tests for online bibliography verification (unit tests, no network)."""
 
     def test_data_classes(self) -> None:
-        from online_bib_verify import VerifyResult, EntryVerifyResult
+        from online_bib_verify import EntryVerifyResult, VerifyResult
+
         vr = VerifyResult(valid=True, metadata={"title": "Test"})
         assert vr.valid
         assert vr.metadata["title"] == "Test"
 
         evr = EntryVerifyResult(
-            status="verified", bib_key="smith2020", confidence=0.9,
+            status="verified",
+            bib_key="smith2020",
+            confidence=0.9,
         )
         assert evr.status == "verified"
         assert evr.bib_key == "smith2020"
@@ -689,8 +766,10 @@ class TestOnlineBibVerify:
 
     def test_entry_verify_result_mismatch(self) -> None:
         from online_bib_verify import EntryVerifyResult
+
         evr = EntryVerifyResult(
-            status="mismatch", bib_key="doe2021",
+            status="mismatch",
+            bib_key="doe2021",
             mismatches=["year: bib='2021' vs api='2020'"],
             confidence=0.7,
         )
@@ -699,6 +778,7 @@ class TestOnlineBibVerify:
 
     def test_cross_check_match(self) -> None:
         from online_bib_verify import OnlineBibVerifier
+
         verifier = OnlineBibVerifier()
         result = verifier._cross_check(
             "test_key",
@@ -710,6 +790,7 @@ class TestOnlineBibVerify:
 
     def test_cross_check_mismatch(self) -> None:
         from online_bib_verify import OnlineBibVerifier
+
         verifier = OnlineBibVerifier()
         result = verifier._cross_check(
             "test_key",
@@ -721,6 +802,7 @@ class TestOnlineBibVerify:
 
     def test_match_title_found(self) -> None:
         from online_bib_verify import OnlineBibVerifier
+
         verifier = OnlineBibVerifier()
         results = [
             {"title": "A Novel Deep Learning Approach", "externalIds": {"DOI": "10.1234/test"}},
@@ -735,6 +817,7 @@ class TestOnlineBibVerify:
 
     def test_match_title_not_found(self) -> None:
         from online_bib_verify import OnlineBibVerifier
+
         verifier = OnlineBibVerifier()
         results = [
             {"title": "Completely Different Paper", "externalIds": {}},
@@ -748,7 +831,9 @@ class TestOnlineBibVerify:
 
     def test_parse_bib_entries(self) -> None:
         import tempfile
+
         from online_bib_verify import _parse_bib_entries
+
         bib_content = """
 @article{smith2020,
   author = {John Smith},
@@ -765,7 +850,10 @@ class TestOnlineBibVerify:
 }
 """
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".bib", delete=False, encoding="utf-8",
+            mode="w",
+            suffix=".bib",
+            delete=False,
+            encoding="utf-8",
         ) as f:
             f.write(bib_content)
             f.flush()
@@ -781,29 +869,34 @@ class TestOnlineBibVerify:
 # Integration: audit module configuration
 # ============================================================
 
+
 class TestAuditModuleUpdated:
     """Tests for updated audit module configuration."""
 
     def test_mode_checks_include_references(self) -> None:
         from audit import MODE_CHECKS
+
         assert "references" in MODE_CHECKS["self-check"]
         assert "references" in MODE_CHECKS["review"]
         assert "references" in MODE_CHECKS["gate"]
 
     def test_mode_checks_include_visual(self) -> None:
         from audit import MODE_CHECKS
+
         assert "visual" in MODE_CHECKS["self-check"]
         assert "visual" in MODE_CHECKS["review"]
         assert "visual" in MODE_CHECKS["gate"]
 
     def test_resolve_script_references(self) -> None:
         from audit import _resolve_script
+
         script = _resolve_script("references", "en", ".tex")
         assert script is not None
         assert script.name == "check_references.py"
 
     def test_resolve_script_visual(self) -> None:
         from audit import _resolve_script
+
         script = _resolve_script("visual", "en", ".pdf")
         assert script is not None
         assert script.name == "visual_check.py"
