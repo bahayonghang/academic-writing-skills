@@ -1,15 +1,11 @@
 [project]
 name = "academic-writing-skills"
-version = "1.2.0"
+version = "2.0.0"
 description = "LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses with format checking, compilation, grammar analysis, and de-AI polishing"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-    "Pillow>=12.1.0",
-]
-authors = [
-    { name = "bahayonghang" }
-]
+dependencies = ["Pillow>=12.1.0"]
+authors = [{ name = "bahayonghang" }]
 keywords = [
     "latex",
     "academic-writing",
@@ -34,11 +30,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8.4.2",
-    "ruff>=0.15.0",
-    "pyright>=1.1.390",
-]
+dev = ["pytest>=8.4.2", "ruff>=0.15.4", "pyright>=1.1.390"]
 
 [project.urls]
 Homepage = "https://github.com/bahayonghang/academic-writing-skills"
@@ -78,12 +70,7 @@ known-first-party = ["academic-writing-skills"]
 
 [tool.pyright]
 include = ["academic-writing-skills", "tests"]
-exclude = [
-    "**/__pycache__",
-    "**/node_modules",
-    ".venv",
-    "docs",
-]
+exclude = ["**/__pycache__", "**/node_modules", ".venv", "docs"]
 pythonVersion = "3.10"
 typeCheckingMode = "off"
 reportMissingImports = false
