@@ -38,9 +38,15 @@ class BibChecker:
         "misc": ["title"],
     }
 
-    def __init__(self, bib_file: str, typ_file: str = None, style: str = None,
-                 online: bool = False, email: str = None,
-                 online_timeout: float = 10.0):
+    def __init__(
+        self,
+        bib_file: str,
+        typ_file: str = None,
+        style: str = None,
+        online: bool = False,
+        email: str = None,
+        online_timeout: float = 10.0,
+    ):
         self.bib_file = Path(bib_file)
         self.typ_file = Path(typ_file) if typ_file else None
         self.style = style
@@ -181,11 +187,7 @@ class BibChecker:
 
         # Filter out non-citation @ matches (packages, imports, label prefixes)
         non_citation_prefixes = ("fig", "tab", "eq", "sec", "preview", "import")
-        citations = {
-            c
-            for c in citations
-            if not c.startswith(non_citation_prefixes)
-        }
+        citations = {c for c in citations if not c.startswith(non_citation_prefixes)}
 
         print(f"  ✓ Found {len(citations)} unique citations in Typst file")
 
@@ -265,7 +267,8 @@ class BibChecker:
 
         print("\n[CHECK] Online Verification")
         verifier = OnlineBibVerifier(
-            polite_email=self.email, timeout=self.online_timeout,
+            polite_email=self.email,
+            timeout=self.online_timeout,
         )
         verified = 0
         for key, entry in self.entries.items():
@@ -367,12 +370,15 @@ Supported Styles:
         help="Citation style to check",
     )
     parser.add_argument(
-        "--online", action="store_true",
+        "--online",
+        action="store_true",
         help="Enable online verification via CrossRef/Semantic Scholar",
     )
     parser.add_argument("--email", help="Email for CrossRef polite pool (faster rate limits)")
     parser.add_argument(
-        "--online-timeout", type=float, default=10.0,
+        "--online-timeout",
+        type=float,
+        default=10.0,
         help="Timeout per API request in seconds",
     )
 
@@ -386,7 +392,9 @@ Supported Styles:
 
     # Run checks
     checker = BibChecker(
-        args.bib_file, args.typ, args.style,
+        args.bib_file,
+        args.typ,
+        args.style,
         online=getattr(args, "online", False),
         email=getattr(args, "email", None),
         online_timeout=getattr(args, "online_timeout", 10.0),

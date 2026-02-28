@@ -46,9 +46,7 @@ def _load_sibling_parsers() -> Any:
             last_exc = exc
             continue
 
-    raise ImportError(
-        f"Cannot load sibling parsers from {_SKILLS_ROOT}: {last_exc}"
-    )
+    raise ImportError(f"Cannot load sibling parsers from {_SKILLS_ROOT}: {last_exc}")
 
 
 _sibling = _load_sibling_parsers()
@@ -91,11 +89,11 @@ def get_parser(
         return LatexParser()
     elif path_str.endswith(".pdf"):
         from pdf_parser import PdfParser
+
         return PdfParser(mode=pdf_mode, heading_pt=heading_pt, body_pt=body_pt)
     else:
         raise ValueError(
-            f"Unsupported format: {Path(file_path).suffix}. "
-            "Supported formats: .tex, .typ, .pdf"
+            f"Unsupported format: {Path(file_path).suffix}. Supported formats: .tex, .typ, .pdf"
         )
 
 

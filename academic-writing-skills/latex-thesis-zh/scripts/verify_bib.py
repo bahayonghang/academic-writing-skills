@@ -27,9 +27,14 @@ class BibTeXVerifier:
 
     GB7714_RECOMMENDED = ["doi", "url", "urldate"]
 
-    def __init__(self, bib_file: str, standard: str = "default",
-                 online: bool = False, email: str | None = None,
-                 online_timeout: float = 10.0):
+    def __init__(
+        self,
+        bib_file: str,
+        standard: str = "default",
+        online: bool = False,
+        email: str | None = None,
+        online_timeout: float = 10.0,
+    ):
         self.bib_file = Path(bib_file).resolve()
         self.standard = standard
         self.entries = []
@@ -111,8 +116,10 @@ class BibTeXVerifier:
         if self.online:
             try:
                 from online_bib_verify import OnlineBibVerifier
+
                 online_verifier = OnlineBibVerifier(
-                    polite_email=self.email, timeout=self.online_timeout,
+                    polite_email=self.email,
+                    timeout=self.online_timeout,
                 )
                 for entry_info in results["needs_online_check"]:
                     entry_dict = {
@@ -127,31 +134,34 @@ class BibTeXVerifier:
                     result = online_verifier.verify_entry(entry_dict)
                     if result.status == "mismatch":
                         for m in result.mismatches:
-                            results["issues"].append({
-                                "key": result.bib_key,
-                                "type": "metadata_mismatch",
-                                "severity": "error",
-                                "message": f"Online verification mismatch: {m}",
-                            })
+                            results["issues"].append(
+                                {
+                                    "key": result.bib_key,
+                                    "type": "metadata_mismatch",
+                                    "severity": "error",
+                                    "message": f"Online verification mismatch: {m}",
+                                }
+                            )
                     elif result.status == "not_found":
-                        results["issues"].append({
-                            "key": result.bib_key,
-                            "type": "not_found_online",
-                            "severity": "warning",
-                            "message": "Entry not found in online databases",
-                        })
+                        results["issues"].append(
+                            {
+                                "key": result.bib_key,
+                                "type": "not_found_online",
+                                "severity": "warning",
+                                "message": "Entry not found in online databases",
+                            }
+                        )
                     elif result.status == "verified" and result.suggested_doi:
-                        results["issues"].append({
-                            "key": result.bib_key,
-                            "type": "doi_suggestion",
-                            "severity": "warning",
-                            "message": f"Consider adding DOI: {result.suggested_doi}",
-                        })
+                        results["issues"].append(
+                            {
+                                "key": result.bib_key,
+                                "type": "doi_suggestion",
+                                "severity": "warning",
+                                "message": f"Consider adding DOI: {result.suggested_doi}",
+                            }
+                        )
             except ImportError:
-                print(
-                    "# Warning: online_bib_verify.py not found, "
-                    "skipping online verification"
-                )
+                print("# Warning: online_bib_verify.py not found, skipping online verification")
 
         return results
 
@@ -219,12 +229,15 @@ def main():
         "--online-check", action="store_true", help="Generate list for online verification"
     )
     parser.add_argument(
-        "--online", action="store_true",
+        "--online",
+        action="store_true",
         help="Enable online verification via CrossRef/Semantic Scholar",
     )
     parser.add_argument("--email", help="Email for CrossRef polite pool (faster rate limits)")
     parser.add_argument(
-        "--online-timeout", type=float, default=10.0,
+        "--online-timeout",
+        type=float,
+        default=10.0,
         help="Timeout per API request in seconds",
     )
     parser.add_argument("--output", help="Output file for online check JSON")
@@ -236,7 +249,8 @@ def main():
         sys.exit(1)
 
     verifier = BibTeXVerifier(
-        args.bib_file, args.standard,
+        args.bib_file,
+        args.standard,
         online=getattr(args, "online", False),
         email=getattr(args, "email", None),
         online_timeout=getattr(args, "online_timeout", 10.0),

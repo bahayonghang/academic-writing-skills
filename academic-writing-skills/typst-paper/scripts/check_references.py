@@ -46,25 +46,26 @@ ORDERING_PREFIXES = {"fig", "tab"}
 class LabelInfo:
     """Label definition information."""
 
-    name: str    # Full label name (e.g., "fig-arch")
+    name: str  # Full label name (e.g., "fig-arch")
     prefix: str  # Prefix if present (e.g., "fig" from "fig:arch" or "fig-arch")
-    line: int    # Definition line number (1-indexed)
-    file: str    # Source file path
+    line: int  # Definition line number (1-indexed)
+    file: str  # Source file path
 
 
 @dataclass
 class RefInfo:
     """Reference information."""
 
-    name: str     # Referenced label name
-    line: int     # Reference line number (1-indexed)
-    file: str     # Source file path
+    name: str  # Referenced label name
+    line: int  # Reference line number (1-indexed)
+    file: str  # Source file path
     command: str  # Reference command ("ref" or "hash-ref")
 
 
 # ---------------------------------------------------------------------------
 # Checker
 # ---------------------------------------------------------------------------
+
 
 class ReferenceChecker:
     """Single-file Typst reference integrity checker."""
@@ -209,7 +210,7 @@ class ReferenceChecker:
                         end_idx = i
                         break
             # Convert char offsets to 1-indexed line numbers
-            start_line = content[:fig_match.start()].count("\n") + 1
+            start_line = content[: fig_match.start()].count("\n") + 1
             end_line = content[:end_idx].count("\n") + 1
             figure_spans.append((start_line, end_line))
 
@@ -328,6 +329,7 @@ class ReferenceChecker:
 # Output formatting
 # ---------------------------------------------------------------------------
 
+
 def _format_issues(issues: list[dict], comment_prefix: str = "//") -> str:
     """Format issues into the project's output protocol."""
     if not issues:
@@ -347,11 +349,10 @@ def _format_issues(issues: list[dict], comment_prefix: str = "//") -> str:
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main() -> int:
     """Entry point."""
-    parser = argparse.ArgumentParser(
-        description="Reference Integrity Checker for Typst papers"
-    )
+    parser = argparse.ArgumentParser(description="Reference Integrity Checker for Typst papers")
     parser.add_argument("file", help="Source .typ file to check")
     parser.add_argument("--json", action="store_true", help="Output JSON format")
     args = parser.parse_args()

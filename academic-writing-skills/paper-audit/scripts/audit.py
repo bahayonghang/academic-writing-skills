@@ -25,15 +25,34 @@ from report_generator import (
 
 MODE_CHECKS: dict[str, list[str]] = {
     "self-check": [
-        "format", "grammar", "logic", "sentences", "deai", "bib", "figures",
-        "references", "visual",
+        "format",
+        "grammar",
+        "logic",
+        "sentences",
+        "deai",
+        "bib",
+        "figures",
+        "references",
+        "visual",
     ],
     "review": [
-        "format", "grammar", "logic", "sentences", "deai", "bib", "figures",
-        "references", "visual",
+        "format",
+        "grammar",
+        "logic",
+        "sentences",
+        "deai",
+        "bib",
+        "figures",
+        "references",
+        "visual",
     ],
     "gate": [
-        "format", "bib", "figures", "references", "visual", "checklist",
+        "format",
+        "bib",
+        "figures",
+        "references",
+        "visual",
+        "checklist",
     ],
     "polish": ["logic", "sentences"],  # Fast rule-based only; agents handle the rest
 }
@@ -120,9 +139,7 @@ def _run_check_script(
         return -1, "", str(e)
 
 
-def _parse_script_output(
-    module_name: str, stdout: str
-) -> list[AuditIssue]:
+def _parse_script_output(module_name: str, stdout: str) -> list[AuditIssue]:
     """
     Parse script output into AuditIssue objects.
     Tries to detect structured output (Severity/Priority format),
@@ -161,40 +178,47 @@ def _parse_script_output(
         msg = line
         msg = structured_pattern.sub("", msg)
         msg = line_pattern.sub("", msg)
-        msg = re.sub(r"^%\s*", "", msg)       # LaTeX comment prefix
-        msg = re.sub(r"^//\s*", "", msg)       # Typst comment prefix
-        msg = re.sub(r"^>\s*", "", msg)        # Markdown quote prefix
+        msg = re.sub(r"^%\s*", "", msg)  # LaTeX comment prefix
+        msg = re.sub(r"^//\s*", "", msg)  # Typst comment prefix
+        msg = re.sub(r"^>\s*", "", msg)  # Markdown quote prefix
         msg = re.sub(r"^\[?\w+\]?\s*", "", msg, count=1)  # Module tag
         msg = msg.strip(" :-")
 
         if msg:
-            issues.append(AuditIssue(
-                module=module_name.upper(),
-                line=line_num,
-                severity=severity,
-                priority=priority,
-                message=msg,
-            ))
+            issues.append(
+                AuditIssue(
+                    module=module_name.upper(),
+                    line=line_num,
+                    severity=severity,
+                    priority=priority,
+                    message=msg,
+                )
+            )
 
     return issues
 
 
 def _run_checklist(
-    content: str, file_path: str, lang: str  # noqa: ARG001
+    content: str,
+    file_path: str,
+    lang: str,  # noqa: ARG001
 ) -> list[ChecklistItem]:
     """Run pre-submission checklist checks."""
     items = []
 
     # Check: no TODO/FIXME/XXX
     todo_lines = [
-        i + 1 for i, line in enumerate(content.split("\n"))
+        i + 1
+        for i, line in enumerate(content.split("\n"))
         if re.search(r"\b(TODO|FIXME|XXX)\b", line)
     ]
-    items.append(ChecklistItem(
-        "No placeholder text (TODO, FIXME, XXX)",
-        len(todo_lines) == 0,
-        f"Found on lines: {todo_lines[:5]}" if todo_lines else "",
-    ))
+    items.append(
+        ChecklistItem(
+            "No placeholder text (TODO, FIXME, XXX)",
+            len(todo_lines) == 0,
+            f"Found on lines: {todo_lines[:5]}" if todo_lines else "",
+        )
+    )
 
     # Check: all figures referenced (LaTeX/Typst)
     ext = Path(file_path).suffix.lower()
@@ -202,63 +226,101 @@ def _run_checklist(
         fig_labels = set(re.findall(r"\\label\{(fig:[^}]+)\}", content))
         fig_refs = set(re.findall(r"\\ref\{(fig:[^}]+)\}", content))
         unreferenced = fig_labels - fig_refs
-        items.append(ChecklistItem(
-            "All figures referenced in text",
-            len(unreferenced) == 0,
-            f"Unreferenced: {unreferenced}" if unreferenced else "",
-        ))
+        items.append(
+            ChecklistItem(
+                "All figures referenced in text",
+                len(unreferenced) == 0,
+                f"Unreferenced: {unreferenced}" if unreferenced else "",
+            )
+        )
 
     # Check: all tables referenced (LaTeX)
     if ext == ".tex":
         tab_labels = set(re.findall(r"\\label\{(tab:[^}]+)\}", content))
         tab_refs = set(re.findall(r"\\ref\{(tab:[^}]+)\}", content))
         unref_tabs = tab_labels - tab_refs
-        items.append(ChecklistItem(
-            "All tables referenced in text",
-            len(unref_tabs) == 0,
-            f"Unreferenced: {unref_tabs}" if unref_tabs else "",
-        ))
+        items.append(
+            ChecklistItem(
+                "All tables referenced in text",
+                len(unref_tabs) == 0,
+                f"Unreferenced: {unref_tabs}" if unref_tabs else "",
+            )
+        )
 
     # Check: anonymous submission (no author names in common patterns)
     anon_patterns = [
         r"\\author\{[^}]*[A-Z][a-z]+",  # LaTeX \author with name
-        r"#set document\(author:",         # Typst author
+        r"#set document\(author:",  # Typst author
     ]
     has_author = any(re.search(p, content) for p in anon_patterns)
-    items.append(ChecklistItem(
-        "Anonymous submission (blind review check)",
-        not has_author,
-        "Author information detected — verify if blind review required" if has_author else "",
-    ))
+    items.append(
+        ChecklistItem(
+            "Anonymous submission (blind review check)",
+            not has_author,
+            "Author information detected — verify if blind review required" if has_author else "",
+        )
+    )
 
     # Check: consistent notation (basic — check for mixed $ and \( \))
     if ext == ".tex":
         inline_dollar = len(re.findall(r"(?<!\$)\$(?!\$)", content))
         inline_paren = len(re.findall(r"\\\(", content))
         mixed = inline_dollar > 0 and inline_paren > 0
-        items.append(ChecklistItem(
-            "Consistent math notation",
-            not mixed,
-            f"Mixed styles: ${inline_dollar}x $...$ and {inline_paren}x \\(...\\)" if mixed else "",
-        ))
+        items.append(
+            ChecklistItem(
+                "Consistent math notation",
+                not mixed,
+                f"Mixed styles: ${inline_dollar}x $...$ and {inline_paren}x \\(...\\)"
+                if mixed
+                else "",
+            )
+        )
 
     # Check: acronyms defined on first use (basic heuristic)
     acronyms = set(re.findall(r"\b([A-Z]{2,6})\b", content))
     undefined = []
     for acr in acronyms:
         # Check if defined as (ACRONYM) or {ACRONYM}
-        if not re.search(rf"\({acr}\)|\{{{acr}\}}", content):
-            # Common acronyms to skip
-            if acr not in {"PDF", "URL", "API", "GPU", "CPU", "RAM", "RGB", "CNN",
-                          "RNN", "GAN", "NLP", "LLM", "MLP", "LSTM", "IEEE", "ACM",
-                          "AAAI", "ICLR", "ICML", "SOTA", "BERT", "GPT", "TODO",
-                          "FIXME", "XXX", "YAML", "JSON", "HTML", "HTTP", "SQL"}:
-                undefined.append(acr)
-    items.append(ChecklistItem(
-        "Acronyms defined on first use",
-        len(undefined) <= 3,  # Allow some tolerance
-        f"Potentially undefined: {undefined[:5]}" if undefined else "",
-    ))
+        if not re.search(rf"\({acr}\)|\{{{acr}\}}", content) and acr not in {
+            "PDF",
+            "URL",
+            "API",
+            "GPU",
+            "CPU",
+            "RAM",
+            "RGB",
+            "CNN",
+            "RNN",
+            "GAN",
+            "NLP",
+            "LLM",
+            "MLP",
+            "LSTM",
+            "IEEE",
+            "ACM",
+            "AAAI",
+            "ICLR",
+            "ICML",
+            "SOTA",
+            "BERT",
+            "GPT",
+            "TODO",
+            "FIXME",
+            "XXX",
+            "YAML",
+            "JSON",
+            "HTML",
+            "HTTP",
+            "SQL",
+        }:
+            undefined.append(acr)
+    items.append(
+        ChecklistItem(
+            "Acronyms defined on first use",
+            len(undefined) <= 3,  # Allow some tolerance
+            f"Potentially undefined: {undefined[:5]}" if undefined else "",
+        )
+    )
 
     return items
 
@@ -283,9 +345,7 @@ def _write_state_file(paper_path: Path, data: dict) -> Path:
     state_dir = paper_path.parent / ".polish-state"
     state_dir.mkdir(exist_ok=True)
     state_file = state_dir / "precheck.json"
-    state_file.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    state_file.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"[polish-precheck] State written to: {state_file}")
     return state_file
 
@@ -323,10 +383,8 @@ def run_polish_precheck(
     lines_list = content.split("\n")
     sections_meta: dict = {}
     for sec_name, (start, end) in raw_sections.items():
-        sec_lines = lines_list[start - 1:end]
-        word_count = sum(
-            len(parser.extract_visible_text(ln).split()) for ln in sec_lines
-        )
+        sec_lines = lines_list[start - 1 : end]
+        word_count = sum(len(parser.extract_visible_text(ln).split()) for ln in sec_lines)
         sections_meta[sec_name] = {"start": start, "end": end, "word_count": word_count}
 
     # Non-IMRaD detection
@@ -339,19 +397,19 @@ def run_polish_precheck(
         logic_script = _resolve_script("logic", lang, fmt)
         if logic_script:
             for sec_name in raw_sections:
-                rc, stdout, _ = _run_check_script(
-                    logic_script, str(path), ["--section", sec_name]
-                )
+                rc, stdout, _ = _run_check_script(logic_script, str(path), ["--section", sec_name])
                 if rc != -1 and stdout.strip():
                     for issue in _parse_script_output("logic", stdout):
-                        precheck_issues.append({
-                            "module": issue.module,
-                            "section": sec_name,
-                            "line": issue.line,
-                            "severity": issue.severity,
-                            "priority": issue.priority,
-                            "message": issue.message,
-                        })
+                        precheck_issues.append(
+                            {
+                                "module": issue.module,
+                                "section": sec_name,
+                                "line": issue.line,
+                                "severity": issue.severity,
+                                "priority": issue.priority,
+                                "message": issue.message,
+                            }
+                        )
 
     # Expression check (sentences)
     expression_issues: list[dict] = []
@@ -362,16 +420,18 @@ def run_polish_precheck(
         )
         if rc != -1 and stdout.strip():
             for issue in _parse_script_output("sentences", stdout):
-                expression_issues.append({
-                    "module": issue.module,
-                    "section": _find_section_for_line(issue.line, raw_sections),
-                    "line": issue.line,
-                    "severity": issue.severity,
-                    "priority": issue.priority,
-                    "message": issue.message,
-                    "original": issue.original,
-                    "revised": issue.revised,
-                })
+                expression_issues.append(
+                    {
+                        "module": issue.module,
+                        "section": _find_section_for_line(issue.line, raw_sections),
+                        "line": issue.line,
+                        "severity": issue.severity,
+                        "priority": issue.priority,
+                        "message": issue.message,
+                        "original": issue.original,
+                        "revised": issue.revised,
+                    }
+                )
 
     # Hard blockers = Critical severity
     blockers = [i for i in precheck_issues if i["severity"] == "Critical"]
@@ -394,13 +454,19 @@ def run_polish_precheck(
     # Return AuditResult so existing render_report() can display precheck issues
     all_issues = [
         AuditIssue(
-            module=i["module"], line=i.get("line"),
-            severity=i["severity"], priority=i["priority"], message=i["message"],
+            module=i["module"],
+            line=i.get("line"),
+            severity=i["severity"],
+            priority=i["priority"],
+            message=i["message"],
         )
         for i in precheck_issues + expression_issues
     ]
     return AuditResult(
-        file_path=str(path), language=lang, mode="polish", venue=journal,
+        file_path=str(path),
+        language=lang,
+        mode="polish",
+        venue=journal,
         issues=all_issues,
     )
 
@@ -442,8 +508,11 @@ def run_audit(
     # Polish mode: early dispatch to precheck
     if mode == "polish":
         return run_polish_precheck(
-            file_path, style=style, journal=journal,
-            lang=lang, skip_logic=skip_logic,
+            file_path,
+            style=style,
+            journal=journal,
+            lang=lang,
+            skip_logic=skip_logic,
         )
 
     # Step 1: Extract text
@@ -513,13 +582,15 @@ def run_audit(
 
             if returncode == -1:
                 print(f"[audit] ERROR {check_name}: {stderr}")
-                all_issues.append(AuditIssue(
-                    module=check_name.upper(),
-                    line=None,
-                    severity="Minor",
-                    priority="P2",
-                    message=f"Check script failed: {stderr[:100]}",
-                ))
+                all_issues.append(
+                    AuditIssue(
+                        module=check_name.upper(),
+                        line=None,
+                        severity="Minor",
+                        priority="P2",
+                        message=f"Check script failed: {stderr[:100]}",
+                    )
+                )
             elif stdout.strip():
                 issues = _parse_script_output(check_name, stdout)
                 all_issues.extend(issues)
@@ -573,58 +644,71 @@ Examples:
         """,
     )
 
+    parser.add_argument("file", help="Path to the document (.tex, .typ, or .pdf)")
     parser.add_argument(
-        "file", help="Path to the document (.tex, .typ, or .pdf)"
-    )
-    parser.add_argument(
-        "--mode", choices=["self-check", "review", "gate", "polish"],
+        "--mode",
+        choices=["self-check", "review", "gate", "polish"],
         default="self-check",
         help="Audit mode (default: self-check)",
     )
     parser.add_argument(
-        "--pdf-mode", choices=["basic", "enhanced"],
+        "--pdf-mode",
+        choices=["basic", "enhanced"],
         default="basic",
         help="PDF extraction mode (default: basic)",
     )
     parser.add_argument(
-        "--venue", default="",
+        "--venue",
+        default="",
         help="Target venue (e.g., neurips, ieee, acm)",
     )
     parser.add_argument(
-        "--lang", choices=["en", "zh"],
+        "--lang",
+        choices=["en", "zh"],
         default=None,
         help="Force language (auto-detects if not specified)",
     )
     parser.add_argument(
-        "--style", choices=["A", "B", "C"], default="A",
+        "--style",
+        choices=["A", "B", "C"],
+        default="A",
         help="Polish style: A=plain precise, B=narrative, C=formal academic",
     )
     parser.add_argument(
-        "--journal", default="",
+        "--journal",
+        default="",
         help="Target journal/venue for polish mode",
     )
     parser.add_argument(
-        "--skip-logic", action="store_true",
+        "--skip-logic",
+        action="store_true",
         help="Skip logic checking in polish mode (expression only)",
     )
     parser.add_argument(
-        "--online", action="store_true",
+        "--online",
+        action="store_true",
         help="Enable online bibliography verification via CrossRef/Semantic Scholar",
     )
     parser.add_argument(
-        "--email", default="",
+        "--email",
+        default="",
         help="Email for CrossRef polite pool (faster rate limits)",
     )
     parser.add_argument(
-        "--scholar-eval", action="store_true",
+        "--scholar-eval",
+        action="store_true",
         help="Enable ScholarEval 8-dimension assessment",
     )
     parser.add_argument(
-        "--output", "-o", default=None,
+        "--output",
+        "-o",
+        default=None,
         help="Output file path (default: stdout)",
     )
     parser.add_argument(
-        "--format", choices=["md", "json"], default="md",
+        "--format",
+        choices=["md", "json"],
+        default="md",
         help="Output format: 'md' for Markdown (default) or 'json' for CI/CD integration",
     )
 
@@ -645,10 +729,7 @@ Examples:
             scholar_eval=getattr(args, "scholar_eval", False),
         )
 
-        if args.format == "json":
-            report = render_json_report(result)
-        else:
-            report = render_report(result)
+        report = render_json_report(result) if args.format == "json" else render_report(result)
 
         if args.output:
             Path(args.output).write_text(report, encoding="utf-8")

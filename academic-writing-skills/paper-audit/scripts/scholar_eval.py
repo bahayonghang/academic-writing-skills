@@ -24,18 +24,17 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 # --- Dimension Configuration ---
 
 SCHOLAR_EVAL_DIMENSIONS: dict[str, dict] = {
-    "soundness":       {"weight": 0.20, "source": "script",   "base": 10},
-    "clarity":         {"weight": 0.15, "source": "script",   "base": 10},
-    "presentation":    {"weight": 0.10, "source": "script",   "base": 10},
-    "novelty":         {"weight": 0.15, "source": "llm",      "base": None},
-    "significance":    {"weight": 0.15, "source": "llm",      "base": None},
-    "reproducibility": {"weight": 0.10, "source": "mixed",    "base": 10},
-    "ethics":          {"weight": 0.05, "source": "llm",      "base": None},
-    "overall":         {"weight": 0.10, "source": "computed",  "base": None},
+    "soundness": {"weight": 0.20, "source": "script", "base": 10},
+    "clarity": {"weight": 0.15, "source": "script", "base": 10},
+    "presentation": {"weight": 0.10, "source": "script", "base": 10},
+    "novelty": {"weight": 0.15, "source": "llm", "base": None},
+    "significance": {"weight": 0.15, "source": "llm", "base": None},
+    "reproducibility": {"weight": 0.10, "source": "mixed", "base": 10},
+    "ethics": {"weight": 0.05, "source": "llm", "base": None},
+    "overall": {"weight": 0.10, "source": "computed", "base": None},
 }
 
 READINESS_LABELS: list[tuple[float, str]] = [
@@ -57,9 +56,11 @@ DEDUCTIONS_10: dict[str, float] = {
 
 # --- Data Models ---
 
+
 @dataclass
 class ScholarEvalResult:
     """Complete ScholarEval assessment result."""
+
     script_scores: dict[str, float | None] = field(default_factory=dict)
     llm_scores: dict | None = None
     merged_scores: dict[str, float | None] = field(default_factory=dict)
@@ -69,20 +70,19 @@ class ScholarEvalResult:
 
 # --- Score Computation ---
 
+
 def _deduct_score(base: float, issues: list[dict]) -> float:
     """Compute score by deducting from base based on issue severities."""
-    total_deduction = sum(
-        DEDUCTIONS_10.get(i.get("severity", ""), 0) for i in issues
-    )
+    total_deduction = sum(DEDUCTIONS_10.get(i.get("severity", ""), 0) for i in issues)
     return max(1.0, base - total_deduction)
 
 
 def _check_reproducibility_signals(issues: list[dict]) -> float:
     """Heuristic check for reproducibility signals from audit issues."""
     method_issues = [
-        i for i in issues
-        if i.get("module", "").upper() == "LOGIC"
-        and "method" in i.get("message", "").lower()
+        i
+        for i in issues
+        if i.get("module", "").upper() == "LOGIC" and "method" in i.get("message", "").lower()
     ]
     return _deduct_score(10, method_issues)
 
@@ -119,9 +119,7 @@ def evaluate_from_audit(audit_issues: list[dict]) -> dict[str, float | None]:
 
     # Presentation <- figures + visual + references
     presentation_issues = (
-        by_module.get("FIGURES", [])
-        + by_module.get("VISUAL", [])
-        + by_module.get("REFERENCES", [])
+        by_module.get("FIGURES", []) + by_module.get("VISUAL", []) + by_module.get("REFERENCES", [])
     )
     scores["presentation"] = _deduct_score(10, presentation_issues)
 
@@ -244,15 +242,12 @@ def build_result(
 
 # --- Report Rendering ---
 
+
 def render_scholar_eval_report(result: ScholarEvalResult) -> str:
     """Render ScholarEval assessment as Markdown table."""
     lines = ["## ScholarEval Assessment (8-Dimension)", ""]
-    lines.append(
-        "| Dimension | Score | Weight | Source | Evidence |"
-    )
-    lines.append(
-        "|-----------|-------|--------|--------|----------|"
-    )
+    lines.append("| Dimension | Score | Weight | Source | Evidence |")
+    lines.append("|-----------|-------|--------|--------|----------|")
 
     for dim, cfg in SCHOLAR_EVAL_DIMENSIONS.items():
         score = result.merged_scores.get(dim)
@@ -262,16 +257,15 @@ def render_scholar_eval_report(result: ScholarEvalResult) -> str:
         evidence = result.evidence.get(dim, "—")
         if len(evidence) > 60:
             evidence = evidence[:57] + "..."
-        lines.append(
-            f"| {dim.title()} | {score_str} | {weight_str} | {source} | {evidence} |"
-        )
+        lines.append(f"| {dim.title()} | {score_str} | {weight_str} | {source} | {evidence} |")
 
     lines.append("")
     lines.append(f"**Publication Readiness**: {result.readiness_label}")
 
     # Show which dimensions need LLM evaluation
     missing = [
-        dim for dim, cfg in SCHOLAR_EVAL_DIMENSIONS.items()
+        dim
+        for dim, cfg in SCHOLAR_EVAL_DIMENSIONS.items()
         if cfg["source"] in ("llm", "mixed") and result.merged_scores.get(dim) is None
     ]
     if missing:
@@ -286,6 +280,7 @@ def render_scholar_eval_report(result: ScholarEvalResult) -> str:
 
 # --- CLI ---
 
+
 def main() -> int:
     """CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -299,7 +294,8 @@ Examples:
         """,
     )
     parser.add_argument(
-        "--audit-json", required=True,
+        "--audit-json",
+        required=True,
         help="Path to audit result JSON (list of issue dicts)",
     )
     parser.add_argument(
@@ -307,7 +303,8 @@ Examples:
         help="Path to LLM evaluation JSON (optional)",
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="Output raw JSON instead of Markdown",
     )
 
@@ -353,12 +350,8 @@ Examples:
     # Output
     if args.json:
         output = {
-            "script_scores": {
-                k: v for k, v in result.script_scores.items()
-            },
-            "merged_scores": {
-                k: v for k, v in result.merged_scores.items()
-            },
+            "script_scores": dict(result.script_scores.items()),
+            "merged_scores": dict(result.merged_scores.items()),
             "readiness_label": result.readiness_label,
             "evidence": result.evidence,
         }

@@ -34,6 +34,7 @@ from urllib.request import Request, urlopen
 @dataclass
 class VerifyResult:
     """Result of a single DOI verification."""
+
     valid: bool
     metadata: dict | None = None
     error: str | None = None
@@ -42,6 +43,7 @@ class VerifyResult:
 @dataclass
 class EntryVerifyResult:
     """Result of verifying a single bibliography entry."""
+
     status: str  # "verified" | "mismatch" | "not_found" | "unverifiable" | "error"
     bib_key: str = ""
     mismatches: list[str] = field(default_factory=list)
@@ -71,9 +73,7 @@ class OnlineBibVerifier:
             time.sleep(self.rate_limit - elapsed)
 
         if params:
-            query_string = "&".join(
-                f"{k}={quote(str(v))}" for k, v in params.items()
-            )
+            query_string = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
             url = f"{url}?{query_string}"
 
         headers = {"User-Agent": "AcademicWritingSkills/1.0"}
@@ -98,11 +98,7 @@ class OnlineBibVerifier:
         msg = data.get("message", {})
         title_list = msg.get("title") or [None]
         author_list = msg.get("author", [])
-        published = (
-            msg.get("published-print")
-            or msg.get("published-online")
-            or {}
-        )
+        published = msg.get("published-print") or msg.get("published-online") or {}
         date_parts = published.get("date-parts", [[None]])
         year_val = date_parts[0][0] if date_parts and date_parts[0] else None
         container = msg.get("container-title") or [None]
@@ -169,7 +165,10 @@ class OnlineBibVerifier:
         return EntryVerifyResult(status="unverifiable", bib_key=bib_key)
 
     def _cross_check(
-        self, bib_key: str, entry: dict, api_meta: dict,
+        self,
+        bib_key: str,
+        entry: dict,
+        api_meta: dict,
     ) -> EntryVerifyResult:
         """Compare bib entry metadata against API-returned metadata."""
         mismatches = []
@@ -201,11 +200,16 @@ class OnlineBibVerifier:
                 confidence=0.7,
             )
         return EntryVerifyResult(
-            status="verified", bib_key=bib_key, confidence=0.9,
+            status="verified",
+            bib_key=bib_key,
+            confidence=0.9,
         )
 
     def _match_title(
-        self, bib_key: str, entry: dict, results: list[dict],
+        self,
+        bib_key: str,
+        entry: dict,
+        results: list[dict],
     ) -> EntryVerifyResult:
         """Match bib entry against title search results."""
         bib_title = re.sub(r"[{}\\]", "", entry.get("title", "")).lower().strip()
@@ -240,19 +244,16 @@ def _parse_bib_entries(bib_path: Path) -> list[dict]:
         fields: dict[str, str] = {}
         for field_match in re.finditer(field_pattern, fields_str):
             name = field_match.group(1).lower()
-            val = (
-                field_match.group(2)
-                or field_match.group(3)
-                or field_match.group(4)
-                or ""
-            )
+            val = field_match.group(2) or field_match.group(3) or field_match.group(4) or ""
             fields[name] = val.strip()
 
-        entries.append({
-            "key": key,
-            "type": entry_type,
-            **fields,
-        })
+        entries.append(
+            {
+                "key": key,
+                "type": entry_type,
+                **fields,
+            }
+        )
 
     return entries
 
@@ -271,10 +272,13 @@ Examples:
     )
     parser.add_argument("--bib", required=True, help="BibTeX file to verify")
     parser.add_argument(
-        "--email", help="Email for CrossRef polite pool (faster rate limits)",
+        "--email",
+        help="Email for CrossRef polite pool (faster rate limits)",
     )
     parser.add_argument(
-        "--timeout", type=float, default=10.0,
+        "--timeout",
+        type=float,
+        default=10.0,
         help="Timeout per API request in seconds (default: 10)",
     )
     parser.add_argument("--json", action="store_true", help="Output JSON format")
@@ -292,7 +296,8 @@ Examples:
         return 0
 
     verifier = OnlineBibVerifier(
-        polite_email=args.email, timeout=args.timeout,
+        polite_email=args.email,
+        timeout=args.timeout,
     )
 
     results = []
@@ -339,11 +344,10 @@ def _print_result(result: EntryVerifyResult) -> None:
                 f"Metadata mismatch for '{result.bib_key}': {m}"
             )
     elif result.status == "not_found":
-        detail = result.mismatches[0] if result.mismatches else "Entry not found in online databases"
-        print(
-            f"% ONLINE_BIB [Severity: Minor] [Priority: P2]: "
-            f"'{result.bib_key}': {detail}"
+        detail = (
+            result.mismatches[0] if result.mismatches else "Entry not found in online databases"
         )
+        print(f"% ONLINE_BIB [Severity: Minor] [Priority: P2]: '{result.bib_key}': {detail}")
 
 
 if __name__ == "__main__":

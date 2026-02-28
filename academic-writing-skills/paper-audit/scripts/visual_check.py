@@ -20,6 +20,7 @@ from pathlib import Path
 # Module-level availability check — safe to import as library without pymupdf installed
 try:
     import pymupdf as _pymupdf_module
+
     _PYMUPDF_AVAILABLE = True
 except ImportError:
     _pymupdf_module = None  # type: ignore[assignment]
@@ -45,9 +46,7 @@ class VisualChecker:
         overlap_threshold: float = 100.0,
     ) -> None:
         if not _PYMUPDF_AVAILABLE:
-            raise ImportError(
-                "visual_check requires pymupdf: pip install pymupdf"
-            )
+            raise ImportError("visual_check requires pymupdf: pip install pymupdf")
         self.doc = _pymupdf_module.open(pdf_path)  # type: ignore[union-attr]
         self.margin = margin_pt
         self.min_dpi = min_dpi
@@ -55,7 +54,7 @@ class VisualChecker:
         self.overlap_threshold = overlap_threshold
         self.issues: list[dict] = []
 
-    def __enter__(self) -> "VisualChecker":
+    def __enter__(self) -> VisualChecker:
         return self
 
     def __exit__(self, *_: object) -> None:
@@ -72,25 +71,33 @@ class VisualChecker:
                 # Left margin
                 if bbox[0] < self.margin - tolerance:
                     self._add_issue(
-                        page_num, "Major", "P1",
+                        page_num,
+                        "Major",
+                        "P1",
                         f"Content overflows left margin (x={bbox[0]:.1f}pt, margin={self.margin}pt)",
                     )
                 # Right margin
                 if bbox[2] > rect.width - self.margin + tolerance:
                     self._add_issue(
-                        page_num, "Major", "P1",
+                        page_num,
+                        "Major",
+                        "P1",
                         f"Content overflows right margin (x={bbox[2]:.1f}pt, page_width={rect.width:.1f}pt)",
                     )
                 # Top margin
                 if bbox[1] < self.margin - tolerance:
                     self._add_issue(
-                        page_num, "Major", "P1",
+                        page_num,
+                        "Major",
+                        "P1",
                         f"Content overflows top margin (y={bbox[1]:.1f}pt, margin={self.margin}pt)",
                     )
                 # Bottom margin
                 if bbox[3] > rect.height - self.margin + tolerance:
                     self._add_issue(
-                        page_num, "Major", "P1",
+                        page_num,
+                        "Major",
+                        "P1",
                         f"Content overflows bottom margin (y={bbox[3]:.1f}pt, page_height={rect.height:.1f}pt)",
                     )
 
@@ -99,19 +106,22 @@ class VisualChecker:
         for page_num, page in enumerate(self.doc):
             blocks = page.get_text("dict")["blocks"]
             rects = [
-                b["bbox"] for b in blocks
+                b["bbox"]
+                for b in blocks
                 if b.get("type") in (0, 1)  # 0=text, 1=image
             ]
             # Sort by x0: once b2.x0 > b1.x1, no further overlap is possible on X axis
             rects.sort(key=lambda r: r[0])
             for i, r1 in enumerate(rects):
-                for r2 in rects[i + 1:]:
+                for r2 in rects[i + 1 :]:
                     if r2[0] > r1[2]:  # Early exit: b2 starts after b1 ends
                         break
                     overlap_area = _calc_overlap_area(r1, r2)
                     if overlap_area > self.overlap_threshold:
                         self._add_issue(
-                            page_num, "Critical", "P0",
+                            page_num,
+                            "Critical",
+                            "P0",
                             f"Block overlap detected: {overlap_area:.0f} sq pt",
                         )
 
@@ -127,8 +137,8 @@ class VisualChecker:
                         # Body text font size range (9-13pt)
                         if 9 <= size <= 13:
                             font_name = span["font"]
-                            font_counter[font_name] = (
-                                font_counter.get(font_name, 0) + len(span["text"])
+                            font_counter[font_name] = font_counter.get(font_name, 0) + len(
+                                span["text"]
                             )
         # Filter to significant fonts (>100 chars)
         main_fonts = [f for f, c in font_counter.items() if c > 100]
@@ -137,7 +147,9 @@ class VisualChecker:
             if len(main_fonts) > 5:
                 font_list += f" (+{len(main_fonts) - 5} more)"
             self._add_issue(
-                0, "Minor", "P2",
+                0,
+                "Minor",
+                "P2",
                 f"Inconsistent body fonts ({len(main_fonts)} detected): {font_list}",
             )
 
@@ -163,7 +175,9 @@ class VisualChecker:
                         effective_dpi = width / render_width_in
                         if effective_dpi < self.min_dpi:
                             self._add_issue(
-                                page_num, "Major", "P1",
+                                page_num,
+                                "Major",
+                                "P1",
                                 f"Low resolution image: {effective_dpi:.0f} DPI "
                                 f"(minimum: {self.min_dpi} DPI, "
                                 f"pixel size: {width}x{height})",
@@ -176,7 +190,9 @@ class VisualChecker:
             images = page.get_images()
             if not text and not images:
                 self._add_issue(
-                    page_num, "Minor", "P2",
+                    page_num,
+                    "Minor",
+                    "P2",
                     "Blank page detected",
                 )
 
@@ -190,15 +206,21 @@ class VisualChecker:
         return self.issues
 
     def _add_issue(
-        self, page: int, severity: str, priority: str, message: str,
+        self,
+        page: int,
+        severity: str,
+        priority: str,
+        message: str,
     ) -> None:
-        self.issues.append({
-            "module": "VISUAL",
-            "page": page + 1,  # 1-indexed
-            "severity": severity,
-            "priority": priority,
-            "message": message,
-        })
+        self.issues.append(
+            {
+                "module": "VISUAL",
+                "page": page + 1,  # 1-indexed
+                "severity": severity,
+                "priority": priority,
+                "message": message,
+            }
+        )
 
     def close(self) -> None:
         """Close the PDF document."""
@@ -238,15 +260,20 @@ Examples:
     )
     parser.add_argument("pdf_file", help="Path to PDF file")
     parser.add_argument(
-        "--margin", type=float, default=72.0,
+        "--margin",
+        type=float,
+        default=72.0,
         help="Page margin in points (default: 72 = 1 inch)",
     )
     parser.add_argument(
-        "--min-dpi", type=int, default=150,
+        "--min-dpi",
+        type=int,
+        default=150,
         help="Minimum image DPI threshold (default: 150)",
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="Output results in JSON format",
     )
 

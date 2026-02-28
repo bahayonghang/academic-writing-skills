@@ -68,29 +68,31 @@ ORDERING_PREFIXES = {"fig", "tab"}
 # Data classes
 # ===========================================================================
 
+
 @dataclass
 class LabelInfo:
     """Label definition information."""
 
-    name: str    # Full label name (e.g., "fig:arch")
+    name: str  # Full label name (e.g., "fig:arch")
     prefix: str  # Prefix (e.g., "fig", "tab", "eq")
-    line: int    # Definition line number (1-indexed)
-    file: str    # Source file path
+    line: int  # Definition line number (1-indexed)
+    file: str  # Source file path
 
 
 @dataclass
 class RefInfo:
     """Reference information."""
 
-    name: str     # Referenced label name
-    line: int     # Reference line number (1-indexed)
-    file: str     # Source file path
+    name: str  # Referenced label name
+    line: int  # Reference line number (1-indexed)
+    file: str  # Source file path
     command: str  # Reference command (e.g., "ref", "eqref", "autoref")
 
 
 # ===========================================================================
 # Router checker
 # ===========================================================================
+
 
 class ReferenceChecker:
     """
@@ -199,7 +201,9 @@ class ReferenceChecker:
                     name = (match.group(1) or match.group(2) or "").strip()
                     command = "ref" if match.group(1) else "hash-ref"
                 if name:
-                    refs.append(RefInfo(name=name, line=lineno, file=self.file_path, command=command))
+                    refs.append(
+                        RefInfo(name=name, line=lineno, file=self.file_path, command=command)
+                    )
         return refs
 
     # ------------------------------------------------------------------
@@ -274,9 +278,7 @@ class ReferenceChecker:
         for lbl in labels:
             if lbl.prefix not in ("fig", "tab"):
                 continue
-            enclosing = next(
-                ((s, e, t) for s, e, t in envs if s <= lbl.line <= e), None
-            )
+            enclosing = next(((s, e, t) for s, e, t in envs if s <= lbl.line <= e), None)
             if enclosing is None:
                 continue
             start, end, env_type = enclosing
@@ -330,9 +332,7 @@ class ReferenceChecker:
         for lbl in labels:
             if lbl.prefix not in ("fig", "tab"):
                 continue
-            enclosing = next(
-                ((s, e) for s, e in figure_spans if s <= lbl.line <= e), None
-            )
+            enclosing = next(((s, e) for s, e in figure_spans if s <= lbl.line <= e), None)
             if enclosing is None:
                 continue
             start, end = enclosing
@@ -361,10 +361,7 @@ class ReferenceChecker:
             if prefix not in ORDERING_PREFIXES:
                 continue
             if name in label_lines and ref_line < label_lines[name]:
-                if self.mode == "latex":
-                    ref_repr = f"\\ref{{{name}}}"
-                else:
-                    ref_repr = f"@{name}"
+                ref_repr = f"\\ref{{{name}}}" if self.mode == "latex" else f"@{name}"
                 self._add_issue(
                     line=ref_line,
                     severity="Minor",
@@ -436,6 +433,7 @@ class ReferenceChecker:
 # Output formatting
 # ===========================================================================
 
+
 def _format_issues(issues: list[dict], comment_prefix: str) -> str:
     """Format issues into the project's output protocol."""
     if not issues:
@@ -454,6 +452,7 @@ def _format_issues(issues: list[dict], comment_prefix: str) -> str:
 # ===========================================================================
 # CLI
 # ===========================================================================
+
 
 def main() -> int:
     """Entry point."""

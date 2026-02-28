@@ -79,11 +79,10 @@ class PdfParser(DocumentParser):
         """Extract text using PyMuPDF with font-size heading detection."""
         try:
             import pymupdf
-        except ImportError:
+        except ImportError as err:
             raise ImportError(
-                "pymupdf is required for PDF support. "
-                "Install with: pip install pymupdf"
-            )
+                "pymupdf is required for PDF support. Install with: pip install pymupdf"
+            ) from err
 
         doc = pymupdf.open(file_path)
         pages = []
@@ -123,11 +122,11 @@ class PdfParser(DocumentParser):
         """Extract text using pymupdf4llm for structured Markdown output."""
         try:
             import pymupdf4llm
-        except ImportError:
+        except ImportError as err:
             raise ImportError(
                 "pymupdf4llm is required for enhanced PDF mode. "
                 "Install with: pip install pymupdf4llm"
-            )
+            ) from err
 
         return pymupdf4llm.to_markdown(file_path)
 

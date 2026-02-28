@@ -45,25 +45,26 @@ ORDERING_PREFIXES = {"fig", "tab"}
 class LabelInfo:
     """Label definition information."""
 
-    name: str    # Full label name (e.g., "fig:arch")
+    name: str  # Full label name (e.g., "fig:arch")
     prefix: str  # Prefix (e.g., "fig", "tab", "eq")
-    line: int    # Definition line number (1-indexed, within the source file)
-    file: str    # Source file path
+    line: int  # Definition line number (1-indexed, within the source file)
+    file: str  # Source file path
 
 
 @dataclass
 class RefInfo:
     """Reference information."""
 
-    name: str     # Referenced label name
-    line: int     # Reference line number (1-indexed, within the source file)
-    file: str     # Source file path
+    name: str  # Referenced label name
+    line: int  # Reference line number (1-indexed, within the source file)
+    file: str  # Source file path
     command: str  # Reference command (e.g., "ref", "eqref", "hyperref")
 
 
 # ---------------------------------------------------------------------------
 # Single-file checker (base)
 # ---------------------------------------------------------------------------
+
 
 class ReferenceChecker:
     """Single-file LaTeX reference integrity checker."""
@@ -316,6 +317,7 @@ class ReferenceChecker:
 # Multi-file checker (ThesisReferenceChecker)
 # ---------------------------------------------------------------------------
 
+
 class ThesisReferenceChecker(ReferenceChecker):
     """
     Multi-file reference checker supporting \\input and \\include.
@@ -403,6 +405,7 @@ class ThesisReferenceChecker(ReferenceChecker):
 # Output formatting
 # ---------------------------------------------------------------------------
 
+
 def _format_issues(issues: list[dict], comment_prefix: str = "%") -> str:
     """Format issues into the project's output protocol."""
     if not issues:
@@ -421,6 +424,7 @@ def _format_issues(issues: list[dict], comment_prefix: str = "%") -> str:
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def main() -> int:
     """Entry point."""
