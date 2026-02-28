@@ -119,6 +119,7 @@ Common cases:
 | References | ref check, label check, cross-ref | `python scripts/check_references.py main.tex` | — |
 | De-AI | deai, 去AI化, humanize | `python scripts/deai_check.py main.tex` | [DEAI.md](resources/modules/DEAI.md) |
 | Title | title, 标题 | `python scripts/optimize_title.py main.tex` | [TITLE.md](resources/modules/TITLE.md) |
+| Caption | caption, 图标题, 表标题, figure caption, table caption | — | [CAPTION.md](resources/modules/CAPTION.md) |
 | Reviewer | reviewer, 审稿, checklist | — | [REVIEWER_PERSPECTIVE.md](resources/references/REVIEWER_PERSPECTIVE.md) |
 | Workflow | workflow, full review | — | [WORKFLOW.md](resources/modules/WORKFLOW.md) |
 

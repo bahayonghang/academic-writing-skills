@@ -31,6 +31,7 @@ description: |
   - "template", "模板", "thuthesis", "pkuthss" → 模板检测模块
   - "deai", "去AI化", "人性化", "降低AI痕迹" → 去AI化编辑模块
   - "title", "标题", "标题优化", "生成标题" → 标题优化模块
+  - "caption", "图表标题", "双语标题", "bicaption" → 图表标题模块
   - "consistency", "一致性", "术语" → 一致性检查模块
 argument-hint: "[main.tex] [--section <章节>] [--module <模块>]"
 allowed-tools: Read, Glob, Grep, Bash(python *), Bash(xelatex *), Bash(lualatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *)
@@ -253,6 +254,15 @@ python scripts/optimize_title.py main.tex --check       # 质量评分（0-100�
 评分维度：简洁性(25%)、可搜索性(30%)、长度(15%)、具体性(20%)、规范性(10%)
 
 详见 [TITLE_OPTIMIZATION.md](resources/TITLE_OPTIMIZATION.md)
+
+---
+
+### 模块：图表标题（Caption）
+**触发词**: caption, 图表标题, 双语标题, bicaption
+
+根据学位论文规范（如 GB/T 7714 和高校模板），生成或优化中英双语图表标题。支持符合规范的英文 Title/Sentence Case 转换，移除 AI 味。
+
+详见 [CAPTION_GUIDE.md](resources/CAPTION_GUIDE.md)
 
 ---
 
