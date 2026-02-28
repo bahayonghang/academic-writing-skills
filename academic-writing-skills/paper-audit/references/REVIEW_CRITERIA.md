@@ -12,6 +12,7 @@ Unified review criteria for paper audit, based on major conference standards (Ne
 - Fairness of experimental comparisons
 - Adequate baselines and ablation studies
 - Reproducibility of results
+- **Experiment Narrative**: Results are presented as a cohesive analytical narrative rather than merely listing numbers.
 
 **Common deduction reasons**:
 - Flawed proofs or incorrect derivations
@@ -20,7 +21,7 @@ Unified review criteria for paper audit, based on major conference standards (Ne
 - Claims not supported by evidence
 - Missing error bars or statistical tests
 
-**Automated checks mapping**: Bibliography verification, Logic & coherence analysis
+**Automated checks mapping**: Bibliography verification, Logic & coherence analysis, Experiment narrative checks
 
 ### 2. Clarity (Weight: 30%)
 

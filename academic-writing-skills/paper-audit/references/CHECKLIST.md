@@ -28,6 +28,12 @@ Consolidated checklists for paper audit across venues.
 - [ ] Limitations section included
 - [ ] Figure/Table captions are concise, without AI-like redundancy, and use consistent casing
 
+### Experiment Analysis
+- [ ] Experiment section uses cohesive paragraph narratives, not itemized lists
+- [ ] Appropriate, up-to-date SOTA baseline methods are included and justified
+- [ ] Ablation studies effectively validate the contribution of core components
+- [ ] Statistical significance/confidence intervals are reported where applicable
+
 ### Submission Compliance
 - [ ] Anonymous submission (no author names in blind review)
 - [ ] Supplementary material within size limits
