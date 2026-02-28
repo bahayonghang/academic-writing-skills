@@ -20,7 +20,8 @@ description: |
   gate (quality gate pass/fail).
   Use when user mentions: audit, review, check paper, paper quality,
   pre-submission check, score paper, or any paper auditing task,
-  polish paper, deep polish, adversarial review, refine writing.
+  polish paper, deep polish, adversarial review, refine writing,
+  caption audit, 图表标题审查.
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode self-check|review|gate|polish] [--pdf-mode basic|enhanced] [--style A|B|C] [--journal <venue>] [--skip-logic] [--online] [--scholar-eval]"
 allowed-tools: Read, Glob, Grep, Bash(python *), Task
 references:
@@ -186,7 +187,7 @@ Force with `--lang en` or `--lang zh`.
 | Sentence Complexity | `analyze_sentences.py` | Clarity | .tex, .typ, .pdf |
 | De-AI Detection | `deai_check.py` | Clarity, Originality | .tex, .typ, .pdf |
 | Bibliography | `verify_bib.py` | Quality | .tex, .typ |
-| Figure/Table Refs | `check_figures.py` | Clarity | .tex |
+| Figure/Table Refs & Captions | `check_figures.py` | Clarity | .tex |
 | Reference Integrity | `check_references.py` | Clarity, Quality | .tex, .typ |
 | Visual Layout | `visual_check.py` | Clarity | .pdf |
 | Consistency (ZH) | `check_consistency.py` | Clarity | .tex (Chinese only) |

@@ -37,6 +37,7 @@ Unified review criteria for paper audit, based on major conference standards (Ne
 - Long, convoluted sentences
 - Missing method details
 - Figures without proper captions or references
+- Verbose or AI-generated caption text (e.g., "The figure shows") or inconsistent casing
 
 **Automated checks mapping**: Format check, Grammar analysis, Sentence complexity, De-AI detection, Figure/table references, Consistency
 

@@ -26,6 +26,7 @@ Consolidated checklists for paper audit across venues.
 - [ ] Abstract is self-contained
 - [ ] Contributions clearly stated in introduction
 - [ ] Limitations section included
+- [ ] Figure/Table captions are concise, without AI-like redundancy, and use consistent casing
 
 ### Submission Compliance
 - [ ] Anonymous submission (no author names in blind review)
