@@ -20,3 +20,13 @@ Process Chinese LaTeX theses using analysis scripts.
 4. Run the requested script (e.g., `python $SKILL_DIR/scripts/compile.py main.tex`).
 5. Output all suggestions in standard LaTeX diff-comment format: `% 模块（第N行）[Severity] [Priority]: 问题 ...`
 6. Never modify `\cite{}`, `\ref{}`, `\label{}`, or math environments without explicit user permission.
+
+## Examples
+
+- Run `python $SKILL_DIR/scripts/compile.py $ARGUMENTS`.
+- Run `python $SKILL_DIR/scripts/check_format.py $ARGUMENTS`.
+
+## Troubleshooting
+
+- Provide `main.tex` and `--module` when arguments are missing.
+- Report command output and exit code when a script returns non-zero.

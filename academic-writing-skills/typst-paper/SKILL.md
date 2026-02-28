@@ -20,3 +20,13 @@ Process Typst academic papers using analysis scripts.
 4. Run the required tool or script (e.g., `typst compile main.typ` or `python $SKILL_DIR/scripts/check_format.py main.typ`).
 5. Output all suggestions in standard Typst diff-comment format `// MODULE (Line N) [Severity] [Priority]: Issue ...`
 6. Never modify `@cite`, `@ref`, `<label>`, or `$...$` math environments without explicit user permission.
+
+## Examples
+
+- Run `typst compile $ARGUMENTS`.
+- Run `python $SKILL_DIR/scripts/check_format.py $ARGUMENTS`.
+
+## Troubleshooting
+
+- Provide `main.typ` and `--module` when arguments are missing.
+- Report command output and exit code when a tool returns non-zero.
