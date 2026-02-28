@@ -39,6 +39,7 @@ Academic Writing Skills 提供三个主要技能：
 | Bibliography | bib, 参考文献 | 文献检查 |
 | De-AI Polishing | deai, 去AI化, humanize | 降低 AI 痕迹 |
 | Title Optimization | title, 标题, title optimization | 标题生成与优化 |
+| Experiment Analysis | experiment, 实验分析, 数据分析 | 实验段落改写与生成 |
 
 ### latex-thesis-zh 模块
 
@@ -54,6 +55,7 @@ Academic Writing Skills 提供三个主要技能：
 | 模板检测 | template, 模板, thuthesis | 模板检测 |
 | 去AI化 | deai, 去AI化, 降低AI痕迹 | 降低 AI 痕迹 |
 | 标题优化 | title, 标题, 标题优化, 生成标题 | 标题生成与优化 |
+| 实验分析 | experiment, 实验分析, 数据分析 | 实验段落改写与生成 |
 
 ### typst-paper 模块
 
@@ -70,6 +72,7 @@ Academic Writing Skills 提供三个主要技能：
 | 去AI化 | deai, 去AI化, humanize | 降低 AI 痕迹 |
 | 模板 | template, IEEE, ACM, 模板 | 模板配置 |
 | 标题优化 | title, 标题, title optimization | 标题生成与优化 |
+| 实验分析 | experiment, 实验分析, 数据分析 | 实验段落改写与生成 |
 
 ## 安全与工具确认
 
@@ -264,7 +267,8 @@ python scripts/detect_template.py main.tex
 3. 去AI化编辑
 4. 长难句拆解
 5. 学术表达优化
-6. 参考文献验证
+6. 实验分析逻辑改写（针对实验章节）
+7. 参考文献验证
 
 ### 中文学位论文完整审查
 1. 结构映射（优先）
@@ -272,7 +276,8 @@ python scripts/detect_template.py main.tex
 3. 模板检测 + 关键要求核对
 4. 去AI化编辑
 5. 学术表达与长难句分析
-6. 参考文献验证
+6. 实验分析逻辑改写（针对实验章节）
+7. 参考文献验证
 
 ### Typst 快速迭代
 1. 编译或监视模式

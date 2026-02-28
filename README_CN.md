@@ -31,6 +31,7 @@ npm run docs:dev
 - **逻辑衔接与方法论**：段落衔接（AXES 模型）、过渡信号词、方法论深度检查 🆕
 - **标题优化**：根据 IEEE/ACM/Springer 最佳实践生成和优化论文标题
 - **图表标题生成与优化**：按照顶会标准生成极简、一致大小写、无 AI 味的英文及双语 Caption 🆕
+- **实验分析生成**：基于核心数据生成包含基线对比、消融研究并符合顶刊连贯叙事规范的实验段落 🆕
 - **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **期刊适配**：IEEE、ACM、Springer、NeurIPS、ICML 格式指南
 - **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
@@ -44,6 +45,7 @@ npm run docs:dev
 - **逻辑衔接与方法论**：段落衔接（AXES 模型）、过渡信号词、方法论深度检查 🆕
 - **标题优化**：根据 GB/T 7713.1-2006 规范生成和优化学位论文标题
 - **图表标题生成与优化**：按照顶会标准生成极简、一致大小写、无 AI 味的英文及双语 Caption 🆕
+- **实验分析生成**：基于核心数据生成包含基线对比、消融研究并符合核心期刊连贯叙述规范的实验段落 🆕
 - **去AI化编辑**：在保持技术准确性的同时降低 AI 写作痕迹
 - **编译支持**：XeLaTeX/LuaLaTeX 完整中文支持
 - **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
@@ -58,6 +60,7 @@ npm run docs:dev
 - **去AI化编辑**：降低 AI 写作痕迹
 - **标题优化**：双语标题生成和优化（中英文）
 - **图表标题生成与优化**：按照顶会标准生成极简、一致大小写、无 AI 味的英文及双语 Caption 🆕
+- **实验分析生成**：基于核心数据生成包含基线对比、消融研究的连贯分析段落 🆕
 - **期刊模板**：IEEE、ACM、Springer、NeurIPS 模板
 - **现代语法**：简洁直观的标记语言
 - **引用完整性检查**：未定义引用、未引用的 label、缺少 caption 检测 🆕
@@ -69,7 +72,7 @@ npm run docs:dev
 - **PDF 视觉排版检查**：页边距溢出、文本/图片块重叠、字体不一致、低分辨率图片、空白页检测
 - **引用完整性检查**：未定义引用、未引用的 label、缺少 caption、引用顺序、编号间隙
 - **ScholarEval 学术评估**：8 维度质量评分（1-10 分），给出投稿可读性标签
-- **图表标题审查 (Caption Audit)**：检查图表标题的格式大小写、冗余程度及“AI 味”缺陷 🆕
+- **实验叙事与标题审查**：检查图表标题格式（Caption Audit）与实验段落的分析深度及连贯叙事（Experiment Narrative） 🆕
 - **在线文献验证**：CrossRef + Semantic Scholar API 验证（无需 API 密钥）
 - **去AI化编辑**：降低 AI 写作痕迹
 - **NeurIPS 对齐评分**：Quality/Clarity/Significance/Originality 1-6 分加权报告
@@ -231,6 +234,13 @@ Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 - 确保关键词（方法+问题）出现在前 65 字符（英文）或前 20 字（中文）
 - 提供多个候选方案并评分（0-100 分）
 
+**实验分析优化** 🆕
+- "帮我分析这些实验数据，写成 IEEE 顶刊标准的段落"
+- "生成消融实验分析"
+- "analyze my experiment data and write results section"
+- 严格遵循使用连贯段落及 `\paragraph{}` 引导结论的要求，防止过度依赖 itemize
+- 充分体现基线对比和重要消融数据
+
 **图表标题优化** 🆕
 - "生成符合顶会规范的表标题"
 - "优化这张图的标题"
@@ -266,6 +276,7 @@ academic-writing-skills/
 │   │   ├── check_format.py           # ChkTeX 包装器
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── analyze_experiment.py     # 实验分析器 🆕
 │   │   ├── check_references.py       # 引用完整性检查 🆕
 │   │   ├── online_bib_verify.py      # 在线文献验证 🆕
 │   │   └── extract_prose.py          # 文本提取器
@@ -288,6 +299,7 @@ academic-writing-skills/
 │   │   ├── check_consistency.py
 │   │   ├── verify_bib.py             # BibTeX 检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── analyze_experiment.py     # 实验分析器 🆕
 │   │   ├── check_references.py       # 引用完整性检查 🆕
 │   │   ├── online_bib_verify.py      # 在线文献验证 🆕
 │   │   └── detect_template.py        # 模板检测器
@@ -309,6 +321,7 @@ academic-writing-skills/
 │   │   ├── check_format.py           # 格式检查器
 │   │   ├── verify_bib.py             # 参考文献检查器
 │   │   ├── optimize_title.py         # 标题优化器 🆕
+│   │   ├── analyze_experiment.py     # 实验分析器 🆕
 │   │   ├── check_references.py       # 引用完整性检查 🆕
 │   │   └── online_bib_verify.py      # 在线文献验证 🆕
 │   └── resources/                    # 技能资源

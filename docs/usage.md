@@ -91,6 +91,7 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Bibliography | bib, bibliography | Bibliography checking |
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Title Optimization | title, 标题, title optimization | Generate and optimize titles |
+| Experiment Analysis | experiment, data analysis, ablation | Generate cohesive experiment narrative |
 
 ### latex-thesis-zh Modules
 
@@ -106,6 +107,7 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Template Detection | template, 模板, thuthesis | Template detection |
 | De-AI Polishing | deai, 去AI化, 降低AI痕迹 | Reduce AI writing traces |
 | Title Optimization | title, 标题, 标题优化 | Generate and optimize titles |
+| Experiment Analysis | experiment, 实验分析, 数据分析 | Generate cohesive experiment narrative |
 
 ### typst-paper Modules
 
@@ -122,6 +124,7 @@ To protect your project and system, the assistant follows safety-first rules whe
 | De-AI Polishing | deai, 去AI化, humanize | Reduce AI writing traces |
 | Template | template, IEEE, ACM | Template configuration |
 | Title Optimization | title, 标题, title optimization | Generate and optimize titles |
+| Experiment Analysis | experiment, data analysis, ablation | Generate cohesive experiment narrative |
 
 ## Compile Module
 
@@ -274,7 +277,8 @@ python scripts/detect_template.py main.tex
 3. De-AI polishing
 4. Sentence decomposition
 5. Expression optimization
-6. Bibliography verification
+6. Experiment analysis (if rewriting results)
+7. Bibliography verification
 
 ### Chinese Thesis Full Review
 1. Structure mapping (first)

@@ -31,6 +31,7 @@ Then open http://localhost:5173 in your browser.
 - **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **Title Optimization**: Generate and optimize paper titles following IEEE/ACM/Springer best practices
 - **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free figure and table captions 🆕
+- **Experiment Analysis**: Generate top-tier experiment analysis paragraphs from raw data/results, with SOTA comparison, ablation analysis, and statistical rigor 🆕
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Venue Support**: IEEE, ACM, Springer, NeurIPS, ICML guidelines
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -44,6 +45,7 @@ Then open http://localhost:5173 in your browser.
 - **Logic & Methodology**: Paragraph coherence (AXES model), transition signals, methodological depth checking 🆕
 - **Title Optimization**: Generate and optimize thesis titles following GB/T 7713.1-2006 standards
 - **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free English & bilingual captions 🆕
+- **Experiment Analysis**: Generate experiment analysis paragraphs following Chinese core journal standards 🆕
 - **De-AI Editing**: Reduce AI writing traces while preserving technical accuracy
 - **Compilation**: XeLaTeX/LuaLaTeX with full Chinese support
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -58,6 +60,7 @@ Then open http://localhost:5173 in your browser.
 - **De-AI Editing**: Reduce AI writing traces
 - **Title Optimization**: Bilingual title generation and optimization (English/Chinese)
 - **Caption Generation & Optimization**: Generate concise, properly-cased, AI-flavor-free bilingual captions 🆕
+- **Experiment Analysis**: Generate cohesive experiment analysis paragraphs for journal/conference papers 🆕
 - **Venue Templates**: IEEE, ACM, Springer, NeurIPS templates
 - **Modern Syntax**: Simple, intuitive markup language
 - **Reference Integrity**: Undefined references, unreferenced labels, missing captions detection 🆕
@@ -69,6 +72,7 @@ Then open http://localhost:5173 in your browser.
 - **PDF Visual Layout Check**: Margin overflow, text/image block overlaps, font inconsistency, low-resolution images, blank pages
 - **Reference Integrity Check**: Undefined references, unreferenced labels, missing captions, numbering gaps
 - **Caption Audit**: Ensure correct casing (Title/Sentence) and remove AI-like redundancy in captions 🆕
+- **Experiment Narrative Audit**: Check whether experiment sections use cohesive paragraph narratives and include ablation/baseline comparisons 🆕
 - **ScholarEval Assessment**: 8-dimension quality scoring (1–10) with publication readiness label
 - **Online Bibliography Verification**: CrossRef + Semantic Scholar API validation (no API key required)
 - **De-AI Editing**: Reduce AI writing traces
@@ -229,6 +233,13 @@ Simply chat with Claude Code and mention your needs. The skills will be automati
 - Ensures key terms (Method + Problem) appear in first 65 characters (English) or 20 characters (Chinese)
 - Provides multiple candidates with quality scores (0-100)
 
+**Experiment Analysis** 🆕
+- "analyze my experiment data and write results section"
+- "generate ablation study analysis"
+- "实验分析，生成符合IEEE标准的段落"
+- Input: raw data tables/CSV/experiment descriptions
+- Output: LaTeX/Typst paragraphs with cohesive narratives
+
 **Caption Optimization** 🆕
 - "generate top-tier table captions"
 - "optimize this figure caption"
@@ -264,6 +275,7 @@ academic-writing-skills/
 │   │   ├── check_format.py           # ChkTeX wrapper
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── analyze_experiment.py     # Experiment analyzer 🆕
 │   │   ├── check_references.py       # Reference integrity checker 🆕
 │   │   ├── online_bib_verify.py      # Online bibliography verifier 🆕
 │   │   └── extract_prose.py          # Text extractor
@@ -287,6 +299,7 @@ academic-writing-skills/
 │   │   ├── check_consistency.py
 │   │   ├── verify_bib.py             # BibTeX checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── analyze_experiment.py     # Experiment analyzer 🆕
 │   │   ├── check_references.py       # Reference integrity checker 🆕
 │   │   ├── online_bib_verify.py      # Online bibliography verifier 🆕
 │   │   └── detect_template.py        # Template detector
@@ -308,6 +321,7 @@ academic-writing-skills/
 │   │   ├── check_format.py           # Format checker
 │   │   ├── verify_bib.py             # Bibliography checker
 │   │   ├── optimize_title.py         # Title optimizer 🆕
+│   │   ├── analyze_experiment.py     # Experiment analyzer 🆕
 │   │   ├── check_references.py       # Reference integrity checker 🆕
 │   │   └── online_bib_verify.py      # Online bibliography verifier 🆕
 │   └── resources/                    # Skill resources
