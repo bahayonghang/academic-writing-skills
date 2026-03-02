@@ -1,7 +1,7 @@
 [project]
 name = "academic-writing-skills"
 version = "2.0.0"
-description = "LaTeX academic writing assistant skills for Claude Code, supporting both English papers and Chinese theses with format checking, compilation, grammar analysis, and de-AI polishing"
+description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers (Recommended platforms: Claude Code, Codex, Antigravity)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["Pillow>=12.1.0"]
