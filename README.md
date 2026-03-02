@@ -2,9 +2,7 @@
 
 [中文版](README_CN.md) | [📚 Documentation](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
-> Academic writing assistant skills for Claude Code, supporting LaTeX and Typst for both English papers and Chinese theses.
-
-> **⚠️ Disclaimer**: This is a personal project for my own use. No guarantees are made regarding functionality or stability. If you encounter any issues, please submit them via [Issues](https://github.com/bahayonghang/academic-writing-skills/issues).
+> Dedicated to post-writing formatting, validation, and deep polishing of academic papers, focusing on enhancing existing text quality rather than from-scratch generation (Recommended platforms: Claude Code, Codex, Antigravity)
 
 ## Documentation
 

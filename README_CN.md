@@ -2,9 +2,7 @@
 
 [English](README.md) | [📚 文档](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs)
 
-> 基于 Claude Code 的学术写作助手，支持 LaTeX 和 Typst，涵盖英文论文和中文学位论文。
-
-> **⚠️ 免责声明**:本项目为个人自用状态,不保证功能完善或稳定性。如遇到问题,请通过 [Issues](https://github.com/bahayonghang/academic-writing-skills/issues) 提交反馈。
+> 专注于学术论文后期的排版精修、格式校验与深度润色，拒绝从零代写，全面提升既有文本质量（推荐平台：Claude Code, Codex, Antigravity）
 
 ## 文档
 
