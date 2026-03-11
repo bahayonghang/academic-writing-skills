@@ -75,7 +75,7 @@ npm run docs:dev
 - **去AI化编辑**：降低 AI 写作痕迹
 - **NeurIPS 对齐评分**：Quality/Clarity/Significance/Originality 1-6 分加权报告
 
-### deep-research（Industrial AI 深度研究）🆕
+### industrial-ai-research（Industrial AI 研究）🆕
 - **Industrial AI 聚焦**：预测性维护、智能调度、工业异常检测、智能制造、CPS 与 robotics crossover
 - **强制 Intake**：在综合前先确认报告语言、交付模式、时间窗口和研究侧重点
 - **按 Venue 优先检索**：优先 recent arXiv 与 T-ASE、CASE 等 IEEE/自动化 venue
@@ -116,7 +116,7 @@ npm run docs:dev
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/deep-research
+npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
 
 # 或一次性安装所有技能
@@ -144,7 +144,7 @@ mkdir -p ~/.claude/skills
 cp -r latex-paper-en ~/.claude/skills/
 cp -r latex-thesis-zh ~/.claude/skills/
 cp -r typst-paper ~/.claude/skills/
-cp -r deep-research ~/.claude/skills/
+cp -r industrial-ai-research ~/.claude/skills/
 cp -r paper-audit ~/.claude/skills/
 ```
 
@@ -158,7 +158,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "deep-research" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "industrial-ai-research" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 ```
 
@@ -340,7 +340,7 @@ academic-writing-skills/
 │           ├── TEMPLATES.md          # 模板示例
 │           └── TYPST_SYNTAX.md       # Typst 语法参考
 │
-├── deep-research/                    # Industrial AI 深度研究 skill 🆕
+├── industrial-ai-research/            # Industrial AI 研究 skill 🆕
 │   ├── SKILL.md                      # 技能定义
 │   ├── agents/                       # UI 元数据
 │   │   └── openai.yaml

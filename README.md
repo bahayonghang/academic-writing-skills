@@ -76,7 +76,7 @@ Then open http://localhost:5173 in your browser.
 - **De-AI Editing**: Reduce AI writing traces
 - **NeurIPS-aligned Scoring**: Quality/Clarity/Significance/Originality 1–6 scale with weighted report
 
-### deep-research (Industrial AI Deep Research) 🆕
+### industrial-ai-research (Industrial AI Research) 🆕
 - **Industrial AI Focus**: Predictive maintenance, intelligent scheduling, industrial anomaly detection, smart manufacturing, CPS, and robotics crossover
 - **Mandatory Intake**: Ask for report language, deliverable mode, time window, and Industrial AI emphasis before synthesis
 - **Venue-aware Retrieval**: Prioritizes recent arXiv plus top IEEE and automation venues such as T-ASE and CASE
@@ -117,7 +117,7 @@ You can easily install these skills using [skilks](https://github.com/bahayongha
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/deep-research
+npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
 
 # Or install all skills at once
@@ -145,7 +145,7 @@ mkdir -p ~/.claude/skills
 cp -r latex-paper-en ~/.claude/skills/
 cp -r latex-thesis-zh ~/.claude/skills/
 cp -r typst-paper ~/.claude/skills/
-cp -r deep-research ~/.claude/skills/
+cp -r industrial-ai-research ~/.claude/skills/
 cp -r paper-audit ~/.claude/skills/
 ```
 
@@ -159,7 +159,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "deep-research" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "industrial-ai-research" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 ```
 
@@ -340,7 +340,7 @@ academic-writing-skills/
 │           ├── TEMPLATES.md
 │           └── TYPST_SYNTAX.md
 │
-├── deep-research/                    # Industrial AI deep research skill 🆕
+├── industrial-ai-research/            # Industrial AI research skill 🆕
 │   ├── SKILL.md                      # Skill definition
 │   ├── agents/                       # UI metadata
 │   │   └── openai.yaml

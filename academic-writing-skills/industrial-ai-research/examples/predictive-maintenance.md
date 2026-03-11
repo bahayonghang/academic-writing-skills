@@ -2,7 +2,7 @@
 
 ## User Prompt
 
-`Deep research recent predictive maintenance papers for rotating machinery.`
+`Research recent predictive maintenance papers for rotating machinery.`
 
 ## Expected Intake
 

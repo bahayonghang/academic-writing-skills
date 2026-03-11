@@ -39,7 +39,7 @@ features:
     details: Reduce AI writing traces while preserving technical accuracy. Built-in references for academic writing styles and common errors.
 
   - icon: 🧭
-    title: Deep Research (deep-research)
+    title: Industrial AI Research (industrial-ai-research)
     details: Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, and structured outputs for predictive maintenance, scheduling, anomaly detection, and smart manufacturing topics.
 
   - icon: 🔬
@@ -56,7 +56,7 @@ Install the skills with a single command:
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/deep-research
+npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
 # Or install all skills at once
 npx skilks add github.com/bahayonghang/academic-writing-skills
@@ -79,7 +79,7 @@ Academic writing can be challenging, especially when managing compilation workfl
 - **latex-paper-en**: Complete toolkit for English academic papers (LaTeX)
 - **latex-thesis-zh**: Specialized support for Chinese theses (LaTeX)
 - **typst-paper**: Modern markup language for fast academic writing 🆕
-- **deep-research**: Industrial AI literature research with venue-aware retrieval and language-aware reporting 🆕
+- **industrial-ai-research**: Industrial AI literature research with venue-aware retrieval and language-aware reporting 🆕
 - **paper-audit**: Automated paper auditing with PDF support, visual checks, and ScholarEval 🆕
 
 ### Compilation Support

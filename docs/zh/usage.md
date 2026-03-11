@@ -11,7 +11,7 @@ Academic Writing Skills 提供四个主要技能：
 | `latex-paper-en` | 英文学术论文 | 编译、格式检查、语法分析、学术翻译 |
 | `latex-thesis-zh` | 中文学位论文 | 编译、GB/T 7714 检查、模板支持 |
 | `typst-paper` | Typst 学术论文 | 编译、格式检查、语法分析、学术翻译 |
-| `deep-research` | Industrial AI 文献研究 | 按 venue 检索、强制 intake、结构化研究报告 |
+| `industrial-ai-research` | Industrial AI 文献研究 | 按 venue 检索、强制 intake、结构化研究报告 |
 
 ## 模块化设计
 
@@ -75,7 +75,7 @@ Academic Writing Skills 提供四个主要技能：
 | 标题优化 | title, 标题, title optimization | 标题生成与优化 |
 | 实验分析 | experiment, 实验分析, 数据分析 | 实验段落改写与生成 |
 
-### deep-research 工作流
+### industrial-ai-research 工作流
 
 | 步骤 | 功能 |
 |------|------|
@@ -363,4 +363,4 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 - [英文论文核心模块](/zh/skills/latex-paper-en/)
 - [中文论文指南](/zh/skills/latex-thesis-zh/)
 - [Typst 论文模块](/zh/skills/typst-paper/)
-- [深度研究](/zh/skills/deep-research/)
+- [Industrial AI 研究](/zh/skills/industrial-ai-research/)

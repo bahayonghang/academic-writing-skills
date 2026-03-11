@@ -1,4 +1,4 @@
 interface:
-  display_name: "Industrial AI Deep Research"
+  display_name: "Industrial AI Research"
   short_description: "Research recent Industrial AI literature with mandatory language selection and venue-aware source prioritization"
   default_prompt: "Research recent Industrial AI literature, ask for report language first, and prioritize arXiv plus top IEEE and automation venues."

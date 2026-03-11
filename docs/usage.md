@@ -11,7 +11,7 @@ Academic Writing Skills provides four main skills:
 | `latex-paper-en` | English academic papers | Compilation, format check, grammar, translation |
 | `latex-thesis-zh` | Chinese theses | Compilation, GB/T 7714 check, template support |
 | `typst-paper` | Typst academic papers | Compilation, format check, grammar, translation |
-| `deep-research` | Industrial AI literature research | venue-aware retrieval, mandatory intake, structured reports |
+| `industrial-ai-research` | Industrial AI literature research | venue-aware retrieval, mandatory intake, structured reports |
 
 ## Modular Design
 
@@ -127,7 +127,7 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Title Optimization | title, 标题, title optimization | Generate and optimize titles |
 | Experiment Analysis | experiment, data analysis, ablation | Generate cohesive experiment narrative |
 
-### deep-research Workflow
+### industrial-ai-research Workflow
 
 | Step | Function |
 |------|----------|
@@ -367,4 +367,4 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 - [English Paper Modules](/skills/latex-paper-en/)
 - [Chinese Thesis Resources](/skills/latex-thesis-zh/)
 - [Typst Paper Modules](/skills/typst-paper/)
-- [Deep Research](/skills/deep-research/)
+- [Industrial AI Research](/skills/industrial-ai-research/)

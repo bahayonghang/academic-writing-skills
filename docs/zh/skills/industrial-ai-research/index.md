@@ -1,10 +1,10 @@
-# 深度研究 (deep-research)
+# Industrial AI 研究 (industrial-ai-research)
 
-面向自动化与 Industrial AI 的深度研究技能，具备强制 intake 问答、按 venue 分层的检索策略，以及稳定的结构化报告输出。
+面向自动化与 Industrial AI 的研究技能，具备强制 intake 问答、按 venue 分层的检索策略，以及稳定的结构化报告输出。
 
 ## 概述
 
-`deep-research` 是一个偏研究前置的技能，适合做预测性维护、智能调度、工业异常检测、智能制造与 CPS 等方向的文献调研。
+`industrial-ai-research` 是一个偏研究前置的技能，适合做预测性维护、智能调度、工业异常检测、智能制造与 CPS 等方向的文献调研。
 
 它和本仓库偏写作或审查的技能不同：先问清报告语言、输出形式、时间窗和研究侧重点，再按 arXiv 与 IEEE/自动化 venue 优先级进行检索和综合。
 
@@ -58,7 +58,7 @@ Secondary crossover sources:
 ## 示例请求
 
 ```text
-Deep research recent predictive maintenance papers
+Research recent predictive maintenance papers
 ```
 
 ```text

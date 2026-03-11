@@ -1,4 +1,4 @@
-"""Smoke tests for the deep-research skill package."""
+"""Smoke tests for the industrial-ai-research skill package."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parent.parent
-SKILL_DIR = ROOT / "academic-writing-skills" / "deep-research"
+SKILL_DIR = ROOT / "academic-writing-skills" / "industrial-ai-research"
 
 REQUIRED_FILES = [
     SKILL_DIR / "SKILL.md",
@@ -27,7 +27,7 @@ CJK_RE = re.compile(r"[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]")
 
 def test_required_files_exist() -> None:
     missing = [path for path in REQUIRED_FILES if not path.exists()]
-    assert not missing, f"Missing deep-research files: {missing}"
+    assert not missing, f"Missing industrial-ai-research files: {missing}"
 
 
 def test_skill_package_contains_no_cjk() -> None:

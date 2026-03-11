@@ -1,12 +1,12 @@
-# Deep Research (deep-research)
+# Industrial AI Research (industrial-ai-research)
 
-Industrial AI deep research with mandatory intake questions, venue-aware source prioritization, and structured report outputs.
+Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, and structured report outputs.
 
 ## Overview
 
-The `deep-research` skill is a lean research workflow for automation and Industrial AI topics. It is designed for requests such as predictive maintenance surveys, intelligent scheduling literature scans, industrial anomaly detection updates, and smart manufacturing trend mapping.
+The `industrial-ai-research` skill is a lean research workflow for automation and Industrial AI topics. It is designed for requests such as predictive maintenance surveys, intelligent scheduling literature scans, industrial anomaly detection updates, and smart manufacturing trend mapping.
 
-Unlike the writing-first skills in this repository, `deep-research` starts with an intake step, then prioritizes recent arXiv streams and top IEEE or automation venues before producing a structured report.
+Unlike the writing-first skills in this repository, `industrial-ai-research` starts with an intake step, then prioritizes recent arXiv streams and top IEEE or automation venues before producing a structured report.
 
 ## Core Capabilities
 
@@ -58,7 +58,7 @@ Secondary crossover sources:
 ## Example Requests
 
 ```text
-Deep research recent predictive maintenance papers
+Research recent predictive maintenance papers
 ```
 
 ```text
@@ -71,6 +71,6 @@ Research industrial anomaly detection gaps and summarize them in Chinese
 
 ## References
 
-- Skill definition: `academic-writing-skills/deep-research/SKILL.md`
+- Skill definition: `academic-writing-skills/industrial-ai-research/SKILL.md`
 - Source policy: `references/source-priority.md`
 - Venue map: `references/venue-map.md`

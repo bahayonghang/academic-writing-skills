@@ -39,8 +39,8 @@ features:
     details: 在保持技术准确性的同时降低 AI 写作痕迹。内置学术写作样式参考和常见错误指南。
 
   - icon: 🧭
-    title: 深度研究 (deep-research)
-    details: 面向自动化与 Industrial AI 的文献深度研究技能，带有强制 intake 问答、按 venue 优先的检索策略，以及结构化调研输出。
+    title: Industrial AI 研究 (industrial-ai-research)
+    details: 面向自动化与 Industrial AI 的文献研究技能，带有强制 intake 问答、按 venue 优先的检索策略，以及结构化调研输出。
 
   - icon: 🔬
     title: 论文审查 (paper-audit)
@@ -56,7 +56,7 @@ features:
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/deep-research
+npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
 # 或一次性安装所有技能
 npx skilks add github.com/bahayonghang/academic-writing-skills
@@ -79,7 +79,7 @@ npx skilks add github.com/bahayonghang/academic-writing-skills
 - **latex-paper-en**：英文学术论文完整工具包（LaTeX）
 - **latex-thesis-zh**：中文论文专业支持（LaTeX）
 - **typst-paper**：快速学术写作的现代化标记语言 🆕
-- **deep-research**：面向自动化与 Industrial AI 的按 venue 分层深度研究技能 🆕
+- **industrial-ai-research**：面向自动化与 Industrial AI 的按 venue 分层研究技能 🆕
 - **paper-audit**：支持 PDF 的自动化论文审查，含视觉检查和 ScholarEval 评估 🆕
 
 ### 编译支持
