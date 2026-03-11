@@ -11,13 +11,13 @@ import pytest
 # ZH scripts dir — must be first on sys.path during ZH module loading
 # so intra-package imports (e.g. `from parsers import get_parser`) resolve to ZH versions
 _ZH_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "latex-thesis-zh" / "scripts"
-_EN_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"
 
 
 def _load_zh(name: str):
     """Load a module from the ZH scripts directory by file path.
 
     Temporarily puts ZH dir first on sys.path so internal imports resolve correctly.
+    Uses save/restore to prevent sys.modules pollution across test suites.
     """
     # Ensure ZH is first for intra-module imports
     zh_str = str(_ZH_DIR)
@@ -26,17 +26,24 @@ def _load_zh(name: str):
         sys.path.insert(0, zh_str)
         inserted = True
 
-    # Remove any cached bare modules that collide (parsers, compile, etc.)
+    # Save and remove collision-prone modules so ZH versions get loaded fresh
+    _collision_names = ("parsers", "compile", "verify_bib", "optimize_title", "map_structure")
+    _saved = {}
     for mod_name in list(sys.modules):
-        if mod_name in ("parsers", "compile", "verify_bib", "optimize_title", "map_structure"):
-            cached_file = getattr(sys.modules[mod_name], "__file__", "") or ""
-            if _EN_DIR.name in cached_file or "latex-paper-en" in cached_file:
-                del sys.modules[mod_name]
+        if mod_name in _collision_names:
+            _saved[mod_name] = sys.modules.pop(mod_name)
 
     spec = importlib.util.spec_from_file_location(f"zh_{name}", _ZH_DIR / f"{name}.py")
     assert spec and spec.loader
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
+
+    # Restore original modules to prevent cross-suite pollution
+    for mod_name in _collision_names:
+        if mod_name in sys.modules and mod_name not in _saved:
+            del sys.modules[mod_name]
+        if mod_name in _saved:
+            sys.modules[mod_name] = _saved[mod_name]
 
     # Restore sys.path: put EN back first for other test files
     if inserted and zh_str in sys.path:

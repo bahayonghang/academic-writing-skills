@@ -14,21 +14,34 @@ _TYPST_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "typst-p
 
 
 def _load_typst(name: str):
-    """Load a module from the Typst scripts directory by file path."""
+    """Load a module from the Typst scripts directory by file path.
+
+    Uses save/restore to prevent sys.modules pollution across test suites.
+    """
     typst_str = str(_TYPST_DIR)
     inserted = False
     if typst_str not in sys.path or sys.path.index(typst_str) != 0:
         sys.path.insert(0, typst_str)
         inserted = True
 
+    # Save and remove collision-prone modules so Typst versions get loaded fresh
+    _collision_names = ("parsers", "compile", "verify_bib", "optimize_title", "check_format")
+    _saved = {}
     for mod_name in list(sys.modules):
-        if mod_name in ("parsers", "compile", "verify_bib", "optimize_title", "check_format"):
-            del sys.modules[mod_name]
+        if mod_name in _collision_names:
+            _saved[mod_name] = sys.modules.pop(mod_name)
 
     spec = importlib.util.spec_from_file_location(f"typst_{name}", _TYPST_DIR / f"{name}.py")
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+
+    # Restore original modules to prevent cross-suite pollution
+    for mod_name in _collision_names:
+        if mod_name in sys.modules and mod_name not in _saved:
+            del sys.modules[mod_name]
+        if mod_name in _saved:
+            sys.modules[mod_name] = _saved[mod_name]
 
     if inserted and typst_str in sys.path:
         sys.path.remove(typst_str)

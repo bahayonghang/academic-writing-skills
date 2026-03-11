@@ -13,6 +13,18 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 SKILLS_ROOT = REPO_ROOT / "academic-writing-skills"
+_DEFAULT_MANDATORY_SECTIONS = [
+    "## Capability Summary",
+    "## Triggering",
+    "## Do Not Use",
+    "## Module Router",
+    "## Required Inputs",
+    "## Output Contract",
+    "## Workflow",
+    "## Safety Boundaries",
+    "## Reference Map",
+    "## Example Requests",
+]
 SKILLS = {
     "latex-paper-en": {
         "modules": [
@@ -42,6 +54,12 @@ SKILLS = {
             "deai",
             "experiment",
         ],
+        "mandatory_sections": [
+            "## Module Router",
+            "## Workflow",
+            "## Safety",
+            "## Scope Exclusions",
+        ],
     },
     "typst-paper": {
         "modules": [
@@ -59,18 +77,6 @@ SKILLS = {
         ],
     },
 }
-MANDATORY_SECTIONS = [
-    "## Capability Summary",
-    "## Triggering",
-    "## Do Not Use",
-    "## Module Router",
-    "## Required Inputs",
-    "## Output Contract",
-    "## Workflow",
-    "## Safety Boundaries",
-    "## Reference Map",
-    "## Example Requests",
-]
 COMMAND_RE = re.compile(r"(^|[\s`(])python\s+\S")
 ROUTER_ROW_RE = re.compile(r"^\| `(?P<module>[^`]+)` \| .*? \| `(?P<command>[^`]+)` \|", re.MULTILINE)
 
@@ -116,7 +122,7 @@ def test_skill_assets_exist() -> None:
 def test_skill_markdown_contract() -> None:
     for skill_name, config in SKILLS.items():
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
-        for section in MANDATORY_SECTIONS:
+        for section in config.get("mandatory_sections", _DEFAULT_MANDATORY_SECTIONS):
             assert section in skill_md, f"{skill_name} missing section: {section}"
         for module_name in config["modules"]:
             assert f"`{module_name}`" in skill_md, f"{skill_name} missing module `{module_name}`"
