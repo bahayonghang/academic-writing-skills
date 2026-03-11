@@ -2,104 +2,107 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## What this repo is
 
-Academic writing assistant skills for Claude Code, supporting LaTeX and Typst for English papers and Chinese theses. The project provides three independent skills: `latex-paper-en` (English academic papers), `latex-thesis-zh` (Chinese theses), and `typst-paper` (Typst papers).
+- This repository ships **Claude Code skills** for academic writing workflows (LaTeX/Typst/PDF audit + Industrial AI literature synthesis).
+- Skills live under `academic-writing-skills/` as **self-contained folders**.
+- Documentation lives under `docs/` as a **VitePress** site (deployed to GitHub Pages on release).
 
-## Build & Test Commands
+## Common commands
 
-```bash
-# Run all tests (requires pytest: uv pip install -e ".[dev]")
-python -m pytest
+### Python (skills + tests)
 
-# Run a single test file
-python -m pytest tests/test_parsers.py
-
-# Documentation site (VitePress)
-cd docs && npm install && npm run docs:dev     # Dev server at http://localhost:5173
-cd docs && npm run docs:build                  # Build for production
-cd docs && npm run docs:preview                # Preview production build
-
-# Optional: use just shortcuts
-cd docs && just build
-cd docs && just check-links
-```
-
-## Skill Script Usage
-
-Each skill has Python scripts in its `scripts/` directory. Run from the repository root:
+This repo uses **uv** + `pyproject.toml`.
 
 ```bash
-# LaTeX compilation (auto-detects Chinese content for XeLaTeX)
-python academic-writing-skills/latex-paper-en/scripts/compile.py main.tex
-python academic-writing-skills/latex-paper-en/scripts/compile.py main.tex --recipe xelatex-biber
+# Install dev dependencies
+uv sync --extra dev
 
-# Format checking
-python academic-writing-skills/latex-paper-en/scripts/check_format.py main.tex --strict
+# Run the full local CI pipeline
+just ci
 
-# Bibliography verification
-python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex
+# Lint / format (Ruff)
+just lint            # ruff format --check + ruff check
+just format          # ruff format
+just fix             # ruff format + ruff check --fix
 
-# Typst compilation (millisecond-level speed)
-typst compile main.typ
-typst watch main.typ  # Real-time preview
+# Type checking (Pyright)
+just typecheck
+
+# Tests
+just test
+
+# Run a single test file / test
+uv run --extra dev python -m pytest tests/test_parsers.py -v
+uv run --extra dev python -m pytest tests/test_parsers.py::test_latex_split_sections -v
 ```
 
-## Architecture
+Notes:
+- The canonical task runner is the repo root `justfile`.
+- Pyright is configured with `typeCheckingMode = "off"` (import checking / lightweight analysis).
 
-```
-academic-writing-skills/
-├── latex-paper-en/          # English paper skill
-│   ├── SKILL.md             # Skill definition (triggers, modules, output protocol)
-│   ├── scripts/             # Python tools (compile.py, check_format.py, parsers.py)
-│   └── references/          # Style guides, venue rules, forbidden terms
-├── latex-thesis-zh/         # Chinese thesis skill (GB/T 7714, university templates)
-│   ├── SKILL.md
-│   ├── scripts/             # Includes map_structure.py, detect_template.py
-│   └── references/          # GB standards, university-specific guides
-├── typst-paper/             # Typst paper skill
-│   ├── SKILL.md
-│   ├── scripts/
-│   └── references/          # Typst syntax, templates
-├── tests/                   # Unit tests (unittest)
-└── docs/                    # VitePress documentation (localized in docs/zh/)
+### Docs (VitePress)
+
+```bash
+cd docs
+npm install
+npm run docs:dev
+
+# Build / preview
+npm run docs:build
+npm run docs:preview
 ```
 
-### Skill Definition Pattern (SKILL.md)
+CI/Deploy detail:
+- `.github/workflows/deploy.yml` builds the VitePress site and publishes `docs/.vitepress/dist` to GitHub Pages **on release published** (or manual workflow dispatch).
 
-Each skill follows a standardized structure:
-1. **YAML frontmatter**: `name`, `description`, trigger keywords
-2. **Critical Rules**: Protected elements (never modify `\cite{}`, `\ref{}`, `\label{}`, math environments)
-3. **Modules**: Independent modules triggered by keywords (Compile, Format Check, Grammar, De-AI, etc.)
-4. **Output Protocol**: All suggestions use diff-comment format with `Severity` and `Priority` fields
-5. **References**: Links to detailed guides in `references/`
+## Repository structure (big picture)
 
-### Shared Parsers
+### 1) Skill packages (primary)
 
-`parsers.py` provides `LatexParser` and `TypstParser` classes for:
-- Section splitting (`split_sections`)
-- Visible text extraction (`extract_visible_text`)
-- Text cleaning (`clean_text` - removes commands, math, comments)
+`academic-writing-skills/<skill-name>/` is the unit of distribution.
 
-## Content Safety Rules
+The core skills:
+- `academic-writing-skills/latex-paper-en/`: English LaTeX paper workflows (IEEE/ACM/Springer/NeurIPS/ICML).
+- `academic-writing-skills/latex-thesis-zh/`: Chinese thesis workflows (GB/T 7714 + template detection / structure mapping).
+- `academic-writing-skills/typst-paper/`: Typst paper workflows (bilingual).
+- `academic-writing-skills/paper-audit/`: Orchestrated audit across `.tex` / `.typ` / `.pdf`, with scoring and optional multi-agent review.
+- `academic-writing-skills/industrial-ai-research/`: Literature research skill with an intake-first protocol.
 
-- **NEVER** modify: `\cite{}`, `\ref{}`, `\label{}` in LaTeX; `@cite`, `@ref`, `@label` in Typst; math environments
-- **NEVER** fabricate bibliography entries; only use existing `.bib` or `.yml` files
-- **NEVER** change domain terminology without user confirmation
-- Check `references/FORBIDDEN_TERMS.md` before modifying protected terms
+Each skill typically contains:
+- `SKILL.md`: entry spec + module router (how requests map to scripts).
+- `scripts/`: Python tooling for compile/check/analyze.
+- `references/` or `resources/`: reference docs the skill reads at runtime.
+- optionally `agents/`, `evals/`, `examples/`, `templates/`.
 
-## Commit Style
+### 2) Shared script patterns (how skills work)
 
-Follow the existing pattern: `emoji type(scope): message`
-- `:sparkles: feat(scope):` - New feature
-- `:memo: docs:` - Documentation
-- `:bug: fix:` - Bug fix
-- `:recycle: refactor:` - Refactoring
-- `:white_check_mark: test:` - Tests
+Most skills implement a **module router** pattern:
+- user intent → module (compile/format/bibliography/grammar/sentences/logic/expression/title/deai/experiment/…)
+- module → run a single Python script under `scripts/` via `uv run python -B ...`
 
-## Key Dependencies
+`paper-audit` is the cross-format orchestrator:
+- For `.tex` / `.typ` audits, it reuses checks from sibling skills’ `scripts/` where possible.
+- For `.pdf` audits, it uses `paper-audit/scripts/` (PDF parsing + visual/layout checks).
 
-- Python 3.9+ with Pillow
-- LaTeX: TeX Live or MiKTeX (with latexmk, chktex, XeLaTeX for Chinese)
-- Typst: `typst-cli` (via cargo or package manager)
-- Docs: Node.js for VitePress
+Tests live centrally under `tests/` and validate the parser + analysis utilities used by multiple skills.
+
+### 3) Docs site
+
+- `docs/` is a standalone VitePress project.
+- `docs/.vitepress/config.ts` defines navigation, i18n (English + `zh/`), and the GitHub Pages base path.
+
+## Non-negotiable content safety constraints (skills)
+
+These constraints are repeated across skill specs and must not be broken when editing scripts or prompts:
+
+- **Never modify** LaTeX inside `\cite{}`, `\ref{}`, `\label{}` or math environments.
+- **Never modify** Typst inside `@cite`, `<label>`, or `$...$` math.
+- **Never fabricate** bibliography entries; only operate on existing `.bib` / `.yml`.
+- Do not change protected terminology unless the user explicitly approves (see each skill’s `references/FORBIDDEN_TERMS.md` where present).
+- Prefer emitting **commented diff/suggestion blocks** rather than silently rewriting source content.
+
+## When you’re unsure where to start
+
+- For any behavior change, start at the relevant `academic-writing-skills/<skill>/SKILL.md` (it documents module routing and the “read next” reference files).
+- For CI failures, run `just ci` locally and then narrow to `just lint`, `just typecheck`, or `just test`.
