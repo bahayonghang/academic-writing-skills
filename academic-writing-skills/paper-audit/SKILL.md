@@ -4,29 +4,284 @@ description: Unified paper audit for Chinese and English papers. Use when review
 metadata:
   category: academic-writing
   tags: [audit, review, paper, pdf, latex, typst, chinese, english, scoring, checklist]
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode MODE] [--pdf-mode MODE] [--style STYLE] [--journal VENUE]"
+  version: "2.0"
+  last_updated: "2026-03-11"
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode MODE] [--pdf-mode MODE] [--style STYLE] [--journal VENUE] [--previous-report PATH]"
 allowed-tools: Read, Glob, Grep, Bash(python *), Task
 ---
 
-# Paper Audit Skill
+# Paper Audit Skill v2.0
 
-Unified academic paper auditing across formats and languages.
+Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages (English, Chinese). Runs automated checks, computes dimension scores, and optionally dispatches multi-perspective review agents.
+
+---
+
+## Critical Rules
+
+- **NEVER** modify `\cite{}`, `\ref{}`, `\label{}`, math environments, or any content listed in `$SKILL_DIR/references/FORBIDDEN_TERMS.md`
+- **NEVER** fabricate bibliography entries; only verify existing `.bib` or `.yml` files
+- **NEVER** change domain terminology without explicit user confirmation
+- **ALWAYS** distinguish `[Script]` (automated) findings from `[LLM]` (agent judgment) assessments in output
+- All dimension scores from scripts are **indicators**, not definitive judgments
+
+---
+
+## Mode Selection Guide
+
+| Mode | When to Use | Output | Speed |
+|------|-------------|--------|-------|
+| `self-check` | Pre-submission readiness check | Scores + issues + checklist | ~30s |
+| `review` | Simulate multi-perspective peer review | Agent review reports + synthesis + revision roadmap | ~2min |
+| `gate` | CI/CD quality gate, binary pass/fail | PASS/FAIL verdict + blocking issues | ~15s |
+| `polish` | Expression refinement via agents | Precheck JSON + Critic/Mentor agent dispatch | ~1min+ |
+| `re-audit` | Verify revisions against prior report | Verification checklist + new issues + score delta | ~1min |
+
+### Mode Selection Logic
+
+```
+"Check my paper"                         -> self-check
+"Review my paper" / "peer review"        -> review
+"Is this ready to submit?"               -> gate
+"Polish the writing"                     -> polish
+"Did I fix the issues?" / "re-check"     -> re-audit
+```
+
+---
 
 ## Steps
 
-1. Parse the paper path and mode from `$ARGUMENTS`. If missing, confirm the target `.tex`, `.typ`, or `.pdf` file.
-2. Review evaluation criteria in `$SKILL_DIR/references/REVIEW_CRITERIA.md` and `$SKILL_DIR/references/CHECKLIST.md`.
-3. Run the orchestrator: `python $SKILL_DIR/scripts/audit.py $ARGUMENTS`.
-4. Present the MD report directly to the user. Distinguish between automated findings and LLM-judgment scores.
-5. If in `review` mode, read `$SKILL_DIR/references/SCHOLAR_EVAL_GUIDE.md` and formulate LLM assessments for Novelty, Significance, Ethics, and Reproducibility.
-6. If in `polish` mode, read `.polish-state/precheck.json` and spawn nested tasks for the Critic Agent and Mentor Agents as defined in the original workflow specifications.
+### All Modes (Common)
+
+1. Parse `$ARGUMENTS` for file path and mode. If missing, ask the user for the target `.tex`, `.typ`, or `.pdf` file.
+2. Read `$SKILL_DIR/references/REVIEW_CRITERIA.md` for scoring framework.
+3. Read `$SKILL_DIR/references/CHECKLIST.md` for universal + venue-specific checklist items.
+4. Run the orchestrator: `python "$SKILL_DIR/scripts/audit.py" $ARGUMENTS`.
+5. Present the Markdown report directly to the user.
+
+### Self-Check Mode
+
+6. Review scores and highlight any Critical/P0 issues that block submission.
+7. If `--scholar-eval` is present, read `$SKILL_DIR/references/SCHOLAR_EVAL_GUIDE.md` and formulate LLM assessments for Novelty, Significance, Ethics, and Reproducibility. Provide as `--llm-json` on a second run.
+
+### Review Mode (Multi-Perspective)
+
+6. Read `$SKILL_DIR/references/SCHOLAR_EVAL_GUIDE.md` for LLM assessment dimensions.
+7. Read `$SKILL_DIR/references/quality_rubrics.md` for scoring anchors and decision mapping.
+8. **Phase 0** (automated): The script output provides automated findings and scores.
+9. **Phase 1** (agents): For each agent in `$SKILL_DIR/agents/`:
+   - Read the agent definition file for persona and protocol.
+   - Dispatch a `Task` with: agent definition + paper content + Phase 0 results as context.
+   - Agents: `methodology_reviewer_agent.md`, `domain_reviewer_agent.md`, `critical_reviewer_agent.md`.
+10. **Phase 2** (synthesis): Read `$SKILL_DIR/agents/synthesis_agent.md` and dispatch a `Task` to consolidate all reviews.
+    - Input: Phase 0 automated results + Phase 1 agent reviews.
+    - Output: Consensus classification, merged scores, final review report, revision roadmap.
+11. Read `$SKILL_DIR/templates/review_report_template.md` for output structure.
+12. Present synthesized report following the template format.
+
+### Gate Mode
+
+6. Report PASS or FAIL based on: zero Critical issues AND all checklist items pass.
+7. List blocking issues (Critical only) and failed checklist items.
+
+### Polish Mode
+
+6. Read `.polish-state/precheck.json` generated by the script.
+7. If blockers detected, report them and ask user to resolve before polishing.
+8. Read `$SKILL_DIR/references/POLISH_GUIDE.md` for style targets and critic protocol.
+9. Spawn nested tasks for the Critic Agent and Mentor Agents as defined in the polish workflow.
+
+### Re-Audit Mode
+
+6. Requires `--previous-report PATH` pointing to a prior audit report.
+7. Script runs fresh checks and compares against previous findings.
+8. Present verification checklist: each prior issue classified as `FULLY_ADDRESSED` / `PARTIALLY_ADDRESSED` / `NOT_ADDRESSED`.
+9. Report any `NEW` issues introduced during revision.
+10. Show score comparison (before vs after).
+
+---
+
+## Venue-Specific Behavior
+
+When `--venue` (or `--journal`) is specified, the audit adds venue-specific checks:
+
+| Venue | Key Rules |
+|-------|-----------|
+| `neurips` | 9-page limit, broader impact statement, paper checklist, double-blind |
+| `iclr` | 10-page limit, reproducibility statement, double-blind |
+| `icml` | 8-page limit, impact statement, 50MB supplementary limit |
+| `ieee` | Abstract <=250 words, 3-5 keywords, >=300 DPI figures |
+| `acm` | CCS concepts required, acmart class, rights management |
+| `thesis-zh` | GB/T 7714-2015 bibliography, bilingual abstract, university template |
+
+Without `--venue`, only universal checklist items apply.
+
+---
+
+## Output Protocol
+
+### Issue Format
+```
+[Severity: Critical|Major|Minor] [Priority: P0|P1|P2]: message (Line N)
+```
+
+### Severity Definitions
+| Severity | Impact | Score Deduction (4-dim) |
+|----------|--------|----------------------|
+| Critical | Blocks submission | -1.5 per issue |
+| Major | Significant quality concern | -0.75 per issue |
+| Minor | Style/formatting improvement | -0.25 per issue |
+
+### Source Labeling
+- `[Script]` — Automated check result (objective, reproducible)
+- `[LLM]` — Agent/LLM judgment (subjective, evidence-based)
+
+---
+
+## Scoring Systems
+
+### 4-Dimension Score (1.0-6.0, base 6.0 with deductions)
+| Dimension | Weight | Primary Checks |
+|-----------|--------|---------------|
+| Quality | 30% | logic, bib, gbt7714 |
+| Clarity | 30% | format, grammar, sentences, consistency, references, visual, figures |
+| Significance | 20% | logic, checklist |
+| Originality | 20% | deai, checklist |
+
+### 8-Dimension ScholarEval (1.0-10.0, optional via `--scholar-eval`)
+| Dimension | Weight | Source |
+|-----------|--------|--------|
+| Soundness | 20% | Script |
+| Clarity | 15% | Script |
+| Presentation | 10% | Script |
+| Novelty | 15% | LLM |
+| Significance | 15% | LLM |
+| Reproducibility | 10% | Mixed |
+| Ethics | 5% | LLM |
+| Overall | 10% | Computed |
+
+See `$SKILL_DIR/references/quality_rubrics.md` for score-level descriptors and decision mapping.
+
+---
+
+## Integration with Sibling Skills
+
+Paper-audit reuses check scripts from sibling skills via format-based routing:
+
+| Format | Script Source | Checks Available |
+|--------|-------------|-----------------|
+| `.tex` (English) | `latex-paper-en/scripts/` | format, grammar, logic, sentences, deai, bib, figures |
+| `.tex` (Chinese) | `latex-thesis-zh/scripts/` (primary), `latex-paper-en/scripts/` (fallback) | + consistency, gbt7714 |
+| `.typ` | `typst-paper/scripts/` | format, grammar, logic, sentences, deai |
+| `.pdf` | `paper-audit/scripts/` only | visual, pdf_parser (no format/bib/figures checks) |
+
+Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `visual_check.py`, `pdf_parser.py`, `detect_language.py`, `parsers.py`, `report_generator.py`, `scholar_eval.py`.
+
+---
+
+## Agent References
+
+| Agent | Definition File | Role |
+|-------|----------------|------|
+| Methodology Reviewer | `$SKILL_DIR/agents/methodology_reviewer_agent.md` | Research design, statistical rigor, reproducibility |
+| Domain Reviewer | `$SKILL_DIR/agents/domain_reviewer_agent.md` | Literature coverage, theoretical framework, contribution |
+| Critical Reviewer | `$SKILL_DIR/agents/critical_reviewer_agent.md` | Core argument challenges, logical fallacies, overclaims |
+| Synthesis Agent | `$SKILL_DIR/agents/synthesis_agent.md` | Consolidate reviews, consensus classification, revision roadmap |
+
+---
+
+## Reference Files
+
+| Reference | Purpose | Used By |
+|-----------|---------|---------|
+| `references/REVIEW_CRITERIA.md` | 4-dimension scoring framework | All modes |
+| `references/CHECKLIST.md` | Universal + venue-specific checklists | self-check, gate |
+| `references/SCHOLAR_EVAL_GUIDE.md` | 8-dimension ScholarEval scoring guide | review (with --scholar-eval) |
+| `references/quality_rubrics.md` | Score-level descriptors and decision mapping | review, self-check |
+| `references/AUDIT_GUIDE.md` | User guide for modes and report interpretation | Reference |
+| `references/POLISH_GUIDE.md` | Style targets and critic/mentor protocol | polish |
+| `references/FORBIDDEN_TERMS.md` | Protected content (citations, math, terminology) | All modes |
+| `references/QUICK_REFERENCE.md` | Check support matrix and CLI quick reference | Reference |
+| `references/editorial_decision_standards.md` | Consensus rules and decision matrix | review (synthesis) |
+
+## Templates
+
+| Template | Purpose |
+|----------|---------|
+| `templates/audit_report_template.md` | Output structure for self-check/gate |
+| `templates/review_report_template.md` | Output structure for multi-perspective review |
+| `templates/revision_roadmap_template.md` | Prioritized revision action plan |
+
+---
+
+## Quality Standards
+
+| Dimension | Requirement |
+|-----------|-------------|
+| Evidence-based | Every weakness must cite specific text, line, or section from the paper |
+| Specificity | Avoid vague comments; provide exact locations and concrete suggestions |
+| Balance | Report both strengths and weaknesses; never only criticize |
+| Actionability | Each issue must include a specific improvement suggestion |
+| Source transparency | Always label findings as [Script] or [LLM] |
+| Format consistency | All reports follow the corresponding template structure |
+| Constructive tone | Professional and helpful; avoid dismissive language |
+
+---
 
 ## Examples
 
-- Run `python $SKILL_DIR/scripts/audit.py $ARGUMENTS`.
-- Run `python $SKILL_DIR/scripts/audit.py paper.pdf --mode review`.
+### Self-Check
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --journal neurips
+```
+
+### Review (Multi-Perspective)
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval
+```
+Then follow Steps 8-12 to dispatch review agents.
+
+### Gate (CI/CD)
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode gate --journal ieee --format json
+```
+
+### Polish
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode polish
+```
+
+### Re-Audit
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.tex --mode re-audit --previous-report report_v1.md
+```
+
+### PDF Input
+```bash
+python "$SKILL_DIR/scripts/audit.py" paper.pdf --mode self-check --pdf-mode enhanced
+```
+
+See `$SKILL_DIR/examples/` for complete output examples.
+
+---
 
 ## Troubleshooting
 
-- Provide a valid `.tex`, `.typ`, or `.pdf` path when arguments are missing.
-- Report command output and exit code when audit execution fails.
+| Problem | Solution |
+|---------|----------|
+| No file path provided | Ask user for a valid `.tex`, `.typ`, or `.pdf` file |
+| Script execution fails | Report the command, exit code, and stderr output |
+| Missing sibling skill scripts | Check that `latex-paper-en/scripts/`, `latex-thesis-zh/scripts/`, or `typst-paper/scripts/` exist |
+| PDF checks limited | PDF mode skips format/bib/figures checks; only visual and content analysis available |
+| `--venue` not recognized | Use one of: `neurips`, `iclr`, `icml`, `ieee`, `acm`, `thesis-zh` |
+| ScholarEval LLM dimensions show N/A | Run with `--scholar-eval`, then provide LLM scores via `--llm-json` |
+| Re-audit missing previous report | Provide `--previous-report PATH` pointing to the prior audit output |
+
+---
+
+## Changelog
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | 2026-03-11 | Full rewrite: venue filtering, multi-perspective review agents, re-audit mode, templates, examples, quality rubrics |
+| 1.0 | 2026-03 | Initial version: 4 modes, script-based audit, 4-dim + 8-dim scoring |

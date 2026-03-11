@@ -50,6 +50,11 @@ class AuditResult:
     summary: str = ""
     # ScholarEval result (optional, populated when --scholar-eval is used)
     scholar_eval_result: object | None = None
+    # Multi-perspective review extras (populated by SKILL.md agent workflow)
+    agent_reviews: list[dict] = field(default_factory=list)
+    consensus: str = ""
+    # Re-audit comparison data (populated by run_reaudit)
+    reaudit_data: dict | None = None
 
 
 @dataclass
@@ -309,70 +314,134 @@ def render_review_report(result: AuditResult) -> str:
     lines = [
         "# Peer Review Report",
         "",
-        f"**File**: `{result.file_path}` | **Language**: {result.language.upper()}",
-        f"**Generated**: {now}" + (f" | **Target Venue**: {result.venue}" if result.venue else ""),
+        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()}",
+        f"**Generated**: {now}"
+        + (f" | **Venue**: {result.venue}" if result.venue else "")
+        + " | **Review Round**: 1",
         "",
     ]
 
     # Summary
     if result.summary:
-        lines.extend(["## Summary", "", result.summary, ""])
+        lines.extend(["## Paper Summary", "", result.summary, ""])
 
-    # Strengths
+    # Strengths (structured: S1, S2, ...)
     if result.strengths:
         lines.extend(["## Strengths", ""])
-        for s in result.strengths:
-            lines.append(f"- {s}")
-        lines.append("")
+        for idx, s in enumerate(result.strengths, 1):
+            if isinstance(s, dict):
+                lines.append(f"### S{idx}: {s.get('title', 'Strength')}")
+                lines.append(s.get("description", ""))
+            else:
+                lines.append(f"### S{idx}: {s}")
+            lines.append("")
 
-    # Weaknesses
+    # Weaknesses (structured: Problem + Why + Suggestion + Severity)
     if result.weaknesses:
         lines.extend(["## Weaknesses", ""])
-        for w in result.weaknesses:
-            lines.append(f"- {w}")
-        lines.append("")
+        for idx, w in enumerate(result.weaknesses, 1):
+            if isinstance(w, dict):
+                lines.append(f"### W{idx}: {w.get('title', 'Weakness')}")
+                lines.append(f"- **Problem**: {w.get('problem', w.get('title', ''))}")
+                lines.append(
+                    f"- **Why it matters**: {w.get('why', 'Impacts paper quality')}"
+                )
+                lines.append(
+                    f"- **Suggestion**: {w.get('suggestion', 'See detailed issues')}"
+                )
+                lines.append(
+                    f"- **Severity**: {w.get('severity', 'Major')}"
+                )
+            else:
+                lines.append(f"### W{idx}: {w}")
+            lines.append("")
 
     # Questions
     if result.questions:
         lines.extend(["## Questions for Authors", ""])
-        for q in result.questions:
-            lines.append(f"- {q}")
+        for idx, q in enumerate(result.questions, 1):
+            lines.append(f"{idx}. {q}")
         lines.append("")
 
-    # Detailed Issues
+    # Detailed Automated Findings (grouped by module)
     if result.issues:
-        lines.extend(["## Detailed Issues", ""])
-        for issue in sorted(
-            result.issues,
-            key=lambda i: (
-                ("Critical", "Major", "Minor").index(i.severity)
-                if i.severity in ("Critical", "Major", "Minor")
-                else 3
-            ),
-        ):
-            loc = f"(Line {issue.line}) " if issue.line else ""
-            lines.append(f"- **[{issue.module}]** {loc}[{issue.severity}]: {issue.message}")
-        lines.append("")
+        lines.extend(["## Detailed Automated Findings", ""])
+        # Group by module
+        modules: dict[str, list[AuditIssue]] = {}
+        for issue in result.issues:
+            modules.setdefault(issue.module, []).append(issue)
+
+        for module_name in sorted(modules.keys()):
+            module_issues = sorted(
+                modules[module_name],
+                key=lambda i: (
+                    ("Critical", "Major", "Minor").index(i.severity)
+                    if i.severity in ("Critical", "Major", "Minor")
+                    else 3
+                ),
+            )
+            lines.extend(
+                [
+                    f"### {module_name}",
+                    "",
+                    "| Line | Severity | Issue |",
+                    "|------|----------|-------|",
+                ]
+            )
+            for issue in module_issues:
+                loc = str(issue.line) if issue.line else "---"
+                lines.append(f"| {loc} | {issue.severity} | {issue.message} |")
+            lines.append("")
 
     # Score & Recommendation
     lines.extend(
         [
             "## Overall Assessment",
             "",
-            "| Dimension | Score |",
-            "|-----------|-------|",
+            "| Dimension | Score | Label |",
+            "|-----------|-------|-------|",
         ]
     )
     for dim in ["quality", "clarity", "significance", "originality"]:
-        lines.append(f"| {dim.capitalize()} | {scores[dim]:.1f}/6.0 |")
+        dim_label = _score_label(scores[dim])
+        lines.append(f"| {dim.capitalize()} | {scores[dim]:.1f}/6.0 | {dim_label} |")
     lines.extend(
         [
-            f"| **Overall** | **{scores['overall']:.1f}/6.0** |",
+            f"| **Overall** | **{scores['overall']:.1f}/6.0** | **{label}** |",
             "",
             f"**Recommendation**: {label}",
             "",
         ]
     )
+
+    # Revision Roadmap
+    critical = [i for i in result.issues if i.severity == "Critical"]
+    major = [i for i in result.issues if i.severity == "Major"]
+    minor = [i for i in result.issues if i.severity == "Minor"]
+
+    if critical or major or minor:
+        lines.extend(["## Revision Roadmap", ""])
+
+        if critical:
+            lines.extend(["### Priority 1 --- Must Address (Blocking)", ""])
+            for idx, issue in enumerate(critical, 1):
+                loc = f" (Line {issue.line})" if issue.line else ""
+                lines.append(f"- [ ] R{idx}: [{issue.module}]{loc} {issue.message}")
+            lines.append("")
+
+        if major:
+            lines.extend(["### Priority 2 --- Strongly Recommended", ""])
+            for idx, issue in enumerate(major, 1):
+                loc = f" (Line {issue.line})" if issue.line else ""
+                lines.append(f"- [ ] S{idx}: [{issue.module}]{loc} {issue.message}")
+            lines.append("")
+
+        if minor:
+            lines.extend(["### Priority 3 --- Optional Improvements", ""])
+            for idx, issue in enumerate(minor, 1):
+                loc = f" (Line {issue.line})" if issue.line else ""
+                lines.append(f"- [ ] [{issue.module}]{loc} {issue.message}")
+            lines.append("")
 
     return "\n".join(lines)
 
@@ -470,6 +539,129 @@ def render_json_report(result: AuditResult) -> str:
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
+def render_reaudit_report(result: AuditResult) -> str:
+    """Render a re-audit comparison report.
+
+    Shows which prior issues were addressed, partially addressed,
+    still present, and which new issues appeared.
+    """
+    lines: list[str] = []
+    data = result.reaudit_data or {}
+    summary = data.get("summary", {})
+    classifications = data.get("classifications", [])
+    new_issues = data.get("new_issues", [])
+
+    lines.append("# Re-Audit Report")
+    lines.append("")
+    lines.append(
+        f"**File**: `{result.file_path}` | **Language**: {result.language} | **Mode**: re-audit"
+    )
+    if result.venue:
+        lines.append(f"**Venue**: {result.venue}")
+    lines.append(f"**Previous Report**: `{data.get('previous_report', 'N/A')}`")
+    lines.append(f"**Generated**: {datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}")
+    lines.append("")
+
+    # Summary
+    lines.append("---")
+    lines.append("")
+    lines.append("## Revision Summary")
+    lines.append("")
+    total_prior = data.get("prior_issue_count", 0)
+    fixed = summary.get("fully_addressed", 0)
+    partial = summary.get("partially_addressed", 0)
+    remaining = summary.get("not_addressed", 0)
+    new_count = summary.get("new", 0)
+    lines.append(f"| Metric | Count |")
+    lines.append(f"|--------|-------|")
+    lines.append(f"| Prior issues | {total_prior} |")
+    lines.append(f"| Fully addressed | {fixed} |")
+    lines.append(f"| Partially addressed | {partial} |")
+    lines.append(f"| Not addressed | {remaining} |")
+    lines.append(f"| New issues | {new_count} |")
+    lines.append("")
+
+    # Progress indicator
+    if total_prior > 0:
+        pct = round((fixed / total_prior) * 100)
+        lines.append(f"**Resolution rate**: {pct}% ({fixed}/{total_prior} fully resolved)")
+    lines.append("")
+
+    # Prior issue verification
+    if classifications:
+        lines.append("---")
+        lines.append("")
+        lines.append("## Prior Issue Verification")
+        lines.append("")
+        lines.append("| # | Module | Prior Severity | Status | Current | Message |")
+        lines.append("|---|--------|---------------|--------|---------|---------|")
+        for idx, c in enumerate(classifications, 1):
+            status = c["status"]
+            if status == "FULLY_ADDRESSED":
+                status_label = "FIXED"
+            elif status == "PARTIALLY_ADDRESSED":
+                status_label = "PARTIAL"
+            else:
+                status_label = "OPEN"
+            cur_sev = c.get("current_severity") or "\u2014"
+            msg = c["prior_message"]
+            if len(msg) > 80:
+                msg = msg[:77] + "..."
+            lines.append(
+                f"| {idx} | {c['prior_module']} | {c['prior_severity']} "
+                f"| {status_label} | {cur_sev} | {msg} |"
+            )
+        lines.append("")
+
+    # New issues
+    if new_issues:
+        lines.append("---")
+        lines.append("")
+        lines.append("## New Issues (not in previous report)")
+        lines.append("")
+        lines.append("| # | Module | Line | Severity | Issue |")
+        lines.append("|---|--------|------|----------|-------|")
+        for idx, ni in enumerate(new_issues, 1):
+            loc = str(ni.get("line")) if ni.get("line") else "\u2014"
+            lines.append(
+                f"| {idx} | {ni['module']} | {loc} | {ni['severity']} | {ni['message']} |"
+            )
+        lines.append("")
+
+    # Current scores
+    scores = calculate_scores(result.issues)
+    overall = scores.get("overall", 6.0)
+    lines.append("---")
+    lines.append("")
+    lines.append("## Current Scores")
+    lines.append("")
+    lines.append("| Dimension | Score |")
+    lines.append("|-----------|-------|")
+    for dim in ("quality", "clarity", "significance", "originality"):
+        lines.append(f"| {dim.title()} | {scores.get(dim, 6.0):.1f} / 6.0 |")
+    lines.append(f"| **Overall** | **{overall:.2f} / 6.0** |")
+    lines.append("")
+
+    # Recommendation
+    lines.append("---")
+    lines.append("")
+    if remaining == 0 and new_count == 0:
+        lines.append("*All prior issues resolved and no new issues found. Ready for next step.*")
+    elif remaining == 0:
+        lines.append(
+            f"*All prior issues resolved, but {new_count} new issue(s) detected. "
+            f"Review new issues before proceeding.*"
+        )
+    else:
+        lines.append(
+            f"*{remaining} prior issue(s) still unresolved. "
+            f"Continue revision and re-run audit.*"
+        )
+    lines.append("")
+
+    return "\n".join(lines)
+
+
 def render_report(result: AuditResult) -> str:
     """
     Render the appropriate report based on audit mode.
@@ -484,6 +676,8 @@ def render_report(result: AuditResult) -> str:
         report = render_review_report(result)
     elif result.mode == "gate":
         report = render_gate_report(result)
+    elif result.mode == "re-audit":
+        report = render_reaudit_report(result)
     elif result.mode == "polish":
         # For polish mode, render_self_check_report shows precheck issues
         report = render_self_check_report(result)

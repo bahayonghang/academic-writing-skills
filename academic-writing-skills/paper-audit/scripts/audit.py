@@ -55,10 +55,82 @@ MODE_CHECKS: dict[str, list[str]] = {
         "checklist",
     ],
     "polish": ["logic", "sentences"],  # Fast rule-based only; agents handle the rest
+    "re-audit": [  # Same checks as self-check for fresh comparison
+        "format",
+        "grammar",
+        "logic",
+        "sentences",
+        "deai",
+        "bib",
+        "figures",
+        "references",
+        "visual",
+    ],
 }
 
 # Additional checks for Chinese documents
 ZH_EXTRA_CHECKS: list[str] = ["consistency", "gbt7714"]
+
+# --- Venue Configuration ---
+
+VENUE_CONFIG: dict[str, dict] = {
+    "neurips": {
+        "page_limit": 9,
+        "required_sections": ["broader_impact"],
+        "checklist_section": "NeurIPS",
+        "blind_review": True,
+        "extra_checks": [
+            ("Paper checklist appendix present", r"\\section\*?\{.*(?:Checklist|Paper\s+Checklist)"),
+            ("Broader impact statement present", r"(?:broader\s+impact|societal\s+impact)"),
+            ("Reproducibility statement present", r"(?:reproducibility|reproduce)"),
+        ],
+    },
+    "iclr": {
+        "page_limit": 10,
+        "checklist_section": "ICLR",
+        "blind_review": True,
+        "extra_checks": [
+            ("Reproducibility statement present", r"(?:reproducibility|reproduce)"),
+            ("Code availability URL present", r"(?:github\.com|code\s+available|code\s+repository)"),
+        ],
+    },
+    "icml": {
+        "page_limit": 8,
+        "required_sections": ["impact_statement"],
+        "checklist_section": "ICML",
+        "blind_review": True,
+        "extra_checks": [
+            ("Impact statement present", r"(?:impact\s+statement|societal\s+impact)"),
+        ],
+    },
+    "ieee": {
+        "abstract_max_words": 250,
+        "keywords_range": (3, 5),
+        "checklist_section": "IEEE",
+        "blind_review": False,
+        "extra_checks": [
+            ("Keywords section present", r"(?:\\begin\{IEEEkeywords\}|\\keywords|[Kk]eywords)"),
+        ],
+    },
+    "acm": {
+        "required_sections": ["ccs_concepts"],
+        "checklist_section": "ACM",
+        "blind_review": False,
+        "extra_checks": [
+            ("CCS concepts present", r"(?:\\ccsdesc|CCS\s+[Cc]oncepts|\\begin\{CCSXML\})"),
+            ("Rights management present", r"(?:\\copyrightyear|\\acmDOI|\\setcopyright)"),
+        ],
+    },
+    "thesis-zh": {
+        "checklist_section": "Chinese Thesis",
+        "blind_review": False,
+        "extra_checks": [
+            ("Bilingual abstract present", r"(?:\\begin\{abstract\}|摘\s*要)"),
+            ("Declaration of originality present", r"(?:原创性|独创性|声明)"),
+            ("Acknowledgments present", r"(?:致\s*谢|acknowledgment)"),
+        ],
+    },
+}
 
 # --- Skill Root Resolution ---
 
@@ -202,8 +274,9 @@ def _run_checklist(
     content: str,
     file_path: str,
     lang: str,  # noqa: ARG001
+    venue: str = "",
 ) -> list[ChecklistItem]:
-    """Run pre-submission checklist checks."""
+    """Run pre-submission checklist checks (universal + venue-specific)."""
     items = []
 
     # Check: no TODO/FIXME/XXX
@@ -321,6 +394,89 @@ def _run_checklist(
             f"Potentially undefined: {undefined[:5]}" if undefined else "",
         )
     )
+
+    # --- Venue-Specific Checks ---
+    venue_key = venue.lower().strip()
+    if venue_key and venue_key in VENUE_CONFIG:
+        config = VENUE_CONFIG[venue_key]
+
+        # Page limit check (heuristic: count \newpage or page-break markers)
+        page_limit = config.get("page_limit")
+        if page_limit:
+            # Rough page estimate: ~300 words per page for LaTeX
+            word_count = len(content.split())
+            est_pages = max(1, word_count // 300)
+            over_limit = est_pages > page_limit
+            items.append(
+                ChecklistItem(
+                    f"Page limit ({page_limit} pages for {venue_key.upper()})",
+                    not over_limit,
+                    f"Estimated ~{est_pages} pages (limit: {page_limit})"
+                    if over_limit
+                    else f"Estimated ~{est_pages} pages",
+                )
+            )
+
+        # Abstract word count (IEEE: max 250)
+        abstract_max = config.get("abstract_max_words")
+        if abstract_max:
+            abs_match = re.search(
+                r"\\begin\{abstract\}(.*?)\\end\{abstract\}", content, re.DOTALL
+            )
+            if abs_match:
+                abs_words = len(abs_match.group(1).split())
+                items.append(
+                    ChecklistItem(
+                        f"Abstract word limit ({abstract_max} words for {venue_key.upper()})",
+                        abs_words <= abstract_max,
+                        f"Abstract has {abs_words} words (limit: {abstract_max})"
+                        if abs_words > abstract_max
+                        else f"Abstract has {abs_words} words",
+                    )
+                )
+
+        # Keywords count range (IEEE: 3-5)
+        keywords_range = config.get("keywords_range")
+        if keywords_range:
+            kw_match = re.search(
+                r"\\begin\{IEEEkeywords\}(.*?)\\end\{IEEEkeywords\}", content, re.DOTALL
+            )
+            if not kw_match:
+                kw_match = re.search(r"[Kk]eywords?[:\s]+(.+?)(?:\n\n|\\.)", content)
+            if kw_match:
+                kw_text = kw_match.group(1)
+                kw_count = len([k.strip() for k in re.split(r"[,;]", kw_text) if k.strip()])
+                lo, hi = keywords_range
+                items.append(
+                    ChecklistItem(
+                        f"Keywords count ({lo}-{hi} for {venue_key.upper()})",
+                        lo <= kw_count <= hi,
+                        f"Found {kw_count} keywords (expected {lo}-{hi})",
+                    )
+                )
+
+        # Blind review compliance
+        if config.get("blind_review"):
+            items.append(
+                ChecklistItem(
+                    f"Double-blind compliance ({venue_key.upper()})",
+                    not has_author,
+                    "Author information detected — must be anonymized for blind review"
+                    if has_author
+                    else "No author information detected",
+                )
+            )
+
+        # Venue-specific content checks (regex-based)
+        for check_label, pattern in config.get("extra_checks", []):
+            found = bool(re.search(pattern, content, re.IGNORECASE))
+            items.append(
+                ChecklistItem(
+                    f"[{venue_key.upper()}] {check_label}",
+                    found,
+                    "" if found else f"Not found — required for {venue_key.upper()} submission",
+                )
+            )
 
     return items
 
@@ -598,8 +754,8 @@ def run_audit(
             else:
                 print(f"[audit] {check_name}: clean")
 
-    # Step 5: Run checklist
-    checklist = _run_checklist(content, file_path, lang)
+    # Step 5: Run checklist (universal + venue-specific)
+    checklist = _run_checklist(content, file_path, lang, venue=venue)
 
     # Step 6: Build result
     result = AuditResult(
@@ -630,6 +786,258 @@ def run_audit(
     return result
 
 
+def export_phase0_context(result: AuditResult) -> str:
+    """Format AuditResult as structured context string for agent consumption.
+
+    Used by SKILL.md to pass Phase 0 automated findings to Phase 1 review agents.
+    Returns a Markdown-formatted summary suitable for inclusion in agent prompts.
+    """
+    from datetime import datetime
+
+    lines = [
+        "# Phase 0: Automated Audit Results",
+        "",
+        f"**File**: `{result.file_path}` | **Language**: {result.language} | **Mode**: {result.mode}",
+    ]
+    if result.venue:
+        lines.append(f"**Venue**: {result.venue}")
+    lines.append(f"**Generated**: {datetime.now().isoformat()}")
+    lines.append("")
+
+    # Issue summary
+    sev_counts: dict[str, int] = {}
+    for issue in result.issues:
+        sev_counts[issue.severity] = sev_counts.get(issue.severity, 0) + 1
+    lines.append(f"## Issue Summary ({len(result.issues)} total)")
+    for sev in ("Critical", "Major", "Minor"):
+        if sev in sev_counts:
+            lines.append(f"- {sev}: {sev_counts[sev]}")
+    lines.append("")
+
+    # Issues by module
+    modules: dict[str, list[AuditIssue]] = {}
+    for issue in result.issues:
+        modules.setdefault(issue.module, []).append(issue)
+
+    lines.append("## Issues by Module")
+    lines.append("")
+    for mod, issues in sorted(modules.items()):
+        lines.append(f"### {mod}")
+        lines.append("")
+        lines.append("| # | Line | Severity | Priority | Issue |")
+        lines.append("|---|------|----------|----------|-------|")
+        for idx, issue in enumerate(issues, 1):
+            loc = str(issue.line) if issue.line else "\u2014"
+            lines.append(
+                f"| {idx} | {loc} | {issue.severity} | {issue.priority} | {issue.message} |"
+            )
+        lines.append("")
+
+    # Checklist
+    if result.checklist:
+        lines.append("## Pre-Submission Checklist")
+        lines.append("")
+        for item in result.checklist:
+            check = "x" if item.passed else " "
+            detail = f" \u2014 {item.details}" if item.details else ""
+            lines.append(f"- [{check}] {item.description}{detail}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def _parse_previous_report(report_path: str) -> list[dict]:
+    """Parse a previous audit report (Markdown) to extract issues.
+
+    Recognises table rows from both full reports and gate reports.
+    Returns a list of dicts with keys: module, severity, message, line.
+    """
+    text = Path(report_path).read_text(encoding="utf-8")
+    issues: list[dict] = []
+
+    # Match issue table rows: | # | MODULE | line | Severity | Priority | message |
+    table_row_re = re.compile(
+        r"^\|\s*\d+\s*\|"  # Row number
+        r"\s*([A-Z_]+)\s*\|"  # Module (uppercase)
+        r"\s*([^|]*?)\s*\|"  # Line
+        r"\s*(\w+)\s*\|"  # Severity
+        r"\s*([^|]*?)\s*\|"  # Priority
+        r"\s*([^|]*?)\s*\|",  # Message
+        re.MULTILINE,
+    )
+
+    for m in table_row_re.finditer(text):
+        module = m.group(1).strip()
+        line_str = m.group(2).strip()
+        severity = m.group(3).strip()
+        message = m.group(5).strip()
+
+        line_num = None
+        if line_str and line_str not in ("\u2014", "-", ""):
+            try:
+                line_num = int(line_str)
+            except ValueError:
+                pass
+
+        issues.append(
+            {
+                "module": module,
+                "severity": severity,
+                "message": message,
+                "line": line_num,
+            }
+        )
+
+    return issues
+
+
+def _fuzzy_match_score(a: str, b: str) -> float:
+    """Compute fuzzy similarity between two strings (0.0 to 1.0)."""
+    from difflib import SequenceMatcher
+
+    return SequenceMatcher(None, a.lower(), b.lower()).ratio()
+
+
+_SEVERITY_RANK: dict[str, int] = {"Critical": 3, "Major": 2, "Minor": 1}
+_MATCH_THRESHOLD: float = 0.6
+
+
+def run_reaudit(
+    file_path: str,
+    previous_report: str,
+    pdf_mode: str = "basic",
+    venue: str = "",
+    lang: str | None = None,
+    online: bool = False,
+    email: str = "",
+    scholar_eval: bool = False,
+) -> AuditResult:
+    """Run a re-audit comparing current state against a previous report.
+
+    Runs a fresh self-check audit and classifies prior issues as:
+    - FULLY_ADDRESSED: No matching issue found in fresh audit
+    - PARTIALLY_ADDRESSED: Similar issue exists but with lower severity
+    - NOT_ADDRESSED: Same or worse issue still present
+    Also identifies NEW issues not in the previous report.
+
+    Args:
+        file_path: Path to the document.
+        previous_report: Path to the previous audit report (Markdown).
+        Other args: same as run_audit.
+
+    Returns:
+        AuditResult with reaudit_data populated.
+    """
+    if not Path(previous_report).exists():
+        raise FileNotFoundError(f"Previous report not found: {previous_report}")
+
+    # Step 1: Run fresh audit (using self-check checks)
+    fresh = run_audit(
+        file_path=file_path,
+        mode="self-check",
+        pdf_mode=pdf_mode,
+        venue=venue,
+        lang=lang,
+        online=online,
+        email=email,
+        scholar_eval=scholar_eval,
+    )
+
+    # Step 2: Parse previous report
+    prior_issues = _parse_previous_report(previous_report)
+    print(f"[re-audit] Previous report: {len(prior_issues)} issues parsed")
+
+    # Step 3: Match and classify each prior issue
+    matched_fresh_indices: set[int] = set()
+    classifications: list[dict] = []
+
+    for prior in prior_issues:
+        best_score = 0.0
+        best_idx = -1
+
+        for idx, fresh_issue in enumerate(fresh.issues):
+            if idx in matched_fresh_indices:
+                continue
+            # Must be same module for matching
+            if fresh_issue.module != prior["module"]:
+                continue
+            score = _fuzzy_match_score(prior["message"], fresh_issue.message)
+            if score > best_score:
+                best_score = score
+                best_idx = idx
+
+        if best_score >= _MATCH_THRESHOLD and best_idx >= 0:
+            matched_fresh_indices.add(best_idx)
+            matched = fresh.issues[best_idx]
+            prior_rank = _SEVERITY_RANK.get(prior["severity"], 1)
+            fresh_rank = _SEVERITY_RANK.get(matched.severity, 1)
+
+            status = "PARTIALLY_ADDRESSED" if fresh_rank < prior_rank else "NOT_ADDRESSED"
+
+            classifications.append(
+                {
+                    "prior_module": prior["module"],
+                    "prior_severity": prior["severity"],
+                    "prior_message": prior["message"],
+                    "status": status,
+                    "current_severity": matched.severity,
+                    "current_message": matched.message,
+                    "match_score": round(best_score, 2),
+                }
+            )
+        else:
+            classifications.append(
+                {
+                    "prior_module": prior["module"],
+                    "prior_severity": prior["severity"],
+                    "prior_message": prior["message"],
+                    "status": "FULLY_ADDRESSED",
+                    "current_severity": None,
+                    "current_message": None,
+                    "match_score": round(best_score, 2),
+                }
+            )
+
+    # Step 4: Identify NEW issues (unmatched in fresh audit)
+    new_issues = [
+        fresh.issues[i] for i in range(len(fresh.issues)) if i not in matched_fresh_indices
+    ]
+
+    # Build result
+    fresh.mode = "re-audit"
+    fresh.reaudit_data = {
+        "previous_report": previous_report,
+        "prior_issue_count": len(prior_issues),
+        "classifications": classifications,
+        "new_issues": [
+            {"module": i.module, "severity": i.severity, "message": i.message, "line": i.line}
+            for i in new_issues
+        ],
+        "summary": {
+            "fully_addressed": sum(
+                1 for c in classifications if c["status"] == "FULLY_ADDRESSED"
+            ),
+            "partially_addressed": sum(
+                1 for c in classifications if c["status"] == "PARTIALLY_ADDRESSED"
+            ),
+            "not_addressed": sum(
+                1 for c in classifications if c["status"] == "NOT_ADDRESSED"
+            ),
+            "new": len(new_issues),
+        },
+    }
+
+    summary = fresh.reaudit_data["summary"]
+    print(
+        f"[re-audit] Results: {summary['fully_addressed']} fixed, "
+        f"{summary['partially_addressed']} partial, "
+        f"{summary['not_addressed']} remaining, "
+        f"{summary['new']} new"
+    )
+
+    return fresh
+
+
 def main() -> int:
     """CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -641,13 +1049,14 @@ Examples:
   python audit.py paper.typ --mode review            # Peer review simulation
   python audit.py paper.pdf --mode gate --pdf-mode enhanced  # Quality gate with enhanced PDF
   python audit.py paper.tex --venue neurips --lang en        # NeurIPS self-check
+  python audit.py paper.tex --mode re-audit --previous-report report_v1.md  # Re-audit
         """,
     )
 
     parser.add_argument("file", help="Path to the document (.tex, .typ, or .pdf)")
     parser.add_argument(
         "--mode",
-        choices=["self-check", "review", "gate", "polish"],
+        choices=["self-check", "review", "gate", "polish", "re-audit"],
         default="self-check",
         help="Audit mode (default: self-check)",
     )
@@ -700,6 +1109,11 @@ Examples:
         help="Enable ScholarEval 8-dimension assessment",
     )
     parser.add_argument(
+        "--previous-report",
+        default=None,
+        help="Path to previous audit report (required for re-audit mode)",
+    )
+    parser.add_argument(
         "--output",
         "-o",
         default=None,
@@ -714,20 +1128,36 @@ Examples:
 
     args = parser.parse_args()
 
+    # Validate re-audit requires --previous-report
+    if args.mode == "re-audit" and not args.previous_report:
+        parser.error("--previous-report is required for re-audit mode")
+
     try:
-        result = run_audit(
-            file_path=args.file,
-            mode=args.mode,
-            pdf_mode=args.pdf_mode,
-            venue=args.venue,
-            lang=args.lang,
-            style=getattr(args, "style", "A"),
-            journal=getattr(args, "journal", ""),
-            skip_logic=getattr(args, "skip_logic", False),
-            online=getattr(args, "online", False),
-            email=getattr(args, "email", ""),
-            scholar_eval=getattr(args, "scholar_eval", False),
-        )
+        if args.mode == "re-audit":
+            result = run_reaudit(
+                file_path=args.file,
+                previous_report=args.previous_report,
+                pdf_mode=args.pdf_mode,
+                venue=args.venue,
+                lang=args.lang,
+                online=getattr(args, "online", False),
+                email=getattr(args, "email", ""),
+                scholar_eval=getattr(args, "scholar_eval", False),
+            )
+        else:
+            result = run_audit(
+                file_path=args.file,
+                mode=args.mode,
+                pdf_mode=args.pdf_mode,
+                venue=args.venue,
+                lang=args.lang,
+                style=getattr(args, "style", "A"),
+                journal=getattr(args, "journal", ""),
+                skip_logic=getattr(args, "skip_logic", False),
+                online=getattr(args, "online", False),
+                email=getattr(args, "email", ""),
+                scholar_eval=getattr(args, "scholar_eval", False),
+            )
 
         report = render_json_report(result) if args.format == "json" else render_report(result)
 

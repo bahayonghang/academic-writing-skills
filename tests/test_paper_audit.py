@@ -12,6 +12,7 @@ from report_generator import (
     ChecklistItem,
     calculate_scores,
     render_gate_report,
+    render_reaudit_report,
     render_report,
     render_review_report,
     render_self_check_report,
@@ -900,3 +901,444 @@ class TestAuditModuleUpdated:
         script = _resolve_script("visual", "en", ".pdf")
         assert script is not None
         assert script.name == "visual_check.py"
+
+
+# ============================================================
+# P0-venue: venue filtering tests
+# ============================================================
+
+
+class TestVenueConfig:
+    """Tests for VENUE_CONFIG and venue-specific checklist items."""
+
+    def test_venue_config_has_all_keys(self) -> None:
+        from audit import VENUE_CONFIG
+
+        expected = {"neurips", "iclr", "icml", "ieee", "acm", "thesis-zh"}
+        assert set(VENUE_CONFIG.keys()) == expected
+
+    def test_venue_config_structure(self) -> None:
+        from audit import VENUE_CONFIG
+
+        for venue_key, config in VENUE_CONFIG.items():
+            assert "checklist_section" in config, f"{venue_key} missing checklist_section"
+            assert "blind_review" in config, f"{venue_key} missing blind_review"
+
+    def test_venue_config_neurips_details(self) -> None:
+        from audit import VENUE_CONFIG
+
+        cfg = VENUE_CONFIG["neurips"]
+        assert cfg["page_limit"] == 9
+        assert cfg["blind_review"] is True
+        assert len(cfg["extra_checks"]) >= 3
+
+    def test_venue_config_ieee_details(self) -> None:
+        from audit import VENUE_CONFIG
+
+        cfg = VENUE_CONFIG["ieee"]
+        assert cfg["abstract_max_words"] == 250
+        assert cfg["keywords_range"] == (3, 5)
+        assert cfg["blind_review"] is False
+
+
+class TestVenueChecklist:
+    """Tests for _run_checklist venue-specific filtering."""
+
+    CLEAN_CONTENT = r"""
+\documentclass{article}
+\begin{document}
+\section{Introduction}
+This is clean text with no issues.
+\end{document}
+"""
+
+    NEURIPS_CONTENT = r"""
+\documentclass{article}
+\begin{document}
+\section{Introduction}
+This paper proposes a novel method.
+\section*{Broader Impact}
+This work may have societal implications.
+\section*{Paper Checklist}
+We provide our checklist below.
+Reproducibility: all code is available.
+\end{document}
+"""
+
+    IEEE_CONTENT = r"""
+\documentclass{IEEEtran}
+\begin{abstract}
+This is a short abstract about signal processing.
+\end{abstract}
+\begin{IEEEkeywords}
+deep learning, signal processing, classification
+\end{IEEEkeywords}
+\begin{document}
+\section{Introduction}
+This paper proposes a method.
+\end{document}
+"""
+
+    def test_no_venue_returns_only_universal(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="")
+        venue_items = [i for i in items if i.description.startswith("[")]
+        assert len(venue_items) == 0
+
+    def test_unknown_venue_returns_only_universal(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="unknown_conf")
+        venue_items = [i for i in items if i.description.startswith("[")]
+        assert len(venue_items) == 0
+
+    def test_neurips_adds_venue_items(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="neurips")
+        venue_items = [i for i in items if "NEURIPS" in i.description]
+        assert len(venue_items) >= 3  # checklist, broader impact, reproducibility
+
+    def test_neurips_content_passes_checks(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.NEURIPS_CONTENT, "paper.tex", "en", venue="neurips")
+        neurips_items = [i for i in items if "NEURIPS" in i.description]
+        passed = [i for i in neurips_items if i.passed]
+        assert len(passed) >= 2  # broader impact + reproducibility should pass
+
+    def test_neurips_page_limit_check(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="neurips")
+        page_item = next((i for i in items if "Page limit" in i.description), None)
+        assert page_item is not None
+
+    def test_neurips_blind_review_check(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="neurips")
+        blind_item = next((i for i in items if "blind" in i.description.lower()), None)
+        assert blind_item is not None
+
+    def test_ieee_abstract_limit(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.IEEE_CONTENT, "paper.tex", "en", venue="ieee")
+        abs_item = next((i for i in items if "Abstract word limit" in i.description), None)
+        assert abs_item is not None
+        assert abs_item.passed  # Short abstract should pass
+
+    def test_ieee_keywords(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.IEEE_CONTENT, "paper.tex", "en", venue="ieee")
+        kw_item = next((i for i in items if "Keywords" in i.description and "IEEE" in i.description), None)
+        assert kw_item is not None
+
+    def test_acm_ccs_missing(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en", venue="acm")
+        ccs_item = next((i for i in items if "CCS" in i.description), None)
+        assert ccs_item is not None
+        assert not ccs_item.passed  # Clean content has no CCS
+
+    def test_backward_compat_no_venue_arg(self) -> None:
+        """Calling _run_checklist without venue arg still works (default='')."""
+        from audit import _run_checklist
+
+        # Should work with positional args only (backward compat)
+        items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en")
+        assert len(items) > 0
+
+
+# ============================================================
+# Re-audit: parse_previous_report tests
+# ============================================================
+
+
+class TestParsePreviousReport:
+    """Tests for _parse_previous_report helper."""
+
+    SAMPLE_REPORT = """\
+# Audit Report
+
+| # | Module | Line | Severity | Priority | Issue |
+|---|--------|------|----------|----------|-------|
+| 1 | FORMAT | 42 | Major | P1 | Inconsistent heading levels |
+| 2 | GRAMMAR | 88 | Minor | P2 | Passive voice overuse in abstract |
+| 3 | BIB | — | Critical | P0 | Undefined citation key: smith2024 |
+"""
+
+    def test_parses_correct_count(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(self.SAMPLE_REPORT, encoding="utf-8")
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert len(issues) == 3
+
+    def test_parses_module_and_severity(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(self.SAMPLE_REPORT, encoding="utf-8")
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert issues[0]["module"] == "FORMAT"
+        assert issues[0]["severity"] == "Major"
+        assert issues[2]["module"] == "BIB"
+        assert issues[2]["severity"] == "Critical"
+
+    def test_parses_line_numbers(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(self.SAMPLE_REPORT, encoding="utf-8")
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert issues[0]["line"] == 42
+        assert issues[1]["line"] == 88
+        assert issues[2]["line"] is None  # "—" should be None
+
+    def test_parses_messages(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(self.SAMPLE_REPORT, encoding="utf-8")
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert "heading levels" in issues[0]["message"]
+        assert "smith2024" in issues[2]["message"]
+
+    def test_empty_report(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text("# Empty Report\n\nNo issues.\n", encoding="utf-8")
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert len(issues) == 0
+
+
+# ============================================================
+# Re-audit: fuzzy matching tests
+# ============================================================
+
+
+class TestFuzzyMatch:
+    """Tests for _fuzzy_match_score."""
+
+    def test_identical_strings(self) -> None:
+        from audit import _fuzzy_match_score
+
+        assert _fuzzy_match_score("hello world", "hello world") == 1.0
+
+    def test_completely_different(self) -> None:
+        from audit import _fuzzy_match_score
+
+        score = _fuzzy_match_score("abc", "xyz")
+        assert score < 0.3
+
+    def test_similar_strings(self) -> None:
+        from audit import _fuzzy_match_score
+
+        score = _fuzzy_match_score(
+            "Inconsistent heading levels",
+            "Inconsistent heading level detected",
+        )
+        assert score >= 0.6
+
+    def test_case_insensitive(self) -> None:
+        from audit import _fuzzy_match_score
+
+        assert _fuzzy_match_score("Hello", "hello") == 1.0
+
+
+# ============================================================
+# Re-audit: reaudit classification tests
+# ============================================================
+
+
+class TestReauditClassification:
+    """Tests for run_reaudit issue classification logic."""
+
+    def _make_result_with_issues(self, issues: list[AuditIssue]) -> AuditResult:
+        return AuditResult(
+            file_path="paper.tex",
+            language="en",
+            mode="re-audit",
+            issues=issues,
+        )
+
+    def test_fully_addressed(self) -> None:
+        """Prior issue not in fresh audit -> FULLY_ADDRESSED."""
+        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+
+        prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading", "line": 10}
+        fresh_issues = [
+            AuditIssue(module="GRAMMAR", line=20, severity="Minor", priority="P2",
+                       message="Passive voice"),
+        ]
+        # Simulate matching: no FORMAT module match
+        best_score = 0.0
+        for fi in fresh_issues:
+            if fi.module != prior["module"]:
+                continue
+            score = _fuzzy_match_score(prior["message"], fi.message)
+            if score > best_score:
+                best_score = score
+        assert best_score < _MATCH_THRESHOLD  # No match -> would be FULLY_ADDRESSED
+
+    def test_not_addressed(self) -> None:
+        """Prior issue still present at same severity -> NOT_ADDRESSED."""
+        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+
+        prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading levels", "line": 10}
+        fresh_issues = [
+            AuditIssue(module="FORMAT", line=10, severity="Major", priority="P1",
+                       message="Bad heading levels detected"),
+        ]
+        best_score = 0.0
+        for fi in fresh_issues:
+            if fi.module != prior["module"]:
+                continue
+            score = _fuzzy_match_score(prior["message"], fi.message)
+            if score > best_score:
+                best_score = score
+        assert best_score >= _MATCH_THRESHOLD
+        # Same severity -> NOT_ADDRESSED
+        prior_rank = _SEVERITY_RANK.get(prior["severity"], 1)
+        fresh_rank = _SEVERITY_RANK.get(fresh_issues[0].severity, 1)
+        assert fresh_rank >= prior_rank  # NOT_ADDRESSED
+
+    def test_partially_addressed(self) -> None:
+        """Prior issue downgraded in severity -> PARTIALLY_ADDRESSED."""
+        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+
+        prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading levels", "line": 10}
+        fresh_issues = [
+            AuditIssue(module="FORMAT", line=10, severity="Minor", priority="P2",
+                       message="Bad heading levels (minor)"),
+        ]
+        best_score = _fuzzy_match_score(prior["message"], fresh_issues[0].message)
+        assert best_score >= _MATCH_THRESHOLD
+        prior_rank = _SEVERITY_RANK.get(prior["severity"], 1)
+        fresh_rank = _SEVERITY_RANK.get(fresh_issues[0].severity, 1)
+        assert fresh_rank < prior_rank  # PARTIALLY_ADDRESSED
+
+
+# ============================================================
+# Re-audit: render_reaudit_report tests
+# ============================================================
+
+
+class TestRenderReauditReport:
+    """Tests for render_reaudit_report."""
+
+    def _make_reaudit_result(self) -> AuditResult:
+        return AuditResult(
+            file_path="paper.tex",
+            language="en",
+            mode="re-audit",
+            venue="neurips",
+            issues=[
+                AuditIssue(module="GRAMMAR", line=20, severity="Minor",
+                           priority="P2", message="Passive voice"),
+            ],
+            reaudit_data={
+                "previous_report": "report_v1.md",
+                "prior_issue_count": 3,
+                "classifications": [
+                    {
+                        "prior_module": "FORMAT",
+                        "prior_severity": "Major",
+                        "prior_message": "Inconsistent heading levels",
+                        "status": "FULLY_ADDRESSED",
+                        "current_severity": None,
+                        "current_message": None,
+                        "match_score": 0.3,
+                    },
+                    {
+                        "prior_module": "BIB",
+                        "prior_severity": "Critical",
+                        "prior_message": "Undefined citation key",
+                        "status": "FULLY_ADDRESSED",
+                        "current_severity": None,
+                        "current_message": None,
+                        "match_score": 0.2,
+                    },
+                    {
+                        "prior_module": "GRAMMAR",
+                        "prior_severity": "Major",
+                        "prior_message": "Passive voice overuse",
+                        "status": "PARTIALLY_ADDRESSED",
+                        "current_severity": "Minor",
+                        "current_message": "Passive voice",
+                        "match_score": 0.75,
+                    },
+                ],
+                "new_issues": [],
+                "summary": {
+                    "fully_addressed": 2,
+                    "partially_addressed": 1,
+                    "not_addressed": 0,
+                    "new": 0,
+                },
+            },
+        )
+
+    def test_report_has_title(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "# Re-Audit Report" in report
+
+    def test_report_has_venue(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "neurips" in report
+
+    def test_report_has_summary_table(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "Fully addressed" in report
+        assert "| 2 |" in report  # 2 fully addressed
+
+    def test_report_has_resolution_rate(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "67%" in report  # 2/3 = 67%
+
+    def test_report_has_verification_table(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "Prior Issue Verification" in report
+        assert "FIXED" in report
+        assert "PARTIAL" in report
+
+    def test_report_has_scores(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_reaudit_report(result)
+        assert "Current Scores" in report
+        assert "Overall" in report
+
+    def test_report_dispatches_via_render_report(self) -> None:
+        result = self._make_reaudit_result()
+        report = render_report(result)
+        assert "# Re-Audit Report" in report
+
+    def test_all_resolved_recommendation(self) -> None:
+        result = self._make_reaudit_result()
+        result.reaudit_data["summary"]["partially_addressed"] = 0
+        result.reaudit_data["summary"]["not_addressed"] = 0
+        report = render_reaudit_report(result)
+        assert "Ready for next step" in report
+
+    def test_unresolved_recommendation(self) -> None:
+        result = self._make_reaudit_result()
+        result.reaudit_data["summary"]["not_addressed"] = 2
+        report = render_reaudit_report(result)
+        assert "still unresolved" in report
