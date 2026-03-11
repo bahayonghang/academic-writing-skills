@@ -3,9 +3,9 @@
 Thesis Structure Mapper - Map multi-file thesis structure
 
 Usage:
-    python map_structure.py main.tex
-    python map_structure.py main.tex --json
-    python map_structure.py main.tex --detect-template
+    uv run python map_structure.py main.tex
+    uv run python map_structure.py main.tex --json
+    uv run python map_structure.py main.tex --detect-template
 """
 
 import argparse
@@ -334,3 +334,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

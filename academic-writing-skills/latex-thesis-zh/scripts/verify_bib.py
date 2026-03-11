@@ -4,9 +4,9 @@ BibTeX Verification Script - Check bibliography integrity
 Includes static checks and online verification preparation.
 
 Usage:
-    python verify_bib.py references.bib
-    python verify_bib.py references.bib --standard gb7714
-    python verify_bib.py references.bib --online-check
+    uv run python verify_bib.py references.bib
+    uv run python verify_bib.py references.bib --standard gb7714
+    uv run python verify_bib.py references.bib --online-check
 """
 
 import argparse
@@ -272,3 +272,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

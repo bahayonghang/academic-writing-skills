@@ -3,10 +3,10 @@
 Prose Extractor - Extract plain text from LaTeX/Typst for analysis
 
 Usage:
-    python extract_prose.py main.tex
-    python extract_prose.py main.typ
-    python extract_prose.py main.tex --output prose.txt
-    python extract_prose.py main.tex --keep-structure
+    uv run python -B extract_prose.py main.tex
+    uv run python -B extract_prose.py main.tex --keep-structure
+    uv run python -B extract_prose.py main.tex --output prose.txt
+    uv run python -B extract_prose.py main.tex --keep-structure
 """
 
 import argparse
@@ -89,3 +89,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

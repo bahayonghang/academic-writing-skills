@@ -3,9 +3,9 @@
 LaTeX Format Checker - chktex wrapper with enhanced reporting
 
 Usage:
-    python check_format.py main.tex
-    python check_format.py main.tex --strict
-    python check_format.py main.tex --config .chktexrc
+    uv run python -B check_format.py main.tex
+    uv run python -B check_format.py main.tex --strict
+    uv run python -B check_format.py main.tex --config .chktexrc
 """
 
 import argparse
@@ -206,3 +206,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

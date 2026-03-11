@@ -3,8 +3,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/analyze_logic.py main.typ
-python ../scripts/analyze_logic.py main.typ --section methods
+uv run python ../scripts/analyze_logic.py main.typ
+uv run python ../scripts/analyze_logic.py main.typ --section methods
 ```
 
 **目标**：确保段落间逻辑流畅，强化方法论的严谨性。
@@ -76,3 +76,4 @@ python ../scripts/analyze_logic.py main.typ --section methods
 5. **论证而非描述**：解释"为何"，而非仅陈述"是什么"
 
 参考：[WRITING_PHILOSOPHY.md](../references/WRITING_PHILOSOPHY.md)
+

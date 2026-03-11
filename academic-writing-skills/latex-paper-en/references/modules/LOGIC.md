@@ -5,8 +5,8 @@
 **Purpose**: Ensure logical flow between paragraphs and strengthen methodological rigor in academic writing.
 
 ```bash
-python scripts/analyze_logic.py main.tex
-python scripts/analyze_logic.py main.tex --section methods
+uv run python -B scripts/analyze_logic.py main.tex
+uv run python -B scripts/analyze_logic.py main.tex --section methods
 ```
 
 **Focus Areas**:
@@ -73,3 +73,4 @@ python scripts/analyze_logic.py main.tex --section methods
 3. **Evidence chain**: Every claim needs support (data, citation, or logic)
 4. **Explicit transitions**: Use signal words to show relationships
 5. **Justify, don't just describe**: Explain *why*, not just *what*
+

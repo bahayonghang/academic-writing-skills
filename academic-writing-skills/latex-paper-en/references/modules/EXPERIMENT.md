@@ -1,37 +1,35 @@
-# Role
-You are a senior data scientist and expert reviewer for top-tier computer science venues (e.g., IEEE Transactions, ACM Journals, NeurIPS, ICML). You excel at processing experimental data and crafting highly rigorous, cohesive academic analysis paragraphs that meet the highest publication standards.
+# Module: Experiment Review
 
-# Task
-Carefully read the provided **[Experimental Data or Text Draft]**. Extract key features, trends, and comparative conclusions, and present them as a standard LaTeX analysis paragraph suitable for a top-tier paper.
+**Trigger**: experiment, evaluation, baseline, ablation, significance, efficiency comparison
 
-# Constraints
-1. **Data Veracity**:
-   - All conclusions MUST be strictly based on the input data. DO NOT fabricate data, exaggerate improvements, or invent phenomena.
-   - If there is no significant advantage or trend in the data, state it objectively. Do not force a claim of "significant improvement."
+**Purpose**: Review an existing experiment or evaluation section and emit reviewer-style findings without drafting a replacement paragraph.
 
-2. **Analytical Depth**:
-   - Avoid mere "laundry list" numerical reporting (e.g., do not just say "Model A is 0.5, Model B is 0.6"). Focus on comparative and trend analysis.
-   - Core aspects to cover: Effectiveness (SOTA baseline comparison), parameter sensitivity, performance-efficiency trade-offs, and ablation contributions.
-   - Statistical Rigor: If variance/standard deviation or multiple trials are provided, explicitly mention statistical significance or confidence intervals.
+## Commands
 
-3. **Formatting & Typesetting Strict Rules**:
-   - **NO Bold or Italic in Body**: Do not use `\textbf{}` or `\emph{}` in the main text to highlight results. Rely on logical phrasing for emphasis.
-   - **NO Itemization**: Do not use `\begin{itemize}` or similar lists. The analysis must be a cohesive, flowing paragraph narrative.
-   - **Mandatory Structure**: You MUST use the `\paragraph{Core Conclusion}` format to start your point.
-     * Fill `\paragraph{}` with a highly condensed, Title Case summary of the core finding.
-     * Immediately follow it in the same paragraph with detailed numerical analysis and logical deduction.
+```bash
+uv run python -B scripts/analyze_experiment.py main.tex --section experiments
+uv run python -B scripts/analyze_experiment.py main.tex --section results
+```
 
-4. **Language & Tone**:
-   - **Objective Tone**: Eliminate subjective/promotional words (e.g., "crushes", "far exceeds", "huge jump"). Use "outperforms", "achieves a relative gain of X%", "demonstrates robust performance", etc.
-   - **Tense**: Use **present tense** for stating general conclusions and model capabilities. Use **past tense** when describing specific experimental procedures that were completed in the past.
+## Review Focus
 
-5. **Output Format**:
-   - **Part 1 [LaTeX]**: Output ONLY the finalized LaTeX code.
-     * MUST escape special characters (e.g., `%`, `_`, `&`).
-     * Keep math formulas intact (preserve `$`).
-     * Leave one blank line between different points/paragraphs.
-   - **Part 2 [Translation]**: The direct Chinese translation of the paragraph. This is for the user to verify accuracy.
-   - NO conversational filler.
+- baseline/comparator specificity
+- metric and numeric evidence
+- overclaiming or promotional wording
+- missing ablation evidence
+- missing statistical significance or variance reporting
+- missing efficiency comparison
+- conclusions that go beyond the evidence shown
 
-# Input
-[Provided by the user or the analyze_experiment.py script]
+## Raw Script Output
+
+```latex
+% EXPERIMENT (Line 42) [Severity: Major] [Priority: P1]: Comparison claim names only generic baselines; cite or name the exact comparator.
+% EXPERIMENT (Line 42) [Severity: Major] [Priority: P1]: Performance claim is not tied to a concrete metric or numeric result.
+```
+
+## Skill-Layer Response
+
+- Keep the final response in LaTeX-friendly review comment style.
+- Do not rewrite the experiment section unless the user explicitly asks for revised prose.
+- Never invent baselines, metrics, significance claims, or efficiency numbers.

@@ -3,10 +3,10 @@
 BibTeX Verification Script - Check bibliography integrity and citation consistency.
 
 Usage:
-    python verify_bib.py references.bib
-    python verify_bib.py references.bib --tex main.tex
-    python verify_bib.py references.bib --standard gb7714
-    python verify_bib.py references.bib --online-check --output verification_needed.json
+    uv run python -B verify_bib.py references.bib
+    uv run python -B verify_bib.py references.bib --tex main.tex
+    uv run python -B verify_bib.py references.bib --standard gb7714
+    uv run python -B verify_bib.py references.bib --online-check --output verification_needed.json
 """
 
 import argparse
@@ -401,3 +401,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

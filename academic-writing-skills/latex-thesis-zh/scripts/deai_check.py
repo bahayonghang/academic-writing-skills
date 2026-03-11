@@ -4,9 +4,9 @@ De-AI Writing Trace Checker for Chinese Academic Theses
 Analyzes LaTeX/Typst source code for AI writing patterns.
 
 Usage:
-    python deai_check.py main.tex --section introduction
-    python deai_check.py main.typ --analyze
-    python deai_check.py main.tex --fix-suggestions
+    uv run python deai_check.py main.tex --section introduction
+    uv run python deai_check.py main.tex --analyze
+    uv run python deai_check.py main.tex --fix-suggestions
 """
 
 import argparse
@@ -341,3 +341,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

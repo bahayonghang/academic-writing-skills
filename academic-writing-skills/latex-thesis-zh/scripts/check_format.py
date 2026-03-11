@@ -3,8 +3,8 @@
 LaTeX Format Checker (Chinese) - chktex wrapper with Chinese support
 
 Usage:
-    python check_format.py main.tex
-    python check_format.py main.tex --strict
+    uv run python check_format.py main.tex
+    uv run python check_format.py main.tex --strict
 """
 
 import argparse
@@ -214,3 +214,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

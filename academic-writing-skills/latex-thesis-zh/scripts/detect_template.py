@@ -3,8 +3,8 @@
 Detect thesis template and report key requirements.
 
 Usage:
-    python detect_template.py main.tex
-    python detect_template.py main.tex --json
+    uv run python detect_template.py main.tex
+    uv run python detect_template.py main.tex --json
 """
 
 import argparse
@@ -133,3 +133,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

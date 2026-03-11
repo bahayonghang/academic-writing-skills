@@ -1,16 +1,23 @@
 # Workflow & Best Practices
 
-If user requests complete review, execute in order:
-1. Format Check → fix critical issues
-2. Grammar Analysis → fix errors
-3. De-AI Editing → reduce AI writing traces
-4. Long Sentence Analysis → simplify complex sentences
-5. Expression Restructuring → improve academic tone
+Choose the smallest module sequence that fits the user request.
+
+## Common Review Paths
+
+1. Build/debug path:
+   `compile` -> `bibliography`
+2. Prose quality path:
+   `grammar` -> `sentences` -> `logic`
+3. Submission hygiene path:
+   `format` -> `figures` -> `title`
+4. Language cleanup path:
+   `translation` or `deai`, then `expression` if tone polish is still needed
+5. Experiment scrutiny path:
+   `experiment` on its own unless the user also asks for logic or figure review
 
 ## Best Practices
 
-1. **Start with Format Check**: Always verify document compiles before other checks
-2. **Iterative Refinement**: Apply one module at a time for better control
-3. **Preserve Protected Elements**: Never modify `\cite{}`, `\ref{}`, `\label{}`, math environments
-4. **Verify Before Commit**: Review all suggestions before accepting changes
-5. Use with version control (git) to track changes; combine with LaTeX Workshop for real-time preview
+1. Route to one concern at a time instead of invoking every module by default.
+2. Preserve `\cite{}`, `\ref{}`, `\label{}`, math, and custom macros unless edits are explicitly requested.
+3. Treat script output as raw analysis; convert it into concise LaTeX-friendly findings for the final response.
+4. Use version control when the user asks for source edits after the review phase.

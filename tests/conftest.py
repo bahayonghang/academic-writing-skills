@@ -1,7 +1,11 @@
 """Shared pytest configuration for script-based tests."""
 
+import os
 import sys
 from pathlib import Path
+
+sys.dont_write_bytecode = True
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 SCRIPT_DIR_EN = (
     Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"

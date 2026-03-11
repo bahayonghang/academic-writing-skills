@@ -6,19 +6,19 @@
 **脚本用法**：
 ```bash
 # 根据内容生成标题
-python ../scripts/optimize_title.py main.typ --generate
+uv run python ../scripts/optimize_title.py main.typ --generate
 
 # 优化现有标题
-python ../scripts/optimize_title.py main.typ --optimize
+uv run python ../scripts/optimize_title.py main.typ --optimize
 
 # 检查标题质量
-python ../scripts/optimize_title.py main.typ --check
+uv run python ../scripts/optimize_title.py main.typ --check
 
 # 交互式模式（推荐）
-python ../scripts/optimize_title.py main.typ --interactive
+uv run python ../scripts/optimize_title.py main.typ --interactive
 
 # 标题对比测试
-python ../scripts/optimize_title.py main.typ --compare "Title A" "Title B" "Title C"
+uv run python ../scripts/optimize_title.py main.typ --compare "Title A" "Title B" "Title C"
 ```
 
 **标题质量标准**（基于 IEEE Author Center 及顶级会议/期刊）：
@@ -212,3 +212,4 @@ Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
 参考资源：
 - [IEEE Author Center](https://conferences.ieeeauthorcenter.ieee.org/)
 - [Royal Society Blog on Title Optimization](https://royalsociety.org/blog/2025/01/title-abstract-and-keywords-a-practical-guide-to-maximizing-the-visibility-and-impact-of-your-papers/)
+

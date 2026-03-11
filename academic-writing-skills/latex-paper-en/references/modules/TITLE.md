@@ -8,19 +8,19 @@
 
 **Generate title from content**:
 ```bash
-python scripts/optimize_title.py main.tex --generate
+uv run python -B scripts/optimize_title.py main.tex --generate
 # Analyzes abstract/introduction to propose 3-5 title candidates
 ```
 
 **Optimize existing title**:
 ```bash
-python scripts/optimize_title.py main.tex --optimize
+uv run python -B scripts/optimize_title.py main.tex --optimize
 # Analyzes current title and provides improvement suggestions
 ```
 
 **Check title quality**:
 ```bash
-python scripts/optimize_title.py main.tex --check
+uv run python -B scripts/optimize_title.py main.tex --check
 # Evaluates title against best practices (score 0-100)
 ```
 
@@ -180,18 +180,18 @@ Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
 
 **Interactive Mode** (Recommended):
 ```bash
-python scripts/optimize_title.py main.tex --interactive
+uv run python -B scripts/optimize_title.py main.tex --interactive
 # Step-by-step guided title creation with user input
 ```
 
 **Batch Mode** (For multiple papers):
 ```bash
-python scripts/optimize_title.py "papers/*.tex" --batch --output title_report.json
+uv run python -B scripts/optimize_title.py "papers/*.tex" --batch --output title_report.json
 ```
 
 **Title A/B Testing** (Optional):
 ```bash
-python scripts/optimize_title.py main.tex --compare "Title A" "Title B" "Title C"
+uv run python -B scripts/optimize_title.py main.tex --compare "Title A" "Title B" "Title C"
 # Compares multiple title candidates with detailed scoring
 ```
 
@@ -205,3 +205,4 @@ python scripts/optimize_title.py main.tex --compare "Title A" "Title B" "Title C
 7. **Match venue style**: IEEE (descriptive), ACM (creative), NeurIPS (concise)
 
 Reference: [IEEE Author Center](https://conferences.ieeeauthorcenter.ieee.org/), [Royal Society Blog](https://royalsociety.org/blog/2025/01/title-abstract-and-keywords-a-practical-guide-to-maximizing-the-visibility-and-impact-of-your-papers/)
+

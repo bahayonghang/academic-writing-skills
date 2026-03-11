@@ -3,11 +3,11 @@
 Typst Compilation Script - Fast compilation for Typst documents
 
 Usage:
-    python compile.py main.typ                    # Compile once
-    python compile.py main.typ --watch            # Watch mode (auto-recompile)
-    python compile.py main.typ --format png       # Export as PNG
-    python compile.py main.typ --output out.pdf   # Custom output name
-    python compile.py main.typ --font-path ./fonts # Custom font directory
+    uv run python compile.py main.typ                    # Compile once
+    uv run python compile.py main.typ --watch            # Watch mode (auto-recompile)
+    uv run python compile.py main.typ --format png       # Export as PNG
+    uv run python compile.py main.typ --output out.pdf   # Custom output name
+    uv run python compile.py main.typ --font-path ./fonts # Custom font directory
 
 Features:
     - Fast compilation (milliseconds)
@@ -183,12 +183,12 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python compile.py main.typ                        # Compile to PDF
-  python compile.py main.typ --watch                # Watch mode
-  python compile.py main.typ --format png           # Export as PNG
-  python compile.py main.typ --output paper.pdf     # Custom output name
-  python compile.py main.typ --font-path ./fonts    # Custom fonts
-  python compile.py main.typ --list-fonts           # List available fonts
+  uv run python compile.py main.typ                        # Compile to PDF
+  uv run python compile.py main.typ --watch                # Watch mode
+  uv run python compile.py main.typ --format png           # Export as PNG
+  uv run python compile.py main.typ --output paper.pdf     # Custom output name
+  uv run python compile.py main.typ --font-path ./fonts    # Custom fonts
+  uv run python compile.py main.typ --list-fonts           # List available fonts
 
 Output Formats:
   pdf    Portable Document Format (default)
@@ -256,3 +256,4 @@ Installation:
 
 if __name__ == "__main__":
     main()
+

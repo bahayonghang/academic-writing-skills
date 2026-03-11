@@ -6,9 +6,13 @@ This script is terminology-driven and provides:
 1) terminology confirmation table
 2) draft translation
 3) ambiguity notes requiring manual confirmation
+
+It preserves LaTeX commands and math segments verbatim while translating
+the surrounding visible prose.
 """
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -48,6 +52,12 @@ COMMON_PATTERNS = {
     "与...相比": "Compared with ...",
     "在...中": "in ...",
 }
+PROTECTED_RE = re.compile(
+    r"(\\[a-zA-Z]+\*?(?:\[[^\]]*\])?(?:\{[^{}]*\})?|"
+    r"\$[^$]*\$|"
+    r"\\begin\{[^}]+\}.*?\\end\{[^}]+\})",
+    re.DOTALL,
+)
 
 
 def _load_source(input_arg: str) -> str:
@@ -66,8 +76,27 @@ def _build_term_table(text: str, domain: str) -> list[tuple[str, str, str]]:
     return table
 
 
+def _mask_protected(text: str) -> tuple[str, dict[str, str]]:
+    masked = text
+    replacements: dict[str, str] = {}
+
+    for idx, match in enumerate(PROTECTED_RE.finditer(text)):
+        placeholder = f"@@LATEX_{idx}@@"
+        replacements[placeholder] = match.group(0)
+        masked = masked.replace(match.group(0), placeholder, 1)
+
+    return masked, replacements
+
+
+def _restore_protected(text: str, replacements: dict[str, str]) -> str:
+    restored = text
+    for placeholder, original in replacements.items():
+        restored = restored.replace(placeholder, original)
+    return restored
+
+
 def _draft_translate(text: str, domain: str) -> tuple[str, list[str]]:
-    translated = text
+    translated, replacements = _mask_protected(text)
     notes: list[str] = []
 
     for zh, en in TERMINOLOGY.get(domain, {}).items():
@@ -85,6 +114,7 @@ def _draft_translate(text: str, domain: str) -> tuple[str, list[str]]:
     # Minimal sentence formatting
     translated = translated.replace("。", ". ").replace("，", ", ")
     translated = " ".join(translated.split())
+    translated = _restore_protected(translated, replacements)
     return translated, notes
 
 

@@ -4,9 +4,9 @@ De-AI Batch Processor for Typst Academic Papers
 Batch processes entire Typst chapters or documents.
 
 Usage:
-    python deai_batch.py main.typ --chapter chapter3/introduction.typ
-    python deai_batch.py main.typ --all-sections
-    python deai_batch.py main.typ --section introduction --output polished/
+    uv run python deai_batch.py main.typ --chapter chapter3/introduction.typ
+    uv run python deai_batch.py main.typ --all-sections
+    uv run python deai_batch.py main.typ --section introduction --output polished/
 """
 
 import argparse
@@ -301,3 +301,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

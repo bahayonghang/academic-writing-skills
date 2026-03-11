@@ -4,9 +4,9 @@ De-AI Writing Trace Checker for Typst Academic Papers
 Analyzes Typst source code for AI writing patterns.
 
 Usage:
-    python deai_check.py main.typ --section introduction
-    python deai_check.py main.typ --analyze
-    python deai_check.py main.typ --fix-suggestions
+    uv run python deai_check.py main.typ --section introduction
+    uv run python deai_check.py main.typ --analyze
+    uv run python deai_check.py main.typ --fix-suggestions
 """
 
 import argparse
@@ -365,3 +365,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

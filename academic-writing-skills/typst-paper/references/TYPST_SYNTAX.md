@@ -611,3 +611,4 @@ This work was supported by...
 - [Typst Universe](https://typst.app/universe/) - Templates and packages
 - [Typst Tutorial](https://typst.app/docs/tutorial/)
 - [Typst Reference](https://typst.app/docs/reference/)
+

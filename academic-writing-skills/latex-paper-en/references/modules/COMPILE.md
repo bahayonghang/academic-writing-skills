@@ -27,28 +27,29 @@
 **Usage**:
 ```bash
 # Default: latexmk auto-handles all dependencies (recommended)
-python scripts/compile.py main.tex                          # Auto-detect compiler + latexmk
+uv run python -B scripts/compile.py main.tex                          # Auto-detect compiler + latexmk
 
 # Single-pass compilation (quick builds)
-python scripts/compile.py main.tex --recipe pdflatex        # PDFLaTeX only
-python scripts/compile.py main.tex --recipe xelatex         # XeLaTeX only
+uv run python -B scripts/compile.py main.tex --recipe pdflatex        # PDFLaTeX only
+uv run python -B scripts/compile.py main.tex --recipe xelatex         # XeLaTeX only
 
 # Explicit bibliography workflows (when you need control)
-python scripts/compile.py main.tex --recipe pdflatex-bibtex # Traditional BibTeX
-python scripts/compile.py main.tex --recipe pdflatex-biber  # Modern biblatex (recommended)
-python scripts/compile.py main.tex --recipe xelatex-bibtex  # XeLaTeX + BibTeX
-python scripts/compile.py main.tex --recipe xelatex-biber   # XeLaTeX + biblatex
+uv run python -B scripts/compile.py main.tex --recipe pdflatex-bibtex # Traditional BibTeX
+uv run python -B scripts/compile.py main.tex --recipe pdflatex-biber  # Modern biblatex (recommended)
+uv run python -B scripts/compile.py main.tex --recipe xelatex-bibtex  # XeLaTeX + BibTeX
+uv run python -B scripts/compile.py main.tex --recipe xelatex-biber   # XeLaTeX + biblatex
 
 # With output directory
-python scripts/compile.py main.tex --outdir build
+uv run python -B scripts/compile.py main.tex --outdir build
 
 # Force detected-compiler biber workflow
-python scripts/compile.py main.tex --biber
+uv run python -B scripts/compile.py main.tex --biber
 
 # Utilities
-python scripts/compile.py main.tex --watch                  # Watch mode
-python scripts/compile.py main.tex --clean                  # Clean aux files
-python scripts/compile.py main.tex --clean-all              # Clean all (incl. PDF)
+uv run python -B scripts/compile.py main.tex --watch                  # Watch mode
+uv run python -B scripts/compile.py main.tex --clean                  # Clean aux files
+uv run python -B scripts/compile.py main.tex --clean-all              # Clean all (incl. PDF)
 ```
 
 **Auto-detection**: Script detects Chinese content (ctex, xeCJK, Chinese chars) and auto-selects xelatex.
+

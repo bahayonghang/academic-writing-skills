@@ -4,9 +4,9 @@ De-AI Batch Processor for Chinese Academic Theses
 Batch processes entire LaTeX/Typst chapters or documents.
 
 Usage:
-    python deai_batch.py main.tex --chapter chapter3/introduction.tex
-    python deai_batch.py main.typ --all-sections
-    python deai_batch.py main.tex --section introduction --output polished/
+    uv run python deai_batch.py main.tex --chapter chapter3/introduction.tex
+    uv run python deai_batch.py main.tex --all-sections
+    uv run python deai_batch.py main.tex --section introduction --output polished/
 """
 
 import argparse
@@ -302,3 +302,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

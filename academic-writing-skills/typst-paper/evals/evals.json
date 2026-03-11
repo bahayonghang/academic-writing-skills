@@ -1,0 +1,23 @@
+{
+  "skill_name": "typst-paper",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Compile my Typst paper and tell me whether the layout looks obviously wrong for an IEEE-style submission.",
+      "expected_output": "Route to compile and format modules, run uv-backed Typst checks, and return Typst-oriented comments.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Validate the bibliography in main.typ, whether it uses BibTeX or Hayagriva, and point out any missing citations.",
+      "expected_output": "Choose the bibliography module correctly and surface Typst citation/bibliography mismatches.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Polish the abstract wording in my Typst paper and help me translate one Chinese paragraph into academic English without breaking labels.",
+      "expected_output": "Route to expression and translation modules while preserving Typst syntax.",
+      "files": []
+    }
+  ]
+}

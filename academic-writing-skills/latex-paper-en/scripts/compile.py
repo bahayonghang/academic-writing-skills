@@ -8,12 +8,12 @@ Default Behavior:
     of compilation passes. This is the recommended approach for most use cases.
 
 Usage:
-    python compile.py main.tex                       # Default: latexmk auto
-    python compile.py main.tex --compiler xelatex    # Explicit compiler
-    python compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
-    python compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
-    python compile.py main.tex --watch               # Continuous compilation
-    python compile.py main.tex --clean               # Clean auxiliary files
+    uv run python -B compile.py main.tex                       # Default: latexmk auto
+    uv run python -B compile.py main.tex --compiler xelatex    # Explicit compiler
+    uv run python -B compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
+    uv run python -B compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
+    uv run python -B compile.py main.tex --watch               # Continuous compilation
+    uv run python -B compile.py main.tex --clean               # Clean auxiliary files
 
 Recipes (matching VS Code LaTeX Workshop):
     latexmk          - LaTeXmk auto (DEFAULT - recommended)
@@ -398,12 +398,12 @@ Recipes (matching VS Code LaTeX Workshop):
   lualatex-biber   lualatex -> biber -> lualatex*2
 
 Examples:
-  python compile.py main.tex                        # Default: latexmk auto
-  python compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
-  python compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
-  python compile.py main.tex --biber               # Force detected-compiler biber flow
-  python compile.py main.tex --outdir build        # Set output directory (latexmk path)
-  python compile.py main.tex --watch                # Watch mode
+  uv run python -B compile.py main.tex                        # Default: latexmk auto
+  uv run python -B compile.py main.tex --recipe pdflatex-bibtex  # Traditional BibTeX
+  uv run python -B compile.py main.tex --recipe pdflatex-biber   # Modern biblatex
+  uv run python -B compile.py main.tex --biber               # Force detected-compiler biber flow
+  uv run python -B compile.py main.tex --outdir build        # Set output directory (latexmk path)
+  uv run python -B compile.py main.tex --watch                # Watch mode
         """,
     )
     parser.add_argument("tex_file", help="Main .tex file to compile")
@@ -486,3 +486,4 @@ Examples:
 
 if __name__ == "__main__":
     main()
+

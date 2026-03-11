@@ -13,8 +13,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/check_format.py main.typ
-python ../scripts/check_format.py main.typ --strict
+uv run python ../scripts/check_format.py main.typ
+uv run python ../scripts/check_format.py main.typ --strict
 ```
 
 **Typst 格式检查要点**:
@@ -48,3 +48,4 @@ python ../scripts/check_format.py main.typ --strict
 - 字体混用（中英文字体未分离）
 - 图表编号不连续
 - 引用格式不统一
+

@@ -3,8 +3,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/analyze_grammar.py main.typ
-python ../scripts/analyze_grammar.py main.typ --section introduction
+uv run python ../scripts/analyze_grammar.py main.typ
+uv run python ../scripts/analyze_grammar.py main.typ --section introduction
 ```
 
 **重点检查领域**:
@@ -30,3 +30,4 @@ python ../scripts/analyze_grammar.py main.typ --section introduction
 | Chinglish | more and more | increasingly |
 
 参考：[COMMON_ERRORS.md](../references/COMMON_ERRORS.md)、[STYLE_GUIDE.md](../references/STYLE_GUIDE.md)
+

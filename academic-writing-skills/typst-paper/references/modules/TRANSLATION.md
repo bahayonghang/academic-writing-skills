@@ -3,8 +3,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/translate_academic.py "中文文本"
-python ../scripts/translate_academic.py main.typ --section abstract
+uv run python ../scripts/translate_academic.py "中文文本"
+uv run python ../scripts/translate_academic.py main.typ --section abstract
 ```
 
 **翻译流程**:
@@ -46,3 +46,4 @@ python ../scripts/translate_academic.py main.typ --section abstract
 | 综上所述 | In summary / In conclusion |
 
 参考：[STYLE_GUIDE.md](../references/STYLE_GUIDE.md)、[COMMON_ERRORS.md](../references/COMMON_ERRORS.md)
+

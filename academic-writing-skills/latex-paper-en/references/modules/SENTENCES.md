@@ -5,8 +5,8 @@
 Trigger condition: Sentences >50 words OR >3 subordinate clauses
 
 ```bash
-python scripts/analyze_sentences.py main.tex
-python scripts/analyze_sentences.py main.tex --section introduction --max-words 45 --max-clauses 3
+uv run python -B scripts/analyze_sentences.py main.tex
+uv run python -B scripts/analyze_sentences.py main.tex --section introduction --max-words 45 --max-clauses 3
 ```
 
 Output format:
@@ -18,3 +18,4 @@ Output format:
 %   - [Purpose] to...
 % Suggested: [simplified version]
 ```
+

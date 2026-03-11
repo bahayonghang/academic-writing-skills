@@ -3,8 +3,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/analyze_sentences.py main.typ
-python ../scripts/analyze_sentences.py main.typ --threshold 50
+uv run python ../scripts/analyze_sentences.py main.typ
+uv run python ../scripts/analyze_sentences.py main.typ --threshold 50
 ```
 
 **触发条件**:
@@ -26,3 +26,4 @@ python ../scripts/analyze_sentences.py main.typ --threshold 50
 2. 提取修饰成分
 3. 拆分为多个短句
 4. 保持逻辑连贯性
+

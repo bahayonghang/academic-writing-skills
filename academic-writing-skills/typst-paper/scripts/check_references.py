@@ -6,8 +6,8 @@ Checks for undefined references, unreferenced labels, missing captions,
 reference ordering issues, and numbering gaps using Typst syntax.
 
 Usage:
-    python check_references.py main.typ
-    python check_references.py main.typ --json
+    uv run python check_references.py main.typ
+    uv run python check_references.py main.typ --json
 """
 
 from __future__ import annotations
@@ -384,3 +384,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

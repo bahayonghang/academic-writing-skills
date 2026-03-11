@@ -9,8 +9,8 @@ Weak verb replacements:
 - show → demonstrate, illustrate, indicate
 
 ```bash
-python scripts/improve_expression.py main.tex
-python scripts/improve_expression.py main.tex --section related
+uv run python -B scripts/improve_expression.py main.tex
+uv run python -B scripts/improve_expression.py main.tex --section related
 ```
 
 Output format:
@@ -22,3 +22,4 @@ Output format:
 ```
 
 Style guide: [STYLE_GUIDE.md](../references/STYLE_GUIDE.md)
+

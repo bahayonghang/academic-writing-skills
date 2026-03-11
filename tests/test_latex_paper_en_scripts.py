@@ -2,16 +2,19 @@
 
 import importlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+experiment_module = importlib.import_module("analyze_experiment")
 compile_module = importlib.import_module("compile")
 verify_bib_module = importlib.import_module("verify_bib")
 check_figures_module = importlib.import_module("check_figures")
 optimize_title_module = importlib.import_module("optimize_title")
+translate_module = importlib.import_module("translate_academic")
 
 
 def test_compile_biber_flag_forces_detected_recipe(
@@ -168,6 +171,53 @@ def test_check_figures_pillow_missing_degrades_gracefully(
     issues = checker.check_quality(figure)
 
     assert any("Pillow not installed" in issue for issue in issues)
+
+
+def test_check_figures_help_does_not_advertise_json() -> None:
+    script_path = Path(check_figures_module.__file__)
+    result = subprocess.run(
+        [sys.executable, "-B", str(script_path), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "--json" not in result.stdout
+
+
+def test_analyze_experiment_accepts_plural_section_alias_and_reports_review_findings(
+    tmp_path: Path,
+) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Experiments}
+Our method significantly outperforms prior methods on the benchmark.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    findings = experiment_module.analyze(tex, "experiments")
+    joined = "\n".join(findings).lower()
+
+    assert "section not found" not in joined
+    assert "% experiment" in joined
+    assert "baseline" in joined or "comparator" in joined
+    assert "ablation" in joined
+    assert "statistical" in joined
+    assert "efficiency" in joined
+
+
+def test_translate_academic_preserves_latex_fragments() -> None:
+    text = r"本文提出了一种用于时间序列预测的模型，如\cite{wang2024}所示，并最小化$L_{pred}$。"
+    result = translate_module.translate(text, "deep-learning")
+
+    assert r"\cite{wang2024}" in result
+    assert r"$L_{pred}$" in result
+    assert "time series forecasting" in result.lower()
 
 
 def test_optimize_title_compare_requires_multiple_titles(

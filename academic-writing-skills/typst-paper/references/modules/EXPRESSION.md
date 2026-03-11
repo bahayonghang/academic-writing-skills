@@ -3,8 +3,8 @@
 
 **脚本用法**:
 ```bash
-python ../scripts/improve_expression.py main.typ
-python ../scripts/improve_expression.py main.typ --section methods
+uv run python ../scripts/improve_expression.py main.typ
+uv run python ../scripts/improve_expression.py main.typ --section methods
 ```
 
 **英文学术表达**:
@@ -41,3 +41,4 @@ python ../scripts/improve_expression.py main.typ --section methods
 ```
 
 参考：[STYLE_GUIDE.md](../references/STYLE_GUIDE.md)
+

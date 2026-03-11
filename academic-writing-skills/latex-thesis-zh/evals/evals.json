@@ -1,0 +1,23 @@
+{
+  "skill_name": "latex-thesis-zh",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我定位这个中文学位论文 main.tex 为什么 XeLaTeX 一直编译失败，并判断是不是 thuthesis 模板。",
+      "expected_output": "先识别模板，再走 compile 模块，返回模板结论和编译排障建议。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "请梳理这篇硕士论文的章节结构，并检查术语和缩略语是否前后统一。",
+      "expected_output": "路由到 structure 和 consistency 模块，并给出结构概览与一致性问题。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "按 GB/T 7714 帮我检查参考文献，再看看绪论是不是有明显 AI 腔。",
+      "expected_output": "路由到 bibliography 和 deai 模块，分别输出格式问题和去 AI 化建议。",
+      "files": []
+    }
+  ]
+}

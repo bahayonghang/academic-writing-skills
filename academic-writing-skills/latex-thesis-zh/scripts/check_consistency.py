@@ -3,9 +3,9 @@
 Terminology Consistency Checker - Check term usage consistency in thesis
 
 Usage:
-    python check_consistency.py main.tex
-    python check_consistency.py main.tex --terms
-    python check_consistency.py main.tex --abbreviations
+    uv run python check_consistency.py main.tex
+    uv run python check_consistency.py main.tex --terms
+    uv run python check_consistency.py main.tex --abbreviations
 """
 
 import argparse
@@ -331,3 +331,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

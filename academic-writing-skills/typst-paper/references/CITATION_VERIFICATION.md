@@ -149,3 +149,4 @@ When verifying citations for Typst, the same 6-step workflow applies. The only d
 - [CrossRef API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/)
 - [arXiv API](https://info.arxiv.org/help/api/basics.html)
 - [Hayagriva Format](https://github.com/typst/hayagriva/blob/main/docs/file-format.md)
+

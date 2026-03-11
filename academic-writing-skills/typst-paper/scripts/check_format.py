@@ -3,9 +3,9 @@
 Typst Format Checker - Validate academic paper formatting
 
 Usage:
-    python check_format.py main.typ              # Basic check
-    python check_format.py main.typ --strict     # Strict mode
-    python check_format.py main.typ --venue ieee # Venue-specific check
+    uv run python check_format.py main.typ              # Basic check
+    uv run python check_format.py main.typ --strict     # Strict mode
+    uv run python check_format.py main.typ --venue ieee # Venue-specific check
 
 Checks:
     - Page settings (margins, paper size)
@@ -280,9 +280,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python check_format.py main.typ                # Basic check
-  python check_format.py main.typ --strict       # Strict mode (warnings as errors)
-  python check_format.py main.typ --venue ieee   # IEEE-specific checks
+  uv run python check_format.py main.typ                # Basic check
+  uv run python check_format.py main.typ --strict       # Strict mode (warnings as errors)
+  uv run python check_format.py main.typ --venue ieee   # IEEE-specific checks
 
 Supported Venues:
   ieee      IEEE conferences and journals
@@ -316,3 +316,4 @@ Supported Venues:
 
 if __name__ == "__main__":
     main()
+

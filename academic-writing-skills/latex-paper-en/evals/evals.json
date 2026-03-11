@@ -1,0 +1,41 @@
+{
+  "skill_name": "latex-paper-en",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Compile my IEEE paper in main.tex, then explain why two citations are unresolved after BibTeX.",
+      "expected_output": "Select compile and bibliography modules, run the correct commands, and report build plus citation findings in LaTeX-oriented review format with exact failing steps or unresolved keys.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review the introduction section for grammar, sentence length, and logic, but do not touch equations or citation keys.",
+      "expected_output": "Route to grammar, sentences, and logic modules with source-preserving comments, keeping equations and citation keys untouched.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Before I submit to ACM, check whether my figures are publication-ready and whether the title sounds too generic.",
+      "expected_output": "Route to figures and title modules and return concrete pre-submission findings about figure readiness, missing assets, resolution risks, or weak title wording.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Translate this Chinese methods paragraph into academic English, but keep \\\\cite{zhang2024} and $L_{pred}$ unchanged and use deep-learning terminology.",
+      "expected_output": "Route to the translation module, preserve LaTeX fragments verbatim, surface terminology choices, and avoid silently rewriting citations or math.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Check the introduction section for AI-sounding phrases and tell me what to revise, but do not rewrite labels, citations, or equations.",
+      "expected_output": "Route to the deai module and return source-preserving findings or risk notes without editing labels, citations, or math environments.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Review the experiments section for weak baselines, unsupported claims, missing ablations, and absent significance reporting, but do not draft a replacement paragraph.",
+      "expected_output": "Route to the experiment module and return reviewer-style LaTeX comments about comparator specificity, metric evidence, ablation coverage, significance reporting, efficiency comparisons, and overclaiming.",
+      "files": []
+    }
+  ]
+}

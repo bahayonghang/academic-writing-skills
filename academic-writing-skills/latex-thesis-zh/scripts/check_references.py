@@ -6,8 +6,8 @@ Extends the single-file checker with multi-file support via \\input{} and \\incl
 Resolves included files relative to the main file's directory.
 
 Usage:
-    python check_references.py main.tex
-    python check_references.py main.tex --json
+    uv run python check_references.py main.tex
+    uv run python check_references.py main.tex --json
 """
 
 from __future__ import annotations
@@ -456,3 +456,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

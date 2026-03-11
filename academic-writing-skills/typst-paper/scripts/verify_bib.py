@@ -3,10 +3,10 @@
 Bibliography Verification Script for Typst
 
 Usage:
-    python verify_bib.py references.bib                    # Check BibTeX file
-    python verify_bib.py references.yml                    # Check Hayagriva file
-    python verify_bib.py references.bib --typ main.typ     # Check citations
-    python verify_bib.py references.bib --style ieee       # Check style
+    uv run python verify_bib.py references.bib                    # Check BibTeX file
+    uv run python verify_bib.py references.yml                    # Check Hayagriva file
+    uv run python verify_bib.py references.bib --typ main.typ     # Check citations
+    uv run python verify_bib.py references.bib --style ieee       # Check style
 
 Checks:
     - Required fields for each entry type
@@ -114,7 +114,10 @@ class BibChecker:
         try:
             import yaml
         except ImportError:
-            print("[ERROR] PyYAML not installed. Install with: pip install pyyaml")
+            print(
+                "[ERROR] PyYAML not installed. Run `uv sync` for project dependencies "
+                "or `uv add pyyaml` before checking Hayagriva files."
+            )
             return False
 
         try:
@@ -345,10 +348,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python verify_bib.py references.bib                    # Check BibTeX file
-  python verify_bib.py references.yml                    # Check Hayagriva file
-  python verify_bib.py references.bib --typ main.typ     # Check citations
-  python verify_bib.py references.bib --style ieee       # Check style
+  uv run python verify_bib.py references.bib                    # Check BibTeX file
+  uv run python verify_bib.py references.yml                    # Check Hayagriva file
+  uv run python verify_bib.py references.bib --typ main.typ     # Check citations
+  uv run python verify_bib.py references.bib --style ieee       # Check style
 
 Supported Formats:
   .bib        BibTeX format (traditional)
@@ -404,3 +407,4 @@ Supported Styles:
 
 if __name__ == "__main__":
     main()
+
