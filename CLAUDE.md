@@ -9,11 +9,11 @@ Academic writing assistant skills for Claude Code, supporting LaTeX and Typst fo
 ## Build & Test Commands
 
 ```bash
-# Run all tests
-python -m unittest
+# Run all tests (requires pytest: uv pip install -e ".[dev]")
+python -m pytest
 
 # Run a single test file
-python -m unittest tests/test_parsers.py
+python -m pytest tests/test_parsers.py
 
 # Documentation site (VitePress)
 cd docs && npm install && npm run docs:dev     # Dev server at http://localhost:5173
