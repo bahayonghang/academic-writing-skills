@@ -3,129 +3,83 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Professional LaTeX & Typst Tools for Claude Code"
-  tagline: "Streamline your academic writing workflow with intelligent compilation, format checking, and bibliography management"
+  text: "Skill-first docs for LaTeX, Typst, audit, and research workflows"
+  tagline: "Documentation rebuilt from the actual SKILL.md contracts in this repository."
   actions:
     - theme: brand
-      text: Get Started
+      text: Install
       link: /installation
     - theme: alt
-      text: View on GitHub
+      text: Browse Skills
+      link: /skills/
+    - theme: alt
+      text: GitHub
       link: https://github.com/bahayonghang/academic-writing-skills
 
 features:
   - icon: 📝
-    title: English Papers (latex-paper-en)
-    details: Comprehensive support for English academic papers with ChkTeX format checking, pdfLaTeX/XeLaTeX compilation, logic & methodology analysis, top-tier caption generation, and IEEE/ACM/Springer style guides.
-
+    title: "`latex-paper-en`"
+    details: "English LaTeX paper workflow for compile, format, bibliography, grammar, sentence, logic, expression, translation, title, figure, de-AI, and experiment review."
   - icon: 📚
-    title: Chinese Thesis (latex-thesis-zh)
-    details: Specialized tools for Chinese theses with GB/T 7714 compliance, XeLaTeX compilation, logic & methodology analysis, bilingual caption generation, and support for major university templates (Tsinghua, PKU, USTC, Fudan).
-
+    title: "`latex-thesis-zh`"
+    details: "Chinese thesis workflow for structure mapping, GB/T 7714 checks, template detection, compilation, consistency checks, title optimization, de-AI, and experiment review."
   - icon: ⚡
-    title: Typst Papers (typst-paper)
-    details: Modern markup language with millisecond compilation, bilingual support, logic & methodology analysis, caption generation, and venue-specific templates (IEEE, ACM, Springer, NeurIPS).
-
-  - icon: 🚀
-    title: Fast Compilation
-    details: Flexible compilation workflows including xelatex, pdflatex, latexmk for LaTeX, and lightning-fast Typst compilation with watch mode.
-
-  - icon: 🔍
-    title: Intelligent Format Checking
-    details: Automated format checking with ChkTeX for LaTeX, Typst syntax validation, bibliography verification, and style guide compliance.
-
-  - icon: 🎨
-    title: De-AI Editing
-    details: Reduce AI writing traces while preserving technical accuracy. Built-in references for academic writing styles and common errors.
-
-  - icon: 🧭
-    title: Industrial AI Research (industrial-ai-research)
-    details: Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, and structured outputs for predictive maintenance, scheduling, anomaly detection, and smart manufacturing topics.
-
+    title: "`typst-paper`"
+    details: "Typst paper workflow for compile, format, bibliography, grammar, sentence, logic, expression, translation, title, de-AI, and experiment review."
   - icon: 🔬
-    title: Paper Audit (paper-audit)
-    details: Automated multi-mode paper auditing for .tex/.typ/.pdf files. PDF visual layout checking, figure/table reference integrity, caption audit, ScholarEval 8-dimension quality scoring, and online bibliography verification via CrossRef/Semantic Scholar.
+    title: "`paper-audit`"
+    details: "Unified audit for `.tex`, `.typ`, and `.pdf` with self-check, review, gate, polish, and re-audit modes."
+  - icon: 🧭
+    title: "`industrial-ai-research`"
+    details: "Venue-aware Industrial AI literature workflow with mandatory intake, source prioritization, and structured report modes."
+  - icon: 🛠️
+    title: "Script-backed"
+    details: "The docs now align with the repository reality: Python scripts live under each skill's `scripts/`, and repo-local examples use `uv run python ...`."
 ---
 
-## Quick Start
+## What This Site Covers
 
-Install the skills with a single command:
+This site documents the skills that exist under `academic-writing-skills/`. It is intentionally skill-first:
 
-```bash
-# Install specific skill
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+- install the repository or individual skills
+- decide which skill fits your task
+- understand the module router for that skill
+- use the matching script or prompt pattern
 
-# Or install all skills at once
-npx skilks add github.com/bahayonghang/academic-writing-skills
+The primary source of truth is each skill's `SKILL.md`. These docs summarize and organize those contracts for faster onboarding.
+
+## Included Skills
+
+| Skill | Best for | Entry |
+| --- | --- | --- |
+| `latex-paper-en` | Existing English LaTeX papers | [/skills/latex-paper-en/](/skills/latex-paper-en/) |
+| `latex-thesis-zh` | Existing Chinese LaTeX theses | [/skills/latex-thesis-zh/](/skills/latex-thesis-zh/) |
+| `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
+| `paper-audit` | Pre-submission checks and reviews | [/skills/paper-audit/](/skills/paper-audit/) |
+| `industrial-ai-research` | Industrial AI literature research | [/skills/industrial-ai-research/](/skills/industrial-ai-research/) |
+
+## Core Principles
+
+- Use the smallest matching module instead of running every checker by default.
+- Provide the entry file path and target scope when you want script execution.
+- Keep compilation, checking, rewriting, and auditing as separate steps when possible.
+- Treat the docs as guidance for the repository version you installed, not as generic LaTeX or Typst advice.
+
+## Fast Path
+
+1. Start with [/installation](/installation).
+2. Follow [/quick-start](/quick-start) for the first working command.
+3. Use [/skills/](/skills/) to choose the correct skill.
+4. Use [/usage](/usage) for cross-skill conventions.
+
+## Repository Layout
+
+```text
+academic-writing-skills/
+├─ latex-paper-en/
+├─ latex-thesis-zh/
+├─ typst-paper/
+├─ paper-audit/
+├─ industrial-ai-research/
+└─ docs/
 ```
-
-## Why Academic Writing Skills?
-
-Academic writing can be challenging, especially when managing compilation workflows, bibliography formatting, and style guide compliance. **Academic Writing Skills** brings intelligent automation to your workflow:
-
-- **No More Compilation Errors**: Intelligent recipe selection and error diagnosis
-- **Fast Compilation**: Typst compiles in milliseconds vs LaTeX's seconds
-- **Style Guide Compliance**: Automated checking against IEEE, ACM, Springer, and GB/T 7714 standards
-- **Time-Saving**: Focus on content, not formatting details
-- **Best Practices**: Learn proper usage through integrated references
-
-## What's Included
-
-### Skills
-
-- **latex-paper-en**: Complete toolkit for English academic papers (LaTeX)
-- **latex-thesis-zh**: Specialized support for Chinese theses (LaTeX)
-- **typst-paper**: Modern markup language for fast academic writing 🆕
-- **industrial-ai-research**: Industrial AI literature research with venue-aware retrieval and language-aware reporting 🆕
-- **paper-audit**: Automated paper auditing with PDF support, visual checks, and ScholarEval 🆕
-
-### Compilation Support
-
-**LaTeX**:
-- Single-pass compilation (xelatex, pdflatex)
-- Automated dependency handling (latexmk)
-- Full bibliography workflows (xelatex-biber, pdflatex-bibtex)
-
-**Typst** 🆕:
-- Millisecond-level compilation
-- Watch mode for live preview
-- Multiple output formats (PDF, PNG, SVG)
-
-### Format Checking
-
-- ChkTeX integration for LaTeX linting
-- Typst syntax validation
-- Bibliography verification (BibTeX/Hayagriva)
-- Style guide compliance checking
-- Reference integrity checking (undefined refs, missing/poor captions)
-- PDF visual layout analysis (margins, overlaps, image DPI)
-
-### References
-
-Built-in documentation for:
-- Common Chinglish errors in academic writing
-- IEEE, ACM, Springer, NeurIPS formatting guidelines
-- GB/T 7714-2015 Chinese bibliography standard
-- University thesis templates and requirements
-- Typst syntax reference and best practices
-
-### Paper Quality Assessment 🆕
-
-- **ScholarEval**: 8-dimension academic quality scoring (1-10 scale)
-- **Publication Readiness Labels**: Strong Accept → Not ready
-- **Online Bibliography Verification**: CrossRef + Semantic Scholar API
-- **PDF Visual Analysis**: Layout issues for camera-ready submissions
-
-## Learn More
-
-- [Installation Guide](/installation) - Detailed installation instructions
-- [Quick Start](/quick-start) - Get up and running in minutes
-- [Usage Guide](/usage) - Comprehensive usage documentation
-- [GitHub Repository](https://github.com/bahayonghang/academic-writing-skills) - Source code and issue tracker
-
-## License
-
-Academic Use Only - Not for commercial use.

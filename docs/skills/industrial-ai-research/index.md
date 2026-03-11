@@ -1,76 +1,59 @@
-# Industrial AI Research (industrial-ai-research)
+# `industrial-ai-research`
 
-Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, and structured report outputs.
+Industrial AI literature research workflow with intake, venue-aware search, and structured outputs.
 
-## Overview
+## Use It For
 
-The `industrial-ai-research` skill is a lean research workflow for automation and Industrial AI topics. It is designed for requests such as predictive maintenance surveys, intelligent scheduling literature scans, industrial anomaly detection updates, and smart manufacturing trend mapping.
+- predictive maintenance surveys
+- intelligent scheduling literature scans
+- industrial anomaly detection updates
+- smart manufacturing and CPS trend mapping
+- gap-finding memos for Industrial AI topics
 
-Unlike the writing-first skills in this repository, `industrial-ai-research` starts with an intake step, then prioritizes recent arXiv streams and top IEEE or automation venues before producing a structured report.
+## Workflow Shape
 
-## Core Capabilities
+1. intake
+2. search plan
+3. source collection
+4. verification and triage
+5. synthesis
+6. report assembly
 
-- Mandatory opening intake for report language, deliverable mode, time window, and Industrial AI emphasis
-- Industrial AI first source strategy, with robotics venues treated as crossover sources
-- Venue-aware filtering for recent arXiv, IEEE automation, and adjacent industrial/control literature
-- Stable report formats for short brief, literature map, venue-ranked survey, and research-gap memo
-- Contrarian synthesis pass to surface weak evidence and overclaimed trends
+## Intake Defaults
 
-## Intake Questions
+If the user does not specify them, the skill defaults toward:
 
-The skill asks these before synthesis:
-
-1. Report language
-2. Deliverable mode
-3. Time window
-4. Domain emphasis inside Industrial AI
-
-Default language choices:
-- `English`
-- `Simplified Chinese`
-- `Bilingual summary`
+- time window: last 3 years
+- topic emphasis: implied by the prompt
 
 ## Deliverable Modes
 
 | Mode | Best for |
-|---|---|
-| `research-brief` | fast decision-ready overview |
-| `literature-map` | thematic overview across methods and papers |
-| `venue-ranked survey` | source-quality-sensitive literature scan |
-| `research-gap memo` | identifying open problems and next experiments |
+| --- | --- |
+| `research-brief` | short decision-ready overview |
+| `literature-map` | thematic clustering |
+| `venue-ranked survey` | source-tier-sensitive survey |
+| `research-gap memo` | open problems and next experiments |
 
-## Default Source Policy
+## Source Policy
 
-Primary anchors:
-- arXiv `eess.SY`
-- arXiv `cs.AI`
-- IEEE Transactions on Automation Science and Engineering
-- IEEE CASE
+Primary sources emphasize recent arXiv and top IEEE or automation venues. Crossover robotics venues are secondary unless they materially improve coverage.
 
-Secondary crossover sources:
-- arXiv `cs.RO`
-- arXiv `cs.LG`
-- ICRA
-- IROS
-- RA-L
-- T-RO
-
-## Example Requests
+## Good First Requests
 
 ```text
-Research recent predictive maintenance papers
+Research recent predictive maintenance papers in the last 3 years.
 ```
 
 ```text
-Compare latest scheduling RL papers from arXiv and IEEE
+Compare scheduling RL papers from arXiv and IEEE automation venues.
 ```
 
 ```text
-Research industrial anomaly detection gaps and summarize them in Chinese
+Write a research-gap memo for industrial anomaly detection.
 ```
 
-## References
+## Notes
 
-- Skill definition: `academic-writing-skills/industrial-ai-research/SKILL.md`
-- Source policy: `references/source-priority.md`
-- Venue map: `references/venue-map.md`
+- This skill is for research, not for compiling or rewriting your paper source.
+- It should separate verified evidence from inference.
