@@ -4,13 +4,14 @@ Comprehensive guide to using Academic Writing Skills.
 
 ## Overview
 
-Academic Writing Skills provides three main skills:
+Academic Writing Skills provides four main skills:
 
 | Skill | Purpose | Key Features |
 |-------|---------|--------------|
 | `latex-paper-en` | English academic papers | Compilation, format check, grammar, translation |
 | `latex-thesis-zh` | Chinese theses | Compilation, GB/T 7714 check, template support |
 | `typst-paper` | Typst academic papers | Compilation, format check, grammar, translation |
+| `deep-research` | Industrial AI literature research | venue-aware retrieval, mandatory intake, structured reports |
 
 ## Modular Design
 
@@ -125,6 +126,17 @@ To protect your project and system, the assistant follows safety-first rules whe
 | Template | template, IEEE, ACM | Template configuration |
 | Title Optimization | title, 标题, title optimization | Generate and optimize titles |
 | Experiment Analysis | experiment, data analysis, ablation | Generate cohesive experiment narrative |
+
+### deep-research Workflow
+
+| Step | Function |
+|------|----------|
+| Intake | Ask for report language, deliverable mode, time window, and Industrial AI emphasis |
+| Source Planning | Build primary and secondary venue buckets before searching |
+| Collection | Gather recent arXiv and top IEEE or automation papers |
+| Verification | Check venue, year, source type, and relevance |
+| Synthesis | Cluster findings, compare evidence, surface gaps |
+| Reporting | Produce a stable report with source buckets, shortlist, synthesis, and next steps |
 
 ## Compile Module
 
@@ -355,3 +367,4 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 - [English Paper Modules](/skills/latex-paper-en/)
 - [Chinese Thesis Resources](/skills/latex-thesis-zh/)
 - [Typst Paper Modules](/skills/typst-paper/)
+- [Deep Research](/skills/deep-research/)

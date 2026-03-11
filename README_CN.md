@@ -75,6 +75,13 @@ npm run docs:dev
 - **去AI化编辑**：降低 AI 写作痕迹
 - **NeurIPS 对齐评分**：Quality/Clarity/Significance/Originality 1-6 分加权报告
 
+### deep-research（Industrial AI 深度研究）🆕
+- **Industrial AI 聚焦**：预测性维护、智能调度、工业异常检测、智能制造、CPS 与 robotics crossover
+- **强制 Intake**：在综合前先确认报告语言、交付模式、时间窗口和研究侧重点
+- **按 Venue 优先检索**：优先 recent arXiv 与 T-ASE、CASE 等 IEEE/自动化 venue
+- **结构化输出**：research-brief、literature-map、venue-ranked survey、research-gap memo
+- **稳定报告结构**：检索范围、来源分桶、候选论文、综合结论与下一步建议
+
 ## 输出协议
 
 所有建议采用注释式 diff 格式，并包含固定字段：
@@ -109,6 +116,7 @@ npm run docs:dev
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skilks add github.com/bahayonghang/academic-writing-skills/deep-research
 npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
 
 # 或一次性安装所有技能
@@ -136,6 +144,7 @@ mkdir -p ~/.claude/skills
 cp -r latex-paper-en ~/.claude/skills/
 cp -r latex-thesis-zh ~/.claude/skills/
 cp -r typst-paper ~/.claude/skills/
+cp -r deep-research ~/.claude/skills/
 cp -r paper-audit ~/.claude/skills/
 ```
 
@@ -149,6 +158,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "typst-paper" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "deep-research" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "paper-audit" "$env:USERPROFILE/.claude/skills/"
 ```
 
@@ -329,6 +339,13 @@ academic-writing-skills/
 │           ├── DEAI_GUIDE.md         # 去AI化指南
 │           ├── TEMPLATES.md          # 模板示例
 │           └── TYPST_SYNTAX.md       # Typst 语法参考
+│
+├── deep-research/                    # Industrial AI 深度研究 skill 🆕
+│   ├── SKILL.md                      # 技能定义
+│   ├── agents/                       # UI 元数据
+│   │   └── openai.yaml
+│   ├── references/                   # 来源策略与报告规则
+│   └── examples/                     # Prompt 示例
 │
 ├── paper-audit/                      # 论文审查 skill 🆕
 │   ├── SKILL.md                      # Skill 定义

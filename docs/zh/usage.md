@@ -4,13 +4,14 @@
 
 ## 概述
 
-Academic Writing Skills 提供三个主要技能：
+Academic Writing Skills 提供四个主要技能：
 
 | 技能 | 用途 | 主要功能 |
 |------|------|----------|
 | `latex-paper-en` | 英文学术论文 | 编译、格式检查、语法分析、学术翻译 |
 | `latex-thesis-zh` | 中文学位论文 | 编译、GB/T 7714 检查、模板支持 |
 | `typst-paper` | Typst 学术论文 | 编译、格式检查、语法分析、学术翻译 |
+| `deep-research` | Industrial AI 文献研究 | 按 venue 检索、强制 intake、结构化研究报告 |
 
 ## 模块化设计
 
@@ -73,6 +74,17 @@ Academic Writing Skills 提供三个主要技能：
 | 模板 | template, IEEE, ACM, 模板 | 模板配置 |
 | 标题优化 | title, 标题, title optimization | 标题生成与优化 |
 | 实验分析 | experiment, 实验分析, 数据分析 | 实验段落改写与生成 |
+
+### deep-research 工作流
+
+| 步骤 | 功能 |
+|------|------|
+| Intake | 先确认报告语言、交付模式、时间窗口与 Industrial AI 侧重点 |
+| 来源规划 | 在检索前先构建 primary / secondary venue 桶 |
+| 收集 | 收集 recent arXiv 与顶级 IEEE / 自动化论文 |
+| 验证 | 检查 venue、年份、来源类型与相关性 |
+| 综合 | 聚类主题、比较证据并暴露研究空白 |
+| 输出 | 生成包含来源分桶、候选论文、综合结论与下一步建议的稳定报告 |
 
 ## 安全与工具确认
 
@@ -351,3 +363,4 @@ python scripts/compile.py main.tex --recipe xelatex-biber
 - [英文论文核心模块](/zh/skills/latex-paper-en/)
 - [中文论文指南](/zh/skills/latex-thesis-zh/)
 - [Typst 论文模块](/zh/skills/typst-paper/)
+- [深度研究](/zh/skills/deep-research/)
