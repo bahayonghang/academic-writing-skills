@@ -5,6 +5,7 @@ Supports three modes: self-check, review, and gate.
 """
 
 import argparse
+import contextlib
 import re
 import subprocess
 import sys
@@ -887,10 +888,8 @@ def _parse_previous_report(report_path: str) -> list[dict]:
 
         line_num = None
         if line_str and line_str not in ("\u2014", "-", ""):
-            try:
+            with contextlib.suppress(ValueError):
                 line_num = int(line_str)
-            except ValueError:
-                pass
 
         issues.append(
             {

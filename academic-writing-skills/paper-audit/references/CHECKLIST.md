@@ -28,6 +28,13 @@ Consolidated checklists for paper audit across venues.
 - [ ] No citation stacking in Introduction/Related Work (max 2 clustered citations per sentence without individual discussion)
 - [ ] Limitations section included
 - [ ] Figure/Table captions are concise, without AI-like redundancy, and use consistent casing
+- [ ] Literature review uses thematic organization, not author/year enumeration (A1)
+- [ ] Each literature theme cluster ends with critical analysis (A2)
+- [ ] Related Work concludes with explicit research gap derivation (A3)
+- [ ] Discussion contains causal/attribution analysis, not just data repetition (B3)
+- [ ] Related Work citations reappear in Discussion for results contextualization (B4)
+- [ ] Conclusion contains all three elements: findings summary + implications + limitations/future work (B5)
+- [ ] Introduction contribution claims are answered in Conclusion (C3)
 
 ### Experiment Analysis
 - [ ] Experiment section uses cohesive paragraph narratives, not itemized lists
@@ -98,3 +105,4 @@ Consolidated checklists for paper audit across venues.
 - [ ] Declaration of originality included
 - [ ] Acknowledgments section present
 - [ ] Keywords in both Chinese and English
+- [ ] No author/year enumeration pattern in literature review (A1-ZH: "张三（2019）提出..." consecutive pattern)

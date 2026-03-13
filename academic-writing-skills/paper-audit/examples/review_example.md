@@ -1,6 +1,6 @@
 # Review Mode Example Output
 
-Example output from `python audit.py paper.tex --mode review --scholar-eval` followed by multi-perspective agent review.
+Example output from `uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval` followed by multi-perspective agent review.
 
 ---
 

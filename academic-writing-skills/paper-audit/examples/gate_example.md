@@ -1,6 +1,6 @@
 # Gate Mode Example Output
 
-Example outputs from `python audit.py paper.tex --mode gate --venue ieee`.
+Example outputs from `uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode gate --venue ieee`.
 
 ---
 

@@ -65,6 +65,13 @@ List all explicit, implicit, and paradigmatic assumptions. Flag any that are unv
 ### 8. "So What?" Test
 Even if everything in the paper is correct, does it matter? Is the contribution significant enough to warrant publication?
 
+### 9. Cross-Section Logic Chain Closure (C3)
+Trace the contribution claims from Introduction through Methods to Conclusion. Verify that:
+- Each problem stated in the Introduction is addressed by a method in the Methods section
+- Each contribution claimed in the Introduction has a corresponding result in the Experiments section
+- Each claim is explicitly answered in the Conclusion with evidence-backed language ("we have shown", "results demonstrate", "experiments confirm")
+If the Conclusion fails to close logic chains opened in the Introduction, flag as Major. This is a structural integrity check — incomplete closure suggests the paper does not deliver on its promises.
+
 ## Severity Classification
 
 | Severity | Definition | Handling |

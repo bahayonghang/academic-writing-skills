@@ -433,7 +433,7 @@ def render_review_report(result: AuditResult) -> str:
 
         if minor:
             lines.extend(["### Priority 3 --- Optional Improvements", ""])
-            for idx, issue in enumerate(minor, 1):
+            for _idx, issue in enumerate(minor, 1):
                 loc = f" (Line {issue.line})" if issue.line else ""
                 lines.append(f"- [ ] [{issue.module}]{loc} {issue.message}")
             lines.append("")
@@ -567,8 +567,8 @@ def render_reaudit_report(result: AuditResult) -> str:
     partial = summary.get("partially_addressed", 0)
     remaining = summary.get("not_addressed", 0)
     new_count = summary.get("new", 0)
-    lines.append(f"| Metric | Count |")
-    lines.append(f"|--------|-------|")
+    lines.append("| Metric | Count |")
+    lines.append("|--------|-------|")
     lines.append(f"| Prior issues | {total_prior} |")
     lines.append(f"| Fully addressed | {fixed} |")
     lines.append(f"| Partially addressed | {partial} |")

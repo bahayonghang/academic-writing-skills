@@ -21,7 +21,7 @@ Unified review criteria for paper audit, based on major conference standards (Ne
 - Claims not supported by evidence
 - Missing error bars or statistical tests
 
-**Automated checks mapping**: Bibliography verification, Logic & coherence analysis, Experiment narrative checks, Citation stacking detection
+**Automated checks mapping**: Bibliography verification, Logic & coherence analysis, Experiment narrative checks, Citation stacking detection, Literature review quality (A1-A4), Discussion depth (B3), Results-literature echo (B4), Conclusion completeness (B5)
 
 ### 2. Clarity (Weight: 30%)
 
@@ -56,7 +56,7 @@ Unified review criteria for paper audit, based on major conference standards (Ne
 - Limited novelty
 - No clear advantage over simpler methods
 
-**Automated checks mapping**: Logic & coherence analysis (methodology justification)
+**Automated checks mapping**: Logic & coherence analysis (methodology justification), Research gap derivation quality (A3), Cross-section logic chain closure (C3)
 
 ### 4. Originality (Weight: 20%)
 

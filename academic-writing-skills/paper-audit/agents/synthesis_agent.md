@@ -120,6 +120,8 @@ Map all findings to a 3-tier revision plan:
 - All [CONSENSUS-ALL] issues
 - All Critical severity findings (automated or agent)
 - Critical Reviewer CRITICAL findings (mandatory inclusion)
+- Literature review issues (A1-A4) from Domain Reviewer if CONSENSUS-MAJORITY
+- Cross-section logic chain issues (C3) from Critical Reviewer if Critical severity
 
 **Priority 2 — Strongly Recommended**:
 - All [CONSENSUS-MAJORITY] issues

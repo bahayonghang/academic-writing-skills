@@ -1,6 +1,6 @@
 # Self-Check Example Output
 
-Example output from `python audit.py paper.tex --mode self-check --venue neurips`.
+Example output from `uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --venue neurips`.
 
 ---
 

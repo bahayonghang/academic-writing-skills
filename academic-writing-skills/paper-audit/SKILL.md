@@ -7,7 +7,7 @@ metadata:
   version: "2.0"
   last_updated: "2026-03-11"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode MODE] [--pdf-mode MODE] [--style STYLE] [--journal VENUE] [--previous-report PATH]"
-allowed-tools: Read, Glob, Grep, Bash(python *), Task
+allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
 # Paper Audit Skill v2.0
@@ -15,6 +15,32 @@ allowed-tools: Read, Glob, Grep, Bash(python *), Task
 Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages (English, Chinese). Runs automated checks, computes dimension scores, and optionally dispatches multi-perspective review agents.
 
 ---
+
+## Capability Summary
+
+- Run automated paper checks across `.tex`, `.typ`, and `.pdf` inputs.
+- Produce self-check, peer-review, gate, polish, and re-audit outputs with explicit severity and priority labels.
+- Combine script findings, venue-specific checklist items, and optional agent synthesis into one report flow.
+- Reuse sibling writing-skill scripts for LaTeX and Typst inputs instead of re-implementing duplicate checks.
+
+## Triggering
+
+Use this skill when the user wants to:
+
+- run a pre-submission readiness audit
+- simulate a reviewer-style critique
+- make a pass/fail submission gate decision
+- compare a revised paper against a previous audit
+- audit a PDF when the source format is unavailable
+
+Trigger it even when the user only says “check my paper”, “review this submission”, “is this ready to submit?”, or “re-audit against the old report”.
+
+## Do Not Use
+
+- fixing the paper source as the first step when the project still fails to compile badly
+- full literature research or survey drafting
+- writing a paper from scratch
+- template-specific LaTeX or Typst editing when the user wants direct source surgery instead of an audit report
 
 ## Critical Rules
 
@@ -55,7 +81,7 @@ Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages
 1. Parse `$ARGUMENTS` for file path and mode. If missing, ask the user for the target `.tex`, `.typ`, or `.pdf` file.
 2. Read `$SKILL_DIR/references/REVIEW_CRITERIA.md` for scoring framework.
 3. Read `$SKILL_DIR/references/CHECKLIST.md` for universal + venue-specific checklist items.
-4. Run the orchestrator: `python "$SKILL_DIR/scripts/audit.py" $ARGUMENTS`.
+4. Run the orchestrator: `uv run python -B "$SKILL_DIR/scripts/audit.py" $ARGUMENTS`.
 5. Present the Markdown report directly to the user.
 
 ### Self-Check Mode
@@ -97,6 +123,24 @@ Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages
 8. Present verification checklist: each prior issue classified as `FULLY_ADDRESSED` / `PARTIALLY_ADDRESSED` / `NOT_ADDRESSED`.
 9. Report any `NEW` issues introduced during revision.
 10. Show score comparison (before vs after).
+
+## Required Inputs
+
+- A target `.tex`, `.typ`, or `.pdf` file.
+- An audit mode, or enough intent to infer one from the mode-selection guide.
+- Optional venue or journal context when the checklist should be venue-specific.
+- Optional `--previous-report PATH` for `re-audit`.
+
+If the user omits the mode, infer it using the selection guide and state the assumption before running the audit.
+
+## Output Contract
+
+- Always return a report, not raw script output.
+- Keep `[Script]` and `[LLM]` findings visibly separated.
+- Include the selected mode, target file, and venue context near the top of the report.
+- For blocking failures, list the exact blocking issue(s) and failed checklist items first.
+- When a script or nested agent step fails, report the command, exit code, and what coverage was skipped.
+- Preserve the source; this skill audits and synthesizes, it does not rewrite the paper by default.
 
 ---
 
@@ -203,6 +247,13 @@ Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `vis
 | `references/QUICK_REFERENCE.md` | Check support matrix and CLI quick reference | Reference |
 | `references/editorial_decision_standards.md` | Consensus rules and decision matrix | review (synthesis) |
 
+## Example Requests
+
+- “Run a self-check on `paper.tex` and tell me what blocks submission.”
+- “Review this paper like a harsh reviewer and give me a revision roadmap.”
+- “Is `paper.pdf` ready to submit to IEEE, or does it fail the gate?”
+- “Re-audit this revision against my previous report and tell me which issues are still open.”
+
 ## Templates
 
 | Template | Purpose |
@@ -231,34 +282,34 @@ Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `vis
 
 ### Self-Check
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --journal neurips
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --journal neurips
 ```
 
 ### Review (Multi-Perspective)
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval
 ```
 Then follow Steps 8-12 to dispatch review agents.
 
 ### Gate (CI/CD)
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode gate --journal ieee --format json
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode gate --journal ieee --format json
 ```
 
 ### Polish
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode polish
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode polish
 ```
 
 ### Re-Audit
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.tex --mode re-audit --previous-report report_v1.md
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode re-audit --previous-report report_v1.md
 ```
 
 ### PDF Input
 ```bash
-python "$SKILL_DIR/scripts/audit.py" paper.pdf --mode self-check --pdf-mode enhanced
+uv run python -B "$SKILL_DIR/scripts/audit.py" paper.pdf --mode self-check --pdf-mode enhanced
 ```
 
 See `$SKILL_DIR/examples/` for complete output examples.

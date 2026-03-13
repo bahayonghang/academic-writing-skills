@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Audit"
+  short_description: "Audit LaTeX, Typst, or PDF papers with self-check, review, gate, polish, and re-audit modes"
+  default_prompt: "Audit my paper file, choose the right audit mode, run the uv-backed orchestrator, and return a clearly labeled report that separates [Script] findings from [LLM] judgments."

@@ -1,0 +1,35 @@
+{
+  "skill_name": "paper-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run a self-check on paper.tex for a NeurIPS submission and tell me which issues block submission versus which are only quality improvements.",
+      "expected_output": "Infer or accept self-check mode, run the audit flow, and return a report that lists Critical or P0 blockers before non-blocking issues and checklist items.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review this paper like a skeptical reviewer, include multi-perspective criticism, and end with a prioritized revision roadmap.",
+      "expected_output": "Route to review mode, separate Phase 0 script findings from agent-style judgments, and produce a synthesis with strengths, weaknesses, questions, scores, and a revision roadmap.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Is paper.pdf ready to submit to IEEE, or does it fail the gate because of blocking layout or checklist issues?",
+      "expected_output": "Route to gate mode for PDF input, report PASS or FAIL clearly, and list blocking issues and failed checklist items before any informational notes.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Re-audit this revised manuscript against report_v1.md and tell me which issues are fully fixed, partially fixed, or still unresolved.",
+      "expected_output": "Route to re-audit mode, require the previous report path, compare prior versus fresh findings, and show a verification checklist with score deltas and any new issues.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Polish the writing of paper.tex, but only if the audit does not find blockers that should stop polishing first.",
+      "expected_output": "Route to polish mode, read the precheck state, stop on blockers, and only describe the critic or mentor follow-up flow when polishing is actually safe to continue.",
+      "files": []
+    }
+  ]
+}

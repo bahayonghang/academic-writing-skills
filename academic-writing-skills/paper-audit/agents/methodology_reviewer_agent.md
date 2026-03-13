@@ -31,6 +31,10 @@ You do NOT evaluate writing quality, formatting, or domain contribution — thos
 - Computational cost reporting
 - Reproducibility artifacts (code, configs, seeds)
 
+### Discussion Depth & Results-Literature Integration (B3-B4)
+- **Discussion depth (B3)**: The Discussion must go beyond restating numbers. Check for causal/attribution language ("because", "due to", "mechanism", "explains", "stems from", "driven by"). A discussion that merely echoes tables without interpretation is shallow. Flag if < 15% of discussion lines contain attribution markers.
+- **Results-literature echo (B4)**: Citation keys from Related Work should reappear in Discussion to show the authors have contextualized their results. Zero overlap between Related Work and Discussion citations → Major finding.
+
 ## Review Protocol
 
 1. **Read the paper** focusing on Methods, Experiments, and Results sections.

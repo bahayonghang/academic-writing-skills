@@ -13,6 +13,10 @@ You do NOT evaluate experimental methodology in depth (Methodology Reviewer's sc
 - Recent developments: Are key papers from the last 3 years covered?
 - Integration quality: Is the literature organized thematically or just enumerated?
 - Missing references: Are there obvious omissions in related work?
+- **Thematic vs enumerated organization (A1)**: Detect 3+ consecutive author/year enumeration patterns (e.g., "Smith (2019) proposed... Jones (2020) introduced..."). Flag and suggest reorganization by research themes with critical analysis within each cluster.
+- **Critical analysis completeness (A2)**: Each theme cluster should end with a synthesis sentence that compares, contrasts, or evaluates — not just list. Look for evaluative language: "however", "despite", "a common limitation", "compared to".
+- **Research gap derivation (A3)**: The final paragraph of Related Work must contain explicit gap language ("gap", "limitation", "remains", "lack", "overlooked", "under-explored") connecting literature to the paper's contribution.
+- **Citation density funnel (A4)**: Citation density should follow broad→focused→specific. A flat or inverted funnel suggests poor narrative structure.
 
 ### Theoretical Framework
 - Is the chosen framework appropriate for the research questions?
