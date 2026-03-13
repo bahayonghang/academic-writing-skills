@@ -78,6 +78,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
 | **实验分析** | 含 SOTA 对比与消融分析的连贯叙事段落 |
 | **去AI化** | 人性化 AI 写作，完整保留所有 LaTeX 语法 |
+| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
 | **引用** | 未定义 `\ref{}`、未引用 `\label{}`、缺少 caption；BibTeX 格式校验 |
 | **在线验证** | CrossRef + Semantic Scholar 文献验证（无需 API 密钥）|
 | **翻译** | 中译英学术翻译，自动识别领域术语 |
@@ -97,6 +98,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **图表标题** | 顶会标准双语 Caption（中文 + 英文）|
 | **实验分析** | 含基线对比与消融覆盖的核心期刊叙事段落 |
 | **去AI化** | 降低 AI 写作痕迹，完整保留所有 LaTeX 命令 |
+| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/文献综述中的堆叠式并列引用 |
 | **编译** | XeLaTeX / LuaLaTeX 完整 CJK 字体支持 |
 | **引用** | 与 `latex-paper-en` 相同的完整性检查；支持在线验证 |
 
@@ -124,6 +126,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **图表标题** | 遵循 IEEE/ACM 标准的双语 Caption |
 | **实验分析** | 面向期刊/会议的连贯叙事段落 |
 | **去AI化** | 人性化 AI 写作；保留 `@cite`、`<label>`、`$...$` |
+| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
 | **期刊模板** | IEEE、ACM、Springer、NeurIPS 模板指引 |
 | **引用** | 未定义 `@ref`、未引用标签；支持在线验证 |
 
@@ -143,6 +146,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **NeurIPS 评分** | Quality / Clarity / Significance / Originality 1–6 分 |
 | **在线验证** | CrossRef + Semantic Scholar（添加 `--online`）；无需 API 密钥 |
 | **去AI化** | 全文降低 AI 写作痕迹 |
+| **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
 
 **审查工作流层级**
 
@@ -164,7 +168,8 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **研究领域** | 预测性维护、智能调度、异常检测、智能制造、CPS、机器人 |
 | **前置确认** | 综合前先确认报告语言、交付模式、时间窗口和研究侧重点 |
 | **检索策略** | 优先近期 arXiv + 顶级 IEEE/自动化 venue（T-ASE、CASE、T-II）|
-| **输出格式** | research-brief · literature-map · venue-ranked survey · research-gap memo |
+| **输出格式** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
+| **综述初稿** | 分类体系大纲 → 逐节证据包 → 逐节写作 → 合并 + 质量门；可选 LaTeX 移交 |
 | **报告结构** | 检索范围 → 来源分桶 → 候选论文 → 综合结论 → 下一步建议 |
 
 ---

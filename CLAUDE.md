@@ -2,107 +2,100 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What this repo is
+## Project Overview
 
-- This repository ships **Claude Code skills** for academic writing workflows (LaTeX/Typst/PDF audit + Industrial AI literature synthesis).
-- Skills live under `academic-writing-skills/` as **self-contained folders**.
-- Documentation lives under `docs/` as a **VitePress** site (deployed to GitHub Pages on release).
+Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships five skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
 
-## Common commands
+## Build & Development Commands
 
-### Python (skills + tests)
+Task runner: `just` (requires `uv` for Python). All commands run through `uv run --extra dev`.
 
-This repo uses **uv** + `pyproject.toml`.
+| Command | What it does |
+|---|---|
+| `just install` | `uv sync --extra dev` — install all deps |
+| `just lint` | `ruff format --check . && ruff check .` |
+| `just typecheck` | `pyright` |
+| `just test` | `python -m pytest tests/` |
+| `just ci` | lint → typecheck → test (full pipeline) |
+| `just fix` | `ruff format . && ruff check --fix .` |
+| `just doc` | VitePress dev server (`cd docs && npm run docs:dev`) |
+| `just doc-build` | Build static docs site |
+| `just clean` | Remove `__pycache__`, `.pytest_cache`, `.ruff_cache` |
 
-```bash
-# Install dev dependencies
-uv sync --extra dev
+Run a single test file: `uv run --extra dev python -m pytest tests/test_parsers.py`
+Run a single test function: `uv run --extra dev python -m pytest tests/test_parsers.py::test_latex_split_sections`
 
-# Run the full local CI pipeline
-just ci
+## Architecture
 
-# Lint / format (Ruff)
-just lint            # ruff format --check + ruff check
-just format          # ruff format
-just fix             # ruff format + ruff check --fix
+### Skill Layout Convention
 
-# Type checking (Pyright)
-just typecheck
-
-# Tests
-just test
-
-# Run a single test file / test
-uv run --extra dev python -m pytest tests/test_parsers.py -v
-uv run --extra dev python -m pytest tests/test_parsers.py::test_latex_split_sections -v
+Each skill directory follows this structure:
+```
+academic-writing-skills/{skill-name}/
+├── SKILL.md          # Entry point & contract (Claude reads this to activate)
+├── scripts/          # Python automation tools
+│   └── parsers.py    # Shared parser base class (per-skill copy)
+├── references/       # Decision-making guides, style rules, forbidden terms
+│   └── modules/      # Per-module detailed references
+├── examples/         # Concrete usage examples
+└── agents/           # Agent persona definitions (paper-audit, industrial-ai-research)
 ```
 
-Notes:
-- The canonical task runner is the repo root `justfile`.
-- Pyright is configured with `typeCheckingMode = "off"` (import checking / lightweight analysis).
+### Five Skills
 
-### Docs (VitePress)
+| Skill | Input | Purpose |
+|---|---|---|
+| `latex-paper-en` | `.tex` | English conference/journal papers (IEEE, ACM, NeurIPS, ICML) |
+| `latex-thesis-zh` | `.tex` | Chinese degree theses (GB/T 7714-2015; thuthesis, pkuthss, etc.) |
+| `typst-paper` | `.typ` | Bilingual Typst papers with millisecond compilation |
+| `paper-audit` | `.tex`/`.typ`/`.pdf` | Multi-perspective pre-submission audit with scoring |
+| `industrial-ai-research` | topic query | Literature synthesis for industrial AI domains (no scripts) |
 
-```bash
-cd docs
-npm install
-npm run docs:dev
+### Parser Hierarchy
 
-# Build / preview
-npm run docs:build
-npm run docs:preview
-```
+All script-based skills share a common `DocumentParser` ABC in their `scripts/parsers.py`:
+- `DocumentParser` (ABC) → `LatexParser`, `TypstParser`
+- Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`
+- Each skill has its own copy of `parsers.py` (not a shared import) — keep them aligned when changing shared behavior.
 
-CI/Deploy detail:
-- `.github/workflows/deploy.yml` builds the VitePress site and publishes `docs/.vitepress/dist` to GitHub Pages **on release published** (or manual workflow dispatch).
+### Test Structure
 
-## Repository structure (big picture)
+Tests in `tests/` import scripts via `sys.path` manipulation in `conftest.py`. The conftest exports path constants:
+- `SCRIPT_DIR_EN` — latex-paper-en/scripts
+- `SCRIPT_DIR_ZH` — latex-thesis-zh/scripts
+- `SCRIPT_DIR_TYPST` — typst-paper/scripts
+- `SCRIPT_DIR_AUDIT` — paper-audit/scripts
 
-### 1) Skill packages (primary)
+Only `SCRIPT_DIR_EN` and `SCRIPT_DIR_AUDIT` are added to `sys.path` by default. Tests use bare imports like `from parsers import LatexParser`.
 
-`academic-writing-skills/<skill-name>/` is the unit of distribution.
+### paper-audit Agent System
 
-The core skills:
-- `academic-writing-skills/latex-paper-en/`: English LaTeX paper workflows (IEEE/ACM/Springer/NeurIPS/ICML).
-- `academic-writing-skills/latex-thesis-zh/`: Chinese thesis workflows (GB/T 7714 + template detection / structure mapping).
-- `academic-writing-skills/typst-paper/`: Typst paper workflows (bilingual).
-- `academic-writing-skills/paper-audit/`: Orchestrated audit across `.tex` / `.typ` / `.pdf`, with scoring and optional multi-agent review.
-- `academic-writing-skills/industrial-ai-research/`: Literature research skill with an intake-first protocol.
+`paper-audit` uses four reviewer agents that produce independent assessments, then a synthesis agent consolidates them:
+- `methodology_reviewer_agent.md` — research design, statistical rigor
+- `domain_reviewer_agent.md` — literature coverage, theoretical framework
+- `critical_reviewer_agent.md` — logical fallacies, argument challenges
+- `synthesis_agent.md` — consensus classification, revision roadmap
 
-Each skill typically contains:
-- `SKILL.md`: entry spec + module router (how requests map to scripts).
-- `scripts/`: Python tooling for compile/check/analyze.
-- `references/` or `resources/`: reference docs the skill reads at runtime.
-- optionally `agents/`, `evals/`, `examples/`, `templates/`.
+### Documentation Site
 
-### 2) Shared script patterns (how skills work)
+VitePress bilingual docs (EN root + `zh/` locale) in `docs/`. Deployed to GitHub Pages on release publish via `.github/workflows/deploy.yml`. Base URL: `/academic-writing-skills/`.
 
-Most skills implement a **module router** pattern:
-- user intent → module (compile/format/bibliography/grammar/sentences/logic/expression/title/deai/experiment/…)
-- module → run a single Python script under `scripts/` via `uv run python -B ...`
+## Critical Rules
 
-`paper-audit` is the cross-format orchestrator:
-- For `.tex` / `.typ` audits, it reuses checks from sibling skills’ `scripts/` where possible.
-- For `.pdf` audits, it uses `paper-audit/scripts/` (PDF parsing + visual/layout checks).
+**Never break these constraints — they apply across all skills:**
 
-Tests live centrally under `tests/` and validate the parser + analysis utilities used by multiple skills.
+1. **Never modify** content inside `\cite{}`, `\ref{}`, `\label{}`, math environments (LaTeX), or `@cite`, `<label>`, `$...$` (Typst).
+2. **Never fabricate** bibliography entries, author names, venue names, or experimental results.
+3. **Never change** protected terminology without explicit permission (see each skill's `references/FORBIDDEN_TERMS.md`).
+4. **Output changes as diff/suggestion blocks** with severity and priority fields. Tag source as `[Script]` (automated) or `[LLM]` (agent judgment).
 
-### 3) Docs site
+## Code Style
 
-- `docs/` is a standalone VitePress project.
-- `docs/.vitepress/config.ts` defines navigation, i18n (English + `zh/`), and the GitHub Pages base path.
+- Python 3.10+ target. Ruff enforces 100-char line length with rules: E, W, F, I, N, UP, B, C4, SIM.
+- `snake_case` for Python modules/functions/tests. Skill directories are `kebab-case`.
+- Run `just fix` before submitting changes.
+- Pyright with `typeCheckingMode = "off"` (lenient — focus is on runtime correctness).
 
-## Non-negotiable content safety constraints (skills)
+## Commit Convention
 
-These constraints are repeated across skill specs and must not be broken when editing scripts or prompts:
-
-- **Never modify** LaTeX inside `\cite{}`, `\ref{}`, `\label{}` or math environments.
-- **Never modify** Typst inside `@cite`, `<label>`, or `$...$` math.
-- **Never fabricate** bibliography entries; only operate on existing `.bib` / `.yml`.
-- Do not change protected terminology unless the user explicitly approves (see each skill’s `references/FORBIDDEN_TERMS.md` where present).
-- Prefer emitting **commented diff/suggestion blocks** rather than silently rewriting source content.
-
-## When you’re unsure where to start
-
-- For any behavior change, start at the relevant `academic-writing-skills/<skill>/SKILL.md` (it documents module routing and the “read next” reference files).
-- For CI failures, run `just ci` locally and then narrow to `just lint`, `just typecheck`, or `just test`.
+Scoped Conventional Commits: `docs: ...`, `refactor(latex-thesis-zh): ...`, `feat(paper-audit): ...`. Keep commits focused by skill or subsystem.

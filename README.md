@@ -78,6 +78,7 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Captions** | Title/Sentence-case, AI-flavor-free figure and table captions |
 | **Experiments** | Cohesive result paragraphs with SOTA comparison and ablation analysis |
 | **De-AI** | Humanize AI-written passages while preserving all LaTeX syntax |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
 | **References** | Undefined `\ref{}`, unreferenced `\label{}`, missing captions; BibTeX format validation |
 | **Online Verify** | CrossRef + Semantic Scholar bibliography verification (no API key required) |
 | **Translation** | Chinese → English academic translation with domain-term awareness |
@@ -97,6 +98,7 @@ Chinese degree thesis editing conforming to GB/T 7714-2015 and major university 
 | **Captions** | Bilingual English/Chinese captions following top-conference standards |
 | **Experiments** | Chinese core-journal narrative paragraphs with baseline/ablation coverage |
 | **De-AI** | Reduce AI writing traces; preserves all LaTeX commands |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work chapters |
 | **Compile** | XeLaTeX / LuaLaTeX with full CJK font support |
 | **References** | Same integrity checks as `latex-paper-en`; online verification supported |
 
@@ -124,6 +126,7 @@ Bilingual Typst paper editing with millisecond-level compilation.
 | **Captions** | Bilingual captions following IEEE/ACM standards |
 | **Experiments** | Cohesive result paragraphs for journal/conference papers |
 | **De-AI** | Humanize AI-written passages; preserves `@cite`, `<label>`, `$... |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
 | **Venues** | IEEE, ACM, Springer, NeurIPS template guidance |
 | **References** | Undefined `@ref`, unreferenced labels; online verification supported |
 
@@ -143,6 +146,7 @@ Automated multi-format audit with layered checks and quality scoring.
 | **NeurIPS Scoring** | Quality / Clarity / Significance / Originality on 1–6 scale |
 | **Online Verify** | CrossRef + Semantic Scholar (add `--online`); no API key required |
 | **De-AI** | Reduce AI writing traces across the whole document |
+| **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
 
 **Audit workflow layers**
 
@@ -164,7 +168,8 @@ Structured literature synthesis focused on Industrial AI domains.
 | **Domains** | Predictive maintenance, intelligent scheduling, anomaly detection, smart manufacturing, CPS, robotics |
 | **Intake** | Asks for report language, deliverable mode, time window, and emphasis before synthesizing |
 | **Retrieval** | Prioritizes recent arXiv + top IEEE/automation venues (T-ASE, CASE, T-II) |
-| **Outputs** | research-brief · literature-map · venue-ranked survey · research-gap memo |
+| **Outputs** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
+| **Survey Draft** | Taxonomy-driven outline → per-section evidence packs → section-by-section writing → merge with quality gate; optional LaTeX handoff |
 | **Report Structure** | Search scope → source buckets → shortlisted papers → synthesis → next-step recommendations |
 
 ---
