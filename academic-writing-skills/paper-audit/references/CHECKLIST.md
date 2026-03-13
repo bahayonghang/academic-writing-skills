@@ -25,6 +25,7 @@ Consolidated checklists for paper audit across venues.
 - [ ] No overly long sentences (> 60 words)
 - [ ] Abstract is self-contained
 - [ ] Contributions clearly stated in introduction
+- [ ] No citation stacking in Introduction/Related Work (max 2 clustered citations per sentence without individual discussion)
 - [ ] Limitations section included
 - [ ] Figure/Table captions are concise, without AI-like redundancy, and use consistent casing
 

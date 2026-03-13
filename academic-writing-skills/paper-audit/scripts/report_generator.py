@@ -79,6 +79,7 @@ DIMENSION_MAP: dict[str, list[str]] = {
     "logic": ["quality", "significance"],
     "sentences": ["clarity"],
     "deai": ["clarity", "originality"],
+    "citations": ["quality"],
     "bib": ["quality"],
     "figures": ["clarity"],
     "consistency": ["clarity"],
@@ -343,15 +344,9 @@ def render_review_report(result: AuditResult) -> str:
             if isinstance(w, dict):
                 lines.append(f"### W{idx}: {w.get('title', 'Weakness')}")
                 lines.append(f"- **Problem**: {w.get('problem', w.get('title', ''))}")
-                lines.append(
-                    f"- **Why it matters**: {w.get('why', 'Impacts paper quality')}"
-                )
-                lines.append(
-                    f"- **Suggestion**: {w.get('suggestion', 'See detailed issues')}"
-                )
-                lines.append(
-                    f"- **Severity**: {w.get('severity', 'Major')}"
-                )
+                lines.append(f"- **Why it matters**: {w.get('why', 'Impacts paper quality')}")
+                lines.append(f"- **Suggestion**: {w.get('suggestion', 'See detailed issues')}")
+                lines.append(f"- **Severity**: {w.get('severity', 'Major')}")
             else:
                 lines.append(f"### W{idx}: {w}")
             lines.append("")
@@ -623,9 +618,7 @@ def render_reaudit_report(result: AuditResult) -> str:
         lines.append("|---|--------|------|----------|-------|")
         for idx, ni in enumerate(new_issues, 1):
             loc = str(ni.get("line")) if ni.get("line") else "\u2014"
-            lines.append(
-                f"| {idx} | {ni['module']} | {loc} | {ni['severity']} | {ni['message']} |"
-            )
+            lines.append(f"| {idx} | {ni['module']} | {loc} | {ni['severity']} | {ni['message']} |")
         lines.append("")
 
     # Current scores
@@ -654,8 +647,7 @@ def render_reaudit_report(result: AuditResult) -> str:
         )
     else:
         lines.append(
-            f"*{remaining} prior issue(s) still unresolved. "
-            f"Continue revision and re-run audit.*"
+            f"*{remaining} prior issue(s) still unresolved. Continue revision and re-run audit.*"
         )
     lines.append("")
 

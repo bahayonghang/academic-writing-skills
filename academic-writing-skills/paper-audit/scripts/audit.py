@@ -30,6 +30,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "logic",
         "sentences",
         "deai",
+        "citations",
         "bib",
         "figures",
         "references",
@@ -41,6 +42,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "logic",
         "sentences",
         "deai",
+        "citations",
         "bib",
         "figures",
         "references",
@@ -61,6 +63,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "logic",
         "sentences",
         "deai",
+        "citations",
         "bib",
         "figures",
         "references",
@@ -80,7 +83,10 @@ VENUE_CONFIG: dict[str, dict] = {
         "checklist_section": "NeurIPS",
         "blind_review": True,
         "extra_checks": [
-            ("Paper checklist appendix present", r"\\section\*?\{.*(?:Checklist|Paper\s+Checklist)"),
+            (
+                "Paper checklist appendix present",
+                r"\\section\*?\{.*(?:Checklist|Paper\s+Checklist)",
+            ),
             ("Broader impact statement present", r"(?:broader\s+impact|societal\s+impact)"),
             ("Reproducibility statement present", r"(?:reproducibility|reproduce)"),
         ],
@@ -91,7 +97,10 @@ VENUE_CONFIG: dict[str, dict] = {
         "blind_review": True,
         "extra_checks": [
             ("Reproducibility statement present", r"(?:reproducibility|reproduce)"),
-            ("Code availability URL present", r"(?:github\.com|code\s+available|code\s+repository)"),
+            (
+                "Code availability URL present",
+                r"(?:github\.com|code\s+available|code\s+repository)",
+            ),
         ],
     },
     "icml": {
@@ -149,6 +158,7 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
         "logic": "analyze_logic.py",
         "sentences": "analyze_sentences.py",
         "deai": "deai_check.py",
+        "citations": "check_citations.py",
         "bib": "verify_bib.py",
         "figures": "check_figures.py",
         "consistency": "check_consistency.py",
@@ -162,6 +172,11 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
 
     # visual check lives only in paper-audit's own scripts directory
     if check_name == "visual":
+        path = SCRIPTS_AUDIT / script_name
+        return path if path.exists() else None
+
+    # citations check lives only in paper-audit's own scripts directory
+    if check_name == "citations":
         path = SCRIPTS_AUDIT / script_name
         return path if path.exists() else None
 
@@ -420,9 +435,7 @@ def _run_checklist(
         # Abstract word count (IEEE: max 250)
         abstract_max = config.get("abstract_max_words")
         if abstract_max:
-            abs_match = re.search(
-                r"\\begin\{abstract\}(.*?)\\end\{abstract\}", content, re.DOTALL
-            )
+            abs_match = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", content, re.DOTALL)
             if abs_match:
                 abs_words = len(abs_match.group(1).split())
                 items.append(
@@ -705,7 +718,7 @@ def run_audit(
             continue
 
         # PDF files need special handling — some scripts expect .tex/.typ
-        if fmt == ".pdf" and check_name in ("format", "figures", "references"):
+        if fmt == ".pdf" and check_name in ("format", "figures", "references", "citations"):
             print(f"[audit] SKIP {check_name}: not applicable for PDF input")
             continue
 
@@ -1014,15 +1027,11 @@ def run_reaudit(
             for i in new_issues
         ],
         "summary": {
-            "fully_addressed": sum(
-                1 for c in classifications if c["status"] == "FULLY_ADDRESSED"
-            ),
+            "fully_addressed": sum(1 for c in classifications if c["status"] == "FULLY_ADDRESSED"),
             "partially_addressed": sum(
                 1 for c in classifications if c["status"] == "PARTIALLY_ADDRESSED"
             ),
-            "not_addressed": sum(
-                1 for c in classifications if c["status"] == "NOT_ADDRESSED"
-            ),
+            "not_addressed": sum(1 for c in classifications if c["status"] == "NOT_ADDRESSED"),
             "new": len(new_issues),
         },
     }
