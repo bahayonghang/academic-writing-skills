@@ -1,0 +1,29 @@
+{
+  "skill_name": "industrial-ai-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research recent predictive maintenance work in the last 3 years and return a research-brief that separates peer-reviewed papers from preprints.",
+      "expected_output": "Ask the mandatory intake questions if they are not already resolved, then produce a research-brief with scope, source buckets, shortlisted papers, evidence-backed synthesis, and explicit preprint labeling.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I need the latest Industrial AI papers on intelligent scheduling for job shops. Prioritize the newest work and tell me where the evidence is thin.",
+      "expected_output": "Prefer recent arXiv plus top automation venues, explain the recency policy, surface thin-evidence areas, and avoid venue-blind mixing in the final report.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Use survey-draft mode for industrial anomaly detection and stop after the YAML outline so I can approve the structure first.",
+      "expected_output": "Route into the survey-draft workflow, ask the survey-specific follow-up questions if missing, build only the S1 YAML outline, and stop before evidence packs or prose.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "My topic is hospital triage optimization with clinical ethics constraints. If that is outside Industrial AI scope, redirect me to the closest supported framing instead of pretending it fits.",
+      "expected_output": "Identify the topic as off-scope, state the boundary clearly, suggest the closest supported Industrial AI framing, and avoid starting a normal synthesis until scope is resolved.",
+      "files": []
+    }
+  ]
+}

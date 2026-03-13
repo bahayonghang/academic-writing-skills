@@ -64,8 +64,17 @@ Always start by asking the four intake questions defined in `references/question
 1. Report language (English / Simplified Chinese / Bilingual summary)
 2. Deliverable mode (research-brief / literature-map / venue-ranked survey / research-gap memo / survey-draft)
 3. Time window (last 12 months / last 3 years / last 5 years / custom)
+4. Industrial AI emphasis (predictive maintenance / intelligent scheduling / industrial anomaly detection / smart manufacturing and process optimization / CPS and edge AI / robotics crossover)
 
 If the user does not choose, default to `last 3 years` and the subdomain implied by their prompt.
+
+## Required Inputs
+
+- A concrete Industrial AI topic or question.
+- User choices for report language, deliverable mode, time window, and domain emphasis.
+- Optional preferences on peer-reviewed-only filtering, benchmarks vs deployment evidence, or desired output format.
+
+If any intake item is missing, ask the mandatory questions from `references/question-flow.md` before you search.
 
 ## Source Strategy
 
@@ -178,6 +187,19 @@ Read `references/report-modes.md` and follow the selected mode exactly.
 - `research-gap memo`: open problems, design space, and next-step opportunities
 - `survey-draft`: taxonomy-driven survey manuscript with outline-first writing and optional LaTeX export
 
+## Output Contract
+
+- State the locked intake choices and any defaults you applied before synthesis.
+- Distinguish verified evidence from inference in every deliverable.
+- Label preprints explicitly as preprints.
+- For non-survey modes, produce a structured report that includes: scope, source buckets, shortlisted papers, synthesis, and next reading or next experiments.
+- For `survey-draft`, keep stage outputs format-specific:
+  - S1: YAML outline only
+  - S2: evidence packs or tables only
+  - S3: section Markdown drafts grounded in the evidence packs
+  - S4: merged Markdown survey with cross-section consistency notes
+- If sources are sparse, inaccessible, or off-scope, say so directly and report the exact fallback you used.
+
 ## Module Router
 
 | Module | Use when | Primary action | Read next |
@@ -227,6 +249,13 @@ Non-negotiable standards:
 - `examples/intelligent-scheduling.md`
 - `examples/industrial-anomaly-detection.md`
 - `examples/survey-predictive-maintenance.md`
+
+## Example Requests
+
+- “Research recent predictive maintenance papers from the last 3 years and return a research-brief.”
+- “Compare industrial anomaly detection papers across arXiv and IEEE automation venues, and show contradictions in evaluation setups.”
+- “Draft a survey on intelligent scheduling for researchers new to the subfield, but stop after the YAML outline for approval.”
+- “My topic is warehouse picking robotics. If that is outside scope, tell me the closest supported Industrial AI framing and proceed only with that.”
 
 ## Boundaries
 
