@@ -352,4 +352,3 @@ def _print_result(result: EntryVerifyResult) -> None:
 
 if __name__ == "__main__":
     sys.exit(main())
-
