@@ -4,7 +4,7 @@
 **脚本用法**:
 ```bash
 uv run python ../scripts/translate_academic.py "中文文本"
-uv run python ../scripts/translate_academic.py main.typ --section abstract
+uv run python ../scripts/translate_academic.py input_zh.txt --domain deep-learning
 ```
 
 **翻译流程**:

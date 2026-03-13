@@ -10,7 +10,7 @@ Recommended module sequence:
 Commands:
 ```bash
 uv run python $SKILL_DIR/scripts/improve_expression.py main.typ --section abstract
-uv run python $SKILL_DIR/scripts/translate_academic.py main.typ --section abstract
+uv run python $SKILL_DIR/scripts/translate_academic.py input_zh.txt --domain deep-learning
 ```
 
 Expected output:

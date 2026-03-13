@@ -77,3 +77,35 @@ uv run python ../scripts/analyze_logic.py main.typ --section methods
 
 参考：[WRITING_PHILOSOPHY.md](../references/WRITING_PHILOSOPHY.md)
 
+---
+
+## Literature Review Quality Validation (A1-A4)
+
+> Authoritative rules are defined in `latex-paper-en/references/modules/LOGIC.md`. This section mirrors them for Typst usage.
+
+### A1: Thematic Clustering (Not Author/Year Enumeration)
+
+Related Work must organize references by research theme. Detecting 3+ consecutive sentences following "Author (Year) proposed..." signals enumeration → Major/P1.
+
+**Script detection**: `analyze_logic.py` checks for consecutive author/year enumeration patterns in the `related` section.
+
+### A2: Critical Analysis After Each Theme Cluster (LLM-judgment)
+
+Each thematic group must end with a synthesis sentence that compares or evaluates. *Requires LLM judgment.*
+
+### A3: Research Gap Derivation
+
+The final paragraph of Related Work must contain explicit research gap language. The script scans the last 10 lines for gap keywords (`gap|limitation|remains|lack|overlooked|under-explored`). No match → Major/P1.
+
+### A4: Funnel-Shaped Citation Density (LLM-judgment)
+
+Citation density should follow broad→focused→specific. *Requires LLM judgment.*
+
+---
+
+## Cross-Section Logic Chain Closure (C3)
+
+Introduction contribution claims must be answered in the Conclusion. The script extracts contribution keywords from `introduction` and answer keywords from `conclusion`. If intro has claims but conclusion has zero answer language → Major/P1 (`[Script]` observation).
+
+Activate with `--cross-section` flag or full-document analysis (no `--section`).
+

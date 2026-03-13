@@ -71,7 +71,9 @@ UNSUPPORTED_RE = re.compile(
     r"for any dataset|without exception)\b",
     re.IGNORECASE,
 )
-COMPARATOR_HINT_RE = re.compile(r"\b(compared with|against|versus|vs\.?|than|over)\b", re.IGNORECASE)
+COMPARATOR_HINT_RE = re.compile(
+    r"\b(compared with|against|versus|vs\.?|than|over)\b", re.IGNORECASE
+)
 SPECIFIC_COMPARATOR_RE = re.compile(
     r"(\\cite\{|"
     r"\b(?:ResNet|BERT|Transformer|LSTM|GRU|CNN|RNN|SVM|XGBoost|LightGBM|"
@@ -87,6 +89,157 @@ EFFICIENCY_RE = re.compile(
     r"\b(latency|runtime|throughput|inference|memory|flops|parameter(?:s)?|params?)\b",
     re.IGNORECASE,
 )
+
+# ── Discussion depth & literature echo (B3, B4) ────────────────
+
+ATTRIBUTION_MARKERS_EN = re.compile(
+    r"\b(because|due to|owing to|as a result of|attributed to|caused by|"
+    r"mechanism|explains|explanation|reason|hypothesis|interpret|"
+    r"stems from|arises from|driven by|suggests that|indicates that)\b",
+    re.IGNORECASE,
+)
+
+CITE_KEY_RE = re.compile(r"\\(?:cite\w*)\*?(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
+
+
+def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """B3: Check ratio of explanatory vs data-repetition lines in discussion."""
+    out: list[str] = []
+    total_visible = 0
+    attribution_lines = 0
+
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        total_visible += 1
+        if ATTRIBUTION_MARKERS_EN.search(visible):
+            attribution_lines += 1
+
+    if total_visible >= 5 and attribution_lines / total_visible < 0.15:
+        out.extend(
+            _format_issue(
+                start,
+                "Major",
+                "P1",
+                "Discussion may lack depth: low ratio of explanatory/attribution "
+                f"language ({attribution_lines}/{total_visible} lines). "
+                "Add causal analysis explaining why results occur.",
+            )
+        )
+        out.append("")
+    return out
+
+
+def _extract_cite_keys_in_range(lines: list[str], start: int, end: int) -> set[str]:
+    """Extract all citation keys from lines in a given range."""
+    keys: set[str] = set()
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1]
+        for match in CITE_KEY_RE.finditer(raw):
+            for key in match.group(1).split(","):
+                k = key.strip()
+                if k:
+                    keys.add(k)
+    return keys
+
+
+def _check_results_literature_echo(
+    lines: list[str],
+    sections: dict[str, tuple[int, int]],
+) -> list[str]:
+    """B4: Check if citation keys from Related Work appear in Discussion."""
+    out: list[str] = []
+    if "related" not in sections or "discussion" not in sections:
+        return out
+
+    rel_start, rel_end = sections["related"]
+    disc_start, disc_end = sections["discussion"]
+
+    related_keys = _extract_cite_keys_in_range(lines, rel_start, rel_end)
+    discussion_keys = _extract_cite_keys_in_range(lines, disc_start, disc_end)
+
+    if related_keys and not related_keys & discussion_keys:
+        out.extend(
+            _format_issue(
+                disc_start,
+                "Major",
+                "P1",
+                "No citations from Related Work reappear in Discussion. "
+                "Compare your findings with prior work to strengthen the narrative.",
+            )
+        )
+        out.append("")
+    return out
+
+
+# ── Conclusion completeness (B5) ───────────────────────────────
+
+CONCLUSION_FINDINGS_RE = re.compile(
+    r"\b(we have shown|we demonstrated|results show|this paper has presented|"
+    r"our experiments confirm|we proposed|we have proposed|findings indicate|"
+    r"key findings?|main results?)\b",
+    re.IGNORECASE,
+)
+CONCLUSION_IMPLICATIONS_RE = re.compile(
+    r"\b(implication|suggests that.*practical|enables|opens|paves the way|"
+    r"facilitates|contributes to|advance|potential for|applicable to)\b",
+    re.IGNORECASE,
+)
+CONCLUSION_LIMITATIONS_RE = re.compile(
+    r"\b(limitation|future work|future direction|remain|challenge|"
+    r"could be extended|further research|further investigation|"
+    r"not addressed|beyond the scope|caveat)\b",
+    re.IGNORECASE,
+)
+
+
+def _check_conclusion_completeness(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """B5: Conclusion must contain findings + implications + limitations/future."""
+    out: list[str] = []
+    section_text = ""
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            section_text += " " + visible
+
+    if not section_text.strip():
+        return out
+
+    has_findings = bool(CONCLUSION_FINDINGS_RE.search(section_text))
+    has_implications = bool(CONCLUSION_IMPLICATIONS_RE.search(section_text))
+    has_limitations = bool(CONCLUSION_LIMITATIONS_RE.search(section_text))
+
+    if not has_limitations:
+        out.extend(
+            _format_issue(
+                start, "Major", "P1", "Conclusion lacks limitations or future work discussion."
+            )
+        )
+        out.append("")
+    if not has_implications:
+        out.extend(
+            _format_issue(
+                start, "Minor", "P2", "Conclusion lacks implications or broader impact statement."
+            )
+        )
+        out.append("")
+    if not has_findings:
+        out.extend(
+            _format_issue(
+                start, "Minor", "P2", "Conclusion lacks explicit summary of core findings."
+            )
+        )
+        out.append("")
+    return out
+
+
 FALLBACK_SECTION_PATTERNS = {
     "experiment": re.compile(
         r"(\\section\*?\{.*(?:Experiment|Experiments|Evaluation|Evaluations|Implementation).*\}|"
@@ -109,7 +262,9 @@ def _normalize_section(section: str | None) -> str | None:
 
 
 def _format_issue(line_no: int, severity: str, priority: str, message: str) -> list[str]:
-    return [f"% EXPERIMENT (Line {line_no}) [Severity: {severity}] [Priority: {priority}]: {message}"]
+    return [
+        f"% EXPERIMENT (Line {line_no}) [Severity: {severity}] [Priority: {priority}]: {message}"
+    ]
 
 
 def _has_claim(text: str) -> bool:
@@ -154,7 +309,9 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         if normalized_section not in sections:
             selected_ranges.extend(_fallback_ranges(lines, normalized_section))
             if not selected_ranges:
-                return [f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"]
+                return [
+                    f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"
+                ]
         else:
             selected_ranges.append(sections[normalized_section])
     else:
@@ -275,15 +432,30 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 "No efficiency comparison is mentioned; verify whether runtime, memory, or parameter cost should be reported.",
             )
 
+    # ── Section-level discussion, echo & conclusion checks ─────
+    if sections:
+        if (
+            not normalized_section or normalized_section == "discussion"
+        ) and "discussion" in sections:
+            d_start, d_end = sections["discussion"]
+            output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
+
+        if not normalized_section:
+            output.extend(_check_results_literature_echo(lines, sections))
+
+        if (
+            not normalized_section or normalized_section == "conclusion"
+        ) and "conclusion" in sections:
+            c_start, c_end = sections["conclusion"]
+            output.extend(_check_conclusion_completeness(lines, c_start, c_end, parser))
+
     if not output:
         output.append("% EXPERIMENT: No rule-based experiment review issues detected.")
     return output
 
 
 def main() -> int:
-    cli = argparse.ArgumentParser(
-        description="Experiment section review for LaTeX/Typst files"
-    )
+    cli = argparse.ArgumentParser(description="Experiment section review for LaTeX/Typst files")
     cli.add_argument("file", type=Path, help="Target .tex/.typ file")
     cli.add_argument("--section", help="Section name to analyze")
     args = cli.parse_args()

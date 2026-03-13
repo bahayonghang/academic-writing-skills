@@ -74,3 +74,68 @@ uv run python -B scripts/analyze_logic.py main.tex --section methods
 4. **Explicit transitions**: Use signal words to show relationships
 5. **Justify, don't just describe**: Explain *why*, not just *what*
 
+---
+
+## Literature Review Quality Validation (A1-A4)
+
+These rules ensure the Related Work section synthesizes literature rather than merely cataloguing it.
+
+### A1: Thematic Clustering (Not Author/Year Enumeration)
+
+**Rule**: Related Work should organize references by research theme, not by author or publication year. Detecting 3+ consecutive sentences following an "Author (Year) proposed/introduced..." pattern signals enumeration.
+
+**Detection heuristic** (script-automated):
+- Regex: `^(In \d{4}|.*\(\d{4}\).*(?:proposed|introduced|presented|developed|designed))`
+- Threshold: 3+ consecutive matching lines → Major/P1
+
+| Pattern | Verdict |
+|---------|---------|
+| "Smith (2019) proposed X. Jones (2020) introduced Y. Lee (2021) designed Z." | Enumeration (flag) |
+| "Attention-based methods have evolved... Smith (2019) and Jones (2020) both explored... However, Lee (2021) showed that..." | Thematic synthesis (pass) |
+
+**Fix**: Reorganize by theme clusters; within each cluster, compare and contrast methods critically.
+
+### A2: Critical Analysis After Each Theme Cluster (LLM-judgment)
+
+**Rule**: Each thematic group must end with a synthesis sentence that compares, contrasts, or evaluates the cited works — not just list them. Look for evaluative language: "however", "despite", "a common limitation", "compared to".
+
+*This rule is too nuanced for regex and requires LLM judgment during review.*
+
+### A3: Research Gap Derivation at End of Related Work
+
+**Rule**: The final paragraph of Related Work must contain explicit research gap language that motivates the current study.
+
+**Detection heuristic** (script-automated):
+- Scan last 10 lines of the `related` section
+- Keywords: `gap|limitation|however.*(?:no|not|few)|remains|lack|overlooked|under-explored|open problem|yet to be|inadequate|insufficient`
+- If no match → Major/P1
+
+| Pattern | Verdict |
+|---------|---------|
+| "Despite these advances, existing methods remain unable to handle X." | Gap present (pass) |
+| "Lee (2021) achieved 95% accuracy on benchmark Y." (section ends) | No gap (flag) |
+
+### A4: Funnel-Shaped Citation Density (LLM-judgment)
+
+**Rule**: Citation density should follow a broad→focused→specific funnel: start with the general field, narrow to the sub-problem, end with the most relevant prior work. A flat or inverted funnel suggests poor narrative structure.
+
+*This rule requires LLM judgment to assess the narrative arc.*
+
+---
+
+## Cross-Section Logic Chain Closure (C3)
+
+**Rule**: Contribution claims made in the Introduction must be explicitly answered in the Conclusion. If the Introduction states "we propose X" or "our contributions include Y", the Conclusion must contain corresponding answer language ("we have shown", "results demonstrate", "experiments confirm").
+
+**Detection heuristic** (script-automated, `--cross-section` flag):
+- Extract contribution keywords from `introduction` section
+- Extract answer keywords from `conclusion` section
+- If intro has claims but conclusion has zero answer language → Major/P1 (flagged as `[Script]` observation)
+
+| Intro Claim | Expected Conclusion Answer |
+|-------------|---------------------------|
+| "We propose a novel attention mechanism." | "We have shown that the proposed attention mechanism achieves..." |
+| "Our main contributions are: (1)..." | "Experiments confirm that contribution (1)..." |
+
+**Note**: This check is inherently heuristic. Findings are framed as observations, not definitive judgments. False positives are possible when the conclusion uses different phrasing to address the same claims.
+

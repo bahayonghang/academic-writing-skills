@@ -18,6 +18,18 @@
       "prompt": "Polish the abstract wording in my Typst paper and help me translate one Chinese paragraph into academic English without breaking labels.",
       "expected_output": "Route to expression and translation modules while preserving Typst syntax.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "My Typst project uses a Hayagriva YAML bibliography. Validate it, then tell me whether any citations used in the paper are missing or unused.",
+      "expected_output": "Choose the bibliography path correctly for Hayagriva input, preserve Typst citation syntax, and surface missing, unused, or mismatched references.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Review the related work section in main.typ for weak literature organization, missing gap derivation, and cross-section logic problems, but do not rewrite labels or math.",
+      "expected_output": "Route to the logic module, flag enumeration-heavy related work or missing gap statements, and keep Typst labels, cites, and math untouched.",
+      "files": []
     }
   ]
 }

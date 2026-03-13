@@ -34,3 +34,28 @@ Carefully read the provided **[Experimental Data or Text Draft]**. Extract key f
 
 # Input
 [Provided by the user or the analyze_experiment.py script]
+
+---
+
+# Discussion & Results-Literature Integration (B3-B4)
+
+> Authoritative rules are defined in `latex-paper-en/references/modules/EXPERIMENT.md`. This section mirrors them for Typst.
+
+## B3: Discussion Depth — Attribution Over Repetition
+
+The Discussion must explain *why* results occur, not just restate numbers. The script counts lines with attribution markers (`because|due to|mechanism|explains|stems from|driven by|suggests that|indicates that`). If ratio < 15% → Major/P1.
+
+## B4: Results-Literature Echo
+
+Citation keys from Related Work (`@key` in Typst) should reappear in Discussion. Zero overlap → Major/P1.
+
+---
+
+# Conclusion Completeness Check (B5)
+
+A complete Conclusion needs three elements:
+1. **Core findings** — `we have shown|results show|findings indicate`
+2. **Implications** — `enables|paves the way|contributes to|potential for`
+3. **Limitations** — `limitation|future work|remain|challenge|further research`
+
+Missing limitations → Major/P1. Missing implications → Minor/P2. Missing findings → Minor/P2.
