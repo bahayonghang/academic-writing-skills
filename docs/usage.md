@@ -105,6 +105,7 @@ Deliverable modes:
 - `literature-map`
 - `venue-ranked survey`
 - `research-gap memo`
+- `survey-draft`
 
 This skill starts with intake questions before synthesis.
 
@@ -134,6 +135,10 @@ Use `paper-audit` after your compile and bibliography steps are already stable.
 ### You are not editing a paper yet, only researching
 
 Use `industrial-ai-research`, not the writing skills.
+
+### You want to draft a full survey paper
+
+Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds an outline, assembles evidence packs, writes section-by-section, and optionally hands off to `latex-paper-en` for LaTeX formatting.
 
 ## Output Expectations
 

@@ -28,10 +28,10 @@ features:
     details: "Typst paper workflow for compile, format, bibliography, grammar, sentence, logic, expression, translation, title, de-AI, and experiment review."
   - icon: 🔬
     title: "`paper-audit`"
-    details: "Unified audit for `.tex`, `.typ`, and `.pdf` with self-check, review, gate, polish, and re-audit modes."
+    details: "Unified audit for `.tex`, `.typ`, and `.pdf` with self-check, review, gate, polish, re-audit modes, and citation stacking detection."
   - icon: 🧭
     title: "`industrial-ai-research`"
-    details: "Venue-aware Industrial AI literature workflow with mandatory intake, source prioritization, and structured report modes."
+    details: "Venue-aware Industrial AI literature workflow with mandatory intake, source prioritization, structured report modes, and survey draft generation."
   - icon: 🛠️
     title: "Script-backed"
     details: "The docs now align with the repository reality: Python scripts live under each skill's `scripts/`, and repo-local examples use `uv run python ...`."

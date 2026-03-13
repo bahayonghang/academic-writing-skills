@@ -32,6 +32,7 @@ Unified academic paper audit for LaTeX, Typst, and PDF documents.
 - PDF visual layout checks
 - severity and priority reporting
 - 4-dimension scoring
+- citation stacking detection (flags 3+ clustered citations without individual discussion as AI writing traces)
 - optional ScholarEval-style assessment
 - optional online bibliography verification
 
@@ -49,7 +50,12 @@ Tell me whether paper.pdf is submission-ready.
 Re-audit this paper against the previous report.
 ```
 
+```text
+Check paper.tex for citation stacking in the introduction and related work.
+```
+
 ## Notes
 
 - `paper-audit` is for reports and scoring, not for being your first compiler.
 - Use the sibling writing skill first if the source still does not build.
+- Citation stacking detection checks Introduction and Related Work sections for sentences with 3+ clustered citations that lack individual discussion — a common AI writing pattern flagged by reviewers.

@@ -12,6 +12,7 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 - title optimization
 - de-AI cleanup
 - experiment-section review
+- anti-citation-stacking checks (Introduction and Related Work)
 
 ## Module Router
 
@@ -47,3 +48,4 @@ Verify references.bib against main.typ.
 
 - This skill is not for LaTeX-first projects.
 - Keep `@cite`, labels, and math intact unless you explicitly want edits.
+- Anti-citation-stacking: max 2 clustered citations per sentence without individual discussion. Sentences with 3+ stacked references are flagged as AI writing traces in Introduction and Related Work.

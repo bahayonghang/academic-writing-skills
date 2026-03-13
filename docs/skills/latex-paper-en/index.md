@@ -12,6 +12,7 @@ English LaTeX paper assistant for existing `.tex` projects.
 - expression polishing
 - Chinese-to-English academic translation
 - title, figure, de-AI, and experiment-section review
+- anti-citation-stacking checks (Introduction and Related Work)
 
 ## Do Not Use It For
 
@@ -62,3 +63,4 @@ Audit figures and bibliography before submission.
 
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, and math unless you explicitly want source edits.
 - Use one module at a time when you need clear diagnostics.
+- Anti-citation-stacking: max 2 clustered citations per sentence without individual discussion. Sentences with 3+ stacked references are flagged as AI writing traces in Introduction and Related Work.

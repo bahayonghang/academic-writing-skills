@@ -12,6 +12,7 @@ Chinese LaTeX thesis assistant for existing `.tex` thesis projects.
 - title optimization
 - de-AI cleanup
 - experiment-chapter review
+- citation stacking detection (Introduction and Related Work chapters)
 
 ## Recommended Default
 
@@ -49,3 +50,4 @@ Check references.bib for GB/T 7714 issues.
 
 - This skill is thesis-specific and not the right tool for English conference papers.
 - Preserve citations, labels, and math by default.
+- Citation stacking detection (Category 6 in de-AI): flags sentences with 3+ clustered citations without per-work discussion in Introduction and Related Work chapters. Max 2 clustered citations per sentence unless stating well-established background facts.
