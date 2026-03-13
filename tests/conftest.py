@@ -24,6 +24,10 @@ SCRIPT_DIR_AUDIT = (
 if str(SCRIPT_DIR_EN) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR_EN))
 
+# Add ZH scripts (appended, not prepended — ZH tests use _load_zh() for priority)
+if str(SCRIPT_DIR_ZH) not in sys.path:
+    sys.path.append(str(SCRIPT_DIR_ZH))
+
 # Add paper-audit scripts for audit tests
 if str(SCRIPT_DIR_AUDIT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR_AUDIT))

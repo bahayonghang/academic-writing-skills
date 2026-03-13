@@ -10,7 +10,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).parent.parent
 SKILLS_ROOT = REPO_ROOT / "academic-writing-skills"
 _DEFAULT_MANDATORY_SECTIONS = [
@@ -26,6 +25,18 @@ _DEFAULT_MANDATORY_SECTIONS = [
     "## Example Requests",
 ]
 SKILLS = {
+    "industrial-ai-research": {
+        "modules": [
+            "research",
+            "survey-outline",
+            "survey-evidence",
+            "survey-write",
+            "survey-merge",
+        ],
+        "min_examples": 4,
+        "min_evals": 4,
+        "expects_uv_commands": False,
+    },
     "latex-paper-en": {
         "modules": [
             "compile",
@@ -41,6 +52,10 @@ SKILLS = {
             "deai",
             "experiment",
         ],
+        "min_examples": 5,
+        "min_evals": 6,
+        "expects_uv_commands": True,
+        "router_help": True,
     },
     "latex-thesis-zh": {
         "modules": [
@@ -52,14 +67,31 @@ SKILLS = {
             "bibliography",
             "title",
             "deai",
+            "logic",
             "experiment",
         ],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
+        "router_help": True,
+    },
+    "paper-audit": {
+        "modules": ["self-check", "review", "gate", "polish", "re-audit"],
         "mandatory_sections": [
-            "## Module Router",
-            "## Workflow",
-            "## Safety",
-            "## Scope Exclusions",
+            "## Capability Summary",
+            "## Triggering",
+            "## Do Not Use",
+            "## Critical Rules",
+            "## Mode Selection Guide",
+            "## Steps",
+            "## Required Inputs",
+            "## Output Contract",
+            "## Reference Files",
+            "## Example Requests",
         ],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
     },
     "typst-paper": {
         "modules": [
@@ -75,10 +107,16 @@ SKILLS = {
             "deai",
             "experiment",
         ],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
+        "router_help": True,
     },
 }
 COMMAND_RE = re.compile(r"(^|[\s`(])python\s+\S")
-ROUTER_ROW_RE = re.compile(r"^\| `(?P<module>[^`]+)` \| .*? \| `(?P<command>[^`]+)` \|", re.MULTILINE)
+ROUTER_ROW_RE = re.compile(
+    r"^\| `(?P<module>[^`]+)` \| .*? \| `(?P<command>[^`]+)` \|", re.MULTILINE
+)
 
 
 def _iter_skill_text_files(root: Path) -> list[Path]:
@@ -110,11 +148,11 @@ def _command_violations(root: Path) -> list[str]:
 
 
 def test_skill_assets_exist() -> None:
-    for skill_name in SKILLS:
+    for skill_name, config in SKILLS.items():
         root = SKILLS_ROOT / skill_name
         assert (root / "SKILL.md").exists()
         assert (root / "examples").is_dir()
-        assert len(list((root / "examples").glob("*.md"))) >= 2
+        assert len(list((root / "examples").glob("*.md"))) >= config.get("min_examples", 3)
         assert (root / "evals" / "evals.json").exists()
         assert (root / "agents" / "openai.yaml").exists()
 
@@ -126,12 +164,17 @@ def test_skill_markdown_contract() -> None:
             assert section in skill_md, f"{skill_name} missing section: {section}"
         for module_name in config["modules"]:
             assert f"`{module_name}`" in skill_md, f"{skill_name} missing module `{module_name}`"
-        assert "uv run python" in skill_md
+        if config.get("expects_uv_commands", False):
+            assert "uv run python" in skill_md
 
 
 def test_skill_command_examples_use_uv_run_python() -> None:
     violations: list[str] = []
-    for skill_name in SKILLS:
+    for skill_name, config in SKILLS.items():
+        if not config.get("expects_uv_commands", False):
+            continue
+        if not config.get("enforce_command_hygiene", skill_name != "paper-audit"):
+            continue
         violations.extend(_command_violations(SKILLS_ROOT / skill_name))
     assert not violations, "\n".join(violations)
 
@@ -141,7 +184,7 @@ def test_skill_directories_do_not_contain_runtime_artifacts() -> None:
     for skill_name in SKILLS:
         root = SKILLS_ROOT / skill_name
         for path in root.rglob("*"):
-            if path.name in {"__pycache__", ".omc"}:
+            if path.name in {"__pycache__", ".omc", ".omx"}:
                 bad_paths.append(str(path))
     assert not bad_paths, "\n".join(bad_paths)
 
@@ -158,12 +201,12 @@ def test_latex_skills_do_not_reference_typst_examples() -> None:
 
 
 def test_evals_json_shape() -> None:
-    for skill_name in SKILLS:
+    for skill_name, config in SKILLS.items():
         evals_path = SKILLS_ROOT / skill_name / "evals" / "evals.json"
         payload = json.loads(evals_path.read_text(encoding="utf-8"))
         assert payload["skill_name"] == skill_name
         assert isinstance(payload["evals"], list)
-        assert len(payload["evals"]) >= 3
+        assert len(payload["evals"]) >= config.get("min_evals", 4)
         for item in payload["evals"]:
             assert {"id", "prompt", "expected_output", "files"} <= set(item)
             assert isinstance(item["files"], list)
@@ -179,12 +222,12 @@ def test_openai_yaml_shape() -> None:
             assert key in yaml_text, f"{skill_name} missing {key} in openai.yaml"
 
 
-def test_latex_paper_en_module_router_commands_match_script_help() -> None:
-    skill_root = SKILLS_ROOT / "latex-paper-en"
+def _assert_module_router_commands_match_script_help(skill_name: str) -> None:
+    skill_root = SKILLS_ROOT / skill_name
     skill_md = (skill_root / "SKILL.md").read_text(encoding="utf-8")
     rows = ROUTER_ROW_RE.findall(skill_md)
 
-    assert rows, "latex-paper-en module router table not found"
+    assert rows, f"{skill_name} module router table not found"
 
     env = dict(os.environ)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
@@ -206,4 +249,18 @@ def test_latex_paper_en_module_router_commands_match_script_help() -> None:
 
         help_text = result.stdout + result.stderr
         for option in [token for token in tokens if token.startswith("--")]:
-            assert option in help_text, f"{module_name} command advertises unsupported option {option}"
+            assert option in help_text, (
+                f"{module_name} command advertises unsupported option {option}"
+            )
+
+
+def test_latex_paper_en_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("latex-paper-en")
+
+
+def test_latex_thesis_zh_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("latex-thesis-zh")
+
+
+def test_typst_paper_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("typst-paper")

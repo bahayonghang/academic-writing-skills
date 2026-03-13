@@ -61,6 +61,7 @@ optimize_title_zh = _load_zh("optimize_title")
 compile_zh = _load_zh("compile")
 verify_bib_zh = _load_zh("verify_bib")
 parsers_zh = _load_zh("parsers")
+analyze_logic_zh = _load_zh("analyze_logic")
 
 
 # ── deai_check.py ──────────────────────────────────────────────
@@ -408,3 +409,76 @@ class TestVerifyBibZh:
         verifier.parse()
         keys = [e["key"] for e in verifier.entries]
         assert keys.count("key1") == 2
+
+
+# ── analyze_logic.py (WP1: Chinese Literature Review Quality) ──
+
+
+class TestAnalyzeLogicZh:
+    """Tests for Chinese literature review quality checks."""
+
+    def test_detects_chinese_author_enumeration(self, tmp_path: Path):
+        """A1: Flag 3+ consecutive author/year enumeration in Chinese."""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{相关工作}\n"
+            "张三（2019）提出了一种基于注意力的方法。\n"
+            "李四（2020）提出了图神经网络方案。\n"
+            "王五（2021）提出了混合架构方法。\n"
+            "赵六（2022）提出了高效剪枝策略。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex, "related")
+        joined = "\n".join(findings)
+        assert "枚举" in joined or "罗列" in joined or "enumeration" in joined.lower()
+
+    def test_detects_missing_gap_derivation_zh(self, tmp_path: Path):
+        """A3: Flag Related Work lacking gap language in Chinese."""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{相关工作}\n"
+            "现有方法在图像分类任务中取得了不错的效果。\n"
+            "上述方法各有优势和特点。\n"
+            "这些技术为本领域的发展做出了贡献。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex, "related")
+        joined = "\n".join(findings)
+        assert "空白" in joined or "gap" in joined.lower()
+
+
+# ── deai_check.py (WP6: AI Filler Connectors + Parallel) ──────
+
+
+class TestDeaiCheckEnhanced:
+    """Tests for C1/C2 AI marker supplements."""
+
+    def test_deai_detects_filler_connectors(self, tmp_path: Path):
+        """C1: Detect AI filler connectors like 总之, 综上所述."""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{结论}\n"
+            "总之，本文提出了一种新方法。\n"
+            "综上所述，实验结果验证了方法的有效性。\n"
+            "值得注意的是，该方法具有较好的泛化能力。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("conclusion")
+        assert result["trace_count"] >= 2
+
+    def test_deai_detects_parallel_sentences(self, tmp_path: Path):
+        """C2: Detect 3+ consecutive lines with same opening pattern."""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n"
+            "本文首先分析了数据预处理的关键步骤。\n"
+            "本文接着验证了模型的有效性。\n"
+            "本文最后证明了方法的泛化能力。\n"
+            "本文还探讨了未来的研究方向。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("introduction")
+        parallel = [t for t in result["traces"] if t["category"] == "parallel_structure"]
+        assert len(parallel) >= 1

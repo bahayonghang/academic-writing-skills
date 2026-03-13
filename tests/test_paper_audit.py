@@ -1034,7 +1034,9 @@ This paper proposes a method.
         from audit import _run_checklist
 
         items = _run_checklist(self.IEEE_CONTENT, "paper.tex", "en", venue="ieee")
-        kw_item = next((i for i in items if "Keywords" in i.description and "IEEE" in i.description), None)
+        kw_item = next(
+            (i for i in items if "Keywords" in i.description and "IEEE" in i.description), None
+        )
         assert kw_item is not None
 
     def test_acm_ccs_missing(self) -> None:
@@ -1176,12 +1178,13 @@ class TestReauditClassification:
 
     def test_fully_addressed(self) -> None:
         """Prior issue not in fresh audit -> FULLY_ADDRESSED."""
-        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+        from audit import _MATCH_THRESHOLD, _fuzzy_match_score
 
         prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading", "line": 10}
         fresh_issues = [
-            AuditIssue(module="GRAMMAR", line=20, severity="Minor", priority="P2",
-                       message="Passive voice"),
+            AuditIssue(
+                module="GRAMMAR", line=20, severity="Minor", priority="P2", message="Passive voice"
+            ),
         ]
         # Simulate matching: no FORMAT module match
         best_score = 0.0
@@ -1195,12 +1198,22 @@ class TestReauditClassification:
 
     def test_not_addressed(self) -> None:
         """Prior issue still present at same severity -> NOT_ADDRESSED."""
-        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+        from audit import _MATCH_THRESHOLD, _SEVERITY_RANK, _fuzzy_match_score
 
-        prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading levels", "line": 10}
+        prior = {
+            "module": "FORMAT",
+            "severity": "Major",
+            "message": "Bad heading levels",
+            "line": 10,
+        }
         fresh_issues = [
-            AuditIssue(module="FORMAT", line=10, severity="Major", priority="P1",
-                       message="Bad heading levels detected"),
+            AuditIssue(
+                module="FORMAT",
+                line=10,
+                severity="Major",
+                priority="P1",
+                message="Bad heading levels detected",
+            ),
         ]
         best_score = 0.0
         for fi in fresh_issues:
@@ -1217,12 +1230,22 @@ class TestReauditClassification:
 
     def test_partially_addressed(self) -> None:
         """Prior issue downgraded in severity -> PARTIALLY_ADDRESSED."""
-        from audit import _fuzzy_match_score, _MATCH_THRESHOLD, _SEVERITY_RANK
+        from audit import _MATCH_THRESHOLD, _SEVERITY_RANK, _fuzzy_match_score
 
-        prior = {"module": "FORMAT", "severity": "Major", "message": "Bad heading levels", "line": 10}
+        prior = {
+            "module": "FORMAT",
+            "severity": "Major",
+            "message": "Bad heading levels",
+            "line": 10,
+        }
         fresh_issues = [
-            AuditIssue(module="FORMAT", line=10, severity="Minor", priority="P2",
-                       message="Bad heading levels (minor)"),
+            AuditIssue(
+                module="FORMAT",
+                line=10,
+                severity="Minor",
+                priority="P2",
+                message="Bad heading levels (minor)",
+            ),
         ]
         best_score = _fuzzy_match_score(prior["message"], fresh_issues[0].message)
         assert best_score >= _MATCH_THRESHOLD
@@ -1246,8 +1269,13 @@ class TestRenderReauditReport:
             mode="re-audit",
             venue="neurips",
             issues=[
-                AuditIssue(module="GRAMMAR", line=20, severity="Minor",
-                           priority="P2", message="Passive voice"),
+                AuditIssue(
+                    module="GRAMMAR",
+                    line=20,
+                    severity="Minor",
+                    priority="P2",
+                    message="Passive voice",
+                ),
             ],
             reaudit_data={
                 "previous_report": "report_v1.md",

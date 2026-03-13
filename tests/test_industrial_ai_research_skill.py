@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-
 ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "academic-writing-skills" / "industrial-ai-research"
 
@@ -17,6 +16,7 @@ REQUIRED_FILES = [
     SKILL_DIR / "references" / "report-modes.md",
     SKILL_DIR / "references" / "question-flow.md",
     SKILL_DIR / "references" / "quality-checklist.md",
+    SKILL_DIR / "evals" / "evals.json",
     SKILL_DIR / "examples" / "predictive-maintenance.md",
     SKILL_DIR / "examples" / "intelligent-scheduling.md",
     SKILL_DIR / "examples" / "industrial-anomaly-detection.md",
@@ -40,17 +40,13 @@ def test_skill_package_contains_no_cjk() -> None:
 
 def test_skill_prompts_for_report_language() -> None:
     skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
-    question_flow = (SKILL_DIR / "references" / "question-flow.md").read_text(
-        encoding="utf-8"
-    )
+    question_flow = (SKILL_DIR / "references" / "question-flow.md").read_text(encoding="utf-8")
     assert "report language" in skill_text.lower()
     assert "which report language should i use" in question_flow.lower()
 
 
 def test_source_priority_mentions_industrial_ai_defaults_and_tiers() -> None:
-    source_priority = (SKILL_DIR / "references" / "source-priority.md").read_text(
-        encoding="utf-8"
-    )
+    source_priority = (SKILL_DIR / "references" / "source-priority.md").read_text(encoding="utf-8")
     venue_map = (SKILL_DIR / "references" / "venue-map.md").read_text(encoding="utf-8")
     combined = f"{source_priority}\n{venue_map}".lower()
     assert "industrial ai" in combined

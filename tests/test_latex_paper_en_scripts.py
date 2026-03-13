@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 experiment_module = importlib.import_module("analyze_experiment")
+logic_module = importlib.import_module("analyze_logic")
 compile_module = importlib.import_module("compile")
 verify_bib_module = importlib.import_module("verify_bib")
 check_figures_module = importlib.import_module("check_figures")
@@ -261,3 +262,202 @@ def test_optimize_title_batch_mode_empty_match_returns_error(
 
     assert code == 1
     assert "No files matched for batch mode" in output.err
+
+
+# ── analyze_logic.py (WP1: Literature Review Quality) ─────────
+
+
+def test_analyze_logic_detects_author_enumeration(tmp_path: Path) -> None:
+    """A1: Flag 3+ consecutive author/year enumeration lines in Related Work."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+In 2019, Smith et al. proposed a novel attention mechanism for sequence modeling.
+In 2020, Jones et al. introduced a graph-based approach for document classification.
+In 2021, Wang et al. presented a hybrid method combining transformers and CNNs.
+In 2022, Li et al. developed an efficient pruning strategy for large models.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "enumeration" in joined
+
+
+def test_analyze_logic_detects_missing_gap_derivation(tmp_path: Path) -> None:
+    """A3: Flag Related Work that lacks gap language in its final lines."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+Smith et al. proposed method A for image classification.
+Jones et al. introduced method B which achieved good results.
+Wang et al. presented method C using transformers.
+These methods share similar design principles and achieve competitive performance.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "gap" in joined
+
+
+def test_analyze_logic_passes_well_structured_related_work(tmp_path: Path) -> None:
+    """Well-structured Related Work with gap derivation should pass A3."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+Attention-based methods have shown promise in sequence modeling.
+However, existing approaches have a significant limitation in handling
+long-range dependencies efficiently. This gap motivates our approach.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "gap" not in joined or "no rule-based" in joined
+
+
+# ── analyze_logic.py (WP4: Cross-Section Logic Chain) ─────────
+
+
+def test_analyze_logic_cross_section_incomplete(tmp_path: Path) -> None:
+    """C3: Flag when Conclusion has no answer language for Introduction claims."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We propose a novel framework for time series forecasting.
+Our contribution includes a new attention mechanism.
+\section{Related Work}
+Prior work has explored various approaches.
+\section{Conclusion}
+Time series forecasting is an important problem.
+Future work will explore additional datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, cross_section=True)
+    joined = "\n".join(findings).lower()
+    assert "logic chain" in joined or "cross-section" in joined
+
+
+def test_analyze_logic_cross_section_complete(tmp_path: Path) -> None:
+    """C3: Pass when Conclusion explicitly addresses Introduction claims."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We propose a novel framework for time series forecasting.
+\section{Related Work}
+Prior work has explored various approaches.
+\section{Conclusion}
+We have shown that our framework achieves state-of-the-art results.
+Results demonstrate the effectiveness of the proposed approach.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, cross_section=True)
+    joined = "\n".join(findings).lower()
+    assert "logic chain" not in joined
+
+
+# ── analyze_experiment.py (WP2: Discussion Depth) ─────────────
+
+
+def test_analyze_experiment_flags_shallow_discussion(tmp_path: Path) -> None:
+    """B3: Flag discussion section with low attribution/explanatory ratio."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Discussion}
+Our method achieves 95.2 percent accuracy.
+The F1 score is 0.93.
+The precision is 0.94 and recall is 0.92.
+Results on dataset A show 96.1 percent.
+Results on dataset B show 93.8 percent.
+Results on dataset C show 94.5 percent.
+The overall performance is satisfactory.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = experiment_module.analyze(tex, "discussion")
+    joined = "\n".join(findings).lower()
+    assert "depth" in joined or "attribution" in joined or "explanatory" in joined
+
+
+def test_analyze_experiment_flags_no_literature_echo(tmp_path: Path) -> None:
+    """B4: Flag when no Related Work citations reappear in Discussion."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+Smith et al. \cite{smith2020} proposed method A.
+Jones et al. \cite{jones2021} introduced method B.
+\section{Discussion}
+Our method achieves the best performance on all benchmarks.
+The improvement is consistent across all datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = experiment_module.analyze(tex)
+    joined = "\n".join(findings).lower()
+    assert "literature echo" in joined or "citations from related work" in joined
+
+
+# ── analyze_experiment.py (WP5: Conclusion Completeness) ──────
+
+
+def test_analyze_experiment_conclusion_incomplete(tmp_path: Path) -> None:
+    """B5: Flag conclusion missing limitations/future work."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Conclusion}
+We have shown that our method achieves good results.
+The approach enables real-time processing of large datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = experiment_module.analyze(tex, "conclusion")
+    joined = "\n".join(findings).lower()
+    assert "limitation" in joined or "future work" in joined
+
+
+def test_analyze_experiment_conclusion_complete(tmp_path: Path) -> None:
+    """B5: Pass when conclusion contains all three elements."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Conclusion}
+We have shown that our method achieves state-of-the-art results on three benchmarks.
+This approach enables efficient processing applicable to real-time systems.
+A limitation of this work is the reliance on labeled data.
+Future work will explore semi-supervised extensions.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = experiment_module.analyze(tex, "conclusion")
+    joined = "\n".join(findings).lower()
+    has_limitation_issue = "limitation" in joined and "lacks" in joined
+    assert not has_limitation_issue

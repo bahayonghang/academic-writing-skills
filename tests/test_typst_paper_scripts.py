@@ -9,7 +9,6 @@ from types import SimpleNamespace
 
 import pytest
 
-
 _TYPST_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "typst-paper" / "scripts"
 
 
@@ -55,6 +54,7 @@ verify_bib_typst = _load_typst("verify_bib")
 optimize_title_typst = _load_typst("optimize_title")
 check_format_typst = _load_typst("check_format")
 parsers_typst = _load_typst("parsers")
+analyze_logic_typst = _load_typst("analyze_logic")
 
 
 def test_typst_compile_missing_binary_returns_error(
@@ -143,3 +143,39 @@ This paper studies time series forecasting.
 """
     assert parsers_typst.extract_title(content) == "Industrial Forecasting with Transformers"
     assert "time series forecasting" in parsers_typst.extract_abstract(content)
+
+
+# ── analyze_logic.py (WP1: Literature Review Quality for Typst) ──
+
+
+def test_typst_analyze_logic_detects_author_enumeration(tmp_path: Path) -> None:
+    """A1: Flag 3+ consecutive author/year enumeration in Typst."""
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= Related Work
+In 2019, Smith et al. proposed a novel attention mechanism.
+In 2020, Jones et al. introduced a graph-based approach.
+In 2021, Wang et al. presented a hybrid transformer method.
+In 2022, Li et al. developed an efficient pruning strategy.
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ, "related")
+    joined = "\n".join(findings).lower()
+    assert "enumeration" in joined
+
+
+def test_typst_analyze_logic_detects_missing_gap_derivation(tmp_path: Path) -> None:
+    """A3: Flag Related Work that lacks gap language in Typst."""
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= Related Work
+Various methods have been proposed for this task.
+These approaches achieve competitive performance on standard benchmarks.
+The field continues to evolve with new architectures.
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ, "related")
+    joined = "\n".join(findings).lower()
+    assert "gap" in joined
