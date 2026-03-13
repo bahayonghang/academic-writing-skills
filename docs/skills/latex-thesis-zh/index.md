@@ -9,8 +9,10 @@ Chinese LaTeX thesis assistant for existing `.tex` thesis projects.
 - template detection
 - thesis compilation
 - term or naming consistency checks
+- logic and coherence review (literature review quality, cross-section closure)
+- discussion depth and conclusion completeness checks
 - title optimization
-- de-AI cleanup
+- de-AI cleanup (including filler connector and parallel sentence detection)
 - experiment-chapter review
 - citation stacking detection (Introduction and Related Work chapters)
 
@@ -30,7 +32,8 @@ For large or multi-file theses, run `structure` first.
 | `bibliography` | GB/T 7714 bibliography checks | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | title or chapter-title optimization | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
 | `deai` | reduce AI writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `experiment` | experiment-section review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `logic` | coherence, lit review quality, cross-section closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `experiment` | experiment-section review, discussion depth, conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
 
 ## Good First Requests
 
@@ -50,4 +53,10 @@ Check references.bib for GB/T 7714 issues.
 
 - This skill is thesis-specific and not the right tool for English conference papers.
 - Preserve citations, labels, and math by default.
+- Minimum useful input is the thesis entry file such as `thesis.tex`; add a bibliography path only when the request targets references.
+- Expected output is source-preserving thesis review feedback, typically `% Module (L##) [Severity] [Priority]: ...`, rather than broad rewrites.
+- Eval coverage currently spans 3 prompt patterns: template+compile diagnosis, structure+consistency review, and bibliography+de-AI checks.
+- The `logic` module checks literature review quality (A1: author enumeration, A3: gap derivation) and cross-section logic chain closure (C3). Use `--cross-section` for full-document closure checks.
+- The `experiment` module checks discussion depth (B3), results-literature echo (B4), and conclusion completeness (B5).
+- The `deai` module now detects AI filler connectors (C1) and parallel sentence structures (C2) in addition to existing AI trace patterns.
 - Citation stacking detection (Category 6 in de-AI): flags sentences with 3+ clustered citations without per-work discussion in Introduction and Related Work chapters. Max 2 clustered citations per sentence unless stating well-established background facts.

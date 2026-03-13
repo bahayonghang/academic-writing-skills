@@ -9,6 +9,7 @@
 - 工业异常检测进展追踪
 - 智能制造与 CPS 趋势梳理
 - Industrial AI 研究空白分析
+- 文献综述质量标准参考（A1-A4 规则适用于综述写作）
 
 ## 工作流形态
 
@@ -34,6 +35,7 @@
 | `literature-map` | 按主题聚类的文献地图 |
 | `venue-ranked survey` | 强调来源层级的综述 |
 | `research-gap memo` | 研究空白与下一步机会 |
+| `survey-draft` | 先 taxonomy、后证据包、再逐节写作的综述草稿，并可选转交 `latex-paper-en` |
 
 ## 推荐提示词
 
@@ -48,3 +50,6 @@
 ```text
 写一份 industrial anomaly detection 的 research-gap memo。
 ```
+
+- 常规模式最终输出为一份稳定结构的报告；`survey-draft` 会额外产出 `outline.yml`、分节 evidence 文件、分节草稿、合并后的 `survey-draft.md` 和 `quality-report.md`。
+- 当前强化方向是把 `survey-outline`、`survey-evidence`、`survey-write`、`survey-merge` 保持为严格分阶段模块：在大纲获批且证据包完成前，不生成正文 prose。

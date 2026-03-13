@@ -74,5 +74,7 @@ Draft a survey on predictive maintenance using the survey-draft mode.
 
 - This skill is for research, not for compiling or rewriting your paper source.
 - It should separate verified evidence from inference.
+- Standard report modes end as one final report with stable sections. `survey-draft` is the engineering-heavier path and produces staged artifacts such as `outline.yml`, per-section evidence files, section drafts, a merged `survey-draft.md`, and a `quality-report.md`.
 - `survey-draft` mode produces Markdown by default. For LaTeX output, it delegates final formatting to `latex-paper-en`.
-- The survey-draft workflow enforces a strict phase gate: no prose is generated until the outline is approved and all evidence packs are assembled.
+- The current hardening direction keeps `survey-outline`, `survey-evidence`, `survey-write`, and `survey-merge` as distinct gated phases: no prose is generated until the outline is approved and all evidence packs are assembled.
+- Literature review quality standards (A1-A4) from the writing skills are cross-referenced in `SURVEY_WRITING_GUIDE.md` for survey context: thematic clustering, critical analysis, gap derivation, and citation density funnel apply to survey writing as well.

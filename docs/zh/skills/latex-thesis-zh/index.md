@@ -9,8 +9,10 @@
 - 模板检测
 - 论文编译
 - 术语或命名一致性检查
+- 逻辑与连贯性检查（文献综述质量、跨章节逻辑链闭合）
+- 讨论深度与结论完整性检查
 - 标题优化
-- 去 AI 修改
+- 去 AI 修改（含填充连接词与排比句检测）
 - 实验章节审阅
 
 ## 默认建议
@@ -29,7 +31,8 @@
 | `bibliography` | GB/T 7714 文献检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 标题或章节标题优化 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
 | `deai` | 降低 AI 痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `experiment` | 实验章节审阅 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `logic` | 逻辑连贯性、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `experiment` | 实验章节审阅、讨论深度、结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
 
 ## 推荐提示词
 
@@ -44,3 +47,7 @@
 ```text
 检查 references.bib 的 GB/T 7714 问题。
 ```
+
+- 最小输入通常是学位论文入口文件，如 `thesis.tex`；只有涉及参考文献时才需要额外给 bibliography 路径。
+- 默认输出是保留源码结构的 thesis 审阅意见，通常采用 `% Module (L##) [Severity] [Priority]: ...` 这类格式，而不是整段重写。
+- 当前 eval 覆盖 3 类请求：template+compile 排障、structure+consistency 审阅，以及 bibliography+deai 检查。
