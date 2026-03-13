@@ -76,4 +76,7 @@ tmp/
 
 .kiro/
 .omc/
+.omx/
+**/.omc/
+**/.omx/
 ref/
