@@ -73,6 +73,17 @@ class ChineseAITraceChecker:
         r"蓬勃(?:发展|兴起)": "growth_data",
     }
 
+    AI_FILLER_CONNECTORS = {
+        r"总之": "filler_remove",
+        r"综上所述": "filler_remove",
+        r"不可否认的是": "filler_remove",
+        r"值得注意的是": "filler_remove",
+        r"需要指出的是": "filler_remove",
+        r"不难发现": "filler_remove",
+        r"众所周知": "filler_remove",
+        r"毋庸讳言": "filler_remove",
+    }
+
     def __init__(self, file_path: Path):
         self.file_path = file_path
         self.content = file_path.read_text(encoding="utf-8", errors="ignore")
@@ -156,6 +167,7 @@ class ChineseAITraceChecker:
             ("over_confident", self.OVER_CONFIDENT),
             ("vague_quantifier", self.VAGUE_QUANTIFIERS),
             ("template_expr", self.TEMPLATE_EXPRESSIONS),
+            ("filler_connector", self.AI_FILLER_CONNECTORS),
         ]
 
         for category, patterns_dict in all_patterns:
@@ -166,7 +178,71 @@ class ChineseAITraceChecker:
                 results["traces"].extend(matches)
 
         results["trace_count"] = len(results["traces"])
+
+        # C2: Check for parallel sentence structures
+        parallel_issues = self._check_parallel_sentences(section_name)
+        results["traces"].extend(parallel_issues)
+        results["trace_count"] = len(results["traces"])
+
         return results
+
+    def _check_parallel_sentences(self, section_name: str) -> list[dict]:
+        """C2: Detect 3+ consecutive lines sharing the same opening pattern."""
+        if section_name not in self.section_ranges:
+            return []
+
+        start, end = self.section_ranges[section_name]
+        issues: list[dict] = []
+        visible_lines: list[tuple[int, str]] = []
+
+        for i in range(start - 1, min(end, len(self.lines))):
+            line = self.lines[i].strip()
+            if not line or line.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(line)
+            if visible and len(visible) >= 4:
+                visible_lines.append((i + 1, visible))
+
+        consecutive = 0
+        streak_start = 0
+        prev_prefix = ""
+        for line_no, text in visible_lines:
+            # Extract first 2 characters as prefix for Chinese text
+            prefix = text[:2]
+            if prefix == prev_prefix and prefix:
+                if consecutive == 0:
+                    streak_start = line_no
+                consecutive += 1
+            else:
+                if consecutive >= 3:
+                    issues.append(
+                        {
+                            "line": streak_start,
+                            "text": f"连续{consecutive}行以相同模式开头",
+                            "original": "",
+                            "pattern": f"parallel:{prev_prefix}",
+                            "category": "parallel_structure",
+                            "section": section_name,
+                            "suggestion_type": "vary_opening",
+                        }
+                    )
+                consecutive = 0
+            prev_prefix = prefix
+
+        if consecutive >= 3:
+            issues.append(
+                {
+                    "line": streak_start,
+                    "text": f"连续{consecutive}行以相同模式开头",
+                    "original": "",
+                    "pattern": f"parallel:{prev_prefix}",
+                    "category": "parallel_structure",
+                    "section": section_name,
+                    "suggestion_type": "vary_opening",
+                }
+            )
+
+        return issues
 
     def analyze_document(self) -> dict:
         analysis = {
@@ -226,6 +302,8 @@ class ChineseAITraceChecker:
             "context_direct": "直接切入具体问题背景.",
             "cite_examples": "提供具体的引用案例.",
             "growth_data": "提供增长数据支持.",
+            "filler_remove": "删除此填充连接词，直接陈述核心观点.",
+            "vary_opening": "变换句式开头，避免机械排比结构.",
         }
         return instructions.get(key, "请改写得更具体、客观。")
 
@@ -341,4 +419,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
