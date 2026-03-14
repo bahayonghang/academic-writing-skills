@@ -16,7 +16,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 
 - 编译并诊断 XeLaTeX / LuaLaTeX / latexmk 构建问题。
 - 检查论文格式、GB/T 7714 相关要求、章节结构、模板类型和术语一致性。
-- 审阅逻辑连贯性、文献综述质量、实验章节写法、标题表达与 AI 痕迹。
+- 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、实验章节写法、标题表达与 AI 痕迹。
 - 在不破坏引用、标签和数学环境的前提下给出可落地的中文论文修改建议。
 
 ## Triggering
@@ -27,7 +27,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 学位论文格式、国标或学校模板检查
 - 章节结构梳理或模板识别
 - 术语、缩略语、命名一致性检查
-- 逻辑连贯性、文献综述质量、跨章节闭合检查
+- 逻辑连贯性、文献综述质量、标题后导语完整性、跨章节闭合检查
 - 标题优化、学术表达或去 AI 化检查
 - 实验章节语言与结构审阅
 
@@ -55,7 +55,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 | `bibliography` | GB/T 7714 or BibTeX validation | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714` | `references/GB_STANDARD.md` |
 | `title` | Optimize Chinese thesis titles and chapter titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check` | `references/TITLE_OPTIMIZATION.md` |
 | `deai` | Reduce AI-writing traces in visible Chinese prose | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction` | `references/DEAI_GUIDE.md` |
-| `logic` | Check logical coherence, lit review quality, cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section related` | `references/LOGIC_COHERENCE.md` |
+| `logic` | Check logical coherence, heading lead-in quality, lit review quality, cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section related` | `references/LOGIC_COHERENCE.md` |
 | `experiment` | Review experiment chapter language and structure | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments` | `references/modules/EXPERIMENT.md` |
 
 ## Required Inputs
@@ -93,7 +93,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - `references/COMPILATION.md`: compilation strategy and toolchain diagnosis.
 - `references/GB_STANDARD.md`: GB/T 7714 and bibliography-related checks.
 - `references/STRUCTURE_GUIDE.md`: thesis structure expectations and chapter mapping.
-- `references/LOGIC_COHERENCE.md`: logic, coherence, consistency, and literature-review expectations.
+- `references/LOGIC_COHERENCE.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
 - `references/TITLE_OPTIMIZATION.md`: Chinese academic title heuristics.
 - `references/DEAI_GUIDE.md`: de-AI review heuristics.
 - `references/modules/EXPERIMENT.md`: experiment-chapter review criteria.
@@ -107,3 +107,4 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - “请梳理这篇硕士论文的章节结构，并检查术语和缩略语是否前后统一。”
 - “按 GB/T 7714 帮我检查参考文献，再看看绪论是不是有明显 AI 腔。”
 - “检查 related work 的逻辑链条和研究空白推导，但不要动任何引用和公式。”
+- “帮我检查每一章、每一节、四级标题后有没有先写导语，不要只看格式。”

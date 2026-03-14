@@ -23,9 +23,29 @@ class DocumentParser(ABC):
     def get_comment_prefix(self) -> str:
         pass
 
+    def extract_headings(self, content: str) -> list[dict[str, Any]]:
+        """Return heading nodes in document order.
+
+        Parsers that support fine-grained heading inspection should override this.
+        """
+        return []
+
 
 class LatexParser(DocumentParser):
     """Parser for Chinese LaTeX Thesis."""
+
+    HEADING_PATTERN = re.compile(
+        r"\\(?P<command>chapter|section|subsection|subsubsection|paragraph)\*?"
+        r"(?:\[[^\]]*\])?\{(?P<title>[^}]*)\}"
+    )
+
+    HEADING_LEVELS = {
+        "chapter": 1,
+        "section": 2,
+        "subsection": 3,
+        "subsubsection": 4,
+        "paragraph": 5,
+    }
 
     # Chinese Section patterns
     SECTION_PATTERNS = {
@@ -105,9 +125,31 @@ class LatexParser(DocumentParser):
 
         return " ".join(visible_parts).strip()
 
+    def extract_headings(self, content: str) -> list[dict[str, Any]]:
+        headings: list[dict[str, Any]] = []
+        for line_no, line in enumerate(content.split("\n"), 1):
+            stripped = line.strip()
+            if not stripped or stripped.startswith(self.get_comment_prefix()):
+                continue
+            match = self.HEADING_PATTERN.search(stripped)
+            if not match:
+                continue
+            command = match.group("command")
+            headings.append(
+                {
+                    "line": line_no,
+                    "level": self.HEADING_LEVELS[command],
+                    "command": command,
+                    "title": match.group("title").strip(),
+                }
+            )
+        return headings
+
 
 class TypstParser(DocumentParser):
     """Parser for Chinese Typst Thesis."""
+
+    HEADING_PATTERN = re.compile(r"^(?P<marks>={1,5})\s+(?P<title>.+?)\s*$")
 
     # Chinese Section patterns for Typst
     # e.g. = 摘要, = 绪论
@@ -188,6 +230,25 @@ class TypstParser(DocumentParser):
             visible_parts.append(temp_line[last_end:])
 
         return " ".join(visible_parts).strip()
+
+    def extract_headings(self, content: str) -> list[dict[str, Any]]:
+        headings: list[dict[str, Any]] = []
+        for line_no, line in enumerate(content.split("\n"), 1):
+            stripped = line.strip()
+            if not stripped or stripped.startswith(self.get_comment_prefix()):
+                continue
+            match = self.HEADING_PATTERN.match(stripped)
+            if not match:
+                continue
+            headings.append(
+                {
+                    "line": line_no,
+                    "level": len(match.group("marks")),
+                    "command": "heading",
+                    "title": match.group("title").strip(),
+                }
+            )
+        return headings
 
 
 def get_parser(file_path: Any) -> DocumentParser:

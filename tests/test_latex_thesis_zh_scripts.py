@@ -325,6 +325,28 @@ class TestParsersZh:
         parser = parsers_zh.get_parser("main.typ")
         assert isinstance(parser, parsers_zh.TypstParser)
 
+    def test_extract_latex_headings(self):
+        content = (
+            "\\chapter{绪论}\n"
+            "\\section{研究背景}\n"
+            "\\subsection{问题定义}\n"
+            "\\subsubsection{数据来源}\n"
+        )
+        parser = parsers_zh.LatexParser()
+        headings = parser.extract_headings(content)
+        assert [heading["command"] for heading in headings] == [
+            "chapter",
+            "section",
+            "subsection",
+            "subsubsection",
+        ]
+
+    def test_extract_typst_headings(self):
+        content = "= 绪论\n== 研究背景\n=== 问题定义\n==== 数据来源\n"
+        parser = parsers_zh.TypstParser()
+        headings = parser.extract_headings(content)
+        assert [heading["level"] for heading in headings] == [1, 2, 3, 4]
+
 
 # ── compile.py (zh) ───────────────────────────────────────────
 
@@ -445,6 +467,37 @@ class TestAnalyzeLogicZh:
         findings = analyze_logic_zh.analyze(tex, "related")
         joined = "\n".join(findings)
         assert "空白" in joined or "gap" in joined.lower()
+
+    def test_detects_missing_heading_lead_before_list(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{方法设计}\n"
+            "\\section{总体流程}\n"
+            "\\begin{itemize}\n"
+            "\\item 数据预处理\n"
+            "\\item 模型训练\n"
+            "\\end{itemize}\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "缺少导语段落" in joined
+
+    def test_detects_weak_heading_lead_when_too_short(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{实验分析}\n"
+            "如下。\n"
+            "\\section{结果对比}\n"
+            "说明如下。\n"
+            "\\subsection{主结果}\n"
+            "下面从准确率和召回率两个方面展开分析。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "导语可能过短" in joined
+        assert "主结果" not in joined
 
 
 # ── deai_check.py (WP6: AI Filler Connectors + Parallel) ──────
