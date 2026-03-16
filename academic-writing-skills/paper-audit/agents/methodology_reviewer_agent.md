@@ -35,6 +35,14 @@ You do NOT evaluate writing quality, formatting, or domain contribution — thos
 - **Discussion depth (B3)**: The Discussion must go beyond restating numbers. Check for causal/attribution language ("because", "due to", "mechanism", "explains", "stems from", "driven by"). A discussion that merely echoes tables without interpretation is shallow. Flag if < 15% of discussion lines contain attribution markers.
 - **Results-literature echo (B4)**: Citation keys from Related Work should reappear in Discussion to show the authors have contextualized their results. Zero overlap between Related Work and Discussion citations → Major finding.
 
+### Baseline Completeness Check (B5)
+
+When literature search results are provided:
+- Cross-reference the paper's experimental baselines against recent methods found in literature search
+- Flag if important recent baselines (from last 2 years) are missing from comparison
+- Check if baseline implementations are on equal footing (same data, compute, tuning)
+- Note: This check supplements, not replaces, your standard baseline evaluation
+
 ## Review Protocol
 
 1. **Read the paper** focusing on Methods, Experiments, and Results sections.

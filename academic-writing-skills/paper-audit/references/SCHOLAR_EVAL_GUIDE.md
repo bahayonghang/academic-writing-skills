@@ -116,7 +116,27 @@ LLM-based dimensions require reading the full paper.
 | 3-4 | Notable ethical concerns unaddressed |
 | 1-2 | Serious ethical violations |
 
-### 8. Overall (10%, Computed)
+### 8. Literature Grounding (12%, Mixed) -- NEW in v3.0
+
+**What it measures**: How well the paper is grounded in and positioned within existing literature.
+
+**Script component**: Automated literature search coverage analysis via `literature_compare.py`.
+**LLM component**: Domain Reviewer's qualitative literature assessment.
+
+**Requires**: `--literature-search` flag for script component.
+
+**Scoring criteria**:
+| Score | Description |
+|-------|-------------|
+| 9-10 | Comprehensive coverage, thematic organization, clear gap derivation |
+| 7-8 | Solid coverage with minor gaps, adequate organization |
+| 5-6 | Reasonable coverage but notable gaps, weak gap identification |
+| 3-4 | Incomplete coverage, enumerated rather than thematic |
+| 1-2 | Minimal or absent literature review |
+
+See `references/LITERATURE_GROUNDING_GUIDE.md` for detailed scoring rubric.
+
+### 9. Overall (10%, Computed)
 
 Weighted average of all available dimension scores, normalized for missing values.
 

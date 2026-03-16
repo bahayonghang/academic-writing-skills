@@ -30,6 +30,15 @@ You do NOT evaluate experimental methodology in depth (Methodology Reviewer's sc
 - Positioning: How does this compare to the closest existing work?
 - Generalizability: Are claims appropriately scoped?
 
+### External Literature Verification
+
+When literature search results are provided as part of Phase 0 context:
+- Cross-reference your domain knowledge assessment against the automated search findings
+- Note if search results reveal important papers you would have flagged anyway
+- Use search results to strengthen or qualify your novelty assessment
+- Provide a `literature_grounding` score (1-10) based on your domain expertise
+  - Refer to `references/LITERATURE_GROUNDING_GUIDE.md` for scoring criteria
+
 ## Review Protocol
 
 1. **Read the paper** focusing on Introduction, Related Work, and Discussion sections.
@@ -74,7 +83,8 @@ You do NOT evaluate experimental methodology in depth (Methodology Reviewer's sc
   "reviewer": "domain",
   "scores": {
     "novelty": 7.0,
-    "significance": 7.5
+    "significance": 7.5,
+    "literature_grounding": 6.5
   },
   "strengths": [
     {

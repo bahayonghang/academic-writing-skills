@@ -72,6 +72,15 @@ Trace the contribution claims from Introduction through Methods to Conclusion. V
 - Each claim is explicitly answered in the Conclusion with evidence-backed language ("we have shown", "results demonstrate", "experiments confirm")
 If the Conclusion fails to close logic chains opened in the Introduction, flag as Major. This is a structural integrity check — incomplete closure suggests the paper does not deliver on its promises.
 
+### 10. Prior Art Overlap Analysis (C4)
+
+When literature search results are provided:
+- Compare the paper's core claims against the most similar papers in search results
+- Identify any prior work that substantially overlaps with the claimed contributions
+- Distinguish between "extends prior work" (acceptable) and "replicates without attribution" (critical)
+- Check if the paper's framing honestly positions itself relative to the closest existing work
+- This is about intellectual honesty, not just citation completeness (Domain Reviewer's scope)
+
 ## Severity Classification
 
 | Severity | Definition | Handling |

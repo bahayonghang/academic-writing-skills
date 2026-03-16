@@ -653,6 +653,10 @@ def run_audit(
     online: bool = False,
     email: str = "",
     scholar_eval: bool = False,
+    literature_search: bool = False,
+    tavily_key: str = "",
+    s2_key: str = "",
+    regression: bool = False,
 ) -> AuditResult:
     """
     Run a complete paper audit.
@@ -663,6 +667,10 @@ def run_audit(
         pdf_mode: PDF extraction mode — "basic" or "enhanced".
         venue: Target venue (e.g., "neurips", "ieee").
         lang: Force language ("en" or "zh"). Auto-detects if None.
+        literature_search: Enable external literature search and comparison.
+        tavily_key: API key for Tavily search (or env TAVILY_API_KEY).
+        s2_key: API key for Semantic Scholar (or env S2_API_KEY).
+        regression: Use regression scoring model instead of weighted average.
 
     Returns:
         AuditResult with all findings.
@@ -771,6 +779,52 @@ def run_audit(
     # Step 5: Run checklist (universal + venue-specific)
     checklist = _run_checklist(content, file_path, lang, venue=venue)
 
+    # Step 5.5: Literature search (optional)
+    literature_context = None
+    literature_grounding_score = None
+    if literature_search and mode in ("self-check", "review"):
+        try:
+            import os
+
+            from literature_compare import compare_with_literature
+            from literature_search import build_literature_context
+
+            t_key = tavily_key or os.environ.get("TAVILY_API_KEY", "")
+            s_key = s2_key or os.environ.get("S2_API_KEY", "")
+            literature_context = build_literature_context(
+                file_path=str(path),
+                content=content,
+                parser=parser,
+                tavily_key=t_key,
+                s2_key=s_key,
+            )
+            print(
+                f"[audit] Literature search: {len(literature_context.filtered_results)} "
+                f"relevant results found"
+            )
+
+            # Compute grounding score via comparison
+            # Extract citation keys from content for comparison
+            citation_keys: list[str] = []
+            if fmt == ".tex":
+                citation_keys = re.findall(r"\\cite\{([^}]+)\}", content)
+                citation_keys = [k.strip() for keys in citation_keys for k in keys.split(",")]
+            elif fmt == ".typ":
+                citation_keys = re.findall(r"@([a-zA-Z][\w-]*)", content)
+
+            comparison_result = compare_with_literature(
+                paper_content=content,
+                paper_citations=citation_keys,
+                literature_results=literature_context.filtered_results,
+            )
+            literature_context.comparison_result = comparison_result
+            literature_grounding_score = comparison_result.grounding_score
+            print(f"[audit] Literature grounding score: {literature_grounding_score:.1f}/10")
+        except ImportError as exc:
+            print(f"[audit] Literature search: module not available — {exc}")
+        except Exception as exc:
+            print(f"[audit] Literature search: failed — {exc}")
+
     # Step 6: Build result
     result = AuditResult(
         file_path=str(path),
@@ -779,6 +833,7 @@ def run_audit(
         venue=venue,
         issues=all_issues,
         checklist=checklist,
+        literature_context=literature_context,
     )
 
     # Step 7: ScholarEval (optional)
@@ -791,8 +846,14 @@ def run_audit(
                 {"module": i.module, "severity": i.severity, "message": i.message}
                 for i in all_issues
             ]
-            script_scores = evaluate_from_audit(issue_dicts)
-            result.scholar_eval_result = build_scholar_result(script_scores)
+            script_scores = evaluate_from_audit(
+                issue_dicts,
+                literature_grounding_score=literature_grounding_score,
+            )
+            result.scholar_eval_result = build_scholar_result(
+                script_scores,
+                use_regression=regression,
+            )
             print("[audit] ScholarEval: script-based scores computed")
         except Exception as exc:
             print(f"[audit] ScholarEval: failed — {exc}")
@@ -856,6 +917,18 @@ def export_phase0_context(result: AuditResult) -> str:
             detail = f" \u2014 {item.details}" if item.details else ""
             lines.append(f"- [{check}] {item.description}{detail}")
         lines.append("")
+
+    # Related Literature Summary (when literature search was performed)
+    if result.literature_context is not None:
+        try:
+            from literature_search import render_literature_summary
+
+            lines.append("## Related Literature Summary")
+            lines.append("")
+            lines.append(render_literature_summary(result.literature_context))
+            lines.append("")
+        except Exception:
+            pass
 
     return "\n".join(lines)
 
@@ -1117,6 +1190,26 @@ Examples:
         help="Enable ScholarEval 8-dimension assessment",
     )
     parser.add_argument(
+        "--literature-search",
+        action="store_true",
+        help="Enable external literature search and comparison (Tavily + Semantic Scholar + arXiv)",
+    )
+    parser.add_argument(
+        "--tavily-key",
+        default="",
+        help="API key for Tavily search (or set TAVILY_API_KEY env var)",
+    )
+    parser.add_argument(
+        "--s2-key",
+        default="",
+        help="API key for Semantic Scholar (or set S2_API_KEY env var)",
+    )
+    parser.add_argument(
+        "--regression",
+        action="store_true",
+        help="Use regression scoring model instead of weighted average for ScholarEval",
+    )
+    parser.add_argument(
         "--previous-report",
         default=None,
         help="Path to previous audit report (required for re-audit mode)",
@@ -1165,6 +1258,10 @@ Examples:
                 online=getattr(args, "online", False),
                 email=getattr(args, "email", ""),
                 scholar_eval=getattr(args, "scholar_eval", False),
+                literature_search=getattr(args, "literature_search", False),
+                tavily_key=getattr(args, "tavily_key", ""),
+                s2_key=getattr(args, "s2_key", ""),
+                regression=getattr(args, "regression", False),
             )
 
         report = render_json_report(result) if args.format == "json" else render_report(result)

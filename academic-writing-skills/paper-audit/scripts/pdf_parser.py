@@ -224,3 +224,98 @@ class PdfParser(DocumentParser):
     def get_comment_prefix(self) -> str:
         """Markdown blockquote style for PDF audit comments."""
         return ">"
+
+    def extract_metadata(self, file_path: str) -> dict:
+        """
+        Extract structured metadata from a PDF file.
+
+        Returns:
+            Dict with keys: title, authors, abstract, keywords, references_text.
+        """
+        content = self.extract_text_from_file(file_path)
+        lines = content.split("\n")
+        metadata: dict = {
+            "title": "",
+            "authors": [],
+            "abstract": "",
+            "keywords": [],
+            "references_text": "",
+        }
+
+        # Extract title: first large heading or first non-empty line
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith("## ") and len(stripped) < 200:
+                metadata["title"] = stripped.lstrip("# ").strip()
+                break
+            elif stripped and not stripped.startswith("#") and len(stripped) > 10:
+                metadata["title"] = stripped
+                break
+
+        # Extract abstract
+        in_abstract = False
+        abstract_lines: list[str] = []
+        for line in lines:
+            stripped = line.strip().lower()
+            if re.search(r"^#{1,3}\s*abstract|^abstract\b", stripped):
+                in_abstract = True
+                continue
+            elif in_abstract and re.search(r"^#{1,3}\s*\d*\.?\s*\w", line.strip()):
+                break
+            elif in_abstract and line.strip():
+                abstract_lines.append(line.strip())
+        metadata["abstract"] = " ".join(abstract_lines)
+
+        # Extract references section text
+        in_refs = False
+        ref_lines: list[str] = []
+        for line in lines:
+            stripped = line.strip().lower()
+            if re.search(r"^#{1,3}\s*references|^references\b", stripped):
+                in_refs = True
+                continue
+            elif in_refs and re.search(r"^#{1,2}\s*\w", line.strip()):
+                break
+            elif in_refs and line.strip():
+                ref_lines.append(line.strip())
+        metadata["references_text"] = "\n".join(ref_lines)
+
+        return metadata
+
+    def extract_references_list(self, file_path: str) -> list[str]:
+        """
+        Extract individual reference entries from a PDF file.
+
+        Returns:
+            List of reference strings (one per bibliography entry).
+        """
+        metadata = self.extract_metadata(file_path)
+        ref_text = metadata.get("references_text", "")
+        if not ref_text:
+            return []
+
+        # Split by numbered references [1], [2], ... or author-year patterns
+        entries: list[str] = []
+        # Try numbered format first
+        numbered = re.split(r"\n?\[(\d+)\]\s*", ref_text)
+        if len(numbered) > 2:
+            # numbered[0] is before first match, then alternating number/text
+            for i in range(1, len(numbered), 2):
+                if i + 1 < len(numbered) and numbered[i + 1].strip():
+                    entries.append(f"[{numbered[i]}] {numbered[i + 1].strip()}")
+            return entries
+
+        # Fallback: split by blank lines or lines starting with common patterns
+        current: list[str] = []
+        for line in ref_text.split("\n"):
+            stripped = line.strip()
+            if not stripped:
+                if current:
+                    entries.append(" ".join(current))
+                    current = []
+            else:
+                current.append(stripped)
+        if current:
+            entries.append(" ".join(current))
+
+        return entries

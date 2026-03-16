@@ -27,13 +27,14 @@ from pathlib import Path
 # --- Dimension Configuration ---
 
 SCHOLAR_EVAL_DIMENSIONS: dict[str, dict] = {
-    "soundness": {"weight": 0.20, "source": "script", "base": 10},
-    "clarity": {"weight": 0.15, "source": "script", "base": 10},
-    "presentation": {"weight": 0.10, "source": "script", "base": 10},
-    "novelty": {"weight": 0.15, "source": "llm", "base": None},
-    "significance": {"weight": 0.15, "source": "llm", "base": None},
-    "reproducibility": {"weight": 0.10, "source": "mixed", "base": 10},
+    "soundness": {"weight": 0.18, "source": "script", "base": 10},
+    "clarity": {"weight": 0.13, "source": "script", "base": 10},
+    "presentation": {"weight": 0.08, "source": "script", "base": 10},
+    "novelty": {"weight": 0.13, "source": "llm", "base": None},
+    "significance": {"weight": 0.13, "source": "llm", "base": None},
+    "reproducibility": {"weight": 0.08, "source": "mixed", "base": 10},
     "ethics": {"weight": 0.05, "source": "llm", "base": None},
+    "literature_grounding": {"weight": 0.12, "source": "mixed", "base": 10},
     "overall": {"weight": 0.10, "source": "computed", "base": None},
 }
 
@@ -66,6 +67,7 @@ class ScholarEvalResult:
     merged_scores: dict[str, float | None] = field(default_factory=dict)
     readiness_label: str = ""
     evidence: dict[str, str] = field(default_factory=dict)
+    literature_context: object | None = None
 
 
 # --- Score Computation ---
@@ -87,12 +89,16 @@ def _check_reproducibility_signals(issues: list[dict]) -> float:
     return _deduct_score(10, method_issues)
 
 
-def evaluate_from_audit(audit_issues: list[dict]) -> dict[str, float | None]:
+def evaluate_from_audit(
+    audit_issues: list[dict],
+    literature_grounding_score: float | None = None,
+) -> dict[str, float | None]:
     """
     Compute script-evaluable dimension scores from audit issues.
 
     Args:
         audit_issues: List of issue dicts with keys: module, severity, message.
+        literature_grounding_score: Optional score from literature_compare.py.
 
     Returns:
         Dict mapping dimension names to scores (1-10 scale).
@@ -125,6 +131,9 @@ def evaluate_from_audit(audit_issues: list[dict]) -> dict[str, float | None]:
 
     # Reproducibility (partial) <- method-related issues
     scores["reproducibility_partial"] = _check_reproducibility_signals(audit_issues)
+
+    # Literature Grounding (partial) <- from literature_compare.py
+    scores["literature_grounding_partial"] = literature_grounding_score
 
     return scores
 
@@ -163,14 +172,27 @@ def merge_scores(
 
         elif cfg["source"] == "mixed":
             # Reproducibility = avg(script_partial, llm) or whichever is available
-            sp = script_scores.get("reproducibility_partial")
-            lp = None
-            if llm_scores and "reproducibility_llm" in llm_scores:
-                lp_data = llm_scores["reproducibility_llm"]
-                if isinstance(lp_data, dict):
-                    lp = lp_data.get("score")
-                else:
-                    lp = float(lp_data) if lp_data is not None else None
+            if dim == "reproducibility":
+                sp = script_scores.get("reproducibility_partial")
+                lp = None
+                if llm_scores and "reproducibility_llm" in llm_scores:
+                    lp_data = llm_scores["reproducibility_llm"]
+                    if isinstance(lp_data, dict):
+                        lp = lp_data.get("score")
+                    else:
+                        lp = float(lp_data) if lp_data is not None else None
+            elif dim == "literature_grounding":
+                sp = script_scores.get("literature_grounding_partial")
+                lp = None
+                if llm_scores and "literature_grounding_llm" in llm_scores:
+                    lp_data = llm_scores["literature_grounding_llm"]
+                    if isinstance(lp_data, dict):
+                        lp = lp_data.get("score")
+                    else:
+                        lp = float(lp_data) if lp_data is not None else None
+            else:
+                sp = None
+                lp = None
 
             if sp is not None and lp is not None:
                 final[dim] = (sp + lp) / 2
@@ -215,20 +237,43 @@ def get_readiness_label(overall_score: float | None) -> str:
 def build_result(
     script_scores: dict[str, float | None],
     llm_scores: dict | None = None,
+    use_regression: bool = False,
 ) -> ScholarEvalResult:
     """Build a complete ScholarEvalResult."""
     merged = merge_scores(script_scores, llm_scores)
     overall = merged.get("overall")
     label = get_readiness_label(overall)
 
+    # Optionally use regression model for overall score
+    if use_regression:
+        try:
+            from scoring_model import RegressionScorer
+
+            model_path = Path(__file__).parent / "models" / "scoring_model.json"
+            if model_path.exists():
+                scorer = RegressionScorer.load_model(model_path)
+            else:
+                scorer = RegressionScorer()  # fallback mode
+            prediction = scorer.predict(merged)
+            merged["overall"] = prediction.predicted_score
+            label = prediction.decision
+        except Exception:
+            pass  # Fall back to weighted average
+
     # Collect evidence from LLM scores
     evidence: dict[str, str] = {}
     if llm_scores:
-        for dim in ("novelty", "significance", "reproducibility_llm", "ethics"):
+        for dim in (
+            "novelty",
+            "significance",
+            "reproducibility_llm",
+            "ethics",
+            "literature_grounding_llm",
+        ):
             if dim in llm_scores and isinstance(llm_scores[dim], dict):
                 ev = llm_scores[dim].get("evidence", "")
-                # Map reproducibility_llm to reproducibility for display
-                display_dim = "reproducibility" if dim == "reproducibility_llm" else dim
+                # Map internal keys to display names
+                display_dim = dim.replace("_llm", "")
                 evidence[display_dim] = ev
 
     return ScholarEvalResult(
@@ -245,7 +290,7 @@ def build_result(
 
 def render_scholar_eval_report(result: ScholarEvalResult) -> str:
     """Render ScholarEval assessment as Markdown table."""
-    lines = ["## ScholarEval Assessment (8-Dimension)", ""]
+    lines = ["## ScholarEval Assessment (9-Dimension)", ""]
     lines.append("| Dimension | Score | Weight | Source | Evidence |")
     lines.append("|-----------|-------|--------|--------|----------|")
 

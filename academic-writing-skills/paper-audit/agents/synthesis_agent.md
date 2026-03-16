@@ -35,6 +35,7 @@ Organize all findings into a structured inventory:
 | Methodology Reviewer | Agent | {finding} | {severity} | {section} |
 | Domain Reviewer | Agent | {finding} | {severity} | {section} |
 | Critical Reviewer | Agent | {finding} | {severity} | {section} |
+| Literature Reviewer | Agent (optional) | {finding} | {severity} | {section} |
 
 ### Step 2: Consensus Classification
 
@@ -74,6 +75,7 @@ For dimensions scored by multiple reviewers:
 | Reproducibility | Methodology Reviewer | — | Direct use |
 | Novelty | Domain Reviewer | — | Direct use |
 | Significance | Domain Reviewer | — | Direct use |
+| Literature Grounding | Literature Reviewer (if present) | Domain Reviewer | Average when both available; Domain Reviewer alone otherwise |
 
 For the 4-dimension NeurIPS scores: use Phase 0 automated scores directly (script-based, objective).
 

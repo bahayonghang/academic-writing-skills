@@ -30,6 +30,24 @@
       "prompt": "Polish the writing of paper.tex, but only if the audit does not find blockers that should stop polishing first.",
       "expected_output": "Route to polish mode, read the precheck state, stop on blockers, and only describe the critic or mentor follow-up flow when polishing is actually safe to continue.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Run a full review of paper.tex with literature search. Find related work I might have missed, score all 9 dimensions.",
+      "expected_output": "Output has 'Related Literature' section; 9 dimensions scored including Literature Grounding; [Script]/[LLM] labels present; missing papers listed with relevance.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Self-check paper.pdf with scholar evaluation and tell me the predicted score with confidence interval.",
+      "expected_output": "9-dim scores present; Literature Grounding shown (N/A if no --literature-search); regression/fallback type indicated; confidence interval displayed.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Compare paper.tex against latest literature and tell me which important papers I'm missing.",
+      "expected_output": "Missing papers listed with relevance scores and reasons; Literature Grounding score computed; specific suggestions for which papers to cite and where.",
+      "files": []
     }
   ]
 }

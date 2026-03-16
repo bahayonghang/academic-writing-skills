@@ -144,6 +144,16 @@ Base score: 10.0, deducted per issue (Critical -2.5, Major -1.25, Minor -0.5). F
 | 3.0 - 4.9 | Poor | Ethics largely ignored; significant concerns unaddressed; potential for harm not discussed |
 | 1.0 - 2.9 | Failing | No ethics consideration; clear ethical violations; potential for significant harm |
 
+### Literature Grounding (Weight: 12%, Source: Mixed) -- NEW in v3.0
+
+| Score Range | Level | Behavioral Indicators |
+|-------------|-------|----------------------|
+| 9.0 - 10.0 | Excellent | Comprehensive coverage of seminal and recent works; thematic organization; clear gap derivation; no important missing references |
+| 7.0 - 8.9 | Good | Solid coverage; mostly thematic organization; adequate gap identification; minor gaps |
+| 5.0 - 6.9 | Fair | Reasonable but notable gaps; some enumeration; weak gap derivation; several missing recent papers |
+| 3.0 - 4.9 | Poor | Incomplete coverage; predominantly enumerated; many important references missing |
+| 1.0 - 2.9 | Failing | Minimal literature review; foundational works missing; no literature-contribution connection |
+
 ### Overall (Weight: 10%, Source: Computed)
 
 Weighted average of all non-null dimensions, normalized by total available weight.

@@ -50,6 +50,8 @@ class AuditResult:
     summary: str = ""
     # ScholarEval result (optional, populated when --scholar-eval is used)
     scholar_eval_result: object | None = None
+    # Literature context (optional, populated when --literature-search is used)
+    literature_context: object | None = None
     # Multi-perspective review extras (populated by SKILL.md agent workflow)
     agent_reviews: list[dict] = field(default_factory=list)
     consensus: str = ""
@@ -87,6 +89,7 @@ DIMENSION_MAP: dict[str, list[str]] = {
     "checklist": ["quality", "clarity", "significance", "originality"],
     "references": ["clarity", "quality"],
     "visual": ["clarity"],
+    "literature_grounding": ["quality", "significance", "originality"],
 }
 
 DIMENSION_WEIGHTS: dict[str, float] = {
@@ -682,6 +685,22 @@ def render_report(result: AuditResult) -> str:
             from scholar_eval import render_scholar_eval_report
 
             report += "\n\n" + render_scholar_eval_report(result.scholar_eval_result)
+        except Exception:
+            pass
+
+    # Append literature comparison section if available
+    if result.literature_context is not None:
+        try:
+            from literature_compare import render_comparison_report
+
+            if hasattr(result.literature_context, "comparison_result"):
+                report += "\n\n" + render_comparison_report(
+                    result.literature_context.comparison_result
+                )
+            elif hasattr(result.literature_context, "filtered_results"):
+                from literature_search import render_literature_summary
+
+                report += "\n\n" + render_literature_summary(result.literature_context)
         except Exception:
             pass
 
