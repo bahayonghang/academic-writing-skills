@@ -226,7 +226,7 @@ def _classify_lead_gap(line: str) -> str:
     stripped = line.strip()
     if not stripped:
         return "empty"
-    if stripped.startswith(parser_comment_prefix := "%") or stripped.startswith("//"):
+    if stripped.startswith("%") or stripped.startswith("//"):
         return "comment"
     if any(stripped.startswith(token) for token in LEAD_STRUCTURAL_COMMANDS):
         return "structural"
