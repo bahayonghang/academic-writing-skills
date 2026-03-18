@@ -35,8 +35,8 @@ Unified academic paper audit for LaTeX, Typst, and PDF documents.
 - severity and priority reporting
 - 4-dimension scoring
 - citation stacking detection (flags 3+ clustered citations without individual discussion as AI writing traces)
-- literature review quality assessment (A1-A4: thematic organization, critical analysis, gap derivation, citation density)
-- discussion depth and results-literature echo (B3-B4)
+- literature review quality assessment (A1/A3 script-backed; A2/A4 reviewer-judgment unless the agent lane is used)
+- discussion depth, discussion layering, and results-literature echo (B3-B4)
 - conclusion completeness check (B5: findings + implications + limitations)
 - cross-section logic chain closure (C3: intro claims answered in conclusion)
 - optional ScholarEval-style assessment
@@ -64,7 +64,7 @@ Check paper.tex for citation stacking in the introduction and related work.
 
 - `paper-audit` is for reports and scoring, not for being your first compiler.
 - Use the sibling writing skill first if the source still does not build.
-- The current hardened mode surface is intentional: `review` runs multi-perspective agent synthesis, `gate` is CI-friendly PASS/FAIL, `polish` starts from a precheck before agent refinement, and `re-audit` compares deltas against a prior report.
-- Outputs differ by mode: checklist-and-score reports for `self-check`, synthesized review packets for `review`, blocking verdicts for `gate`, and issue-delta verification for `re-audit`.
+- `audit.py --mode review` produces the Phase 0 automated review report. The full multi-perspective synthesis happens when the outer skill workflow dispatches reviewer agents.
+- Outputs differ by execution surface: script-only `self-check` and `review` produce automated reports; the full skill workflow layers reviewer synthesis on top of `review`; `gate` is CI-friendly PASS/FAIL; `re-audit` compares deltas against a prior report.
 - Citation stacking detection checks Introduction and Related Work sections for sentences with 3+ clustered citations that lack individual discussion — a common AI writing pattern flagged by reviewers.
-- The audit now includes literature review quality (A1-A4), discussion depth (B3-B4), conclusion completeness (B5), and cross-section logic chain closure (C3) in both automated Phase 0 checks and agent-based Phase 1 reviews.
+- Automated Phase 0 currently covers A1/A3 plus experiment-structure and cross-section checks that are script-backed. A2/A4 remain agent-review judgments unless future heuristics are added.

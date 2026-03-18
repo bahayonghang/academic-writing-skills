@@ -31,9 +31,9 @@ For large or multi-file theses, run `structure` first.
 | `template` | detect or validate thesis template | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex` |
 | `bibliography` | GB/T 7714 bibliography checks | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | title or chapter-title optimization | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
-| `deai` | reduce AI writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `logic` | coherence, lit review quality, cross-section closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
-| `experiment` | experiment-section review, discussion depth, conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `deai` | reduce AI writing traces and low-information rhetoric | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
+| `logic` | coherence, introduction funnel, chapter mainline, lit review quality, cross-section closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
 
 ## Good First Requests
 

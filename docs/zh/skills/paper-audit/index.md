@@ -15,7 +15,7 @@
 | 模式 | 适用场景 | 脚本 |
 | --- | --- | --- |
 | `self-check` | 做一次完整就绪性检查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode self-check` |
-| `review` | 需要评审风格报告 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode review` |
+| `review` | 需要评审风格报告（脚本先给 Phase 0 自动审查） | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode review` |
 | `gate` | 只想看阻塞性问题 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
 | `polish` | 想做风格导向的后续润色 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | 想对照旧报告复检 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |

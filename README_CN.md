@@ -73,11 +73,11 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **语法** | 中式英语检测、弱动词替换、主谓一致性检查 |
 | **长难句** | 复杂句拆解（超过 50 词自动触发）|
 | **表达** | 学术语气改进、表达重构 |
-| **逻辑** | 段落衔接（AXES 模型）、过渡信号词、方法论深度检查 |
+| **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、方法论深度、摘要/结论一致性检查 |
 | **标题** | IEEE/ACM/Springer 最佳实践生成；移除无效词；综合评分 0–100 |
 | **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
-| **实验分析** | 含 SOTA 对比与消融分析的连贯叙事段落 |
-| **去AI化** | 人性化 AI 写作，完整保留所有 LaTeX 语法 |
+| **实验分析** | 含 SOTA 对比、消融分析、discussion 分层与结论完整性的连贯叙事段落 |
+| **去AI化** | 人性化 AI 写作，完整保留所有 LaTeX 语法，并标出低信息密度空话 |
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
 | **引用** | 未定义 `\ref{}`、未引用 `\label{}`、缺少 caption；BibTeX 格式校验 |
 | **在线验证** | CrossRef + Semantic Scholar 文献验证（无需 API 密钥）|
@@ -93,11 +93,11 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **参考文献** | GB/T 7714-2015 规范合规；BibTeX 格式校验 |
 | **模板** | thuthesis / pkuthss / ustcthesis / fduthesis 自动检测 |
 | **中文规范** | 口语化表达检测、术语一致性检查 |
-| **逻辑** | 段落衔接（AXES 模型）、过渡信号词、方法论深度检查 |
+| **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、章节主线、跨章节逻辑链 |
 | **标题** | 符合 GB/T 7713.1-2006 规范；中英文双语候选方案 |
 | **图表标题** | 顶会标准双语 Caption（中文 + 英文）|
-| **实验分析** | 含基线对比与消融覆盖的核心期刊叙事段落 |
-| **去AI化** | 降低 AI 写作痕迹，完整保留所有 LaTeX 命令 |
+| **实验分析** | 含基线对比、消融覆盖、discussion 分层与结论完整性的核心期刊叙事段落 |
+| **去AI化** | 降低 AI 写作痕迹，完整保留所有 LaTeX 命令，并标出低信息密度套话 |
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/文献综述中的堆叠式并列引用 |
 | **编译** | XeLaTeX / LuaLaTeX 完整 CJK 字体支持 |
 | **引用** | 与 `latex-paper-en` 相同的完整性检查；支持在线验证 |
@@ -121,11 +121,11 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **编译** | Typst CLI 封装，含错误摘要 |
 | **格式** | 页面设置、文本格式、引用语法检查 |
 | **语法** | 与 `latex-paper-en` 相同的检查，适配 Typst 语法 |
-| **逻辑** | AXES 段落衔接、过渡信号词、方法论严谨性 |
+| **逻辑** | AXES 段落衔接、绪论漏斗链、摘要/结论一致性、跨章节逻辑链 |
 | **标题** | 双语（中英文）标题生成与优化 |
 | **图表标题** | 遵循 IEEE/ACM 标准的双语 Caption |
-| **实验分析** | 面向期刊/会议的连贯叙事段落 |
-| **去AI化** | 人性化 AI 写作；保留 `@cite`、`<label>`、`$...$` |
+| **实验分析** | 面向期刊/会议的连贯叙事段落，并检查 discussion 分层 |
+| **去AI化** | 中英文 Typst 去 AI 化；保留 `@cite`、`<label>`、`$...$` |
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
 | **期刊模板** | IEEE、ACM、Springer、NeurIPS 模板指引 |
 | **引用** | 未定义 `@ref`、未引用标签；支持在线验证 |
@@ -137,16 +137,17 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | 类别 | 功能 |
 |---|---|
 | **输入** | `.tex`、`.typ`、`.pdf` 文件 |
-| **模式** | `self-check`（全面审查）· `review`（重点审查）· `gate`（投稿门控）|
+| **模式** | `self-check`（全面审查）· `review`（Phase 0 自动审查；完整综合评审由 skill 工作流完成）· `gate`（投稿门控）|
 | **视觉排版** | 页边距溢出、文本/图片重叠、字体不一致、低分辨率图片、空白页 |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
-| **实验叙事** | 段落连贯性、消融覆盖度、基线对比检查 |
+| **实验叙事** | 段落连贯性、基线对比、discussion 深度/分层、结论完整性检查 |
 | **ScholarEval** | 8 维度质量评分（1–10 分），附投稿可读性标签 |
 | **NeurIPS 评分** | Quality / Clarity / Significance / Originality 1–6 分 |
 | **在线验证** | CrossRef + Semantic Scholar（添加 `--online`）；无需 API 密钥 |
 | **去AI化** | 全文降低 AI 写作痕迹 |
 | **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
+| **审查范围说明** | Phase 0 脚本稳定覆盖 A1/A3、实验结构与 C3；A2/A4 仍属于 reviewer judgment，需 agent review 才完整 |
 
 **审查工作流层级**
 

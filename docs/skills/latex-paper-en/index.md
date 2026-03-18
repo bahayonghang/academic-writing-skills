@@ -34,13 +34,13 @@ English LaTeX paper assistant for existing `.tex` projects.
 | `bibliography` | BibTeX validation and missing citations | `uv run python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex` |
 | `grammar` | grammar cleanup | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_grammar.py main.tex --section introduction` |
 | `sentences` | long or dense sentences | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_sentences.py main.tex --section introduction` |
-| `logic` | coherence, methodological flow, lit review quality, cross-section closure | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
+| `logic` | coherence, introduction funnel, lit review quality, abstract/conclusion alignment, cross-section closure | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
 | `expression` | academic tone polish | `uv run python academic-writing-skills/latex-paper-en/scripts/improve_expression.py main.tex --section related` |
 | `translation` | Chinese to English academic translation | `uv run python academic-writing-skills/latex-paper-en/scripts/translate_academic.py input.txt --domain deep-learning` |
 | `title` | title checking or generation | `uv run python academic-writing-skills/latex-paper-en/scripts/optimize_title.py main.tex --check` |
 | `figures` | figure existence, DPI, captions | `uv run python academic-writing-skills/latex-paper-en/scripts/check_figures.py main.tex` |
-| `deai` | reduce AI writing traces | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
-| `experiment` | experiment-section review, discussion depth, conclusion completeness | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
+| `deai` | reduce AI writing traces and low-information boilerplate | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
+| `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
 
 ## Minimum Inputs
 

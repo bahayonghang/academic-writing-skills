@@ -73,11 +73,11 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Grammar** | Chinglish detection, weak-verb replacement, subject-verb agreement |
 | **Sentences** | Complex sentence decomposition (auto-triggers at > 50 words) |
 | **Expression** | Academic tone improvement, expression restructuring |
-| **Logic** | Paragraph coherence (AXES model), transition signals, methodological depth |
+| **Logic** | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment |
 | **Title** | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100 |
 | **Captions** | Title/Sentence-case, AI-flavor-free figure and table captions |
-| **Experiments** | Cohesive result paragraphs with SOTA comparison and ablation analysis |
-| **De-AI** | Humanize AI-written passages while preserving all LaTeX syntax |
+| **Experiments** | Cohesive result paragraphs with SOTA comparison, ablation analysis, discussion layering, and conclusion completeness |
+| **De-AI** | Humanize AI-written passages while preserving all LaTeX syntax; flags low-information boilerplate |
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
 | **References** | Undefined `\ref{}`, unreferenced `\label{}`, missing captions; BibTeX format validation |
 | **Online Verify** | CrossRef + Semantic Scholar bibliography verification (no API key required) |
@@ -93,11 +93,11 @@ Chinese degree thesis editing conforming to GB/T 7714-2015 and major university 
 | **Bibliography** | GB/T 7714-2015 compliance; BibTeX format validation |
 | **Templates** | thuthesis / pkuthss / ustcthesis / fduthesis auto-detection |
 | **Chinese Style** | Oral-expression detection, terminology consistency |
-| **Logic** | Paragraph coherence (AXES model), transition signals, methodological depth |
+| **Logic** | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure |
 | **Title** | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates |
 | **Captions** | Bilingual English/Chinese captions following top-conference standards |
-| **Experiments** | Chinese core-journal narrative paragraphs with baseline/ablation coverage |
-| **De-AI** | Reduce AI writing traces; preserves all LaTeX commands |
+| **Experiments** | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness |
+| **De-AI** | Reduce AI writing traces; preserves all LaTeX commands; flags low-information rhetoric |
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work chapters |
 | **Compile** | XeLaTeX / LuaLaTeX with full CJK font support |
 | **References** | Same integrity checks as `latex-paper-en`; online verification supported |
@@ -121,11 +121,11 @@ Bilingual Typst paper editing with millisecond-level compilation.
 | **Compile** | Typst CLI wrapper with error summarization |
 | **Format** | Page settings, text formatting, citation syntax |
 | **Grammar** | Same checks as `latex-paper-en`, adapted for Typst syntax |
-| **Logic** | AXES paragraph coherence, transition signals, methodological rigor |
+| **Logic** | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure |
 | **Title** | Bilingual (English/Chinese) title generation and optimization |
 | **Captions** | Bilingual captions following IEEE/ACM standards |
-| **Experiments** | Cohesive result paragraphs for journal/conference papers |
-| **De-AI** | Humanize AI-written passages; preserves `@cite`, `<label>`, `$... |
+| **Experiments** | Cohesive result paragraphs for journal/conference papers, including discussion layering checks |
+| **De-AI** | Humanize AI-written passages in English or Chinese; preserves `@cite`, `<label>`, `$...$` |
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
 | **Venues** | IEEE, ACM, Springer, NeurIPS template guidance |
 | **References** | Undefined `@ref`, unreferenced labels; online verification supported |
@@ -137,16 +137,17 @@ Automated multi-format audit with layered checks and quality scoring.
 | Category | Capability |
 |---|---|
 | **Input** | `.tex`, `.typ`, `.pdf` files |
-| **Modes** | `self-check` (full audit) · `review` (targeted) · `gate` (submission gate) |
+| **Modes** | `self-check` (full audit) · `review` (Phase 0 automated review; full synthesis via skill workflow) · `gate` (submission gate) |
 | **Visual Layout** | Margin overflow, text/image overlaps, font inconsistency, low-res images, blank pages |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
-| **Experiment Narrative** | Checks paragraph cohesion, ablation coverage, baseline comparisons |
+| **Experiment Narrative** | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness |
 | **ScholarEval** | 8-dimension quality scoring (1–10) with publication readiness label |
 | **NeurIPS Scoring** | Quality / Clarity / Significance / Originality on 1–6 scale |
 | **Online Verify** | CrossRef + Semantic Scholar (add `--online`); no API key required |
 | **De-AI** | Reduce AI writing traces across the whole document |
 | **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
+| **Review Scope Note** | A1/A3, experiment structure, and C3 are script-backed in Phase 0; A2/A4 remain reviewer-judgment unless agent review is invoked |
 
 **Audit workflow layers**
 

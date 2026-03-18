@@ -33,13 +33,13 @@
 | `bibliography` | BibTeX 验证与缺失引用 | `uv run python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex` |
 | `grammar` | 语法检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_grammar.py main.tex --section introduction` |
 | `sentences` | 长句或密集句分析 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_sentences.py main.tex --section introduction` |
-| `logic` | 连贯性、方法论、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
+| `logic` | 连贯性、绪论漏斗链、文献综述质量、摘要/结论一致性、跨章节逻辑链 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/latex-paper-en/scripts/improve_expression.py main.tex --section related` |
 | `translation` | 中译英学术翻译 | `uv run python academic-writing-skills/latex-paper-en/scripts/translate_academic.py input.txt --domain deep-learning` |
 | `title` | 标题检查或生成 | `uv run python academic-writing-skills/latex-paper-en/scripts/optimize_title.py main.tex --check` |
 | `figures` | 图表存在性、DPI、caption 检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_figures.py main.tex` |
-| `deai` | 降低 AI 痕迹 | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
-| `experiment` | 实验章节审阅、讨论深度、结论完整性 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
+| `deai` | 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
+| `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
 
 ## 最小输入
 

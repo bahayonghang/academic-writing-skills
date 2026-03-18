@@ -30,9 +30,9 @@
 | `template` | 检测或验证模板 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex` |
 | `bibliography` | GB/T 7714 文献检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 标题或章节标题优化 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
-| `deai` | 降低 AI 痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `logic` | 逻辑连贯性、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
-| `experiment` | 实验章节审阅、讨论深度、结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `deai` | 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
+| `logic` | 逻辑连贯性、绪论漏斗链、章节主线、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
 
 ## 推荐提示词
 

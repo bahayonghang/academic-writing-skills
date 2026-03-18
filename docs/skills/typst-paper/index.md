@@ -26,12 +26,12 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 | `bibliography` | BibTeX or Hayagriva validation | `uv run python academic-writing-skills/typst-paper/scripts/verify_bib.py references.bib --typ main.typ` |
 | `grammar` | grammar cleanup | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
 | `sentences` | long or dense sentence review | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
-| `logic` | coherence, lit review quality, cross-section closure | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
+| `logic` | coherence, introduction funnel, lit review quality, abstract/conclusion alignment, cross-section closure | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
 | `expression` | academic tone polish | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | Chinese and English academic translation | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | title checking or optimization | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
-| `deai` | reduce AI writing traces | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
-| `experiment` | experiment-section review, discussion depth, conclusion completeness | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
+| `deai` | reduce English or Chinese AI writing traces, including low-information filler | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
+| `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
 
 ## Minimum Inputs
 

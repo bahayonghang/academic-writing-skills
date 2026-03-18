@@ -24,12 +24,12 @@
 | `bibliography` | BibTeX 或 Hayagriva 验证 | `uv run python academic-writing-skills/typst-paper/scripts/verify_bib.py references.bib --typ main.typ` |
 | `grammar` | 语法检查 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
 | `sentences` | 长句分析 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
-| `logic` | 连贯性、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
+| `logic` | 连贯性、绪论漏斗链、文献综述质量、摘要/结论一致性、跨章节逻辑链 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | 中英学术翻译 | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | 标题检查或优化 | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
-| `deai` | 降低 AI 痕迹 | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
-| `experiment` | 实验章节审阅、讨论深度、结论完整性 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
+| `deai` | 中英文 Typst 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
+| `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
 
 ## 最小输入
 
