@@ -76,6 +76,7 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Logic** | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment |
 | **Title** | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100 |
 | **Captions** | Title/Sentence-case, AI-flavor-free figure and table captions |
+| **Pseudocode** | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
 | **Experiments** | Cohesive result paragraphs with SOTA comparison, ablation analysis, discussion layering, and conclusion completeness |
 | **De-AI** | Humanize AI-written passages while preserving all LaTeX syntax; flags low-information boilerplate |
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
@@ -124,6 +125,7 @@ Bilingual Typst paper editing with millisecond-level compilation.
 | **Logic** | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure |
 | **Title** | Bilingual (English/Chinese) title generation and optimization |
 | **Captions** | Bilingual captions following IEEE/ACM standards |
+| **Pseudocode** | IEEE-like review for `algorithmic`, `algorithm-figure`, and `lovelace`, including wrapper, caption, style hook, and comment-length checks |
 | **Experiments** | Cohesive result paragraphs for journal/conference papers, including discussion layering checks |
 | **De-AI** | Humanize AI-written passages in English or Chinese; preserves `@cite`, `<label>`, `$...$` |
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
@@ -141,6 +143,7 @@ Automated multi-format audit with layered checks and quality scoring.
 | **Visual Layout** | Margin overflow, text/image overlaps, font inconsistency, low-res images, blank pages |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
+| **Pseudocode Audit** | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments |
 | **Experiment Narrative** | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness |
 | **ScholarEval** | 8-dimension quality scoring (1–10) with publication readiness label |
 | **NeurIPS Scoring** | Quality / Clarity / Significance / Originality on 1–6 scale |
@@ -249,6 +252,14 @@ optimize this table caption
 generate bilingual caption for Figure 3
 ```
 
+### Pseudocode & Algorithm Blocks
+
+```
+check whether this IEEE pseudocode still uses algorithm2e floats
+review this algorithm-figure block for caption and line-number issues
+make this pseudocode IEEE-safe without inventing a fake Algorithm 1 rule
+```
+
 ### Reference & Bibliography
 
 ```
@@ -336,6 +347,7 @@ academic-writing-skills/
 │       ├── online_bib_verify.py    # CrossRef / Semantic Scholar lookup
 │       ├── check_references.py     # \ref / \label / caption integrity
 │       ├── check_figures.py        # Figure usage analysis
+│       ├── check_pseudocode.py     # IEEE-aware pseudocode checks
 │       ├── analyze_grammar.py      # Chinglish, weak verbs, agreement
 │       ├── analyze_sentences.py    # Long sentence decomposition
 │       ├── analyze_logic.py        # AXES coherence, transition signals
@@ -360,6 +372,7 @@ academic-writing-skills/
 │   ├── agents/ · evals/ · examples/
 │   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
 │   └── scripts/                    # Same toolset, Typst-syntax aware
+│       └── check_pseudocode.py     # IEEE-like Typst pseudocode checks
 │
 ├── paper-audit/
 │   ├── SKILL.md
@@ -371,6 +384,7 @@ academic-writing-skills/
 │       ├── parsers.py              # Shared parser base
 │       ├── pdf_parser.py           # PDF text & metadata extraction
 │       ├── visual_check.py         # PDF layout & rendering analysis
+│       ├── check_pseudocode.py     # Routed from sibling skills for IEEE pseudocode checks
 │       ├── check_references.py     # Reference integrity
 │       ├── detect_language.py      # Language detection
 │       ├── scholar_eval.py         # 8-dimension ScholarEval scoring

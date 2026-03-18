@@ -22,6 +22,7 @@ Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages
 - Produce self-check, peer-review, gate, polish, and re-audit outputs with explicit severity and priority labels.
 - Combine script findings, venue-specific checklist items, and optional agent synthesis into one report flow.
 - Reuse sibling writing-skill scripts for LaTeX and Typst inputs instead of re-implementing duplicate checks.
+- Audit IEEE-style pseudocode blocks for float usage, caption/label/reference hygiene, and advisory readability issues.
 
 ## Triggering
 
@@ -50,6 +51,7 @@ Trigger it even when the user only says “check my paper”, “review this sub
 - **NEVER** fabricate bibliography entries; only verify existing `.bib` or `.yml` files
 - **NEVER** change domain terminology without explicit user confirmation
 - **ALWAYS** distinguish `[Script]` (automated) findings from `[LLM]` (agent judgment) assessments in output
+- **ALWAYS** distinguish IEEE hard pseudocode violations from IEEE-safe default recommendations
 - All dimension scores from scripts are **indicators**, not definitive judgments
 
 ---
@@ -154,6 +156,10 @@ If the user omits the mode, infer it using the selection guide and state the ass
 
 > Venue-specific rules: see [`references/VENUE_RULES.md`](references/VENUE_RULES.md) for per-venue behavior adjustments.
 
+For IEEE pseudocode:
+- hard gate rules: no floating `algorithm` / `algorithm2e`; pseudocode blocks need caption, label, and text reference
+- advisory rules: line numbers, explicit input/output markers, short comments, concise step text
+
 ## Output Protocol
 
 ### Issue Format
@@ -185,6 +191,7 @@ Paper-audit reuses check scripts from sibling skills via format-based routing:
 | Format | Script Source | Checks Available |
 |--------|-------------|-----------------|
 | `.tex` (English) | `latex-paper-en/scripts/` | format, grammar, logic, experiment, sentences, deai, bib, figures |
+| `.tex` / `.typ` pseudocode | sibling `check_pseudocode.py` | IEEE-safe algorithm float, caption, label, reference, and advisory checks |
 | `.tex` (Chinese) | `latex-thesis-zh/scripts/` (primary), `latex-paper-en/scripts/` (fallback) | + experiment, consistency, gbt7714 |
 | `.typ` | `typst-paper/scripts/` | format, grammar, logic, experiment, sentences, deai |
 | `.pdf` | `paper-audit/scripts/` only | visual, pdf_parser (no format/bib/figures checks) |
@@ -259,6 +266,7 @@ Default model coefficients approximate the weighted-average behavior. Custom tra
 - “Run a self-check on `paper.tex` and tell me what blocks submission.”
 - “Review this paper like a harsh reviewer and give me a revision roadmap.”
 - “Is `paper.pdf` ready to submit to IEEE, or does it fail the gate?”
+- “Check whether the IEEE pseudocode in `paper.tex` still uses a floating `algorithm` block.”
 - “Re-audit this revision against my previous report and tell me which issues are still open.”
 
 ## Templates

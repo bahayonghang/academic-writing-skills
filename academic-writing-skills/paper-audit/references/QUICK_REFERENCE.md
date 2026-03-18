@@ -15,6 +15,7 @@ Quick lookup for audit modes, checks, CLI arguments, and format compatibility.
 | `deai` | ✅ | ✅ | ✅ | ✅ | `deai_check.py` |
 | `bib` | ✅ | ✅ | ✅ | ❌ | `verify_bib.py` |
 | `figures` | ✅ | ✅ | ❌ | ❌ | `check_figures.py` |
+| `pseudocode` | ✅ | ✅ | ✅ | ❌ | `check_pseudocode.py` |
 | `references` | ✅ | ✅ | ✅ | ❌ | `check_references.py` |
 | `visual` | ❌ | ❌ | ❌ | ✅ | `visual_check.py` |
 | `consistency` | ❌ | ✅ | ❌ | ❌ | `check_consistency.py` |
@@ -36,6 +37,7 @@ Quick lookup for audit modes, checks, CLI arguments, and format compatibility.
 | deai | ✅ | ✅ | ❌ | ❌ |
 | bib | ✅ | ✅ | ✅ | ❌ |
 | figures | ✅ | ✅ | ✅ | ❌ |
+| pseudocode | ✅ | ✅ | ✅ | ❌ |
 | references | ✅ | ✅ | ✅ | ❌ |
 | visual | ✅ | ✅ | ✅ | ❌ |
 | checklist | ❌ | ❌ | ✅ | ❌ |
@@ -133,6 +135,9 @@ python check_references.py paper.tex --json
 
 # Visual layout check
 python visual_check.py paper.pdf --margin 72 --min-dpi 150
+
+# IEEE pseudocode safety check
+python check_pseudocode.py paper.tex --venue ieee
 
 # Bibliography verification (with online lookup)
 python verify_bib.py refs.bib --tex paper.tex --online --email me@uni.edu

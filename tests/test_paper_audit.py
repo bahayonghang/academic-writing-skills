@@ -1,5 +1,6 @@
 """Tests for paper-audit skill components."""
 
+import json
 import sys
 from pathlib import Path
 
@@ -398,6 +399,7 @@ class TestAuditModule:
         gate_checks = MODE_CHECKS["gate"]
         assert len(gate_checks) < len(MODE_CHECKS["self-check"])
         assert "format" in gate_checks
+        assert "pseudocode" in gate_checks
         assert "checklist" in gate_checks
 
     def test_zh_extra_checks(self) -> None:
@@ -968,6 +970,13 @@ class TestAuditModuleUpdated:
         assert script is not None
         assert script.name == "visual_check.py"
 
+    def test_resolve_script_pseudocode(self) -> None:
+        from audit import _resolve_script
+
+        script = _resolve_script("pseudocode", "en", ".tex")
+        assert script is not None
+        assert script.name == "check_pseudocode.py"
+
 
 # ============================================================
 # P0-venue: venue filtering tests
@@ -1045,6 +1054,27 @@ This paper proposes a method.
 \end{document}
 """
 
+    IEEE_FLOAT_ALGO_CONTENT = r"""
+\documentclass{IEEEtran}
+\begin{abstract}
+This is a short abstract about signal processing.
+\end{abstract}
+\begin{IEEEkeywords}
+deep learning, signal processing, classification
+\end{IEEEkeywords}
+\begin{document}
+\section{Introduction}
+This paper proposes a method.
+\begin{algorithm}
+\caption{Adaptive inference procedure}
+\label{alg:main}
+\begin{algorithmic}
+\State Update model state
+\end{algorithmic}
+\end{algorithm}
+\end{document}
+"""
+
     def test_no_venue_returns_only_universal(self) -> None:
         from audit import _run_checklist
 
@@ -1105,6 +1135,17 @@ This paper proposes a method.
         )
         assert kw_item is not None
 
+    def test_ieee_pseudocode_float_checklist_item_fails(self) -> None:
+        from audit import _run_checklist
+
+        items = _run_checklist(self.IEEE_FLOAT_ALGO_CONTENT, "paper.tex", "en", venue="ieee")
+        pseudo_item = next(
+            (i for i in items if "No floating pseudocode environment" in i.description),
+            None,
+        )
+        assert pseudo_item is not None
+        assert not pseudo_item.passed
+
     def test_acm_ccs_missing(self) -> None:
         from audit import _run_checklist
 
@@ -1120,6 +1161,102 @@ This paper proposes a method.
         # Should work with positional args only (backward compat)
         items = _run_checklist(self.CLEAN_CONTENT, "paper.tex", "en")
         assert len(items) > 0
+
+
+def test_run_audit_gate_pseudocode_float_becomes_blocking(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        TestVenueChecklist.IEEE_FLOAT_ALGO_CONTENT,
+        encoding="utf-8",
+    )
+
+    def fake_resolve_script(check_name: str, lang: str, fmt: str):
+        return Path("check_pseudocode.py" if check_name == "pseudocode" else f"{check_name}.py")
+
+    def fake_run(script: Path, file_path: str, extra_args=None):
+        if script.name != "check_pseudocode.py":
+            return 0, "", ""
+        if extra_args and "--json" in extra_args:
+            payload = [
+                {
+                    "module": "PSEUDOCODE",
+                    "line": 10,
+                    "severity": "Critical",
+                    "priority": "P0",
+                    "message": "IEEE-safe pseudocode should not use floating algorithm environments; wrap algorithmic content in a figure instead.",
+                }
+            ]
+            return 1, json.dumps(payload), ""
+        return (
+            1,
+            "% PSEUDOCODE (Line 10) [Severity: Critical] [Priority: P0]: IEEE-safe pseudocode "
+            "should not use floating algorithm environments; wrap algorithmic content in a figure instead.",
+            "",
+        )
+
+    monkeypatch.setattr(audit, "_resolve_script", fake_resolve_script)
+    monkeypatch.setattr(audit, "_run_check_script", fake_run)
+
+    result = audit.run_audit(str(tex), mode="gate", lang="en", venue="ieee")
+
+    assert any(issue.module == "PSEUDOCODE" and issue.severity == "Critical" for issue in result.issues)
+    assert any(
+        "No floating pseudocode environment" in item.description and not item.passed
+        for item in result.checklist
+    )
+
+
+def test_run_audit_gate_keeps_missing_line_numbers_advisory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        TestVenueChecklist.IEEE_CONTENT,
+        encoding="utf-8",
+    )
+
+    def fake_resolve_script(check_name: str, lang: str, fmt: str):
+        return Path("check_pseudocode.py" if check_name == "pseudocode" else f"{check_name}.py")
+
+    def fake_run(script: Path, file_path: str, extra_args=None):
+        if script.name != "check_pseudocode.py":
+            return 0, "", ""
+        if extra_args and "--json" in extra_args:
+            payload = [
+                {
+                    "module": "PSEUDOCODE",
+                    "line": 18,
+                    "severity": "Minor",
+                    "priority": "P2",
+                    "message": "Line numbers were not detected. They are recommended for IEEE-like review but not required.",
+                }
+            ]
+            return 0, json.dumps(payload), ""
+        return (
+            0,
+            "% PSEUDOCODE (Line 18) [Severity: Minor] [Priority: P2]: Line numbers were not "
+            "detected. They are recommended for IEEE-like review but not required.",
+            "",
+        )
+
+    monkeypatch.setattr(audit, "_resolve_script", fake_resolve_script)
+    monkeypatch.setattr(audit, "_run_check_script", fake_run)
+
+    result = audit.run_audit(str(tex), mode="gate", lang="en", venue="ieee")
+
+    assert not any(issue.severity == "Critical" for issue in result.issues)
+    assert any(issue.module == "PSEUDOCODE" and issue.severity == "Minor" for issue in result.issues)
+    assert all(
+        item.passed
+        for item in result.checklist
+        if "Pseudocode" in item.description or "pseudocode" in item.description
+    )
 
 
 # ============================================================

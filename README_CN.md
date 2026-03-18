@@ -76,6 +76,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、方法论深度、摘要/结论一致性检查 |
 | **标题** | IEEE/ACM/Springer 最佳实践生成；移除无效词；综合评分 0–100 |
 | **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
+| **伪代码** | 面向 `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 审查；检查浮动体、caption/label/引用顺序、长注释和行号建议 |
 | **实验分析** | 含 SOTA 对比、消融分析、discussion 分层与结论完整性的连贯叙事段落 |
 | **去AI化** | 人性化 AI 写作，完整保留所有 LaTeX 语法，并标出低信息密度空话 |
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
@@ -124,6 +125,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **逻辑** | AXES 段落衔接、绪论漏斗链、摘要/结论一致性、跨章节逻辑链 |
 | **标题** | 双语（中英文）标题生成与优化 |
 | **图表标题** | 遵循 IEEE/ACM 标准的双语 Caption |
+| **伪代码** | 面向 `algorithmic`、`algorithm-figure`、`lovelace` 的 IEEE-like 审查，检查 wrapper、caption、style hook 和注释长度 |
 | **实验分析** | 面向期刊/会议的连贯叙事段落，并检查 discussion 分层 |
 | **去AI化** | 中英文 Typst 去 AI 化；保留 `@cite`、`<label>`、`$...$` |
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
@@ -141,6 +143,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **视觉排版** | 页边距溢出、文本/图片重叠、字体不一致、低分辨率图片、空白页 |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
+| **伪代码审查** | IEEE gate 检查浮动算法环境、caption/label/引用顺序，并把行号与长注释归为建议项而非硬阻塞 |
 | **实验叙事** | 段落连贯性、基线对比、discussion 深度/分层、结论完整性检查 |
 | **ScholarEval** | 8 维度质量评分（1–10 分），附投稿可读性标签 |
 | **NeurIPS 评分** | Quality / Clarity / Significance / Originality 1–6 分 |
@@ -249,6 +252,14 @@ detect Chinglish in Section 2
 生成图 3 的双语 caption
 ```
 
+### 伪代码与算法块
+
+```
+检查这个 IEEE 伪代码是否还在用 algorithm2e 浮动体
+审查这个 algorithm-figure 的 caption 和行号
+把这段伪代码改成 IEEE-safe 的写法，但不要伪造 Algorithm 1 规则
+```
+
 ### 参考文献
 
 ```
@@ -336,6 +347,7 @@ academic-writing-skills/
 │       ├── online_bib_verify.py    # CrossRef / Semantic Scholar 查询
 │       ├── check_references.py     # \ref / \label / caption 完整性
 │       ├── check_figures.py        # 图片使用分析
+│       ├── check_pseudocode.py     # IEEE-aware 伪代码检查
 │       ├── analyze_grammar.py      # 中式英语、弱动词、主谓一致
 │       ├── analyze_sentences.py    # 长难句拆解
 │       ├── analyze_logic.py        # AXES 衔接、过渡信号词
@@ -360,6 +372,7 @@ academic-writing-skills/
 │   ├── agents/ · evals/ · examples/
 │   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
 │   └── scripts/                    # 同等工具链，适配 Typst 语法
+│       └── check_pseudocode.py     # IEEE-like Typst 伪代码检查
 │
 ├── paper-audit/
 │   ├── SKILL.md
@@ -371,6 +384,7 @@ academic-writing-skills/
 │       ├── parsers.py              # 共享解析基类
 │       ├── pdf_parser.py           # PDF 文本与元数据提取
 │       ├── visual_check.py         # PDF 排版渲染分析
+│       ├── check_pseudocode.py     # 通过 sibling route 调用的 IEEE 伪代码检查
 │       ├── check_references.py     # 引用完整性
 │       ├── detect_language.py      # 语言检测
 │       ├── scholar_eval.py         # 8 维度 ScholarEval 评分

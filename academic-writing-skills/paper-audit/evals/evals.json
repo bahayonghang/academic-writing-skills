@@ -123,6 +123,28 @@
         {"type": "regex", "pattern": "\\[LLM\\]", "description": "[LLM] label present"},
         {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "Run an IEEE gate check on paper.tex and tell me whether the pseudocode still uses a floating algorithm environment or misses caption/label hygiene.",
+      "expected_output": "Route to gate mode with IEEE context, surface pseudocode float and caption/label checklist failures clearly, and separate mandatory violations from advisory comments.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "gate", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(pseudocode|algorithm)", "description": "pseudocode findings present"},
+        {"type": "regex", "pattern": "(PASS|FAIL)", "description": "pass/fail verdict present"}
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Self-check this IEEE manuscript and tell me which pseudocode issues are hard blockers versus only IEEE-safe recommendations like line numbers or shorter comments.",
+      "expected_output": "Output separates mandatory pseudocode problems from advisory defaults, making clear that missing line numbers are recommendations rather than submission blockers.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(recommended|recommendation|advisory)", "description": "advisory distinction present"},
+        {"type": "regex", "pattern": "(pseudocode|algorithm)", "description": "pseudocode findings present"}
+      ]
     }
   ]
 }

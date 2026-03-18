@@ -6,6 +6,7 @@ Supports three modes: self-check, review, and gate.
 
 import argparse
 import contextlib
+import json
 import re
 import subprocess
 import sys
@@ -35,6 +36,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "citations",
         "bib",
         "figures",
+        "pseudocode",
         "references",
         "visual",
     ],
@@ -48,6 +50,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "citations",
         "bib",
         "figures",
+        "pseudocode",
         "references",
         "visual",
     ],
@@ -55,6 +58,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "format",
         "bib",
         "figures",
+        "pseudocode",
         "references",
         "visual",
         "checklist",
@@ -70,6 +74,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "citations",
         "bib",
         "figures",
+        "pseudocode",
         "references",
         "visual",
     ],
@@ -166,6 +171,7 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
         "citations": "check_citations.py",
         "bib": "verify_bib.py",
         "figures": "check_figures.py",
+        "pseudocode": "check_pseudocode.py",
         "consistency": "check_consistency.py",
         "references": "check_references.py",
         "visual": "visual_check.py",
@@ -415,6 +421,172 @@ def _run_checklist(
         )
     )
 
+    def _collect_ieee_pseudocode_items() -> list[ChecklistItem]:
+        ext = Path(file_path).suffix.lower()
+        if ext not in {".tex", ".typ"}:
+            return []
+
+        def _fallback_items() -> list[ChecklistItem]:
+            if ext == ".tex":
+                float_fail = bool(re.search(r"\\begin\{algorithm\*?\}", content))
+                figure_match = re.search(
+                    r"\\begin\{figure\*?\}[\s\S]*?\\begin\{algorithmic\}[\s\S]*?\\end\{figure\*?\}",
+                    content,
+                )
+                caption_label_fail = False
+                reference_fail = False
+                caption_details = ""
+                reference_details = ""
+                if figure_match:
+                    figure_text = figure_match.group(0)
+                    caption_label_fail = not (
+                        re.search(r"\\caption(?:\[[^\]]*\])?\{", figure_text)
+                        and re.search(r"\\label\{([^}]+)\}", figure_text)
+                    )
+                    if caption_label_fail:
+                        caption_details = (
+                            "Fallback IEEE pseudocode check found a figure-wrapped algorithmic block "
+                            "without both caption and label"
+                        )
+                    label_match = re.search(r"\\label\{([^}]+)\}", figure_text)
+                    if label_match:
+                        label_name = label_match.group(1).strip()
+                        begin_idx = content.find(figure_text)
+                        first_ref = re.search(
+                            rf"\\(?:ref|autoref|cref|Cref|pageref)\{{{re.escape(label_name)}\}}",
+                            content,
+                        )
+                        if first_ref is None or first_ref.start() > begin_idx:
+                            reference_fail = True
+                            reference_details = (
+                                "Fallback IEEE pseudocode check did not find a text reference before "
+                                "the pseudocode figure"
+                            )
+                return [
+                    ChecklistItem(
+                        "[IEEE] No floating pseudocode environment used",
+                        not float_fail,
+                        "Fallback IEEE pseudocode check found a floating algorithm environment"
+                        if float_fail
+                        else "",
+                    ),
+                    ChecklistItem(
+                        "[IEEE] Pseudocode blocks have caption and label",
+                        not caption_label_fail,
+                        caption_details,
+                    ),
+                    ChecklistItem(
+                        "[IEEE] Pseudocode blocks are referenced before appearing",
+                        not reference_fail,
+                        reference_details,
+                    ),
+                ]
+
+            wrapper_fail = "lovelace" in content and not (
+                "#figure(" in content or "algorithm-figure(" in content
+            )
+            caption_label_fail = "algorithm-figure(" in content and "caption:" not in content
+            return [
+                ChecklistItem(
+                    "[IEEE] No floating pseudocode environment used",
+                    not wrapper_fail,
+                    "Fallback IEEE pseudocode check found a lovelace block without a figure wrapper"
+                    if wrapper_fail
+                    else "",
+                ),
+                ChecklistItem(
+                    "[IEEE] Pseudocode blocks have caption and label",
+                    not caption_label_fail,
+                    "Fallback IEEE pseudocode check found algorithm-figure without caption"
+                    if caption_label_fail
+                    else "",
+                ),
+                ChecklistItem(
+                    "[IEEE] Pseudocode blocks are referenced before appearing",
+                    True,
+                    "",
+                ),
+            ]
+
+        if ext == ".tex":
+            has_pseudocode = any(
+                marker in content
+                for marker in (
+                    r"\begin{algorithm}",
+                    r"\begin{algorithmic}",
+                    "algorithm2e",
+                    "algorithmicx",
+                    "algpseudocodex",
+                )
+            )
+        else:
+            has_pseudocode = any(
+                marker in content for marker in ("algorithm-figure", "@preview/algorithmic", "lovelace")
+            )
+
+        if not has_pseudocode:
+            return _fallback_items()
+
+        if not Path(file_path).exists():
+            return _fallback_items()
+
+        script = _resolve_script("pseudocode", "zh" if lang == "zh" else "en", ext)
+        if script is None:
+            return [
+                ChecklistItem(
+                    "[IEEE] Pseudocode audit script available",
+                    False,
+                    "Pseudocode checker script not found",
+                )
+            ]
+
+        returncode, stdout, stderr = _run_check_script(
+            script, file_path, ["--venue", "ieee", "--json"]
+        )
+        if returncode == -1:
+            return _fallback_items()
+
+        try:
+            payload = json.loads(stdout or "[]")
+        except json.JSONDecodeError:
+            return _fallback_items()
+
+        def _messages_for(patterns: tuple[str, ...]) -> list[str]:
+            messages: list[str] = []
+            for issue in payload:
+                message = issue.get("message", "")
+                if any(pattern in message for pattern in patterns):
+                    messages.append(message)
+            return messages
+
+        wrapper_messages = _messages_for(
+            ("floating algorithm environments", "not wrapped in a figure-like container")
+        )
+        caption_label_messages = _messages_for(
+            ("missing a caption", "missing a label")
+        )
+        reference_messages = _messages_for(
+            ("never referenced", "first reference", "referenced before")
+        )
+
+        return [
+            ChecklistItem(
+                "[IEEE] No floating pseudocode environment used",
+                not wrapper_messages,
+                "; ".join(wrapper_messages[:2]) if wrapper_messages else "",
+            ),
+            ChecklistItem(
+                "[IEEE] Pseudocode blocks have caption and label",
+                not caption_label_messages,
+                "; ".join(caption_label_messages[:2]) if caption_label_messages else "",
+            ),
+            ChecklistItem(
+                "[IEEE] Pseudocode blocks are referenced before appearing",
+                not reference_messages,
+                "; ".join(reference_messages[:2]) if reference_messages else "",
+            ),
+        ]
+
     # --- Venue-Specific Checks ---
     venue_key = venue.lower().strip()
     if venue_key and venue_key in VENUE_CONFIG:
@@ -495,6 +667,9 @@ def _run_checklist(
                     "" if found else f"Not found — required for {venue_key.upper()} submission",
                 )
             )
+
+        if venue_key == "ieee":
+            items.extend(_collect_ieee_pseudocode_items())
 
     return items
 

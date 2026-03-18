@@ -31,6 +31,7 @@ Unified academic paper audit for LaTeX, Typst, and PDF documents.
 ## Key Capabilities
 
 - reference integrity checks
+- IEEE pseudocode gate checks for algorithm floats, caption/label/reference order, and advisory line-number guidance
 - PDF visual layout checks
 - severity and priority reporting
 - 4-dimension scoring
@@ -60,11 +61,16 @@ Re-audit this paper against the previous report.
 Check paper.tex for citation stacking in the introduction and related work.
 ```
 
+```text
+Run an IEEE gate check and tell me whether the pseudocode still violates float or caption rules.
+```
+
 ## Notes
 
 - `paper-audit` is for reports and scoring, not for being your first compiler.
 - Use the sibling writing skill first if the source still does not build.
 - `audit.py --mode review` produces the Phase 0 automated review report. The full multi-perspective synthesis happens when the outer skill workflow dispatches reviewer agents.
 - Outputs differ by execution surface: script-only `self-check` and `review` produce automated reports; the full skill workflow layers reviewer synthesis on top of `review`; `gate` is CI-friendly PASS/FAIL; `re-audit` compares deltas against a prior report.
+- IEEE pseudocode findings are split into hard rules versus IEEE-safe recommendations; missing line numbers should stay advisory unless the venue says otherwise.
 - Citation stacking detection checks Introduction and Related Work sections for sentences with 3+ clustered citations that lack individual discussion — a common AI writing pattern flagged by reviewers.
 - Automated Phase 0 currently covers A1/A3 plus experiment-structure and cross-section checks that are script-backed. A2/A4 remain agent-review judgments unless future heuristics are added.

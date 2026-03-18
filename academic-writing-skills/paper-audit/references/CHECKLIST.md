@@ -86,6 +86,11 @@ Consolidated checklists for paper audit across venues.
 - [ ] References follow IEEE format
 - [ ] Figure captions below figures, table captions above tables
 - [ ] All figures are high resolution (>= 300 DPI)
+- [ ] No floating `algorithm` / `algorithm2e` environment in IEEE pseudocode
+- [ ] Pseudocode blocks use a caption and label
+- [ ] Pseudocode blocks are referenced in text before appearing
+- [ ] Pseudocode line numbers are enabled when helpful for review (recommended, not mandatory)
+- [ ] Pseudocode comments are short; paragraph-level explanation stays in the main text
 
 ## ACM Specific
 
