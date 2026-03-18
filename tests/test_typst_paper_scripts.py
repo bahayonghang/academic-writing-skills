@@ -24,7 +24,14 @@ def _load_typst(name: str):
         inserted = True
 
     # Save and remove collision-prone modules so Typst versions get loaded fresh
-    _collision_names = ("parsers", "compile", "verify_bib", "optimize_title", "check_format")
+    _collision_names = (
+        "parsers",
+        "compile",
+        "verify_bib",
+        "optimize_title",
+        "check_format",
+        "check_pseudocode",
+    )
     _saved = {}
     for mod_name in list(sys.modules):
         if mod_name in _collision_names:
@@ -53,6 +60,7 @@ compile_typst = _load_typst("compile")
 verify_bib_typst = _load_typst("verify_bib")
 optimize_title_typst = _load_typst("optimize_title")
 check_format_typst = _load_typst("check_format")
+check_pseudocode_typst = _load_typst("check_pseudocode")
 parsers_typst = _load_typst("parsers")
 analyze_logic_typst = _load_typst("analyze_logic")
 analyze_experiment_typst = _load_typst("analyze_experiment")
@@ -104,6 +112,69 @@ def test_typst_format_checker_flags_missing_bibliography(tmp_path: Path) -> None
     checker.check_citations()
 
     assert "Citations found but no bibliography command" in checker.issues
+
+
+def test_typst_pseudocode_accepts_algorithm_figure_defaults(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """#import "@preview/algorithmic:0.1.0": *
+#show: style-algorithm
+
+#algorithm-figure(
+  caption: [Adaptive inference procedure],
+  line-numbers: true,
+)[
+  step("Initialize cache")
+  comment("Short note")
+]
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_typst.PseudocodeChecker(str(typ), venue="ieee")
+    issues = checker.check()
+
+    assert issues == []
+
+
+def test_typst_pseudocode_flags_missing_caption_and_style_hook(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """#import "@preview/algorithmic:0.1.0": *
+
+#algorithm-figure(
+)[
+  step("Initialize cache")
+]
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_typst.PseudocodeChecker(str(typ), venue="ieee")
+    issues = checker.check()
+    messages = "\n".join(issue["message"] for issue in issues)
+
+    assert "style-algorithm" in messages
+    assert "missing a caption" in messages
+
+
+def test_typst_pseudocode_flags_lovelace_without_wrapper(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """#import "@preview/lovelace:0.1.0": *
+
+#lovelace[
+  let step = "Initialize cache"
+]
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_typst.PseudocodeChecker(str(typ), venue="ieee")
+    issues = checker.check()
+
+    assert any(issue["severity"] == "Critical" for issue in issues)
+    assert any("figure-like container" in issue["message"] for issue in issues)
 
 
 def test_typst_verify_bib_reports_missing_and_unused_citations(tmp_path: Path) -> None:

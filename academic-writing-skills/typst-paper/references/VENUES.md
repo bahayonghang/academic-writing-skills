@@ -105,6 +105,13 @@
 )
 ```
 
+### Pseudocode
+- Prefer the `algorithmic` package for IEEE-like Typst pseudocode because it provides `algorithm-figure`, caption support, and conventional control-flow rendering.
+- Treat `lovelace` as a flexible fallback when the user explicitly wants freer syntax.
+- In IEEE-like output, wrap pseudocode in `algorithm-figure(...)` or `#figure(...)` with a caption.
+- Line numbers are recommended for review convenience, but they are not enforced here as an IEEE hard rule.
+- Keep comments short and move paragraph-level explanation back into the main text.
+
 ---
 
 ## ACM Conferences and Journals

@@ -12,6 +12,7 @@
 - 跨章节逻辑链闭合
 - 翻译与双语润色
 - 标题优化
+- `algorithmic`、`algorithm-figure`、`lovelace` 的 IEEE-like 伪代码审查
 - 去 AI 修改
 - 实验章节审阅
 
@@ -28,6 +29,7 @@
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | 中英学术翻译 | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | 标题检查或优化 | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
+| `pseudocode` | `algorithmic` / `algorithm-figure` / `lovelace` 的 IEEE-like 检查 | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
 | `deai` | 中英文 Typst 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
 | `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
 
@@ -36,6 +38,7 @@
 - 入口文件，如 `main.typ`
 - 若只处理局部内容，可补充 section 名称
 - bibliography 路径可选，支持 BibTeX 和 Hayagriva
+- 如果是 `pseudocode`，请尽量说明是否按 IEEE-like 输出要求审查
 - 如果是 `translation`，可直接给局部段落，但会默认保留 Typst labels、引用和公式
 
 ## 推荐提示词
@@ -52,5 +55,9 @@
 核对 references.bib 和 main.typ 的引用关系。
 ```
 
+```text
+审查这个 algorithm-figure 的 caption、style-algorithm 和行号设置。
+```
+
 - 默认输出是 Typst 友好的、保留源码结构的审阅意见，而不是静默改写。
-- 当前 eval 覆盖 3 类请求：compile+format、BibTeX/Hayagriva bibliography 路由检查，以及在保留 Typst labels 前提下的 expression+translation。
+- 当前 eval 已补充伪代码相关请求，包括 algorithm-figure 检查和 lovelace wrapper 指引。

@@ -1,9 +1,9 @@
 ---
 name: typst-paper
-description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, expression polishing, translation, title optimization, de-AI editing, or experiment-section review. Trigger even when the user only mentions one Typst file, one bibliography issue, or one section rewrite. Also trigger when the user mentions ".typ files", "typst compile error", "typst export", or "typst bibliography" even without saying the word "Typst" explicitly.
+description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, expression polishing, translation, title optimization, pseudocode review, algorithm block cleanup, de-AI editing, or experiment-section review. Trigger even when the user only mentions one Typst file, one bibliography issue, one pseudocode block, or one section rewrite. Also trigger when the user mentions ".typ files", "typst compile error", "typst export", "typst bibliography", `algorithm-figure`, `lovelace`, or `algorithmic` even without saying the word "Typst" explicitly.
 metadata:
   category: academic-writing
-  tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva]
+  tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(typst *)
 ---
@@ -16,6 +16,7 @@ Use this skill for targeted work on an existing Typst paper project. Route reque
 
 - Compile Typst projects and diagnose Typst CLI issues.
 - Audit format, bibliography, grammar, sentence length, argument logic, expression quality, and AI traces.
+- Review IEEE-like pseudocode blocks for `algorithmic`, `algorithm-figure`, `lovelace`, caption handling, and comment length.
 - Support both BibTeX and Hayagriva bibliography files.
 - Improve titles, translation, and experiment-section clarity for Typst papers.
 
@@ -29,6 +30,7 @@ Use this skill when the user has an existing `.typ` paper project and wants help
 - grammar, sentence, logic, or expression review
 - translation or bilingual polishing
 - title optimization
+- pseudocode and algorithm-block review
 - de-AI editing
 - experiment-section review
 
@@ -41,6 +43,7 @@ Do not use this skill for:
 - thesis template detection or GB/T 7714 thesis workflows
 - from-scratch paper planning or literature research
 - multi-perspective review, scoring, or submission gate decisions (use `paper-audit`)
+- standalone pseudocode drafting without a paper context
 
 ## Module Router
 
@@ -55,6 +58,7 @@ Do not use this skill for:
 | `expression` | Tone and expression polishing | `uv run python $SKILL_DIR/scripts/improve_expression.py main.typ --section methods` | `references/modules/EXPRESSION.md` |
 | `translation` | Chinese/English academic translation in Typst context | `uv run python $SKILL_DIR/scripts/translate_academic.py input_zh.txt --domain deep-learning` | `references/modules/TRANSLATION.md` |
 | `title` | Generate, compare, or optimize Typst paper titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check` | `references/modules/TITLE.md` |
+| `pseudocode` | Review `algorithmic` / `algorithm-figure` / `lovelace` output for IEEE-like safety, captions, and comment length | `uv run python $SKILL_DIR/scripts/check_pseudocode.py main.typ --venue ieee` | `references/modules/PSEUDOCODE.md` |
 | `deai` | Reduce English or Chinese AI-writing traces while preserving Typst syntax | `uv run python $SKILL_DIR/scripts/deai_check.py main.typ --section introduction` | `references/modules/DEAI.md` |
 | `experiment` | Inspect experiment-section clarity, discussion layering, and reporting quality | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.typ --section experiment` | `references/modules/EXPERIMENT.md` |
 
@@ -93,6 +97,7 @@ If arguments are missing, ask only for the Typst entry file and the target modul
 - `references/STYLE_GUIDE.md`: paper-writing style baseline.
 - `references/CITATION_VERIFICATION.md`: citation verification workflow.
 - `references/modules/`: module-specific Typst commands and choices.
+- `references/modules/PSEUDOCODE.md`: IEEE-like defaults for Typst pseudocode.
 
 Read only the file that matches the active module.
 
@@ -100,6 +105,7 @@ Read only the file that matches the active module.
 
 - “Compile this Typst paper and tell me why the export works locally but fails in CI.”
 - “Check bibliography, title, and abstract wording in my `main.typ` submission.”
+- “Review this `algorithm-figure` block for IEEE-like caption, line-number, and comment issues.”
 - “Review the methods section for sentence length and logic, but keep Typst labels intact.”
 
 See `examples/` for full request-to-command walkthroughs.

@@ -95,6 +95,28 @@
         {"type": "contains", "text": "experiment", "description": "experiment module routed"},
         {"type": "regex", "pattern": "(layer|mechanism|limitation|implication|depth)", "description": "discussion depth assessed"}
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "Review the algorithm-figure block in my IEEE-style Typst paper and tell me whether the caption, line numbers, and style-algorithm hook are in good shape.",
+      "expected_output": "Route to the pseudocode module, inspect algorithmic usage, and distinguish missing caption or wrapper issues from line-number recommendations.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
+        {"type": "regex", "pattern": "(algorithm-figure|style-algorithm|caption)", "description": "Typst pseudocode details checked"},
+        {"type": "regex", "pattern": "(recommended|not required|IEEE-like)", "description": "advisory distinction present"}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "I used lovelace for a custom pseudocode block in main.typ. Tell me whether I still need a figure wrapper and caption for an IEEE-like submission.",
+      "expected_output": "Route to the pseudocode module, identify lovelace usage, and explain when figure wrapping and captions become mandatory for IEEE-like output.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
+        {"type": "regex", "pattern": "(lovelace|figure|caption)", "description": "lovelace wrapper guidance present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
     }
   ]
 }
