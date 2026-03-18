@@ -15,6 +15,7 @@ deai_module = importlib.import_module("deai_check")
 compile_module = importlib.import_module("compile")
 verify_bib_module = importlib.import_module("verify_bib")
 check_figures_module = importlib.import_module("check_figures")
+check_pseudocode_module = importlib.import_module("check_pseudocode")
 optimize_title_module = importlib.import_module("optimize_title")
 translate_module = importlib.import_module("translate_academic")
 
@@ -186,6 +187,89 @@ def test_check_figures_help_does_not_advertise_json() -> None:
 
     assert result.returncode == 0
     assert "--json" not in result.stdout
+
+
+def test_check_pseudocode_flags_ieee_algorithm_float(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{IEEEtran}
+\begin{document}
+\begin{algorithm}
+\caption{Adaptive inference procedure}
+\label{alg:main}
+\begin{algorithmic}
+\State Update model state
+\end{algorithmic}
+\end{algorithm}
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_module.PseudocodeChecker(str(tex), venue="ieee")
+    issues = checker.check()
+
+    assert any(issue["severity"] == "Critical" for issue in issues)
+    assert any("floating algorithm environments" in issue["message"] for issue in issues)
+
+
+def test_check_pseudocode_accepts_ieee_figure_wrapped_algorithmic(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{IEEEtran}
+\usepackage{algorithmicx}
+\usepackage{algpseudocodex}
+\begin{document}
+As shown in Fig.~\ref{alg:main}, the controller updates the state online.
+\begin{figure}[t]
+\caption{Adaptive inference procedure}
+\label{alg:main}
+\begin{algorithmic}[1]
+\Require Current state $x_t$
+\Ensure Updated estimate $\hat{x}_{t+1}$
+\State Initialize the cache.
+\Comment{Short note}
+\end{algorithmic}
+\end{figure}
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_module.PseudocodeChecker(str(tex), venue="ieee")
+    issues = checker.check()
+
+    assert issues == []
+
+
+def test_check_pseudocode_flags_article_led_caption_and_long_comment(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{IEEEtran}
+\usepackage{algorithmicx}
+\begin{document}
+See Fig.~\ref{alg:main}.
+\begin{figure}[t]
+\caption{The proposed adaptive inference procedure}
+\label{alg:main}
+\begin{algorithmic}[1]
+\Require State $x_t$
+\Ensure Estimate $\hat{x}_{t+1}$
+\State Update the cache.
+\Comment{This comment line explains far too much detail for a compact pseudocode note.}
+\end{algorithmic}
+\end{figure}
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    checker = check_pseudocode_module.PseudocodeChecker(str(tex), venue="ieee")
+    issues = checker.check()
+    messages = "\n".join(issue["message"] for issue in issues)
+
+    assert "caption starts with an article" in messages
+    assert "unusually long" in messages
 
 
 def test_analyze_experiment_accepts_plural_section_alias_and_reports_review_findings(

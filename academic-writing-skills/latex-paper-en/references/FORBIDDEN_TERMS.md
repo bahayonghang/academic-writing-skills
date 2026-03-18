@@ -55,6 +55,25 @@ $...$ (inline math)
 % All content here is protected
 \end{algorithmic}
 \end{algorithm}
+
+\begin{figure}
+% If the figure contains pseudocode, keep its algorithmic content protected
+\end{figure}
+```
+
+Also preserve algorithmic-family commands such as:
+
+```latex
+\Require
+\Ensure
+\State
+\Statex
+\Comment
+\LComment
+\Procedure
+\Function
+\KwIn
+\KwOut
 ```
 
 ## Code Listings

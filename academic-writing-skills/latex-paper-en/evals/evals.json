@@ -96,6 +96,28 @@
         {"type": "contains", "text": "experiment", "description": "experiment module routed"},
         {"type": "regex", "pattern": "(layer|mechanism|limitation|implication)", "description": "discussion depth assessed"}
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "Check whether the pseudocode in my IEEE LaTeX paper still uses a floating algorithm environment or misses the caption and label conventions reviewers expect.",
+      "expected_output": "Route to the pseudocode module, apply IEEE-aware checks, and separate hard float violations from caption, label, or reference hygiene issues.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
+        {"type": "regex", "pattern": "(IEEE|algorithm|caption|label)", "description": "IEEE-aware pseudocode review present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Rewrite the guidance around this algorithm2e block so it becomes IEEE-safe, and tell me whether line numbers or Require/Ensure are mandatory or only recommended.",
+      "expected_output": "Route to the pseudocode module, explain that floating algorithm environments are the hard issue, and clearly distinguish line numbers or Require/Ensure as IEEE-safe defaults rather than official mandates.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
+        {"type": "regex", "pattern": "(recommended|not required|IEEE-safe)", "description": "advisory distinction present"},
+        {"type": "regex", "pattern": "(algorithm2e|figure)", "description": "migration guidance present"}
+      ]
     }
   ]
 }

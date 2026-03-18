@@ -61,6 +61,13 @@
 - Captions above tables
 - Referenced in text before appearing
 
+### Pseudocode
+- IEEEtran only recognizes `figure` and `table` as standard floats; do not assume a dedicated `algorithm` float is IEEE-safe.
+- Prefer `figure` + `algorithmicx` / `algpseudocodex` for LaTeX pseudocode in IEEE submissions.
+- Give the pseudocode block a normal figure caption and reference it in text before the figure appears.
+- Prefer direct captions such as `Adaptive inference procedure` instead of `The proposed algorithm...`.
+- Explicit input/output markers and short inline comments are recommended defaults, not IEEE hard requirements.
+
 ## ACM Conferences
 
 ### Style
