@@ -1,6 +1,6 @@
 ---
 name: paper-audit
-description: Unified paper audit for Chinese and English papers. Use when reviewing paper quality, pre-submission checks, or doing adversarial reviews.
+description: Unified paper audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use when reviewing paper quality, running pre-submission checks, simulating peer review, making pass/fail gate decisions, polishing writing, re-auditing revisions, or scoring with ScholarEval dimensions. Trigger when the user says "check my paper", "is this ready to submit", "score my paper", "review like a reviewer", "find missing references", "literature search", "re-audit", or wants a CI/CD quality gate. Do not use for direct source editing or compiling — use the format-specific writing skills instead.
 metadata:
   category: academic-writing
   tags: [audit, review, paper, pdf, latex, typst, chinese, english, scoring, checklist]
@@ -41,6 +41,8 @@ Trigger it even when the user only says “check my paper”, “review this sub
 - full literature research or survey drafting
 - writing a paper from scratch
 - template-specific LaTeX or Typst editing when the user wants direct source surgery instead of an audit report
+- direct source editing, grammar fixing, or expression polishing on individual sections (use `latex-paper-en`, `latex-thesis-zh`, or `typst-paper` based on format and language)
+- fixing compilation errors as the primary task (use the format-specific skill first)
 
 ## Critical Rules
 
@@ -95,6 +97,8 @@ Trigger it even when the user only says “check my paper”, “review this sub
 7. Read `$SKILL_DIR/references/quality_rubrics.md` for scoring anchors and decision mapping.
 8. **Phase 0** (automated): The script output provides automated findings and scores.
    - When `--literature-search` is enabled, Phase 0 also includes literature search results and grounding score.
+   - `audit.py --mode review` by itself runs Phase 0 only. Full multi-perspective review happens after the skill dispatches Phase 1 reviewer tasks.
+   - In Phase 0, literature-review enumeration/gap checks, experiment-section structure checks, and cross-section closure are script-backed; A2/A4 style judgments remain reviewer/LLM work unless future heuristics are added.
 9. **Phase 1** (agents): For each agent in `$SKILL_DIR/agents/`:
    - Read the agent definition file for persona and protocol.
    - Dispatch a `Task` with: agent definition + paper content + Phase 0 results as context.
@@ -148,20 +152,7 @@ If the user omits the mode, infer it using the selection guide and state the ass
 
 ## Venue-Specific Behavior
 
-When `--venue` (or `--journal`) is specified, the audit adds venue-specific checks:
-
-| Venue | Key Rules |
-|-------|-----------|
-| `neurips` | 9-page limit, broader impact statement, paper checklist, double-blind |
-| `iclr` | 10-page limit, reproducibility statement, double-blind |
-| `icml` | 8-page limit, impact statement, 50MB supplementary limit |
-| `ieee` | Abstract <=250 words, 3-5 keywords, >=300 DPI figures |
-| `acm` | CCS concepts required, acmart class, rights management |
-| `thesis-zh` | GB/T 7714-2015 bibliography, bilingual abstract, university template |
-
-Without `--venue`, only universal checklist items apply.
-
----
+> Venue-specific rules: see [`references/VENUE_RULES.md`](references/VENUE_RULES.md) for per-venue behavior adjustments.
 
 ## Output Protocol
 
@@ -185,33 +176,7 @@ Without `--venue`, only universal checklist items apply.
 
 ## Scoring Systems
 
-### 4-Dimension Score (1.0-6.0, base 6.0 with deductions)
-| Dimension | Weight | Primary Checks |
-|-----------|--------|---------------|
-| Quality | 30% | logic, bib, gbt7714 |
-| Clarity | 30% | format, grammar, sentences, consistency, references, visual, figures |
-| Significance | 20% | logic, checklist |
-| Originality | 20% | deai, checklist |
-
-### 8-Dimension ScholarEval (1.0-10.0, optional via `--scholar-eval`)
-
-> **v3.0**: Now supports 9 dimensions with Literature Grounding. Use `--literature-search` for automated literature verification.
-
-| Dimension | Weight | Source |
-|-----------|--------|--------|
-| Soundness | 18% | Script |
-| Clarity | 13% | Script |
-| Presentation | 8% | Script |
-| Novelty | 13% | LLM |
-| Significance | 13% | LLM |
-| Reproducibility | 8% | Mixed |
-| Ethics | 5% | LLM |
-| Literature Grounding | 12% | Mixed (NEW) |
-| Overall | 10% | Computed |
-
-See `$SKILL_DIR/references/quality_rubrics.md` for score-level descriptors and decision mapping.
-
----
+> Scoring rubrics: see [`references/SCORING_SYSTEMS.md`](references/SCORING_SYSTEMS.md) for the full 4-dim and 9-dim ScholarEval scoring tables.
 
 ## Integration with Sibling Skills
 
@@ -219,12 +184,14 @@ Paper-audit reuses check scripts from sibling skills via format-based routing:
 
 | Format | Script Source | Checks Available |
 |--------|-------------|-----------------|
-| `.tex` (English) | `latex-paper-en/scripts/` | format, grammar, logic, sentences, deai, bib, figures |
-| `.tex` (Chinese) | `latex-thesis-zh/scripts/` (primary), `latex-paper-en/scripts/` (fallback) | + consistency, gbt7714 |
-| `.typ` | `typst-paper/scripts/` | format, grammar, logic, sentences, deai |
+| `.tex` (English) | `latex-paper-en/scripts/` | format, grammar, logic, experiment, sentences, deai, bib, figures |
+| `.tex` (Chinese) | `latex-thesis-zh/scripts/` (primary), `latex-paper-en/scripts/` (fallback) | + experiment, consistency, gbt7714 |
+| `.typ` | `typst-paper/scripts/` | format, grammar, logic, experiment, sentences, deai |
 | `.pdf` | `paper-audit/scripts/` only | visual, pdf_parser (no format/bib/figures checks) |
 
-Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `visual_check.py`, `pdf_parser.py`, `detect_language.py`, `parsers.py`, `report_generator.py`, `scholar_eval.py`, `literature_search.py`, `literature_compare.py`, `scoring_model.py`.
+Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `check_citations.py`, `visual_check.py`, `pdf_parser.py`, `detect_language.py`, `parsers.py`, `report_generator.py`, `scholar_eval.py`, `literature_search.py`, `literature_compare.py`, `scoring_model.py`.
+
+> `check_citations.py` detects citation stacking (3+ clustered citations without individual discussion). `check_references.py` validates figure/table/equation label-ref integrity.
 
 ---
 
@@ -302,8 +269,6 @@ Default model coefficients approximate the weighted-average behavior. Custom tra
 | `templates/review_report_template.md` | Output structure for multi-perspective review |
 | `templates/revision_roadmap_template.md` | Prioritized revision action plan |
 
----
-
 ## Quality Standards
 
 | Dimension | Requirement |
@@ -315,8 +280,6 @@ Default model coefficients approximate the weighted-average behavior. Custom tra
 | Source transparency | Always label findings as [Script] or [LLM] |
 | Format consistency | All reports follow the corresponding template structure |
 | Constructive tone | Professional and helpful; avoid dismissive language |
-
----
 
 ## Examples
 
@@ -369,27 +332,8 @@ See `$SKILL_DIR/examples/` for complete output examples.
 
 ## Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| No file path provided | Ask user for a valid `.tex`, `.typ`, or `.pdf` file |
-| Script execution fails | Report the command, exit code, and stderr output |
-| Missing sibling skill scripts | Check that `latex-paper-en/scripts/`, `latex-thesis-zh/scripts/`, or `typst-paper/scripts/` exist |
-| PDF checks limited | PDF mode skips format/bib/figures checks; only visual and content analysis available |
-| `--venue` not recognized | Use one of: `neurips`, `iclr`, `icml`, `ieee`, `acm`, `thesis-zh` |
-| ScholarEval LLM dimensions show N/A | Run with `--scholar-eval`, then provide LLM scores via `--llm-json` |
-| Re-audit missing previous report | Provide `--previous-report PATH` pointing to the prior audit output |
-| Literature search returns no results | Check API keys; Semantic Scholar works without key but slower; arXiv always available |
-| `TAVILY_API_KEY` not set | Set env var or pass `--tavily-key`; Tavily is optional — S2 + arXiv work without it |
-| Semantic Scholar rate limited | Set `S2_API_KEY` for higher limits; the client has built-in exponential backoff |
-| Literature Grounding shows N/A | Run with `--literature-search` to enable automated literature verification |
-| Regression model gives unexpected scores | Check `scripts/models/scoring_model.json`; default coefficients approximate weighted average |
-
----
+> Troubleshooting: see [`references/TROUBLESHOOTING.md`](references/TROUBLESHOOTING.md).
 
 ## Changelog
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 3.0 | 2026-03-16 | Literature search engine (Tavily + S2 + arXiv); 9-dimension ScholarEval with Literature Grounding (12%); linear regression scoring model; Literature Reviewer agent; PDF metadata extraction; 3 new eval prompts |
-| 2.0 | 2026-03-11 | Full rewrite: venue filtering, multi-perspective review agents, re-audit mode, templates, examples, quality rubrics |
-| 1.0 | 2026-03 | Initial version: 4 modes, script-based audit, 4-dim + 8-dim scoring |
+> Version history: see [`references/CHANGELOG.md`](references/CHANGELOG.md).

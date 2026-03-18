@@ -1,6 +1,6 @@
 ---
 name: industrial-ai-research
-description: Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, structured report outputs, and survey draft generation. Use when the user needs up-to-date research on predictive maintenance, intelligent scheduling, industrial anomaly detection, smart manufacturing, cyber-physical systems, edge AI for automation, or crossover robotics-for-industry topics.
+description: Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, structured report outputs, and survey draft generation. Use when the user needs up-to-date research on predictive maintenance, intelligent scheduling, industrial anomaly detection, smart manufacturing, cyber-physical systems, edge AI for automation, or crossover robotics-for-industry topics. Also trigger for adjacent terms: "digital twin", "industrial IoT", "Industry 4.0", "manufacturing AI", "factory automation", "process optimization", or "survey draft" in industrial contexts.
 metadata:
   category: academic-writing
   tags: [industrial-ai, research, literature-review, predictive-maintenance, scheduling, anomaly-detection, smart-manufacturing, cps, arxiv, ieee, survey, survey-draft]
@@ -40,6 +40,8 @@ Use this skill when the user wants to:
 - Auditing paper quality or formatting (use `paper-audit`)
 - Systematic reviews or meta-analyses requiring IRB or clinical ethics
 - Topics outside the Industrial AI and automation domain
+- Auditing an existing paper's quality or formatting (use `paper-audit`)
+- Editing LaTeX/Typst source files (use the appropriate writing skill)
 
 ## Safety Boundaries
 

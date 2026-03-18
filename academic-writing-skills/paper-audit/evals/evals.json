@@ -5,49 +5,124 @@
       "id": 1,
       "prompt": "Run a self-check on paper.tex for a NeurIPS submission and tell me which issues block submission versus which are only quality improvements.",
       "expected_output": "Infer or accept self-check mode, run the audit flow, and return a report that lists Critical or P0 blockers before non-blocking issues and checklist items.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
     },
     {
       "id": 2,
       "prompt": "Review this paper like a skeptical reviewer, include multi-perspective criticism, and end with a prioritized revision roadmap.",
       "expected_output": "Route to review mode, separate Phase 0 script findings from agent-style judgments, and produce a synthesis with strengths, weaknesses, questions, scores, and a revision roadmap.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "review", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
+        {"type": "regex", "pattern": "(roadmap|revision|priority)", "description": "revision roadmap included"}
+      ]
     },
     {
       "id": 3,
       "prompt": "Is paper.pdf ready to submit to IEEE, or does it fail the gate because of blocking layout or checklist issues?",
       "expected_output": "Route to gate mode for PDF input, report PASS or FAIL clearly, and list blocking issues and failed checklist items before any informational notes.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "gate", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(PASS|FAIL)", "description": "pass/fail verdict present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
     },
     {
       "id": 4,
       "prompt": "Re-audit this revised manuscript against report_v1.md and tell me which issues are fully fixed, partially fixed, or still unresolved.",
       "expected_output": "Route to re-audit mode, require the previous report path, compare prior versus fresh findings, and show a verification checklist with score deltas and any new issues.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "re-audit", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(FULLY_ADDRESSED|PARTIALLY_ADDRESSED|NOT_ADDRESSED)", "description": "verification classification present"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+      ]
     },
     {
       "id": 5,
       "prompt": "Polish the writing of paper.tex, but only if the audit does not find blockers that should stop polishing first.",
       "expected_output": "Route to polish mode, read the precheck state, stop on blockers, and only describe the critic or mentor follow-up flow when polishing is actually safe to continue.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "polish", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(blocker|precheck|safe)", "description": "precheck gate evaluated"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+      ]
     },
     {
       "id": 6,
       "prompt": "Run a full review of paper.tex with literature search. Find related work I might have missed, score all 9 dimensions.",
       "expected_output": "Output has 'Related Literature' section; 9 dimensions scored including Literature Grounding; [Script]/[LLM] labels present; missing papers listed with relevance.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "review", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(Literature Grounding|literature.grounding)", "description": "9th dimension present"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
     },
     {
       "id": 7,
       "prompt": "Self-check paper.pdf with scholar evaluation and tell me the predicted score with confidence interval.",
       "expected_output": "9-dim scores present; Literature Grounding shown (N/A if no --literature-search); regression/fallback type indicated; confidence interval displayed.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(ScholarEval|scholar.eval|9.dim)", "description": "ScholarEval scoring present"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+      ]
     },
     {
       "id": 8,
       "prompt": "Compare paper.tex against latest literature and tell me which important papers I'm missing.",
       "expected_output": "Missing papers listed with relevance scores and reasons; Literature Grounding score computed; specific suggestions for which papers to cite and where.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {"type": "regex", "pattern": "(missing|Missing|uncited)", "description": "missing papers identified"},
+        {"type": "regex", "pattern": "(relevance|score)", "description": "relevance scoring present"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Run a self-check on paper.tex and tell me whether the discussion only repeats numbers instead of explaining mechanisms, comparing with prior work, and stating limitations.",
+      "expected_output": "Phase 0 report includes script-backed experiment findings about discussion depth, layering, literature echo, and conclusion completeness.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(discussion|depth|layer|mechanism)", "description": "discussion depth assessed"},
+        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present for automated findings"}
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Self-check this manuscript and tell me whether the introduction promises are actually answered in the conclusion.",
+      "expected_output": "Phase 0 report includes cross-section logic chain findings from the logic module, not just section-local comments.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "(cross-section|closure|C3|contribution.*conclusion)", "description": "cross-section closure checked"},
+        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present for automated findings"}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Review this paper and tell me which parts are script-backed findings versus agent-only judgments for literature organization and narrative quality.",
+      "expected_output": "Output clearly separates Phase 0 script findings from Phase 1 reviewer judgments and does not overstate A2/A4 as automated checks.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "review", "description": "correct mode selected"},
+        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present"},
+        {"type": "regex", "pattern": "\\[LLM\\]", "description": "[LLM] label present"},
+        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+      ]
     }
   ]
 }

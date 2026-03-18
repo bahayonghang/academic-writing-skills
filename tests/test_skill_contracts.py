@@ -154,7 +154,9 @@ def test_skill_assets_exist() -> None:
         assert (root / "examples").is_dir()
         assert len(list((root / "examples").glob("*.md"))) >= config.get("min_examples", 3)
         assert (root / "evals" / "evals.json").exists()
-        assert (root / "agents" / "openai.yaml").exists()
+        openai_yaml = root / "agents" / "openai.yaml"
+        if openai_yaml.exists():
+            pass  # optional; paper-audit removed it in v3.0
 
 
 def test_skill_markdown_contract() -> None:
@@ -215,9 +217,10 @@ def test_evals_json_shape() -> None:
 def test_openai_yaml_shape() -> None:
     required_keys = {"interface:", "display_name:", "short_description:", "default_prompt:"}
     for skill_name in SKILLS:
-        yaml_text = (SKILLS_ROOT / skill_name / "agents" / "openai.yaml").read_text(
-            encoding="utf-8"
-        )
+        yaml_path = SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+        if not yaml_path.exists():
+            continue  # optional; paper-audit removed it in v3.0
+        yaml_text = yaml_path.read_text(encoding="utf-8")
         for key in required_keys:
             assert key in yaml_text, f"{skill_name} missing {key} in openai.yaml"
 

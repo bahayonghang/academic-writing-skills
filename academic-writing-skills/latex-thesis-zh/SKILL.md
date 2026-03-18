@@ -1,6 +1,6 @@
 ---
 name: latex-thesis-zh
-description: Compile, inspect, and polish Chinese LaTeX theses (XeLaTeX/LuaLaTeX). Use when working on an existing .tex thesis project needing compilation, GB/T 7714 checks, structure mapping, or academic editing.
+description: Chinese LaTeX thesis assistant for existing .tex degree thesis projects (XeLaTeX/LuaLaTeX/latexmk). Use this skill whenever a user works on a Chinese master's or doctoral thesis needing compilation, GB/T 7714 bibliography checks, chapter structure mapping, template detection (thuthesis, pkuthss), terminology consistency, logic coherence review, heading lead-in checks, title optimization, de-AI editing, or experiment chapter review. Trigger even for single issues like "帮我编译论文", "检查国标格式", "看看绪论逻辑", "毕业论文", "学位论文", or "硕士/博士论文".
 metadata:
   category: academic-writing
   tags: [latex, thesis, chinese, phd, master, xelatex, gb7714, thuthesis, pkuthss, compilation, bibliography, structure]
@@ -42,21 +42,23 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 仅有 DOCX/PDF、没有 LaTeX 源文件的场景
 - 纯文献调研、没有学位论文工程的任务
 - 从零写一篇学位论文
+- 多维度审稿、评分或投稿门控检查（使用 `paper-audit`）
+- 英文会议/期刊论文编辑（使用 `latex-paper-en`）
 
 ## Module Router
 
 | Module | Use when | Primary command | Read next |
 | --- | --- | --- | --- |
-| `compile` | Thesis build fails or toolchain is unclear | `uv run python $SKILL_DIR/scripts/compile.py main.tex` | `references/COMPILATION.md` |
-| `format` | User asks about thesis formatting or GB/T 7714 layout | `uv run python $SKILL_DIR/scripts/check_format.py main.tex` | `references/GB_STANDARD.md` |
+| `compile` | Thesis build fails or toolchain is unclear | `uv run python $SKILL_DIR/scripts/compile.py main.tex` | `references/modules/COMPILE.md` |
+| `format` | User asks about thesis formatting or GB/T 7714 layout | `uv run python $SKILL_DIR/scripts/check_format.py main.tex` | `references/modules/FORMAT.md` |
 | `structure` | Need chapter/section map or thesis skeleton overview | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex` | `references/STRUCTURE_GUIDE.md` |
-| `consistency` | Terms, abbreviations, or naming drift across chapters | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms` | `references/LOGIC_COHERENCE.md` |
-| `template` | Need to identify or validate thesis class/template | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex` | `references/UNIVERSITIES/generic.md` |
-| `bibliography` | GB/T 7714 or BibTeX validation | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714` | `references/GB_STANDARD.md` |
-| `title` | Optimize Chinese thesis titles and chapter titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check` | `references/TITLE_OPTIMIZATION.md` |
-| `deai` | Reduce AI-writing traces in visible Chinese prose | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction` | `references/DEAI_GUIDE.md` |
-| `logic` | Check logical coherence, heading lead-in quality, lit review quality, cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section related` | `references/LOGIC_COHERENCE.md` |
-| `experiment` | Review experiment chapter language and structure | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments` | `references/modules/EXPERIMENT.md` |
+| `consistency` | Terms, abbreviations, or naming drift across chapters | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms` | `references/modules/CONSISTENCY.md` |
+| `template` | Need to identify or validate thesis class/template | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex` | `references/modules/TEMPLATE.md` |
+| `bibliography` | GB/T 7714 or BibTeX validation | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714` | `references/modules/BIBLIOGRAPHY.md` |
+| `title` | Optimize Chinese thesis titles and chapter titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check` | `references/modules/TITLE.md` |
+| `deai` | Reduce AI-writing traces in visible Chinese prose | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction` | `references/modules/DEAI.md` |
+| `logic` | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section related` | `references/modules/LOGIC.md` |
+| `experiment` | Review experiment chapter language, discussion layering, and conclusion completeness | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments` | `references/modules/EXPERIMENT.md` |
 
 ## Required Inputs
 
