@@ -55,6 +55,8 @@ optimize_title_typst = _load_typst("optimize_title")
 check_format_typst = _load_typst("check_format")
 parsers_typst = _load_typst("parsers")
 analyze_logic_typst = _load_typst("analyze_logic")
+analyze_experiment_typst = _load_typst("analyze_experiment")
+deai_typst = _load_typst("deai_check")
 
 
 def test_typst_compile_missing_binary_returns_error(
@@ -179,3 +181,71 @@ The field continues to evolve with new architectures.
     findings = analyze_logic_typst.analyze(typ, "related")
     joined = "\n".join(findings).lower()
     assert "gap" in joined
+
+
+def test_typst_analyze_logic_flags_intro_funnel_jump(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+工业预测在制造场景中十分重要。
+本文提出一种稀疏注意力模型。
+= 结论
+未来工作将继续扩展更多数据集。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ)
+    joined = "\n".join(findings).lower()
+    assert "jump from background directly to contribution" in joined or "漏斗" in joined
+
+
+def test_typst_analyze_logic_flags_tri_section_misalignment(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 摘要
+本文研究工业预测问题，并提出一种稀疏模型。
+= 引言
+本文提出一种稀疏模型，主要贡献是提升效率与精度。
+= 结论
+未来工作将考虑更多应用场景。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ, cross_section=True)
+    joined = "\n".join(findings).lower()
+    assert "misaligned" in joined
+
+
+def test_typst_analyze_experiment_flags_unlayered_discussion(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 讨论
+模型在数据集A上的准确率为95.2%。
+模型在数据集B上的准确率为94.8%。
+模型在数据集C上的准确率为94.1%。
+宏平均F1分别为0.92、0.90和0.89。
+整体结果较好。
+实验数值如上所示。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_experiment_typst.analyze(typ, "discussion")
+    joined = "\n".join(findings).lower()
+    assert "layered structure" in joined
+
+
+def test_typst_deai_detects_low_information_density_in_chinese(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+近年来，该问题引起了广泛关注。
+本文具有重要意义。
+本文开展了全面研究。
+本文取得了显著提升。
+""",
+        encoding="utf-8",
+    )
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("introduction")
+    categories = {trace["category"] for trace in result["traces"]}
+    assert "low_information_density" in categories

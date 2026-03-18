@@ -65,27 +65,53 @@ SECTION_ALIASES = {
 ATTRIBUTION_MARKERS_EN = re.compile(
     r"\b(because|due to|owing to|as a result of|attributed to|caused by|"
     r"mechanism|explains|explanation|reason|hypothesis|interpret|"
-    r"stems from|arises from|driven by|suggests that|indicates that)\b",
+    r"stems from|arises from|driven by|suggests that|indicates that)\b|"
+    r"(原因|机制|解释|归因于|由于|之所以|本质上|究其原因)",
     re.IGNORECASE,
 )
+DISCUSSION_CATEGORY_MARKERS = {
+    "mechanism": re.compile(
+        r"\b(because|due to|mechanism|explains|reason|stems from|driven by|suggests that)\b|"
+        r"(原因|机制|解释|归因于|由于|之所以|本质上|究其原因)",
+        re.IGNORECASE,
+    ),
+    "comparison": re.compile(
+        r"\b(compared with|compared to|relative to|unlike|consistent with|prior work|baseline)\b|"
+        r"(相比|相较于|与.*相比|前人工作|已有研究|基线|文献)",
+        re.IGNORECASE,
+    ),
+    "limitation": re.compile(
+        r"\b(limitation|limitations|boundary|boundaries|fails? when|trade-off|caveat|underperforms)\b|"
+        r"(局限|不足|边界|失效|代价|受限于|仍存在)",
+        re.IGNORECASE,
+    ),
+    "implication": re.compile(
+        r"\b(implication|practical|application|future work|future direction|suggests broader)\b|"
+        r"(启示|应用价值|实际意义|展望|未来工作|后续研究|推广)",
+        re.IGNORECASE,
+    ),
+}
 
 # Typst uses @key for citations
 TYPST_CITE_KEY_RE = re.compile(r"@([a-zA-Z0-9_-]+)")
 
 CONCLUSION_FINDINGS_RE = re.compile(
     r"\b(we have shown|we demonstrated|results show|this paper has presented|"
-    r"our experiments confirm|we proposed|we have proposed|findings indicate)\b",
+    r"our experiments confirm|we proposed|we have proposed|findings indicate)\b|"
+    r"(实验表明|结果表明|研究发现|本文证明了|验证了|主要结果)",
     re.IGNORECASE,
 )
 CONCLUSION_IMPLICATIONS_RE = re.compile(
     r"\b(implication|suggests that.*practical|enables|opens|paves the way|"
-    r"facilitates|contributes to|advance|potential for|applicable to)\b",
+    r"facilitates|contributes to|advance|potential for|applicable to)\b|"
+    r"(启示|应用价值|实际意义|推动|促进|有助于|展望)",
     re.IGNORECASE,
 )
 CONCLUSION_LIMITATIONS_RE = re.compile(
     r"\b(limitation|future work|future direction|remain|challenge|"
     r"could be extended|further research|further investigation|"
-    r"not addressed|beyond the scope|caveat)\b",
+    r"not addressed|beyond the scope|caveat)\b|"
+    r"(局限|不足|未来工作|后续研究|有待|进一步研究|改进方向)",
     re.IGNORECASE,
 )
 
@@ -127,6 +153,41 @@ def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> l
                 "P1",
                 "Discussion may lack depth: low ratio of explanatory/attribution "
                 f"language ({attribution_lines}/{total_visible} lines).",
+            )
+        )
+        out.append("")
+    return out
+
+
+def _check_discussion_structure(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """Check whether discussion covers multiple argumentative categories."""
+    out: list[str] = []
+    visible_lines: list[str] = []
+    category_hits = dict.fromkeys(DISCUSSION_CATEGORY_MARKERS, 0)
+
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        visible_lines.append(visible)
+        for name, pattern in DISCUSSION_CATEGORY_MARKERS.items():
+            if pattern.search(visible):
+                category_hits[name] += 1
+
+    if len(visible_lines) < 6:
+        return out
+
+    covered_categories = [name for name, count in category_hits.items() if count > 0]
+    if len(covered_categories) < 2:
+        out.extend(
+            _format_issue(
+                start,
+                "Major",
+                "P1",
+                "Discussion may lack layered structure: cover at least two categories such as mechanism, prior-work comparison, limitations/boundaries, or implications/outlook.",
             )
         )
         out.append("")
@@ -216,6 +277,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         if (not normalized or normalized == "discussion") and "discussion" in sections:
             d_start, d_end = sections["discussion"]
             output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
+            output.extend(_check_discussion_structure(lines, d_start, d_end, parser))
 
         if not normalized:
             output.extend(_check_results_literature_echo(lines, sections))

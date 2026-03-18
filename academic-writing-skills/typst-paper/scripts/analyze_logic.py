@@ -12,10 +12,10 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 
 
 TRANSITIONS = {
@@ -40,13 +40,15 @@ def _needs_method_justification(text: str) -> bool:
 # ── Literature review quality checks (A1, A3) ──────────────────
 
 AUTHOR_ENUM_EN = re.compile(
-    r"^(?:In \d{4}|.*?\(\d{4}\).*?(?:proposed|introduced|presented|developed|designed))",
+    r"^(?:In \d{4}|.*?\(\d{4}\).*?(?:proposed|introduced|presented|developed|designed)|"
+    r".*[（(]\d{4}[)）].*(?:提出|设计|开发|构建))",
     re.IGNORECASE,
 )
 
 GAP_KEYWORDS_EN = re.compile(
     r"\b(gap|limitation|however.*(?:no|not|few)|remains|lack|overlooked|"
-    r"under-explored|open problem|yet to be|inadequate|insufficient)\b",
+    r"under-explored|open problem|yet to be|inadequate|insufficient)\b|"
+    r"(空白|不足|局限|仍未|缺乏|尚未解决|有待|研究较少)",
     re.IGNORECASE,
 )
 
@@ -127,15 +129,207 @@ def _check_gap_derivation(lines: list[str], start: int, end: int, parser) -> lis
 
 CONTRIBUTION_KEYWORDS_EN = re.compile(
     r"\b(we propose|we present|we introduce|our contribution|we design|we develop|"
-    r"this paper proposes|this work presents|main contributions)\b",
+    r"this paper proposes|this work presents|main contributions)\b|"
+    r"(本文提出|本文设计|主要贡献|本研究提出)",
     re.IGNORECASE,
 )
 ANSWER_KEYWORDS_EN = re.compile(
     r"\b(we have shown|we demonstrated|results show|results demonstrate|"
     r"experiments confirm|we have proposed|this paper has presented|"
-    r"our experiments show|findings indicate|we have addressed)\b",
+    r"our experiments show|findings indicate|we have addressed)\b|"
+    r"(实验表明|结果表明|研究发现|本文证明了|验证了)",
     re.IGNORECASE,
 )
+
+INTRO_BACKGROUND_RE = re.compile(
+    r"\b(important|growing|widely used|demand|need|application|applications|"
+    r"real-world|industry|practical|in recent years|increasingly)\b|"
+    r"(近年来|需求|背景|应用|现实场景|工业界|学术界)",
+    re.IGNORECASE,
+)
+INTRO_PROBLEM_RE = re.compile(
+    r"\b(problem|challenge|bottleneck|limitation|difficult|difficulty|issue|"
+    r"expensive|costly|fails?|cannot|struggle|insufficient|inefficient)\b|"
+    r"(问题|挑战|瓶颈|局限|困难|代价高|不足|低效)",
+    re.IGNORECASE,
+)
+INTRO_PRIOR_RE = re.compile(
+    r"\b(existing|previous|prior|earlier|current|traditional|state-of-the-art|"
+    r"studies|literature|methods|approaches|however|nevertheless|recent work)\b|"
+    r"(现有|已有|既有|先前|传统|文献|相关工作|已有研究|然而|但是)",
+    re.IGNORECASE,
+)
+TRIAD_PROBLEM_RE = re.compile(
+    r"\b(problem|challenge|task|goal|objective|bottleneck|limitation|address)\b|"
+    r"(问题|挑战|任务|目标|瓶颈|局限|研究问题)",
+    re.IGNORECASE,
+)
+TRIAD_METHOD_RE = re.compile(
+    r"\b(propose|present|introduce|design|develop|framework|method|approach|"
+    r"model|mechanism|pipeline|strategy)\b|"
+    r"(提出|设计|构建|方法|框架|模型|机制|策略)",
+    re.IGNORECASE,
+)
+TRIAD_RESULT_RE = re.compile(
+    r"\b(result|results|improve|improvement|achieve|achieves|outperform|gain|"
+    r"accuracy|f1|mae|mse|latency|throughput|benchmark|experiments show)\b|"
+    r"(结果表明|实验表明|提升|优于|准确率|召回率|性能|基准)",
+    re.IGNORECASE,
+)
+TRIAD_CONTRIBUTION_RE = re.compile(
+    r"\b(contribution|contributions|novel|we propose|we present|we introduce|"
+    r"main contributions)\b|"
+    r"(贡献|创新点|本文提出|主要贡献|新颖)",
+    re.IGNORECASE,
+)
+
+
+def _section_visible_lines(
+    lines: list[str], bounds: tuple[int, int], parser
+) -> list[tuple[int, str]]:
+    visible_lines: list[tuple[int, str]] = []
+    comment_prefix = parser.get_comment_prefix()
+    start, end = bounds
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(comment_prefix):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            visible_lines.append((line_no, visible))
+    return visible_lines
+
+
+def _coverage_map(text: str) -> dict[str, bool]:
+    return {
+        "problem": bool(TRIAD_PROBLEM_RE.search(text)),
+        "method": bool(TRIAD_METHOD_RE.search(text)),
+        "result": bool(TRIAD_RESULT_RE.search(text) or re.search(r"\d+(?:\.\d+)?%?", text)),
+        "contribution": bool(TRIAD_CONTRIBUTION_RE.search(text)),
+    }
+
+
+def _check_introduction_funnel(
+    lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    out: list[str] = []
+    if "introduction" not in sections:
+        return out
+
+    visible_lines = _section_visible_lines(lines, sections["introduction"], parser)
+    if len(visible_lines) < 3:
+        return out
+
+    first_problem = first_prior = first_contribution = None
+    for line_no, visible in visible_lines:
+        if first_problem is None and INTRO_PROBLEM_RE.search(visible):
+            first_problem = line_no
+        if first_prior is None and (INTRO_PRIOR_RE.search(visible) or "@" in lines[line_no - 1]):
+            first_prior = line_no
+        if first_contribution is None and CONTRIBUTION_KEYWORDS_EN.search(visible):
+            first_contribution = line_no
+
+    if first_contribution is None:
+        return out
+
+    if first_problem is None or first_contribution < first_problem:
+        out.extend(
+            [
+                f"// INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                "Introduction may jump from background directly to contribution.",
+                "// Suggested: Insert the unresolved bottleneck before presenting the method.",
+                "// Rationale: The solution should be introduced only after the reader sees the problem.",
+                "",
+            ]
+        )
+
+    if first_problem is not None and first_prior is None:
+        out.extend(
+            [
+                f"// INTRODUCTION (Line {first_problem}) [Severity: Major] [Priority: P1]: "
+                "Introduction states the problem but does not derive it from prior-work limitations.",
+                "// Suggested: Add literature-based insufficiencies before the contribution claim.",
+                "// Rationale: This preserves the background -> bottleneck -> prior effort -> contribution funnel.",
+                "",
+            ]
+        )
+    elif (
+        first_problem is not None
+        and first_prior is not None
+        and first_contribution is not None
+        and first_prior > first_contribution
+    ):
+        out.extend(
+            [
+                f"// INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                "Contribution claim appears before prior-work insufficiencies are established.",
+                "// Suggested: Reorder the introduction so prior-work limitations appear before the paper contribution.",
+                "// Rationale: The introduction should unfold like a funnel instead of skipping steps.",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_tri_section_alignment(
+    content: str, lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    out: list[str] = []
+    if "introduction" not in sections or "conclusion" not in sections:
+        return out
+
+    abstract_text = extract_abstract(content)
+    if not abstract_text:
+        return out
+
+    intro_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections["introduction"], parser)
+    )
+    conclusion_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections["conclusion"], parser)
+    )
+    if not intro_text or not conclusion_text:
+        return out
+
+    coverage = {
+        "abstract": _coverage_map(abstract_text),
+        "contribution_source": _coverage_map(intro_text),
+        "conclusion": _coverage_map(conclusion_text),
+    }
+    required_facets = {
+        facet
+        for facet in ("problem", "method", "result", "contribution")
+        if sum(1 for sec in coverage.values() if sec[facet]) >= 2
+    }
+    mismatches = []
+    for section_name, section_coverage in coverage.items():
+        missing = sorted(facet for facet in required_facets if not section_coverage[facet])
+        if len(missing) >= 2 or (
+            section_name in {"abstract", "conclusion"}
+            and ("result" in missing or "contribution" in missing)
+        ):
+            mismatches.append(f"{section_name} missing {', '.join(missing)}")
+
+    if coverage["contribution_source"]["contribution"]:
+        if not coverage["abstract"]["contribution"]:
+            mismatches.append("abstract missing contribution claim")
+        if not coverage["conclusion"]["contribution"]:
+            mismatches.append("conclusion missing contribution response")
+    if coverage["abstract"]["method"] and not coverage["conclusion"]["result"]:
+        mismatches.append("conclusion missing result evidence")
+
+    if mismatches:
+        out.extend(
+            [
+                "// LOGIC [Severity: Major] [Priority: P1]: "
+                "Abstract, contribution claims, and conclusion may be misaligned.",
+                f"// Observation: {'; '.join(mismatches)}.",
+                "// Suggested: Align the problem, method, key results, and contribution across all three sections.",
+                "// Rationale: These sections should summarize the same core story, not drift apart.",
+                "",
+            ]
+        )
+    return out
 
 
 def _check_cross_section_closure(
@@ -249,6 +443,9 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
 
     # ── Section-level checks ───────────────────────────────────
     if sections:
+        if not section and "introduction" in sections:
+            out.extend(_check_introduction_funnel(lines, sections, parser))
+
         related_key = "related"
         if related_key in sections:
             r_start, r_end = sections[related_key]
@@ -258,6 +455,8 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
 
         if cross_section and not section:
             out.extend(_check_cross_section_closure(lines, sections, parser))
+        if not section:
+            out.extend(_check_tri_section_alignment(content, lines, sections, parser))
 
     if not out:
         out.append("// LOGIC/METHODOLOGY: No rule-based coherence issues detected.")

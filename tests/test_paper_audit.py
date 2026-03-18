@@ -389,6 +389,7 @@ class TestAuditModule:
         assert "format" in checks
         assert "grammar" in checks
         assert "logic" in checks
+        assert "experiment" in checks
         assert "bib" in checks
 
     def test_gate_has_minimal_checks(self) -> None:
@@ -410,6 +411,13 @@ class TestAuditModule:
         script = _resolve_script("grammar", "en", ".tex")
         assert script is not None
         assert script.name == "analyze_grammar.py"
+
+    def test_resolve_script_experiment(self) -> None:
+        from audit import _resolve_script
+
+        script = _resolve_script("experiment", "en", ".tex")
+        assert script is not None
+        assert script.name == "analyze_experiment.py"
 
     def test_resolve_script_unknown(self) -> None:
         from audit import _resolve_script
@@ -449,6 +457,64 @@ This is clean text with no issues.
         todo_item = next((i for i in items if "TODO" in i.description), None)
         assert todo_item is not None
         assert todo_item.passed
+
+    def test_dimension_map_includes_experiment(self) -> None:
+        from report_generator import DIMENSION_MAP
+
+        assert "experiment" in DIMENSION_MAP
+        assert "quality" in DIMENSION_MAP["experiment"]
+
+    def test_run_audit_passes_cross_section_to_logic(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import audit
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(
+            "\\documentclass{article}\n\\begin{document}\n\\section{Introduction}\nA problem.\n\\section{Conclusion}\nA conclusion.\n\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        calls: list[tuple[str, list[str]]] = []
+
+        def fake_run(script_path, file_path, extra_args=None):
+            calls.append((Path(script_path).name, list(extra_args or [])))
+            return 0, "", ""
+
+        monkeypatch.setattr(audit, "_run_check_script", fake_run)
+        monkeypatch.setattr(audit, "_run_checklist", lambda *args, **kwargs: [])
+
+        result = audit.run_audit(str(tex), mode="self-check", lang="en")
+        assert result is not None
+        logic_calls = [args for name, args in calls if name == "analyze_logic.py"]
+        assert logic_calls
+        assert ["--cross-section"] in logic_calls
+
+    def test_run_audit_schedules_experiment_and_deai(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import audit
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(
+            "\\documentclass{article}\n\\begin{document}\n\\section{Discussion}\nResults.\n\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        calls: list[str] = []
+
+        def fake_run(script_path, file_path, extra_args=None):
+            calls.append(Path(script_path).name)
+            if Path(script_path).name == "analyze_experiment.py":
+                return 0, "% EXPERIMENT (Line 1) [Severity: Major] [Priority: P1]: issue", ""
+            return 0, "", ""
+
+        monkeypatch.setattr(audit, "_run_check_script", fake_run)
+        monkeypatch.setattr(audit, "_run_checklist", lambda *args, **kwargs: [])
+
+        result = audit.run_audit(str(tex), mode="self-check", lang="en")
+        assert "analyze_experiment.py" in calls
+        assert any(issue.module == "EXPERIMENT" for issue in result.issues)
 
 
 # ============================================================

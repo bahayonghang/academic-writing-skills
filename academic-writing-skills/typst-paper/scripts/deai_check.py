@@ -35,6 +35,10 @@ class AITraceChecker:
         r"\brobust\s+(?:performance|method|approach)\b": "specify_condition",
         r"\bnovel\s+(?:approach|method|technique|algorithm)\b": "explain_novelty",
         r"\bstate-of-the-art\s+(?:performance|results|accuracy)\b": "cite_sota",
+        r"显著提升": "quantify",
+        r"全面(?:分析|研究|系统)": "list_scope",
+        r"重要(?:意义|价值|贡献)": "explain_why",
+        r"新颖(?:方法|思路)": "explain_novelty",
     }
 
     # High-priority AI patterns (Category 2: Over-confident)
@@ -47,6 +51,10 @@ class AITraceChecker:
         r"\bcompletely\b": "limit",
         r"\balways\b": "frequency",
         r"\bnever\b": "frequency",
+        r"显而易见": "hedge",
+        r"毫无疑问": "hedge",
+        r"必然": "condition",
+        r"完全": "limit",
     }
 
     # High-priority AI patterns (Category 4: Vague quantification)
@@ -59,6 +67,10 @@ class AITraceChecker:
         r"\ba\s+(?:lot|large\s+number)\s+of\b": "quantify",
         r"\bthe\s+majority\s+of\b": "quantify_percent",
         r"\bsubstantial\s+(?:amount|number|gain|improvement)\b": "quantify",
+        r"大量研究": "cite_specific",
+        r"众多(?:实验|学者)": "quantify_exp",
+        r"多种(?:方法|方案)": "list_methods",
+        r"大幅(?:提升|改善)": "quantify",
     }
 
     # Medium-priority AI patterns (Category 3: Template expressions)
@@ -69,7 +81,19 @@ class AITraceChecker:
         r"\bwith\s+the\s+(?:rapid\s+)?development\s+of\b": "context_direct",
         r"\bhas\s+(?:been\s+)?widely\s+used\b": "cite_examples",
         r"\bhas\s+attracted\s+(?:much\s+)?attention\b": "cite_examples",
+        r"近年来": "specific_time",
+        r"越来越多的": "increasingly",
+        r"发挥(?:着)?重要(?:的)?作用": "specific_impact",
+        r"被广泛(?:应用|使用)": "cite_examples",
+        r"引起了(?:广泛|众多)关注": "cite_examples",
     }
+    AI_FILLER_CONNECTORS = {
+        r"总之": "filler_remove",
+        r"综上所述": "filler_remove",
+        r"值得注意的是": "filler_remove",
+        r"需要指出的是": "filler_remove",
+    }
+    EVIDENCE_MARKERS = re.compile(r"(#cite\(|@\w+|\b\d+(?:\.\d+)?%?\b|\\cite\{)")
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
@@ -169,6 +193,7 @@ class AITraceChecker:
             ("over_confident", self.OVER_CONFIDENT),
             ("vague_quantifier", self.VAGUE_QUANTIFIERS),
             ("template_expr", self.TEMPLATE_EXPRESSIONS),
+            ("filler_connector", self.AI_FILLER_CONNECTORS),
         ]
 
         for category, patterns_dict in all_patterns:
@@ -178,8 +203,98 @@ class AITraceChecker:
                 )
                 results["traces"].extend(matches)
 
+        results["traces"].extend(self._check_parallel_openings(section_name))
+        results["traces"].extend(self._check_low_information_density(section_name))
         results["trace_count"] = len(results["traces"])
         return results
+
+    def _check_parallel_openings(self, section_name: str) -> list[dict]:
+        if section_name not in self.section_ranges:
+            return []
+        start, end = self.section_ranges[section_name]
+        visible_lines: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            line = self.lines[i].strip()
+            if not line or line.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(line)
+            if visible and len(visible) >= 4:
+                visible_lines.append((i + 1, visible))
+
+        openings: dict[str, list[int]] = {}
+        for line_no, visible in visible_lines:
+            prefix = (
+                visible[:2]
+                if re.search(r"[\u4e00-\u9fff]", visible)
+                else " ".join(visible.split()[:2]).lower()
+            )
+            if prefix:
+                openings.setdefault(prefix, []).append(line_no)
+
+        for prefix, line_numbers in openings.items():
+            if len(line_numbers) >= 3:
+                return [
+                    {
+                        "line": line_numbers[0],
+                        "text": f"Repeated opening pattern '{prefix}' across {len(line_numbers)} lines",
+                        "original": "",
+                        "pattern": f"parallel:{prefix}",
+                        "category": "parallel_structure",
+                        "section": section_name,
+                        "suggestion_type": "vary_opening",
+                    }
+                ]
+        return []
+
+    def _check_low_information_density(self, section_name: str) -> list[dict]:
+        if section_name not in self.section_ranges:
+            return []
+        start, end = self.section_ranges[section_name]
+        visible_lines: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            line = self.lines[i].strip()
+            if not line or line.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(line)
+            if visible:
+                visible_lines.append((i + 1, visible))
+
+        if len(visible_lines) < 3:
+            return []
+
+        text = " ".join(text for _, text in visible_lines)
+        boilerplate_hits = 0
+        for patterns_dict in (
+            self.EMPTY_PHRASES,
+            self.VAGUE_QUANTIFIERS,
+            self.TEMPLATE_EXPRESSIONS,
+            self.AI_FILLER_CONNECTORS,
+        ):
+            boilerplate_hits += sum(
+                1 for pattern in patterns_dict if re.search(pattern, text, re.IGNORECASE)
+            )
+
+        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(text):
+            return []
+
+        repeated_openings = any(
+            trace["category"] == "parallel_structure"
+            for trace in self._check_parallel_openings(section_name)
+        )
+        if not repeated_openings and len(text.split()) < 20 and len(text) < 60:
+            return []
+
+        return [
+            {
+                "line": visible_lines[0][0],
+                "text": text[:160],
+                "original": "",
+                "pattern": "low_information_density",
+                "category": "low_information_density",
+                "section": section_name,
+                "suggestion_type": "increase_information_density",
+            }
+        ]
 
     def analyze_document(self) -> dict:
         """Analyze entire document."""
@@ -241,6 +356,9 @@ class AITraceChecker:
             "specific_impact": "Describe specific impact or function.",
             "context_direct": "Start directly with the problem/context.",
             "cite_examples": "Provide citation examples.",
+            "filler_remove": "Delete filler connectors and state the point directly.",
+            "vary_opening": "Vary sentence openings to avoid mechanical repetition.",
+            "increase_information_density": "Add concrete methods, comparators, evidence, and results instead of rhetorical filler.",
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
 

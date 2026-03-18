@@ -79,6 +79,7 @@ DIMENSION_MAP: dict[str, list[str]] = {
     "format": ["clarity"],
     "grammar": ["clarity"],
     "logic": ["quality", "significance"],
+    "experiment": ["quality", "significance"],
     "sentences": ["clarity"],
     "deai": ["clarity", "originality"],
     "citations": ["quality"],

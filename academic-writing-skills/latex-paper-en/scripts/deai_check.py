@@ -70,6 +70,8 @@ class AITraceChecker:
         r"\bhas\s+(?:been\s+)?widely\s+used\b": "cite_examples",
         r"\bhas\s+attracted\s+(?:much\s+)?attention\b": "cite_examples",
     }
+    EVIDENCE_MARKERS = re.compile(r"(\\cite\{|@\w+|\b\d+(?:\.\d+)?%?\b|\[[0-9,\s]+\])")
+    REPEATED_OPENING_RE = re.compile(r"^[A-Za-z]+(?:\s+[A-Za-z]+)?")
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
@@ -178,8 +180,63 @@ class AITraceChecker:
                 )
                 results["traces"].extend(matches)
 
+        results["traces"].extend(self._check_low_information_density(section_name))
         results["trace_count"] = len(results["traces"])
         return results
+
+    def _check_low_information_density(self, section_name: str) -> list[dict]:
+        """Detect long, content-light sections that rely on boilerplate without evidence."""
+        if section_name not in self.section_ranges:
+            return []
+
+        start, end = self.section_ranges[section_name]
+        visible_lines: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            stripped = self.lines[i].strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(stripped)
+            if visible:
+                visible_lines.append((i + 1, visible))
+
+        if len(visible_lines) < 3:
+            return []
+
+        text = " ".join(text for _, text in visible_lines)
+        boilerplate_hits = 0
+        for patterns_dict in (
+            self.EMPTY_PHRASES,
+            self.VAGUE_QUANTIFIERS,
+            self.TEMPLATE_EXPRESSIONS,
+        ):
+            boilerplate_hits += sum(
+                1 for pattern in patterns_dict if re.search(pattern, text, re.IGNORECASE)
+            )
+
+        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(text):
+            return []
+
+        openings: list[str] = []
+        for _, visible in visible_lines:
+            match = self.REPEATED_OPENING_RE.search(visible)
+            if match:
+                openings.append(match.group(0).lower())
+        repeated_opening = any(openings.count(opening) >= 2 for opening in set(openings))
+
+        if not repeated_opening and len(text.split()) < 60:
+            return []
+
+        return [
+            {
+                "line": visible_lines[0][0],
+                "text": text[:160],
+                "original": "",
+                "pattern": "low_information_density",
+                "category": "low_information_density",
+                "section": section_name,
+                "suggestion_type": "increase_information_density",
+            }
+        ]
 
     def analyze_document(self) -> dict:
         """Analyze entire document."""
@@ -241,6 +298,7 @@ class AITraceChecker:
             "specific_impact": "Describe specific impact or function.",
             "context_direct": "Start directly with the problem/context.",
             "cite_examples": "Provide citation examples.",
+            "increase_information_density": "Replace boilerplate with concrete methods, comparators, evidence, and results.",
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
 

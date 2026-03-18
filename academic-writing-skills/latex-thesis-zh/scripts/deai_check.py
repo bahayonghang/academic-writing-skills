@@ -83,6 +83,7 @@ class ChineseAITraceChecker:
         r"众所周知": "filler_remove",
         r"毋庸讳言": "filler_remove",
     }
+    EVIDENCE_MARKERS = re.compile(r"(\\cite\{|@\w+|\d+(?:\.\d+)?%?)")
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
@@ -182,6 +183,7 @@ class ChineseAITraceChecker:
         # C2: Check for parallel sentence structures
         parallel_issues = self._check_parallel_sentences(section_name)
         results["traces"].extend(parallel_issues)
+        results["traces"].extend(self._check_low_information_density(section_name))
         results["trace_count"] = len(results["traces"])
 
         return results
@@ -244,6 +246,56 @@ class ChineseAITraceChecker:
 
         return issues
 
+    def _check_low_information_density(self, section_name: str) -> list[dict]:
+        """Detect sections that are long on rhetoric but short on information."""
+        if section_name not in self.section_ranges:
+            return []
+
+        start, end = self.section_ranges[section_name]
+        visible_lines: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            line = self.lines[i].strip()
+            if not line or line.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(line)
+            if visible:
+                visible_lines.append((i + 1, visible))
+
+        if len(visible_lines) < 3:
+            return []
+
+        text = " ".join(text for _, text in visible_lines)
+        boilerplate_hits = 0
+        for patterns_dict in (
+            self.EMPTY_PHRASES,
+            self.VAGUE_QUANTIFIERS,
+            self.TEMPLATE_EXPRESSIONS,
+            self.AI_FILLER_CONNECTORS,
+        ):
+            boilerplate_hits += sum(1 for pattern in patterns_dict if re.search(pattern, text))
+
+        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(text):
+            return []
+
+        opening_prefixes = [text[:2] for _, text in visible_lines if len(text) >= 2]
+        repeated_opening = any(
+            opening_prefixes.count(prefix) >= 2 for prefix in set(opening_prefixes)
+        )
+        if not repeated_opening and len(text) < 60:
+            return []
+
+        return [
+            {
+                "line": visible_lines[0][0],
+                "text": text[:160],
+                "original": "",
+                "pattern": "low_information_density",
+                "category": "low_information_density",
+                "section": section_name,
+                "suggestion_type": "increase_information_density",
+            }
+        ]
+
     def analyze_document(self) -> dict:
         analysis = {
             "total_lines": len(self.lines),
@@ -304,6 +356,7 @@ class ChineseAITraceChecker:
             "growth_data": "提供增长数据支持.",
             "filler_remove": "删除此填充连接词，直接陈述核心观点.",
             "vary_opening": "变换句式开头，避免机械排比结构.",
+            "increase_information_density": "补入具体方法、对比对象、数据或结论，不要只说空泛价值判断.",
         }
         return instructions.get(key, "请改写得更具体、客观。")
 

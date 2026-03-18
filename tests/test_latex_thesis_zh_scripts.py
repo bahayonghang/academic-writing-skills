@@ -62,6 +62,7 @@ compile_zh = _load_zh("compile")
 verify_bib_zh = _load_zh("verify_bib")
 parsers_zh = _load_zh("parsers")
 analyze_logic_zh = _load_zh("analyze_logic")
+analyze_experiment_zh = _load_zh("analyze_experiment")
 
 
 # ── deai_check.py ──────────────────────────────────────────────
@@ -499,6 +500,31 @@ class TestAnalyzeLogicZh:
         assert "导语可能过短" in joined
         assert "主结果" not in joined
 
+    def test_detects_thesis_mainline_breaks(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n研究背景如下。\n"
+            "\\chapter{方法一}\n本章介绍第一个工作并展示结果。\n"
+            "\\chapter{方法二}\n本章介绍第二个工作并展示结果。\n"
+            "\\chapter{结论}\n总结全文。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "章节主线" in joined
+
+    def test_detects_abstract_contribution_conclusion_misalignment(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{abstract}\n本文研究工业预测问题，并提出了一种稀疏模型。\n\\end{abstract}\n"
+            "\\chapter{创新点}\n本文的主要贡献在于提出一种新模型并验证其效率优势。\n"
+            "\\chapter{结论}\n未来工作将考虑更多场景。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "摘要、创新点/贡献来源、结论之间可能存在错位" in joined
+
 
 # ── deai_check.py (WP6: AI Filler Connectors + Parallel) ──────
 
@@ -535,3 +561,33 @@ class TestDeaiCheckEnhanced:
         result = checker.check_section("introduction")
         parallel = [t for t in result["traces"] if t["category"] == "parallel_structure"]
         assert len(parallel) >= 1
+
+    def test_deai_detects_low_information_density(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n近年来，该问题引起了广泛关注。\n"
+            "本文具有重要意义。\n"
+            "本文开展了全面研究。\n"
+            "本文取得了显著提升。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("introduction")
+        categories = {trace["category"] for trace in result["traces"]}
+        assert "low_information_density" in categories
+
+
+def test_analyze_experiment_flags_unlayered_discussion_zh(tmp_path: Path):
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        "\\chapter{讨论}\n模型在数据集A上的准确率为95.2%。\n"
+        "模型在数据集B上的准确率为94.8%。\n"
+        "模型在数据集C上的准确率为94.1%。\n"
+        "宏平均F1分别为0.92、0.90和0.89。\n"
+        "整体结果较好。\n"
+        "实验数值如上所示。\n",
+        encoding="utf-8",
+    )
+    findings = analyze_experiment_zh.analyze(tex, "discussion")
+    joined = "\n".join(findings)
+    assert "layered structure" in joined

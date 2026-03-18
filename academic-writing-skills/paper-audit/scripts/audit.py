@@ -29,6 +29,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "format",
         "grammar",
         "logic",
+        "experiment",
         "sentences",
         "deai",
         "citations",
@@ -41,6 +42,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "format",
         "grammar",
         "logic",
+        "experiment",
         "sentences",
         "deai",
         "citations",
@@ -62,6 +64,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "format",
         "grammar",
         "logic",
+        "experiment",
         "sentences",
         "deai",
         "citations",
@@ -157,6 +160,7 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
         "format": "check_format.py",
         "grammar": "analyze_grammar.py",
         "logic": "analyze_logic.py",
+        "experiment": "analyze_experiment.py",
         "sentences": "analyze_sentences.py",
         "deai": "deai_check.py",
         "citations": "check_citations.py",
@@ -736,6 +740,8 @@ def run_audit(
             continue
 
         extra_args: list[str] = []
+        if check_name == "logic":
+            extra_args = ["--cross-section"]
         if check_name == "sentences":
             extra_args = ["--max-words", "60", "--max-clauses", "3"]
         if check_name == "bib" and online:

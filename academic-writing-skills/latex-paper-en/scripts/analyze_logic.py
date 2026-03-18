@@ -12,10 +12,10 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 
 
 TRANSITIONS = {
@@ -135,6 +135,198 @@ ANSWER_KEYWORDS_EN = re.compile(
     re.IGNORECASE,
 )
 
+INTRO_BACKGROUND_RE = re.compile(
+    r"\b(important|growing|widely used|demand|need|application|applications|"
+    r"real-world|industry|practical|in recent years|increasingly)\b",
+    re.IGNORECASE,
+)
+INTRO_PROBLEM_RE = re.compile(
+    r"\b(problem|challenge|bottleneck|limitation|difficult|difficulty|issue|"
+    r"expensive|costly|fails?|cannot|struggle|insufficient|inefficient)\b",
+    re.IGNORECASE,
+)
+INTRO_PRIOR_RE = re.compile(
+    r"\b(existing|previous|prior|earlier|current|traditional|state-of-the-art|"
+    r"studies|literature|methods|approaches|however|nevertheless|recent work)\b",
+    re.IGNORECASE,
+)
+TRIAD_PROBLEM_RE = re.compile(
+    r"\b(problem|challenge|task|goal|objective|bottleneck|limitation|address)\b",
+    re.IGNORECASE,
+)
+TRIAD_METHOD_RE = re.compile(
+    r"\b(propose|present|introduce|design|develop|framework|method|approach|"
+    r"model|mechanism|pipeline|strategy)\b",
+    re.IGNORECASE,
+)
+TRIAD_RESULT_RE = re.compile(
+    r"\b(result|results|improve|improvement|achieve|achieves|outperform|gain|"
+    r"accuracy|f1|mae|mse|latency|throughput|benchmark|experiments show)\b",
+    re.IGNORECASE,
+)
+TRIAD_CONTRIBUTION_RE = re.compile(
+    r"\b(contribution|contributions|novel|we propose|we present|we introduce|"
+    r"main contributions)\b",
+    re.IGNORECASE,
+)
+
+
+def _section_visible_lines(
+    lines: list[str], bounds: tuple[int, int], parser
+) -> list[tuple[int, str]]:
+    visible_lines: list[tuple[int, str]] = []
+    comment_prefix = parser.get_comment_prefix()
+    start, end = bounds
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(comment_prefix):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            visible_lines.append((line_no, visible))
+    return visible_lines
+
+
+def _coverage_map(text: str) -> dict[str, bool]:
+    lowered = text.lower()
+    return {
+        "problem": bool(TRIAD_PROBLEM_RE.search(lowered)),
+        "method": bool(TRIAD_METHOD_RE.search(lowered)),
+        "result": bool(TRIAD_RESULT_RE.search(lowered) or re.search(r"\d+(?:\.\d+)?%?", lowered)),
+        "contribution": bool(TRIAD_CONTRIBUTION_RE.search(lowered)),
+    }
+
+
+def _check_introduction_funnel(
+    lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    """Check whether introduction follows background -> problem -> prior work -> contribution."""
+    out: list[str] = []
+    if "introduction" not in sections:
+        return out
+
+    visible_lines = _section_visible_lines(lines, sections["introduction"], parser)
+    if len(visible_lines) < 3:
+        return out
+
+    first_background = first_problem = first_prior = first_contribution = None
+    for line_no, visible in visible_lines:
+        lowered = visible.lower()
+        if first_background is None and INTRO_BACKGROUND_RE.search(lowered):
+            first_background = line_no
+        if first_problem is None and INTRO_PROBLEM_RE.search(lowered):
+            first_problem = line_no
+        if first_prior is None and (
+            INTRO_PRIOR_RE.search(lowered) or "\\cite{" in lines[line_no - 1] or "[" in visible
+        ):
+            first_prior = line_no
+        if first_contribution is None and CONTRIBUTION_KEYWORDS_EN.search(lowered):
+            first_contribution = line_no
+
+    if first_contribution is None:
+        return out
+
+    if first_problem is None or first_contribution < first_problem:
+        out.extend(
+            [
+                f"% INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                "Introduction may jump from background directly to contribution.",
+                "% Suggested: Insert the unresolved technical bottleneck before presenting the method.",
+                "% Rationale: Readers need the problem statement before the solution.",
+                "",
+            ]
+        )
+
+    if first_problem is not None and first_prior is None:
+        out.extend(
+            [
+                f"% INTRODUCTION (Line {first_problem}) [Severity: Major] [Priority: P1]: "
+                "Introduction states the problem but does not derive it from prior work limitations.",
+                "% Suggested: Add a prior-work paragraph explaining what existing methods still fail to solve.",
+                "% Rationale: The contribution should be motivated by concrete insufficiencies in the literature.",
+                "",
+            ]
+        )
+    elif (
+        first_problem is not None
+        and first_prior is not None
+        and first_contribution is not None
+        and first_prior > first_contribution
+    ):
+        out.extend(
+            [
+                f"% INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                "Contribution claim appears before prior-work insufficiencies are established.",
+                "% Suggested: Reorder the introduction so literature limitations appear before the paper contribution.",
+                "% Rationale: This preserves the background -> bottleneck -> prior effort -> contribution funnel.",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_tri_section_alignment(
+    content: str, lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    """Check alignment among abstract, contribution source, and conclusion."""
+    out: list[str] = []
+    if "introduction" not in sections or "conclusion" not in sections:
+        return out
+
+    abstract_text = extract_abstract(content)
+    if not abstract_text:
+        return out
+
+    intro_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections["introduction"], parser)
+    )
+    conclusion_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections["conclusion"], parser)
+    )
+    if not intro_text or not conclusion_text:
+        return out
+
+    coverage = {
+        "abstract": _coverage_map(abstract_text),
+        "contribution_source": _coverage_map(intro_text),
+        "conclusion": _coverage_map(conclusion_text),
+    }
+    required_facets = {
+        facet
+        for facet in ("problem", "method", "result", "contribution")
+        if sum(1 for sec in coverage.values() if sec[facet]) >= 2
+    }
+
+    mismatches: list[str] = []
+    for section_name, section_coverage in coverage.items():
+        missing = sorted(facet for facet in required_facets if not section_coverage[facet])
+        if len(missing) >= 2 or (
+            section_name in {"abstract", "conclusion"}
+            and ("result" in missing or "contribution" in missing)
+        ):
+            mismatches.append(f"{section_name} missing {', '.join(missing)}")
+
+    if coverage["contribution_source"]["contribution"]:
+        if not coverage["abstract"]["contribution"]:
+            mismatches.append("abstract missing contribution claim")
+        if not coverage["conclusion"]["contribution"]:
+            mismatches.append("conclusion missing contribution response")
+    if coverage["abstract"]["method"] and not coverage["conclusion"]["result"]:
+        mismatches.append("conclusion missing result evidence")
+
+    if mismatches:
+        out.extend(
+            [
+                "% LOGIC [Severity: Major] [Priority: P1]: "
+                "Abstract, contribution claims, and conclusion may be misaligned.",
+                f"% Observation: {'; '.join(mismatches)}.",
+                "% Suggested: Make sure all three sections consistently state the problem, method, key results, and contribution.",
+                "% Rationale: These sections should tell the same core story with different emphasis, not diverge.",
+                "",
+            ]
+        )
+    return out
+
 
 def _check_cross_section_closure(
     lines: list[str], sections: dict[str, tuple[int, int]], parser
@@ -245,6 +437,9 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
 
     # ── Section-level checks ───────────────────────────────────
     if sections:
+        if not section and "introduction" in sections:
+            out.extend(_check_introduction_funnel(lines, sections, parser))
+
         related_key = "related"
         if related_key in sections:
             r_start, r_end = sections[related_key]
@@ -254,6 +449,8 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
 
         if cross_section and not section:
             out.extend(_check_cross_section_closure(lines, sections, parser))
+        if not section:
+            out.extend(_check_tri_section_alignment(content, lines, sections, parser))
 
     if not out:
         out.append("% LOGIC/METHODOLOGY: No rule-based coherence issues detected.")

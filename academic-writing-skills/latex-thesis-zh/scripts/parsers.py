@@ -51,6 +51,7 @@ class LatexParser(DocumentParser):
     SECTION_PATTERNS = {
         "abstract": r"\\chapter{摘要}|\\section{摘要}",
         "introduction": r"\\chapter{绪论}|\\chapter{引言}|\\section{绪论}|\\section{引言}",
+        "contribution": r"\\chapter{(?:创新点|主要贡献)}|\\section{(?:创新点|主要贡献)}",
         "related": r"\\chapter{相关工作}|\\section{相关工作}|\\section{文献综述}",
         "method": r"\\chapter{.*?(?:方法|原理|设计)}",
         "experiment": r"\\chapter{.*?(?:实验|实现|测试)}|\\section{.*?(?:实验|实现)}",
@@ -156,6 +157,7 @@ class TypstParser(DocumentParser):
     SECTION_PATTERNS = {
         "abstract": r"^=\s+摘要",
         "introduction": r"^=\s+(?:绪论|引言)",
+        "contribution": r"^=\s+(?:创新点|主要贡献)",
         "related": r"^=\s+(?:相关工作|文献综述)",
         "method": r"^=\s+.*(?:方法|原理|设计)",
         "experiment": r"^=\s+.*(?:实验|实现|测试)",

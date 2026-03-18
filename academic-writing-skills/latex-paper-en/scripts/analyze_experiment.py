@@ -98,6 +98,24 @@ ATTRIBUTION_MARKERS_EN = re.compile(
     r"stems from|arises from|driven by|suggests that|indicates that)\b",
     re.IGNORECASE,
 )
+DISCUSSION_CATEGORY_MARKERS_EN = {
+    "mechanism": re.compile(
+        r"\b(because|due to|mechanism|explains|reason|stems from|driven by|suggests that)\b",
+        re.IGNORECASE,
+    ),
+    "comparison": re.compile(
+        r"\b(compared with|compared to|relative to|unlike|consistent with|prior work|baseline)\b",
+        re.IGNORECASE,
+    ),
+    "limitation": re.compile(
+        r"\b(limitation|limitations|boundary|boundaries|fails? when|trade-off|caveat|underperforms)\b",
+        re.IGNORECASE,
+    ),
+    "implication": re.compile(
+        r"\b(implication|practical|application|future work|future direction|suggests broader)\b",
+        re.IGNORECASE,
+    ),
+}
 
 CITE_KEY_RE = re.compile(r"\\(?:cite\w*)\*?(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
 
@@ -128,6 +146,46 @@ def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> l
                 "Discussion may lack depth: low ratio of explanatory/attribution "
                 f"language ({attribution_lines}/{total_visible} lines). "
                 "Add causal analysis explaining why results occur.",
+            )
+        )
+        out.append("")
+    return out
+
+
+def _check_discussion_structure(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """Check whether long discussions cover multiple argumentative categories."""
+    out: list[str] = []
+    visible_lines: list[str] = []
+    category_hits = dict.fromkeys(DISCUSSION_CATEGORY_MARKERS_EN, 0)
+
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        visible_lines.append(visible)
+        for name, pattern in DISCUSSION_CATEGORY_MARKERS_EN.items():
+            if pattern.search(visible):
+                category_hits[name] += 1
+
+    if len(visible_lines) < 6:
+        return out
+
+    covered_categories = [name for name, count in category_hits.items() if count > 0]
+    topic_sentence_count = sum(
+        1 for visible in visible_lines if visible[:1].isupper() and len(visible.split()) >= 6
+    )
+    if len(covered_categories) < 2 or topic_sentence_count < 2:
+        out.extend(
+            _format_issue(
+                start,
+                "Major",
+                "P1",
+                "Discussion may lack layered structure: it should cover at least two categories "
+                "(mechanism, comparison with prior work, limitations/boundaries, implications/outlook) "
+                "instead of only restating results.",
             )
         )
         out.append("")
@@ -439,6 +497,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         ) and "discussion" in sections:
             d_start, d_end = sections["discussion"]
             output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
+            output.extend(_check_discussion_structure(lines, d_start, d_end, parser))
 
         if not normalized_section:
             output.extend(_check_results_literature_echo(lines, sections))

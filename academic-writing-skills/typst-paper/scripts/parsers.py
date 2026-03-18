@@ -47,13 +47,13 @@ class TypstParser(DocumentParser):
     # Section patterns (Heading 1-3)
     # Matches: = Introduction or == Related Work
     SECTION_PATTERNS = {
-        "introduction": r"^=\s+(?:Introduction|INTRODUCTION)",
-        "related": r"^=\s+(?:Related\s+Work|RELATED\s+WORK)",
-        "method": r"^=\s+.*(?:Method|Methodology|Approach)",
-        "experiment": r"^=\s+.*(?:Experiment|Evaluation|Implementation)",
-        "result": r"^=\s+.*(?:Result|Performance)",
-        "discussion": r"^=\s+.*(?:Discussion|Analysis)",
-        "conclusion": r"^=\s+.*(?:Conclusion|Conclusions)",
+        "introduction": r"^=\s+(?:Introduction|INTRODUCTION|绪论|引言)",
+        "related": r"^=\s+(?:Related\s+Work|RELATED\s+WORK|相关工作|文献综述)",
+        "method": r"^=\s+.*(?:Method|Methodology|Approach|方法|原理|设计)",
+        "experiment": r"^=\s+.*(?:Experiment|Evaluation|Implementation|实验|实现|测试)",
+        "result": r"^=\s+.*(?:Result|Performance|结果|性能)",
+        "discussion": r"^=\s+.*(?:Discussion|Analysis|讨论|分析)",
+        "conclusion": r"^=\s+.*(?:Conclusion|Conclusions|结论|总结与展望)",
         "abstract": r"#abstract\[",
     }
 
@@ -233,5 +233,13 @@ def extract_abstract(content: str) -> str:
         text = _extract_balanced_block(content, bracket_idx, "[", "]")
         if text:
             return _strip_typst_markup(text)
+
+    heading_abs = re.search(
+        r"^=\s+摘要\s*\n(.*?)(?=^=\s+|\Z)",
+        content,
+        re.DOTALL | re.MULTILINE,
+    )
+    if heading_abs:
+        return _strip_typst_markup(heading_abs.group(1))
 
     return ""

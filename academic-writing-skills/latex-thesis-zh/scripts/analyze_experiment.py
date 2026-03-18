@@ -66,6 +66,12 @@ ATTRIBUTION_MARKERS_ZH = re.compile(
     r"(原因|机制|表明|解释为|归因于|导致|由于|之所以|这是因为|根本原因|"
     r"本质上|究其原因|可能是因为)",
 )
+DISCUSSION_CATEGORY_MARKERS_ZH = {
+    "mechanism": re.compile(r"(原因|机制|解释|归因于|由于|之所以|本质上|究其原因)"),
+    "comparison": re.compile(r"(相比|相较于|与.*相比|前人工作|已有研究|基线|文献)"),
+    "limitation": re.compile(r"(局限|不足|边界|失效|代价|受限于|仍存在)"),
+    "implication": re.compile(r"(启示|应用价值|实际意义|展望|未来工作|后续研究|推广)"),
+}
 
 CITE_KEY_RE = re.compile(r"\\(?:cite\w*)\*?(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
 
@@ -117,6 +123,41 @@ def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> l
                 "P1",
                 "Discussion may lack depth: low ratio of explanatory/attribution "
                 f"language ({attribution_lines}/{total_visible} lines).",
+            )
+        )
+        out.append("")
+    return out
+
+
+def _check_discussion_structure(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """Check whether discussion covers multiple argumentative categories."""
+    out: list[str] = []
+    visible_lines: list[str] = []
+    category_hits = dict.fromkeys(DISCUSSION_CATEGORY_MARKERS_ZH, 0)
+
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        visible_lines.append(visible)
+        for name, pattern in DISCUSSION_CATEGORY_MARKERS_ZH.items():
+            if pattern.search(visible):
+                category_hits[name] += 1
+
+    if len(visible_lines) < 6:
+        return out
+
+    covered_categories = [name for name, count in category_hits.items() if count > 0]
+    if len(covered_categories) < 2:
+        out.extend(
+            _format_issue(
+                start,
+                "Major",
+                "P1",
+                "Discussion may lack layered structure: it should separately cover mechanism, prior-work comparison, limitations/boundaries, or implications/outlook.",
             )
         )
         out.append("")
@@ -209,6 +250,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         if (not normalized or normalized == "discussion") and "discussion" in sections:
             d_start, d_end = sections["discussion"]
             output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
+            output.extend(_check_discussion_structure(lines, d_start, d_end, parser))
 
         if not normalized:
             output.extend(_check_results_literature_echo(lines, sections))

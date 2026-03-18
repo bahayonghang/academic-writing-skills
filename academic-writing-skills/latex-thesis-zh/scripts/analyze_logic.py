@@ -12,10 +12,10 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import extract_abstract, get_parser
 
 
 TRANSITIONS_ZH = {
@@ -167,6 +167,227 @@ LEAD_GUIDE_KEYWORDS_ZH = (
     "围绕",
     "从而",
 )
+INTRO_BACKGROUND_RE_ZH = re.compile(r"(背景|需求|近年来|应用|场景|行业|领域|现实)")
+INTRO_PROBLEM_RE_ZH = re.compile(r"(问题|挑战|瓶颈|局限|不足|困难|代价高|尚未解决)")
+INTRO_PRIOR_RE_ZH = re.compile(r"(现有|已有|既有|前人|相关工作|文献|已有研究|然而|但是)")
+TRIAD_PROBLEM_RE_ZH = re.compile(r"(问题|挑战|任务|目标|瓶颈|局限|研究问题)")
+TRIAD_METHOD_RE_ZH = re.compile(r"(提出|设计|构建|方法|框架|模型|机制|策略)")
+TRIAD_RESULT_RE_ZH = re.compile(r"(结果表明|实验表明|研究发现|提升|优于|准确率|召回率|性能|基准)")
+TRIAD_CONTRIBUTION_RE_ZH = re.compile(r"(贡献|创新点|本文提出|主要贡献|本研究提出|独特之处)")
+CHAPTER_BRIDGE_KEYWORDS_ZH = (
+    "基于上一章",
+    "承接上一章",
+    "在上一章基础上",
+    "在前文基础上",
+    "进一步",
+    "针对尚未解决",
+    "围绕上述问题",
+    "为解决上述问题",
+    "延续前文",
+)
+
+
+def _section_visible_lines(
+    lines: list[str], bounds: tuple[int, int], parser
+) -> list[tuple[int, str]]:
+    visible_lines: list[tuple[int, str]] = []
+    comment_prefix = parser.get_comment_prefix()
+    start, end = bounds
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(comment_prefix):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            visible_lines.append((line_no, visible))
+    return visible_lines
+
+
+def _coverage_map_zh(text: str) -> dict[str, bool]:
+    return {
+        "problem": bool(TRIAD_PROBLEM_RE_ZH.search(text)),
+        "method": bool(TRIAD_METHOD_RE_ZH.search(text)),
+        "result": bool(TRIAD_RESULT_RE_ZH.search(text) or re.search(r"\d+(?:\.\d+)?%?", text)),
+        "contribution": bool(TRIAD_CONTRIBUTION_RE_ZH.search(text)),
+    }
+
+
+def _check_introduction_funnel(
+    lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    out: list[str] = []
+    if "introduction" not in sections:
+        return out
+
+    visible_lines = _section_visible_lines(lines, sections["introduction"], parser)
+    if len(visible_lines) < 3:
+        return out
+
+    first_problem = first_prior = first_contribution = None
+    for line_no, visible in visible_lines:
+        if first_problem is None and INTRO_PROBLEM_RE_ZH.search(visible):
+            first_problem = line_no
+        if first_prior is None and (
+            INTRO_PRIOR_RE_ZH.search(visible) or "\\cite{" in lines[line_no - 1]
+        ):
+            first_prior = line_no
+        if first_contribution is None and CONTRIBUTION_KEYWORDS_ZH.search(visible):
+            first_contribution = line_no
+
+    if first_contribution is None:
+        return out
+
+    if first_problem is None or first_contribution < first_problem:
+        out.extend(
+            [
+                f"% 绪论结构（第{first_contribution}行）[Severity: Major] [Priority: P1]: "
+                "绪论可能从背景直接跳到本文方案，缺少技术瓶颈铺垫",
+                "% 建议：先明确主流方法解决不了什么，再提出本文研究问题或方法。",
+                "% 理由：绪论应按背景→瓶颈→前人不足→本文工作的漏斗链展开。",
+                "",
+            ]
+        )
+
+    if first_problem is not None and first_prior is None:
+        out.extend(
+            [
+                f"% 绪论结构（第{first_problem}行）[Severity: Major] [Priority: P1]: "
+                "绪论提出了问题，但没有从前人工作不足推导该问题",
+                "% 建议：补充已有工作的尝试与局限，再落到本文研究动机。",
+                "% 理由：只有问题没有前人不足，会让研究动机显得突兀。",
+                "",
+            ]
+        )
+    elif (
+        first_problem is not None
+        and first_prior is not None
+        and first_contribution is not None
+        and first_prior > first_contribution
+    ):
+        out.extend(
+            [
+                f"% 绪论结构（第{first_contribution}行）[Severity: Major] [Priority: P1]: "
+                "本文工作出现在前人不足之前，绪论漏斗链顺序可能错误",
+                "% 建议：先交代已有方法的不足，再引出本文方法。",
+                "% 理由：研究问题和方法应建立在明确的文献缺口之上。",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_tri_section_alignment(
+    content: str, lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    out: list[str] = []
+    if "conclusion" not in sections:
+        return out
+
+    abstract_text = extract_abstract(content)
+    if not abstract_text:
+        return out
+
+    contribution_key = "contribution" if "contribution" in sections else "introduction"
+    if contribution_key not in sections:
+        return out
+
+    contribution_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections[contribution_key], parser)
+    )
+    conclusion_text = " ".join(
+        text for _, text in _section_visible_lines(lines, sections["conclusion"], parser)
+    )
+    if not contribution_text or not conclusion_text:
+        return out
+
+    coverage = {
+        "abstract": _coverage_map_zh(abstract_text),
+        "contribution_source": _coverage_map_zh(contribution_text),
+        "conclusion": _coverage_map_zh(conclusion_text),
+    }
+    required_facets = {
+        facet
+        for facet in ("problem", "method", "result", "contribution")
+        if sum(1 for sec in coverage.values() if sec[facet]) >= 2
+    }
+    mismatches: list[str] = []
+    for section_name, section_coverage in coverage.items():
+        missing = sorted(facet for facet in required_facets if not section_coverage[facet])
+        if len(missing) >= 2 or (
+            section_name in {"abstract", "conclusion"}
+            and ("result" in missing or "contribution" in missing)
+        ):
+            mismatches.append(f"{section_name} 缺少 {', '.join(missing)}")
+
+    if coverage["contribution_source"]["contribution"]:
+        if not coverage["abstract"]["contribution"]:
+            mismatches.append("abstract 缺少贡献表述")
+        if not coverage["conclusion"]["contribution"]:
+            mismatches.append("conclusion 缺少贡献回应")
+    if coverage["abstract"]["method"] and not coverage["conclusion"]["result"]:
+        mismatches.append("conclusion 缺少结果支撑")
+
+    if mismatches:
+        out.extend(
+            [
+                "% 跨章节一致性 [Severity: Major] [Priority: P1]: 摘要、创新点/贡献来源、结论之间可能存在错位",
+                f"% 观察：{'；'.join(mismatches)}。",
+                "% 建议：三处都要围绕研究问题、方法、核心结果、增量贡献形成对应关系。",
+                "% 理由：摘要、创新点与结论应长得像但不应各说各话。",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_chapter_mainline(content: str, lines: list[str], parser) -> list[str]:
+    """Check whether major chapters are bridged into one thesis storyline."""
+    out: list[str] = []
+    headings = [h for h in parser.extract_headings(content) if h["level"] == 1]
+    if len(headings) < 3:
+        return out
+
+    substantive = [
+        h
+        for h in headings
+        if not _is_exempt_heading(h["title"])
+        and "结论" not in h["title"]
+        and "总结" not in h["title"]
+    ]
+    if len(substantive) < 3:
+        return out
+
+    missing_bridges: list[str] = []
+    for heading in substantive[1:]:
+        start_line = heading["line"] + 1
+        lead_text = ""
+        for line_no in range(start_line, min(start_line + 8, len(lines)) + 1):
+            raw = lines[line_no - 1].strip()
+            kind = _classify_lead_gap(raw)
+            if kind in {"empty", "comment", "structural"}:
+                continue
+            visible = parser.extract_visible_text(raw)
+            if visible:
+                lead_text = visible
+                break
+        if not lead_text:
+            continue
+        has_bridge = any(keyword in lead_text for keyword in CHAPTER_BRIDGE_KEYWORDS_ZH)
+        generic_chapter_open = lead_text.startswith("本章") or lead_text.startswith("本文")
+        if not has_bridge and generic_chapter_open:
+            missing_bridges.append(f"{heading['title']}（第{heading['line']}行）")
+
+    if len(missing_bridges) >= 2:
+        out.extend(
+            [
+                "% 章节主线 [Severity: Major] [Priority: P1]: 多个核心章节缺少与前章结论的桥接，整体主线可能偏向工作罗列",
+                f"% 观察：{', '.join(missing_bridges)} 的开头未明确承接上一章或说明递进关系。",
+                "% 建议：在章节引言或本章小结中显式写出“基于上一章……本章进一步……”。",
+                "% 理由：学位论文需要体现递进或并列互补的系统性，而不是可任意换序的工作堆砌。",
+                "",
+            ]
+        )
+    return out
 
 
 def _check_cross_section_closure(
@@ -372,8 +593,12 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
     # ── 章节级检查 ─────────────────────────────────────────────
     if not section:
         out.extend(_check_heading_leads(content, lines, parser))
+        out.extend(_check_chapter_mainline(content, lines, parser))
 
     if sections:
+        if not section and "introduction" in sections:
+            out.extend(_check_introduction_funnel(lines, sections, parser))
+
         related_key = "related"
         if related_key in sections:
             r_start, r_end = sections[related_key]
@@ -383,6 +608,8 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
 
         if cross_section and not section:
             out.extend(_check_cross_section_closure(lines, sections, parser))
+        if not section:
+            out.extend(_check_tri_section_alignment(content, lines, sections, parser))
 
     if not out:
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")

@@ -11,6 +11,7 @@ import pytest
 
 experiment_module = importlib.import_module("analyze_experiment")
 logic_module = importlib.import_module("analyze_logic")
+deai_module = importlib.import_module("deai_check")
 compile_module = importlib.import_module("compile")
 verify_bib_module = importlib.import_module("verify_bib")
 check_figures_module = importlib.import_module("check_figures")
@@ -374,6 +375,46 @@ Results demonstrate the effectiveness of the proposed approach.
     assert "logic chain" not in joined
 
 
+def test_analyze_logic_flags_intro_funnel_jump(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+Time series forecasting is important in industrial planning.
+We propose a new adaptive transformer for this task.
+\section{Conclusion}
+We have shown strong results on multiple benchmarks.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex)
+    joined = "\n".join(findings).lower()
+    assert "jump from background directly to contribution" in joined or "funnel" in joined
+
+
+def test_analyze_logic_flags_tri_section_misalignment(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\begin{abstract}
+We study long-horizon forecasting and propose a sparse transformer.
+\end{abstract}
+\section{Introduction}
+We propose a sparse transformer and our main contributions are improved efficiency and accuracy.
+\section{Conclusion}
+Future work will explore more datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, cross_section=True)
+    joined = "\n".join(findings).lower()
+    assert "misaligned" in joined
+
+
 # ── analyze_experiment.py (WP2: Discussion Depth) ─────────────
 
 
@@ -461,3 +502,64 @@ Future work will explore semi-supervised extensions.
     joined = "\n".join(findings).lower()
     has_limitation_issue = "limitation" in joined and "lacks" in joined
     assert not has_limitation_issue
+
+
+def test_analyze_experiment_flags_unlayered_discussion(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Discussion}
+Our method reaches 95.2 accuracy on dataset A.
+It reaches 94.8 accuracy on dataset B.
+It reaches 93.9 accuracy on dataset C.
+The macro-F1 is 0.92 on dataset A.
+The macro-F1 is 0.90 on dataset B.
+The macro-F1 is 0.89 on dataset C.
+Overall, the reported numbers are strong.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = experiment_module.analyze(tex, "discussion")
+    joined = "\n".join(findings).lower()
+    assert "layered structure" in joined
+
+
+def test_deai_detects_low_information_density(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+In recent years, this topic has attracted much attention.
+This paper makes an important contribution to the field.
+This paper provides a comprehensive analysis of the problem.
+This paper offers an effective solution with significant improvement.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    categories = {trace["category"] for trace in result["traces"]}
+    assert "low_information_density" in categories
+
+
+def test_deai_avoids_low_information_false_positive_with_evidence(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+In recent years, transformer forecasting has attracted much attention \cite{smith2024}.
+We propose a sparse transformer that reduces MAE by 12.3\% over PatchTST.
+Experiments on three datasets show consistent gains in both MAE and RMSE.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    categories = {trace["category"] for trace in result["traces"]}
+    assert "low_information_density" not in categories
