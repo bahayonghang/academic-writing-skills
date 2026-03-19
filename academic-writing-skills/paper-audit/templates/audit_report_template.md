@@ -1,6 +1,6 @@
 # Audit Report Template
 
-Output structure for `self-check` and `gate` modes.
+Output structure for `quick-audit` and `gate` modes.
 
 ---
 

@@ -3,147 +3,104 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Run a self-check on paper.tex for a NeurIPS submission and tell me which issues block submission versus which are only quality improvements.",
-      "expected_output": "Infer or accept self-check mode, run the audit flow, and return a report that lists Critical or P0 blockers before non-blocking issues and checklist items.",
-      "files": [],
+      "prompt": "Run a quick audit on paper.tex for a NeurIPS submission and tell me what blocks submission versus what is only a quality improvement.",
+      "expected_output": "Route to quick-audit, keep blockers first, and produce a compact readiness report rather than a full reviewer-style issue bundle.",
+      "files": ["evals/fixtures/quick_audit_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {"type": "contains", "text": "quick-audit", "description": "canonical quick-audit mode selected"},
+        {"type": "regex", "pattern": "(block|Block|blocking)", "description": "blocking issues discussed"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "script/llm provenance visible"},
+        {"type": "not_contains", "text": "Deep Review Report", "description": "quick audit does not drift into deep-review report format"}
       ]
     },
     {
       "id": 2,
-      "prompt": "Review this paper like a skeptical reviewer, include multi-perspective criticism, and end with a prioritized revision roadmap.",
-      "expected_output": "Route to review mode, separate Phase 0 script findings from agent-style judgments, and produce a synthesis with strengths, weaknesses, questions, scores, and a revision roadmap.",
-      "files": [],
+      "prompt": "Review this manuscript like a real conference reviewer. I care more about the biggest validity threats than about grammar. Give me a structured revision roadmap and point me to the generated artifact files.",
+      "expected_output": "Route to deep-review, produce a deep-review report, surface artifact paths, and emphasize major/moderate/minor findings plus a revision roadmap.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "review", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
-        {"type": "regex", "pattern": "(roadmap|revision|priority)", "description": "revision roadmap included"}
+        {"type": "contains", "text": "Deep Review Report", "description": "deep-review report rendered"},
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(Major Issues|Moderate Issues|Minor Issues)", "description": "severity-grouped issue sections present"},
+        {"type": "regex", "pattern": "(Artifacts|artifact_dir|final_issues\\.json|review_report\\.md)", "description": "artifact references surfaced"},
+        {"type": "regex", "pattern": "(Revision Roadmap|Priority 1)", "description": "roadmap present"},
+        {"type": "regex", "pattern": "(final_issues\\.json|review_report\\.md)", "description": "required deep-review artifacts named explicitly"}
       ]
     },
     {
       "id": 3,
-      "prompt": "Is paper.pdf ready to submit to IEEE, or does it fail the gate because of blocking layout or checklist issues?",
-      "expected_output": "Route to gate mode for PDF input, report PASS or FAIL clearly, and list blocking issues and failed checklist items before any informational notes.",
-      "files": [],
+      "prompt": "Deep-review this paper and tell me whether the abstract and conclusion claims actually match the evidence in the experiments. I want quote-backed findings with lane/source metadata.",
+      "expected_output": "Use a claims-vs-evidence framing, highlight quote-backed findings, and surface structured reviewer metadata rather than a simple checklist dump.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "gate", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(PASS|FAIL)", "description": "pass/fail verdict present"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(claims|evidence|overclaim|unsupported)", "description": "claims-vs-evidence reasoning present"},
+        {"type": "regex", "pattern": "(Quote|quote)", "description": "quote-backed issue output present"},
+        {"type": "regex", "pattern": "(review_lane|claims_vs_evidence|source_kind|Quote Verified)", "description": "structured metadata visible"},
+        {"type": "regex", "pattern": "(source_section|Related Sections)", "description": "section anchoring metadata visible"}
       ]
     },
     {
       "id": 4,
-      "prompt": "Re-audit this revised manuscript against report_v1.md and tell me which issues are fully fixed, partially fixed, or still unresolved.",
-      "expected_output": "Route to re-audit mode, require the previous report path, compare prior versus fresh findings, and show a verification checklist with score deltas and any new issues.",
-      "files": [],
+      "prompt": "Review this methods-heavy paper and check for notation drift, equation-to-text mismatch, and numbers that do not reconcile between the table and appendix. Show section anchors.",
+      "expected_output": "Emphasize notation and numeric consistency, not just generic methodology commentary, and include section anchoring.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "re-audit", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(FULLY_ADDRESSED|PARTIALLY_ADDRESSED|NOT_ADDRESSED)", "description": "verification classification present"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(notation|equation|numeric|appendix|reconcile)", "description": "cross-section consistency focus present"},
+        {"type": "regex", "pattern": "(source_section|Section|Related Sections)", "description": "section anchoring present"},
+        {"type": "regex", "pattern": "(review_lane|notation_and_numeric_consistency)", "description": "lane metadata surfaced"}
       ]
     },
     {
       "id": 5,
-      "prompt": "Polish the writing of paper.tex, but only if the audit does not find blockers that should stop polishing first.",
-      "expected_output": "Route to polish mode, read the precheck state, stop on blockers, and only describe the critic or mentor follow-up flow when polishing is actually safe to continue.",
-      "files": [],
+      "prompt": "Gate this IEEE paper and separate true submission blockers from advisory pseudocode recommendations like line numbers or shorter comments.",
+      "expected_output": "Return PASS or FAIL and clearly distinguish blockers from recommendations.",
+      "files": ["evals/fixtures/gate_ieee_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "polish", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(blocker|precheck|safe)", "description": "precheck gate evaluated"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+        {"type": "contains", "text": "Verdict", "description": "verdict shown"},
+        {"type": "regex", "pattern": "(PASS|FAIL)", "description": "pass/fail value present"},
+        {"type": "regex", "pattern": "(Block|Blocking|must fix)", "description": "blocking section present"},
+        {"type": "regex", "pattern": "(advisory|recommendation|recommended)", "description": "advisory distinction present"},
+        {"type": "not_contains", "text": "Deep Review Report", "description": "gate output stays in gate format"}
       ]
     },
     {
       "id": 6,
-      "prompt": "Run a full review of paper.tex with literature search. Find related work I might have missed, score all 9 dimensions.",
-      "expected_output": "Output has 'Related Literature' section; 9 dimensions scored including Literature Grounding; [Script]/[LLM] labels present; missing papers listed with relevance.",
-      "files": [],
+      "prompt": "Re-audit this revision against my previous report and tell me which root-cause issues are fully fixed, partially fixed, still open, or newly introduced.",
+      "expected_output": "Use re-audit language with issue-level status classification, not a fresh audit only.",
+      "files": [
+        "evals/fixtures/deep_review_fixture.tex",
+        "evals/fixtures/previous_final_issues.json",
+        "evals/fixtures/previous_review_report.md"
+      ],
       "assertions": [
-        {"type": "contains", "text": "review", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(Literature Grounding|literature.grounding)", "description": "9th dimension present"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {"type": "contains", "text": "Re-Audit Report", "description": "re-audit report rendered"},
+        {"type": "regex", "pattern": "(FULLY_ADDRESSED|PARTIALLY_ADDRESSED|NOT_ADDRESSED|NEW)", "description": "status categories present"},
+        {"type": "regex", "pattern": "(root_cause_key|root cause)", "description": "root-cause comparison language present"}
       ]
     },
     {
       "id": 7,
-      "prompt": "Self-check paper.pdf with scholar evaluation and tell me the predicted score with confidence interval.",
-      "expected_output": "9-dim scores present; Literature Grounding shown (N/A if no --literature-search); regression/fallback type indicated; confidence interval displayed.",
-      "files": [],
+      "prompt": "Run a deep review with literature grounding and tell me if the novelty claim is actually defended against the closest prior work.",
+      "expected_output": "Use prior-art and novelty grounding logic, not just missing-reference detection.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
       "assertions": [
-        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(ScholarEval|scholar.eval|9.dim)", "description": "ScholarEval scoring present"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(prior.art|prior-art|novelty|closest prior work|grounding)", "description": "prior-art reasoning present"},
+        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "provenance present"},
+        {"type": "regex", "pattern": "(review_lane|prior-art|novelty)", "description": "review-lane level framing preserved"}
       ]
     },
     {
       "id": 8,
-      "prompt": "Compare paper.tex against latest literature and tell me which important papers I'm missing.",
-      "expected_output": "Missing papers listed with relevance scores and reasons; Literature Grounding score computed; specific suggestions for which papers to cite and where.",
-      "files": [],
+      "prompt": "Polish this paper only if the precheck says there are no blockers that would make polishing premature.",
+      "expected_output": "Route to polish mode, evaluate safety first, and stop when blockers exist.",
+      "files": ["evals/fixtures/polish_fixture.tex"],
       "assertions": [
-        {"type": "regex", "pattern": "(missing|Missing|uncited)", "description": "missing papers identified"},
-        {"type": "regex", "pattern": "(relevance|score)", "description": "relevance scoring present"},
-        {"type": "regex", "pattern": "\\[(Script|LLM)\\]", "description": "[Script]/[LLM] labels present"}
-      ]
-    },
-    {
-      "id": 9,
-      "prompt": "Run a self-check on paper.tex and tell me whether the discussion only repeats numbers instead of explaining mechanisms, comparing with prior work, and stating limitations.",
-      "expected_output": "Phase 0 report includes script-backed experiment findings about discussion depth, layering, literature echo, and conclusion completeness.",
-      "files": [],
-      "assertions": [
-        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(discussion|depth|layer|mechanism)", "description": "discussion depth assessed"},
-        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present for automated findings"}
-      ]
-    },
-    {
-      "id": 10,
-      "prompt": "Self-check this manuscript and tell me whether the introduction promises are actually answered in the conclusion.",
-      "expected_output": "Phase 0 report includes cross-section logic chain findings from the logic module, not just section-local comments.",
-      "files": [],
-      "assertions": [
-        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(cross-section|closure|C3|contribution.*conclusion)", "description": "cross-section closure checked"},
-        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present for automated findings"}
-      ]
-    },
-    {
-      "id": 11,
-      "prompt": "Review this paper and tell me which parts are script-backed findings versus agent-only judgments for literature organization and narrative quality.",
-      "expected_output": "Output clearly separates Phase 0 script findings from Phase 1 reviewer judgments and does not overstate A2/A4 as automated checks.",
-      "files": [],
-      "assertions": [
-        {"type": "contains", "text": "review", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "\\[Script\\]", "description": "[Script] label present"},
-        {"type": "regex", "pattern": "\\[LLM\\]", "description": "[LLM] label present"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
-      ]
-    },
-    {
-      "id": 12,
-      "prompt": "Run an IEEE gate check on paper.tex and tell me whether the pseudocode still uses a floating algorithm environment or misses caption/label hygiene.",
-      "expected_output": "Route to gate mode with IEEE context, surface pseudocode float and caption/label checklist failures clearly, and separate mandatory violations from advisory comments.",
-      "files": [],
-      "assertions": [
-        {"type": "contains", "text": "gate", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(pseudocode|algorithm)", "description": "pseudocode findings present"},
-        {"type": "regex", "pattern": "(PASS|FAIL)", "description": "pass/fail verdict present"}
-      ]
-    },
-    {
-      "id": 13,
-      "prompt": "Self-check this IEEE manuscript and tell me which pseudocode issues are hard blockers versus only IEEE-safe recommendations like line numbers or shorter comments.",
-      "expected_output": "Output separates mandatory pseudocode problems from advisory defaults, making clear that missing line numbers are recommendations rather than submission blockers.",
-      "files": [],
-      "assertions": [
-        {"type": "contains", "text": "self-check", "description": "correct mode selected"},
-        {"type": "regex", "pattern": "(recommended|recommendation|advisory)", "description": "advisory distinction present"},
-        {"type": "regex", "pattern": "(pseudocode|algorithm)", "description": "pseudocode findings present"}
+        {"type": "contains", "text": "polish", "description": "polish mode acknowledged"},
+        {"type": "regex", "pattern": "(precheck|blocker|safe)", "description": "precheck safety logic present"},
+        {"type": "not_contains", "text": "Deep Review Report", "description": "polish flow does not drift into deep-review report output"}
       ]
     }
   ]

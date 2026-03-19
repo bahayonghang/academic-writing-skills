@@ -1,347 +1,297 @@
 ---
 name: paper-audit
-description: Unified paper audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use when reviewing paper quality, running pre-submission checks, simulating peer review, making pass/fail gate decisions, polishing writing, re-auditing revisions, or scoring with ScholarEval dimensions. Trigger when the user says "check my paper", "is this ready to submit", "score my paper", "review like a reviewer", "find missing references", "literature search", "re-audit", or wants a CI/CD quality gate. Do not use for direct source editing or compiling — use the format-specific writing skills instead.
+description: Deep-review-first audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants reviewer-style paper critique, pre-submission readiness checks, pass/fail gate decisions, structured revision roadmaps, or re-audits of revised manuscripts. Trigger even if the user only says "review my paper", "check if this is ready to submit", "audit this PDF", "simulate peer review", "find the biggest problems in this manuscript", or "re-check whether I fixed the review issues". Do not use for direct source editing or compilation-heavy repair; route those to the format-specific writing skills instead.
 metadata:
   category: academic-writing
-  tags: [audit, review, paper, pdf, latex, typst, chinese, english, scoring, checklist]
-  version: "3.0"
-  last_updated: "2026-03-16"
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode MODE] [--pdf-mode MODE] [--style STYLE] [--journal VENUE] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--regression]"
+  tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
+  version: "4.0"
+  last_updated: "2026-03-19"
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format markdown|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v3.0
+# Paper Audit Skill v4.0
 
-Unified academic paper auditing across formats (LaTeX, Typst, PDF) and languages (English, Chinese). Runs automated checks, computes dimension scores, and optionally dispatches multi-perspective review agents.
+`paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
 
----
+Use it for audit and review. Do not use it as the first tool for source editing, sentence rewriting, or build fixing.
 
-## Capability Summary
+## What This Skill Produces
 
-- Run automated paper checks across `.tex`, `.typ`, and `.pdf` inputs.
-- Produce self-check, peer-review, gate, polish, and re-audit outputs with explicit severity and priority labels.
-- Combine script findings, venue-specific checklist items, and optional agent synthesis into one report flow.
-- Reuse sibling writing-skill scripts for LaTeX and Typst inputs instead of re-implementing duplicate checks.
-- Audit IEEE-style pseudocode blocks for float usage, caption/label/reference hygiene, and advisory readability issues.
+- `quick-audit`: fast submission-readiness screen with script-backed findings
+- `deep-review`: reviewer-style structured issue bundle with major/moderate/minor findings
+- `gate`: PASS/FAIL decision calibrated for submission blockers
+- `re-audit`: compare current issue bundle against a previous audit
+- `polish`: precheck-only handoff into a polishing workflow
 
-## Triggering
+The primary product is no longer just a score. For `deep-review`, the main outputs are:
 
-Use this skill when the user wants to:
-
-- run a pre-submission readiness audit
-- simulate a reviewer-style critique
-- make a pass/fail submission gate decision
-- compare a revised paper against a previous audit
-- audit a PDF when the source format is unavailable
-
-Trigger it even when the user only says “check my paper”, “review this submission”, “is this ready to submit?”, or “re-audit against the old report”.
+- `final_issues.json`
+- `overall_assessment.txt`
+- `review_report.md`
+- `revision_roadmap.md`
 
 ## Do Not Use
 
-- fixing the paper source as the first step when the project still fails to compile badly
-- full literature research or survey drafting
-- writing a paper from scratch
-- template-specific LaTeX or Typst editing when the user wants direct source surgery instead of an audit report
-- direct source editing, grammar fixing, or expression polishing on individual sections (use `latex-paper-en`, `latex-thesis-zh`, or `typst-paper` based on format and language)
-- fixing compilation errors as the primary task (use the format-specific skill first)
+- direct source surgery on `.tex` / `.typ`
+- compilation debugging as the main task
+- free-form literature survey writing
+- cosmetic grammar cleanup without an audit goal
 
 ## Critical Rules
 
-- **NEVER** modify `\cite{}`, `\ref{}`, `\label{}`, math environments, or any content listed in `$SKILL_DIR/references/FORBIDDEN_TERMS.md`
-- **NEVER** fabricate bibliography entries; only verify existing `.bib` or `.yml` files
-- **NEVER** change domain terminology without explicit user confirmation
-- **ALWAYS** distinguish `[Script]` (automated) findings from `[LLM]` (agent judgment) assessments in output
-- **ALWAYS** distinguish IEEE hard pseudocode violations from IEEE-safe default recommendations
-- All dimension scores from scripts are **indicators**, not definitive judgments
+- Never rewrite the paper source unless the user explicitly switches to an editing skill.
+- Never fabricate references, baselines, or reviewer evidence.
+- Always distinguish `[Script]` from `[LLM]` findings.
+- Always anchor reviewer findings to a quote, section, or exact textual location.
+- Be conservative with OCR noise, formatting quirks, and obvious copy-editing trivia.
+- Review like a careful reader: understand the author's intended meaning before flagging an issue.
 
----
+## Mode Selection
 
-## Mode Selection Guide
+| Requested intent | Mode |
+|---|---|
+| "check my paper", "quick audit", "submission readiness" | `quick-audit` |
+| "review my paper", "simulate peer review", "harsh review", "deep review" | `deep-review` |
+| "is this ready to submit", "gate this submission", "blockers only" | `gate` |
+| "did I fix these issues", "re-audit", "compare against old review" | `re-audit` |
+| "polish the writing, but only if safe" | `polish` |
 
-| Mode | When to Use | Output | Speed |
-|------|-------------|--------|-------|
-| `self-check` | Pre-submission readiness check | Scores + issues + checklist | ~30s |
-| `review` | Simulate multi-perspective peer review | Agent review reports + synthesis + revision roadmap | ~2min |
-| `gate` | CI/CD quality gate, binary pass/fail | PASS/FAIL verdict + blocking issues | ~15s |
-| `polish` | Expression refinement via agents | Precheck JSON + Critic/Mentor agent dispatch | ~1min+ |
-| `re-audit` | Verify revisions against prior report | Verification checklist + new issues + score delta | ~1min |
+Legacy aliases still work for one compatibility cycle:
 
-### Mode Selection Logic
+- `self-check` -> `quick-audit`
+- `review` -> `deep-review`
 
+## Review Standard
+
+Read these references before running reviewer-style work:
+
+1. `references/REVIEW_CRITERIA.md`
+2. `references/DEEP_REVIEW_CRITERIA.md`
+3. `references/CHECKLIST.md`
+4. `references/CONSOLIDATION_RULES.md`
+5. `references/ISSUE_SCHEMA.md`
+
+The deep-review workflow uses a 10-part issue taxonomy:
+
+1. formula / derivation errors
+2. notation inconsistency
+3. prose vs formal object mismatch
+4. numerical inconsistency
+5. missing justification
+6. overclaim or claim inaccuracy
+7. ambiguity that can mislead a careful reader
+8. underspecified methods / missing information
+9. internal contradiction
+10. self-consistency of standards
+
+## Workflow
+
+### Common Step 0
+
+Parse `$ARGUMENTS` and infer the mode if the user did not provide one. State the inferred mode before running commands if you had to infer it.
+
+### `quick-audit`
+
+1. Run:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode quick-audit ...
+   ```
+2. Present a concise report:
+   - `Submission Blockers` first
+   - then `Quality Improvements`
+   - then checklist items
+   - mark quick-audit findings with `[Script]` provenance
+3. If the user clearly wants reviewer-depth critique after the quick screen, escalate to `deep-review`.
+
+### `deep-review`
+
+Use this as the default reviewer-style path.
+
+#### Phase 1: Prepare workspace
+
+Run:
+
+```bash
+uv run python -B "$SKILL_DIR/scripts/prepare_review_workspace.py" <paper> --output-dir ./review_results
 ```
-"Check my paper"                         -> self-check
-"Review my paper" / "peer review"        -> review
-"Is this ready to submit?"               -> gate
-"Polish the writing"                     -> polish
-"Did I fix the issues?" / "re-check"     -> re-audit
+
+This creates:
+
+- `full_text.md`
+- `metadata.json`
+- `section_index.json`
+- `claim_map.json`
+- `paper_summary.md`
+- `sections/*.md`
+- `comments/`
+
+#### Phase 2: Phase 0 automated audit
+
+Run:
+
+```bash
+uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
 ```
 
----
+Treat this as **Phase 0 only**. It supplies script-backed context and scores, not the final review.
 
-## Steps
+#### Phase 3: Section and cross-cutting review lanes
 
-### All Modes (Common)
+Read:
 
-1. Parse `$ARGUMENTS` for file path and mode. If missing, ask the user for the target `.tex`, `.typ`, or `.pdf` file.
-2. Read `$SKILL_DIR/references/REVIEW_CRITERIA.md` for scoring framework.
-3. Read `$SKILL_DIR/references/CHECKLIST.md` for universal + venue-specific checklist items.
-4. Run the orchestrator: `uv run python -B "$SKILL_DIR/scripts/audit.py" $ARGUMENTS`.
-5. Present the Markdown report directly to the user.
+- `references/SUBAGENT_TEMPLATES.md`
+- `references/REVIEW_LANE_GUIDE.md`
 
-### Self-Check Mode
+Then dispatch reviewer tasks for:
 
-6. Review scores and highlight any Critical/P0 issues that block submission.
-7. If `--scholar-eval` is present, read `$SKILL_DIR/references/SCHOLAR_EVAL_GUIDE.md` and formulate LLM assessments for Novelty, Significance, Ethics, and Reproducibility. Provide as `--llm-json` on a second run.
+- section lanes
+  - introduction / related work
+  - methods
+  - results
+  - discussion / conclusion
+  - appendix, if present
+- cross-cutting lanes
+  - claims vs evidence
+  - notation and numeric consistency
+  - evaluation fairness and reproducibility
+  - self-standard consistency
+  - prior-art and novelty grounding
 
-### Review Mode (Multi-Perspective)
+Each lane writes a JSON array into `comments/`.
 
-6. Read `$SKILL_DIR/references/SCHOLAR_EVAL_GUIDE.md` for LLM assessment dimensions.
-7. Read `$SKILL_DIR/references/quality_rubrics.md` for scoring anchors and decision mapping.
-8. **Phase 0** (automated): The script output provides automated findings and scores.
-   - When `--literature-search` is enabled, Phase 0 also includes literature search results and grounding score.
-   - `audit.py --mode review` by itself runs Phase 0 only. Full multi-perspective review happens after the skill dispatches Phase 1 reviewer tasks.
-   - In Phase 0, literature-review enumeration/gap checks, experiment-section structure checks, and cross-section closure are script-backed; A2/A4 style judgments remain reviewer/LLM work unless future heuristics are added.
-9. **Phase 1** (agents): For each agent in `$SKILL_DIR/agents/`:
-   - Read the agent definition file for persona and protocol.
-   - Dispatch a `Task` with: agent definition + paper content + Phase 0 results as context.
-   - Agents: `methodology_reviewer_agent.md`, `domain_reviewer_agent.md`, `critical_reviewer_agent.md`.
-   - When `--literature-search` is enabled, also dispatch `literature_reviewer_agent.md` (optional).
-10. **Phase 2** (synthesis): Read `$SKILL_DIR/agents/synthesis_agent.md` and dispatch a `Task` to consolidate all reviews.
-    - Input: Phase 0 automated results + Phase 1 agent reviews.
-    - Output: Consensus classification, merged scores, final review report, revision roadmap.
-11. Read `$SKILL_DIR/templates/review_report_template.md` for output structure.
-12. Present synthesized report following the template format.
+If subagents are unavailable, use the built-in deterministic fallback lane pass in `scripts/audit.py` so the workflow still writes lane-compatible JSON into `comments/` before consolidation.
 
-### Gate Mode
+#### Phase 4: Consolidation
 
-6. Report PASS or FAIL based on: zero Critical issues AND all checklist items pass.
-7. List blocking issues (Critical only) and failed checklist items.
+Run:
 
-### Polish Mode
+```bash
+uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" <review_dir>
+uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" <review_dir> --write-back
+uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir>
+```
 
-6. Read `.polish-state/precheck.json` generated by the script.
-7. If blockers detected, report them and ask user to resolve before polishing.
-8. Read `$SKILL_DIR/references/POLISH_GUIDE.md` for style targets and critic protocol.
-9. Spawn nested tasks for the Critic Agent and Mentor Agents as defined in the polish workflow.
+Consolidation rules:
 
-### Re-Audit Mode
+- merge exact duplicates
+- keep distinct paper-level consequences separate even if they share a root cause
+- preserve singleton findings unless clearly false positive
+- assign `comment_type`, `severity`, `confidence`, and `root_cause_key`
 
-6. Requires `--previous-report PATH` pointing to a prior audit report.
-7. Script runs fresh checks and compares against previous findings.
-8. Present verification checklist: each prior issue classified as `FULLY_ADDRESSED` / `PARTIALLY_ADDRESSED` / `NOT_ADDRESSED`.
-9. Report any `NEW` issues introduced during revision.
-10. Show score comparison (before vs after).
+#### Phase 5: Present result
 
-## Required Inputs
+Summarize:
 
-- A target `.tex`, `.typ`, or `.pdf` file.
-- An audit mode, or enough intent to infer one from the mode-selection guide.
-- Optional venue or journal context when the checklist should be venue-specific.
-- Optional `--previous-report PATH` for `re-audit`.
+- 1 short paragraph overall assessment
+- counts of major / moderate / minor issues
+- 3 highest-priority revision items
+- path to `review_report.md` and `final_issues.json`
 
-If the user omits the mode, infer it using the selection guide and state the assumption before running the audit.
+### `gate`
+
+1. Run:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode gate ...
+   ```
+2. Report PASS/FAIL.
+3. List blockers first.
+4. Keep advisory items separate from blockers.
+5. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
+
+### `re-audit`
+
+1. Requires `--previous-report PATH`.
+2. Run:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode re-audit --previous-report <path> ...
+   ```
+3. If both old and new `final_issues.json` bundles are available, also run:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/diff_review_issues.py" <old_final_issues.json> <new_final_issues.json>
+   ```
+4. Present:
+   - root-cause-aware status labels: `FULLY_ADDRESSED`, `PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`
+   - use structured prior issue bundles when available, but still accept Markdown previous reports
+
+### `polish`
+
+1. Run the audit precheck:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
+   ```
+2. If blockers exist, stop and report them.
+3. Only proceed into polishing if the precheck is safe.
 
 ## Output Contract
 
-- Always return a report, not raw script output.
-- Keep `[Script]` and `[LLM]` findings visibly separated.
-- Include the selected mode, target file, and venue context near the top of the report.
-- For blocking failures, list the exact blocking issue(s) and failed checklist items first.
-- When a script or nested agent step fails, report the command, exit code, and what coverage was skipped.
-- Preserve the source; this skill audits and synthesizes, it does not rewrite the paper by default.
+For `deep-review`, the final issue schema is:
 
----
-
-## Venue-Specific Behavior
-
-> Venue-specific rules: see [`references/VENUE_RULES.md`](references/VENUE_RULES.md) for per-venue behavior adjustments.
-
-For IEEE pseudocode:
-- hard gate rules: no floating `algorithm` / `algorithm2e`; pseudocode blocks need caption, label, and text reference
-- advisory rules: line numbers, explicit input/output markers, short comments, concise step text
-
-## Output Protocol
-
-### Issue Format
-```
-[Severity: Critical|Major|Minor] [Priority: P0|P1|P2]: message (Line N)
+```json
+{
+  "title": "short issue title",
+  "quote": "exact quote from paper",
+  "explanation": "why this matters and what remains problematic",
+  "comment_type": "methodology|claim_accuracy|presentation|missing_information",
+  "severity": "major|moderate|minor",
+  "confidence": "high|medium|low",
+  "source_kind": "script|llm",
+  "source_section": "methods",
+  "related_sections": ["results", "appendix"],
+  "root_cause_key": "shared-normalized-key",
+  "review_lane": "claims_vs_evidence",
+  "gate_blocker": false,
+  "quote_verified": true
+}
 ```
 
-### Severity Definitions
-| Severity | Impact | Score Deduction (4-dim) |
-|----------|--------|----------------------|
-| Critical | Blocks submission | -1.5 per issue |
-| Major | Significant quality concern | -0.75 per issue |
-| Minor | Style/formatting improvement | -0.25 per issue |
+Always prefer:
 
-### Source Labeling
-- `[Script]` — Automated check result (objective, reproducible)
-- `[LLM]` — Agent/LLM judgment (subjective, evidence-based)
+- exact quotes over vague paraphrase
+- evidence-backed findings over style commentary
+- issue bundle + roadmap over raw script dumps
 
----
+## References
 
-## Scoring Systems
+| File | Purpose |
+|---|---|
+| `references/REVIEW_CRITERIA.md` | top-level audit scoring and mapping |
+| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy and leniency rules |
+| `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
+| `references/ISSUE_SCHEMA.md` | canonical JSON schema |
+| `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
+| `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
+| `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
 
-> Scoring rubrics: see [`references/SCORING_SYSTEMS.md`](references/SCORING_SYSTEMS.md) for the full 4-dim and 9-dim ScholarEval scoring tables.
+## Scripts
 
-## Integration with Sibling Skills
+| Script | Purpose |
+|---|---|
+| `scripts/audit.py` | Phase 0 audit and mode entrypoint |
+| `scripts/prepare_review_workspace.py` | create deep-review workspace |
+| `scripts/build_claim_map.py` | extract headline claims and closure targets |
+| `scripts/consolidate_review_findings.py` | deduplicate comment JSONs |
+| `scripts/verify_quotes.py` | verify exact quote presence |
+| `scripts/render_deep_review_report.py` | render final Markdown report |
+| `scripts/diff_review_issues.py` | compare old vs new issue bundles |
 
-Paper-audit reuses check scripts from sibling skills via format-based routing:
+## Reviewer Lanes
 
-| Format | Script Source | Checks Available |
-|--------|-------------|-----------------|
-| `.tex` (English) | `latex-paper-en/scripts/` | format, grammar, logic, experiment, sentences, deai, bib, figures |
-| `.tex` / `.typ` pseudocode | sibling `check_pseudocode.py` | IEEE-safe algorithm float, caption, label, reference, and advisory checks |
-| `.tex` (Chinese) | `latex-thesis-zh/scripts/` (primary), `latex-paper-en/scripts/` (fallback) | + experiment, consistency, gbt7714 |
-| `.typ` | `typst-paper/scripts/` | format, grammar, logic, experiment, sentences, deai |
-| `.pdf` | `paper-audit/scripts/` only | visual, pdf_parser (no format/bib/figures checks) |
+Default deep-review lanes live in `agents/`:
 
-Scripts that live in paper-audit itself: `audit.py`, `check_references.py`, `check_citations.py`, `visual_check.py`, `pdf_parser.py`, `detect_language.py`, `parsers.py`, `report_generator.py`, `scholar_eval.py`, `literature_search.py`, `literature_compare.py`, `scoring_model.py`.
+- `section_reviewer_agent.md`
+- `claims_evidence_reviewer_agent.md`
+- `notation_consistency_reviewer_agent.md`
+- `evaluation_fairness_reviewer_agent.md`
+- `self_consistency_reviewer_agent.md`
+- `prior_art_reviewer_agent.md`
+- `synthesis_agent.md`
 
-> `check_citations.py` detects citation stacking (3+ clustered citations without individual discussion). `check_references.py` validates figure/table/equation label-ref integrity.
-
----
-
-## Literature Search Integration (NEW in v3.0)
-
-When `--literature-search` is enabled, the audit pipeline adds external literature verification:
-
-### How It Works
-
-1. **Metadata Extraction**: Extracts title, abstract, keywords, and method names from the paper.
-2. **Query Generation**: Generates 5 search strategies (title-based, method-based, problem-based, keyword combos, negation-aware).
-3. **Multi-Source Search**: Queries Semantic Scholar, arXiv, and optionally Tavily in parallel.
-4. **Relevance Filtering**: Deduplicates and filters results by relevance to the paper (TF-IDF word overlap).
-5. **Literature Comparison**: Compares found literature against the paper's bibliography.
-6. **Grounding Score**: Computes a Literature Grounding score (1-10) based on coverage, recency, missing refs, and freshness.
-
-### API Keys
-
-| Source | Key | Required? |
-|--------|-----|-----------|
-| Semantic Scholar | `--s2-key` or `S2_API_KEY` env var | Optional (works without key at lower rate limit) |
-| arXiv | None | Free, no key needed |
-| Tavily | `--tavily-key` or `TAVILY_API_KEY` env var | Required for Tavily source |
-
-### Regression Scoring Model
-
-When `--regression` is enabled with `--scholar-eval`, uses a Ridge regression model instead of weighted average for the overall score prediction. The model considers:
-- 9 base dimension scores
-- 3 interaction terms (soundness×novelty, clarity×significance, literature_grounding×novelty)
-- 2 meta features (critical issue count, dimensions below 5.0)
-
-Default model coefficients approximate the weighted-average behavior. Custom trained models can be placed at `$SKILL_DIR/scripts/models/scoring_model.json`.
-
----
-
-## Agent References
-
-| Agent | Definition File | Role |
-|-------|----------------|------|
-| Methodology Reviewer | `$SKILL_DIR/agents/methodology_reviewer_agent.md` | Research design, statistical rigor, reproducibility |
-| Domain Reviewer | `$SKILL_DIR/agents/domain_reviewer_agent.md` | Literature coverage, theoretical framework, contribution |
-| Critical Reviewer | `$SKILL_DIR/agents/critical_reviewer_agent.md` | Core argument challenges, logical fallacies, overclaims |
-| Synthesis Agent | `$SKILL_DIR/agents/synthesis_agent.md` | Consolidate reviews, consensus classification, revision roadmap |
-| Literature Reviewer | `$SKILL_DIR/agents/literature_reviewer_agent.md` | External literature verification (optional, with `--literature-search`) |
-
----
-
-## Reference Files
-
-| Reference | Purpose | Used By |
-|-----------|---------|---------|
-| `references/REVIEW_CRITERIA.md` | 4-dimension scoring framework | All modes |
-| `references/CHECKLIST.md` | Universal + venue-specific checklists | self-check, gate |
-| `references/SCHOLAR_EVAL_GUIDE.md` | 8-dimension ScholarEval scoring guide | review (with --scholar-eval) |
-| `references/quality_rubrics.md` | Score-level descriptors and decision mapping | review, self-check |
-| `references/AUDIT_GUIDE.md` | User guide for modes and report interpretation | Reference |
-| `references/POLISH_GUIDE.md` | Style targets and critic/mentor protocol | polish |
-| `references/FORBIDDEN_TERMS.md` | Protected content (citations, math, terminology) | All modes |
-| `references/QUICK_REFERENCE.md` | Check support matrix and CLI quick reference | Reference |
-| `references/editorial_decision_standards.md` | Consensus rules and decision matrix | review (synthesis) |
-| `references/LITERATURE_GROUNDING_GUIDE.md` | Literature Grounding dimension scoring rubric (NEW v3.0) | review, self-check (with --literature-search) |
-
-## Example Requests
-
-- “Run a self-check on `paper.tex` and tell me what blocks submission.”
-- “Review this paper like a harsh reviewer and give me a revision roadmap.”
-- “Is `paper.pdf` ready to submit to IEEE, or does it fail the gate?”
-- “Check whether the IEEE pseudocode in `paper.tex` still uses a floating `algorithm` block.”
-- “Re-audit this revision against my previous report and tell me which issues are still open.”
-
-## Templates
-
-| Template | Purpose |
-|----------|---------|
-| `templates/audit_report_template.md` | Output structure for self-check/gate |
-| `templates/review_report_template.md` | Output structure for multi-perspective review |
-| `templates/revision_roadmap_template.md` | Prioritized revision action plan |
-
-## Quality Standards
-
-| Dimension | Requirement |
-|-----------|-------------|
-| Evidence-based | Every weakness must cite specific text, line, or section from the paper |
-| Specificity | Avoid vague comments; provide exact locations and concrete suggestions |
-| Balance | Report both strengths and weaknesses; never only criticize |
-| Actionability | Each issue must include a specific improvement suggestion |
-| Source transparency | Always label findings as [Script] or [LLM] |
-| Format consistency | All reports follow the corresponding template structure |
-| Constructive tone | Professional and helpful; avoid dismissive language |
+Legacy persona agents remain for compatibility but are no longer the default backbone of `deep-review`.
 
 ## Examples
 
-### Self-Check
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --journal neurips
-```
-
-### Review (Multi-Perspective)
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval
-```
-Then follow Steps 8-12 to dispatch review agents.
-
-### Gate (CI/CD)
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode gate --journal ieee --format json
-```
-
-### Polish
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode polish
-```
-
-### Re-Audit
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode re-audit --previous-report report_v1.md
-```
-
-### PDF Input
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.pdf --mode self-check --pdf-mode enhanced
-```
-
-### Literature Search (NEW v3.0)
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode review --scholar-eval --literature-search
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --scholar-eval --literature-search --tavily-key $TAVILY_API_KEY
-```
-
-### Regression Scoring (NEW v3.0)
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode self-check --scholar-eval --regression
-```
-
-See `$SKILL_DIR/examples/` for complete output examples.
-
----
-
-## Troubleshooting
-
-> Troubleshooting: see [`references/TROUBLESHOOTING.md`](references/TROUBLESHOOTING.md).
-
-## Changelog
-
-> Version history: see [`references/CHANGELOG.md`](references/CHANGELOG.md).
+- “Review this manuscript like a serious conference reviewer and tell me the biggest validity risks.”
+- “Run a quick audit on `paper.tex` and tell me what blocks submission.”
+- “Gate this IEEE submission and separate blockers from recommendations.”
+- “Re-audit this revision against my previous report.”

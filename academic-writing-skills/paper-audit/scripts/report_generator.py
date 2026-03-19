@@ -5,7 +5,7 @@ Handles scoring engine, issue aggregation, and Markdown report rendering.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 # --- Data Models ---
 
@@ -25,6 +25,64 @@ class AuditIssue:
 
 
 @dataclass
+class DeepReviewIssue:
+    """A structured reviewer finding used by deep-review workflows."""
+
+    ISSUE_KEYS = (
+        "title",
+        "quote",
+        "explanation",
+        "comment_type",
+        "severity",
+        "confidence",
+        "source_kind",
+        "source_section",
+        "related_sections",
+        "root_cause_key",
+        "review_lane",
+        "gate_blocker",
+        "quote_verified",
+    )
+
+    title: str
+    quote: str
+    explanation: str
+    comment_type: str
+    severity: str
+    confidence: str = "medium"
+    source_kind: str = "llm"
+    source_section: str = ""
+    related_sections: list[str] = field(default_factory=list)
+    root_cause_key: str = ""
+    review_lane: str = ""
+    gate_blocker: bool = False
+    quote_verified: Optional[bool] = None
+
+    @classmethod
+    def from_dict(cls, issue: dict) -> "DeepReviewIssue":
+        """Build a DeepReviewIssue from a persisted issue mapping."""
+        payload = {key: issue[key] for key in cls.ISSUE_KEYS if key in issue}
+        return cls(**payload)
+
+    def to_dict(self) -> dict:
+        return {
+            "title": self.title,
+            "quote": self.quote,
+            "explanation": self.explanation,
+            "comment_type": self.comment_type,
+            "severity": self.severity,
+            "confidence": self.confidence,
+            "source_kind": self.source_kind,
+            "source_section": self.source_section,
+            "related_sections": list(self.related_sections),
+            "root_cause_key": self.root_cause_key,
+            "review_lane": self.review_lane,
+            "gate_blocker": self.gate_blocker,
+            "quote_verified": self.quote_verified,
+        }
+
+
+@dataclass
 class ChecklistItem:
     """A single pre-submission checklist item."""
 
@@ -39,15 +97,21 @@ class AuditResult:
 
     file_path: str
     language: str  # "en" or "zh"
-    mode: str  # "self-check", "review", "gate", "polish"
+    mode: str  # "quick-audit", "deep-review", "gate", "polish", "re-audit"
     venue: str = ""  # e.g., "neurips", "ieee"
+    mode_alias_used: str | None = None
     issues: list[AuditIssue] = field(default_factory=list)
+    issue_bundle: list[DeepReviewIssue] = field(default_factory=list)
     checklist: list[ChecklistItem] = field(default_factory=list)
     # Review mode extras
     strengths: list[str] = field(default_factory=list)
     weaknesses: list[str] = field(default_factory=list)
     questions: list[str] = field(default_factory=list)
     summary: str = ""
+    overall_assessment: str = ""
+    revision_roadmap: list[dict] = field(default_factory=list)
+    section_index: list[dict] = field(default_factory=list)
+    artifact_dir: str = ""
     # ScholarEval result (optional, populated when --scholar-eval is used)
     scholar_eval_result: object | None = None
     # Literature context (optional, populated when --literature-search is used)
@@ -115,6 +179,62 @@ SCORE_LABELS: list[tuple[float, str]] = [
     (0.0, "Strong Reject"),
 ]
 
+DEEP_REVIEW_SEVERITY_ORDER: dict[str, int] = {
+    "major": 0,
+    "moderate": 1,
+    "minor": 2,
+}
+
+SOURCE_KIND_LABELS: dict[str, str] = {
+    "llm": "[LLM]",
+    "script": "[Script]",
+}
+
+DEEP_REVIEW_ISSUE_KEYS: tuple[str, ...] = (
+    "title",
+    "quote",
+    "explanation",
+    "comment_type",
+    "severity",
+    "confidence",
+    "source_kind",
+    "source_section",
+    "related_sections",
+    "root_cause_key",
+    "review_lane",
+    "gate_blocker",
+    "quote_verified",
+)
+
+DEEP_REVIEW_PRIORITY_LABELS: dict[str, str] = {
+    "major": "Priority 1",
+    "moderate": "Priority 2",
+    "minor": "Priority 3",
+}
+
+DEEP_REVIEW_SECTIONS: tuple[tuple[str, str], ...] = (
+    ("major", "Major Issues"),
+    ("moderate", "Moderate Issues"),
+    ("minor", "Minor Issues"),
+)
+
+
+def coerce_deep_review_issue(issue: DeepReviewIssue | dict[str, Any]) -> DeepReviewIssue:
+    """Convert an issue payload into the canonical DeepReviewIssue dataclass."""
+    if isinstance(issue, DeepReviewIssue):
+        return issue
+
+    payload = {key: issue[key] for key in DEEP_REVIEW_ISSUE_KEYS if key in issue}
+    payload["related_sections"] = [
+        section for section in payload.get("related_sections", []) if section
+    ]
+    return DeepReviewIssue(**payload)
+
+
+def normalize_deep_review_issue_dict(issue: DeepReviewIssue | dict[str, Any]) -> dict[str, Any]:
+    """Convert an issue payload into the canonical persisted dict schema."""
+    return coerce_deep_review_issue(issue).to_dict()
+
 
 def _score_label(score: float) -> str:
     """Map numeric score to NeurIPS-style label."""
@@ -170,6 +290,143 @@ def _count_issues(issues: list[AuditIssue]) -> str:
     return f"{c}/{m}/{n}"
 
 
+def _count_deep_review_issues(issues: list[DeepReviewIssue]) -> dict[str, int]:
+    """Count deep-review issues by severity."""
+    return {
+        "major": sum(1 for i in issues if i.severity == "major"),
+        "moderate": sum(1 for i in issues if i.severity == "moderate"),
+        "minor": sum(1 for i in issues if i.severity == "minor"),
+    }
+
+
+def _default_revision_roadmap(issues: list[DeepReviewIssue]) -> list[dict]:
+    """Build a minimal roadmap from issue severities when none is provided."""
+    return [
+        {
+            "priority": DEEP_REVIEW_PRIORITY_LABELS.get(issue.severity, "Priority 3"),
+            "title": issue.title,
+            "source": SOURCE_KIND_LABELS.get(issue.source_kind, "[LLM]"),
+            "section": issue.source_section or "unknown",
+        }
+        for issue in issues
+    ]
+
+
+def render_deep_review_report(result: AuditResult) -> str:
+    """Render a deep-review-first Markdown report."""
+    scores = calculate_scores(result.issues)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    issue_counts = _count_deep_review_issues(result.issue_bundle)
+    recommendation = _score_label(scores["overall"])
+    roadmap = result.revision_roadmap or _default_revision_roadmap(result.issue_bundle)
+
+    lines = [
+        "# Deep Review Report",
+        "",
+        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: {result.mode}",
+        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+    ]
+    if result.mode_alias_used:
+        lines.append(f"**Compatibility Note**: legacy mode alias `{result.mode_alias_used}` mapped to `{result.mode}`.")
+    if result.artifact_dir:
+        lines.append(f"**Artifacts**: `{result.artifact_dir}`")
+    lines.extend(["", "## Overall Assessment", ""])
+
+    if result.overall_assessment:
+        lines.append(result.overall_assessment)
+    else:
+        lines.append(
+            "Deep review completed. Inspect the structured issue list below for the highest-impact "
+            "claim, methodology, and consistency risks before revising."
+        )
+    lines.extend(
+        [
+            "",
+            f"- **Major**: {issue_counts['major']}",
+            f"- **Moderate**: {issue_counts['moderate']}",
+            f"- **Minor**: {issue_counts['minor']}",
+            "",
+        ]
+    )
+
+    if result.summary:
+        lines.extend(["## Paper Summary", "", result.summary, ""])
+
+    if result.issue_bundle:
+        issues = sorted(
+            result.issue_bundle,
+            key=lambda i: (
+                DEEP_REVIEW_SEVERITY_ORDER.get(i.severity, 99),
+                i.source_section or "",
+                i.title.lower(),
+            ),
+        )
+        for severity, title in DEEP_REVIEW_SECTIONS:
+            bucket = [issue for issue in issues if issue.severity == severity]
+            if not bucket:
+                continue
+            lines.extend([f"## {title}", ""])
+            for idx, issue in enumerate(bucket, 1):
+                related = ", ".join(issue.related_sections) if issue.related_sections else "—"
+                source_label = SOURCE_KIND_LABELS.get(issue.source_kind, "[LLM]")
+                lines.append(f"### {severity[:1].upper()}{idx}: {issue.title}")
+                lines.append(f"- **Type**: {issue.comment_type}")
+                lines.append(f"- **Source**: {source_label} via `{issue.review_lane or 'review'}`")
+                lines.append(f"- **Confidence**: {issue.confidence}")
+                lines.append(f"- **Section**: {issue.source_section or 'unknown'}")
+                lines.append(f"- **Related Sections**: {related}")
+                if issue.root_cause_key:
+                    lines.append(f"- **Root Cause Key**: `{issue.root_cause_key}`")
+                if issue.quote_verified is not None:
+                    lines.append(f"- **Quote Verified**: {'yes' if issue.quote_verified else 'no'}")
+                lines.append(f"- **Quote**: `{issue.quote}`")
+                lines.append(f"- **Explanation**: {issue.explanation}")
+                lines.append("")
+
+    if result.issues:
+        lines.extend(["## Phase 0 Automated Findings", ""])
+        modules: dict[str, list[AuditIssue]] = {}
+        for issue in result.issues:
+            modules.setdefault(issue.module, []).append(issue)
+
+        for module_name in sorted(modules.keys()):
+            lines.extend([f"### [Script] {module_name}", ""])
+            lines.extend(["| Line | Severity | Issue |", "|------|----------|-------|"])
+            for issue in modules[module_name]:
+                loc = str(issue.line) if issue.line else "---"
+                lines.append(f"| {loc} | {issue.severity} | {issue.message} |")
+            lines.append("")
+
+    lines.extend(
+        [
+            "## Score Summary",
+            "",
+            f"- **Quality**: {scores['quality']:.1f}/6.0",
+            f"- **Clarity**: {scores['clarity']:.1f}/6.0",
+            f"- **Significance**: {scores['significance']:.1f}/6.0",
+            f"- **Originality**: {scores['originality']:.1f}/6.0",
+            f"- **Overall**: {scores['overall']:.1f}/6.0 ({recommendation})",
+            "",
+        ]
+    )
+
+    if roadmap:
+        lines.extend(["## Revision Roadmap", ""])
+        for priority in ("Priority 1", "Priority 2", "Priority 3"):
+            items = [item for item in roadmap if item.get("priority") == priority]
+            if not items:
+                continue
+            lines.extend([f"### {priority}", ""])
+            for item in items:
+                source = item.get("source", "[LLM]")
+                section = item.get("section", "unknown")
+                title = item.get("title", "Untitled issue")
+                lines.append(f"- [ ] {title} ({source}; {section})")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
 def render_polish_precheck_report(result: AuditResult, precheck: dict) -> str:
     """Render precheck summary shown before Critic agent is spawned."""
     lines = [
@@ -216,9 +473,11 @@ def render_polish_precheck_report(result: AuditResult, precheck: dict) -> str:
 
 
 def render_self_check_report(result: AuditResult) -> str:
-    """Render a self-check mode Markdown report."""
+    """Render a quick-audit-style Markdown report."""
     scores = calculate_scores(result.issues)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    blockers = [issue for issue in result.issues if issue.severity == "Critical"]
+    quality_improvements = [issue for issue in result.issues if issue.severity != "Critical"]
 
     lines = [
         "# Paper Audit Report",
@@ -241,6 +500,65 @@ def render_self_check_report(result: AuditResult) -> str:
             "",
         ]
     )
+
+    # Submission blockers first.
+    lines.extend(["## Submission Blockers", ""])
+    if blockers:
+        for issue in blockers:
+            loc = f"(Line {issue.line}) " if issue.line else ""
+            lines.append(
+                f"- [Script] **[{issue.module}]** {loc}"
+                f"[Severity: {issue.severity}] [Priority: {issue.priority}]: "
+                f"{issue.message}"
+            )
+            if issue.original:
+                lines.append(f"  - Original: `{issue.original}`")
+            if issue.revised:
+                lines.append(f"  - Revised: `{issue.revised}`")
+            if issue.rationale:
+                lines.append(f"  - Rationale: {issue.rationale}")
+    else:
+        lines.append("- No submission blockers detected.")
+    lines.append("")
+
+    # High-signal quality improvements next.
+    lines.extend(["## Quality Improvements", ""])
+    if quality_improvements:
+        for severity, heading in [
+            ("Major", "### High-Signal Quality Issues"),
+            ("Minor", "### Additional Quality Improvements"),
+        ]:
+            sev_issues = [issue for issue in quality_improvements if issue.severity == severity]
+            if not sev_issues:
+                continue
+            lines.extend([heading, ""])
+            for issue in sev_issues:
+                loc = f"(Line {issue.line}) " if issue.line else ""
+                lines.append(
+                    f"- [Script] **[{issue.module}]** {loc}"
+                    f"[Severity: {issue.severity}] [Priority: {issue.priority}]: "
+                    f"{issue.message}"
+                )
+                if issue.original:
+                    lines.append(f"  - Original: `{issue.original}`")
+                if issue.revised:
+                    lines.append(f"  - Revised: `{issue.revised}`")
+                if issue.rationale:
+                    lines.append(f"  - Rationale: {issue.rationale}")
+            lines.append("")
+    else:
+        lines.append("- No quality improvements identified.")
+        lines.append("")
+
+    # Checklist
+    if result.checklist:
+        lines.extend(["## Pre-Submission Checklist", ""])
+        for item in result.checklist:
+            mark = "x" if item.passed else " "
+            lines.append(f"- [{mark}] {item.description}")
+            if not item.passed and item.details:
+                lines.append(f"  - {item.details}")
+        lines.append("")
 
     # Scores Table
     dim_issues_map: dict[str, list[AuditIssue]] = {
@@ -275,43 +593,14 @@ def render_self_check_report(result: AuditResult) -> str:
     )
     lines.append("")
 
-    # Issues by Severity
-    lines.extend(["## Issues", ""])
-    for severity in ["Critical", "Major", "Minor"]:
-        sev_issues = [i for i in result.issues if i.severity == severity]
-        if sev_issues:
-            lines.append(f"### {severity}")
-            lines.append("")
-            for issue in sev_issues:
-                loc = f"(Line {issue.line}) " if issue.line else ""
-                lines.append(
-                    f"- **[{issue.module}]** {loc}"
-                    f"[Severity: {issue.severity}] [Priority: {issue.priority}]: "
-                    f"{issue.message}"
-                )
-                if issue.original:
-                    lines.append(f"  - Original: `{issue.original}`")
-                if issue.revised:
-                    lines.append(f"  - Revised: `{issue.revised}`")
-                if issue.rationale:
-                    lines.append(f"  - Rationale: {issue.rationale}")
-            lines.append("")
-
-    # Checklist
-    if result.checklist:
-        lines.extend(["## Pre-Submission Checklist", ""])
-        for item in result.checklist:
-            mark = "x" if item.passed else " "
-            lines.append(f"- [{mark}] {item.description}")
-            if not item.passed and item.details:
-                lines.append(f"  - {item.details}")
-        lines.append("")
-
     return "\n".join(lines)
 
 
 def render_review_report(result: AuditResult) -> str:
     """Render a peer-review simulation Markdown report."""
+    if result.issue_bundle or result.mode == "deep-review":
+        return render_deep_review_report(result)
+
     scores = calculate_scores(result.issues)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     label = _score_label(scores["overall"])
@@ -437,7 +726,7 @@ def render_review_report(result: AuditResult) -> str:
 
         if minor:
             lines.extend(["### Priority 3 --- Optional Improvements", ""])
-            for _idx, issue in enumerate(minor, 1):
+            for issue in minor:
                 loc = f" (Line {issue.line})" if issue.line else ""
                 lines.append(f"- [ ] [{issue.module}]{loc} {issue.message}")
             lines.append("")
@@ -451,7 +740,7 @@ def render_gate_report(result: AuditResult) -> str:
 
     blocking = [i for i in result.issues if i.severity == "Critical"]
     passed = len(blocking) == 0 and all(item.passed for item in result.checklist)
-    verdict = "PASS ✅" if passed else "FAIL ❌"
+    verdict = "PASS" if passed else "FAIL"
 
     lines = [
         "# Quality Gate Report",
@@ -468,15 +757,15 @@ def render_gate_report(result: AuditResult) -> str:
         lines.extend(["## Blocking Issues (must fix)", ""])
         for issue in blocking:
             loc = f"(Line {issue.line}) " if issue.line else ""
-            lines.append(f"- ❌ **[{issue.module}]** {loc}{issue.message}")
+            lines.append(f"- [BLOCKING] **[{issue.module}]** {loc}{issue.message}")
         lines.append("")
 
     # Checklist
     if result.checklist:
         lines.extend(["## Checklist", ""])
         for item in result.checklist:
-            icon = "✅" if item.passed else "❌"
-            lines.append(f"- {icon} {item.description}")
+            status = "[PASS]" if item.passed else "[FAIL]"
+            lines.append(f"- {status} {item.description}")
             if not item.passed and item.details:
                 lines.append(f"  - {item.details}")
         lines.append("")
@@ -484,10 +773,12 @@ def render_gate_report(result: AuditResult) -> str:
     # Non-blocking issues (informational)
     non_blocking = [i for i in result.issues if i.severity != "Critical"]
     if non_blocking:
-        lines.extend(["## Non-Blocking Issues (informational)", ""])
+        lines.extend(["## Advisory Recommendations (non-blocking)", ""])
+        lines.append("These are advisory recommendations, not submission blockers.")
+        lines.append("")
         for issue in non_blocking:
             loc = f"(Line {issue.line}) " if issue.line else ""
-            lines.append(f"- ⚠️ **[{issue.module}]** {loc}{issue.message}")
+            lines.append(f"- [INFO] **[{issue.module}]** {loc}{issue.message}")
         lines.append("")
 
     return "\n".join(lines)
@@ -510,6 +801,7 @@ def render_json_report(result: AuditResult) -> str:
         "file": result.file_path,
         "language": result.language,
         "mode": result.mode,
+        "mode_alias_used": result.mode_alias_used,
         "venue": result.venue,
         "generated_at": datetime.now().isoformat(),
         "scores": {k: round(v, 2) for k, v in scores.items()},
@@ -535,6 +827,15 @@ def render_json_report(result: AuditResult) -> str:
             for c in result.checklist
         ],
     }
+    if result.issue_bundle:
+        data["issue_bundle"] = [normalize_deep_review_issue_dict(issue) for issue in result.issue_bundle]
+        data["overall_assessment"] = result.overall_assessment
+        data["paper_summary"] = result.summary
+        data["revision_roadmap"] = result.revision_roadmap or _default_revision_roadmap(
+            result.issue_bundle
+        )
+        data["section_index"] = result.section_index
+        data["artifact_dir"] = result.artifact_dir
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
@@ -592,23 +893,17 @@ def render_reaudit_report(result: AuditResult) -> str:
         lines.append("")
         lines.append("## Prior Issue Verification")
         lines.append("")
-        lines.append("| # | Module | Prior Severity | Status | Current | Message |")
-        lines.append("|---|--------|---------------|--------|---------|---------|")
+        lines.append("| # | root_cause_key | Module | Prior Severity | Status | Current | Message |")
+        lines.append("|---|----------------|--------|---------------|--------|---------|---------|")
         for idx, c in enumerate(classifications, 1):
-            status = c["status"]
-            if status == "FULLY_ADDRESSED":
-                status_label = "FIXED"
-            elif status == "PARTIALLY_ADDRESSED":
-                status_label = "PARTIAL"
-            else:
-                status_label = "OPEN"
             cur_sev = c.get("current_severity") or "\u2014"
+            root_cause = c.get("root_cause_key") or "root cause unavailable"
             msg = c["prior_message"]
             if len(msg) > 80:
                 msg = msg[:77] + "..."
             lines.append(
-                f"| {idx} | {c['prior_module']} | {c['prior_severity']} "
-                f"| {status_label} | {cur_sev} | {msg} |"
+                f"| {idx} | {root_cause} | {c['prior_module']} | {c['prior_severity']} "
+                f"| {c['status']} | {cur_sev} | {msg} |"
             )
         lines.append("")
 
@@ -668,8 +963,12 @@ def render_report(result: AuditResult) -> str:
     Returns:
         Formatted Markdown report string.
     """
-    if result.mode == "review":
+    if result.mode == "deep-review":
+        report = render_deep_review_report(result)
+    elif result.mode == "review":
         report = render_review_report(result)
+    elif result.mode == "quick-audit":
+        report = render_self_check_report(result)
     elif result.mode == "gate":
         report = render_gate_report(result)
     elif result.mode == "re-audit":
