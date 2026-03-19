@@ -18,7 +18,7 @@ Task runner: `just` (requires `uv` for Python). All commands run through `uv run
 | `just test` | `python -m pytest tests/` |
 | `just ci` | lint → typecheck → test (full pipeline) |
 | `just fix` | `ruff format . && ruff check --fix .` |
-| `just doc` | VitePress dev server (`cd docs && npm run docs:dev`) |
+| `just docs` | VitePress dev server (`cd docs && npm run docs:dev`) |
 | `just doc-build` | Build static docs site |
 | `just clean` | Remove `__pycache__`, `.pytest_cache`, `.ruff_cache` |
 

@@ -90,11 +90,18 @@ uv run python -m pytest tests/
 ### `paper-audit`
 
 模式：
-- `self-check`
-- `review`
+- `quick-audit`
+- `deep-review`
 - `gate`
 - `polish`
 - `re-audit`
+
+推荐选择：
+
+- 想快速做脚本化筛查时用 `quick-audit`
+- 想拿到审稿人风格问题清单和路线图时用 `deep-review`
+- 只看 blocker 时用 `gate`
+- 已有旧报告、想验证修订效果时用 `re-audit`
 
 ### `industrial-ai-research`
 
@@ -132,3 +139,9 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 ### 你还没开始写，只是在做调研
 
 用 `industrial-ai-research`，不要先用写作技能。
+
+## 输出预期
+
+- 写作类技能通常返回面向问题的建议和脚本化诊断。
+- `paper-audit` 返回 severity 分级报告、结构化问题清单、修订路线图，以及可选 score summary。
+- 调研类输出应明确区分已验证证据与推断。

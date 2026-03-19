@@ -1,5 +1,16 @@
 import { defineConfig } from 'vitepress'
 
+function excludeFromLocalSearch(relativePath: string): boolean {
+  const normalized = relativePath.replace(/\\/g, '/')
+
+  return (
+    normalized.startsWith('plans/') ||
+    normalized.startsWith('report/') ||
+    normalized.includes('/resources/references/') ||
+    normalized.includes('resources/references/')
+  )
+}
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Academic Writing Skills",
@@ -10,6 +21,25 @@ export default defineConfig({
 
   // Check dead links natively
   ignoreDeadLinks: false,
+
+  // Keep local search focused on task-facing docs. Large archived analyses and
+  // long-form reference pages stay browsable, but they do not need to bloat
+  // the generated search index chunks.
+  transformPageData(pageData) {
+    if (excludeFromLocalSearch(pageData.relativePath)) {
+      pageData.frontmatter.search = false
+    }
+  },
+
+  vite: {
+    build: {
+      // VitePress local search emits one prebuilt index chunk per locale.
+      // In this bilingual docs site those chunks are content payloads, not
+      // accidental vendor bloat, and they legitimately exceed Vite's default
+      // 500 kB warning threshold.
+      chunkSizeWarningLimit: 750
+    }
+  },
 
   // Theme configuration
   themeConfig: {
@@ -66,7 +96,12 @@ export default defineConfig({
         text: 'Paper Audit (paper-audit)',
         collapsed: false,
         items: [
-          { text: 'Overview', link: '/skills/paper-audit/' }
+          { text: 'Overview', link: '/skills/paper-audit/' },
+          { text: 'Workflow', link: '/skills/paper-audit/resources/WORKFLOW' },
+          { text: 'Modes', link: '/skills/paper-audit/resources/MODES' },
+          { text: 'Outputs', link: '/skills/paper-audit/resources/OUTPUTS' },
+          { text: 'CLI & Examples', link: '/skills/paper-audit/resources/CLI_AND_EXAMPLES' },
+          { text: 'Troubleshooting', link: '/skills/paper-audit/resources/TROUBLESHOOTING' }
         ]
       },
       {
@@ -159,7 +194,12 @@ export default defineConfig({
             text: '论文审查 (paper-audit)',
             collapsed: false,
             items: [
-              { text: '概览', link: '/zh/skills/paper-audit/' }
+              { text: '概览', link: '/zh/skills/paper-audit/' },
+              { text: '工作流', link: '/zh/skills/paper-audit/resources/WORKFLOW' },
+              { text: '模式说明', link: '/zh/skills/paper-audit/resources/MODES' },
+              { text: '输出产物', link: '/zh/skills/paper-audit/resources/OUTPUTS' },
+              { text: '命令与示例', link: '/zh/skills/paper-audit/resources/CLI_AND_EXAMPLES' },
+              { text: '常见问题', link: '/zh/skills/paper-audit/resources/TROUBLESHOOTING' }
             ]
           },
           {

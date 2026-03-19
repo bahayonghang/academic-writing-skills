@@ -13,7 +13,7 @@
 | [`latex-paper-en`](#latex-paper-en) | 英文学术论文 — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
 | [`latex-thesis-zh`](#latex-thesis-zh) | 中文学位论文 — GB/T 7714 / thuthesis / pkuthss | `.tex` |
 | [`typst-paper`](#typst-paper) | 快速编译双语论文 | `.typ` |
-| [`paper-audit`](#paper-audit) | 自动化投稿前审查与评分 | `.tex` `.typ` `.pdf` |
+| [`paper-audit`](#paper-audit) | 深度审稿优先的论文审查与投稿门控 | `.tex` `.typ` `.pdf` |
 | [`industrial-ai-research`](#industrial-ai-research) | Industrial AI 文献综合与研究缺口分析 | — |
 
 ---
@@ -134,34 +134,62 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 
 ### paper-audit
 
-多格式自动化审查工具，包含分层检查与质量评分。
+以深度审稿为核心的多格式论文审查工具，包含结构化问题清单、修订路线图与投稿门控。
 
 | 类别 | 功能 |
 |---|---|
 | **输入** | `.tex`、`.typ`、`.pdf` 文件 |
-| **模式** | `self-check`（全面审查）· `review`（Phase 0 自动审查；完整综合评审由 skill 工作流完成）· `gate`（投稿门控）|
+| **模式** | `quick-audit`（快速筛查）· `deep-review`（审稿人风格深审）· `gate`（投稿门控）· `re-audit`（修订回归）|
 | **视觉排版** | 页边距溢出、文本/图片重叠、字体不一致、低分辨率图片、空白页 |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
 | **伪代码审查** | IEEE gate 检查浮动算法环境、caption/label/引用顺序，并把行号与长注释归为建议项而非硬阻塞 |
 | **实验叙事** | 段落连贯性、基线对比、discussion 深度/分层、结论完整性检查 |
+| **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`revision_roadmap.md` |
 | **ScholarEval** | 8 维度质量评分（1–10 分），附投稿可读性标签 |
 | **NeurIPS 评分** | Quality / Clarity / Significance / Originality 1–6 分 |
 | **在线验证** | CrossRef + Semantic Scholar（添加 `--online`）；无需 API 密钥 |
 | **去AI化** | 全文降低 AI 写作痕迹 |
 | **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
-| **审查范围说明** | Phase 0 脚本稳定覆盖 A1/A3、实验结构与 C3；A2/A4 仍属于 reviewer judgment，需 agent review 才完整 |
+| **审查范围说明** | Phase 0 负责脚本化审查；`deep-review` 进一步加入 claim-evidence、符号/数值一致性、评估公平性、自我标准一致性、先验工作定位等 reviewer lanes |
 
 **审查工作流层级**
 
 | 层级 | 检查内容 |
 |---|---|
-| L0 | 格式预检（语法、编译错误）|
-| L1 | 引用完整性（未定义引用、缺少 caption）|
-| L2 | 视觉排版（PDF 渲染分析）|
-| L3 | Caption 与实验叙事质量 |
-| L4 | 去AI化编辑 |
-| L5 | ScholarEval / NeurIPS 评分 |
+| L0 | `quick-audit` / `gate` 脚本审查 |
+| L1 | deep-review workspace 预处理（sections、summary、claim map）|
+| L2 | section review lanes |
+| L3 | cross-cutting review lanes |
+| L4 | 问题合并与 quote 校验 |
+| L5 | 最终报告、路线图与可选评分摘要 |
+
+**快速使用**
+
+| 模式 | 适用时机 | 主产物 |
+|---|---|---|
+| `quick-audit` | 想快速看投稿风险 | 脚本化报告 + checklist + score summary |
+| `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 |
+| `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
+| `re-audit` | 想验证修订效果 | 问题状态对比 |
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
+```
+
+兼容别名：
+
+- `self-check` -> `quick-audit`
+- `review` -> `deep-review`
+
+文档：
+
+- [概览](docs/zh/skills/paper-audit/index.md)
+- [工作流](docs/zh/skills/paper-audit/resources/WORKFLOW.md)
+- [输出产物](docs/zh/skills/paper-audit/resources/OUTPUTS.md)
 
 ### industrial-ai-research
 

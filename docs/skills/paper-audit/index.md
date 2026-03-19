@@ -1,76 +1,89 @@
 # `paper-audit`
 
-Unified academic paper audit for LaTeX, Typst, and PDF documents.
+Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents.
 
 ## Use It For
 
-- pre-submission checks
-- structured self-review
-- simulated peer review
-- gate-style readiness decisions
-- post-revision re-audits
+- quick readiness screening before submission
+- reviewer-style deep critique
+- pass/fail submission gating
+- revision verification against an older audit
+- polish precheck before style-focused editing
+
+## Do Not Use It For
+
+- direct source editing as the first step
+- compilation debugging as the main task
+- free-form literature survey writing
+- purely cosmetic copy-editing without an audit goal
 
 ## Modes
 
 | Mode | Use when | Script |
 | --- | --- | --- |
-| `self-check` | you want a full readiness pass | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode self-check` |
-| `review` | you want a review-oriented report | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode review` |
-| `gate` | you want pass or fail style blocking issues | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
-| `polish` | you want style-targeted follow-up work | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
+| `quick-audit` | you want a fast readiness pass | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
+| `deep-review` | you want a reviewer-style issue bundle and roadmap | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
+| `gate` | you want pass/fail blockers only | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
+| `polish` | you want a precheck before polishing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | you want to compare against a previous report | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |
 
-## Supported Inputs
+Legacy aliases:
 
-- `.tex`
-- `.typ`
-- `.pdf`
-- optional `--journal` or `--venue` for venue-aware checks
-- optional `--previous-report` when using `re-audit`
+- `self-check` -> `quick-audit`
+- `review` -> `deep-review`
 
-## Key Capabilities
+## How to Choose a Mode
 
-- reference integrity checks
-- IEEE pseudocode gate checks for algorithm floats, caption/label/reference order, and advisory line-number guidance
-- PDF visual layout checks
-- severity and priority reporting
-- 4-dimension scoring
-- citation stacking detection (flags 3+ clustered citations without individual discussion as AI writing traces)
-- literature review quality assessment (A1/A3 script-backed; A2/A4 reviewer-judgment unless the agent lane is used)
-- discussion depth, discussion layering, and results-literature echo (B3-B4)
-- conclusion completeness check (B5: findings + implications + limitations)
-- cross-section logic chain closure (C3: intro claims answered in conclusion)
-- optional ScholarEval-style assessment
-- optional online bibliography verification
+- choose `quick-audit` if you want a fast script-backed screen
+- choose `deep-review` if you want reviewer-style critique and a roadmap
+- choose `gate` if you only care about blockers
+- choose `re-audit` if you already have an older report
+- choose `polish` only when you need a pre-polish safety check
+
+## Deep-review at a Glance
+
+1. Prepare workspace with `prepare_review_workspace.py`
+2. Run Phase 0 automated audit with `audit.py --mode deep-review`
+3. Dispatch section and cross-cutting review lanes
+4. Consolidate comment JSONs
+5. Verify quotes
+6. Render `review_report.md`
+
+## Main outputs
+
+- `final_issues.json`
+- `overall_assessment.txt`
+- `review_report.md`
+- `revision_roadmap.md`
+
+## Read This Next
+
+- [Workflow](./resources/WORKFLOW.md)
+- [Modes](./resources/MODES.md)
+- [Outputs](./resources/OUTPUTS.md)
+- [CLI and Examples](./resources/CLI_AND_EXAMPLES.md)
+- [Troubleshooting](./resources/TROUBLESHOOTING.md)
 
 ## Good First Requests
 
 ```text
-Run a self-check audit on paper.tex.
+Run a quick-audit on paper.tex and tell me what blocks submission.
 ```
 
 ```text
-Tell me whether paper.pdf is submission-ready.
+Deep-review this manuscript like a conference reviewer and give me a revision roadmap.
 ```
 
 ```text
-Re-audit this paper against the previous report.
+Gate this IEEE paper and separate hard blockers from advisory pseudocode recommendations.
 ```
 
 ```text
-Check paper.tex for citation stacking in the introduction and related work.
+Re-audit this revision against the previous report.
 ```
 
-```text
-Run an IEEE gate check and tell me whether the pseudocode still violates float or caption rules.
-```
+## Important Notes
 
-## Notes
-
-- `paper-audit` is for reports and scoring, not for being your first compiler.
-- Use the sibling writing skill first if the source still does not build.
-- `audit.py --mode review` produces the Phase 0 automated review report. The full multi-perspective synthesis happens when the outer skill workflow dispatches reviewer agents.
-- Outputs differ by execution surface: script-only `self-check` and `review` produce automated reports; the full skill workflow layers reviewer synthesis on top of `review`; `gate` is CI-friendly PASS/FAIL; `re-audit` compares deltas against a prior report.
-- IEEE pseudocode findings are split into hard rules versus IEEE-safe recommendations; missing line numbers should stay advisory unless the venue says otherwise.
-- Citation stacking detection checks Introduction and Related Work sections for sentences with 3+ clustered citations that lack individual discussion — a common AI writing pattern flagged by reviewers.
-- Automated Phase 0 currently covers A1/A3 plus experiment-structure and cross-section checks that are script-backed. A2/A4 remain agent-review judgments unless future heuristics are added.
+- `audit.py --mode deep-review` is only Phase 0, not the full reviewer workflow.
+- The primary deep-review product is the structured issue bundle, not the score summary.
+- Use source files when possible; PDF input is supported but weaker for formula- and notation-heavy papers.

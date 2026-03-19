@@ -23,7 +23,21 @@ uv sync
 
 ## Install Skills
 
-Copy the skill folders you need into your Codex or Claude skill directory, or package them with your preferred skill manager.
+Recommended: install directly with `npx skills`.
+
+```bash
+# Install individual skills
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
+npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+
+# Or install all skills at once
+npx skills add github.com/bahayonghang/academic-writing-skills
+```
+
+If you prefer manual installation, copy the skill folders you need into your Claude skill directory.
 
 Typical folders:
 

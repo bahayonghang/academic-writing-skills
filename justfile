@@ -24,7 +24,7 @@ help:
     @echo "  just format            - 仅格式化代码"
     @echo ""
     @echo "📚 文档："
-    @echo "  just doc               - 本地预览文档"
+    @echo "  just docs              - 本地预览文档"
     @echo "  just doc-build         - 构建文档"
     @echo ""
     @echo "🧹 清理："
@@ -102,7 +102,7 @@ clean:
     @echo "✅ 清理完成！"
 
 # 本地预览文档
-doc:
+docs:
     @echo "📚 启动文档开发服务器..."
     @cd docs && npm run docs:dev
 

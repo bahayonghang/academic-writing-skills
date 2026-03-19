@@ -274,12 +274,11 @@ class TestReportRendering:
         report = render_self_check_report(result)
         assert "# Paper Audit Report" in report
         assert "Executive Summary" in report
-        assert "Scores" in report
-        assert "Issues" in report
-        assert "Critical" in report
-        assert "Major" in report
-        assert "Minor" in report
+        assert "Submission Blockers" in report
+        assert "Quality Improvements" in report
+        assert "[Script]" in report
         assert "Pre-Submission Checklist" in report
+        assert "Scores" in report
         assert "[x] Paper compiles" in report
         assert "[ ] No TODO found" in report
 
@@ -315,6 +314,7 @@ class TestReportRendering:
         assert "PASS" in report
         # "Blocking Issues (must fix)" should NOT appear; only "Non-Blocking Issues"
         assert "Blocking Issues (must fix)" not in report
+        assert report.isascii()
 
     def test_gate_report_fail(self) -> None:
         result = AuditResult(
@@ -330,6 +330,21 @@ class TestReportRendering:
         report = render_gate_report(result)
         assert "FAIL" in report
         assert "Blocking Issues" in report
+        assert "[BLOCKING]" in report
+
+    def test_gate_report_uses_ascii_safe_advisory_labels(self) -> None:
+        result = AuditResult(
+            file_path="paper.tex",
+            language="en",
+            mode="gate",
+            issues=[AuditIssue("GRAMMAR", 4, "Minor", "P2", "Passive voice")],
+            checklist=[ChecklistItem("No TODOs", False, "Found TODO")],
+        )
+        report = render_gate_report(result)
+        assert "Advisory Recommendations" in report
+        assert "[INFO]" in report
+        assert "[FAIL]" in report
+        assert report.isascii()
 
     def test_render_report_dispatches_correctly(self, sample_issues: list[AuditIssue]) -> None:
         for mode, expected_title in [
@@ -1328,6 +1343,51 @@ class TestParsePreviousReport:
         issues = _parse_previous_report(str(report_file))
         assert len(issues) == 0
 
+    def test_parses_root_cause_summary_bullets(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(
+            "# Previous Review Summary\n\n"
+            "- Root cause `claim-scope-mismatch`: headline claim broader than supported evidence.\n",
+            encoding="utf-8",
+        )
+
+        from audit import _parse_previous_report
+
+        issues = _parse_previous_report(str(report_file))
+        assert len(issues) == 1
+        assert issues[0]["root_cause_key"] == "claim-scope-mismatch"
+        assert issues[0]["match_strategy"] == "root_cause_summary"
+        assert "supported evidence" in issues[0]["message"]
+
+    def test_collect_previous_issues_uses_structured_bundle_when_present(self, tmp_path: Path) -> None:
+        report_file = tmp_path / "report.md"
+        report_file.write_text(
+            "# Previous Review Summary\n\n"
+            "- Root cause `comparison-asymmetry`: proposed method tuned more aggressively.\n",
+            encoding="utf-8",
+        )
+        (tmp_path / "previous_final_issues.json").write_text(
+            json.dumps(
+                [
+                    {
+                        "title": "Comparison protocol is asymmetric",
+                        "explanation": "The proposed method receives extra opportunities.",
+                        "severity": "moderate",
+                        "comment_type": "methodology",
+                        "review_lane": "evaluation_fairness_and_reproducibility",
+                        "root_cause_key": "comparison-asymmetry",
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        from audit import _collect_previous_issues
+
+        issues = _collect_previous_issues(str(report_file))
+        assert any(issue["match_strategy"] == "structured_issue" for issue in issues)
+        assert any(issue["root_cause_key"] == "comparison-asymmetry" for issue in issues)
+
 
 # ============================================================
 # Re-audit: fuzzy matching tests
@@ -1488,6 +1548,7 @@ class TestRenderReauditReport:
                         "prior_module": "FORMAT",
                         "prior_severity": "Major",
                         "prior_message": "Inconsistent heading levels",
+                        "root_cause_key": "heading-hierarchy",
                         "status": "FULLY_ADDRESSED",
                         "current_severity": None,
                         "current_message": None,
@@ -1497,6 +1558,7 @@ class TestRenderReauditReport:
                         "prior_module": "BIB",
                         "prior_severity": "Critical",
                         "prior_message": "Undefined citation key",
+                        "root_cause_key": "citation-resolution",
                         "status": "FULLY_ADDRESSED",
                         "current_severity": None,
                         "current_message": None,
@@ -1506,6 +1568,7 @@ class TestRenderReauditReport:
                         "prior_module": "GRAMMAR",
                         "prior_severity": "Major",
                         "prior_message": "Passive voice overuse",
+                        "root_cause_key": "passive-voice-overuse",
                         "status": "PARTIALLY_ADDRESSED",
                         "current_severity": "Minor",
                         "current_message": "Passive voice",
@@ -1547,8 +1610,9 @@ class TestRenderReauditReport:
         result = self._make_reaudit_result()
         report = render_reaudit_report(result)
         assert "Prior Issue Verification" in report
-        assert "FIXED" in report
-        assert "PARTIAL" in report
+        assert "FULLY_ADDRESSED" in report
+        assert "PARTIALLY_ADDRESSED" in report
+        assert "heading-hierarchy" in report
 
     def test_report_has_scores(self) -> None:
         result = self._make_reaudit_result()

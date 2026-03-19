@@ -79,16 +79,14 @@ SKILLS = {
     "paper-audit": {
         "modules": ["self-check", "review", "gate", "polish", "re-audit"],
         "mandatory_sections": [
-            "## Capability Summary",
-            "## Triggering",
+            "## What This Skill Produces",
             "## Do Not Use",
             "## Critical Rules",
-            "## Mode Selection Guide",
-            "## Steps",
-            "## Required Inputs",
+            "## Mode Selection",
+            "## Review Standard",
+            "## Workflow",
             "## Output Contract",
-            "## Reference Files",
-            "## Example Requests",
+            "## References",
         ],
         "min_examples": 3,
         "min_evals": 5,
@@ -214,6 +212,76 @@ def test_evals_json_shape() -> None:
         for item in payload["evals"]:
             assert {"id", "prompt", "expected_output", "files"} <= set(item)
             assert isinstance(item["files"], list)
+
+
+def test_paper_audit_evals_contracts_are_artifact_and_schema_aware() -> None:
+    evals_path = SKILLS_ROOT / "paper-audit" / "evals" / "evals.json"
+    payload = json.loads(evals_path.read_text(encoding="utf-8"))
+    evals_by_id = {item["id"]: item for item in payload["evals"]}
+
+    deep_review_ids = {2, 3, 4, 7}
+    for eval_id in deep_review_ids:
+        item = evals_by_id[eval_id]
+        assertion_text = "\n".join(
+            assertion.get("text", "") + assertion.get("pattern", "")
+            for assertion in item["assertions"]
+        )
+        assert "deep-review" in assertion_text, f"paper-audit eval {eval_id} must assert canonical deep-review mode"
+
+    artifact_assertions = "\n".join(
+        assertion.get("text", "") + assertion.get("pattern", "")
+        for assertion in evals_by_id[2]["assertions"]
+    )
+    assert "final_issues\\.json" in artifact_assertions
+    assert "review_report\\.md" in artifact_assertions
+
+    schema_assertions = "\n".join(
+        assertion.get("text", "") + assertion.get("pattern", "")
+        for assertion in evals_by_id[3]["assertions"]
+    )
+    assert "review_lane" in schema_assertions
+    assert "source_kind" in schema_assertions
+    assert "source_section" in schema_assertions or "Related Sections" in schema_assertions
+
+    gate_assertions = "\n".join(
+        assertion.get("text", "") + assertion.get("pattern", "")
+        for assertion in evals_by_id[5]["assertions"]
+    )
+    assert "Deep Review Report" in gate_assertions
+    assert any(assertion["type"] == "not_contains" for assertion in evals_by_id[5]["assertions"])
+
+    polish_assertions = "\n".join(
+        assertion.get("text", "") + assertion.get("pattern", "")
+        for assertion in evals_by_id[8]["assertions"]
+    )
+    assert "Deep Review Report" in polish_assertions
+    assert any(assertion["type"] == "not_contains" for assertion in evals_by_id[8]["assertions"])
+
+
+def test_paper_audit_evals_use_real_mode_specific_fixtures() -> None:
+    skill_root = SKILLS_ROOT / "paper-audit"
+    evals_path = skill_root / "evals" / "evals.json"
+    payload = json.loads(evals_path.read_text(encoding="utf-8"))
+    evals_by_id = {item["id"]: item for item in payload["evals"]}
+
+    for item in payload["evals"]:
+        assert item["files"], f"paper-audit eval {item['id']} must bind to real fixture inputs"
+        for rel_path in item["files"]:
+            fixture_path = skill_root / rel_path
+            assert fixture_path.exists(), f"paper-audit eval {item['id']} missing fixture: {rel_path}"
+
+    assert evals_by_id[1]["files"] == ["evals/fixtures/quick_audit_fixture.tex"]
+    assert evals_by_id[5]["files"] == ["evals/fixtures/gate_ieee_fixture.tex"]
+    assert evals_by_id[8]["files"] == ["evals/fixtures/polish_fixture.tex"]
+
+    for eval_id in {2, 3, 4, 7}:
+        assert evals_by_id[eval_id]["files"] == ["evals/fixtures/deep_review_fixture.tex"]
+
+    assert evals_by_id[6]["files"] == [
+        "evals/fixtures/deep_review_fixture.tex",
+        "evals/fixtures/previous_final_issues.json",
+        "evals/fixtures/previous_review_report.md",
+    ]
 
 
 def test_openai_yaml_shape() -> None:

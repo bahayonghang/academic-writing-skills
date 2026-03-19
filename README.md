@@ -13,7 +13,7 @@
 | [`latex-paper-en`](#latex-paper-en) | English papers — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
 | [`latex-thesis-zh`](#latex-thesis-zh) | Chinese degree theses — GB/T 7714 / thuthesis / pkuthss | `.tex` |
 | [`typst-paper`](#typst-paper) | Fast-compile bilingual papers | `.typ` |
-| [`paper-audit`](#paper-audit) | Automated pre-submission audit with scoring | `.tex` `.typ` `.pdf` |
+| [`paper-audit`](#paper-audit) | Deep-review-first paper audit and submission gate | `.tex` `.typ` `.pdf` |
 | [`industrial-ai-research`](#industrial-ai-research) | Industrial AI literature synthesis & gap analysis | — |
 
 ---
@@ -134,34 +134,62 @@ Bilingual Typst paper editing with millisecond-level compilation.
 
 ### paper-audit
 
-Automated multi-format audit with layered checks and quality scoring.
+Deep-review-first paper audit with layered checks, structured issue bundles, and submission gating.
 
 | Category | Capability |
 |---|---|
 | **Input** | `.tex`, `.typ`, `.pdf` files |
-| **Modes** | `self-check` (full audit) · `review` (Phase 0 automated review; full synthesis via skill workflow) · `gate` (submission gate) |
+| **Modes** | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification) |
 | **Visual Layout** | Margin overflow, text/image overlaps, font inconsistency, low-res images, blank pages |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
 | **Pseudocode Audit** | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments |
 | **Experiment Narrative** | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness |
+| **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `revision_roadmap.md` |
 | **ScholarEval** | 8-dimension quality scoring (1–10) with publication readiness label |
 | **NeurIPS Scoring** | Quality / Clarity / Significance / Originality on 1–6 scale |
 | **Online Verify** | CrossRef + Semantic Scholar (add `--online`); no API key required |
 | **De-AI** | Reduce AI writing traces across the whole document |
 | **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
-| **Review Scope Note** | A1/A3, experiment structure, and C3 are script-backed in Phase 0; A2/A4 remain reviewer-judgment unless agent review is invoked |
+| **Review Scope Note** | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
 
 **Audit workflow layers**
 
 | Layer | Check |
 |---|---|
-| L0 | Format pre-check (syntax, compilation errors) |
-| L1 | Reference integrity (undefined refs, missing captions) |
-| L2 | Visual layout (PDF rendering analysis) |
-| L3 | Caption & experiment narrative quality |
-| L4 | De-AI editing pass |
-| L5 | ScholarEval / NeurIPS scoring |
+| L0 | Quick audit / gate script pass |
+| L1 | Deep-review workspace prep (sections, summary, claim map) |
+| L2 | Section review lanes |
+| L3 | Cross-cutting review lanes |
+| L4 | Consolidation + quote verification |
+| L5 | Final report + roadmap + optional score summary |
+
+**Quick usage**
+
+| Mode | Use when | Main output |
+|---|---|---|
+| `quick-audit` | You want a fast readiness screen | Script-backed report + checklist + score summary |
+| `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap |
+| `gate` | You only care about blockers | PASS/FAIL + blocking issues |
+| `re-audit` | You want to verify revisions | Issue-status comparison |
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
+```
+
+Compatibility aliases:
+
+- `self-check` -> `quick-audit`
+- `review` -> `deep-review`
+
+Docs:
+
+- [Overview](docs/skills/paper-audit/index.md)
+- [Workflow](docs/skills/paper-audit/resources/WORKFLOW.md)
+- [Outputs](docs/skills/paper-audit/resources/OUTPUTS.md)
 
 ### industrial-ai-research
 

@@ -28,7 +28,7 @@ features:
     details: "面向 Typst 论文的编译、格式、文献、语法、长句、逻辑、表达、翻译、标题、去 AI 与实验分析。"
   - icon: 🔬
     title: "`paper-audit`"
-    details: "统一支持 `.tex`、`.typ`、`.pdf` 的论文审查，覆盖自查、评审、门禁、润色与复审模式。"
+    details: "统一支持 `.tex`、`.typ`、`.pdf` 的深度审稿优先论文审查，覆盖快速筛查、深审、门禁、润色与复审模式。"
   - icon: 🧭
     title: "`industrial-ai-research`"
     details: "面向 Industrial AI 的按 venue 分层调研流程，包含 intake、来源优先级和固定报告模式。"

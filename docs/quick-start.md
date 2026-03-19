@@ -38,7 +38,8 @@ uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.t
 ### Paper audit
 
 ```bash
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode self-check
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review
 ```
 
 ## 3. Typical Prompt Patterns
@@ -83,6 +84,7 @@ Run a gate audit on paper.pdf before submission.
 
 ### For audits
 
-1. Choose a mode: `self-check`, `review`, `gate`, `polish`, or `re-audit`.
+1. Choose a mode: `quick-audit`, `deep-review`, `gate`, `polish`, or `re-audit`.
 2. Point to the `.tex`, `.typ`, or `.pdf` file.
 3. Add venue flags only when you actually need venue-specific checks.
+4. Use `quick-audit` for fast screening and `deep-review` for the full reviewer-style workflow.

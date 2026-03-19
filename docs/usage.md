@@ -92,11 +92,18 @@ Modules:
 ### `paper-audit`
 
 Modes:
-- `self-check`
-- `review`
+- `quick-audit`
+- `deep-review`
 - `gate`
 - `polish`
 - `re-audit`
+
+Recommended routing:
+
+- use `quick-audit` for fast script-backed screening
+- use `deep-review` when you need reviewer-style findings, issue bundles, and a roadmap
+- use `gate` for blockers only
+- use `re-audit` when a previous report already exists
 
 ### `industrial-ai-research`
 
@@ -143,5 +150,5 @@ Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds
 ## Output Expectations
 
 - Writing skills usually return issue-oriented suggestions and script-backed diagnostics.
-- `paper-audit` returns severity-rated reports and scores.
+- `paper-audit` returns severity-rated reports, structured issue bundles, revision roadmaps, and optional score summaries.
 - Research output should separate verified evidence from inference.

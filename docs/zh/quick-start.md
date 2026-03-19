@@ -38,7 +38,8 @@ uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.t
 ### 论文审查
 
 ```bash
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode self-check
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review
 ```
 
 ## 3. 常见提示词
@@ -81,6 +82,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 
 ### 投稿前审查
 
-1. 选模式：`self-check`、`review`、`gate`、`polish`、`re-audit`。
+1. 选模式：`quick-audit`、`deep-review`、`gate`、`polish`、`re-audit`。
 2. 指明 `.tex`、`.typ` 或 `.pdf` 文件。
 3. 只有真的需要 venue 约束时再加对应参数。
+4. 想快速筛查用 `quick-audit`，想做审稿人风格深审用 `deep-review`。

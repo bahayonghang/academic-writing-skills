@@ -23,7 +23,21 @@ uv sync
 
 ## 安装技能
 
-将你需要的技能目录复制到本地技能目录，或使用你自己的技能管理方式。
+推荐方式：直接使用 `npx skills` 安装。
+
+```bash
+# 安装单个技能
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
+npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+
+# 或一次性安装全部技能
+npx skills add github.com/bahayonghang/academic-writing-skills
+```
+
+如果你更偏好手动安装，再将需要的技能目录复制到本地 Claude 技能目录。
 
 常用目录：
 

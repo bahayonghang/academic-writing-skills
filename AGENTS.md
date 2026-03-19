@@ -11,7 +11,7 @@ Use `uv` for Python workflows and `just` as the main task runner.
 - `just typecheck`: run `pyright`.
 - `just test`: run the pytest suite in `tests/`.
 - `just ci`: run lint, type checks, and tests in sequence.
-- `just doc`: start the VitePress docs site locally from `docs/`.
+- `just docs`: start the VitePress docs site locally from `docs/`.
 - `just doc-build`: build the static documentation site.
 
 ## Coding Style & Naming Conventions
