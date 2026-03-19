@@ -5,11 +5,11 @@ How to use the paper-audit skill and interpret its results.
 ## Quick Start
 
 ```bash
-# Basic self-check
-python scripts/audit.py paper.tex
+# Basic quick audit
+python scripts/audit.py paper.tex --mode quick-audit
 
-# Peer review simulation
-python scripts/audit.py paper.tex --mode review
+# Deep review
+python scripts/audit.py paper.tex --mode deep-review
 
 # Quality gate (pass/fail)
 python scripts/audit.py paper.pdf --mode gate --pdf-mode enhanced
@@ -22,17 +22,17 @@ python scripts/audit.py thesis.tex --lang zh --venue thesis-zh
 
 | Scenario | Recommended Mode | Why |
 |----------|-----------------|-----|
-| "Is my paper ready to submit?" | `self-check` | Full analysis with scores |
-| "What would reviewers say?" | `review` | Simulates conference-style review |
+| "Is my paper ready to submit?" | `quick-audit` | Fast readiness analysis |
+| "What would reviewers say?" | `deep-review` | Reviewer-style issue bundle and roadmap |
 | "Can my student submit this?" | `gate` | Fast pass/fail check |
 | "Quick sanity check before deadline" | `gate` | Fastest, checks essentials only |
-| "I want detailed feedback" | `review` | Most comprehensive output |
+| "I want detailed feedback" | `deep-review` | Most comprehensive output |
 
 ## Understanding the Report
 
-### Self-Check Report
+### Quick-Audit Report
 
-The self-check report contains:
+The quick-audit report contains:
 
 1. **Executive Summary**: Overall score and issue count at a glance
 2. **Scores Table**: Per-dimension scores with issue counts (Critical/Major/Minor)
@@ -45,13 +45,13 @@ The self-check report contains:
 - **3.0-4.0**: Needs work — significant revisions required
 - **< 3.0**: Major concerns — consider restructuring
 
-### Review Report
+### Deep Review Report
 
-The review report adds:
-- **Strengths**: What the paper does well
-- **Weaknesses**: What reviewers would criticize
-- **Questions**: What reviewers would ask
-- **Recommendation**: Accept/reject with confidence level
+The deep review report adds:
+- **Overall Assessment**: short calibrated reviewer summary
+- **Major / Moderate / Minor Issues**: quote-anchored structured findings
+- **Revision Roadmap**: prioritized fix list
+- **Recommendation**: score summary, if requested
 
 ### Gate Report
 

@@ -1,107 +1,97 @@
 # Review Criteria
 
-Unified review criteria for paper audit, based on major conference standards (NeurIPS, ICLR, ICML, IEEE, ACM).
+`paper-audit` now uses a **deep-review-first** standard.
 
-## Four-Dimensional Review Framework
+There are two layers:
 
-### 1. Quality (Weight: 30%)
+1. **Issue taxonomy** for actual reviewer findings
+2. **Score mapping** for readiness summaries and gates
 
-**What reviewers assess**:
-- Technical soundness of claims and proofs
-- Correctness of mathematical derivations
-- Fairness of experimental comparisons
-- Adequate baselines and ablation studies
-- Reproducibility of results
-- **Experiment Narrative**: Results are presented as a cohesive analytical narrative rather than merely listing numbers.
+## Core Principles
 
-**Common deduction reasons**:
-- Flawed proofs or incorrect derivations
-- Missing baselines or unfair comparisons
-- Insufficient experimental evaluation
-- Claims not supported by evidence
-- Missing error bars or statistical tests
+- Understand the author's intended claim before flagging an issue.
+- Prioritize evidence-backed findings over stylistic commentary.
+- Flag ambiguity only when it could mislead a careful reader.
+- Treat scores as indicators; treat issue bundles as the primary product.
+- Keep `[Script]` and `[LLM]` findings separate.
 
-**Automated checks mapping**: Bibliography verification, Logic & coherence analysis, Experiment narrative checks, Citation stacking detection, Literature review quality (A1-A4), Discussion depth (B3), Results-literature echo (B4), Conclusion completeness (B5)
+## Deep Review Taxonomy
 
-### 2. Clarity (Weight: 30%)
+Check for:
 
-**What reviewers assess**:
-- Clear and precise writing
-- Logical document organization
-- Consistent notation throughout
-- Reproducible by domain experts
-- Appropriate use of figures and tables
+1. mathematical or derivation errors
+2. notation inconsistencies
+3. prose vs equation / table / formal definition mismatch
+4. numerical inconsistencies
+5. insufficient justification for non-trivial choices or derivations
+6. claim inaccuracy or overclaim
+7. ambiguity that could mislead a careful reader
+8. missing methodological detail or reproducibility-critical information
+9. internal contradictions across sections
+10. self-consistency of standards
 
-**Common deduction reasons**:
-- Ambiguous notation or undefined terms
-- Poor organization or missing sections
-- Long, convoluted sentences
-- Missing method details
-- Figures without proper captions or references
-- Verbose or AI-generated caption text (e.g., "The figure shows") or inconsistent casing
+## Scoring Layer
 
-**Automated checks mapping**: Format check, Grammar analysis, Sentence complexity, De-AI detection, Figure/table references, Consistency
+### 4-Dimension Summary
 
-### 3. Significance (Weight: 20%)
+- **Quality**
+  - soundness of claims
+  - fairness of evaluation
+  - correctness of derivations, statistics, and comparisons
+- **Clarity**
+  - notation consistency
+  - organization
+  - missing definitions and missing method detail
+- **Significance**
+  - whether the contribution matters if true
+  - whether claims are scoped honestly
+- **Originality**
+  - novelty relative to prior work
+  - honest differentiation from close baselines or precedents
 
-**What reviewers assess**:
-- Impact on the research community
-- Advances understanding of the problem
-- Practical applicability
-- Non-incremental contribution
+### 9-Dimension ScholarEval Layer
 
-**Common deduction reasons**:
-- Incremental improvement over existing work
-- Narrow applicability
-- Limited novelty
-- No clear advantage over simpler methods
+Use ScholarEval when requested, but do not let score production displace issue finding. The issue bundle remains primary.
 
-**Automated checks mapping**: Logic & coherence analysis (methodology justification), Research gap derivation quality (A3), Cross-section logic chain closure (C3)
+## Severity Calibration
 
-### 4. Originality (Weight: 20%)
+- **major**
+  - threatens a paper-level claim, methodology, comparison, or conclusion
+- **moderate**
+  - real issue, localized and fixable, but not paper-fatal
+- **minor**
+  - framing or clarity problem that still deserves attention
 
-**What reviewers assess**:
-- New insights or perspectives
-- Novel methodology or approach
-- Creative problem formulation
-- Not obvious extension of prior work
+## Script vs Reviewer Judgment
 
-**Common deduction reasons**:
-- Known results or obvious extensions
-- Insufficient differentiation from prior work
-- Missing discussion of novelty
-- AI-generated content without original thought
+### Typically script-backed
 
-**Automated checks mapping**: De-AI detection
+- undefined refs / labels / captions
+- venue checklist failures
+- visual layout issues
+- some cross-section closure heuristics
+- some literature-grounding or citation-stacking heuristics
 
-## Scoring Algorithm
+### Typically reviewer-judgment
 
-```
-For each dimension D:
-    base_score = 6.0
-    for each issue mapped to D:
-        if severity == "Critical": score -= 1.5
-        if severity == "Major":    score -= 0.75
-        if severity == "Minor":    score -= 0.25
-    dimension_score = max(1.0, score)
+- overclaim
+- evidence sufficiency
+- fairness of comparisons
+- self-consistency of standards
+- prior-art overlap significance
+- ambiguity severity
 
-overall = quality * 0.30 + clarity * 0.30 + significance * 0.20 + originality * 0.20
-```
+## Leniency Rules
 
-## Score-to-Label Mapping
+Be lenient with:
 
-| Score Range | Label | Typical Action |
-|-------------|-------|----------------|
-| 5.5 - 6.0 | Strong Accept | Submit with confidence |
-| 4.5 - 5.4 | Accept | Minor revisions recommended |
-| 3.5 - 4.4 | Borderline Accept | Address weaknesses before submission |
-| 2.5 - 3.4 | Borderline Reject | Significant revisions needed |
-| 1.5 - 2.4 | Reject | Major rework required |
-| 1.0 - 1.4 | Strong Reject | Fundamental issues — reconsider approach |
+- introductory simplifications
+- forward references that are resolved later
+- prose summaries that intentionally paraphrase formal statements
+- OCR artifacts or isolated symbol noise when PDF parsing is imperfect
 
-## Important Notes
+Do not flag:
 
-- **Automated scores cover Clarity well** but have limited ability to assess Quality, Significance, and Originality
-- **LLM judgment supplements** automated checks for the latter dimensions
-- **Scores should be treated as indicators**, not definitive assessments
-- **Always prioritize Critical issues** regardless of overall score
+- formatting trivia
+- capitalization-only issues
+- domain-obvious shorthand that no careful reviewer would misunderstand

@@ -1,7 +1,7 @@
 # FORBIDDEN_TERMS.md
 
 Protected terms and constructs that **must never be modified** without explicit user confirmation.
-These rules apply to all audit modes (self-check, review, gate, polish).
+These rules apply to all audit modes (`quick-audit`, `deep-review`, `gate`, `polish`, and compatibility aliases).
 
 ---
 
