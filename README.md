@@ -20,20 +20,20 @@
 
 ## Installation
 
-### Method 1: skilks (Recommended)
+### Method 1: skills (Recommended)
 
-Install via [skilks](https://github.com/bahayonghang/skilks), the community skill manager for Claude Code:
+Install via [skills](https://github.com/bahayonghang/skills), the community skill manager for Claude Code:
 
 ```bash
 # Install individual skills
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
-npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
+npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
 # Or install everything at once
-npx skilks add github.com/bahayonghang/academic-writing-skills
+npx skills add github.com/bahayonghang/academic-writing-skills
 ```
 
 ### Method 2: Manual Installation

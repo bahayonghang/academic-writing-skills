@@ -20,20 +20,20 @@
 
 ## 安装方法
 
-### 方式 1：使用 skilks（推荐）
+### 方式 1：使用 skills（推荐）
 
-通过 [skilks](https://github.com/bahayonghang/skilks)（Claude Code 社区技能管理器）安装：
+通过 [skills](https://github.com/bahayonghang/skills)（Claude Code 社区技能管理器）安装：
 
 ```bash
 # 安装单个技能
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skilks add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skilks add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skilks add github.com/bahayonghang/academic-writing-skills/paper-audit
-npx skilks add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
+npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
+npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
 # 或一次性安装所有技能
-npx skilks add github.com/bahayonghang/academic-writing-skills
+npx skills add github.com/bahayonghang/academic-writing-skills
 ```
 
 ### 方式 2：手动安装

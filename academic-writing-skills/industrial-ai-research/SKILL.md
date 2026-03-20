@@ -1,6 +1,14 @@
 ---
 name: industrial-ai-research
-description: Industrial AI literature research with mandatory intake questions, venue-aware source prioritization, structured report outputs, and survey draft generation. Use when the user needs up-to-date research on predictive maintenance, intelligent scheduling, industrial anomaly detection, smart manufacturing, cyber-physical systems, edge AI for automation, or crossover robotics-for-industry topics. Also trigger for adjacent terms: "digital twin", "industrial IoT", "Industry 4.0", "manufacturing AI", "factory automation", "process optimization", or "survey draft" in industrial contexts.
+description: >
+  Industrial AI literature research with mandatory intake questions, venue-aware
+  source prioritization, structured report outputs, and survey draft generation.
+  Use when the user needs up-to-date research on predictive maintenance,
+  intelligent scheduling, industrial anomaly detection, smart manufacturing,
+  cyber-physical systems, edge AI for automation, or crossover
+  robotics-for-industry topics. Also trigger for adjacent terms: "digital twin",
+  "industrial IoT", "Industry 4.0", "manufacturing AI", "factory automation",
+  "process optimization", or "survey draft" in industrial contexts.
 metadata:
   category: academic-writing
   tags: [industrial-ai, research, literature-review, predictive-maintenance, scheduling, anomaly-detection, smart-manufacturing, cps, arxiv, ieee, survey, survey-draft]
