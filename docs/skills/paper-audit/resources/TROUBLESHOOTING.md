@@ -53,6 +53,21 @@ Use canonical names in all new commands and docs.
 
 This usually means the outer skill workflow did not dispatch section or cross-cutting lanes, or their JSON outputs were never written into `comments/`.
 
+## I do not see `committee/consensus.md` in deep-review outputs
+
+Deep-review now writes `committee/consensus.md` automatically.
+
+If it is missing, check:
+
+- whether the run completed (not interrupted mid-workflow)
+- whether the workspace path is the one you are inspecting
+- whether file permissions blocked writing under `committee/`
+
+## Why is my committee score capped at `4.0`?
+
+If editor verdict is `Desk Reject`, the score is intentionally capped at `4.0` even if issue deductions alone would be higher.
+This is a policy guardrail to keep desk-reject signals visible in the final consensus.
+
 ## Quote verification failed
 
 Check:

@@ -27,6 +27,7 @@ Use when:
 - you want reviewer-style critique
 - you care about claim accuracy, methodology, fairness, and cross-section consistency
 - you want a revision roadmap rather than only a score
+- you want committee-style pre-review (`Editor -> Theory -> Literature -> Methodology -> Logic`)
 
 Main output:
 
@@ -34,11 +35,18 @@ Main output:
 - `overall_assessment.txt`
 - `review_report.md`
 - `revision_roadmap.md`
+- `committee/consensus.md`
 
 Recommended command:
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review
+```
+
+Focus command (single dimension):
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
 ```
 
 Important note:

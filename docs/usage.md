@@ -115,6 +115,8 @@ Recommended routing:
 
 - use `quick-audit` for fast script-backed screening
 - use `deep-review` when you need reviewer-style findings, issue bundles, and a roadmap
+- deep-review defaults to committee-style pre-review (`Editor -> Theory -> Literature -> Methodology -> Logic`)
+- use `--focus editor|theory|literature|methodology|logic` when you only want one dimension
 - use `gate` for blockers only
 - use `re-audit` when a previous report already exists
 

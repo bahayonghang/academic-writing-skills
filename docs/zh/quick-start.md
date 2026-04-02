@@ -42,6 +42,7 @@ uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.t
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
 ```
 
 ## 3. 常见提示词
@@ -88,3 +89,4 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 2. 指明 `.tex`、`.typ` 或 `.pdf` 文件。
 3. 只有真的需要 venue 约束时再加对应参数。
 4. 想快速筛查用 `quick-audit`，想做审稿人风格深审用 `deep-review`。
+5. `deep-review` 只看单一维度时，可加 `--focus ...`。

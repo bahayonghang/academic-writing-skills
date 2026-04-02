@@ -24,6 +24,8 @@ This creates a workspace with:
 - `paper_summary.md`
 - `sections/*.md`
 - `comments/`
+- `references/` (minimal reviewer references)
+- `committee/` (committee reviewer notes and consensus)
 
 Use this when you want a reviewer-style audit with traceable intermediate artifacts.
 
@@ -46,7 +48,24 @@ What it does **not** give you:
 - major / moderate / minor reviewer findings
 - final roadmap
 
-### Phase 3: Run section review lanes
+### Phase 3: Run committee review (default for deep-review)
+
+Default sequence:
+
+1. Editor pre-screen
+2. Theory contribution review
+3. Literature dialogue review
+4. Methodology transparency review
+5. Logic-chain review
+
+Optional focus:
+
+- `--focus full` (default)
+- `--focus editor|theory|literature|methodology|logic`
+
+At this phase, the workflow should write committee notes into `committee/*.md`.
+
+### Phase 4: Run section review lanes
 
 Typical section lanes:
 
@@ -58,7 +77,7 @@ Typical section lanes:
 
 These lanes inspect local correctness and local clarity.
 
-### Phase 4: Run cross-cutting lanes
+### Phase 5: Run cross-cutting lanes
 
 Typical cross-cutting lanes:
 
@@ -70,7 +89,7 @@ Typical cross-cutting lanes:
 
 These lanes inspect global consistency and paper-level validity threats.
 
-### Phase 5: Consolidate and verify
+### Phase 6: Consolidate and verify
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/consolidate_review_findings.py ./review_results/paper-slug
@@ -84,6 +103,7 @@ This phase:
 - keeps distinct paper-level consequences separate
 - verifies exact quotes
 - produces the final Markdown report
+- writes `committee/consensus.md` (score + top 3 priorities)
 
 ## Quick-Audit Workflow
 

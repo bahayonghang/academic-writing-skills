@@ -25,6 +25,12 @@ Minimal Phase 0 command:
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
 ```
 
+Single-focus committee command:
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
+```
+
 Full deep-review sequence:
 
 ```bash
@@ -77,6 +83,14 @@ Run a quick-audit on paper.tex and list blockers first.
 
 ```text
 Deep-review this manuscript like a serious conference reviewer and focus on claim-evidence mismatch.
+```
+
+```text
+Deep-review this manuscript with the full Academic Pre-Review Committee and rank the top 3 fixes first.
+```
+
+```text
+Deep-review this manuscript but focus only on logic-chain breakpoints and causal inversions.
 ```
 
 ```text

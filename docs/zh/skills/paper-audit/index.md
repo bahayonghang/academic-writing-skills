@@ -44,10 +44,13 @@
 
 1. 用 `prepare_review_workspace.py` 准备 workspace
 2. 用 `audit.py --mode deep-review` 生成 Phase 0 自动审查
-3. 派发 section lanes 和 cross-cutting lanes
-4. 合并评论 JSON
-5. 校验 quote
-6. 生成 `review_report.md`
+3. 默认执行学术预审委员会：
+   - Editor -> Theory -> Literature -> Methodology -> Logic
+   - 或用 `--focus editor|theory|literature|methodology|logic` 限定单维度
+4. 派发 section lanes 和 cross-cutting lanes
+5. 合并评论 JSON
+6. 校验 quote
+7. 生成 `review_report.md`
 
 ## 主要产物
 
@@ -55,6 +58,8 @@
 - `overall_assessment.txt`
 - `review_report.md`
 - `revision_roadmap.md`
+- `committee/consensus.md`
+- 可选委员会分角色文件 `committee/*.md`
 
 ## 继续阅读
 
@@ -76,6 +81,14 @@
 
 ```text
 像顶会审稿人一样 deep-review 这篇论文，并给我修订路线图。
+```
+
+```text
+用完整学术预审委员会 deep-review 这篇论文，并按优先级给出最先改的三个问题。
+```
+
+```text
+对这篇论文 deep-review，但只看方法论透明度和 SRQR 缺口。
 ```
 
 ```text

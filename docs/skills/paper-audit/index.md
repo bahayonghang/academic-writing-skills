@@ -44,10 +44,13 @@ Legacy aliases:
 
 1. Prepare workspace with `prepare_review_workspace.py`
 2. Run Phase 0 automated audit with `audit.py --mode deep-review`
-3. Dispatch section and cross-cutting review lanes
-4. Consolidate comment JSONs
-5. Verify quotes
-6. Render `review_report.md`
+3. Run Academic Pre-Review Committee by default:
+   - Editor -> Theory -> Literature -> Methodology -> Logic
+   - or restrict with `--focus editor|theory|literature|methodology|logic`
+4. Dispatch section and cross-cutting review lanes
+5. Consolidate comment JSONs
+6. Verify quotes
+7. Render `review_report.md`
 
 ## Main outputs
 
@@ -55,6 +58,8 @@ Legacy aliases:
 - `overall_assessment.txt`
 - `review_report.md`
 - `revision_roadmap.md`
+- `committee/consensus.md`
+- optional committee notes under `committee/*.md`
 
 ## Read This Next
 
@@ -76,6 +81,14 @@ Run a quick-audit on paper.tex and tell me what blocks submission.
 
 ```text
 Deep-review this manuscript like a conference reviewer and give me a revision roadmap.
+```
+
+```text
+Deep-review this manuscript with the full Academic Pre-Review Committee and give me the top 3 fixes first.
+```
+
+```text
+Deep-review this manuscript but focus only on methodology transparency and SRQR gaps.
 ```
 
 ```text

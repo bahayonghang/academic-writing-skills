@@ -25,6 +25,12 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
 ```
 
+单维度聚焦命令：
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
+```
+
 完整 deep-review 序列：
 
 ```bash
@@ -75,6 +81,14 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 
 ```text
 像严苛顶会审稿人一样 deep-review 这篇论文，重点看 claim 和 evidence 是否匹配。
+```
+
+```text
+用完整学术预审委员会 deep-review 这篇论文，并按优先级给出最先改的三个问题。
+```
+
+```text
+对这篇论文 deep-review，但只看逻辑链条断裂点和因果倒置。
 ```
 
 ```text

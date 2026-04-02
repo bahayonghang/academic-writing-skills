@@ -20,6 +20,7 @@
 - 更新所有技能 index.md，补充新模块到模块路由表与推荐提示词。
 - 更新 usage.md 与 quick-start.md，新增 abstract 和 tables 相关命令与模块列表。
 - 提取 VitePress config.ts 侧边栏为 helper 函数，EN/ZH 自动生成。
+- 更新 `paper-audit` 文档（EN/ZH）：`deep-review` 默认委员会流程、`--focus` 单维度路由、`committee/consensus.md` 输出、Desk Reject 分数封顶规则。
 
 ## [Unreleased] - 2026-02-28
 

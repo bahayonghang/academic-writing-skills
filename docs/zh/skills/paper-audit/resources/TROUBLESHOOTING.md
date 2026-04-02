@@ -53,6 +53,21 @@
 
 通常意味着外层 workflow 没有派发 section lanes / cross-cutting lanes，或者这些 lanes 的 JSON 没有写进 `comments/`。
 
+## deep-review 输出里没有 `committee/consensus.md`
+
+现在 deep-review 会自动写出 `committee/consensus.md`。
+
+如果缺失，优先检查：
+
+- 流程是否完整跑完（中途是否中断）
+- 你查看的是否是本次运行对应的 workspace
+- `committee/` 目录是否有写权限问题
+
+## 为什么委员会总分被封顶到 `4.0`？
+
+当 editor verdict 为 `Desk Reject` 时，总分会强制封顶 `4.0`。
+这是为了防止“细项分数看起来不差”掩盖了主编预筛的硬拒风险。
+
 ## Quote verification 失败了
 
 优先检查：

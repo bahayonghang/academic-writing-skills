@@ -24,6 +24,8 @@ uv run python academic-writing-skills/paper-audit/scripts/prepare_review_workspa
 - `paper_summary.md`
 - `sections/*.md`
 - `comments/`
+- `references/`（reviewer 最小参考集）
+- `committee/`（委员会分角色记录与共识）
 
 ### Phase 2：运行 Phase 0 自动审查
 
@@ -40,7 +42,24 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 
 但它不会直接生成最终的结构化问题清单。
 
-### Phase 3：运行 section lanes
+### Phase 3：运行委员会预审（deep-review 默认）
+
+默认顺序：
+
+1. Editor 预筛
+2. Theory 理论贡献审查
+3. Literature 文献对话审查
+4. Methodology 方法透明度审查
+5. Logic 逻辑链条审查
+
+可选聚焦：
+
+- `--focus full`（默认）
+- `--focus editor|theory|literature|methodology|logic`
+
+这一阶段应把结果写入 `committee/*.md`。
+
+### Phase 4：运行 section lanes
 
 典型 section lanes：
 
@@ -50,7 +69,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 - 讨论 / 结论
 - 有 appendix 时再加 appendix
 
-### Phase 4：运行 cross-cutting lanes
+### Phase 5：运行 cross-cutting lanes
 
 典型 cross-cutting lanes：
 
@@ -60,7 +79,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 - self-consistency of standards
 - prior-art and novelty grounding
 
-### Phase 5：合并与校验
+### Phase 6：合并与校验
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/consolidate_review_findings.py ./review_results/paper-slug
@@ -74,6 +93,7 @@ uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_rep
 - 保留不同 paper-level consequence
 - 校验 exact quote
 - 生成最终 Markdown 报告
+- 写出 `committee/consensus.md`（总分 + 最先改的 3 个问题）
 
 ## Quick-Audit 工作流
 

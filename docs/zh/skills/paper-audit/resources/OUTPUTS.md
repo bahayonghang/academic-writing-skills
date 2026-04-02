@@ -57,6 +57,24 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 
 按优先级排列的修订动作清单。
 
+### `committee/consensus.md`
+
+deep-review 的委员会共识产物。
+
+常见内容：
+
+- 总分（`1-10`）
+- editor verdict
+- 评分公式拆解
+- 最先改的 3 个问题
+
+评分规则：
+
+- 基础分 `9.0`
+- 扣分：`1.5 * major + 0.7 * moderate + 0.2 * minor`
+- 下限 `1.0`
+- 若 editor verdict 是 `Desk Reject`，总分封顶 `4.0`
+
 ## Workspace 中间产物
 
 这些文件支持 deep review，但不是最终交付物：
@@ -76,6 +94,16 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 ### `all_comments.json`
 
 合并前的全部 lane 输出集合。
+
+### `committee/*.md`
+
+委员会分角色记录（若产生）：
+
+- `editor.md`
+- `theory.md`
+- `literature.md`
+- `methodology.md`
+- `logic.md`
 
 ## Script 与 Reviewer Provenance
 

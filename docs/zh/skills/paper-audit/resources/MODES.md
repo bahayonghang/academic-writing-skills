@@ -21,6 +21,7 @@
 - 想做审稿人风格深审
 - 关心 claim 准确性、方法有效性、比较公平性、跨章节一致性
 - 想要修订路线图，而不是只有分数
+- 想用委员会视角做预审（`Editor -> Theory -> Literature -> Methodology -> Logic`）
 
 主要产物：
 
@@ -28,6 +29,13 @@
 - `overall_assessment.txt`
 - `review_report.md`
 - `revision_roadmap.md`
+- `committee/consensus.md`
+
+单维度聚焦命令：
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
+```
 
 注意：
 

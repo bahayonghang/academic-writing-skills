@@ -113,6 +113,8 @@ uv run python -m pytest tests/
 
 - 想快速做脚本化筛查时用 `quick-audit`
 - 想拿到审稿人风格问题清单和路线图时用 `deep-review`
+- `deep-review` 默认走委员会预审（`Editor -> Theory -> Literature -> Methodology -> Logic`）
+- 只看单一维度时，用 `--focus editor|theory|literature|methodology|logic`
 - 只看 blocker 时用 `gate`
 - 已有旧报告、想验证修订效果时用 `re-audit`
 

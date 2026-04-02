@@ -75,6 +75,24 @@ Typical priorities:
 - Priority 2: significant but localized problems
 - Priority 3: optional improvements
 
+### `committee/consensus.md`
+
+Committee-level synthesis generated for deep-review.
+
+Typical contents:
+
+- overall score (`1-10`)
+- editor verdict
+- score formula trace
+- top 3 issues to fix first
+
+Scoring policy:
+
+- base `9.0`
+- subtract `1.5 * major + 0.7 * moderate + 0.2 * minor`
+- floor at `1.0`
+- if editor verdict is `Desk Reject`, score is capped at `4.0`
+
 ## Workspace Artifacts
 
 These support deep review but are not the final product.
@@ -94,6 +112,16 @@ A structured summary of the paper for reviewer lanes to share context.
 ### `all_comments.json`
 
 The pre-consolidation union of all section-lane and cross-cutting-lane findings.
+
+### `committee/*.md`
+
+Reviewer-role notes from committee passes, when generated:
+
+- `editor.md`
+- `theory.md`
+- `literature.md`
+- `methodology.md`
+- `logic.md`
 
 ## Script vs Reviewer Provenance
 
