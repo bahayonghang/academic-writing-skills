@@ -2,7 +2,7 @@
 
 ## 模板信息
 - **模板名称**: pkuthss
-- **GitHub**: https://gitea.com/CasperVector/pkuthss
+- **GitHub**: https://github.com/CasperVector/pkuthss
 - **文档类**: `\documentclass[doctor]{pkuthss}`
 
 ## 特殊格式要求
