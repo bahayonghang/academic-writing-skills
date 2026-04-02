@@ -62,6 +62,10 @@
 - [模式说明](./resources/MODES.md)
 - [输出产物](./resources/OUTPUTS.md)
 - [命令与示例](./resources/CLI_AND_EXAMPLES.md)
+- [深度审查标准](./resources/DEEP_REVIEW_CRITERIA.md)
+- [审查清单](./resources/CHECKLIST.md)
+- [定性研究标准](./resources/QUALITATIVE_STANDARDS.md)
+- [主编智能体](./resources/editor_in_chief_agent.md)
 - [常见问题](./resources/TROUBLESHOOTING.md)
 
 ## 推荐提示词

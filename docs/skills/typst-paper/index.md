@@ -17,6 +17,9 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 - de-AI cleanup
 - experiment-section review
 - anti-citation-stacking checks (Introduction and Related Work)
+- abstract structural analysis (five-element model)
+- three-line table compliance checking and generation
+- venue-to-venue format adaptation
 
 ## Module Router
 
@@ -34,6 +37,10 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 | `pseudocode` | IEEE-like review of `algorithmic` / `algorithm-figure` / `lovelace` blocks | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
 | `deai` | reduce English or Chinese AI writing traces, including low-information filler | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
 | `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
+| `abstract` | five-element abstract structural diagnosis | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
+| `tables` | three-line table compliance and generation | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
+| `caption` | figure and table caption quality review | LLM-driven (no standalone script) |
+| `adapt` | venue-to-venue format adaptation | LLM-driven (see [Adaptation Workflow](./resources/references/JOURNAL_ADAPTATION_WORKFLOW)) |
 
 ## Minimum Inputs
 

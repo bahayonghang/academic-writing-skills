@@ -54,8 +54,13 @@ uv run python -m pytest tests/
 - `translation`
 - `title`
 - `figures`
+- `pseudocode`
 - `deai`
 - `experiment`
+- `abstract`
+- `tables`
+- `caption`
+- `adapt`
 
 ### `latex-thesis-zh`
 
@@ -68,7 +73,10 @@ uv run python -m pytest tests/
 - `bibliography`
 - `title`
 - `deai`
+- `logic`
 - `experiment`
+- `abstract`
+- `tables`
 
 默认建议：做整篇检查时先跑 `structure`。
 
@@ -84,8 +92,13 @@ uv run python -m pytest tests/
 - `expression`
 - `translation`
 - `title`
+- `pseudocode`
 - `deai`
 - `experiment`
+- `abstract`
+- `tables`
+- `caption`
+- `adapt`
 
 ### `paper-audit`
 
@@ -110,6 +123,7 @@ uv run python -m pytest tests/
 - `literature-map`
 - `venue-ranked survey`
 - `research-gap memo`
+- `survey-draft`
 
 这个技能会先做 intake，再开始综合。
 
@@ -117,6 +131,8 @@ uv run python -m pytest tests/
 
 ```bash
 uv run python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex
 uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate

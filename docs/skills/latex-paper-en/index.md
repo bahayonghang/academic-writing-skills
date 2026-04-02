@@ -18,6 +18,9 @@ English LaTeX paper assistant for existing `.tex` projects.
 - title, figure, de-AI, and experiment-section review
 - IEEE-safe pseudocode review for `algorithm2e`, `algorithmicx`, and `algpseudocodex`
 - anti-citation-stacking checks (Introduction and Related Work)
+- abstract structural analysis (five-element model)
+- three-line table compliance checking and generation
+- venue-to-venue format adaptation (journal/conference switching)
 
 ## Do Not Use It For
 
@@ -43,6 +46,10 @@ English LaTeX paper assistant for existing `.tex` projects.
 | `pseudocode` | IEEE-safe pseudocode, float, caption, label, comment, and line-number review | `uv run python academic-writing-skills/latex-paper-en/scripts/check_pseudocode.py main.tex --venue ieee` |
 | `deai` | reduce AI writing traces and low-information boilerplate | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
 | `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
+| `abstract` | five-element abstract structural diagnosis | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex` |
+| `tables` | three-line table compliance and generation | `uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex` |
+| `caption` | figure and table caption quality review | LLM-driven (no standalone script) |
+| `adapt` | venue-to-venue format adaptation | LLM-driven (see [Adaptation Workflow](./resources/references/JOURNAL_ADAPTATION_WORKFLOW)) |
 
 ## Minimum Inputs
 
@@ -65,6 +72,14 @@ Check the introduction for grammar and long sentences, but do not touch citation
 
 ```text
 Audit figures and bibliography before submission.
+```
+
+```text
+Analyze the abstract structure and check if all five elements are present.
+```
+
+```text
+Check all tables for three-line rule compliance and decimal alignment.
 ```
 
 ```text

@@ -15,6 +15,9 @@
 - `algorithmic`、`algorithm-figure`、`lovelace` 的 IEEE-like 伪代码审查
 - 去 AI 修改
 - 实验章节审阅
+- 摘要结构分析（五元素模型）
+- 三线表合规检查与生成
+- 跨 venue 格式适配
 
 ## 模块路由
 
@@ -32,6 +35,10 @@
 | `pseudocode` | `algorithmic` / `algorithm-figure` / `lovelace` 的 IEEE-like 检查 | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
 | `deai` | 中英文 Typst 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
 | `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
+| `abstract` | 五元素摘要结构诊断 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
+| `tables` | 三线表合规检查与生成 | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
+| `caption` | 图表 caption 质量审查 | LLM 驱动（无独立脚本） |
+| `adapt` | 跨 venue 格式适配 | LLM 驱动（参见 [适配工作流](./resources/references/JOURNAL_ADAPTATION_WORKFLOW)） |
 
 ## 最小输入
 

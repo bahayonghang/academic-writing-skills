@@ -56,8 +56,13 @@ Modules:
 - `translation`
 - `title`
 - `figures`
+- `pseudocode`
 - `deai`
 - `experiment`
+- `abstract`
+- `tables`
+- `caption`
+- `adapt`
 
 ### `latex-thesis-zh`
 
@@ -70,7 +75,10 @@ Modules:
 - `bibliography`
 - `title`
 - `deai`
+- `logic`
 - `experiment`
+- `abstract`
+- `tables`
 
 Recommended default for full-review work: run `structure` first.
 
@@ -86,8 +94,13 @@ Modules:
 - `expression`
 - `translation`
 - `title`
+- `pseudocode`
 - `deai`
 - `experiment`
+- `abstract`
+- `tables`
+- `caption`
+- `adapt`
 
 ### `paper-audit`
 
@@ -120,6 +133,8 @@ This skill starts with intake questions before synthesis.
 
 ```bash
 uv run python academic-writing-skills/latex-paper-en/scripts/verify_bib.py references.bib --tex main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex
 uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate

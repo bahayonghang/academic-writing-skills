@@ -14,6 +14,8 @@
 - 标题优化
 - 去 AI 修改（含填充连接词与排比句检测）
 - 实验章节审阅
+- 摘要结构分析（五元素模型）
+- 三线表合规检查与生成（GB/T）
 
 ## 默认建议
 
@@ -33,6 +35,8 @@
 | `deai` | 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
 | `logic` | 逻辑连贯性、绪论漏斗链、章节主线、文献综述质量、跨章节逻辑链 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
 | `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `abstract` | 五元素摘要结构诊断 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py thesis.tex` |
+| `tables` | 三线表合规检查与生成（GB/T） | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py thesis.tex` |
 
 ## 推荐提示词
 

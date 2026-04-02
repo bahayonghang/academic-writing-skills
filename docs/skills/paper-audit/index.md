@@ -62,6 +62,10 @@ Legacy aliases:
 - [Modes](./resources/MODES.md)
 - [Outputs](./resources/OUTPUTS.md)
 - [CLI and Examples](./resources/CLI_AND_EXAMPLES.md)
+- [Deep Review Criteria](./resources/DEEP_REVIEW_CRITERIA.md)
+- [Checklist](./resources/CHECKLIST.md)
+- [Qualitative Standards](./resources/QUALITATIVE_STANDARDS.md)
+- [Editor-in-Chief Agent](./resources/editor_in_chief_agent.md)
 - [Troubleshooting](./resources/TROUBLESHOOTING.md)
 
 ## Good First Requests

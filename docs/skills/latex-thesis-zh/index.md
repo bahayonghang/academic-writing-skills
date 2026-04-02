@@ -15,6 +15,8 @@ Chinese LaTeX thesis assistant for existing `.tex` thesis projects.
 - de-AI cleanup (including filler connector and parallel sentence detection)
 - experiment-chapter review
 - citation stacking detection (Introduction and Related Work chapters)
+- abstract structural analysis (five-element model)
+- three-line table compliance checking and generation
 
 ## Recommended Default
 
@@ -34,6 +36,8 @@ For large or multi-file theses, run `structure` first.
 | `deai` | reduce AI writing traces and low-information rhetoric | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
 | `logic` | coherence, introduction funnel, chapter mainline, lit review quality, cross-section closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
 | `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `abstract` | five-element abstract structural diagnosis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py thesis.tex` |
+| `tables` | three-line table compliance and generation (GB/T) | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py thesis.tex` |
 
 ## Good First Requests
 

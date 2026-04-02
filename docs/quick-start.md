@@ -19,6 +19,8 @@ All repository-local Python examples below follow the repo rule: `uv run python 
 ```bash
 uv run python academic-writing-skills/latex-paper-en/scripts/compile.py main.tex
 uv run python academic-writing-skills/latex-paper-en/scripts/check_format.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex
+uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex
 ```
 
 ### Chinese LaTeX thesis

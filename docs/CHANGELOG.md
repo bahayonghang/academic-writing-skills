@@ -2,6 +2,25 @@
 
 本文档根据 Git 提交历史整理，记录项目主要功能与文档变更。
 
+## [Unreleased] - 2026-04-01
+
+### Added
+- 为 `latex-paper-en`、`latex-thesis-zh`、`typst-paper` 新增 Abstract 模块：五元素摘要结构诊断（`analyze_abstract.py`）。
+- 为 `latex-paper-en`、`latex-thesis-zh`、`typst-paper` 新增 Tables 模块：三线表合规检查（`check_tables.py`）与表格生成（`generate_table.py`）。
+- 为 `latex-paper-en`、`typst-paper` 新增 Adapt 模块：跨 venue 格式适配工作流。
+- 为 `latex-paper-en`、`typst-paper` 新增 6 份参考指南：ABSTRACT_STRUCTURE、CITATION_STYLES、JOURNAL_ABBREVIATIONS、JOURNAL_ADAPTATION_WORKFLOW、NUMBER_UNIT_GUIDE、TABLE_GUIDE。
+- 为 `latex-thesis-zh` 新增 3 份参考指南：ABSTRACT_STRUCTURE、CAPTION_GUIDE、TABLE_GUIDE。
+- 为 `latex-thesis-zh` 文档站点新增全部 11 个模块页面（之前文档缺失）。
+- 为 `paper-audit` 新增 DEEP_REVIEW_CRITERIA（16 类问题分类法）、CHECKLIST（通用+六大 venue 专项）、QUALITATIVE_STANDARDS（SRQR 定性研究评审标准）。
+- 为 `paper-audit` 新增 editor_in_chief_agent（EIC desk-reject 筛选智能体）。
+- 为 `paper-audit` 新增专项 reviewer 智能体：prior_art、critical、domain、methodology。
+
+### Changed
+- 重构文档站点侧边栏：所有技能现在展示可折叠的 Modules / References 子分组。
+- 更新所有技能 index.md，补充新模块到模块路由表与推荐提示词。
+- 更新 usage.md 与 quick-start.md，新增 abstract 和 tables 相关命令与模块列表。
+- 提取 VitePress config.ts 侧边栏为 helper 函数，EN/ZH 自动生成。
+
 ## [Unreleased] - 2026-02-28
 
 ### Added

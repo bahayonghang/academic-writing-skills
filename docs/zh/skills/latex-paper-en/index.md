@@ -17,6 +17,9 @@
 - 中译英学术翻译
 - 标题、图表、去 AI、实验章节审阅
 - `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 伪代码审查
+- 摘要结构分析（五元素模型）
+- 三线表合规检查与生成
+- 跨 venue 格式适配（期刊/会议切换）
 
 ## 不适用场景
 
@@ -42,6 +45,10 @@
 | `pseudocode` | IEEE-safe 伪代码、浮动体、caption、label、注释和行号建议检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_pseudocode.py main.tex --venue ieee` |
 | `deai` | 降低 AI 痕迹与低信息密度套话 | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
 | `experiment` | 实验章节审阅、讨论深度/分层、结论完整性 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
+| `abstract` | 五元素摘要结构诊断 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex` |
+| `tables` | 三线表合规检查与生成 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex` |
+| `caption` | 图表 caption 质量审查 | LLM 驱动（无独立脚本） |
+| `adapt` | 跨 venue 格式适配 | LLM 驱动（参见 [适配工作流](./resources/references/JOURNAL_ADAPTATION_WORKFLOW)） |
 
 ## 最小输入
 
@@ -64,6 +71,14 @@
 
 ```text
 投稿前帮我检查 figures 和 bibliography。
+```
+
+```text
+分析摘要结构，检查五元素是否完备。
+```
+
+```text
+检查所有表格的三线表合规性和小数对齐。
 ```
 
 ```text
