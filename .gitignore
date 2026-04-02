@@ -80,3 +80,5 @@ tmp/
 **/.omc/
 **/.omx/
 ref/
+
+review_results/
