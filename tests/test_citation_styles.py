@@ -4,15 +4,13 @@ import tempfile
 from pathlib import Path
 
 from conftest import SCRIPT_DIR_EN  # noqa: F401
-
 from verify_bib import BibTeXVerifier
 
 
 def _write_bib(content: str) -> Path:
-    f = tempfile.NamedTemporaryFile(mode="w", suffix=".bib", delete=False, encoding="utf-8")
-    f.write(content)
-    f.close()
-    return Path(f.name)
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".bib", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        return Path(f.name)
 
 
 SAMPLE_BIB = r"""
@@ -69,7 +67,9 @@ def test_verify_bib_page_format_en_dash() -> None:
         page_issues = [i for i in result["issues"] if i.get("type") == "page_format"]
         # smith2023 has pages = {1-15} (single hyphen)
         assert len(page_issues) >= 1
-        assert "en dash" in page_issues[0]["message"].lower() or "en dash" in page_issues[0]["message"]
+        assert (
+            "en dash" in page_issues[0]["message"].lower() or "en dash" in page_issues[0]["message"]
+        )
     finally:
         path.unlink(missing_ok=True)
 
@@ -83,7 +83,8 @@ def test_verify_bib_apa_author_threshold() -> None:
         verifier = BibTeXVerifier(str(path), style="apa")
         result = verifier.verify()
         author_issues = [
-            i for i in result["issues"]
+            i
+            for i in result["issues"]
             if i.get("type") == "author_count" and i.get("key") == "doe2022"
         ]
         # 7 authors, APA threshold is 20 → no author count warning
@@ -99,7 +100,8 @@ def test_verify_bib_nature_author_threshold() -> None:
         verifier = BibTeXVerifier(str(path), style="nature")
         result = verifier.verify()
         author_issues = [
-            i for i in result["issues"]
+            i
+            for i in result["issues"]
             if i.get("type") == "author_count" and i.get("key") == "doe2022"
         ]
         # doe2022 has 7 authors, Nature threshold is 5 → should warn
@@ -117,7 +119,8 @@ def test_verify_bib_doi_missing_warning() -> None:
             verifier = BibTeXVerifier(str(path), style=style)
             result = verifier.verify()
             doi_issues = [
-                i for i in result["issues"]
+                i
+                for i in result["issues"]
                 if i.get("type") == "doi_missing" and i.get("key") == "nodoi2021"
             ]
             assert len(doi_issues) >= 1, f"{style} should warn about missing DOI"
@@ -132,7 +135,8 @@ def test_verify_bib_vancouver_no_doi_warning() -> None:
         verifier = BibTeXVerifier(str(path), style="vancouver")
         result = verifier.verify()
         doi_issues = [
-            i for i in result["issues"]
+            i
+            for i in result["issues"]
             if i.get("type") == "doi_missing" and i.get("key") == "nodoi2021"
         ]
         assert len(doi_issues) == 0, "Vancouver should not warn about missing DOI"
@@ -147,7 +151,8 @@ def test_verify_bib_correct_en_dash_no_warning() -> None:
         verifier = BibTeXVerifier(str(path), style="ieee")
         result = verifier.verify()
         page_issues = [
-            i for i in result["issues"]
+            i
+            for i in result["issues"]
             if i.get("type") == "page_format" and i.get("key") == "doe2022"
         ]
         # doe2022 has pages = {100--120} → correct, no warning

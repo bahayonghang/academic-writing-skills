@@ -93,7 +93,7 @@ class TableChecker:
                 block_lines = [line]
                 depth = 0
                 start = i
-                for ch in stripped[stripped.index("table(") + 6:]:
+                for ch in stripped[stripped.index("table(") + 6 :]:
                     if ch == "(":
                         depth += 1
                     elif ch == ")":
@@ -109,11 +109,13 @@ class TableChecker:
                         if full.count("(") <= full.count(")"):
                             break
 
-                tables.append({
-                    "start": start,
-                    "end": start + len(block_lines) - 1,
-                    "content": "\n".join(block_lines),
-                })
+                tables.append(
+                    {
+                        "start": start,
+                        "end": start + len(block_lines) - 1,
+                        "content": "\n".join(block_lines),
+                    }
+                )
 
         return tables
 
@@ -252,9 +254,7 @@ def main():
     parser.add_argument(
         "--fix-suggestions", "-f", action="store_true", help="Include fix suggestions"
     )
-    parser.add_argument(
-        "--json", "-j", action="store_true", help="Output in JSON format"
-    )
+    parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
 
     args = parser.parse_args()
 

@@ -274,10 +274,7 @@ class BibChecker:
             # DOI requirement (IEEE, APA, Nature require it)
             if self.style in ("ieee", "apa"):
                 entry_type = entry["type"]
-                if (
-                    "doi" not in fields
-                    and entry_type in ("article", "inproceedings")
-                ):
+                if "doi" not in fields and entry_type in ("article", "inproceedings"):
                     self.warnings.append(
                         f"Entry '{key}': [{self.style.upper()}] DOI recommended "
                         f"for {entry_type} entries."

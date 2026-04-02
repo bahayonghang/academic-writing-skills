@@ -99,14 +99,14 @@ class TableChecker:
                 break
         if not has_booktabs and re.search(r"\\begin\{table\*?\}", self.content):
             self.issues.append(
-                    {
-                        "line": 0,
-                        "level": self.LEVEL_WARNING,
-                        "priority": "P2",
-                        "message": "booktabs package not loaded. Add \\usepackage{booktabs} for professional three-line tables.",
-                        "category": "package",
-                    }
-                )
+                {
+                    "line": 0,
+                    "level": self.LEVEL_WARNING,
+                    "priority": "P2",
+                    "message": "booktabs package not loaded. Add \\usepackage{booktabs} for professional three-line tables.",
+                    "category": "package",
+                }
+            )
 
     def _find_table_environments(self) -> list[dict]:
         """Find all table/table* environments with their line ranges."""
@@ -132,9 +132,7 @@ class TableChecker:
         """Check for vertical lines in column specifications."""
         content = table["content"]
         # Find tabular column spec: \begin{tabular}{|c|c|c|}
-        col_specs = re.findall(
-            r"\\begin\{tabular\*?\}(?:\{[^}]*\})?\{([^}]+)\}", content
-        )
+        col_specs = re.findall(r"\\begin\{tabular\*?\}(?:\{[^}]*\})?\{([^}]+)\}", content)
         for spec in col_specs:
             if "|" in spec:
                 self.issues.append(
@@ -299,23 +297,21 @@ class TableChecker:
             and re.search(r"\d+\.?\d*\s*\*{1,3}", content)
         ):
             self.issues.append(
-                    {
-                        "line": table["start"],
-                        "level": self.LEVEL_INFO,
-                        "priority": "P3",
-                        "message": "Statistical significance markers (*/**/ ***) detected but no table note defining them. Add a note: 'Note. * p<0.05; ** p<0.01; *** p<0.001.'",
-                        "category": "table_note",
-                    }
-                )
+                {
+                    "line": table["start"],
+                    "level": self.LEVEL_INFO,
+                    "priority": "P3",
+                    "message": "Statistical significance markers (*/**/ ***) detected but no table note defining them. Add a note: 'Note. * p<0.05; ** p<0.01; *** p<0.001.'",
+                    "category": "table_note",
+                }
+            )
 
     def _check_number_precision(self, table: dict) -> None:
         """Check for inconsistent decimal precision within columns."""
         content = table["content"]
 
         # Extract data rows (lines between \midrule and \bottomrule)
-        data_match = re.search(
-            r"\\midrule(.*?)\\bottomrule", content, re.DOTALL
-        )
+        data_match = re.search(r"\\midrule(.*?)\\bottomrule", content, re.DOTALL)
         if not data_match:
             return
 
@@ -404,9 +400,7 @@ class TableChecker:
                 lines.append(f"\n[{category.upper()}] ({len(issues)} issues)")
                 for issue in issues:
                     prefix = f"  Line {issue['line']}" if issue["line"] else "  Global"
-                    lines.append(
-                        f"{prefix}: [{issue['level']}] {issue['message']}"
-                    )
+                    lines.append(f"{prefix}: [{issue['level']}] {issue['message']}")
                     if issue.get("fix"):
                         lines.append(f"    Fix: {issue['fix']}")
 
@@ -423,9 +417,7 @@ def main():
     parser.add_argument(
         "--fix-suggestions", "-f", action="store_true", help="Include fix suggestions"
     )
-    parser.add_argument(
-        "--json", "-j", action="store_true", help="Output in JSON format"
-    )
+    parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
 
     args = parser.parse_args()
 

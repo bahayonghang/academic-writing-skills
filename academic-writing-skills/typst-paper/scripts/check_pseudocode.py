@@ -131,7 +131,9 @@ class PseudocodeChecker:
         if not LOVELACE_IMPORT_RE.search(self.content):
             return
 
-        has_wrapper = bool(FIGURE_RE.search(self.content) or ALGORITHM_FIGURE_RE.search(self.content))
+        has_wrapper = bool(
+            FIGURE_RE.search(self.content) or ALGORITHM_FIGURE_RE.search(self.content)
+        )
         if self.venue == "ieee" and not has_wrapper:
             self._add_issue(
                 self._line_for_token("lovelace"),
@@ -151,9 +153,9 @@ class PseudocodeChecker:
             )
 
     def check_prose_length(self) -> None:
-        figure_blocks = self._find_parenthesized_blocks(FIGURE_RE) + self._find_parenthesized_blocks(
-            ALGORITHM_FIGURE_RE
-        )
+        figure_blocks = self._find_parenthesized_blocks(
+            FIGURE_RE
+        ) + self._find_parenthesized_blocks(ALGORITHM_FIGURE_RE)
         for start_line, _end_line, text in figure_blocks:
             if "algorithm" not in text.lower() and "lovelace" not in self.content.lower():
                 continue

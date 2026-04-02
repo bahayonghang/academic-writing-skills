@@ -230,8 +230,11 @@ class AbstractAnalyzer:
         elements = {}
         for element_name in ["background", "objective", "methods", "results", "conclusion"]:
             elements[element_name] = self._analyze_element(
-                element_name, sentences, markers.get(element_name, []),
-                vague_patterns.get(element_name, []), lang
+                element_name,
+                sentences,
+                markers.get(element_name, []),
+                vague_patterns.get(element_name, []),
+                lang,
             )
 
         # Word/char count
@@ -454,7 +457,7 @@ class AbstractAnalyzer:
             lines.append(f"\n  {label:12s}: [{icon}]")
             if elem.get("evidence"):
                 ev = elem["evidence"]
-                lines.append(f"    Evidence: \"{ev}\"")
+                lines.append(f'    Evidence: "{ev}"')
             if elem.get("suggestion"):
                 lines.append(f"    Suggestion: {elem['suggestion']}")
 
@@ -495,9 +498,7 @@ def main():
     parser.add_argument(
         "--max-chars", type=int, default=300, help="Max char count for ZH (default: 300)"
     )
-    parser.add_argument(
-        "--json", "-j", action="store_true", help="Output in JSON format"
-    )
+    parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
 
     args = parser.parse_args()
 

@@ -94,9 +94,7 @@ class TableGenerator:
 
         return "\n".join(lines)
 
-    def _to_latex(
-        self, headers: list[str], rows: list[list[str]], caption: str = ""
-    ) -> str:
+    def _to_latex(self, headers: list[str], rows: list[list[str]], caption: str = "") -> str:
         """Generate LaTeX booktabs table code."""
         n_cols = len(headers)
         if n_cols == 0:
@@ -156,9 +154,7 @@ class TableGenerator:
 
         return "\n".join(lines)
 
-    def _suggest_captions(
-        self, headers: list[str], caption_en: str, caption_zh: str
-    ) -> dict:
+    def _suggest_captions(self, headers: list[str], caption_en: str, caption_zh: str) -> dict:
         """Suggest bilingual captions based on column content."""
         suggestion = {
             "en": caption_en or f"Comparison of {', '.join(headers[1:3])} across methods.",
@@ -193,9 +189,7 @@ def load_json(file_path: str) -> tuple[list[str], list[list[str]]]:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Table Generator - CSV/JSON to LaTeX booktabs"
-    )
+    parser = argparse.ArgumentParser(description="Table Generator - CSV/JSON to LaTeX booktabs")
     parser.add_argument("data_file", help="CSV or JSON file with table data")
     parser.add_argument(
         "--style",
@@ -211,9 +205,7 @@ def main():
     )
     parser.add_argument("--caption-en", default="", help="English caption text")
     parser.add_argument("--caption-zh", default="", help="Chinese caption text")
-    parser.add_argument(
-        "--json", "-j", action="store_true", help="Output in JSON format"
-    )
+    parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
 
     args = parser.parse_args()
 

@@ -226,7 +226,9 @@ def test_paper_audit_evals_contracts_are_artifact_and_schema_aware() -> None:
             assertion.get("text", "") + assertion.get("pattern", "")
             for assertion in item["assertions"]
         )
-        assert "deep-review" in assertion_text, f"paper-audit eval {eval_id} must assert canonical deep-review mode"
+        assert "deep-review" in assertion_text, (
+            f"paper-audit eval {eval_id} must assert canonical deep-review mode"
+        )
 
     artifact_assertions = "\n".join(
         assertion.get("text", "") + assertion.get("pattern", "")
@@ -268,7 +270,9 @@ def test_paper_audit_evals_use_real_mode_specific_fixtures() -> None:
         assert item["files"], f"paper-audit eval {item['id']} must bind to real fixture inputs"
         for rel_path in item["files"]:
             fixture_path = skill_root / rel_path
-            assert fixture_path.exists(), f"paper-audit eval {item['id']} missing fixture: {rel_path}"
+            assert fixture_path.exists(), (
+                f"paper-audit eval {item['id']} missing fixture: {rel_path}"
+            )
 
     assert evals_by_id[1]["files"] == ["evals/fixtures/quick_audit_fixture.tex"]
     assert evals_by_id[5]["files"] == ["evals/fixtures/gate_ieee_fixture.tex"]

@@ -36,7 +36,7 @@ class BibTeXVerifier:
     # Style-specific author thresholds for et al.
     STYLE_ET_AL_THRESHOLD = {
         "ieee": 6,
-        "apa": 20,       # APA lists up to 20; in-text uses et al. for 3+
+        "apa": 20,  # APA lists up to 20; in-text uses et al. for 3+
         "vancouver": 6,
         "nature": 5,
     }
@@ -276,8 +276,7 @@ class BibTeXVerifier:
                     "type": "page_format",
                     "severity": "warning",
                     "message": (
-                        f"Page range uses hyphen '{pages}'. "
-                        "Use en dash (--) for page ranges."
+                        f"Page range uses hyphen '{pages}'. Use en dash (--) for page ranges."
                     ),
                 }
             )
@@ -324,17 +323,16 @@ class BibTeXVerifier:
             and "doi" not in fields
             and entry_type in ("article", "inproceedings")
         ):
-                issues.append(
-                    {
-                        "key": entry_key,
-                        "type": "doi_missing",
-                        "severity": "warning",
-                        "message": (
-                            f"[{self.style.upper()}] DOI recommended for "
-                            f"{entry_type} entries."
-                        ),
-                    }
-                )
+            issues.append(
+                {
+                    "key": entry_key,
+                    "type": "doi_missing",
+                    "severity": "warning",
+                    "message": (
+                        f"[{self.style.upper()}] DOI recommended for {entry_type} entries."
+                    ),
+                }
+            )
 
         return issues
 

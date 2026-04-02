@@ -3,17 +3,15 @@
 import tempfile
 from pathlib import Path
 
-from conftest import SCRIPT_DIR_EN  # noqa: F401 (triggers sys.path setup)
-
 from analyze_abstract import AbstractAnalyzer
+from conftest import SCRIPT_DIR_EN  # noqa: F401 (triggers sys.path setup)
 
 
 def _write_tex(content: str) -> Path:
     """Write content to a temp .tex file and return the path."""
-    f = tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False, encoding="utf-8")
-    f.write(content)
-    f.close()
-    return Path(f.name)
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        return Path(f.name)
 
 
 FULL_ABSTRACT = r"""
@@ -75,14 +73,18 @@ Hello world.
 \end{document}
 """
 
-LONG_ABSTRACT = r"""
+LONG_ABSTRACT = (
+    r"""
 \documentclass{article}
 \begin{document}
 \begin{abstract}
-""" + " ".join(["word"] * 300) + r"""
+"""
+    + " ".join(["word"] * 300)
+    + r"""
 \end{abstract}
 \end{document}
 """
+)
 
 
 def test_abstract_all_elements_present() -> None:

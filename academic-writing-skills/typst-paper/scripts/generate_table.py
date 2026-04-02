@@ -47,8 +47,8 @@ class TableGenerator:
             result["captions"] = self._suggest_captions(headers, caption_en, caption_zh)
         if stats:
             result["stats_note"] = (
-                '[Note. Bold values indicate best performance. '
-                '\\* $p < 0.05$; \\*\\* $p < 0.01$; \\*\\*\\* $p < 0.001$.]'
+                "[Note. Bold values indicate best performance. "
+                "\\* $p < 0.05$; \\*\\* $p < 0.01$; \\*\\*\\* $p < 0.001$.]"
             )
 
         return result
@@ -77,9 +77,7 @@ class TableGenerator:
 
         return "\n".join(lines)
 
-    def _to_typst(
-        self, headers: list[str], rows: list[list[str]], caption: str = ""
-    ) -> str:
+    def _to_typst(self, headers: list[str], rows: list[list[str]], caption: str = "") -> str:
         n_cols = len(headers)
         if n_cols == 0:
             return ""
@@ -114,9 +112,7 @@ class TableGenerator:
 
         return "\n".join(lines)
 
-    def _suggest_captions(
-        self, headers: list[str], caption_en: str, caption_zh: str
-    ) -> dict:
+    def _suggest_captions(self, headers: list[str], caption_en: str, caption_zh: str) -> dict:
         return {
             "en": caption_en or f"Comparison of {', '.join(headers[1:3])} across methods.",
             "zh": caption_zh or f"不同方法的{'、'.join(headers[1:3])}比较。",
@@ -145,11 +141,17 @@ def main():
     )
     parser.add_argument("data_file", help="CSV or JSON file with table data")
     parser.add_argument(
-        "--style", choices=["booktabs", "plain"], default="booktabs",
+        "--style",
+        choices=["booktabs", "plain"],
+        default="booktabs",
         help="Table style (default: booktabs)",
     )
-    parser.add_argument("--bilingual", "-b", action="store_true", help="Generate bilingual captions")
-    parser.add_argument("--stats", "-s", action="store_true", help="Add statistical significance note")
+    parser.add_argument(
+        "--bilingual", "-b", action="store_true", help="Generate bilingual captions"
+    )
+    parser.add_argument(
+        "--stats", "-s", action="store_true", help="Add statistical significance note"
+    )
     parser.add_argument("--caption-en", default="", help="English caption text")
     parser.add_argument("--caption-zh", default="", help="Chinese caption text")
     parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
@@ -172,8 +174,12 @@ def main():
 
     gen = TableGenerator(style=args.style)
     result = gen.generate(
-        headers, rows, bilingual=args.bilingual, stats=args.stats,
-        caption_en=args.caption_en, caption_zh=args.caption_zh,
+        headers,
+        rows,
+        bilingual=args.bilingual,
+        stats=args.stats,
+        caption_en=args.caption_en,
+        caption_zh=args.caption_zh,
     )
 
     if args.json:

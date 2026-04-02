@@ -4,21 +4,18 @@ import json
 import tempfile
 from pathlib import Path
 
-from conftest import SCRIPT_DIR_EN  # noqa: F401 (triggers sys.path setup)
-
 from check_tables import TableChecker
+from conftest import SCRIPT_DIR_EN  # noqa: F401 (triggers sys.path setup)
 from generate_table import TableGenerator, load_csv, load_json
-
 
 # --- TableChecker tests ---
 
 
 def _write_tex(content: str) -> Path:
     """Write content to a temp .tex file and return the path."""
-    f = tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False, encoding="utf-8")
-    f.write(content)
-    f.close()
-    return Path(f.name)
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        return Path(f.name)
 
 
 VALID_THREE_LINE = r"""
@@ -218,29 +215,25 @@ def test_generate_table_word_tip() -> None:
 
 
 def test_load_csv_from_file() -> None:
-    f = tempfile.NamedTemporaryFile(
-        mode="w", suffix=".csv", delete=False, encoding="utf-8"
-    )
-    f.write("Model,Acc,F1\nA,90.0,88.0\nB,91.0,89.0\n")
-    f.close()
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8") as f:
+        f.write("Model,Acc,F1\nA,90.0,88.0\nB,91.0,89.0\n")
+        name = f.name
     try:
-        headers, rows = load_csv(f.name)
+        headers, rows = load_csv(name)
         assert headers == ["Model", "Acc", "F1"]
         assert len(rows) == 2
     finally:
-        Path(f.name).unlink(missing_ok=True)
+        Path(name).unlink(missing_ok=True)
 
 
 def test_load_json_from_file() -> None:
     data = {"headers": ["X", "Y"], "rows": [["1", "2"]]}
-    f = tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False, encoding="utf-8"
-    )
-    json.dump(data, f)
-    f.close()
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+        json.dump(data, f)
+        name = f.name
     try:
-        headers, rows = load_json(f.name)
+        headers, rows = load_json(name)
         assert headers == ["X", "Y"]
         assert rows == [["1", "2"]]
     finally:
-        Path(f.name).unlink(missing_ok=True)
+        Path(name).unlink(missing_ok=True)
