@@ -1218,7 +1218,9 @@ def test_run_audit_gate_pseudocode_float_becomes_blocking(
 
     result = audit.run_audit(str(tex), mode="gate", lang="en", venue="ieee")
 
-    assert any(issue.module == "PSEUDOCODE" and issue.severity == "Critical" for issue in result.issues)
+    assert any(
+        issue.module == "PSEUDOCODE" and issue.severity == "Critical" for issue in result.issues
+    )
     assert any(
         "No floating pseudocode environment" in item.description and not item.passed
         for item in result.checklist
@@ -1266,7 +1268,9 @@ def test_run_audit_gate_keeps_missing_line_numbers_advisory(
     result = audit.run_audit(str(tex), mode="gate", lang="en", venue="ieee")
 
     assert not any(issue.severity == "Critical" for issue in result.issues)
-    assert any(issue.module == "PSEUDOCODE" and issue.severity == "Minor" for issue in result.issues)
+    assert any(
+        issue.module == "PSEUDOCODE" and issue.severity == "Minor" for issue in result.issues
+    )
     assert all(
         item.passed
         for item in result.checklist
@@ -1359,7 +1363,9 @@ class TestParsePreviousReport:
         assert issues[0]["match_strategy"] == "root_cause_summary"
         assert "supported evidence" in issues[0]["message"]
 
-    def test_collect_previous_issues_uses_structured_bundle_when_present(self, tmp_path: Path) -> None:
+    def test_collect_previous_issues_uses_structured_bundle_when_present(
+        self, tmp_path: Path
+    ) -> None:
         report_file = tmp_path / "report.md"
         report_file.write_text(
             "# Previous Review Summary\n\n"

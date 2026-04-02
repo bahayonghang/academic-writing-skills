@@ -7,7 +7,6 @@ import json
 import re
 from pathlib import Path
 
-
 SEVERITY_ORDER = {"major": 0, "moderate": 1, "minor": 2}
 CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2}
 VALID_TYPES = {"methodology", "claim_accuracy", "presentation", "missing_information"}

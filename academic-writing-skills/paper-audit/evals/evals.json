@@ -126,6 +126,43 @@
         {"type": "regex", "pattern": "(theor|contribution|concept|framework)", "description": "theory contribution assessment present"},
         {"type": "regex", "pattern": "(Major Issues|Moderate Issues|Minor Issues)", "description": "severity-grouped findings present"}
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "Deep-review this paper using the Academic Pre-Review Committee (Editor -> Theory -> Literature -> Methodology -> Logic). Be harsh, quote-backed, and point me to the committee artifacts in the deep-review workspace.",
+      "expected_output": "Run deep-review with committee routing, produce committee artifacts, and embed a committee section in the deep-review report when available.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "regex", "pattern": "(Academic Pre-Review Committee|Committee)", "description": "committee section present"},
+        {"type": "regex", "pattern": "(Editor|Theory|Literature|Methodology|Logic)", "description": "committee roles present"}
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Deep-review this paper but focus ONLY on methodology transparency (SRQR). I want MUST-FIX vs SHOULD-FIX items and quote-backed findings. Use --focus methodology if needed.",
+      "expected_output": "Route to deep-review and produce a methodology-focused committee output with MUST-FIX vs SHOULD-FIX separation and SRQR deltas.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "regex", "pattern": "(MUST-FIX|SHOULD-FIX|SRQR)", "description": "methodology transparency structure present"}
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Deep-review this paper but focus ONLY on theory contribution. Give me exactly 3 fatal theory holes with quote+location, plus 2-4 concrete moves to fix. Use --focus theory if needed.",
+      "expected_output": "Route to deep-review and produce a theory-focused committee output with 3 fatal theory holes and concrete fixes.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "regex", "pattern": "(3 Fatal Theory Holes|Fatal Theory Holes|Theory Contribution)", "description": "theory review structure present"}
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Deep-review this paper but focus ONLY on the logic chain. I want a logic chain diagnostic diagram (Mermaid flowchart is fine) and quote-backed breakpoints. Use --focus logic if needed.",
+      "expected_output": "Route to deep-review and produce a logic-chain-focused committee output including a diagnostic diagram and quoted breakpoints.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "regex", "pattern": "(mermaid|flowchart|Logic Chain)", "description": "logic chain diagnostic present"}
+      ]
     }
   ]
 }

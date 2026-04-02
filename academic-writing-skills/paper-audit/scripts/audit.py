@@ -395,7 +395,10 @@ def _section_lane_rules(section_key: str, normalized_text: str, claim_map: dict)
         },
         {
             "enabled": section_key in {"experiment", "experiments", "results", "evaluation"}
-            and any(token in normalized_text for token in ("improve", "outperform", "%", "accuracy", "f1", "bleu")),
+            and any(
+                token in normalized_text
+                for token in ("improve", "outperform", "%", "accuracy", "f1", "bleu")
+            ),
             "title": "Result claims should identify comparison scope and uncertainty",
             "quote": "",
             "explanation": (
@@ -466,7 +469,9 @@ def _summarize_section_text(section_text: str, *, max_len: int = 280) -> str:
     return summary[: max_len - 3].rstrip() + "..."
 
 
-def _fallback_section_lane_issues(section_key: str, section_text: str, claim_map: dict) -> list[dict]:
+def _fallback_section_lane_issues(
+    section_key: str, section_text: str, claim_map: dict
+) -> list[dict]:
     """Generate deterministic fallback findings for a workspace section."""
     normalized = _normalize_inline_text(section_text)
     if not normalized:
@@ -516,9 +521,7 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
         )
 
     numeric_sections = [
-        key
-        for key, text in section_texts.items()
-        if re.search(r"\b\d+(?:\.\d+)?\b", text)
+        key for key, text in section_texts.items() if re.search(r"\b\d+(?:\.\d+)?\b", text)
     ]
     if len(numeric_sections) >= 2:
         issues.append(
@@ -554,7 +557,9 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
             )
         )
 
-    if any("baseline" in text.lower() or "compare" in text.lower() for text in section_texts.values()):
+    if any(
+        "baseline" in text.lower() or "compare" in text.lower() for text in section_texts.values()
+    ):
         issues.append(
             _make_fallback_issue(
                 title="Comparison protocol should make fairness assumptions explicit",
@@ -567,7 +572,9 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
                 severity="moderate",
                 source_section="results" if "results" in section_texts else "experiment",
                 review_lane="evaluation_fairness_and_reproducibility",
-                related_sections=[key for key in ("methods", "results", "appendix") if key in section_texts],
+                related_sections=[
+                    key for key in ("methods", "results", "appendix") if key in section_texts
+                ],
             )
         )
 
@@ -658,7 +665,9 @@ def _build_overall_assessment(issues: list[dict]) -> str:
             f"Deep review found {severity_summary} issues. "
             f"The highest-priority concerns are: {concerns}."
         )
-    return f"Deep review found {severity_summary} issues that should be addressed before submission."
+    return (
+        f"Deep review found {severity_summary} issues that should be addressed before submission."
+    )
 
 
 def _build_revision_roadmap(issues: list[dict]) -> list[dict]:
@@ -691,6 +700,105 @@ def _write_revision_roadmap(review_dir: Path, roadmap: list[dict]) -> None:
             )
         lines.append("")
     (review_dir / "revision_roadmap.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def _extract_editor_verdict_from_markdown(editor_md: str) -> str | None:
+    """Parse an editor verdict from committee/editor.md content."""
+    match = re.search(r"^\s*Verdict\s*:\s*(.+?)\s*$", editor_md, flags=re.IGNORECASE | re.MULTILINE)
+    if not match:
+        return None
+    verdict = match.group(1).strip()
+    if not verdict:
+        return None
+    return verdict
+
+
+def _infer_editor_verdict(
+    phase0_result: AuditResult,
+    issues: list[dict],
+) -> str:
+    """Infer an editor verdict when no explicit committee editor note exists."""
+    has_critical = any(issue.severity == "Critical" for issue in phase0_result.issues)
+    major_count = sum(1 for issue in issues if issue.get("severity") == "major")
+    if has_critical:
+        return "Desk Reject"
+    if major_count >= 3:
+        return "Conditional Pass"
+    return "Pass to Review"
+
+
+def _compute_committee_score(
+    issues: list[dict],
+    editor_verdict: str | None,
+) -> float:
+    """Compute committee score and enforce desk-reject cap."""
+    major_count = sum(1 for issue in issues if issue.get("severity") == "major")
+    moderate_count = sum(1 for issue in issues if issue.get("severity") == "moderate")
+    minor_count = sum(1 for issue in issues if issue.get("severity") == "minor")
+    score = 9.0 - (1.5 * major_count) - (0.7 * moderate_count) - (0.2 * minor_count)
+    score = max(1.0, score)
+    if editor_verdict and "desk reject" in editor_verdict.lower():
+        score = min(score, 4.0)
+    return round(score, 1)
+
+
+def _write_committee_consensus(
+    review_dir: Path,
+    phase0_result: AuditResult,
+    issues: list[dict],
+) -> None:
+    """Write committee/consensus.md with enforced score policy."""
+    committee_dir = review_dir / "committee"
+    committee_dir.mkdir(parents=True, exist_ok=True)
+
+    editor_path = committee_dir / "editor.md"
+    editor_verdict = None
+    if editor_path.exists():
+        editor_verdict = _extract_editor_verdict_from_markdown(
+            editor_path.read_text(encoding="utf-8")
+        )
+    if editor_verdict is None:
+        editor_verdict = _infer_editor_verdict(phase0_result, issues)
+
+    score = _compute_committee_score(issues, editor_verdict)
+    major_count = sum(1 for issue in issues if issue.get("severity") == "major")
+    moderate_count = sum(1 for issue in issues if issue.get("severity") == "moderate")
+    minor_count = sum(1 for issue in issues if issue.get("severity") == "minor")
+
+    top_issues = [
+        issue.get("title", "Untitled issue")
+        for issue in sorted(
+            issues,
+            key=lambda item: (
+                {"major": 0, "moderate": 1, "minor": 2}.get(item.get("severity", "minor"), 3),
+                item.get("source_section", ""),
+            ),
+        )[:3]
+    ]
+
+    lines = [
+        "## Committee Consensus",
+        "",
+        f"Overall Score: {score}/10",
+        f"Editor Verdict: {editor_verdict}",
+        "",
+        "### Score Formula",
+        "- base 9.0",
+        f"- minus 1.5 * major ({major_count})",
+        f"- minus 0.7 * moderate ({moderate_count})",
+        f"- minus 0.2 * minor ({minor_count})",
+        "- floor 1.0",
+        "- desk reject cap 4.0",
+        "",
+        "### Top 3 Issues To Fix First",
+    ]
+    if top_issues:
+        for idx, title in enumerate(top_issues, start=1):
+            lines.append(f"{idx}. {title}")
+    else:
+        lines.append("1. No actionable issues detected.")
+
+    (committee_dir / "consensus.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def run_deep_review(
@@ -735,11 +843,16 @@ def run_deep_review(
 
     from consolidate_review_findings import consolidate_findings, load_comment_files
 
-    findings = [normalize_deep_review_issue_dict(issue) for issue in load_comment_files(review_dir / "comments")]
+    findings = [
+        normalize_deep_review_issue_dict(issue)
+        for issue in load_comment_files(review_dir / "comments")
+    ]
     consolidated = consolidate_findings(findings)
     verified = [
         normalize_deep_review_issue_dict(issue)
-        for issue in verify_quotes((review_dir / "full_text.md").read_text(encoding="utf-8"), consolidated)
+        for issue in verify_quotes(
+            (review_dir / "full_text.md").read_text(encoding="utf-8"), consolidated
+        )
     ]
 
     (review_dir / "all_comments.json").write_text(
@@ -755,6 +868,7 @@ def run_deep_review(
     (review_dir / "overall_assessment.txt").write_text(overall_assessment + "\n", encoding="utf-8")
     revision_roadmap = _build_revision_roadmap(verified)
     _write_revision_roadmap(review_dir, revision_roadmap)
+    _write_committee_consensus(review_dir, phase0_result, verified)
 
     issue_bundle = [coerce_deep_review_issue(issue) for issue in verified]
     result = AuditResult(
@@ -778,6 +892,7 @@ def run_deep_review(
         encoding="utf-8",
     )
     return result
+
 
 def _run_checklist(
     content: str,
@@ -1004,7 +1119,8 @@ def _run_checklist(
             )
         else:
             has_pseudocode = any(
-                marker in content for marker in ("algorithm-figure", "@preview/algorithmic", "lovelace")
+                marker in content
+                for marker in ("algorithm-figure", "@preview/algorithmic", "lovelace")
             )
 
         if not has_pseudocode:
@@ -1023,9 +1139,7 @@ def _run_checklist(
                 )
             ]
 
-        returncode, stdout, _ = _run_check_script(
-            script, file_path, ["--venue", "ieee", "--json"]
-        )
+        returncode, stdout, _ = _run_check_script(script, file_path, ["--venue", "ieee", "--json"])
         if returncode == -1:
             return _fallback_items()
 
@@ -1045,9 +1159,7 @@ def _run_checklist(
         wrapper_messages = _messages_for(
             ("floating algorithm environments", "not wrapped in a figure-like container")
         )
-        caption_label_messages = _messages_for(
-            ("missing a caption", "missing a label")
-        )
+        caption_label_messages = _messages_for(("missing a caption", "missing a label"))
         reference_messages = _messages_for(
             ("never referenced", "first reference", "referenced before")
         )
@@ -1385,10 +1497,7 @@ def run_audit(
         clean = parser.clean_text(content) if fmt != ".pdf" else content
         lang = detect_language(clean)
 
-    print(
-        f"[audit] File: {path.name} | Format: {fmt} | Language: {lang} | "
-        f"Mode: {canonical_mode}"
-    )
+    print(f"[audit] File: {path.name} | Format: {fmt} | Language: {lang} | Mode: {canonical_mode}")
     if alias_used:
         print(f"[audit] Compatibility alias detected: {alias_used} -> {canonical_mode}")
 
@@ -1981,7 +2090,15 @@ Examples:
     parser.add_argument("file", help="Path to the document (.tex, .typ, or .pdf)")
     parser.add_argument(
         "--mode",
-        choices=["quick-audit", "deep-review", "gate", "polish", "re-audit", "self-check", "review"],
+        choices=[
+            "quick-audit",
+            "deep-review",
+            "gate",
+            "polish",
+            "re-audit",
+            "self-check",
+            "review",
+        ],
         default="quick-audit",
         help="Audit mode (default: quick-audit; self-check/review kept as compatibility aliases)",
     )

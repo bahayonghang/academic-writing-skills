@@ -9,7 +9,9 @@ from pathlib import Path
 from report_generator import AuditResult, coerce_deep_review_issue, render_deep_review_report
 
 
-def _read_json_if_exists(path: Path, default: list[dict] | dict | None = None) -> list[dict] | dict | None:
+def _read_json_if_exists(
+    path: Path, default: list[dict] | dict | None = None
+) -> list[dict] | dict | None:
     """Load JSON from path when present, otherwise return the provided default."""
     if not path.exists():
         return default

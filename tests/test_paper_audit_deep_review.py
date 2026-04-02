@@ -1,6 +1,7 @@
 """Tests for paper-audit deep-review-first additions."""
 
 import json
+import re
 from pathlib import Path
 
 from report_generator import (
@@ -80,7 +81,12 @@ def test_render_deep_review_report_groups_issue_bundle() -> None:
         ],
         overall_assessment="Important paper, but the central claim needs recalibration.",
         revision_roadmap=[
-            {"priority": "Priority 1", "title": "Qualify headline claim", "source": "[LLM]", "section": "abstract"}
+            {
+                "priority": "Priority 1",
+                "title": "Qualify headline claim",
+                "source": "[LLM]",
+                "section": "abstract",
+            }
         ],
     )
 
@@ -90,6 +96,39 @@ def test_render_deep_review_report_groups_issue_bundle() -> None:
     assert "Major Issues" in report
     assert "Moderate Issues" in report
     assert "Revision Roadmap" in report
+
+
+def test_render_deep_review_report_embeds_committee_section(tmp_path: Path) -> None:
+    committee_dir = tmp_path / "committee"
+    committee_dir.mkdir(parents=True, exist_ok=True)
+    (committee_dir / "editor.md").write_text("Editor notes go here.", encoding="utf-8")
+    (committee_dir / "theory.md").write_text("Theory notes go here.", encoding="utf-8")
+    (committee_dir / "consensus.md").write_text("Consensus notes go here.", encoding="utf-8")
+
+    result = AuditResult(
+        file_path="paper.tex",
+        language="en",
+        mode="deep-review",
+        issue_bundle=[
+            DeepReviewIssue(
+                title="Headline claim outruns evidence",
+                quote="We achieve state-of-the-art efficiency.",
+                explanation="The claim is not supported across all evaluated settings.",
+                comment_type="claim_accuracy",
+                severity="major",
+                source_section="abstract",
+                review_lane="claims_vs_evidence",
+            ),
+        ],
+        overall_assessment="Assessment.",
+        artifact_dir=str(tmp_path),
+    )
+
+    report = render_deep_review_report(result)
+    assert "Academic Pre-Review Committee" in report
+    assert "Editor notes go here." in report
+    assert "Theory notes go here." in report
+    assert "Consensus notes go here." in report
 
 
 def test_render_json_report_includes_issue_bundle() -> None:
@@ -144,6 +183,8 @@ We show strong results.
     assert (workspace / "section_index.json").exists()
     assert (workspace / "claim_map.json").exists()
     assert (workspace / "paper_summary.md").exists()
+    assert (workspace / "committee").exists()
+    assert (workspace / "references" / "DEEP_REVIEW_CRITERIA.md").exists()
 
     section_index = json.loads((workspace / "section_index.json").read_text(encoding="utf-8"))
     assert any(section["section_key"] == "introduction" for section in section_index)
@@ -184,8 +225,22 @@ def test_verify_quotes_marks_missing_quotes() -> None:
     from verify_quotes import verify_quotes
 
     issues = [
-        {"title": "Found", "quote": "exact text", "explanation": "", "comment_type": "presentation", "severity": "minor", "source_kind": "llm"},
-        {"title": "Missing", "quote": "not present", "explanation": "", "comment_type": "presentation", "severity": "minor", "source_kind": "llm"},
+        {
+            "title": "Found",
+            "quote": "exact text",
+            "explanation": "",
+            "comment_type": "presentation",
+            "severity": "minor",
+            "source_kind": "llm",
+        },
+        {
+            "title": "Missing",
+            "quote": "not present",
+            "explanation": "",
+            "comment_type": "presentation",
+            "severity": "minor",
+            "source_kind": "llm",
+        },
     ]
 
     updated = verify_quotes("This contains exact text in the body.", issues)
@@ -229,6 +284,7 @@ We conclude that the method is broadly superior.
     assert (artifact_dir / "revision_roadmap.md").exists()
     assert (artifact_dir / "phase0_context.md").exists()
     assert (artifact_dir / "review_report.md").exists()
+    assert (artifact_dir / "committee" / "consensus.md").exists()
     assert (artifact_dir / "claim_map.json").exists()
     assert (artifact_dir / "section_index.json").exists()
     assert result.issue_bundle
@@ -241,10 +297,65 @@ We conclude that the method is broadly superior.
     assert first_issue["source_kind"] in {"llm", "script"}
     assert "review_lane" in first_issue
     assert "quote_verified" in first_issue
-    assert {"title", "quote", "explanation", "comment_type", "severity", "source_kind", "review_lane", "root_cause_key", "quote_verified"}.issubset(first_issue)
+    assert {
+        "title",
+        "quote",
+        "explanation",
+        "comment_type",
+        "severity",
+        "source_kind",
+        "review_lane",
+        "root_cause_key",
+        "quote_verified",
+    }.issubset(first_issue)
     assert any(issue["review_lane"] == "claims_vs_evidence" for issue in payload)
-    assert any(issue["review_lane"] == "evaluation_fairness_and_reproducibility" for issue in payload)
+    assert any(
+        issue["review_lane"] == "evaluation_fairness_and_reproducibility" for issue in payload
+    )
     assert any(issue["review_lane"] == "section_methods" for issue in payload)
+
+
+def test_compute_committee_score_applies_desk_reject_cap() -> None:
+    from audit import _compute_committee_score
+
+    issues = [
+        {"severity": "minor"},
+        {"severity": "minor"},
+    ]
+    score_without_cap = _compute_committee_score(issues, "Pass to Review")
+    score_with_cap = _compute_committee_score(issues, "Desk Reject")
+
+    assert score_without_cap == 8.6
+    assert score_with_cap == 4.0
+
+
+def test_run_deep_review_caps_score_from_editor_verdict(tmp_path: Path) -> None:
+    from audit import _write_committee_consensus
+
+    review_dir = tmp_path / "workspace"
+    committee_dir = review_dir / "committee"
+    committee_dir.mkdir(parents=True, exist_ok=True)
+    (committee_dir / "editor.md").write_text(
+        "## Editor Pre-Screen\n\nVerdict: Desk Reject\n",
+        encoding="utf-8",
+    )
+    phase0 = AuditResult(
+        file_path="paper.tex",
+        language="en",
+        mode="quick-audit",
+    )
+    issues = [
+        {"severity": "minor", "title": "Minor issue A", "source_section": "introduction"},
+        {"severity": "minor", "title": "Minor issue B", "source_section": "conclusion"},
+    ]
+    _write_committee_consensus(review_dir, phase0, issues)
+
+    consensus = (committee_dir / "consensus.md").read_text(encoding="utf-8")
+
+    assert "Editor Verdict: Desk Reject" in consensus
+    match = re.search(r"Overall Score:\s*([0-9]+(?:\.[0-9]+)?)\/10", consensus)
+    assert match is not None
+    assert float(match.group(1)) <= 4.0
 
 
 def test_run_audit_deep_review_dispatches_to_issue_bundle(tmp_path: Path) -> None:

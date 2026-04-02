@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 from datetime import datetime
 from pathlib import Path
 
@@ -86,6 +87,32 @@ def write_summary_stub(
     (workspace / "paper_summary.md").write_text("\n".join(lines), encoding="utf-8")
 
 
+def _copy_workspace_references(workspace: Path) -> None:
+    """Copy a small reference set into the workspace for reviewer agents.
+
+    Reviewer lane templates read `<review_dir>/references/...`, so keep the workspace
+    self-contained even when the audit is run from other working directories.
+    """
+    skill_root = Path(__file__).resolve().parent.parent
+    source_dir = skill_root / "references"
+    dest_dir = workspace / "references"
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    minimal_refs = (
+        "DEEP_REVIEW_CRITERIA.md",
+        "ISSUE_SCHEMA.md",
+        "REVIEW_LANE_GUIDE.md",
+        "CONSOLIDATION_RULES.md",
+        "CHECKLIST.md",
+        "QUALITATIVE_STANDARDS.md",
+    )
+    for name in minimal_refs:
+        src = source_dir / name
+        if not src.exists():
+            continue
+        shutil.copy2(src, dest_dir / name)
+
+
 def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> Path:
     """Create deep-review workspace files and return the workspace path."""
     source = Path(input_path).resolve()
@@ -107,8 +134,10 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
     workspace = Path(output_dir).resolve() / slug
     sections_dir = workspace / "sections"
     comments_dir = workspace / "comments"
+    committee_dir = workspace / "committee"
     sections_dir.mkdir(parents=True, exist_ok=True)
     comments_dir.mkdir(parents=True, exist_ok=True)
+    committee_dir.mkdir(parents=True, exist_ok=True)
 
     full_text_path = workspace / "full_text.md"
     full_text_path.write_text(visible_text if visible_text else content, encoding="utf-8")
@@ -155,6 +184,7 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
         encoding="utf-8",
     )
     write_summary_stub(workspace, metadata["title"], claim_map, section_index)
+    _copy_workspace_references(workspace)
     return workspace
 
 

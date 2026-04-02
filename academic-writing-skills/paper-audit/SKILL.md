@@ -4,13 +4,13 @@ description: Deep-review-first audit for Chinese and English academic papers acr
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "4.0"
-  last_updated: "2026-03-19"
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format markdown|json]"
+  version: "4.2"
+  last_updated: "2026-04-02"
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format markdown|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v4.0
+# Paper Audit Skill v4.2
 
 `paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
 
@@ -61,6 +61,31 @@ Legacy aliases still work for one compatibility cycle:
 
 - `self-check` -> `quick-audit`
 - `review` -> `deep-review`
+
+## Committee Focus Routing (deep-review)
+
+For `deep-review`, use the **Academic Pre-Review Committee** by default. This is a 5-role review pass:
+
+1. Editor (desk-reject screen)
+2. Reviewer 1 (theory contribution)
+3. Reviewer 3 (literature dialogue / gap)
+4. Reviewer 2 (methodology transparency)
+5. Reviewer 4 (logic chain)
+
+If the user requests a single dimension, run only the matching committee role(s).
+
+If `--focus ...` is provided, it overrides keyword inference:
+- `--focus full` (default)
+- `--focus editor|theory|literature|methodology|logic`
+
+Keyword map (English + Chinese):
+- editor: "desk reject", "pre-screen", "editor", "EIC", "主编", "预筛", "初筛"
+- theory: "theory", "contribution", "novelty", "theoretical dialogue", "理论", "贡献", "创新性"
+- literature: "related work", "literature", "research gap", "citation", "文献", "综述", "Research Gap", "引用"
+- methodology: "methods", "sample", "coding", "data", "design", "SRQR", "方法", "样本", "编码", "数据", "研究设计", "透明度"
+- logic: "logic", "argument", "causal", "structure", "论证", "因果", "逻辑", "结构"
+
+Output language: match the user's request language. If ambiguous, match the paper language.
 
 ## Review Standard
 
@@ -131,6 +156,8 @@ This creates:
 - `paper_summary.md`
 - `sections/*.md`
 - `comments/`
+- `references/` (minimal copies for reviewer agents)
+- `committee/` (committee reviewer artifacts)
 
 #### Phase 2: Phase 0 automated audit
 
@@ -142,7 +169,46 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
 
 Treat this as **Phase 0 only**. It supplies script-backed context and scores, not the final review.
 
-#### Phase 3: Section and cross-cutting review lanes
+#### Phase 3: Committee + Review Lanes
+
+##### Phase 3A: Academic Pre-Review Committee (default)
+
+Decide committee focus:
+- If `--focus ...` is provided, use it.
+- Otherwise infer from the user request using the keyword map in "Committee Focus Routing".
+- If nothing matches, default to `full` (all five roles).
+
+Dispatch the committee reviewers (in this exact order) and have them write artifacts into the workspace:
+
+1. `agents/committee_editor_agent.md`
+   - write: `committee/editor.md`
+   - write: `comments/committee_editor.json`
+2. `agents/committee_theory_agent.md`
+   - write: `committee/theory.md`
+   - write: `comments/committee_theory.json`
+3. `agents/committee_literature_agent.md`
+   - write: `committee/literature.md`
+   - write: `comments/committee_literature.json`
+4. `agents/committee_methodology_agent.md`
+   - write: `committee/methodology.md`
+   - write: `comments/committee_methodology.json`
+5. `agents/committee_logic_agent.md`
+   - write: `committee/logic.md`
+   - write: `comments/committee_logic.json`
+
+If subagents are unavailable, run the committee reviewers inline, but keep the same file outputs.
+
+Then write: `committee/consensus.md`
+- include: overall score (1-10), ordered priorities, and the top 3 issues to fix first
+- scoring formula:
+  - start at 9.0
+  - subtract: `1.5 * (# major) + 0.7 * (# moderate) + 0.2 * (# minor)`
+  - floor at 1.0
+  - if Editor verdict is Desk Reject, cap at 4.0
+
+Note: `render_deep_review_report.py` automatically embeds `committee/*.md` into `review_report.md` when present.
+
+##### Phase 3B: Section and cross-cutting review lanes (coverage)
 
 Read:
 
@@ -284,6 +350,14 @@ Always prefer:
 | `scripts/diff_review_issues.py` | compare old vs new issue bundles |
 
 ## Reviewer Lanes
+
+Committee agents (deep-review default):
+
+- `committee_editor_agent.md`
+- `committee_theory_agent.md`
+- `committee_literature_agent.md`
+- `committee_methodology_agent.md`
+- `committee_logic_agent.md`
 
 Default deep-review lanes live in `agents/`:
 

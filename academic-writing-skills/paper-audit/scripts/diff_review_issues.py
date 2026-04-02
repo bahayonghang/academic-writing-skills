@@ -37,11 +37,7 @@ def diff_issues(previous: list[dict], current: list[dict]) -> dict:
             }
         )
 
-    new_items = [
-        issue
-        for key, issue in current_by_key.items()
-        if key not in previous_by_key
-    ]
+    new_items = [issue for key, issue in current_by_key.items() if key not in previous_by_key]
     return {"statuses": statuses, "new_issues": new_items}
 
 

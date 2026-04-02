@@ -7,7 +7,6 @@ import json
 import re
 from pathlib import Path
 
-
 CLAIM_PATTERNS = (
     r"\bwe (?:show|demonstrate|find|propose|introduce|present)\b",
     r"\bour results?\b",

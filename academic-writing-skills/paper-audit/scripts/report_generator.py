@@ -5,6 +5,7 @@ Handles scoring engine, issue aggregation, and Markdown report rendering.
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Optional
 
 # --- Data Models ---
@@ -327,7 +328,9 @@ def render_deep_review_report(result: AuditResult) -> str:
         f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
     ]
     if result.mode_alias_used:
-        lines.append(f"**Compatibility Note**: legacy mode alias `{result.mode_alias_used}` mapped to `{result.mode}`.")
+        lines.append(
+            f"**Compatibility Note**: legacy mode alias `{result.mode_alias_used}` mapped to `{result.mode}`."
+        )
     if result.artifact_dir:
         lines.append(f"**Artifacts**: `{result.artifact_dir}`")
     lines.extend(["", "## Overall Assessment", ""])
@@ -348,6 +351,31 @@ def render_deep_review_report(result: AuditResult) -> str:
             "",
         ]
     )
+
+    committee_blocks: list[str] = []
+    if result.artifact_dir:
+        committee_dir = Path(result.artifact_dir) / "committee"
+        if committee_dir.exists():
+            ordered = [
+                ("editor.md", "### Editor (Desk Reject Screen)"),
+                ("theory.md", "### Reviewer 1 (Theory Contribution)"),
+                ("literature.md", "### Reviewer 3 (Literature Dialogue)"),
+                ("methodology.md", "### Reviewer 2 (Methodology & Transparency)"),
+                ("logic.md", "### Reviewer 4 (Logic Chain)"),
+                ("consensus.md", "### Committee Consensus"),
+            ]
+            for filename, heading in ordered:
+                path = committee_dir / filename
+                if not path.exists():
+                    continue
+                text = path.read_text(encoding="utf-8").strip()
+                if not text:
+                    continue
+                committee_blocks.extend([heading, "", text, ""])
+
+    if committee_blocks:
+        lines.extend(["## Academic Pre-Review Committee", ""])
+        lines.extend(committee_blocks)
 
     if result.summary:
         lines.extend(["## Paper Summary", "", result.summary, ""])
@@ -828,7 +856,9 @@ def render_json_report(result: AuditResult) -> str:
         ],
     }
     if result.issue_bundle:
-        data["issue_bundle"] = [normalize_deep_review_issue_dict(issue) for issue in result.issue_bundle]
+        data["issue_bundle"] = [
+            normalize_deep_review_issue_dict(issue) for issue in result.issue_bundle
+        ]
         data["overall_assessment"] = result.overall_assessment
         data["paper_summary"] = result.summary
         data["revision_roadmap"] = result.revision_roadmap or _default_revision_roadmap(
@@ -893,7 +923,9 @@ def render_reaudit_report(result: AuditResult) -> str:
         lines.append("")
         lines.append("## Prior Issue Verification")
         lines.append("")
-        lines.append("| # | root_cause_key | Module | Prior Severity | Status | Current | Message |")
+        lines.append(
+            "| # | root_cause_key | Module | Prior Severity | Status | Current | Message |"
+        )
         lines.append("|---|----------------|--------|---------------|--------|---------|---------|")
         for idx, c in enumerate(classifications, 1):
             cur_sev = c.get("current_severity") or "\u2014"
