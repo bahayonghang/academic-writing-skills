@@ -102,6 +102,30 @@
         {"type": "regex", "pattern": "(precheck|blocker|safe)", "description": "precheck safety logic present"},
         {"type": "not_contains", "text": "Deep Review Report", "description": "polish flow does not drift into deep-review report output"}
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "Gate this submission with an editor-in-chief screening first. Tell me if a busy top-venue EIC would desk-reject this paper based on the title, abstract, and introduction pitch quality alone.",
+      "expected_output": "Run gate mode with EIC screening pass. Evaluate pitch quality, venue fit, fatal flaws, and presentation baseline before the detailed checklist.",
+      "files": ["evals/fixtures/gate_ieee_fixture.tex"],
+      "assertions": [
+        {"type": "regex", "pattern": "(EIC|editor.in.chief|desk.reject|screening)", "description": "EIC screening language present"},
+        {"type": "regex", "pattern": "(pitch|Pitch)", "description": "pitch quality assessment present"},
+        {"type": "regex", "pattern": "(PASS|FAIL|Pass to Review|Desk Reject|Conditional Pass)", "description": "EIC verdict present"},
+        {"type": "regex", "pattern": "(Verdict|verdict|score)", "description": "gate verdict or score shown"}
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Deep-review this qualitative research paper. Pay special attention to whether the coding process is transparent, whether data saturation is discussed, and whether there is adequate researcher reflexivity. Also check the theoretical contribution depth.",
+      "expected_output": "Route to deep-review and apply qualitative methodology checks (B6-B10) plus theory contribution assessment (A5-A7). Flag missing SRQR elements.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(coding|saturation|reflexivity|triangulation|sampling)", "description": "qualitative methodology checks present"},
+        {"type": "regex", "pattern": "(theor|contribution|concept|framework)", "description": "theory contribution assessment present"},
+        {"type": "regex", "pattern": "(Major Issues|Moderate Issues|Minor Issues)", "description": "severity-grouped findings present"}
+      ]
     }
   ]
 }

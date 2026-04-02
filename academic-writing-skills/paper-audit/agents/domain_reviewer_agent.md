@@ -24,6 +24,14 @@ You do NOT evaluate experimental methodology in depth (Methodology Reviewer's sc
 - Are framework limitations acknowledged?
 - Were alternative frameworks considered and justified for exclusion?
 
+### Theory Contribution Assessment (A5-A7)
+
+These dimensions evaluate whether the paper makes a meaningful theoretical contribution beyond empirical findings. They are especially important for theory-driven or social science papers, but apply to any paper claiming theoretical novelty.
+
+- **Concept definition clarity (A5)**: Are the paper's core concepts clearly and unambiguously defined? Look for key terms that are used repeatedly but never formally defined, or defined differently in different sections. A concept that means different things to different readers cannot anchor a theoretical contribution.
+- **Theory dialogue quality (A6)**: Does the paper engage in substantive dialogue with existing theories — comparing, contrasting, extending, or challenging them? Or does it merely cite theories as background? Strong theory dialogue shows how the paper's framework relates to, builds upon, or departs from prior theoretical work. Weak dialogue drops theory names without engagement.
+- **Incremental theoretical knowledge (A7)**: Can the paper clearly answer: "What new knowledge does this research add to the theoretical landscape?" If the contribution is purely empirical (new data for an existing theory), that is valid but should be acknowledged as such. If the paper claims theoretical novelty, the specific increment must be identifiable and non-trivial.
+
 ### Domain Contribution
 - Type of contribution: theoretical, empirical, methodological, or practical?
 - Scale: incremental extension vs. significant advance?

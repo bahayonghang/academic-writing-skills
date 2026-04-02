@@ -24,10 +24,17 @@ Consolidated checklists for paper audit across venues.
 - [ ] All acronyms defined on first use
 - [ ] No overly long sentences (> 60 words)
 - [ ] Abstract is self-contained
+- [ ] Abstract contains all 5 structural elements (Background / Objective / Methods / Results / Conclusion)
+- [ ] Abstract Results section includes at least one quantitative finding
+- [ ] Abstract within venue word count limit
 - [ ] Contributions clearly stated in introduction
 - [ ] No citation stacking in Introduction/Related Work (max 2 clustered citations per sentence without individual discussion)
 - [ ] Limitations section included
 - [ ] Figure/Table captions are concise, without AI-like redundancy, and use consistent casing
+- [ ] Tables use three-line format (booktabs / no vertical lines)
+- [ ] Table captions placed above table, notes placed below
+- [ ] Number precision consistent within each table column
+- [ ] Statistical significance markers defined in table note when used
 - [ ] Literature review uses thematic organization, not author/year enumeration (A1)
 - [ ] Each literature theme cluster ends with critical analysis (A2)
 - [ ] Related Work concludes with explicit research gap derivation (A3)
@@ -35,6 +42,19 @@ Consolidated checklists for paper audit across venues.
 - [ ] Related Work citations reappear in Discussion for results contextualization (B4)
 - [ ] Conclusion contains all three elements: findings summary + implications + limitations/future work (B5)
 - [ ] Introduction contribution claims are answered in Conclusion (C3)
+
+### Theory & Conceptual Framework
+- [ ] Core theoretical concepts defined clearly and unambiguously (A5)
+- [ ] Theoretical framework engages with existing theories, not just cites them (A6)
+- [ ] Paper's theoretical contribution is identifiable and stated explicitly (A7)
+- [ ] Research gap is genuine and supported by literature evidence, not fabricated by selective citation
+
+### Qualitative Methodology (apply when paper uses qualitative or mixed methods)
+- [ ] Sampling strategy described with theoretical/methodological rationale (B6)
+- [ ] Data saturation discussed or sample size justified (B7)
+- [ ] Coding/analysis process described with sufficient detail: stages, coders, examples (B8)
+- [ ] Trustworthiness strategies reported (triangulation, member checking, audit trail, etc.) (B9)
+- [ ] Researcher reflexivity addressed for studies involving human participants or sensitive topics (B10)
 
 ### Experiment Analysis
 - [ ] Experiment section uses cohesive paragraph narratives, not itemized lists

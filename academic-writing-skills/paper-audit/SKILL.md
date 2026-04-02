@@ -72,7 +72,7 @@ Read these references before running reviewer-style work:
 4. `references/CONSOLIDATION_RULES.md`
 5. `references/ISSUE_SCHEMA.md`
 
-The deep-review workflow uses a 10-part issue taxonomy:
+The deep-review workflow uses a 16-part issue taxonomy:
 
 1. formula / derivation errors
 2. notation inconsistency
@@ -84,6 +84,12 @@ The deep-review workflow uses a 10-part issue taxonomy:
 8. underspecified methods / missing information
 9. internal contradiction
 10. self-consistency of standards
+11. table structure violations
+12. abstract structural incompleteness
+13. theory contribution deficiency
+14. qualitative methodology opacity
+15. pseudo-innovation / straw man
+16. paragraph-level argument incoherence
 
 ## Workflow
 
@@ -194,10 +200,12 @@ Summarize:
    ```bash
    uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode gate ...
    ```
-2. Report PASS/FAIL.
-3. List blockers first.
-4. Keep advisory items separate from blockers.
-5. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
+2. **EIC Screening** (Phase 0.5): Read `agents/editor_in_chief_agent.md` and perform the editor-in-chief desk-reject screening on the paper's title, abstract, and introduction. This evaluates pitch quality, venue fit, fatal flaws, and presentation baseline. A desk-reject verdict is a gate blocker.
+3. Report PASS/FAIL.
+4. Present EIC screening results first (verdict + score + justification).
+5. List blockers next.
+6. Keep advisory items separate from blockers.
+7. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
 
 ### `re-audit`
 
@@ -256,7 +264,7 @@ Always prefer:
 | File | Purpose |
 |---|---|
 | `references/REVIEW_CRITERIA.md` | top-level audit scoring and mapping |
-| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy and leniency rules |
+| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy (16 dimensions) and leniency rules |
 | `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
 | `references/ISSUE_SCHEMA.md` | canonical JSON schema |
 | `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
@@ -286,8 +294,14 @@ Default deep-review lanes live in `agents/`:
 - `self_consistency_reviewer_agent.md`
 - `prior_art_reviewer_agent.md`
 - `synthesis_agent.md`
+- `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)
 
-Legacy persona agents remain for compatibility but are no longer the default backbone of `deep-review`.
+Specialized deep-review agents (read their files for activation criteria):
+
+- `critical_reviewer_agent.md` — devil's advocate with C3-C5 checks
+- `domain_reviewer_agent.md` — domain expertise with A1-A7 assessments
+- `methodology_reviewer_agent.md` — methodology rigor with B3-B10 checks
+- `literature_reviewer_agent.md` — evidence-based literature verification (optional, `--literature-search`)
 
 ## Examples
 

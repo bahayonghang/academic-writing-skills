@@ -301,3 +301,177 @@ def test_diff_review_issues_reports_statuses() -> None:
     assert statuses["claim-a"] == "PARTIALLY_ADDRESSED"
     assert statuses["claim-b"] == "FULLY_ADDRESSED"
     assert diff["new_issues"][0]["root_cause_key"] == "claim-c"
+
+
+# ============================================================
+# v4.1 enhancements: EIC, theory contribution, qualitative,
+#                     pseudo-innovation, logic chain
+# ============================================================
+
+_AGENTS_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "paper-audit" / "agents"
+_REFS_DIR = Path(__file__).parent.parent / "academic-writing-skills" / "paper-audit" / "references"
+
+
+class TestEditorInChiefAgent:
+    """Tests for the new Editor-in-Chief agent file and gate integration."""
+
+    def test_agent_file_exists(self) -> None:
+        assert (_AGENTS_DIR / "editor_in_chief_agent.md").exists()
+
+    def test_agent_has_screening_dimensions(self) -> None:
+        content = (_AGENTS_DIR / "editor_in_chief_agent.md").read_text(encoding="utf-8")
+        assert "Pitch Quality" in content
+        assert "Venue Fit" in content
+        assert "Fatal Flaw Detection" in content
+        assert "Presentation Baseline" in content
+
+    def test_agent_has_decision_thresholds(self) -> None:
+        content = (_AGENTS_DIR / "editor_in_chief_agent.md").read_text(encoding="utf-8")
+        assert "Pass to Review" in content
+        assert "Desk Reject" in content
+        assert "Conditional Pass" in content
+
+    def test_gate_mode_references_eic_in_skill(self) -> None:
+        skill_md = (_REFS_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
+        assert "editor_in_chief_agent.md" in skill_md
+        assert "EIC Screening" in skill_md
+
+
+class TestExpandedTaxonomy:
+    """Tests for the expanded 16-part issue taxonomy."""
+
+    def test_deep_review_criteria_has_16_dimensions(self) -> None:
+        content = (_REFS_DIR / "DEEP_REVIEW_CRITERIA.md").read_text(encoding="utf-8")
+        # Check new dimensions exist
+        assert "Theory contribution deficiency" in content
+        assert "Qualitative methodology opacity" in content
+        assert "Pseudo-innovation" in content
+        assert "Paragraph-level argument incoherence" in content
+
+    def test_deep_review_criteria_has_eic_section(self) -> None:
+        content = (_REFS_DIR / "DEEP_REVIEW_CRITERIA.md").read_text(encoding="utf-8")
+        assert "Editor-in-Chief screening" in content
+        assert "gate mode" in content
+
+    def test_skill_md_lists_16_part_taxonomy(self) -> None:
+        content = (_REFS_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
+        assert "16-part issue taxonomy" in content
+        assert "theory contribution deficiency" in content
+        assert "pseudo-innovation" in content
+        assert "paragraph-level argument incoherence" in content
+
+
+class TestTheoryContributionDimensions:
+    """Tests for A5-A7 theory contribution dimensions in domain reviewer."""
+
+    def test_domain_reviewer_has_a5_a7(self) -> None:
+        content = (_AGENTS_DIR / "domain_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "(A5)" in content
+        assert "(A6)" in content
+        assert "(A7)" in content
+
+    def test_a5_concept_clarity(self) -> None:
+        content = (_AGENTS_DIR / "domain_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Concept definition clarity" in content
+
+    def test_a6_theory_dialogue(self) -> None:
+        content = (_AGENTS_DIR / "domain_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Theory dialogue quality" in content
+
+    def test_a7_incremental_knowledge(self) -> None:
+        content = (_AGENTS_DIR / "domain_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Incremental theoretical knowledge" in content
+
+    def test_checklist_has_theory_items(self) -> None:
+        content = (_REFS_DIR / "CHECKLIST.md").read_text(encoding="utf-8")
+        assert "Theory & Conceptual Framework" in content
+        assert "(A5)" in content
+        assert "(A6)" in content
+        assert "(A7)" in content
+
+
+class TestQualitativeMethodologySupport:
+    """Tests for B6-B10 qualitative methodology dimensions."""
+
+    def test_methodology_reviewer_has_b6_b10(self) -> None:
+        content = (_AGENTS_DIR / "methodology_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "(B6)" in content
+        assert "(B7)" in content
+        assert "(B8)" in content
+        assert "(B9)" in content
+        assert "(B10)" in content
+
+    def test_b6_sampling_logic(self) -> None:
+        content = (_AGENTS_DIR / "methodology_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Theoretical sampling logic" in content
+
+    def test_b8_coding_transparency(self) -> None:
+        content = (_AGENTS_DIR / "methodology_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Coding process transparency" in content
+
+    def test_qualitative_standards_reference_exists(self) -> None:
+        assert (_REFS_DIR / "QUALITATIVE_STANDARDS.md").exists()
+
+    def test_qualitative_standards_has_srqr(self) -> None:
+        content = (_REFS_DIR / "QUALITATIVE_STANDARDS.md").read_text(encoding="utf-8")
+        assert "SRQR" in content
+        assert "Data saturation" in content or "saturation" in content
+        assert "Reflexivity" in content or "reflexivity" in content
+        assert "Triangulation" in content or "triangulation" in content
+
+    def test_checklist_has_qualitative_items(self) -> None:
+        content = (_REFS_DIR / "CHECKLIST.md").read_text(encoding="utf-8")
+        assert "Qualitative Methodology" in content
+        assert "(B6)" in content
+        assert "(B7)" in content
+        assert "(B8)" in content
+        assert "(B9)" in content
+        assert "(B10)" in content
+
+    def test_methodology_reviewer_references_qualitative_standards(self) -> None:
+        content = (_AGENTS_DIR / "methodology_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "QUALITATIVE_STANDARDS.md" in content
+
+
+class TestPseudoInnovationDetection:
+    """Tests for pseudo-innovation detection in prior art reviewer."""
+
+    def test_prior_art_reviewer_has_pseudo_innovation_section(self) -> None:
+        content = (_AGENTS_DIR / "prior_art_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Pseudo-Innovation Detection" in content
+
+    def test_prior_art_reviewer_has_straw_man(self) -> None:
+        content = (_AGENTS_DIR / "prior_art_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Straw Man" in content
+
+    def test_prior_art_reviewer_has_fabricated_gap(self) -> None:
+        content = (_AGENTS_DIR / "prior_art_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Fabricated Research Gap" in content
+
+    def test_prior_art_reviewer_has_selective_citation(self) -> None:
+        content = (_AGENTS_DIR / "prior_art_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Selective Citation" in content
+
+    def test_prior_art_reviewer_has_literature_dialogue(self) -> None:
+        content = (_AGENTS_DIR / "prior_art_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Literature Dialogue Quality" in content
+
+
+class TestLogicChainAnalysis:
+    """Tests for C5 paragraph-level logic chain analysis in critical reviewer."""
+
+    def test_critical_reviewer_has_c5(self) -> None:
+        content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "(C5)" in content
+
+    def test_c5_has_topic_sentence_extraction(self) -> None:
+        content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Topic sentence extraction" in content or "topic sentence" in content.lower()
+
+    def test_c5_has_adjacency_coherence(self) -> None:
+        content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Adjacency coherence" in content or "adjacency coherence" in content.lower()
+
+    def test_c5_has_causal_inversion(self) -> None:
+        content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "causal inversion" in content.lower()

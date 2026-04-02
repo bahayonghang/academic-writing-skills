@@ -81,6 +81,22 @@ When literature search results are provided:
 - Check if the paper's framing honestly positions itself relative to the closest existing work
 - This is about intellectual honesty, not just citation completeness (Domain Reviewer's scope)
 
+### 11. Paragraph-Level Argument Coherence (C5)
+
+Analyze the logical flow at the paragraph level across the entire paper:
+
+1. **Topic sentence extraction**: Identify the central claim or topic of each paragraph (usually the first or second sentence).
+2. **Adjacency coherence check**: For each pair of adjacent paragraphs within the same section, verify there is a logical connection — either continuation, elaboration, contrast, or cause-effect.
+3. **Flag logical jumps**: Mark locations where the reader would ask "how did we get here?" — abrupt topic shifts without transition, unannounced changes of scope, or skipped reasoning steps.
+4. **Flag causal inversions**: Identify paragraphs where effect is presented before cause, or conclusions appear before the supporting evidence.
+5. **Argument-evidence binding**: For each argumentative paragraph, check whether the evidence (citation, data, or reasoning) actually supports the stated claim. Flag paragraphs where the argument and evidence point in different directions.
+
+**Severity guidance**:
+- Logical jump between sections (e.g., Methods to Results): usually acceptable (structural convention)
+- Logical jump within a section that breaks the argument chain: Major
+- Missing transition that is easily fixable with one sentence: Minor
+- Causal inversion that could mislead the reader about the paper's reasoning: Major
+
 ## Severity Classification
 
 | Severity | Definition | Handling |

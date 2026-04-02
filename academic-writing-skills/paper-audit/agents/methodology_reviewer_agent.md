@@ -24,6 +24,16 @@ You do NOT evaluate writing quality, formatting, or domain contribution — thos
 - Counter-argument consideration
 - Evidence triangulation
 
+### Qualitative Methodology Depth Checks (B6-B10)
+
+Apply these when the paper uses qualitative or mixed-methods research. Read `references/QUALITATIVE_STANDARDS.md` for detailed criteria and SRQR-based assessment items.
+
+- **Theoretical sampling logic (B6)**: The sampling strategy must have a clear theoretical or methodological rationale — not just convenience. Check whether the paper explains *why* these participants/cases/sites were selected and how the selection connects to the research questions. "We interviewed 15 participants" without rationale is insufficient.
+- **Data saturation (B7)**: The paper should discuss how the researchers determined that data collection was sufficient. Look for: explicit saturation claims with evidence, discussion of when new themes stopped emerging, or justification for a predetermined sample size. Complete silence on saturation in a grounded-theory or interview-based study is a moderate issue.
+- **Coding process transparency (B8)**: The analysis process must be described with enough detail to assess rigor. Vague descriptions like "data were coded using NVivo" or "thematic analysis was performed" are red flags. Look for: coding stages (open/axial/selective or initial/focused), number of coders, code examples, and how disagreements were resolved.
+- **Triangulation (B9)**: Check whether the paper uses multiple data sources, methods, or analysts to cross-validate findings. Triangulation is especially important when the paper makes strong claims based on a single data type. Note: not all qualitative studies require triangulation — evaluate based on the strength of claims made.
+- **Researcher reflexivity (B10)**: For research involving human participants or sensitive topics, the paper should acknowledge the researcher's positionality and potential influence on data collection and interpretation. A token statement ("we acknowledge potential bias") without specifics is weak reflexivity. Strong reflexivity describes specific assumptions, background, and mitigation strategies.
+
 ### Machine Learning Papers
 - Dataset selection, splits, and preprocessing
 - Evaluation metric appropriateness
