@@ -33,6 +33,22 @@ class BibTeXVerifier:
 
     GB7714_RECOMMENDED = ["doi", "url", "urldate"]
 
+    # Style-specific author thresholds for et al.
+    STYLE_ET_AL_THRESHOLD = {
+        "ieee": 6,
+        "apa": 20,       # APA lists up to 20; in-text uses et al. for 3+
+        "vancouver": 6,
+        "nature": 5,
+    }
+
+    # Style-specific required fields beyond the base set
+    STYLE_EXTRA_FIELDS = {
+        "ieee": {"article": ["volume", "pages"]},
+        "apa": {"article": ["volume"]},
+        "vancouver": {"article": ["volume", "pages"]},
+        "nature": {"article": ["volume", "pages"]},
+    }
+
     def __init__(
         self,
         bib_file: str,
@@ -41,6 +57,7 @@ class BibTeXVerifier:
         online: bool = False,
         email: str | None = None,
         online_timeout: float = 10.0,
+        style: str = "ieee",
     ):
         self.bib_file = Path(bib_file).resolve()
         self.standard = standard
@@ -50,6 +67,7 @@ class BibTeXVerifier:
         self.online = online
         self.email = email
         self.online_timeout = online_timeout
+        self.style = style.lower()
 
     def parse(self) -> list[dict]:
         """Parse BibTeX file into entries."""
@@ -125,6 +143,10 @@ class BibTeXVerifier:
                 results["issues"].extend(entry_issues)
             else:
                 results["valid_entries"] += 1
+
+            # Style-specific checks
+            style_issues = self._check_style_compliance(entry)
+            results["issues"].extend(style_issues)
 
             # Check for missing identifiers (DOI/URL)
             if "doi" not in entry["fields"] and "url" not in entry["fields"]:
@@ -238,6 +260,84 @@ class BibTeXVerifier:
 
         return issues
 
+    def _check_style_compliance(self, entry: dict) -> list[dict]:
+        """Check entry against style-specific rules (IEEE/APA/Vancouver/Nature)."""
+        issues: list[dict] = []
+        fields = entry["fields"]
+        entry_key = entry["key"]
+        entry_type = entry["type"]
+
+        # Check page format (en dash)
+        pages = fields.get("pages", "")
+        if pages and "-" in pages and "--" not in pages:
+            issues.append(
+                {
+                    "key": entry_key,
+                    "type": "page_format",
+                    "severity": "warning",
+                    "message": (
+                        f"Page range uses hyphen '{pages}'. "
+                        "Use en dash (--) for page ranges."
+                    ),
+                }
+            )
+
+        # Check style-specific extra required fields
+        extra = self.STYLE_EXTRA_FIELDS.get(self.style, {}).get(entry_type, [])
+        for field in extra:
+            if field not in fields or not fields[field]:
+                issues.append(
+                    {
+                        "key": entry_key,
+                        "type": "style_missing_field",
+                        "severity": "warning",
+                        "message": (
+                            f"[{self.style.upper()}] Missing recommended field "
+                            f"'{field}' for {entry_type}"
+                        ),
+                    }
+                )
+
+        # Check author count vs et al. threshold (informational)
+        author = fields.get("author", "")
+        if author:
+            # Count authors by splitting on " and "
+            author_count = len(re.split(r"\s+and\s+", author))
+            threshold = self.STYLE_ET_AL_THRESHOLD.get(self.style, 6)
+            if author_count > threshold:
+                issues.append(
+                    {
+                        "key": entry_key,
+                        "type": "author_count",
+                        "severity": "info",
+                        "message": (
+                            f"[{self.style.upper()}] {author_count} authors listed; "
+                            f"style uses et al. after {threshold}. "
+                            "Ensure bibliography style handles truncation."
+                        ),
+                    }
+                )
+
+        # DOI requirement varies by style
+        if (
+            self.style in ("ieee", "nature", "apa")
+            and "doi" not in fields
+            and entry_type in ("article", "inproceedings")
+        ):
+                issues.append(
+                    {
+                        "key": entry_key,
+                        "type": "doi_missing",
+                        "severity": "warning",
+                        "message": (
+                            f"[{self.style.upper()}] DOI recommended for "
+                            f"{entry_type} entries."
+                        ),
+                    }
+                )
+
+        return issues
+
     def _check_gb7714_recommended(self, entry: dict, issues: list[dict]) -> None:
         fields = entry["fields"]
         entry_key = entry["key"]
@@ -348,6 +448,12 @@ def main() -> int:
     parser.add_argument("--tex", help="Main .tex file for citation consistency checks")
     parser.add_argument("--standard", choices=["default", "gb7714"], default="default")
     parser.add_argument(
+        "--style",
+        choices=["ieee", "apa", "vancouver", "nature"],
+        default="ieee",
+        help="Citation style for style-specific validation (default: ieee)",
+    )
+    parser.add_argument(
         "--online-check", action="store_true", help="Generate list for online verification"
     )
     parser.add_argument(
@@ -378,6 +484,7 @@ def main() -> int:
         online=getattr(args, "online", False),
         email=getattr(args, "email", None),
         online_timeout=getattr(args, "online_timeout", 10.0),
+        style=getattr(args, "style", "ieee"),
     )
     result = verifier.verify()
 

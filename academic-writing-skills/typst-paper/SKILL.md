@@ -1,6 +1,6 @@
 ---
 name: typst-paper
-description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, expression polishing, translation, title optimization, pseudocode review, algorithm block cleanup, de-AI editing, or experiment-section review. Trigger even when the user only mentions one Typst file, one bibliography issue, one pseudocode block, or one section rewrite. Also trigger when the user mentions ".typ files", "typst compile error", "typst export", "typst bibliography", `algorithm-figure`, `lovelace`, or `algorithmic` even without saying the word "Typst" explicitly.
+description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, expression polishing, translation, title optimization, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Trigger even when the user only mentions one Typst file, one bibliography issue, one pseudocode block, one section rewrite, "three-line table", "check abstract", or "reformat for another journal". Also trigger when the user mentions ".typ files", "typst compile error", "typst export", "typst bibliography", `algorithm-figure`, `lovelace`, or `algorithmic` even without saying the word "Typst" explicitly.
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
@@ -61,6 +61,9 @@ Do not use this skill for:
 | `pseudocode` | Review `algorithmic` / `algorithm-figure` / `lovelace` output for IEEE-like safety, captions, and comment length | `uv run python $SKILL_DIR/scripts/check_pseudocode.py main.typ --venue ieee` | `references/modules/PSEUDOCODE.md` |
 | `deai` | Reduce English or Chinese AI-writing traces while preserving Typst syntax | `uv run python $SKILL_DIR/scripts/deai_check.py main.typ --section introduction` | `references/modules/DEAI.md` |
 | `experiment` | Inspect experiment-section clarity, discussion layering, and reporting quality | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.typ --section experiment` | `references/modules/EXPERIMENT.md` |
+| `tables` | Table structure validation, three-line table generation | `uv run python $SKILL_DIR/scripts/check_tables.py main.typ` | `references/modules/TABLES.md` |
+| `abstract` | Abstract five-element structure diagnosis and word count validation | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.typ` | `references/modules/ABSTRACT.md` |
+| `adapt` | Journal adaptation: reformat paper for a different venue | (LLM-driven workflow) | references/modules/ADAPT.md |
 
 ## Required Inputs
 

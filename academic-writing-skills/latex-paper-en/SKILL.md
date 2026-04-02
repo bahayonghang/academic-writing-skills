@@ -1,6 +1,6 @@
 ---
 name: latex-paper-en
-description: English LaTeX academic paper assistant for existing `.tex` projects. Use this skill whenever the user wants to compile, lint, audit, or improve an English LaTeX conference or journal paper such as IEEE, ACM, Springer, NeurIPS, or ICML submissions. Trigger even when the user only mentions one paper issue, such as bibliography errors, grammar cleanup, sentence splitting, logic review, expression polishing, translation, title optimization, figure checks, pseudocode review, algorithm block cleanup, de-AI editing, or experiment-section review. Also trigger for "proofread my paper", "fix my LaTeX", "prepare for submission", "check my manuscript", "improve my writing", `algorithm2e`, `algorithmicx`, `algpseudocodex`, `Require/Ensure`, or "Algorithm 1" when the user has a .tex file.
+description: English LaTeX academic paper assistant for existing `.tex` projects. Use this skill whenever the user wants to compile, lint, audit, or improve an English LaTeX conference or journal paper such as IEEE, ACM, Springer, NeurIPS, or ICML submissions. Trigger even when the user only mentions one paper issue, such as bibliography errors, grammar cleanup, sentence splitting, logic review, expression polishing, translation, title optimization, figure checks, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Also trigger for "proofread my paper", "fix my LaTeX", "prepare for submission", "check my manuscript", "improve my writing", "three-line table", "booktabs", "check abstract", "reformat for another journal", "换投", `algorithm2e`, `algorithmicx`, `algpseudocodex`, `Require/Ensure`, or "Algorithm 1" when the user has a .tex file.
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
@@ -64,6 +64,9 @@ Do not use this skill for:
 | `pseudocode` | IEEE-safe pseudocode review, `algorithm2e` cleanup, caption/label/reference checks, and comment-length review | `uv run python -B $SKILL_DIR/scripts/check_pseudocode.py main.tex --venue ieee` | `references/modules/PSEUDOCODE.md` |
 | `deai` | Reduce AI-writing traces while preserving LaTeX syntax | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction` | `references/modules/DEAI.md` |
 | `experiment` | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments` | `references/modules/EXPERIMENT.md` |
+| `tables` | Table structure validation, three-line table generation, or booktabs review | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex` | `references/modules/TABLES.md` |
+| `abstract` | Abstract five-element structure diagnosis and word count validation | `uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.tex` | `references/modules/ABSTRACT.md` |
+| `adapt` | Journal adaptation: reformat paper for a different venue | (LLM-driven workflow) | references/modules/ADAPT.md |
 
 ## Required Inputs
 

@@ -38,6 +38,16 @@ class BibChecker:
         "misc": ["title"],
     }
 
+    # Style-specific author thresholds for et al.
+    STYLE_ET_AL_THRESHOLD = {
+        "ieee": 6,
+        "apa": 20,
+        "vancouver": 6,
+        "nature": 5,
+        "mla": 3,
+        "chicago": 10,
+    }
+
     def __init__(
         self,
         bib_file: str,
@@ -238,25 +248,40 @@ class BibChecker:
 
         print(f"\n[CHECK] Style Requirements ({self.style.upper()})")
 
-        if self.style == "ieee":
-            # IEEE typically uses numeric citations
-            print("  ℹ IEEE uses numeric citations [1], [2], etc.")
+        for key, entry in self.entries.items():
+            fields = entry["fields"]
 
-        elif self.style == "apa":
-            # APA uses author-year citations
-            print("  ℹ APA uses author-year citations (Smith, 2020)")
+            # Page format: en dash check
+            pages = fields.get("pages", "")
+            if pages and "-" in pages and "--" not in pages:
+                self.warnings.append(
+                    f"Entry '{key}': page range uses hyphen '{pages}'. "
+                    "Use en dash (--) for page ranges."
+                )
 
-        elif self.style == "gb-7714-2015":
-            # Chinese national standard
-            print("  ℹ GB/T 7714-2015 is the Chinese national standard")
-            # Check for Chinese characters in titles
-            chinese_entries = []
-            for key, entry in self.entries.items():
-                title = entry["fields"].get("title", "")
-                if re.search(r"[\u4e00-\u9fff]", title):
-                    chinese_entries.append(key)
-            if chinese_entries:
-                print(f"  ✓ Found {len(chinese_entries)} entries with Chinese titles")
+            # Author count vs et al. threshold
+            author = fields.get("author", "")
+            if author:
+                author_count = len(re.split(r"\s+and\s+", author))
+                threshold = self.STYLE_ET_AL_THRESHOLD.get(self.style, 6)
+                if author_count > threshold:
+                    self.warnings.append(
+                        f"Entry '{key}': {author_count} authors; "
+                        f"{self.style.upper()} uses et al. after {threshold}. "
+                        "Ensure bibliography style handles truncation."
+                    )
+
+            # DOI requirement (IEEE, APA, Nature require it)
+            if self.style in ("ieee", "apa"):
+                entry_type = entry["type"]
+                if (
+                    "doi" not in fields
+                    and entry_type in ("article", "inproceedings")
+                ):
+                    self.warnings.append(
+                        f"Entry '{key}': [{self.style.upper()}] DOI recommended "
+                        f"for {entry_type} entries."
+                    )
 
     def check_online(self):
         """Verify entries online via CrossRef/Semantic Scholar."""
