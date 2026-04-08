@@ -74,6 +74,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **长难句** | 复杂句拆解（超过 50 词自动触发）|
 | **表达** | 学术语气改进、表达重构 |
 | **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、方法论深度、摘要/结论一致性检查 |
+| **文献综述** | 独立的 related work 综合分析与重写蓝图：主题聚合、比较分析、研究空白推导 |
 | **标题** | IEEE/ACM/Springer 最佳实践生成；移除无效词；综合评分 0–100 |
 | **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
 | **伪代码** | 面向 `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 审查；检查浮动体、caption/label/引用顺序、长注释和行号建议 |
@@ -95,6 +96,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **模板** | thuthesis / pkuthss / ustcthesis / fduthesis 自动检测 |
 | **中文规范** | 口语化表达检测、术语一致性检查 |
 | **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、章节主线、跨章节逻辑链 |
+| **文献综述** | 面向学位论文的文献综述诊断与重写蓝图：拒绝作者年份流水账，强化比较分析与空白推导 |
 | **标题** | 符合 GB/T 7713.1-2006 规范；中英文双语候选方案 |
 | **图表标题** | 顶会标准双语 Caption（中文 + 英文）|
 | **实验分析** | 含基线对比、消融覆盖、discussion 分层与结论完整性的核心期刊叙事段落 |
@@ -123,6 +125,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **格式** | 页面设置、文本格式、引用语法检查 |
 | **语法** | 与 `latex-paper-en` 相同的检查，适配 Typst 语法 |
 | **逻辑** | AXES 段落衔接、绪论漏斗链、摘要/结论一致性、跨章节逻辑链 |
+| **文献综述** | 在保留 `@cite` anchors 与 Typst labels 的前提下，检查 related work 的综合性与研究空白链条 |
 | **标题** | 双语（中英文）标题生成与优化 |
 | **图表标题** | 遵循 IEEE/ACM 标准的双语 Caption |
 | **伪代码** | 面向 `algorithmic`、`algorithm-figure`、`lovelace` 的 IEEE-like 审查，检查 wrapper、caption、style hook 和注释长度 |
@@ -152,6 +155,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **去AI化** | 全文降低 AI 写作痕迹 |
 | **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
 | **审查范围说明** | Phase 0 负责脚本化审查；`deep-review` 进一步加入 claim-evidence、符号/数值一致性、评估公平性、自我标准一致性、先验工作定位等 reviewer lanes |
+| **文献边界** | `--focus literature` 负责判断 research gap 是否真实、文献定位是否公平，不负责代写综述正文；需要改写时请转交对应写作类 skill |
 
 **审查工作流层级**
 
@@ -203,6 +207,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 | **输出格式** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
 | **综述初稿** | 分类体系大纲 → 逐节证据包 → 逐节写作 → 合并 + 质量门；可选 LaTeX 移交 |
 | **报告结构** | 检索范围 → 来源分桶 → 候选论文 → 综合结论 → 下一步建议 |
+| **综合规则** | 综述写作必须保留冲突证据，按照“共识 → 分歧 → 局限 → 空白”组织，禁止把相互矛盾的研究强行写成统一结论 |
 
 ---
 

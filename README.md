@@ -74,6 +74,7 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Sentences** | Complex sentence decomposition (auto-triggers at > 50 words) |
 | **Expression** | Academic tone improvement, expression restructuring |
 | **Logic** | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment |
+| **Literature** | Dedicated related-work synthesis checks and rewrite blueprints: thematic clustering, comparative analysis, and research-gap derivation |
 | **Title** | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100 |
 | **Captions** | Title/Sentence-case, AI-flavor-free figure and table captions |
 | **Pseudocode** | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
@@ -95,6 +96,7 @@ Chinese degree thesis editing conforming to GB/T 7714-2015 and major university 
 | **Templates** | thuthesis / pkuthss / ustcthesis / fduthesis auto-detection |
 | **Chinese Style** | Oral-expression detection, terminology consistency |
 | **Logic** | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure |
+| **Literature** | Thesis-specific literature review diagnosis and rewrite blueprint: no author/year listing, stronger comparison, evidence-backed gap derivation |
 | **Title** | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates |
 | **Captions** | Bilingual English/Chinese captions following top-conference standards |
 | **Experiments** | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness |
@@ -123,6 +125,7 @@ Bilingual Typst paper editing with millisecond-level compilation.
 | **Format** | Page settings, text formatting, citation syntax |
 | **Grammar** | Same checks as `latex-paper-en`, adapted for Typst syntax |
 | **Logic** | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure |
+| **Literature** | Related-work synthesis checks and rewrite blueprints while preserving `@cite` anchors and Typst labels |
 | **Title** | Bilingual (English/Chinese) title generation and optimization |
 | **Captions** | Bilingual captions following IEEE/ACM standards |
 | **Pseudocode** | IEEE-like review for `algorithmic`, `algorithm-figure`, and `lovelace`, including wrapper, caption, style hook, and comment-length checks |
@@ -152,6 +155,7 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | **De-AI** | Reduce AI writing traces across the whole document |
 | **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
 | **Review Scope Note** | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
+| **Literature Boundary** | `--focus literature` judges whether the gap is real and the literature positioning is fair; it does not rewrite the section. Use the format-specific writing skills for prose changes |
 
 **Audit workflow layers**
 
@@ -203,6 +207,7 @@ Structured literature synthesis focused on Industrial AI domains.
 | **Outputs** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
 | **Survey Draft** | Taxonomy-driven outline → per-section evidence packs → section-by-section writing → merge with quality gate; optional LaTeX handoff |
 | **Report Structure** | Search scope → source buckets → shortlisted papers → synthesis → next-step recommendations |
+| **Synthesis Rule** | Preserve contradictions, write through consensus → disagreement → limitations → gap, and never flatten conflicting evidence into fake agreement |
 
 ---
 
