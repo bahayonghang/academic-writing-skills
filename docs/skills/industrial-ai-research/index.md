@@ -78,3 +78,4 @@ Draft a survey on predictive maintenance using the survey-draft mode.
 - `survey-draft` mode produces Markdown by default. For LaTeX output, it delegates final formatting to `latex-paper-en`.
 - The current hardening direction keeps `survey-outline`, `survey-evidence`, `survey-write`, and `survey-merge` as distinct gated phases: no prose is generated until the outline is approved and all evidence packs are assembled.
 - Literature review quality standards (A1-A4) from the writing skills are cross-referenced in `SURVEY_WRITING_GUIDE.md` for survey context: thematic clustering, critical analysis, gap derivation, and citation density funnel apply to survey writing as well.
+- Survey prose should preserve contradictions and default to `consensus -> disagreement -> limitations -> gap`, not paper-by-paper narration or fake agreement.

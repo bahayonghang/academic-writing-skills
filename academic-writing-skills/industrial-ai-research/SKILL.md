@@ -12,8 +12,8 @@ description: >
 metadata:
   category: academic-writing
   tags: [industrial-ai, research, literature-review, predictive-maintenance, scheduling, anomaly-detection, smart-manufacturing, cps, arxiv, ieee, survey, survey-draft]
-  version: "1.1"
-  last_updated: "2026-03-12"
+  version: "1.2"
+  last_updated: "2026-04-08"
 argument-hint: "[topic] [--mode MODE] [--lang LANG] [--window WINDOW] [--output-dir DIR]"
 allowed-tools: Read, Glob, Grep, WebSearch, WebFetch
 ---
@@ -29,6 +29,7 @@ Run a lean, source-aware research workflow for Industrial AI.
 - Venue-aware source prioritization (arXiv, IEEE, automation venues)
 - Four deliverable modes: research-brief, literature-map, venue-ranked survey, research-gap memo
 - Contrarian synthesis pass to surface contradictions and under-explored gaps
+- Consensus -> disagreement -> limitations -> gap synthesis discipline for survey prose
 - Survey draft generation: outline-first writing with per-section evidence packs and optional LaTeX export
 
 ## Triggering
@@ -67,6 +68,7 @@ Use this skill when the user wants to:
 4. Default to the last 3 years, but keep seminal older work when it is still necessary for context.
 5. Cite every substantive claim and separate verified evidence from inference.
 6. In survey-draft mode, complete all structure and evidence phases before generating any prose. Structure phases produce YAML/tables only.
+7. Preserve contradictions explicitly; do not flatten conflicting findings into fake agreement.
 
 ## Intake Contract
 
@@ -136,6 +138,7 @@ When the user asks for the latest work, prefer:
 
 - Cluster the shortlisted papers by problem, method, dataset, deployment setting, and evaluation style.
 - Surface trends, gaps, contradictions, and under-explored opportunities.
+- When contradictions exist, state them before drawing any research-gap conclusion.
 - Run a contrarian pass: what would challenge the dominant conclusion?
 
 ### Phase 6. Report Assembly
@@ -208,6 +211,7 @@ Read `references/report-modes.md` and follow the selected mode exactly.
   - S2: evidence packs or tables only
   - S3: section Markdown drafts grounded in the evidence packs
   - S4: merged Markdown survey with cross-section consistency notes
+- Survey prose should prefer `consensus -> disagreement -> limitations -> gap` over paper-by-paper narration.
 - If sources are sparse, inaccessible, or off-scope, say so directly and report the exact fallback you used.
 
 ## Module Router

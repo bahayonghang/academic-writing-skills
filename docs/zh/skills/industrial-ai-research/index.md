@@ -53,3 +53,4 @@
 
 - 常规模式最终输出为一份稳定结构的报告；`survey-draft` 会额外产出 `outline.yml`、分节 evidence 文件、分节草稿、合并后的 `survey-draft.md` 和 `quality-report.md`。
 - 当前强化方向是把 `survey-outline`、`survey-evidence`、`survey-write`、`survey-merge` 保持为严格分阶段模块：在大纲获批且证据包完成前，不生成正文 prose。
+- survey prose 必须保留冲突证据，优先采用“共识 -> 分歧 -> 局限 -> 空白”的组织链条，而不是逐篇点名或强行写成统一意见。

@@ -65,6 +65,17 @@ The Comparative Analysis section (Phase S4) must include at least one cross-cutt
 - Avoid generator-tone phrases: "In this section, we will discuss...", "It is worth noting that...", "Taken together..." (limit to ≤2 occurrences in the entire draft).
 - Prefer active constructions: "Zhang et al. [12] propose..." over "A method was proposed by Zhang et al. [12]..."
 
+## Core Synthesis Chain
+
+For any paragraph that reviews multiple papers, default to this chain:
+
+1. **Consensus**: state what the cited papers broadly agree on.
+2. **Disagreement**: surface differences in assumptions, data regimes, metrics, or deployment evidence.
+3. **Limitations**: identify what remains weak across the compared studies.
+4. **Gap**: derive the under-explored or unresolved issue from those limitations.
+
+Do not skip directly from citation listing to a claimed gap. The gap must be earned by the synthesis.
+
 ## Literature Review Quality Standards
 
 Survey papers must exemplify the highest literature review quality. These rules (cross-referenced from the `latex-paper-en` skill's LOGIC module) are especially critical in survey context:
@@ -80,12 +91,14 @@ Each H3 subsection (theme cluster) MUST end with a critical synthesis paragraph 
 - Summarizes shared strengths and limitations of methods in that cluster
 - Identifies open problems within the cluster
 - Provides a transition to the next cluster or section
+- Preserves conflicting findings when studies disagree on the same benchmark or deployment claim
 
 ### A3: Research Gap Derivation (Mandatory)
 The final subsection of the literature review (or the Comparative Analysis section) MUST explicitly identify:
 - Gaps in the current literature that remain unaddressed
 - Under-explored combinations of methods and applications
 - Missing evaluation dimensions (e.g., deployment evidence, latency, data efficiency)
+- Contradictions that remain unresolved across research groups
 
 ### A4: Citation Density Funnel
 Survey papers naturally follow a funnel pattern: broad introduction citations → focused per-cluster citations → specific technique deep-dives. Maintain this pattern within each H2 section.

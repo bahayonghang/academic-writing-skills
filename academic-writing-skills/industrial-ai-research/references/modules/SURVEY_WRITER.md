@@ -30,8 +30,10 @@ For each H3 under the current H2:
    - Comparison sentences must use data from the comparison table.
    - Quantitative claims must use exact values from anchor facts.
    - Citation scope: prefer Primary → Chapter-level → Global (sparingly).
+   - When multiple papers are discussed together, write through `consensus -> disagreement -> limitations -> gap` instead of paper-by-paper enumeration.
 4. **Include the comparison table** from the evidence pack (may be reformatted for flow).
 5. **End with a synthesis paragraph** that connects findings to the broader taxonomy branch.
+6. **Preserve contradictions explicitly** when papers disagree on performance, deployment readiness, or safety claims.
 
 ### 3. Run Self-Check Gate
 
