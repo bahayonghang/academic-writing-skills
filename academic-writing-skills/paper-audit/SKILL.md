@@ -4,13 +4,13 @@ description: Deep-review-first audit for Chinese and English academic papers acr
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "4.2"
-  last_updated: "2026-04-02"
+  version: "4.3"
+  last_updated: "2026-04-08"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format markdown|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v4.2
+# Paper Audit Skill v4.3
 
 `paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
 
@@ -36,6 +36,7 @@ The primary product is no longer just a score. For `deep-review`, the main outpu
 - direct source surgery on `.tex` / `.typ`
 - compilation debugging as the main task
 - free-form literature survey writing
+- paragraph-level related-work rewriting
 - cosmetic grammar cleanup without an audit goal
 
 ## Critical Rules
@@ -46,6 +47,7 @@ The primary product is no longer just a score. For `deep-review`, the main outpu
 - Always anchor reviewer findings to a quote, section, or exact textual location.
 - Be conservative with OCR noise, formatting quirks, and obvious copy-editing trivia.
 - Review like a careful reader: understand the author's intended meaning before flagging an issue.
+- For literature findings, judge whether the gap is evidence-backed and fairly positioned; do not rewrite the prose inside `paper-audit`.
 
 ## Mode Selection
 
@@ -74,6 +76,12 @@ For `deep-review`, use the **Academic Pre-Review Committee** by default. This is
 
 If the user requests a single dimension, run only the matching committee role(s).
 
+Literature focus means:
+- verify whether the literature is thematically synthesized or merely enumerated
+- verify whether contradictions are acknowledged rather than flattened
+- verify whether the claimed gap is genuine instead of manufactured by selective citation
+- do **not** rewrite the related-work prose; hand that off to the format-specific writing skill when needed
+
 If `--focus ...` is provided, it overrides keyword inference:
 - `--focus full` (default)
 - `--focus editor|theory|literature|methodology|logic`
@@ -81,7 +89,7 @@ If `--focus ...` is provided, it overrides keyword inference:
 Keyword map (English + Chinese):
 - editor: "desk reject", "pre-screen", "editor", "EIC", "主编", "预筛", "初筛"
 - theory: "theory", "contribution", "novelty", "theoretical dialogue", "理论", "贡献", "创新性"
-- literature: "related work", "literature", "research gap", "citation", "文献", "综述", "Research Gap", "引用"
+- literature: "related work", "literature", "research gap", "citation", "文献", "综述", "Research Gap", "引用", "gap is fake", "选择性引用"
 - methodology: "methods", "sample", "coding", "data", "design", "SRQR", "方法", "样本", "编码", "数据", "研究设计", "透明度"
 - logic: "logic", "argument", "causal", "structure", "论证", "因果", "逻辑", "结构"
 
@@ -383,3 +391,4 @@ Specialized deep-review agents (read their files for activation criteria):
 - “Run a quick audit on `paper.tex` and tell me what blocks submission.”
 - “Gate this IEEE submission and separate blockers from recommendations.”
 - “Re-audit this revision against my previous report.”
+- “Audit only the literature positioning and tell me whether the claimed gap is real or fabricated by selective citation.”

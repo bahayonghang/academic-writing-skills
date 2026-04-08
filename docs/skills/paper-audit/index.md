@@ -15,6 +15,7 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents.
 - direct source editing as the first step
 - compilation debugging as the main task
 - free-form literature survey writing
+- related-work paragraph rewriting
 - purely cosmetic copy-editing without an audit goal
 
 ## Modes
@@ -92,6 +93,10 @@ Deep-review this manuscript but focus only on methodology transparency and SRQR 
 ```
 
 ```text
+Audit only the literature positioning and tell me whether the claimed gap is real or manufactured by selective citation.
+```
+
+```text
 Gate this IEEE paper and separate hard blockers from advisory pseudocode recommendations.
 ```
 
@@ -104,3 +109,4 @@ Re-audit this revision against the previous report.
 - `audit.py --mode deep-review` is only Phase 0, not the full reviewer workflow.
 - The primary deep-review product is the structured issue bundle, not the score summary.
 - Use source files when possible; PDF input is supported but weaker for formula- and notation-heavy papers.
+- `--focus literature` is critique-only: it checks synthesis quality, contradiction handling, and gap legitimacy, but does not rewrite the related-work prose.
