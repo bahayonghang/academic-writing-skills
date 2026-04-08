@@ -11,6 +11,7 @@ import pytest
 
 experiment_module = importlib.import_module("analyze_experiment")
 logic_module = importlib.import_module("analyze_logic")
+literature_module = importlib.import_module("analyze_literature")
 deai_module = importlib.import_module("deai_check")
 compile_module = importlib.import_module("compile")
 verify_bib_module = importlib.import_module("verify_bib")
@@ -409,6 +410,66 @@ long-range dependencies efficiently. This gap motivates our approach.
     findings = logic_module.analyze(tex, "related")
     joined = "\n".join(findings).lower()
     assert "gap" not in joined or "no rule-based" in joined
+
+
+def test_analyze_literature_marks_borderline_cluster_for_review(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+Smith et al. \cite{smith2020} proposed a convolutional baseline.
+Jones et al. \cite{jones2021} introduced a transformer variant.
+Lee et al. \cite{lee2022} designed a hybrid architecture for the same task.
+Wang et al. \cite{wang2023} extended the benchmark with larger datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    findings = literature_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "needs review" in joined
+
+
+def test_analyze_literature_flags_repeated_missing_comparative_synthesis(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+Smith et al. \cite{smith2020} proposed a convolutional baseline.
+Jones et al. \cite{jones2021} introduced a transformer variant.
+
+Lee et al. \cite{lee2022} designed a hybrid architecture for the same task.
+Wang et al. \cite{wang2023} extended the benchmark with larger datasets.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    findings = literature_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "repeatedly catalog prior work" in joined
+
+
+def test_analyze_literature_passes_when_comparison_and_gap_are_present(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Related Work}
+CNN-based methods are efficient on small datasets, whereas transformer variants model long-range dependencies more effectively.
+However, both families remain sensitive to distribution shift and require large labeled corpora.
+This shared limitation leaves a gap in robust forecasting under scarce labels, which motivates our method.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+
+    findings = literature_module.analyze(tex, "related")
+    joined = "\n".join(findings).lower()
+    assert "comparative synthesis" not in joined
 
 
 # ── analyze_logic.py (WP4: Cross-Section Logic Chain) ─────────

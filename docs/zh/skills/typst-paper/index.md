@@ -8,7 +8,7 @@
 - 格式与 venue 检查
 - BibTeX 或 Hayagriva 文献验证
 - 语法、长句、逻辑、表达优化
-- 文献综述质量检查、讨论深度、结论完整性
+- 文献综述质量检查与重写蓝图、讨论深度、结论完整性
 - 跨章节逻辑链闭合
 - 翻译与双语润色
 - 标题优化
@@ -29,6 +29,7 @@
 | `grammar` | 语法检查 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
 | `sentences` | 长句分析 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
 | `logic` | 连贯性、绪论漏斗链、文献综述质量、摘要/结论一致性、跨章节逻辑链 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
+| `literature` | related work 综合分析、比较分析与研究空白推导 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_literature.py main.typ --section related` |
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | 中英学术翻译 | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | 标题检查或优化 | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
@@ -68,3 +69,4 @@
 
 - 默认输出是 Typst 友好的、保留源码结构的审阅意见，而不是静默改写。
 - 当前 eval 已补充伪代码相关请求，包括 algorithm-figure 检查和 lovelace wrapper 指引。
+- 如果用户明确要改写文献综述、补比较分析或推导研究空白，优先走 `literature`。

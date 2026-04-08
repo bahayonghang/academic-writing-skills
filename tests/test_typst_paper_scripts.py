@@ -63,6 +63,7 @@ check_format_typst = _load_typst("check_format")
 check_pseudocode_typst = _load_typst("check_pseudocode")
 parsers_typst = _load_typst("parsers")
 analyze_logic_typst = _load_typst("analyze_logic")
+analyze_literature_typst = _load_typst("analyze_literature")
 analyze_experiment_typst = _load_typst("analyze_experiment")
 deai_typst = _load_typst("deai_check")
 
@@ -252,6 +253,41 @@ The field continues to evolve with new architectures.
     findings = analyze_logic_typst.analyze(typ, "related")
     joined = "\n".join(findings).lower()
     assert "gap" in joined
+
+
+def test_typst_analyze_literature_marks_borderline_cluster_for_review(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= Related Work
+Smith et al. @smith2020 proposed a convolutional baseline.
+Jones et al. @jones2021 introduced a transformer variant.
+Lee et al. @lee2022 designed a hybrid architecture.
+Wang et al. @wang2023 expanded the benchmark.
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_literature_typst.analyze(typ, "related")
+    joined = "\n".join(findings).lower()
+    assert "needs review" in joined
+
+
+def test_typst_analyze_literature_flags_repeated_missing_comparative_synthesis(
+    tmp_path: Path,
+) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= Related Work
+Smith et al. @smith2020 proposed a convolutional baseline.
+Jones et al. @jones2021 introduced a transformer variant.
+
+Lee et al. @lee2022 designed a hybrid architecture.
+Wang et al. @wang2023 expanded the benchmark.
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_literature_typst.analyze(typ, "related")
+    joined = "\n".join(findings).lower()
+    assert "multiple citation-heavy paragraphs" in joined
 
 
 def test_typst_analyze_logic_flags_intro_funnel_jump(tmp_path: Path) -> None:

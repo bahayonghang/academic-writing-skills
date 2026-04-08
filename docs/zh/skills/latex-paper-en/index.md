@@ -9,7 +9,7 @@
 - 参考文献验证
 - 语法与长句优化
 - 逻辑与论证衔接检查
-- 文献综述质量检查（主题组织、研究空白推导）
+- 文献综述质量检查与重写蓝图（主题组织、比较分析、研究空白推导）
 - 讨论深度与文献回溯分析
 - 结论完整性验证
 - 跨章节逻辑链闭合
@@ -38,6 +38,7 @@
 | `grammar` | 语法检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_grammar.py main.tex --section introduction` |
 | `sentences` | 长句或密集句分析 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_sentences.py main.tex --section introduction` |
 | `logic` | 连贯性、绪论漏斗链、文献综述质量、摘要/结论一致性、跨章节逻辑链 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
+| `literature` | related work 综合分析、比较分析与研究空白推导 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_literature.py main.tex --section related` |
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/latex-paper-en/scripts/improve_expression.py main.tex --section related` |
 | `translation` | 中译英学术翻译 | `uv run python academic-writing-skills/latex-paper-en/scripts/translate_academic.py input.txt --domain deep-learning` |
 | `title` | 标题检查或生成 | `uv run python academic-writing-skills/latex-paper-en/scripts/optimize_title.py main.tex --check` |
@@ -85,5 +86,10 @@
 检查这个 IEEE 伪代码是否还在用 algorithm2e 浮动体，并判断 caption 是否安全。
 ```
 
+```text
+把 Related Work 改成综合讨论，而不是按作者年份罗列，但不要动任何 citation anchors。
+```
+
 - 默认输出是保留源码结构的审阅意见，通常采用 LaTeX 友好的 comment 形式，而不是直接静默改写。
 - 当前 eval 已覆盖 IEEE 伪代码相关请求，包括浮动体迁移、caption/label 检查，以及“硬规则 vs 建议项”的区分。
+- 当用户明确在问文献综述重写、比较分析或 gap 推导时，优先走 `literature`，不要把这类请求继续塞进 `logic`。

@@ -62,6 +62,7 @@ compile_zh = _load_zh("compile")
 verify_bib_zh = _load_zh("verify_bib")
 parsers_zh = _load_zh("parsers")
 analyze_logic_zh = _load_zh("analyze_logic")
+analyze_literature_zh = _load_zh("analyze_literature")
 analyze_experiment_zh = _load_zh("analyze_experiment")
 
 
@@ -468,6 +469,35 @@ class TestAnalyzeLogicZh:
         findings = analyze_logic_zh.analyze(tex, "related")
         joined = "\n".join(findings)
         assert "空白" in joined or "gap" in joined.lower()
+
+    def test_marks_borderline_comparative_synthesis_zh_for_review(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{相关工作}\n"
+            "张三（2019）提出了一种注意力方法。\n"
+            "李四（2020）提出了图神经网络方案。\n"
+            "王五（2021）提出了混合架构方法。\n"
+            "赵六（2022）提出了高效剪枝策略。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_literature_zh.analyze(tex, "related")
+        joined = "\n".join(findings)
+        assert "Needs Review" in joined
+
+    def test_detects_repeated_missing_comparative_synthesis_zh(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{相关工作}\n"
+            "张三（2019）提出了一种注意力方法。\n"
+            "李四（2020）提出了图神经网络方案。\n"
+            "\n"
+            "王五（2021）提出了混合架构方法。\n"
+            "赵六（2022）提出了高效剪枝策略。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_literature_zh.analyze(tex, "related")
+        joined = "\n".join(findings)
+        assert "多个引文密集段落" in joined
 
     def test_detects_missing_heading_lead_before_list(self, tmp_path: Path):
         tex = tmp_path / "main.tex"

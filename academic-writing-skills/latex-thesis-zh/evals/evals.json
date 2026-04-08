@@ -116,6 +116,17 @@
         {"type": "contains", "text": "experiment", "description": "experiment module routed"},
         {"type": "regex", "pattern": "(分层|机理|局限|layer|mechanism|limitation)", "description": "discussion depth assessed"}
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "我的文献综述太像按作者年份点名了。请保留原有引用，只给我一个“共识-分歧-局限-空白-本文切入点”的重写蓝图。",
+      "expected_output": "路由到 literature 模块，指出罗列式写法或比较分析不足，并给出不新增引用的重写蓝图。",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "literature", "description": "literature module routed"},
+        {"type": "regex", "pattern": "(共识|分歧|局限|空白|切入点)", "description": "rewrite blueprint present"},
+        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+      ]
     }
   ]
 }

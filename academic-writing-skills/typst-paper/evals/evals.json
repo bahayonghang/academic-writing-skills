@@ -117,6 +117,17 @@
         {"type": "regex", "pattern": "(lovelace|figure|caption)", "description": "lovelace wrapper guidance present"},
         {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "Rewrite the Related Work in my Typst paper so it sounds like a synthesis instead of a citation list. Keep every @cite anchor and show me the consensus-disagreement-gap chain.",
+      "expected_output": "Route to the literature module, preserve Typst citation anchors, diagnose missing comparison or gap derivation, and provide a rewrite chain from consensus to gap.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "literature", "description": "literature module routed"},
+        {"type": "regex", "pattern": "(consensus|disagreement|gap|limitation)", "description": "rewrite chain present"},
+        {"type": "not_contains", "text": "@cite-rewritten", "description": "@cite references preserved"}
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 ---
 name: typst-paper
-description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, expression polishing, translation, title optimization, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Trigger even when the user only mentions one Typst file, one bibliography issue, one pseudocode block, one section rewrite, "three-line table", "check abstract", or "reformat for another journal". Also trigger when the user mentions ".typ files", "typst compile error", "typst export", "typst bibliography", `algorithm-figure`, `lovelace`, or `algorithmic` even without saying the word "Typst" explicitly.
+description: Typst academic paper assistant for existing `.typ` paper projects in English or Chinese. Use this skill whenever the user wants to compile, audit, or improve a Typst paper, including format checks, bibliography validation for BibTeX or Hayagriva, grammar/sentence/logic review, literature review rewriting, related-work restructuring, research-gap derivation, expression polishing, translation, title optimization, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Trigger even when the user only mentions one Typst file, one bibliography issue, one pseudocode block, one section rewrite, "rewrite related work", "research gap", "three-line table", "check abstract", or "reformat for another journal". Also trigger when the user mentions ".typ files", "typst compile error", "typst export", "typst bibliography", `algorithm-figure`, `lovelace`, or `algorithmic` even without saying the word "Typst" explicitly.
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
@@ -16,6 +16,7 @@ Use this skill for targeted work on an existing Typst paper project. Route reque
 
 - Compile Typst projects and diagnose Typst CLI issues.
 - Audit format, bibliography, grammar, sentence length, argument logic, expression quality, and AI traces.
+- Diagnose and rewrite-plan literature review sections so they move from theme clustering to comparison and gap derivation.
 - Review IEEE-like pseudocode blocks for `algorithmic`, `algorithm-figure`, `lovelace`, caption handling, and comment length.
 - Support both BibTeX and Hayagriva bibliography files.
 - Improve titles, translation, and experiment-section clarity for Typst papers.
@@ -28,6 +29,7 @@ Use this skill when the user has an existing `.typ` paper project and wants help
 - format or venue compliance
 - bibliography validation for BibTeX or Hayagriva
 - grammar, sentence, logic, or expression review
+- literature review restructuring, related-work synthesis, or research-gap derivation
 - translation or bilingual polishing
 - title optimization
 - pseudocode and algorithm-block review
@@ -55,6 +57,7 @@ Do not use this skill for:
 | `grammar` | Grammar cleanup on Typst prose | `uv run python $SKILL_DIR/scripts/analyze_grammar.py main.typ --section introduction` | `references/modules/GRAMMAR.md` |
 | `sentences` | Long or dense sentence diagnostics | `uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction` | `references/modules/SENTENCES.md` |
 | `logic` | Argument flow, introduction funnel, cross-section closure, and abstract/conclusion alignment review | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.typ --section methods` | `references/modules/LOGIC.md` |
+| `literature` | Related Work is list-like, under-compared, or missing a literature-backed gap | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.typ --section related` | `references/modules/LITERATURE.md` |
 | `expression` | Tone and expression polishing | `uv run python $SKILL_DIR/scripts/improve_expression.py main.typ --section methods` | `references/modules/EXPRESSION.md` |
 | `translation` | Chinese/English academic translation in Typst context | `uv run python $SKILL_DIR/scripts/translate_academic.py input_zh.txt --domain deep-learning` | `references/modules/TRANSLATION.md` |
 | `title` | Generate, compare, or optimize Typst paper titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check` | `references/modules/TITLE.md` |
@@ -79,6 +82,7 @@ If arguments are missing, ask only for the Typst entry file and the target modul
 - Return findings in Typst diff-comment style whenever possible: `// MODULE (Line N) [Severity] [Priority]: Issue ...`
 - Report the exact command used and the exit code when a script fails.
 - Preserve `@cite`, `<label>`, math blocks, and Typst macros unless the user explicitly asks for source edits.
+- For `literature`, diagnose and offer a rewrite blueprint first; only produce revised prose when the user explicitly asks for it.
 
 ## Workflow
 
@@ -108,6 +112,7 @@ Read only the file that matches the active module.
 
 - “Compile this Typst paper and tell me why the export works locally but fails in CI.”
 - “Check bibliography, title, and abstract wording in my `main.typ` submission.”
+- “Rewrite the related work in my Typst paper so it sounds like an academic dialogue rather than a paper list, but keep citation anchors untouched.”
 - “Review this `algorithm-figure` block for IEEE-like caption, line-number, and comment issues.”
 - “Review the methods section for sentence length and logic, but keep Typst labels intact.”
 

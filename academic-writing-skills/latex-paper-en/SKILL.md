@@ -1,6 +1,6 @@
 ---
 name: latex-paper-en
-description: English LaTeX academic paper assistant for existing `.tex` projects. Use this skill whenever the user wants to compile, lint, audit, or improve an English LaTeX conference or journal paper such as IEEE, ACM, Springer, NeurIPS, or ICML submissions. Trigger even when the user only mentions one paper issue, such as bibliography errors, grammar cleanup, sentence splitting, logic review, expression polishing, translation, title optimization, figure checks, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Also trigger for "proofread my paper", "fix my LaTeX", "prepare for submission", "check my manuscript", "improve my writing", "three-line table", "booktabs", "check abstract", "reformat for another journal", "换投", `algorithm2e`, `algorithmicx`, `algpseudocodex`, `Require/Ensure`, or "Algorithm 1" when the user has a .tex file.
+description: English LaTeX academic paper assistant for existing `.tex` projects. Use this skill whenever the user wants to compile, lint, audit, or improve an English LaTeX conference or journal paper such as IEEE, ACM, Springer, NeurIPS, or ICML submissions. Trigger even when the user only mentions one paper issue, such as bibliography errors, grammar cleanup, sentence splitting, logic review, literature review rewriting, related-work restructuring, research-gap derivation, expression polishing, translation, title optimization, figure checks, pseudocode review, algorithm block cleanup, de-AI editing, experiment-section review, table structure validation, three-line table generation, abstract structure diagnosis, or journal adaptation. Also trigger for "proofread my paper", "fix my LaTeX", "prepare for submission", "check my manuscript", "improve my writing", "rewrite related work", "research gap", "related work is too list-like", "three-line table", "booktabs", "check abstract", "reformat for another journal", "换投", `algorithm2e`, `algorithmicx`, `algpseudocodex`, `Require/Ensure`, or "Algorithm 1" when the user has a .tex file.
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
@@ -16,6 +16,7 @@ Use this skill for targeted work on an existing English LaTeX paper project. Kee
 
 - Compile and diagnose LaTeX build failures.
 - Audit formatting, bibliography, grammar, sentence length, argument logic, and figure quality.
+- Diagnose and rewrite-plan literature review sections around thematic synthesis, comparison, and gap derivation.
 - Review IEEE-style pseudocode blocks, figure-wrapped algorithms, captions, labels, comments, and algorithm package choices.
 - Improve expression, translate academic prose, optimize titles, and reduce AI-writing traces.
 - Review experiment sections without rewriting citations, labels, or math.
@@ -28,6 +29,7 @@ Use this skill when the user has an existing English `.tex` paper project and wa
 - format or venue compliance
 - bibliography and citation validation
 - grammar, sentence, logic, or expression review
+- literature review restructuring, related-work synthesis, or research-gap derivation
 - translation of academic prose
 - title optimization
 - figure or caption quality checks
@@ -57,6 +59,7 @@ Do not use this skill for:
 | `grammar` | Grammar and surface-level language fixes | `uv run python -B $SKILL_DIR/scripts/analyze_grammar.py main.tex --section introduction` | `references/modules/GRAMMAR.md` |
 | `sentences` | Long, dense, or hard-to-read sentences | `uv run python -B $SKILL_DIR/scripts/analyze_sentences.py main.tex --section introduction` | `references/modules/SENTENCES.md` |
 | `logic` | Weak argument flow, unclear transitions, introduction funnel problems, or abstract/conclusion misalignment | `uv run python -B $SKILL_DIR/scripts/analyze_logic.py main.tex --section methods` | `references/modules/LOGIC.md` |
+| `literature` | Related Work is list-like, under-compared, or missing an evidence-backed research gap | `uv run python -B $SKILL_DIR/scripts/analyze_literature.py main.tex --section related` | `references/modules/LITERATURE.md` |
 | `expression` | Academic tone polish without changing claims | `uv run python -B $SKILL_DIR/scripts/improve_expression.py main.tex --section related` | `references/modules/EXPRESSION.md` |
 | `translation` | Chinese-to-English academic translation or bilingual polishing | `uv run python -B $SKILL_DIR/scripts/translate_academic.py input.txt --domain deep-learning` | `references/modules/TRANSLATION.md` |
 | `title` | Generate, compare, or optimize paper titles | `uv run python -B $SKILL_DIR/scripts/optimize_title.py main.tex --check` | `references/modules/TITLE.md` |
@@ -83,6 +86,7 @@ If arguments are missing, ask only for the file path and the target module.
 - Keep comments surgical and source-aware.
 - Report the exact command used and the exit code when a script fails.
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments unless the user explicitly asks for source edits.
+- For `literature`, default to diagnosis + rewrite blueprint first; only produce paragraph-level rewriting when the user explicitly asks for prose.
 
 ## Workflow
 
@@ -114,6 +118,7 @@ Read only the file that matches the active module.
 - “Compile my IEEE paper and tell me why `main.tex` still fails after BibTeX.”
 - “Check the introduction section for grammar and sentence length, but do not rewrite equations.”
 - “Audit figures and references in this ACM submission before I submit.”
+- “Rewrite the related work so it reads like a synthesis instead of a paper-by-paper list, but keep all citation anchors intact.”
 - “Check whether this IEEE pseudocode still uses `algorithm2e` floats and tell me how to make it IEEE-safe.”
 - “Review the experiments section for overclaiming, missing ablations, and weak baseline comparisons.”
 

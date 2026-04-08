@@ -118,6 +118,17 @@
         {"type": "regex", "pattern": "(recommended|not required|IEEE-safe)", "description": "advisory distinction present"},
         {"type": "regex", "pattern": "(algorithm2e|figure)", "description": "migration guidance present"}
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "My Related Work reads like a paper-by-paper list. Keep every citation anchor, but show me how to rewrite it into consensus, disagreement, limitations, and the research gap.",
+      "expected_output": "Route to the literature module, diagnose enumeration or missing comparison, preserve citation anchors, and provide a rewrite blueprint that moves from consensus to research gap.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "literature", "description": "literature module routed"},
+        {"type": "regex", "pattern": "(consensus|disagreement|limitation|gap)", "description": "rewrite blueprint present"},
+        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+      ]
     }
   ]
 }

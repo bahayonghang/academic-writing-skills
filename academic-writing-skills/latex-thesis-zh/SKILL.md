@@ -1,6 +1,6 @@
 ---
 name: latex-thesis-zh
-description: Chinese LaTeX thesis assistant for existing .tex degree thesis projects (XeLaTeX/LuaLaTeX/latexmk). Use this skill whenever a user works on a Chinese master's or doctoral thesis needing compilation, GB/T 7714 bibliography checks, chapter structure mapping, template detection (thuthesis, pkuthss), terminology consistency, logic coherence review, heading lead-in checks, title optimization, de-AI editing, experiment chapter review, three-line table validation, or abstract structure diagnosis. Trigger even for single issues like "帮我编译论文", "检查国标格式", "看看绪论逻辑", "毕业论文", "学位论文", "硕士/博士论文", "三线表", "检查摘要", or "摘要结构".
+description: Chinese LaTeX thesis assistant for existing .tex degree thesis projects (XeLaTeX/LuaLaTeX/latexmk). Use this skill whenever a user works on a Chinese master's or doctoral thesis needing compilation, GB/T 7714 bibliography checks, chapter structure mapping, template detection (thuthesis, pkuthss), terminology consistency, logic coherence review, literature review restructuring, related-work synthesis, research-gap derivation, heading lead-in checks, title optimization, de-AI editing, experiment chapter review, three-line table validation, or abstract structure diagnosis. Trigger even for single issues like "帮我编译论文", "检查国标格式", "看看绪论逻辑", "文献综述太像罗列", "研究空白没推出来", "毕业论文", "学位论文", "硕士/博士论文", "三线表", "检查摘要", or "摘要结构".
 metadata:
   category: academic-writing
   tags: [latex, thesis, chinese, phd, master, xelatex, gb7714, thuthesis, pkuthss, compilation, bibliography, structure]
@@ -17,6 +17,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 编译并诊断 XeLaTeX / LuaLaTeX / latexmk 构建问题。
 - 检查论文格式、GB/T 7714 相关要求、章节结构、模板类型和术语一致性。
 - 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、实验章节写法、标题表达与 AI 痕迹。
+- 针对文献综述提供“共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点”的重写蓝图。
 - 在不破坏引用、标签和数学环境的前提下给出可落地的中文论文修改建议。
 
 ## Triggering
@@ -28,6 +29,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 章节结构梳理或模板识别
 - 术语、缩略语、命名一致性检查
 - 逻辑连贯性、文献综述质量、标题后导语完整性、跨章节闭合检查
+- 文献综述重写、比较分析不足、研究空白推导薄弱
 - 标题优化、学术表达或去 AI 化检查
 - 实验章节语言与结构审阅
 
@@ -58,6 +60,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 | `title` | Optimize Chinese thesis titles and chapter titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check` | `references/modules/TITLE.md` |
 | `deai` | Reduce AI-writing traces in visible Chinese prose | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction` | `references/modules/DEAI.md` |
 | `logic` | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section related` | `references/modules/LOGIC.md` |
+| `literature` | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出 | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related` | `references/modules/LITERATURE.md` |
 | `experiment` | Review experiment chapter language, discussion layering, and conclusion completeness | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments` | `references/modules/EXPERIMENT.md` |
 | `tables` | 表格结构校验、三线表生成、booktabs 检查 | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex` | `references/modules/TABLES.md` |
 | `abstract` | 摘要五要素结构诊断与字数校验 | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.tex --lang zh` | `references/modules/ABSTRACT.md` |
@@ -77,6 +80,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 明确给出执行的命令；若脚本失败，必须报告退出码和关键 stderr。
 - 将“检查结果”和“建议改写”分开陈述，避免把脚本诊断和正文润色混在一起。
 - 默认保留 `\cite{}`、`\ref{}`、`\label{}`、数学环境、参考文献键和模板宏命令。
+- `literature` 模块默认先给诊断与重写蓝图；只有用户明确要求时才给段落级改写提案。
 
 ## Workflow
 
@@ -111,4 +115,5 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - “请梳理这篇硕士论文的章节结构，并检查术语和缩略语是否前后统一。”
 - “按 GB/T 7714 帮我检查参考文献，再看看绪论是不是有明显 AI 腔。”
 - “检查 related work 的逻辑链条和研究空白推导，但不要动任何引用和公式。”
+- “把文献综述从作者年份罗列改成按主题对话式写法，但不要新增任何引用。”
 - “帮我检查每一章、每一节、四级标题后有没有先写导语，不要只看格式。”

@@ -8,7 +8,7 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 - format and venue checks
 - bibliography validation for BibTeX or Hayagriva
 - grammar, sentence, logic, and expression review
-- literature review quality checks (thematic organization, gap derivation)
+- literature review quality checks and rewrite blueprints (thematic organization, comparison, gap derivation)
 - discussion depth, results-literature echo, and conclusion completeness
 - cross-section logic chain closure
 - translation and bilingual polishing
@@ -31,6 +31,7 @@ Typst academic paper assistant for existing `.typ` projects in English or Chines
 | `grammar` | grammar cleanup | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
 | `sentences` | long or dense sentence review | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
 | `logic` | coherence, introduction funnel, lit review quality, abstract/conclusion alignment, cross-section closure | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
+| `literature` | related-work synthesis, comparative analysis, and research-gap derivation | `uv run python academic-writing-skills/typst-paper/scripts/analyze_literature.py main.typ --section related` |
 | `expression` | academic tone polish | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | Chinese and English academic translation | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | title checking or optimization | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
@@ -68,12 +69,17 @@ Verify references.bib against main.typ.
 Review this algorithm-figure block for caption, style-algorithm, and line-number issues.
 ```
 
+```text
+Rewrite the Related Work in my Typst paper so it sounds like a synthesis instead of a citation list.
+```
+
 ## Notes
 
 - This skill is not for LaTeX-first projects.
 - Keep `@cite`, labels, and math intact unless you explicitly want edits.
 - Expected output is Typst-ready, source-preserving review feedback rather than silent rewrites.
 - Eval coverage now includes pseudocode prompts for algorithm-figure checks and lovelace wrapper guidance.
+- Use `literature` for Related Work rewriting and synthesis; keep `logic` for intro funnel and cross-section closure.
 - The `logic` module checks literature review quality (A1: author enumeration, A3: gap derivation) and cross-section logic chain closure (C3). Use `--cross-section` for full-document closure checks.
 - The `experiment` module checks discussion depth (B3), results-literature echo (B4), and conclusion completeness (B5: findings + implications + limitations).
 - Anti-citation-stacking: max 2 clustered citations per sentence without individual discussion. Sentences with 3+ stacked references are flagged as AI writing traces in Introduction and Related Work.
