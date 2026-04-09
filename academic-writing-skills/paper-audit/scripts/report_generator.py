@@ -3,6 +3,7 @@ Report Generator for Paper Audit skill.
 Handles scoring engine, issue aggregation, and Markdown report rendering.
 """
 
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -113,6 +114,7 @@ class AuditResult:
     revision_roadmap: list[dict] = field(default_factory=list)
     section_index: list[dict] = field(default_factory=list)
     artifact_dir: str = ""
+    review_focus: str = "full"
     # ScholarEval result (optional, populated when --scholar-eval is used)
     scholar_eval_result: object | None = None
     # Literature context (optional, populated when --literature-search is used)
@@ -212,6 +214,13 @@ DEEP_REVIEW_PRIORITY_LABELS: dict[str, str] = {
     "moderate": "Priority 2",
     "minor": "Priority 3",
 }
+
+JOURNAL_RECOMMENDATION_ORDER: tuple[str, ...] = (
+    "Accept",
+    "Minor Revision",
+    "Major Revision",
+    "Reject",
+)
 
 DEEP_REVIEW_SECTIONS: tuple[tuple[str, str], ...] = (
     ("major", "Major Issues"),
@@ -313,13 +322,327 @@ def _default_revision_roadmap(issues: list[DeepReviewIssue]) -> list[dict]:
     ]
 
 
+def _clean_peer_review_text(text: str) -> str:
+    """Normalize summary text before rendering reviewer prose."""
+    text = text.strip()
+    text = text.removeprefix("- ").strip()
+    text = text.lstrip("#").strip()
+    text = " ".join(text.split())
+    text = re.sub(
+        r"^(abstract|introduction|conclusion|discussion|method|methods|results)\s+",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    return text.strip()
+
+
+def _rewrite_opening_focus(text: str) -> str:
+    """Rewrite extracted cues into more natural reviewer-opening prose fragments."""
+    cleaned = _clean_peer_review_text(text).rstrip(".")
+    lowered = cleaned.lower()
+    if lowered.startswith("we achieve state-of-the-art efficiency across "):
+        tail = cleaned[39:].strip()
+        tail = re.sub(r"^across\s+", "", tail, flags=re.IGNORECASE)
+        return "improved efficiency across " + tail
+    if lowered.startswith("we achieve "):
+        return cleaned[11:].strip()
+    if lowered.startswith("we propose "):
+        body = cleaned[11:].strip()
+        body = re.sub(r"^a\s+", "", body, flags=re.IGNORECASE)
+        body = re.sub(r"\s+and\s+claims\s+", " with ", body, flags=re.IGNORECASE)
+        return "the proposed method offers a " + body
+    if lowered.startswith("this paper proposes "):
+        body = cleaned[19:].strip()
+        body = re.sub(r"^a\s+", "", body, flags=re.IGNORECASE)
+        body = re.sub(r"\s+and\s+claims\s+", " with ", body, flags=re.IGNORECASE)
+        body = re.sub(
+            r"\s+broad\s+superiority\s+over\s+",
+            " broader advantages over ",
+            body,
+            flags=re.IGNORECASE,
+        )
+        return "the proposed method offers a " + body
+    if lowered.startswith("we demonstrate "):
+        return cleaned[15:].strip()
+    if lowered.startswith("we show "):
+        return cleaned[8:].strip()
+    return cleaned
+
+
+def _compress_peer_review_opening(research_question: str, thesis: str) -> str:
+    """Compress extracted summary cues into a reviewer-style opening paragraph."""
+    rq = _rewrite_opening_focus(research_question)
+    th = _rewrite_opening_focus(thesis)
+
+    if rq and th:
+        return f"The manuscript examines {rq} and argues that {th}."
+    if th:
+        return f"The manuscript argues that {th}."
+    if rq:
+        return f"The manuscript examines {rq}."
+    return (
+        "This manuscript addresses a potentially relevant research problem, but its current argument "
+        "still needs tighter evidence alignment and clearer support for the main claims."
+    )
+
+
+def _sort_deep_review_issues(issues: list[DeepReviewIssue]) -> list[DeepReviewIssue]:
+    """Sort structured findings by severity, confidence, and location."""
+    confidence_order = {"high": 0, "medium": 1, "low": 2}
+    return sorted(
+        issues,
+        key=lambda issue: (
+            DEEP_REVIEW_SEVERITY_ORDER.get(issue.severity, 99),
+            confidence_order.get(issue.confidence, 3),
+            0 if issue.gate_blocker else 1,
+            -(len(issue.related_sections) or 0),
+            issue.source_section or "",
+            issue.title.lower(),
+        ),
+    )
+
+
+def _journal_recommendation(issues: list[DeepReviewIssue]) -> str:
+    """Map structured deep-review findings to a journal-style decision."""
+    major = sum(1 for issue in issues if issue.severity == "major")
+    moderate = sum(1 for issue in issues if issue.severity == "moderate")
+    blocking = any(issue.gate_blocker for issue in issues)
+
+    if blocking and major >= 1:
+        return "Reject"
+    if major >= 3:
+        return "Reject"
+    if major >= 1 or moderate >= 4:
+        return "Major Revision"
+    if moderate >= 1 or len(issues) >= 3:
+        return "Minor Revision"
+    return "Accept"
+
+
+def _build_peer_review_summary(result: AuditResult, issue_counts: dict[str, int]) -> str:
+    """Build a concise journal-style summary paragraph block."""
+    summary_text = (result.summary or "").strip()
+    overall = (result.overall_assessment or "").strip()
+
+    research_question = ""
+    core_thesis = ""
+    headline_claim = ""
+    current_section = ""
+    for raw_line in summary_text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("## "):
+            current_section = line.removeprefix("## ").strip().lower()
+            continue
+        normalized = _clean_peer_review_text(line)
+        if not normalized or normalized.upper() == "TODO" or "TODO" in normalized:
+            continue
+        if current_section == "research question" and not research_question:
+            research_question = normalized
+        elif current_section == "core thesis" and not core_thesis:
+            core_thesis = normalized
+        elif current_section == "headline claims" and not headline_claim:
+            headline_claim = normalized
+
+    opening = _compress_peer_review_opening(research_question, core_thesis or headline_claim)
+
+    evaluative = overall or (
+        f"At this stage, the paper raises {issue_counts['major']} major, {issue_counts['moderate']} "
+        f"moderate, and {issue_counts['minor']} minor concerns that should be addressed before submission."
+    )
+
+    closing = (
+        "In its current form, the paper would benefit most from revisions that better align the headline "
+        "contribution with the presented evidence, clarify the methodological basis of the claims, and "
+        "tighten the overall argumentative coherence."
+    )
+
+    return "\n\n".join([opening, evaluative, closing])
+
+
+def _peer_review_issue_location(issue: DeepReviewIssue) -> str:
+    """Render a reviewer-friendly location label for a structured issue."""
+    if issue.source_section:
+        return issue.source_section
+    if issue.related_sections:
+        return issue.related_sections[0]
+    return "the manuscript"
+
+
+def _peer_review_issue_text(issue: DeepReviewIssue) -> str:
+    """Translate a structured finding into reviewer-style prose."""
+    location = _peer_review_issue_location(issue)
+    quote = issue.quote.strip()
+    quote_text = (
+        f' The quoted text ("{quote}") sharpens this concern.'
+        if quote and issue.quote_verified is True
+        else ""
+    )
+    related = ""
+    if issue.related_sections:
+        extras = [
+            section
+            for section in issue.related_sections
+            if section and section != issue.source_section
+        ]
+        if extras:
+            related = f" This issue also affects {', '.join(extras)}."
+    source_label = "[Script]" if issue.source_kind == "script" else "[LLM]"
+    return (
+        f"In {location}, the manuscript shows a problem with {issue.title.lower()}. "
+        f"{issue.explanation.strip()} This matters because it weakens the credibility or interpretability "
+        f"of the corresponding claim. The authors should revise this part directly and make the supporting "
+        f"evidence or reasoning explicit.{quote_text}{related} {source_label}"
+    ).strip()
+
+
+def render_peer_review_report(result: AuditResult) -> str:
+    """Render a concise journal-style reviewer report from deep-review artifacts."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    issues = _sort_deep_review_issues(result.issue_bundle)
+    issue_counts = _count_deep_review_issues(issues)
+    recommendation = _journal_recommendation(issues)
+    major_issues = [issue for issue in issues if issue.severity == "major"][:5]
+    minor_issues = [issue for issue in issues if issue.severity in {"moderate", "minor"}][:4]
+
+    lines = [
+        "# Peer Review Report",
+        "",
+        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: deep-review",
+        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+    ]
+    if result.artifact_dir:
+        lines.append(f"**Artifacts**: `{result.artifact_dir}`")
+    lines.extend(["", "## Summary", "", _build_peer_review_summary(result, issue_counts), ""])
+
+    lines.extend(["## Major Issues", ""])
+    if major_issues:
+        for idx, issue in enumerate(major_issues, 1):
+            lines.append(f"{idx}. {_peer_review_issue_text(issue)}")
+            lines.append("")
+    else:
+        lines.append(
+            "1. No major validity-threatening issue was identified in the current deep-review bundle."
+        )
+        lines.append("")
+
+    lines.extend(["## Minor Issues", ""])
+    if minor_issues:
+        for idx, issue in enumerate(minor_issues, 1):
+            lines.append(f"{idx}. {_peer_review_issue_text(issue)}")
+            lines.append("")
+    else:
+        lines.append("1. No minor issue requiring additional comment was identified.")
+        lines.append("")
+
+    rationale = {
+        "Accept": "The central contribution appears supportable and only non-substantive edits remain.",
+        "Minor Revision": "The paper is potentially publishable, but several clarifications or limited corrections are still needed.",
+        "Major Revision": "The paper may become publishable, but key issues still affect the credibility, completeness, or transparency of the claims.",
+        "Reject": "The current version has unresolved issues that materially weaken the core conclusions or submission readiness.",
+    }[recommendation]
+    lines.extend(["## Recommendation", "", f"**{recommendation}**. {rationale}"])
+    return "\n".join(lines)
+
+
+def _committee_signal_from_artifacts(artifact_dir: str) -> tuple[float | None, str]:
+    """Load committee score and verdict from the generated consensus artifact when present."""
+    if not artifact_dir:
+        return None, ""
+
+    consensus_path = Path(artifact_dir) / "committee" / "consensus.md"
+    if not consensus_path.exists():
+        return None, ""
+
+    text = consensus_path.read_text(encoding="utf-8")
+    score_match = re.search(r"Overall Score:\s*([0-9]+(?:\.[0-9]+)?)\/10", text)
+    verdict_match = re.search(r"Editor Verdict:\s*(.+)", text)
+    score = float(score_match.group(1)) if score_match else None
+    verdict = verdict_match.group(1).strip() if verdict_match else ""
+    return score, verdict
+
+
+def _artifact_path(result: AuditResult, filename: str) -> str:
+    """Return an artifact path label for reports and summaries."""
+    if not result.artifact_dir:
+        return filename
+    return str(Path(result.artifact_dir) / filename)
+
+
+def render_deep_review_summary(
+    result: AuditResult,
+    *,
+    primary_style: str = "deep-review",
+) -> str:
+    """Render the compact CLI-facing deep-review summary with both report paths."""
+    primary_style = (
+        primary_style if primary_style in {"deep-review", "peer-review"} else "deep-review"
+    )
+    primary_name = "peer_review_report.md" if primary_style == "peer-review" else "review_report.md"
+    companion_name = (
+        "review_report.md" if primary_style == "peer-review" else "peer_review_report.md"
+    )
+
+    issues = _sort_deep_review_issues(result.issue_bundle)
+    issue_counts = _count_deep_review_issues(issues)
+    recommendation = _journal_recommendation(issues)
+    committee_score, editor_verdict = _committee_signal_from_artifacts(result.artifact_dir)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    lines = [
+        "# Deep Review Summary",
+        "",
+        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: deep-review",
+        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+    ]
+    if result.review_focus != "full":
+        lines.append(f"**Focus**: `{result.review_focus}`")
+    lines.extend(
+        [
+            f"**Primary View**: `{primary_style}`",
+            "",
+            "## Overall Assessment",
+            "",
+            result.overall_assessment
+            or "Deep review completed. Inspect the primary artifact and issue bundle before revising.",
+            "",
+            "## Decision Signals",
+            "",
+        ]
+    )
+    if committee_score is not None:
+        lines.append(f"- **Committee Score**: {committee_score:.1f}/10")
+    if editor_verdict:
+        lines.append(f"- **Editor Verdict**: {editor_verdict}")
+    lines.extend(
+        [
+            f"- **Reviewer Recommendation**: {recommendation}",
+            (
+                f"- **Issue Bundle**: {issue_counts['major']} major / {issue_counts['moderate']} moderate / "
+                f"{issue_counts['minor']} minor"
+            ),
+            "",
+            "## Artifacts",
+            "",
+            f"- **Primary**: `{_artifact_path(result, primary_name)}`",
+            f"- **Companion**: `{_artifact_path(result, companion_name)}`",
+            f"- **Structured Issues**: `{_artifact_path(result, 'final_issues.json')}`",
+            f"- **Revision Roadmap**: `{_artifact_path(result, 'revision_roadmap.md')}`",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def render_deep_review_report(result: AuditResult) -> str:
     """Render a deep-review-first Markdown report."""
-    scores = calculate_scores(result.issues)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
-    issue_counts = _count_deep_review_issues(result.issue_bundle)
-    recommendation = _score_label(scores["overall"])
+    issues = _sort_deep_review_issues(result.issue_bundle)
+    issue_counts = _count_deep_review_issues(issues)
+    recommendation = _journal_recommendation(issues)
     roadmap = result.revision_roadmap or _default_revision_roadmap(result.issue_bundle)
+    committee_score, editor_verdict = _committee_signal_from_artifacts(result.artifact_dir)
 
     lines = [
         "# Deep Review Report",
@@ -327,6 +650,8 @@ def render_deep_review_report(result: AuditResult) -> str:
         f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: {result.mode}",
         f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
     ]
+    if result.review_focus != "full":
+        lines.append(f"**Focus**: `{result.review_focus}`")
     if result.mode_alias_used:
         lines.append(
             f"**Compatibility Note**: legacy mode alias `{result.mode_alias_used}` mapped to `{result.mode}`."
@@ -381,14 +706,6 @@ def render_deep_review_report(result: AuditResult) -> str:
         lines.extend(["## Paper Summary", "", result.summary, ""])
 
     if result.issue_bundle:
-        issues = sorted(
-            result.issue_bundle,
-            key=lambda i: (
-                DEEP_REVIEW_SEVERITY_ORDER.get(i.severity, 99),
-                i.source_section or "",
-                i.title.lower(),
-            ),
-        )
         for severity, title in DEEP_REVIEW_SECTIONS:
             bucket = [issue for issue in issues if issue.severity == severity]
             if not bucket:
@@ -407,7 +724,7 @@ def render_deep_review_report(result: AuditResult) -> str:
                     lines.append(f"- **Root Cause Key**: `{issue.root_cause_key}`")
                 if issue.quote_verified is not None:
                     lines.append(f"- **Quote Verified**: {'yes' if issue.quote_verified else 'no'}")
-                lines.append(f"- **Quote**: `{issue.quote}`")
+                lines.append(f"- **Quote**: `{issue.quote}`" if issue.quote else "- **Quote**: —")
                 lines.append(f"- **Explanation**: {issue.explanation}")
                 lines.append("")
 
@@ -425,15 +742,18 @@ def render_deep_review_report(result: AuditResult) -> str:
                 lines.append(f"| {loc} | {issue.severity} | {issue.message} |")
             lines.append("")
 
+    lines.extend(["## Decision Signals", ""])
+    if committee_score is not None:
+        lines.append(f"- **Committee Score**: {committee_score:.1f}/10")
+    if editor_verdict:
+        lines.append(f"- **Editor Verdict**: {editor_verdict}")
     lines.extend(
         [
-            "## Score Summary",
-            "",
-            f"- **Quality**: {scores['quality']:.1f}/6.0",
-            f"- **Clarity**: {scores['clarity']:.1f}/6.0",
-            f"- **Significance**: {scores['significance']:.1f}/6.0",
-            f"- **Originality**: {scores['originality']:.1f}/6.0",
-            f"- **Overall**: {scores['overall']:.1f}/6.0 ({recommendation})",
+            f"- **Reviewer Recommendation**: {recommendation}",
+            (
+                f"- **Issue Bundle**: {issue_counts['major']} major / {issue_counts['moderate']} moderate / "
+                f"{issue_counts['minor']} minor"
+            ),
             "",
         ]
     )
@@ -866,6 +1186,15 @@ def render_json_report(result: AuditResult) -> str:
         )
         data["section_index"] = result.section_index
         data["artifact_dir"] = result.artifact_dir
+        data["review_focus"] = result.review_focus
+        data["review_recommendation"] = _journal_recommendation(
+            _sort_deep_review_issues(result.issue_bundle)
+        )
+        committee_score, editor_verdict = _committee_signal_from_artifacts(result.artifact_dir)
+        if committee_score is not None:
+            data["committee_score"] = committee_score
+        if editor_verdict:
+            data["committee_verdict"] = editor_verdict
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
@@ -985,7 +1314,7 @@ def render_reaudit_report(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
-def render_report(result: AuditResult) -> str:
+def render_report(result: AuditResult, *, report_style: str = "deep-review") -> str:
     """
     Render the appropriate report based on audit mode.
 
@@ -996,7 +1325,7 @@ def render_report(result: AuditResult) -> str:
         Formatted Markdown report string.
     """
     if result.mode == "deep-review":
-        report = render_deep_review_report(result)
+        report = render_deep_review_summary(result, primary_style=report_style)
     elif result.mode == "review":
         report = render_review_report(result)
     elif result.mode == "quick-audit":

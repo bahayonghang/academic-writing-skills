@@ -51,13 +51,14 @@ Legacy aliases:
 4. Dispatch section and cross-cutting review lanes
 5. Consolidate comment JSONs
 6. Verify quotes
-7. Render `review_report.md`
+7. Render `review_report.md` and `peer_review_report.md`
 
 ## Main outputs
 
 - `final_issues.json`
 - `overall_assessment.txt`
 - `review_report.md`
+- `peer_review_report.md`
 - `revision_roadmap.md`
 - `committee/consensus.md`
 - optional committee notes under `committee/*.md`

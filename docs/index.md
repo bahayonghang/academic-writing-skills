@@ -28,7 +28,7 @@ features:
     details: "Typst paper workflow for compile, format, bibliography, grammar, sentence, logic, expression, translation, title, de-AI, and experiment review."
   - icon: 🔬
     title: "`paper-audit`"
-    details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf` with quick-audit, deep-review, gate, polish, and re-audit workflows."
+    details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf` with quick-audit, deep-review, gate, polish, and re-audit workflows plus a journal-style peer review report output."
   - icon: 🧭
     title: "`industrial-ai-research`"
     details: "Venue-aware Industrial AI literature workflow with mandatory intake, source prioritization, structured report modes, and survey draft generation."

@@ -11,6 +11,7 @@ from report_generator import (
     normalize_deep_review_issue_dict,
     render_deep_review_report,
     render_json_report,
+    render_report,
 )
 
 
@@ -98,6 +99,31 @@ def test_render_deep_review_report_groups_issue_bundle() -> None:
     assert "Revision Roadmap" in report
 
 
+def test_render_deep_review_report_uses_issue_bundle_recommendation() -> None:
+    result = AuditResult(
+        file_path="paper.tex",
+        language="en",
+        mode="deep-review",
+        issue_bundle=[
+            DeepReviewIssue(
+                title="Headline claim outruns evidence",
+                quote="We achieve state-of-the-art efficiency.",
+                explanation="The claim is too broad for the demonstrated scope.",
+                comment_type="claim_accuracy",
+                severity="major",
+                source_section="abstract",
+                review_lane="claims_vs_evidence",
+            )
+        ],
+        overall_assessment="The central claim still needs stronger evidence alignment.",
+    )
+
+    report = render_deep_review_report(result)
+    assert "Reviewer Recommendation" in report
+    assert "Major Revision" in report
+    assert "Strong Accept" not in report
+
+
 def test_render_deep_review_report_embeds_committee_section(tmp_path: Path) -> None:
     committee_dir = tmp_path / "committee"
     committee_dir.mkdir(parents=True, exist_ok=True)
@@ -129,6 +155,36 @@ def test_render_deep_review_report_embeds_committee_section(tmp_path: Path) -> N
     assert "Editor notes go here." in report
     assert "Theory notes go here." in report
     assert "Consensus notes go here." in report
+
+
+def test_render_report_returns_combined_deep_review_summary(tmp_path: Path) -> None:
+    result = AuditResult(
+        file_path="paper.tex",
+        language="en",
+        mode="deep-review",
+        artifact_dir=str(tmp_path),
+        review_focus="methodology",
+        issue_bundle=[
+            DeepReviewIssue(
+                title="Comparison protocol is asymmetric",
+                quote="We tune our method over three retries.",
+                explanation="The proposed method receives more tuning budget than the baseline.",
+                comment_type="methodology",
+                severity="major",
+                source_section="results",
+                review_lane="evaluation_fairness_and_reproducibility",
+            )
+        ],
+        overall_assessment="The paper needs a tighter methodology story before review.",
+    )
+
+    report = render_report(result, report_style="peer-review")
+    assert "Deep Review Summary" in report
+    assert "Primary View" in report
+    assert "peer-review" in report
+    assert "peer_review_report.md" in report
+    assert "review_report.md" in report
+    assert "`methodology`" in report
 
 
 def test_render_json_report_includes_issue_bundle() -> None:
@@ -393,6 +449,118 @@ We conclude the gains are broadly effective.
     ]
     assert reloaded.revision_roadmap == result.revision_roadmap
     assert reloaded.section_index == result.section_index
+
+
+def test_run_audit_deep_review_focus_methodology_limits_issue_bundle(tmp_path: Path) -> None:
+    from audit import run_audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Method Focus Test}
+\begin{document}
+\begin{abstract}
+We show significant gains over prior work.
+\end{abstract}
+\section{Introduction}
+This paper claims broad superiority over prior work.
+\section{Method}
+We define x as the latent state and assume a fixed calibration constant.
+\section{Results}
+We tune our method over three retry runs while reporting each baseline once.
+\section{Conclusion}
+We conclude the method is broadly superior.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    result = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
+    payload = json.loads(
+        (Path(result.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
+    )
+    lanes = {issue["review_lane"] for issue in payload}
+
+    assert result.review_focus == "methodology"
+    assert lanes
+    assert lanes <= {
+        "section_methods",
+        "section_results",
+        "notation_and_numeric_consistency",
+        "evaluation_fairness_and_reproducibility",
+    }
+    assert (Path(result.artifact_dir) / "committee" / "methodology.md").exists()
+    assert not (Path(result.artifact_dir) / "committee" / "theory.md").exists()
+
+
+def test_run_audit_relative_path_does_not_report_missing_existing_file(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    from audit import run_audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Relative Path Test}
+\begin{document}
+\begin{abstract}
+We present a short test paper.
+\end{abstract}
+\section{Introduction}
+This paper introduces a bounded method.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+    result = run_audit("paper.tex", mode="quick-audit", lang="en")
+    assert not any("File not found" in issue.message for issue in result.issues)
+
+
+def test_repeated_deep_review_runs_clear_stale_workspace_artifacts(tmp_path: Path) -> None:
+    from audit import run_audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Repeat Run Test}
+\begin{document}
+\begin{abstract}
+We show significant gains over prior work.
+\end{abstract}
+\section{Introduction}
+This paper claims broad superiority over prior work.
+\section{Method}
+We define x as the latent state and assume a fixed calibration constant.
+\section{Results}
+We tune our method over three retry runs while reporting each baseline once.
+\section{Conclusion}
+We conclude the method is broadly superior.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    full = run_audit(str(tex), mode="deep-review", focus="full", lang="en")
+    assert (Path(full.artifact_dir) / "committee" / "theory.md").exists()
+
+    focused = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
+
+    focused_committee = Path(focused.artifact_dir) / "committee" / "theory.md"
+    focused_payload = json.loads(
+        (Path(focused.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
+    )
+    focused_lanes = {issue["review_lane"] for issue in focused_payload}
+
+    assert not focused_committee.exists()
+    assert focused_lanes <= {
+        "section_methods",
+        "section_results",
+        "notation_and_numeric_consistency",
+        "evaluation_fairness_and_reproducibility",
+    }
 
 
 def test_diff_review_issues_reports_statuses() -> None:

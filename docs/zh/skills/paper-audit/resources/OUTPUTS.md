@@ -53,6 +53,19 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 - score summary
 - revision roadmap
 
+### `peer_review_report.md`
+
+面向期刊 / SCI 审稿场景的 reviewer-facing 报告，由 deep-review artifacts 派生而来。
+
+典型结构：
+
+- Summary
+- Major Issues
+- Minor Issues
+- Recommendation
+
+当你需要更接近期刊审稿系统提交格式的结果时，优先查看这个文件；`review_report.md` 仍保留为证据更完整的深审报告。
+
 ### `revision_roadmap.md`
 
 按优先级排列的修订动作清单。

@@ -51,13 +51,14 @@
 4. 派发 section lanes 和 cross-cutting lanes
 5. 合并评论 JSON
 6. 校验 quote
-7. 生成 `review_report.md`
+7. 生成 `review_report.md` 与 `peer_review_report.md`
 
 ## 主要产物
 
 - `final_issues.json`
 - `overall_assessment.txt`
 - `review_report.md`
+- `peer_review_report.md`
 - `revision_roadmap.md`
 - `committee/consensus.md`
 - 可选委员会分角色文件 `committee/*.md`

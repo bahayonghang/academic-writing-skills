@@ -143,7 +143,7 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 |---|---|
 | **Input** | `.tex`, `.typ`, `.pdf` files |
 | **Modes** | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification) |
-| **Visual Layout** | Margin overflow, text/image overlaps, font inconsistency, low-res images, blank pages |
+| **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md` |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
 | **Pseudocode Audit** | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments |
@@ -173,13 +173,14 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | Mode | Use when | Main output |
 |---|---|---|
 | `quick-audit` | You want a fast readiness screen | Script-backed report + checklist + score summary |
-| `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap |
+| `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap + optional `peer_review_report.md` |
 | `gate` | You only care about blockers | PASS/FAIL + blocking issues |
 | `re-audit` | You want to verify revisions | Issue-status comparison |
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
+uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py review_results/paper-slug --style peer-review
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
 ```

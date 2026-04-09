@@ -167,5 +167,5 @@ Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds
 ## Output Expectations
 
 - Writing skills usually return issue-oriented suggestions and script-backed diagnostics.
-- `paper-audit` returns severity-rated reports, structured issue bundles, revision roadmaps, and optional score summaries.
+- `paper-audit` returns severity-rated reports, structured issue bundles, revision roadmaps, reviewer-style `peer_review_report.md`, and optional score summaries.
 - Research output should separate verified evidence from inference.

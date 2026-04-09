@@ -1,16 +1,16 @@
 ---
 name: paper-audit
-description: Deep-review-first audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants reviewer-style paper critique, pre-submission readiness checks, pass/fail gate decisions, structured revision roadmaps, or re-audits of revised manuscripts. Trigger even if the user only says "review my paper", "check if this is ready to submit", "audit this PDF", "simulate peer review", "find the biggest problems in this manuscript", or "re-check whether I fixed the review issues". Do not use for direct source editing or compilation-heavy repair; route those to the format-specific writing skills instead.
+description: Deep-review-first audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants reviewer-style paper critique, pre-submission readiness checks, pass/fail gate decisions, structured revision roadmaps, journal-style peer review reports, or re-audits of revised manuscripts. Trigger even if the user only says "review my paper", "check if this is ready to submit", "audit this PDF", "simulate peer review", "write a SCI review report", "give me Summary / Major Issues / Minor Issues / Recommendation", "find the biggest problems in this manuscript", or "re-check whether I fixed the review issues". Do not use for direct source editing or compilation-heavy repair; route those to the format-specific writing skills instead.
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "4.3"
-  last_updated: "2026-04-08"
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format markdown|json]"
+  version: "4.4"
+  last_updated: "2026-04-09"
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v4.3
+# Paper Audit Skill v4.4
 
 `paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
 
@@ -29,6 +29,7 @@ The primary product is no longer just a score. For `deep-review`, the main outpu
 - `final_issues.json`
 - `overall_assessment.txt`
 - `review_report.md`
+- `peer_review_report.md`
 - `revision_roadmap.md`
 
 ## Do Not Use
@@ -146,6 +147,11 @@ Parse `$ARGUMENTS` and infer the mode if the user did not provide one. State the
 ### `deep-review`
 
 Use this as the default reviewer-style path.
+
+If the user explicitly wants a submission-style reviewer report (for example: “SCI reviewer”,
+“journal review report”, “Summary / Major Issues / Minor Issues / Recommendation”, or “审稿报告”),
+keep the same deep-review evidence pipeline but make `peer_review_report.md` the **Primary View**
+in the combined CLI summary while keeping `review_report.md` as the richer evidence bundle.
 
 #### Phase 1: Prepare workspace
 
@@ -266,7 +272,8 @@ Summarize:
 - 1 short paragraph overall assessment
 - counts of major / moderate / minor issues
 - 3 highest-priority revision items
-- path to `review_report.md` and `final_issues.json`
+- identify the **Primary View** selected by `--report-style`
+- path to `review_report.md`, `peer_review_report.md`, and `final_issues.json`
 
 ### `gate`
 

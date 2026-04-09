@@ -26,6 +26,76 @@ def _section_lines(lines: list[str], start: int, end: int, zero_based: bool) -> 
     return "\n".join(lines[max(0, start - 1) : end]).strip()
 
 
+def _clean_summary_line(text: str) -> str:
+    """Normalize extracted summary text for reviewer-facing artifacts."""
+    normalized = re.sub(r"^#+\s*", "", text.strip())
+    normalized = re.sub(r"\s+", " ", normalized)
+    normalized = re.sub(
+        r"^(abstract|introduction|conclusion|discussion|method|methods|results)\s+",
+        "",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    return normalized.strip(" -")
+
+
+def _rewrite_research_focus(text: str) -> str:
+    """Rewrite extracted prose into a more question/topic-oriented summary phrase."""
+    cleaned = _clean_summary_line(text).rstrip(".")
+    lowered = cleaned.lower()
+    if lowered.startswith("we achieve state-of-the-art efficiency across "):
+        tail = cleaned[39:].strip()
+        tail = re.sub(r"^across\s+", "", tail, flags=re.IGNORECASE)
+        return "improved efficiency across " + tail
+    if lowered.startswith("we achieve "):
+        return cleaned[11:].strip()
+    if lowered.startswith("we propose "):
+        return "a method for " + cleaned[11:].strip()
+    if lowered.startswith("this paper proposes "):
+        body = cleaned[19:].strip()
+        body = re.sub(r"^a\s+", "", body, flags=re.IGNORECASE)
+        body = re.sub(r"\s+and\s+claims\s+", " and ", body, flags=re.IGNORECASE)
+        return "a proposed method offering " + body
+    if lowered.startswith("we demonstrate "):
+        return cleaned[15:].strip()
+    if lowered.startswith("we show "):
+        return cleaned[8:].strip()
+    return cleaned
+
+
+def _first_nonempty_sentence(text: str) -> str:
+    """Return the first plausible sentence from a section chunk."""
+    cleaned = _clean_summary_line(text)
+    if not cleaned:
+        return ""
+    parts = re.split(r"(?<=[.!?])\s+", cleaned)
+    return next((part.strip() for part in parts if part.strip()), cleaned)
+
+
+def _infer_research_question(section_texts: dict[str, str]) -> str:
+    """Infer a concise research-question sentence from abstract/introduction."""
+    for key in ("abstract", "introduction"):
+        chunk = section_texts.get(key, "")
+        sentence = _first_nonempty_sentence(chunk)
+        if sentence:
+            return _rewrite_research_focus(sentence)
+    return "Research question could not be inferred automatically from the current source."
+
+
+def _infer_core_thesis(claim_map: dict, section_texts: dict[str, str]) -> str:
+    """Infer the paper's central thesis from claim map or key sections."""
+    for claim in claim_map.get("headline_claims", []):
+        cleaned = _clean_summary_line(claim)
+        if cleaned:
+            return cleaned
+    for key in ("introduction", "abstract", "method"):
+        chunk = section_texts.get(key, "")
+        sentence = _first_nonempty_sentence(chunk)
+        if sentence:
+            return sentence
+    return "Core thesis could not be inferred automatically from the current source."
+
+
 def build_section_index(content: str, parser, fmt: str) -> list[dict]:
     """Turn parser section tuples into portable section metadata."""
     sections = parser.split_sections(content)
@@ -56,23 +126,31 @@ def write_summary_stub(
     title: str,
     claim_map: dict,
     section_index: list[dict],
+    section_texts: dict[str, str],
 ) -> None:
     """Write a structured summary stub the reviewer can refine."""
+    research_question = _infer_research_question(section_texts)
+    core_thesis = _infer_core_thesis(claim_map, section_texts)
+    headline_claims = [_clean_summary_line(claim) for claim in claim_map.get("headline_claims", [])]
+    headline_claims = [claim for claim in headline_claims if claim]
+    closure_targets = [_clean_summary_line(claim) for claim in claim_map.get("closure_targets", [])]
+    closure_targets = [claim for claim in closure_targets if claim]
+
     lines = [
         f"# Paper Summary: {title}",
         "",
         "## Research Question",
-        "- TODO",
+        f"- {research_question}",
         "",
         "## Core Thesis",
-        "- TODO",
+        f"- {core_thesis}",
         "",
         "## Headline Claims",
     ]
-    if claim_map["headline_claims"]:
-        lines.extend([f"- {claim}" for claim in claim_map["headline_claims"]])
+    if headline_claims:
+        lines.extend([f"- {claim}" for claim in headline_claims])
     else:
-        lines.append("- TODO")
+        lines.append("- No headline claim was extracted automatically.")
     lines.extend(["", "## Section Map"])
     for section in section_index:
         lines.append(
@@ -80,10 +158,10 @@ def write_summary_stub(
             f"{section['word_count']} words"
         )
     lines.extend(["", "## Closure Targets"])
-    if claim_map["closure_targets"]:
-        lines.extend([f"- {claim}" for claim in claim_map["closure_targets"]])
+    if closure_targets:
+        lines.extend([f"- {claim}" for claim in closure_targets])
     else:
-        lines.append("- TODO")
+        lines.append("- No closure target was extracted automatically.")
     (workspace / "paper_summary.md").write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -132,6 +210,8 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
     slug = slugify(title or source.stem)
 
     workspace = Path(output_dir).resolve() / slug
+    if workspace.exists():
+        shutil.rmtree(workspace)
     sections_dir = workspace / "sections"
     comments_dir = workspace / "comments"
     committee_dir = workspace / "committee"
@@ -183,7 +263,7 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
         json.dumps(metadata, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-    write_summary_stub(workspace, metadata["title"], claim_map, section_index)
+    write_summary_stub(workspace, metadata["title"], claim_map, section_index, section_texts)
     _copy_workspace_references(workspace)
     return workspace
 

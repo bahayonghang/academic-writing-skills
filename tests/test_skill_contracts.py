@@ -291,6 +291,32 @@ def test_paper_audit_evals_use_real_mode_specific_fixtures() -> None:
     ]
 
 
+def test_paper_audit_skill_argument_hint_matches_cli_contract() -> None:
+    skill_root = SKILLS_ROOT / "paper-audit"
+    skill_md = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "# Paper Audit Skill v4.4" in skill_md
+    assert "--report-style deep-review|peer-review" in skill_md
+    assert "--focus full|editor|theory|literature|methodology|logic" in skill_md
+    assert "--format md|json" in skill_md
+    assert "markdown|json" not in skill_md
+
+    env = dict(os.environ)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    audit_script = skill_root / "scripts" / "audit.py"
+    result = subprocess.run(
+        [sys.executable, "-B", str(audit_script), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+    )
+    assert result.returncode == 0, result.stderr
+    help_text = result.stdout + result.stderr
+    for flag in ("--report-style", "--focus", "--format"):
+        assert flag in help_text, f"paper-audit help missing supported flag {flag}"
+
+
 def test_openai_yaml_shape() -> None:
     required_keys = {"interface:", "display_name:", "short_description:", "default_prompt:"}
     for skill_name in SKILLS:

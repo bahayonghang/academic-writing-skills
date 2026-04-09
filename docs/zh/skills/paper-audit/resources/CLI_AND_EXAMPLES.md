@@ -39,7 +39,16 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 uv run python academic-writing-skills/paper-audit/scripts/consolidate_review_findings.py ./review_results/paper-slug
 uv run python academic-writing-skills/paper-audit/scripts/verify_quotes.py ./review_results/paper-slug --write-back
 uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py ./review_results/paper-slug
+uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py ./review_results/paper-slug --style peer-review
 ```
+
+面向期刊审稿报告的自然语言请求：
+
+```text
+像 SCI 期刊审稿人一样审这篇论文，给我 Summary、Major Issues、Minor Issues 和 Recommendation。
+```
+
+此时优先交付的 reader-facing 产物是 `peer_review_report.md`，而 `review_report.md` 仍保留为证据更完整的深审报告。
 
 ## IEEE Gate
 

@@ -24,6 +24,7 @@ from report_generator import (
     normalize_deep_review_issue_dict,
     render_deep_review_report,
     render_json_report,
+    render_peer_review_report,
     render_report,
 )
 from verify_quotes import verify_quotes
@@ -117,6 +118,77 @@ MODE_CHECKS: dict[str, list[str]] = {
 MODE_ALIASES: dict[str, str] = {
     "self-check": "quick-audit",
     "review": "deep-review",
+}
+
+DEEP_REVIEW_FOCI: tuple[str, ...] = (
+    "full",
+    "editor",
+    "theory",
+    "literature",
+    "methodology",
+    "logic",
+)
+
+FOCUS_TO_ALLOWED_LANES: dict[str, set[str]] = {
+    "full": {
+        "section_intro_related",
+        "section_methods",
+        "section_results",
+        "section_discussion_conclusion",
+        "section_appendix",
+        "claims_vs_evidence",
+        "notation_and_numeric_consistency",
+        "evaluation_fairness_and_reproducibility",
+        "self_standard_consistency",
+        "prior_art_and_novelty_grounding",
+    },
+    "editor": {
+        "section_intro_related",
+        "claims_vs_evidence",
+        "prior_art_and_novelty_grounding",
+    },
+    "theory": {
+        "section_intro_related",
+        "claims_vs_evidence",
+        "prior_art_and_novelty_grounding",
+    },
+    "literature": {
+        "section_intro_related",
+        "prior_art_and_novelty_grounding",
+    },
+    "methodology": {
+        "section_methods",
+        "section_results",
+        "notation_and_numeric_consistency",
+        "evaluation_fairness_and_reproducibility",
+    },
+    "logic": {
+        "section_discussion_conclusion",
+        "self_standard_consistency",
+        "claims_vs_evidence",
+    },
+}
+
+FOCUS_TO_COMMITTEE_ROLES: dict[str, tuple[str, ...]] = {
+    "full": ("editor", "theory", "literature", "methodology", "logic"),
+    "editor": ("editor",),
+    "theory": ("theory",),
+    "literature": ("literature",),
+    "methodology": ("methodology",),
+    "logic": ("logic",),
+}
+
+ROLE_TO_REVIEW_LANES: dict[str, set[str]] = {
+    "editor": {"section_intro_related", "claims_vs_evidence", "prior_art_and_novelty_grounding"},
+    "theory": {"section_intro_related", "claims_vs_evidence", "prior_art_and_novelty_grounding"},
+    "literature": {"section_intro_related", "prior_art_and_novelty_grounding"},
+    "methodology": {
+        "section_methods",
+        "section_results",
+        "notation_and_numeric_consistency",
+        "evaluation_fairness_and_reproducibility",
+    },
+    "logic": {"section_discussion_conclusion", "self_standard_consistency", "claims_vs_evidence"},
 }
 
 # Additional checks for Chinese documents
@@ -378,6 +450,7 @@ def _section_lane_rules(section_key: str, normalized_text: str, claim_map: dict)
             "severity": "moderate",
             "review_lane": "claims_vs_evidence",
             "related_sections": [section_key, "results"],
+            "quote_keywords": ("state-of-the-art", "significant", "best", "novel", "superior"),
         },
         {
             "enabled": section_key in {"method", "methods", "approach", "model"}
@@ -392,6 +465,7 @@ def _section_lane_rules(section_key: str, normalized_text: str, claim_map: dict)
             "severity": "moderate",
             "review_lane": _lane_from_section(section_key),
             "related_sections": None,
+            "quote_keywords": ("assume", "define"),
         },
         {
             "enabled": section_key in {"experiment", "experiments", "results", "evaluation"}
@@ -409,6 +483,7 @@ def _section_lane_rules(section_key: str, normalized_text: str, claim_map: dict)
             "severity": "moderate",
             "review_lane": "evaluation_fairness_and_reproducibility",
             "related_sections": [section_key, "methods"],
+            "quote_keywords": ("improve", "outperform", "accuracy", "f1", "bleu", "baseline"),
         },
         {
             "enabled": section_key == "appendix",
@@ -422,6 +497,7 @@ def _section_lane_rules(section_key: str, normalized_text: str, claim_map: dict)
             "severity": "minor",
             "review_lane": "notation_and_numeric_consistency",
             "related_sections": [section_key, "results"],
+            "quote_requires_digits": True,
         },
     ]
 
@@ -441,13 +517,17 @@ def _make_fallback_issue(
     gate_blocker: bool = False,
 ) -> dict:
     """Build a lane-compatible fallback issue payload."""
+    normalized_quote = quote.strip()
+    normalized_confidence = confidence
+    if not normalized_quote and normalized_confidence == "medium":
+        normalized_confidence = "low"
     return {
         "title": title,
-        "quote": quote.strip(),
+        "quote": normalized_quote,
         "explanation": explanation.strip(),
         "comment_type": comment_type,
         "severity": severity,
-        "confidence": confidence,
+        "confidence": normalized_confidence,
         "source_kind": source_kind,
         "source_section": source_section,
         "related_sections": related_sections or ([source_section] if source_section else []),
@@ -469,6 +549,80 @@ def _summarize_section_text(section_text: str, *, max_len: int = 280) -> str:
     return summary[: max_len - 3].rstrip() + "..."
 
 
+def _clean_section_for_quote_search(section_text: str) -> str:
+    """Drop markdown headings so fallback quotes stay closer to the paper prose."""
+    return "\n".join(
+        line for line in section_text.splitlines() if not line.lstrip().startswith("#")
+    ).strip()
+
+
+def _candidate_quote_sentences(section_text: str) -> list[str]:
+    """Split a section into sentence-like chunks for exact quote extraction."""
+    cleaned = _clean_section_for_quote_search(section_text)
+    if not cleaned:
+        return []
+    normalized = re.sub(r"\s+", " ", cleaned)
+    sentences = re.split(r"(?<=[.!?])\s+", normalized)
+    return [sentence.strip() for sentence in sentences if sentence.strip()]
+
+
+def _extract_sentence_quote(
+    section_text: str,
+    *,
+    keywords: tuple[str, ...] = (),
+    require_digits: bool = False,
+) -> str:
+    """Return an exact sentence from the section that matches the requested heuristic."""
+    for sentence in _candidate_quote_sentences(section_text):
+        lowered = sentence.lower()
+        if keywords and not any(keyword in lowered for keyword in keywords):
+            continue
+        if require_digits and not re.search(r"\b\d+(?:\.\d+)?\b", sentence):
+            continue
+        return sentence
+    return ""
+
+
+def _exact_quote_from_section(
+    section_text: str,
+    raw_quote: str = "",
+    *,
+    keywords: tuple[str, ...] = (),
+    require_digits: bool = False,
+) -> str:
+    """Prefer an existing exact quote; otherwise extract a sentence verbatim from the section."""
+    quote = raw_quote.strip()
+    if quote and quote in section_text:
+        return quote
+    return _extract_sentence_quote(
+        section_text,
+        keywords=keywords,
+        require_digits=require_digits,
+    )
+
+
+def _find_quote_in_sections(
+    section_texts: dict[str, str],
+    preferred_sections: tuple[str, ...],
+    *,
+    keywords: tuple[str, ...] = (),
+    require_digits: bool = False,
+) -> tuple[str, str]:
+    """Find the first exact quote across a preferred list of sections."""
+    for section_key in preferred_sections:
+        section_text = section_texts.get(section_key, "")
+        if not section_text:
+            continue
+        quote = _extract_sentence_quote(
+            section_text,
+            keywords=keywords,
+            require_digits=require_digits,
+        )
+        if quote:
+            return section_key, quote
+    return preferred_sections[0] if preferred_sections else "unknown", ""
+
+
 def _fallback_section_lane_issues(
     section_key: str, section_text: str, claim_map: dict
 ) -> list[dict]:
@@ -481,10 +635,16 @@ def _fallback_section_lane_issues(
     for rule in _section_lane_rules(section_key, normalized.lower(), claim_map):
         if not rule["enabled"]:
             continue
+        quote = _exact_quote_from_section(
+            section_text,
+            rule.get("quote", ""),
+            keywords=tuple(rule.get("quote_keywords", ())),
+            require_digits=bool(rule.get("quote_requires_digits", False)),
+        )
         issues.append(
             _make_fallback_issue(
                 title=rule["title"],
-                quote=rule["quote"] or _summarize_section_text(section_text),
+                quote=quote,
                 explanation=rule["explanation"],
                 comment_type=rule["comment_type"],
                 severity=rule["severity"],
@@ -504,19 +664,24 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
     closure_targets = claim_map.get("closure_targets", [])
 
     if headline_claims:
+        claim_section, claim_quote = _find_quote_in_sections(
+            section_texts,
+            ("abstract", "introduction"),
+            keywords=("state-of-the-art", "significant", "novel", "superior", "outperform"),
+        )
         issues.append(
             _make_fallback_issue(
                 title="Abstract and conclusion claims need explicit evidence traceability",
-                quote=headline_claims[0],
+                quote=claim_quote,
                 explanation=(
                     "At least one headline claim was detected. Deep review should check whether experiments and "
                     "conclusion language trace back to the same bounded evidence base."
                 ),
                 comment_type="claim_accuracy",
                 severity="major",
-                source_section="abstract",
+                source_section=claim_section,
                 review_lane="claims_vs_evidence",
-                related_sections=["abstract", "results", "conclusion"],
+                related_sections=[claim_section, "results", "conclusion"],
             )
         )
 
@@ -524,64 +689,118 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
         key for key, text in section_texts.items() if re.search(r"\b\d+(?:\.\d+)?\b", text)
     ]
     if len(numeric_sections) >= 2:
+        numeric_section, numeric_quote = _find_quote_in_sections(
+            section_texts,
+            tuple(numeric_sections),
+            require_digits=True,
+        )
         issues.append(
             _make_fallback_issue(
                 title="Cross-section numeric consistency should be reconciled",
-                quote=_summarize_section_text(section_texts[numeric_sections[0]]),
+                quote=numeric_quote,
                 explanation=(
                     "Multiple sections contain numeric claims. Confirm that the same quantities reconcile across "
                     "main text, tables, and appendix material."
                 ),
                 comment_type="presentation",
                 severity="moderate",
-                source_section=numeric_sections[0],
+                source_section=numeric_section,
                 review_lane="notation_and_numeric_consistency",
                 related_sections=numeric_sections[:3],
             )
         )
 
     if closure_targets:
+        closure_section, closure_quote = _find_quote_in_sections(
+            section_texts,
+            ("conclusion", "discussion"),
+            keywords=("conclude", "therefore", "overall", "superior"),
+        )
         issues.append(
             _make_fallback_issue(
                 title="Conclusion should close the loop on the paper's strongest claims",
-                quote=closure_targets[0],
+                quote=closure_quote,
                 explanation=(
                     "A closure claim appears in the discussion/conclusion. Verify that it matches the limitations, "
                     "experimental scope, and prior-art positioning established earlier in the paper."
                 ),
                 comment_type="missing_information",
                 severity="minor",
-                source_section="conclusion",
+                source_section=closure_section,
                 review_lane="self_standard_consistency",
-                related_sections=["conclusion", "introduction", "results"],
+                related_sections=[closure_section, "introduction", "results"],
             )
         )
 
     if any(
         "baseline" in text.lower() or "compare" in text.lower() for text in section_texts.values()
     ):
+        comparison_section, comparison_quote = _find_quote_in_sections(
+            section_texts,
+            ("results", "experiment", "methods", "method"),
+            keywords=("baseline", "compare", "improve", "accuracy"),
+        )
         issues.append(
             _make_fallback_issue(
                 title="Comparison protocol should make fairness assumptions explicit",
-                quote=_summarize_section_text(" ".join(section_texts.values())),
+                quote=comparison_quote,
                 explanation=(
                     "Comparative evaluation language was detected. Deep review should verify that baseline tuning, "
                     "data splits, and reporting conventions are described symmetrically."
                 ),
                 comment_type="methodology",
                 severity="moderate",
-                source_section="results" if "results" in section_texts else "experiment",
+                source_section=comparison_section,
                 review_lane="evaluation_fairness_and_reproducibility",
                 related_sections=[
-                    key for key in ("methods", "results", "appendix") if key in section_texts
+                    key
+                    for key in ("methods", "method", "results", "experiment", "appendix")
+                    if key in section_texts
                 ],
+            )
+        )
+
+    if any(
+        any(token in text.lower() for token in ("prior work", "related work", "novel", "gap"))
+        for text in section_texts.values()
+    ):
+        prior_section, prior_quote = _find_quote_in_sections(
+            section_texts,
+            ("related_work", "introduction", "abstract"),
+            keywords=("prior work", "related work", "novel", "gap", "superiority"),
+        )
+        issues.append(
+            _make_fallback_issue(
+                title="Novelty claim should be grounded against the closest prior work",
+                quote=prior_quote,
+                explanation=(
+                    "The paper positions itself against prior work, but the current wording should make the "
+                    "closest comparator and the real novelty delta explicit instead of relying on broad "
+                    "superiority language."
+                ),
+                comment_type="claim_accuracy",
+                severity="moderate",
+                source_section=prior_section,
+                review_lane="prior_art_and_novelty_grounding",
+                related_sections=[prior_section, "results"],
             )
         )
 
     return issues
 
 
-def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: dict) -> list[dict]:
+def _selected_lanes_for_focus(focus: str) -> set[str]:
+    """Return the allowed fallback lanes for the selected deep-review focus."""
+    return FOCUS_TO_ALLOWED_LANES.get(focus, FOCUS_TO_ALLOWED_LANES["full"])
+
+
+def _write_lane_outputs(
+    review_dir: Path,
+    section_index: list[dict],
+    claim_map: dict,
+    *,
+    focus: str = "full",
+) -> list[dict]:
     """Create fallback lane outputs inside comments/ and return all raw issues."""
     sections_dir = review_dir / "sections"
     comments_dir = review_dir / "comments"
@@ -589,6 +808,7 @@ def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: 
 
     section_texts: dict[str, str] = {}
     raw_issues: list[dict] = []
+    allowed_lanes = _selected_lanes_for_focus(focus)
 
     for section in section_index:
         section_key = section.get("section_key", "")
@@ -601,6 +821,8 @@ def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: 
         section_text = section_path.read_text(encoding="utf-8")
         section_texts[section_key] = section_text
         lane_name = _lane_from_section(section_key)
+        if lane_name not in allowed_lanes:
+            continue
         lane_issues = _fallback_section_lane_issues(section_key, section_text, claim_map)
         if lane_issues:
             _write_lane_file(comments_dir, lane_name, lane_issues)
@@ -609,6 +831,8 @@ def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: 
     cross_cutting = _fallback_cross_cutting_issues(claim_map, section_texts)
     lane_buckets: dict[str, list[dict]] = {}
     for issue in cross_cutting:
+        if issue["review_lane"] not in allowed_lanes:
+            continue
         lane_buckets.setdefault(issue["review_lane"], []).append(issue)
         raw_issues.append(issue)
 
@@ -616,6 +840,7 @@ def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: 
         _write_lane_file(comments_dir, lane_name, lane_issues)
 
     if not raw_issues:
+        placeholder_lane = next(iter(sorted(allowed_lanes)), "self_standard_consistency")
         placeholder = [
             _make_fallback_issue(
                 title="Deep review requires manual reviewer judgment",
@@ -627,13 +852,292 @@ def _write_lane_outputs(review_dir: Path, section_index: list[dict], claim_map: 
                 comment_type="missing_information",
                 severity="minor",
                 source_section="unknown",
-                review_lane="self_standard_consistency",
+                review_lane=placeholder_lane,
             )
         ]
-        _write_lane_file(comments_dir, "self_standard_consistency", placeholder)
+        _write_lane_file(comments_dir, placeholder_lane, placeholder)
         raw_issues.extend(placeholder)
 
     return raw_issues
+
+
+def _issues_for_committee_role(role: str, issues: list[dict]) -> list[dict]:
+    """Select a focused subset of issue-bundle items for one committee role."""
+    role_lanes = ROLE_TO_REVIEW_LANES.get(role, set())
+    selected: list[dict] = []
+    for issue in issues:
+        title = str(issue.get("title", "")).lower()
+        section = str(issue.get("source_section", "")).lower()
+        lane = str(issue.get("review_lane", ""))
+        comment_type = str(issue.get("comment_type", ""))
+
+        if lane in role_lanes:
+            selected.append(issue)
+            continue
+        if role == "editor" and section in {"abstract", "introduction"}:
+            selected.append(issue)
+            continue
+        if role == "theory" and any(
+            token in title for token in ("theory", "novelty", "contribution", "gap", "prior work")
+        ):
+            selected.append(issue)
+            continue
+        if role == "literature" and any(
+            token in title for token in ("prior work", "novelty", "gap", "literature")
+        ):
+            selected.append(issue)
+            continue
+        if role == "methodology" and comment_type == "methodology":
+            selected.append(issue)
+            continue
+        if role == "logic" and any(
+            token in title for token in ("logic", "argument", "conclusion", "closure")
+        ):
+            selected.append(issue)
+            continue
+    return selected
+
+
+def _committee_issue_copies(role: str, issues: list[dict]) -> list[dict]:
+    """Re-label issue payloads for committee artifact storage."""
+    copied: list[dict] = []
+    for issue in issues:
+        payload = dict(issue)
+        payload["review_lane"] = f"committee_{role}"
+        copied.append(payload)
+    return copied
+
+
+def _committee_issue_line(issue: dict) -> str:
+    """Render one short committee-facing issue bullet."""
+    quote = issue.get("quote", "").strip()
+    section = issue.get("source_section", "unknown")
+    explanation = issue.get("explanation", "").strip()
+    quote_part = f'"{quote}"' if quote else issue.get("title", "issue")
+    return f"({section}) {quote_part} — {explanation}"
+
+
+def _render_editor_committee_markdown(
+    role_issues: list[dict],
+    *,
+    phase0_result: AuditResult,
+) -> str:
+    """Render the deterministic editor pre-screen artifact."""
+    verdict_basis = list(role_issues)
+    if not verdict_basis:
+        verdict_basis = [
+            normalize_deep_review_issue_dict(
+                {
+                    "title": issue.message,
+                    "quote": "",
+                    "explanation": issue.message,
+                    "comment_type": "presentation",
+                    "severity": "major" if issue.severity == "Critical" else "moderate",
+                    "source_kind": "script",
+                    "source_section": "abstract",
+                    "review_lane": "committee_editor",
+                }
+            )
+            for issue in phase0_result.issues
+            if issue.severity == "Critical"
+        ]
+    verdict = _infer_editor_verdict(phase0_result, verdict_basis)
+    score = _compute_committee_score(role_issues, verdict)
+    desk_reject_triggers = [
+        issue.get("title", "Untitled issue")
+        for issue in role_issues
+        if issue.get("severity") == "major"
+    ]
+    top_reasons = desk_reject_triggers or [
+        issue.get("title", "Untitled issue") for issue in role_issues[:3]
+    ]
+    fast_fixes = [
+        f"Clarify {issue.get('source_section', 'the affected section')} to address {issue.get('title', 'the issue').lower()}."
+        for issue in role_issues[:3]
+    ]
+
+    lines = [
+        "## Editor Pre-Screen (1-10)",
+        "",
+        f"Score: {score}/10",
+        f"Verdict: {verdict}",
+        "",
+        "### Desk-Reject Triggers (if any)",
+    ]
+    if desk_reject_triggers:
+        lines.extend([f"- {trigger}" for trigger in desk_reject_triggers])
+    else:
+        lines.append("- None identified from the deterministic fallback pass.")
+    lines.extend(["", "### Top 3 Reasons (no hedging)"])
+    if top_reasons:
+        lines.extend([f"{idx}. {reason}" for idx, reason in enumerate(top_reasons[:3], start=1)])
+    else:
+        lines.append("1. No blocking pre-screen concern was surfaced.")
+    lines.extend(["", "### Fast Fixes (within 1-2 days)"])
+    if fast_fixes:
+        lines.extend([f"- {fix}" for fix in fast_fixes])
+    else:
+        lines.append("- No fast fix identified.")
+    return "\n".join(lines) + "\n"
+
+
+def _render_theory_committee_markdown(role_issues: list[dict]) -> str:
+    """Render the deterministic theory review artifact."""
+    lines = ["## Theory Contribution Review", "", "### 3 Fatal Theory Holes"]
+    if role_issues:
+        for idx, issue in enumerate(role_issues[:3], start=1):
+            lines.append(f"{idx}. {_committee_issue_line(issue)}")
+    else:
+        lines.append("1. No theory-specific fatal hole was surfaced by the fallback pass.")
+    lines.extend(["", "### Concrete Moves"])
+    if role_issues:
+        for issue in role_issues[:4]:
+            lines.append(
+                f"- Tighten the paper's theoretical positioning in {issue.get('source_section', 'the affected section')} to resolve {issue.get('title', 'this issue').lower()}."
+            )
+    else:
+        lines.append("- Clarify the paper's conceptual delta against the closest baseline.")
+    return "\n".join(lines) + "\n"
+
+
+def _render_literature_committee_markdown(role_issues: list[dict]) -> str:
+    """Render the deterministic literature review artifact."""
+    lines = [
+        "## Literature Dialogue Review",
+        "",
+        "### Closest Prior Work Risks",
+    ]
+    if role_issues:
+        for issue in role_issues[:3]:
+            lines.append(f"- {_committee_issue_line(issue)}")
+    else:
+        lines.append("- No literature-grounding risk was surfaced by the fallback pass.")
+    lines.extend(["", "### Gap Claim Risks"])
+    if role_issues:
+        for issue in role_issues[:2]:
+            lines.append(
+                f"- The claimed gap should be defended more explicitly: {issue.get('title', 'Untitled issue')}."
+            )
+    else:
+        lines.append("- No selective-citation concern was surfaced.")
+    lines.extend(["", "### Fast Fixes"])
+    if role_issues:
+        for issue in role_issues[:3]:
+            lines.append(
+                f"- Name the closest prior comparator in {issue.get('source_section', 'the related-work framing')} and explain the real novelty delta."
+            )
+    else:
+        lines.append(
+            "- Add one sentence identifying the closest prior work and the exact novelty delta."
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _render_methodology_committee_markdown(role_issues: list[dict]) -> str:
+    """Render the deterministic methodology review artifact."""
+    must_fix = [issue for issue in role_issues if issue.get("severity") == "major"]
+    should_fix = [issue for issue in role_issues if issue.get("severity") != "major"]
+    lines = [
+        "## Methodology Transparency Review (SRQR-aware)",
+        "",
+        "### MUST-FIX (submission blockers)",
+    ]
+    if must_fix:
+        for issue in must_fix:
+            lines.append(f"- {_committee_issue_line(issue)}")
+    else:
+        lines.append("- No methodology blocker was surfaced by the fallback pass.")
+    lines.extend(["", "### SHOULD-FIX (quality improvements)"])
+    if should_fix:
+        for issue in should_fix[:4]:
+            lines.append(f"- {_committee_issue_line(issue)}")
+    else:
+        lines.append("- No secondary methodology issue was surfaced.")
+    lines.extend(
+        [
+            "",
+            "### SRQR Checklist Deltas",
+            "- Sampling rationale: clarify how the evidence base supports the paper's strongest claims.",
+            "- Data collection details (time/place/duration): add context when results depend on specific settings.",
+            "- Coding process (stages, coders, disagreement resolution): specify if qualitative or hybrid analysis is used.",
+            "- Saturation: state whether the evidence scope is exhaustive or bounded.",
+            "- Triangulation: explain whether multiple evidence sources were reconciled.",
+            "- Reflexivity: acknowledge researcher choices that shape interpretation.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
+def _render_logic_committee_markdown(role_issues: list[dict]) -> str:
+    """Render the deterministic logic review artifact."""
+    lines = ["## Logic Chain Review", "", "### Breakpoints"]
+    if role_issues:
+        for issue in role_issues[:4]:
+            lines.append(f"- {_committee_issue_line(issue)}")
+    else:
+        lines.append("- No explicit logic-chain breakpoint was surfaced by the fallback pass.")
+    lines.extend(["", "### Structural Fix Moves"])
+    if role_issues:
+        for issue in role_issues[:3]:
+            lines.append(
+                f"- Add one explicit bridge sentence in {issue.get('source_section', 'the affected section')} so the argument chain closes cleanly."
+            )
+    else:
+        lines.append("- Add one sentence linking the opening promise to the concluding claim.")
+    return "\n".join(lines) + "\n"
+
+
+def _write_committee_artifacts(
+    review_dir: Path,
+    phase0_result: AuditResult,
+    issues: list[dict],
+    *,
+    focus: str,
+) -> tuple[float | None, str]:
+    """Write deterministic committee markdown/json artifacts for the selected focus."""
+    committee_dir = review_dir / "committee"
+    comments_dir = review_dir / "comments"
+    committee_dir.mkdir(parents=True, exist_ok=True)
+    comments_dir.mkdir(parents=True, exist_ok=True)
+
+    selected_roles = FOCUS_TO_COMMITTEE_ROLES.get(focus, FOCUS_TO_COMMITTEE_ROLES["full"])
+    rendered_role = False
+    for role in selected_roles:
+        role_issues = _issues_for_committee_role(role, issues)
+        if role == "editor":
+            markdown = _render_editor_committee_markdown(role_issues, phase0_result=phase0_result)
+        elif role == "theory":
+            markdown = _render_theory_committee_markdown(role_issues)
+        elif role == "literature":
+            markdown = _render_literature_committee_markdown(role_issues)
+        elif role == "methodology":
+            markdown = _render_methodology_committee_markdown(role_issues)
+        else:
+            markdown = _render_logic_committee_markdown(role_issues)
+
+        (committee_dir / f"{role}.md").write_text(markdown, encoding="utf-8")
+        (comments_dir / f"committee_{role}.json").write_text(
+            json.dumps(_committee_issue_copies(role, role_issues), indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        rendered_role = True
+
+    if focus == "full":
+        _write_committee_consensus(review_dir, phase0_result, issues)
+        editor_verdict = _extract_editor_verdict_from_markdown(
+            (committee_dir / "editor.md").read_text(encoding="utf-8")
+        )
+        return _compute_committee_score(issues, editor_verdict), editor_verdict or ""
+
+    if rendered_role and "editor" in selected_roles:
+        editor_verdict = _extract_editor_verdict_from_markdown(
+            (committee_dir / "editor.md").read_text(encoding="utf-8")
+        )
+        return _compute_committee_score(
+            _issues_for_committee_role("editor", issues), editor_verdict
+        ), (editor_verdict or "")
+
+    return None, ""
 
 
 def _write_lane_file(comments_dir: Path, lane_name: str, lane_issues: list[dict]) -> None:
@@ -806,6 +1310,7 @@ def run_deep_review(
     pdf_mode: str = "basic",
     venue: str = "",
     lang: str | None = None,
+    focus: str = "full",
     online: bool = False,
     email: str = "",
     scholar_eval: bool = False,
@@ -815,17 +1320,24 @@ def run_deep_review(
     regression: bool = False,
 ) -> AuditResult:
     """Run the end-to-end deep-review workflow with deterministic fallback lanes."""
-    review_dir = prepare_workspace(file_path)
+    source_path = str(Path(file_path).resolve())
+    review_dir = prepare_workspace(source_path)
     metadata = json.loads((review_dir / "metadata.json").read_text(encoding="utf-8"))
+    metadata["review_focus"] = focus
+    (review_dir / "metadata.json").write_text(
+        json.dumps(metadata, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
     section_index = json.loads((review_dir / "section_index.json").read_text(encoding="utf-8"))
     claim_map = json.loads((review_dir / "claim_map.json").read_text(encoding="utf-8"))
 
     phase0_result = run_audit(
-        file_path=file_path,
+        file_path=source_path,
         mode="quick-audit",
         pdf_mode=pdf_mode,
         venue=venue,
         lang=lang,
+        focus=focus,
         online=online,
         email=email,
         scholar_eval=scholar_eval,
@@ -839,7 +1351,7 @@ def run_deep_review(
         encoding="utf-8",
     )
 
-    _write_lane_outputs(review_dir, section_index, claim_map)
+    _write_lane_outputs(review_dir, section_index, claim_map, focus=focus)
 
     from consolidate_review_findings import consolidate_findings, load_comment_files
 
@@ -868,11 +1380,11 @@ def run_deep_review(
     (review_dir / "overall_assessment.txt").write_text(overall_assessment + "\n", encoding="utf-8")
     revision_roadmap = _build_revision_roadmap(verified)
     _write_revision_roadmap(review_dir, revision_roadmap)
-    _write_committee_consensus(review_dir, phase0_result, verified)
+    _write_committee_artifacts(review_dir, phase0_result, verified, focus=focus)
 
     issue_bundle = [coerce_deep_review_issue(issue) for issue in verified]
     result = AuditResult(
-        file_path=str(Path(file_path).resolve()),
+        file_path=source_path,
         language=lang or metadata.get("language", "en"),
         mode="deep-review",
         venue=venue,
@@ -884,11 +1396,16 @@ def run_deep_review(
         revision_roadmap=revision_roadmap,
         section_index=section_index,
         artifact_dir=str(review_dir),
+        review_focus=focus,
         scholar_eval_result=phase0_result.scholar_eval_result,
         literature_context=phase0_result.literature_context,
     )
     (review_dir / "review_report.md").write_text(
         render_deep_review_report(result),
+        encoding="utf-8",
+    )
+    (review_dir / "peer_review_report.md").write_text(
+        render_peer_review_report(result),
         encoding="utf-8",
     )
     return result
@@ -1421,6 +1938,7 @@ def run_audit(
     pdf_mode: str = "basic",
     venue: str = "",
     lang: str | None = None,
+    focus: str = "full",
     style: str = "A",
     journal: str = "",
     skip_logic: bool = False,
@@ -1451,7 +1969,7 @@ def run_audit(
     """
     canonical_mode, alias_used = normalize_mode(mode)
 
-    path = Path(file_path)
+    path = Path(file_path).resolve()
     if not path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
@@ -1462,7 +1980,7 @@ def run_audit(
     # Polish mode: early dispatch to precheck
     if canonical_mode == "polish":
         return run_polish_precheck(
-            file_path,
+            str(path),
             style=style,
             journal=journal,
             lang=lang,
@@ -1471,10 +1989,11 @@ def run_audit(
 
     if canonical_mode == "deep-review":
         return run_deep_review(
-            file_path=file_path,
+            file_path=str(path),
             pdf_mode=pdf_mode,
             venue=venue,
             lang=lang,
+            focus=focus,
             online=online,
             email=email,
             scholar_eval=scholar_eval,
@@ -1485,7 +2004,7 @@ def run_audit(
         )
 
     # Step 1: Extract text
-    parser = get_parser(file_path, pdf_mode=pdf_mode)
+    parser = get_parser(str(path), pdf_mode=pdf_mode)
 
     if fmt == ".pdf":
         content = parser.extract_text_from_file(str(path))
@@ -1572,7 +2091,7 @@ def run_audit(
                 print(f"[audit] {check_name}: clean")
 
     # Step 5: Run checklist (universal + venue-specific)
-    checklist = _run_checklist(content, file_path, lang, venue=venue)
+    checklist = _run_checklist(content, str(path), lang, venue=venue)
 
     # Step 5.5: Literature search (optional)
     literature_context = None
@@ -1627,6 +2146,7 @@ def run_audit(
         mode=canonical_mode,
         venue=venue,
         mode_alias_used=alias_used,
+        review_focus=focus,
         issues=all_issues,
         checklist=checklist,
         literature_context=literature_context,
@@ -2120,6 +2640,18 @@ Examples:
         help="Force language (auto-detects if not specified)",
     )
     parser.add_argument(
+        "--report-style",
+        choices=["deep-review", "peer-review"],
+        default="deep-review",
+        help="Preferred reviewer-facing report style for deep-review mode (default: deep-review)",
+    )
+    parser.add_argument(
+        "--focus",
+        choices=list(DEEP_REVIEW_FOCI),
+        default="full",
+        help="Deep-review focus selector (default: full)",
+    )
+    parser.add_argument(
         "--style",
         choices=["A", "B", "C"],
         default="A",
@@ -2213,6 +2745,7 @@ Examples:
                 pdf_mode=args.pdf_mode,
                 venue=args.venue,
                 lang=args.lang,
+                focus=getattr(args, "focus", "full"),
                 style=getattr(args, "style", "A"),
                 journal=getattr(args, "journal", ""),
                 skip_logic=getattr(args, "skip_logic", False),
@@ -2225,7 +2758,11 @@ Examples:
                 regression=getattr(args, "regression", False),
             )
 
-        report = render_json_report(result) if args.format == "json" else render_report(result)
+        report = (
+            render_json_report(result)
+            if args.format == "json"
+            else render_report(result, report_style=getattr(args, "report_style", "deep-review"))
+        )
 
         if args.output:
             Path(args.output).write_text(report, encoding="utf-8")

@@ -39,7 +39,16 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 uv run python academic-writing-skills/paper-audit/scripts/consolidate_review_findings.py ./review_results/paper-slug
 uv run python academic-writing-skills/paper-audit/scripts/verify_quotes.py ./review_results/paper-slug --write-back
 uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py ./review_results/paper-slug
+uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py ./review_results/paper-slug --style peer-review
 ```
+
+Reviewer-report-first natural-language request:
+
+```text
+Review this manuscript like an SCI journal reviewer and give me Summary, Major Issues, Minor Issues, and Recommendation.
+```
+
+The final reader-facing artifact for that request is `peer_review_report.md`, while `review_report.md` remains the richer evidence bundle.
 
 ## IEEE Gate
 

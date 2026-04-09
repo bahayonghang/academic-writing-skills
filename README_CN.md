@@ -143,7 +143,7 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 |---|---|
 | **输入** | `.tex`、`.typ`、`.pdf` 文件 |
 | **模式** | `quick-audit`（快速筛查）· `deep-review`（审稿人风格深审）· `gate`（投稿门控）· `re-audit`（修订回归）|
-| **视觉排版** | 页边距溢出、文本/图片重叠、字体不一致、低分辨率图片、空白页 |
+| **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`peer_review_report.md`、`revision_roadmap.md` |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
 | **伪代码审查** | IEEE gate 检查浮动算法环境、caption/label/引用顺序，并把行号与长注释归为建议项而非硬阻塞 |
@@ -173,13 +173,14 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | 模式 | 适用时机 | 主产物 |
 |---|---|---|
 | `quick-audit` | 想快速看投稿风险 | 脚本化报告 + checklist + score summary |
-| `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 |
+| `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 + 可选 `peer_review_report.md` |
 | `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
 | `re-audit` | 想验证修订效果 | 问题状态对比 |
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
+uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py review_results/paper-slug --style peer-review
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
 ```

@@ -55,7 +55,7 @@ This should:
 
 ### `review_report.md`
 
-The human-readable final review report.
+The human-readable final deep-review report.
 
 Expected sections:
 
@@ -64,6 +64,19 @@ Expected sections:
 - Phase 0 automated findings
 - score summary
 - revision roadmap
+
+### `peer_review_report.md`
+
+A reviewer-facing journal / SCI style report derived from the deep-review artifacts.
+
+Expected sections:
+
+- Summary
+- Major Issues
+- Minor Issues
+- Recommendation
+
+Use this artifact when you want something closer to what a real journal reviewer would submit, while keeping `review_report.md` as the richer evidence bundle.
 
 ### `revision_roadmap.md`
 

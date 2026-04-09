@@ -47,11 +47,21 @@ The quick-audit report contains:
 
 ### Deep Review Report
 
+The deep review workflow now produces two complementary reviewer artifacts:
+- **`review_report.md`**: the evidence-rich audit bundle with structured major / moderate / minor findings, committee outputs, and roadmap details
+- **`peer_review_report.md`**: a polished journal-style reviewer report with **Summary**, **Major Issues**, **Minor Issues**, and **Recommendation**
+
 The deep review report adds:
 - **Overall Assessment**: short calibrated reviewer summary
 - **Major / Moderate / Minor Issues**: quote-anchored structured findings
 - **Revision Roadmap**: prioritized fix list
 - **Recommendation**: score summary, if requested
+
+The peer review report adds:
+- **Summary**: 1-2 concise paragraphs in academic-review tone
+- **Major Issues**: numbered validity-threatening concerns with section or quote anchors
+- **Minor Issues**: numbered secondary concerns that still merit revision
+- **Recommendation**: `Accept | Minor Revision | Major Revision | Reject`
 
 ### Gate Report
 

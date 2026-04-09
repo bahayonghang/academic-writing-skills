@@ -8,6 +8,7 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" paper.tex --mode deep-review --sc
 uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" ./review_results/paper
 uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" ./review_results/paper --write-back
 uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" ./review_results/paper
+uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" ./review_results/paper --style peer-review
 ```
 
 ---
