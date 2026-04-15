@@ -1,4 +1,4 @@
 interface:
   display_name: "LaTeX Paper EN"
-  short_description: "Compile and review existing English LaTeX papers with module-based checks for bibliography, prose, experiments, figures, and submission readiness"
-  default_prompt: "Review my existing English LaTeX paper project, choose the smallest matching module, run the relevant uv-backed checker, and return LaTeX-friendly findings."
+  short_description: "Compile and review English LaTeX papers with inference-first module routing, multi-module sequencing, and source-preserving findings"
+  default_prompt: "Review my English LaTeX paper project, infer the smallest matching module from the request, sequence compatible modules when needed, ask only for missing file or section details, run the relevant uv-backed checks, and return LaTeX-friendly findings."

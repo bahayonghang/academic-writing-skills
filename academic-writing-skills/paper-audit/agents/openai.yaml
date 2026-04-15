@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Audit"
+  short_description: "Deep-review-first paper auditing with quick-audit, gate, re-audit, and peer-review presentation surfaces"
+  default_prompt: "Audit my paper in deep-review-first mode, infer the correct audit mode and report style from the request, lock the paper format and language, run the review pipeline, and present the right primary surface for deep-review, peer-review, gate, or re-audit."
