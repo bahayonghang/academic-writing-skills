@@ -4,6 +4,8 @@ description: Chinese LaTeX thesis assistant for existing .tex degree thesis proj
 metadata:
   category: academic-writing
   tags: [latex, thesis, chinese, phd, master, xelatex, gb7714, thuthesis, pkuthss, compilation, bibliography, structure]
+  version: "1.3"
+  last_updated: "2026-04-15"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *)
 ---
@@ -65,6 +67,15 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 | `tables` | 表格结构校验、三线表生成、booktabs 检查 | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex` | `references/modules/TABLES.md` |
 | `abstract` | 摘要五要素结构诊断与字数校验 | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.tex --lang zh` | `references/modules/ABSTRACT.md` |
 
+## 路由规则
+
+- 先根据用户问题自动推断模块，不把“你想用哪个模块”当成默认追问。
+- 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `tables` / `abstract`。
+- 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
+- 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。
+- 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。
+- 某个脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不要静默切换到别的模块掩盖失败。
+
 ## Required Inputs
 
 - 论文入口文件，例如 `main.tex`。
@@ -72,7 +83,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 - 可选 bibliography 路径，当任务聚焦参考文献。
 - 可选学校/模板上下文，当用户关心 `thuthesis`、`pkuthss` 或特定高校要求。
 
-如果参数不完整，只追问入口 `.tex` 文件和目标模块，不额外扩展问题。
+如果参数不完整，保留已推断出的模块，只追问缺失的入口 `.tex` 文件、section、bibliography 路径或学校/模板上下文，不额外扩展问题。
 
 ## Output Contract
 
@@ -84,11 +95,12 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 
 ## Workflow
 
-1. Parse `$ARGUMENTS` for entry file and module. If missing, ask for the thesis `.tex` entry file and target module.
-2. Read the one reference file tied to that module (see "Read next" column).
-3. Run the corresponding script with `uv run python ...`.
-4. Return findings as `% Module (L##) [Severity] [Priority]: ...`. Report exact command and exit code on failure.
-5. If template and structure are both unclear, run `template` first, then `structure`.
+1. Parse `$ARGUMENTS`，先锁定入口文件，再根据用户诉求推断模块；若缺参数，只追问缺失项。
+2. 若请求同时覆盖多个兼容模块，按“路由规则”中的顺序串行执行，并分模块回报结果。
+3. Read the one reference file tied to that module (see "Read next" column).
+4. Run the corresponding script with `uv run python ...`.
+5. Return findings as `% Module (L##) [Severity] [Priority]: ...`. Report exact command and exit code on failure.
+6. If template and structure are both unclear, run `template` first, then `structure`.
 
 ## Safety Boundaries
 

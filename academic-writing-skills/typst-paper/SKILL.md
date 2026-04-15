@@ -4,6 +4,8 @@ description: Typst academic paper assistant for existing `.typ` paper projects i
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
+  version: "1.3"
+  last_updated: "2026-04-15"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(typst *)
 ---
@@ -68,6 +70,16 @@ Do not use this skill for:
 | `abstract` | Abstract five-element structure diagnosis and word count validation | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.typ` | `references/modules/ABSTRACT.md` |
 | `adapt` | Journal adaptation: reformat paper for a different venue | (LLM-driven workflow) | references/modules/ADAPT.md |
 
+## Routing Rules
+
+- Infer the module from the user request first. Ask for the module only if the request still maps equally well to multiple incompatible modules.
+- If the user requests 2-3 compatible checks, run them in sequence rather than collapsing everything into one generic review.
+- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `pseudocode` / `tables` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` -> `title` / `expression` / `translation` / `adapt`.
+- For bibliography requests, decide BibTeX vs Hayagriva before running the script; do not guess the format after the fact.
+- Prefer `logic` for abstract-introduction-conclusion alignment, introduction funnel breaks, or contribution drift; prefer `literature` only when the user is specifically asking for Related Work synthesis, comparison, or gap derivation.
+- Keep `pseudocode` for `algorithm-figure`, `algorithmic`, `lovelace`, caption, wrapper, and IEEE-like style-hook issues even when the user phrases them as formatting problems.
+- If a command fails, report the exact command and exit code before suggesting the next fallback; do not silently replace a failed script run with a generic prose review.
+
 ## Required Inputs
 
 - `main.typ` or the Typst entry file.
@@ -75,7 +87,7 @@ Do not use this skill for:
 - Optional bibliography path when the request targets references.
 - Optional venue context when the user cares about IEEE, ACM, Springer, or similar expectations.
 
-If arguments are missing, ask only for the Typst entry file and the target module.
+If arguments are missing, preserve the inferred module and ask only for the missing Typst entry file, section, bibliography path, or venue context.
 
 ## Output Contract
 
@@ -86,11 +98,12 @@ If arguments are missing, ask only for the Typst entry file and the target modul
 
 ## Workflow
 
-1. Parse `$ARGUMENTS` and select the active module.
-2. Read only the reference file needed for that module.
-3. Run the module script with `uv run python ...`.
-4. Return Typst-ready comments and next actions.
-5. For bibliography requests, decide BibTeX vs Hayagriva first, then run `bibliography`.
+1. Parse `$ARGUMENTS`, infer the active module, and keep that inference unless the user explicitly changes the target.
+2. If the request combines multiple compatible concerns, run them in the routing order above and group the output by module.
+3. Read only the reference file needed for that module.
+4. Run the module script with `uv run python ...`.
+5. Return Typst-ready comments and next actions.
+6. For bibliography requests, decide BibTeX vs Hayagriva first, then run `bibliography`.
 
 ## Safety Boundaries
 

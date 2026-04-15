@@ -80,13 +80,22 @@ Always start by asking the four intake questions defined in `references/question
 
 If the user does not choose, default to `last 3 years` and the subdomain implied by their prompt.
 
+## Intake Resolution Rules
+
+- Resolve as many intake fields as possible from the user prompt before asking follow-up questions.
+- If all four intake fields are already explicit or safely inferable, do not restate them as questions; lock them, announce the locked choices, and proceed.
+- If some intake fields are missing, ask only for the missing fields in one compact follow-up block rather than re-asking the full questionnaire.
+- If the user asks for the "latest", "recent", "current", or "today's" work without a window, default to `last 12 months` and report the absolute year span you used in the final scope note.
+- If the topic is clearly outside Industrial AI scope, stop before search, name the boundary, and offer the closest supported framing instead of forcing a bad search.
+- If the user explicitly says "stop after outline" or another survey checkpoint, honor that checkpoint and do not advance to the next survey phase automatically.
+
 ## Required Inputs
 
 - A concrete Industrial AI topic or question.
 - User choices for report language, deliverable mode, time window, and domain emphasis.
 - Optional preferences on peer-reviewed-only filtering, benchmarks vs deployment evidence, or desired output format.
 
-If any intake item is missing, ask the mandatory questions from `references/question-flow.md` before you search.
+If any intake item is missing, ask only for the unresolved items from `references/question-flow.md` before you search.
 
 ## Source Strategy
 
@@ -203,6 +212,7 @@ Read `references/report-modes.md` and follow the selected mode exactly.
 ## Output Contract
 
 - State the locked intake choices and any defaults you applied before synthesis.
+- Include a short search-method note: venue buckets used, recency policy, and any fallback or broadening step you had to apply.
 - Distinguish verified evidence from inference in every deliverable.
 - Label preprints explicitly as preprints.
 - For non-survey modes, produce a structured report that includes: scope, source buckets, shortlisted papers, synthesis, and next reading or next experiments.

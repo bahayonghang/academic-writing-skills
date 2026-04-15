@@ -65,6 +65,22 @@ Legacy aliases still work for one compatibility cycle:
 - `self-check` -> `quick-audit`
 - `review` -> `deep-review`
 
+## Input Resolution
+
+- Resolve the paper path first and keep the user-provided relative path when it already works.
+- Infer the paper format from the extension (`.tex`, `.typ`, `.pdf`) before choosing checks or parser behavior.
+- Infer `report-style` from the request: use `peer-review` when the user asks for journal-review prose such as Summary / Major Issues / Minor Issues / Recommendation; otherwise default to `deep-review`.
+- Infer output language from the request first, then fall back to the paper language when the request is ambiguous.
+- For `re-audit`, require `--previous-report PATH`. If it is missing, stop immediately and ask only for that path instead of running a fresh audit.
+- State the locked mode, report style, focus, language, and venue (if known) before running commands when any of them were inferred rather than explicitly provided.
+
+## Presentation Surface
+
+- `deep-review`: make the issue bundle, revision roadmap, and artifact paths the primary summary surface. It is acceptable to mention schema-level fields such as review lanes or source provenance here.
+- `peer-review`: make reviewer prose the primary summary surface. Do not expose raw internal keys like `review_lane`, `source_kind`, or `root_cause_key` in the top-level prose summary; keep them inside the artifact bundle.
+- `gate`: show verdict first, then EIC screening, then blockers, then advisory recommendations.
+- `re-audit`: show status buckets (`FULLY_ADDRESSED`, `PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`) before any new audit commentary.
+
 ## Committee Focus Routing (deep-review)
 
 For `deep-review`, use the **Academic Pre-Review Committee** by default. This is a 5-role review pass:
@@ -129,7 +145,7 @@ The deep-review workflow uses a 16-part issue taxonomy:
 
 ### Common Step 0
 
-Parse `$ARGUMENTS` and infer the mode if the user did not provide one. State the inferred mode before running commands if you had to infer it.
+Parse `$ARGUMENTS`, lock the paper path, and infer the mode if the user did not provide one. State the inferred mode before running commands if you had to infer it.
 
 ### `quick-audit`
 
@@ -151,7 +167,7 @@ Use this as the default reviewer-style path.
 If the user explicitly wants a submission-style reviewer report (for example: “SCI reviewer”,
 “journal review report”, “Summary / Major Issues / Minor Issues / Recommendation”, or “审稿报告”),
 keep the same deep-review evidence pipeline but make `peer_review_report.md` the **Primary View**
-in the combined CLI summary while keeping `review_report.md` as the richer evidence bundle.
+in the combined CLI summary while keeping `review_report.md` as the richer evidence bundle. In this path, keep raw schema fields inside artifacts rather than the reviewer-facing prose.
 
 #### Phase 1: Prepare workspace
 

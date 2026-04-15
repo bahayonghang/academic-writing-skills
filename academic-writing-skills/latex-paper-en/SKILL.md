@@ -4,6 +4,8 @@ description: English LaTeX academic paper assistant for existing `.tex` projects
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
+  version: "1.3"
+  last_updated: "2026-04-15"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(pdflatex *), Bash(xelatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *), Bash(chktex *)
 ---
@@ -71,6 +73,15 @@ Do not use this skill for:
 | `abstract` | Abstract five-element structure diagnosis and word count validation | `uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.tex` | `references/modules/ABSTRACT.md` |
 | `adapt` | Journal adaptation: reformat paper for a different venue | (LLM-driven workflow) | references/modules/ADAPT.md |
 
+## Routing Rules
+
+- Infer the module from the user request before asking follow-up questions. Ask for the module only when two or more modules are equally plausible after keyword routing.
+- If the user asks for 2-3 compatible checks in one turn, run them sequentially instead of forcing a single-module reply.
+- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` -> `title` / `expression` / `translation` / `adapt`.
+- Prefer `logic` for cross-section alignment requests (abstract vs introduction vs conclusion), introduction funnel issues, or contribution drift; prefer `literature` only when the problem is specifically about Related Work organization, comparison, or gap derivation.
+- Keep `experiment` for results, discussion, baseline, ablation, significance, limitation, and conclusion-completeness concerns even if the user phrases them as "logic" problems.
+- When a script fails, stop the current module, report the exact command plus exit code, and recommend the next smallest useful fallback instead of silently switching modules.
+
 ## Required Inputs
 
 - `main.tex` or the paper entrypoint.
@@ -78,7 +89,7 @@ Do not use this skill for:
 - Optional bibliography path when the request targets references.
 - Optional venue/context when the user cares about IEEE, ACM, Springer, NeurIPS, or ICML conventions.
 
-If arguments are missing, ask only for the file path and the target module.
+If arguments are missing, preserve the inferred module and ask only for the missing file path, section, bibliography path, or venue context.
 
 ## Output Contract
 
@@ -90,11 +101,12 @@ If arguments are missing, ask only for the file path and the target module.
 
 ## Workflow
 
-1. Parse `$ARGUMENTS` and identify the smallest matching module.
+1. Parse `$ARGUMENTS`, infer the smallest matching module, and keep that inference unless the user explicitly redirects you.
 2. Read only the reference file needed for that module.
-3. Run the module script with `uv run python -B ...`.
-4. Summarize issues, suggested fixes, and blockers in LaTeX-friendly comments.
-5. If the user asks for a different concern, switch modules instead of overloading one run.
+3. If the request contains multiple compatible concerns, run them in the routing order above and keep the output grouped by module.
+4. Run the module script with `uv run python -B ...`.
+5. Summarize issues, suggested fixes, and blockers in LaTeX-friendly comments.
+6. If the user asks for a different concern, switch modules instead of overloading one run.
 
 ## Safety Boundaries
 
