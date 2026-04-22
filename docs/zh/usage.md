@@ -36,6 +36,7 @@ uv run python -m pytest tests/
 | `latex-paper-en` | `.tex` | 英文论文编译与审阅 |
 | `latex-thesis-zh` | `.tex` | 中文学位论文编译与审阅 |
 | `typst-paper` | `.typ` | Typst 论文编译与审阅 |
+| `bib-search-citation` | `.bib` | 文献库检索、预览与引用提取 |
 | `paper-audit` | `.tex`、`.typ`、`.pdf` | 投稿前检查与结构化审查 |
 | `industrial-ai-research` | topic | 文献调研与综合 |
 
@@ -100,6 +101,17 @@ uv run python -m pytest tests/
 - `caption`
 - `adapt`
 
+### `bib-search-citation`
+
+入口形态：
+- `--query`
+- `--spec-json`
+- `--spec-file`
+- `preview_bib_search.py`
+
+默认建议：先用紧凑 `--query`，只有真的需要引用格式、原始 BibTeX 或裁剪字段时，
+再追加 `cite:...`、`raw:true` 或 `--return-fields`。
+
 ### `paper-audit`
 
 模式：
@@ -137,6 +149,7 @@ uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py
 uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex
 uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate
 ```
 
@@ -154,6 +167,11 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 
 在编译和文献都稳定后，再使用 `paper-audit`。
 
+### 你要检索 `.bib` 文献库或直接返回引用片段
+
+用 `bib-search-citation`，不要先用写作技能。它处理的是文献库文件本身，
+不是论文源文件树。
+
 ### 你还没开始写，只是在做调研
 
 用 `industrial-ai-research`，不要先用写作技能。
@@ -161,5 +179,6 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 ## 输出预期
 
 - 写作类技能通常返回面向问题的建议和脚本化诊断。
+- `bib-search-citation` 返回结构化检索结果、可选原始 BibTeX，以及可直接使用的引用片段。
 - `paper-audit` 返回 severity 分级报告、结构化问题清单、修订路线图，以及可选 score summary。
 - 调研类输出应明确区分已验证证据与推断。

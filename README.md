@@ -2,7 +2,7 @@
 
 [中文版](README_CN.md)
 
-> Post-writing polish and validation for academic papers — format checks, grammar analysis, de-AI editing, bibliography verification, and experiment narrative generation. Focused on enhancing existing text quality, not generating from scratch.
+> Post-writing polish and validation for academic papers — format checks, bibliography search and verification, grammar analysis, de-AI editing, and experiment narrative generation. Focused on enhancing existing text quality, not generating from scratch.
 >
 > Recommended platforms: **Claude Code · Codex · Antigravity**
 
@@ -13,6 +13,7 @@
 | [`latex-paper-en`](#latex-paper-en) | English papers — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
 | [`latex-thesis-zh`](#latex-thesis-zh) | Chinese degree theses — GB/T 7714 / thuthesis / pkuthss | `.tex` |
 | [`typst-paper`](#typst-paper) | Fast-compile bilingual papers | `.typ` |
+| [`bib-search-citation`](#bib-search-citation) | Fast search and citation extraction from `.bib` libraries | `.bib` |
 | [`paper-audit`](#paper-audit) | Deep-review-first paper audit and submission gate | `.tex` `.typ` `.pdf` |
 | [`industrial-ai-research`](#industrial-ai-research) | Industrial AI literature synthesis & gap analysis | — |
 
@@ -29,6 +30,7 @@ Install via [skills](https://github.com/bahayonghang/skills), the community skil
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
 npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
@@ -47,14 +49,14 @@ cd academic-writing-skills/academic-writing-skills
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r latex-paper-en latex-thesis-zh typst-paper paper-audit industrial-ai-research ~/.claude/skills/
+cp -r latex-paper-en latex-thesis-zh typst-paper bib-search-citation paper-audit industrial-ai-research ~/.claude/skills/
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-audit","industrial-ai-research")) {
+foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","bib-search-citation","paper-audit","industrial-ai-research")) {
     Copy-Item -Recurse $skill "$env:USERPROFILE/.claude/skills/"
 }
 ```
@@ -134,6 +136,29 @@ Bilingual Typst paper editing with millisecond-level compilation.
 | **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
 | **Venues** | IEEE, ACM, Springer, NeurIPS template guidance |
 | **References** | Undefined `@ref`, unreferenced labels; online verification supported |
+
+### bib-search-citation
+
+Fast bibliography search and citation extraction for BibTeX or BibLaTeX `.bib` libraries.
+
+| Category | Capability |
+|---|---|
+| **Input** | BibTeX / BibLaTeX `.bib`, including Zotero-exported libraries |
+| **Search** | Topic, author, year, venue, DOI, arXiv, keywords, annotation, abstract, and entry type |
+| **Filters** | Compact filters such as `author:` `year>=` `type:` `has:` plus negation |
+| **Output** | Research fields, raw BibTeX, LaTeX snippets (`\cite{}` / `\parencite{}` / `\textcite{}`), and Typst snippets (`@key` / `#cite(...)`) |
+| **Preview** | JSON search output can be piped into `preview_bib_search.py` for compact human review |
+| **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints |
+
+```bash
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "TimeMachine raw:true cite:both limit:1" | uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py
+```
+
+Docs:
+
+- [Overview](docs/skills/bib-search-citation/index.md)
+- [Query Syntax](docs/skills/bib-search-citation/resources/query-syntax.md)
 
 ### paper-audit
 
@@ -300,7 +325,11 @@ make this pseudocode IEEE-safe without inventing a fake Algorithm 1 rule
 check figure references in my paper
 find undefined labels
 verify my bibliography
+search references.bib for Mamba forecasting papers after 2024 and return both LaTeX and Typst citations
+find entries in library.bib whose annotation says CodeAvailable and show raw BibTeX
 ```
+
+Use `bib-search-citation` when the target is the `.bib` library itself rather than a `.tex` or `.typ` source tree.
 
 ### Paper Audit
 
@@ -356,6 +385,11 @@ All suggestions use diff-comment style with mandatory severity and priority fiel
 - Typst CLI (`cargo install typst-cli` or system package manager)
 - Chinese documents: Source Han Serif / Noto Serif CJK SC
 
+### Bibliography Search (`bib-search-citation`)
+
+- Python 3.10+
+- UTF-8 `.bib` file (BibTeX / BibLaTeX / Zotero export)
+
 ### Paper Audit (`paper-audit`)
 
 - Python 3.10+
@@ -407,6 +441,15 @@ academic-writing-skills/
 │   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
 │   └── scripts/                    # Same toolset, Typst-syntax aware
 │       └── check_pseudocode.py     # IEEE-like Typst pseudocode checks
+│
+├── bib-search-citation/
+│   ├── SKILL.md
+│   ├── agents/
+│   ├── references/
+│   │   └── query-syntax.md
+│   └── scripts/
+│       ├── search_bib.py           # Search, filter, rank, and cite `.bib` entries
+│       └── preview_bib_search.py   # Compact human-readable preview for JSON results
 │
 ├── paper-audit/
 │   ├── SKILL.md

@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Skill-first docs for LaTeX, Typst, audit, and research workflows"
+  text: "Skill-first docs for LaTeX, Typst, bibliography, audit, and research workflows"
   tagline: "Documentation rebuilt from the actual SKILL.md contracts in this repository."
   actions:
     - theme: brand
@@ -26,6 +26,9 @@ features:
   - icon: ⚡
     title: "`typst-paper`"
     details: "Typst paper workflow for compile, format, bibliography, grammar, sentence, logic, expression, translation, title, de-AI, and experiment review."
+  - icon: 🔎
+    title: "`bib-search-citation`"
+    details: "BibTeX and BibLaTeX library search with compact filters, raw BibTeX export, and LaTeX or Typst citation snippets."
   - icon: 🔬
     title: "`paper-audit`"
     details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf` with quick-audit, deep-review, gate, polish, and re-audit workflows plus a journal-style peer review report output."
@@ -55,6 +58,7 @@ The primary source of truth is each skill's `SKILL.md`. These docs summarize and
 | `latex-paper-en` | Existing English LaTeX papers | [/skills/latex-paper-en/](/skills/latex-paper-en/) |
 | `latex-thesis-zh` | Existing Chinese LaTeX theses | [/skills/latex-thesis-zh/](/skills/latex-thesis-zh/) |
 | `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
+| `bib-search-citation` | Search and cite local `.bib` libraries | [/skills/bib-search-citation/](/skills/bib-search-citation/) |
 | `paper-audit` | Pre-submission checks and reviews | [/skills/paper-audit/](/skills/paper-audit/) |
 | `industrial-ai-research` | Industrial AI literature research | [/skills/industrial-ai-research/](/skills/industrial-ai-research/) |
 
@@ -79,6 +83,7 @@ academic-writing-skills/
 ├─ latex-paper-en/
 ├─ latex-thesis-zh/
 ├─ typst-paper/
+├─ bib-search-citation/
 ├─ paper-audit/
 ├─ industrial-ai-research/
 └─ docs/

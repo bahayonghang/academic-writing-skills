@@ -181,6 +181,16 @@ function typstPaperItems(prefix: string) {
   ]
 }
 
+function bibSearchCitationItems(prefix: string) {
+  const base = `${prefix}/bib-search-citation`
+  const r = `${base}/resources`
+  const isZh = prefix.startsWith('/zh')
+  return [
+    { text: isZh ? '概览' : 'Overview', link: `${base}/` },
+    { text: isZh ? '查询语法' : 'Query Syntax', link: `${r}/query-syntax` },
+  ]
+}
+
 function paperAuditItems(prefix: string) {
   const base = `${prefix}/paper-audit`
   const r = `${base}/resources`
@@ -239,6 +249,13 @@ function buildSidebar(prefix: string) {
       items: typstPaperItems(prefix),
     },
     {
+      text: isZh
+        ? 'Bib 文献检索 (bib-search-citation)'
+        : 'Bib Search (bib-search-citation)',
+      collapsed: false,
+      items: bibSearchCitationItems(prefix),
+    },
+    {
       text: isZh ? '论文审查 (paper-audit)' : 'Paper Audit (paper-audit)',
       collapsed: false,
       items: paperAuditItems(prefix),
@@ -258,7 +275,8 @@ function buildSidebar(prefix: string) {
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Academic Writing Skills",
-  description: "Skill-first documentation for LaTeX, Typst, paper audit, and Industrial AI research workflows",
+  description:
+    "Skill-first documentation for LaTeX, Typst, bibliography, paper audit, and research workflows",
 
   // Base URL for GitHub Pages
   base: '/academic-writing-skills/',
@@ -391,7 +409,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#0066cc' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
-    ['meta', { property: 'og:title', content: 'Academic Writing Skills | Professional LaTeX Tools for Claude Code' }],
+    ['meta', { property: 'og:title', content: 'Academic Writing Skills | LaTeX, Typst, and Bibliography Workflows for Claude Code' }],
     ['meta', { property: 'og:site_name', content: 'Academic Writing Skills' }],
     ['meta', { property: 'og:url', content: 'https://github.com/bahayonghang/academic-writing-skills' }]
   ]

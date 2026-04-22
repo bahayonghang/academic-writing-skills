@@ -38,6 +38,7 @@ uv run python -m pytest tests/
 | `latex-paper-en` | `.tex` | English paper compile and review |
 | `latex-thesis-zh` | `.tex` | Chinese thesis compile and review |
 | `typst-paper` | `.typ` | Typst paper compile and review |
+| `bib-search-citation` | `.bib` | Search, filter, preview, and cite bibliography entries |
 | `paper-audit` | `.tex`, `.typ`, `.pdf` | Readiness checks and structured review |
 | `industrial-ai-research` | topic | Literature research and synthesis |
 
@@ -102,6 +103,17 @@ Modules:
 - `caption`
 - `adapt`
 
+### `bib-search-citation`
+
+Search surfaces:
+- `--query`
+- `--spec-json`
+- `--spec-file`
+- `preview_bib_search.py`
+
+Recommended default: start with a compact `--query`, then add `cite:...`, `raw:true`,
+or `--return-fields` only when the request needs them.
+
 ### `paper-audit`
 
 Modes:
@@ -139,6 +151,7 @@ uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py
 uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex
 uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py thesis.tex
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate
 ```
 
@@ -156,6 +169,11 @@ Use `grammar`, `sentences`, `logic`, `expression`, `deai`, or `experiment` on th
 
 Use `paper-audit` after your compile and bibliography steps are already stable.
 
+### You need to search a `.bib` library or return citation snippets
+
+Use `bib-search-citation`, not the writing skills. It works on the bibliography file itself,
+not on the paper source tree.
+
 ### You are not editing a paper yet, only researching
 
 Use `industrial-ai-research`, not the writing skills.
@@ -167,5 +185,6 @@ Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds
 ## Output Expectations
 
 - Writing skills usually return issue-oriented suggestions and script-backed diagnostics.
+- `bib-search-citation` returns structured search results, optional raw BibTeX, and citation-ready snippets.
 - `paper-audit` returns severity-rated reports, structured issue bundles, revision roadmaps, reviewer-style `peer_review_report.md`, and optional score summaries.
 - Research output should separate verified evidence from inference.

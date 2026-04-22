@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-> 专注于学术论文后期排版精修、格式校验与深度润色——拒绝从零代写，全面提升既有文本质量。
+> 专注于学术论文后期排版精修、文献检索与校验、格式校验与深度润色——拒绝从零代写，全面提升既有文本质量。
 >
 > 推荐平台：**Claude Code · Codex · Antigravity**
 
@@ -13,6 +13,7 @@
 | [`latex-paper-en`](#latex-paper-en) | 英文学术论文 — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
 | [`latex-thesis-zh`](#latex-thesis-zh) | 中文学位论文 — GB/T 7714 / thuthesis / pkuthss | `.tex` |
 | [`typst-paper`](#typst-paper) | 快速编译双语论文 | `.typ` |
+| [`bib-search-citation`](#bib-search-citation) | `.bib` 文献库快速检索与引用提取 | `.bib` |
 | [`paper-audit`](#paper-audit) | 深度审稿优先的论文审查与投稿门控 | `.tex` `.typ` `.pdf` |
 | [`industrial-ai-research`](#industrial-ai-research) | Industrial AI 文献综合与研究缺口分析 | — |
 
@@ -29,6 +30,7 @@
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
 npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
@@ -47,14 +49,14 @@ cd academic-writing-skills/academic-writing-skills
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r latex-paper-en latex-thesis-zh typst-paper paper-audit industrial-ai-research ~/.claude/skills/
+cp -r latex-paper-en latex-thesis-zh typst-paper bib-search-citation paper-audit industrial-ai-research ~/.claude/skills/
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
 New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-audit","industrial-ai-research")) {
+foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","bib-search-citation","paper-audit","industrial-ai-research")) {
     Copy-Item -Recurse $skill "$env:USERPROFILE/.claude/skills/"
 }
 ```
@@ -134,6 +136,29 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","paper-aud
 | **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
 | **期刊模板** | IEEE、ACM、Springer、NeurIPS 模板指引 |
 | **引用** | 未定义 `@ref`、未引用标签；支持在线验证 |
+
+### bib-search-citation
+
+面向 BibTeX / BibLaTeX `.bib` 文献库的快速检索与引用提取工具。
+
+| 类别 | 功能 |
+|---|---|
+| **输入** | BibTeX / BibLaTeX `.bib`，支持 Zotero 导出的文献库 |
+| **检索** | 主题、作者、年份、venue、DOI、arXiv、keywords、annotation、abstract、条目类型 |
+| **过滤** | 支持 `author:` `year>=` `type:` `has:` 等紧凑过滤表达式，也支持排除条件 |
+| **输出** | 研究导向字段、原始 BibTeX、LaTeX 引用片段（`\cite{}` / `\parencite{}` / `\textcite{}`）与 Typst 引用片段（`@key` / `#cite(...)`） |
+| **预览** | JSON 结果可继续管道给 `preview_bib_search.py`，生成紧凑的人类可读摘要 |
+| **特殊判断** | `has:code` 会从 URL、annotation、keywords、note 类字段和 abstract 中推断代码可用性 |
+
+```bash
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "TimeMachine raw:true cite:both limit:1" | uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py
+```
+
+文档：
+
+- [概览](docs/zh/skills/bib-search-citation/index.md)
+- [查询语法](docs/zh/skills/bib-search-citation/resources/query-syntax.md)
 
 ### paper-audit
 
@@ -300,7 +325,11 @@ detect Chinglish in Section 2
 检查论文的图表引用
 查找未定义的标签
 验证参考文献
+在 references.bib 里找 2024 年后的 Mamba 时序预测论文，并返回 LaTeX 和 Typst 引用
+找出 library.bib 中 annotation 包含 CodeAvailable 的条目，并给我原始 BibTeX
 ```
+
+当目标是 `.bib` 文献库本身，而不是 `.tex` / `.typ` 论文工程时，优先用 `bib-search-citation`。
 
 ### 论文审查
 
@@ -356,6 +385,11 @@ run paper-audit --online --scholar-eval
 - Typst CLI（`cargo install typst-cli` 或通过包管理器安装）
 - 中文文档：思源宋体 / Noto Serif CJK SC
 
+### 文献检索（`bib-search-citation`）
+
+- Python 3.10+
+- UTF-8 编码的 `.bib` 文件（BibTeX / BibLaTeX / Zotero 导出）
+
 ### 论文审查（`paper-audit`）
 
 - Python 3.10+
@@ -407,6 +441,15 @@ academic-writing-skills/
 │   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
 │   └── scripts/                    # 同等工具链，适配 Typst 语法
 │       └── check_pseudocode.py     # IEEE-like Typst 伪代码检查
+│
+├── bib-search-citation/
+│   ├── SKILL.md
+│   ├── agents/
+│   ├── references/
+│   │   └── query-syntax.md
+│   └── scripts/
+│       ├── search_bib.py           # `.bib` 条目检索、过滤、排序与引用输出
+│       └── preview_bib_search.py   # JSON 结果的紧凑人工预览
 │
 ├── paper-audit/
 │   ├── SKILL.md

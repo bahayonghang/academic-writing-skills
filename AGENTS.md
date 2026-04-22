@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Core skill packages live under `academic-writing-skills/`, with one directory per skill such as `latex-paper-en/`, `latex-thesis-zh/`, `typst-paper/`, `paper-audit/`, and `industrial-ai-research/`. Each skill typically contains `SKILL.md`, `scripts/`, `references/`, `examples/`, and optional `agents/` or `evals/`. Automated tests live in `tests/` and mirror script-level behavior. User-facing documentation is in `docs/` with localized content under `docs/zh/`. Use `ref/` for supporting reference material, not product code.
+Core skill packages live under `academic-writing-skills/`, with one directory per skill such as `latex-paper-en/`, `latex-thesis-zh/`, `typst-paper/`, `bib-search-citation/`, `paper-audit/`, and `industrial-ai-research/`. Each skill typically contains `SKILL.md`, `scripts/`, `references/`, `examples/`, and optional `agents/` or `evals/`. Automated tests live in `tests/` and mirror script-level behavior. User-facing documentation is in `docs/` with localized content under `docs/zh/`. Use `ref/` for supporting reference material, not product code.
 
 ## Build, Test, and Development Commands
 Use `uv` for Python workflows and `just` as the main task runner.

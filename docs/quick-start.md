@@ -7,6 +7,7 @@
 | An English LaTeX paper | `latex-paper-en` |
 | A Chinese LaTeX thesis | `latex-thesis-zh` |
 | A Typst paper | `typst-paper` |
+| A `.bib` library you want to search or cite from | `bib-search-citation` |
 | A paper you want to audit before submission | `paper-audit` |
 | An Industrial AI topic to research | `industrial-ai-research` |
 
@@ -37,6 +38,13 @@ uv run python academic-writing-skills/typst-paper/scripts/compile.py main.typ
 uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.typ
 ```
 
+### Bib library search
+
+```bash
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
+uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "TimeMachine raw:true cite:both limit:1" | uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py
+```
+
 ### Paper audit
 
 ```bash
@@ -62,6 +70,10 @@ Compile main.typ and review the abstract for grammar.
 ```
 
 ```text
+Search references.bib for Cheng papers after 2024 on Mamba forecasting and return both LaTeX and Typst citations.
+```
+
+```text
 Run a gate audit on paper.pdf before submission.
 ```
 
@@ -84,6 +96,13 @@ Run a gate audit on paper.pdf before submission.
 1. Compile.
 2. Run format or bibliography checks.
 3. Run language-quality modules on the section you are editing.
+
+### For bibliography search
+
+1. Point to the `.bib` file first.
+2. Start with a compact `--query`.
+3. Add `cite:...` or `raw:true` only when you need citation forms or raw BibTeX.
+4. Pipe into `preview_bib_search.py` when you want a compact summary instead of raw JSON.
 
 ### For audits
 

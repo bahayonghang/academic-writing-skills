@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "面向 LaTeX、Typst、论文审查与调研的技能文档"
+  text: "面向 LaTeX、Typst、文献库检索、论文审查与调研的技能文档"
   tagline: "文档内容直接按仓库中的 SKILL.md 重构，优先反映真实能力与真实脚本入口。"
   actions:
     - theme: brand
@@ -26,6 +26,9 @@ features:
   - icon: ⚡
     title: "`typst-paper`"
     details: "面向 Typst 论文的编译、格式、文献、语法、长句、逻辑、表达、翻译、标题、去 AI 与实验分析。"
+  - icon: 🔎
+    title: "`bib-search-citation`"
+    details: "面向 BibTeX / BibLaTeX 文献库的快速检索工具，支持紧凑过滤表达式、原始 BibTeX 导出，以及 LaTeX / Typst 引用片段。"
   - icon: 🔬
     title: "`paper-audit`"
     details: "统一支持 `.tex`、`.typ`、`.pdf` 的深度审稿优先论文审查，覆盖快速筛查、深审、门禁、润色与复审模式。"
@@ -55,6 +58,7 @@ features:
 | `latex-paper-en` | 英文 LaTeX 论文 | [/zh/skills/latex-paper-en/](/zh/skills/latex-paper-en/) |
 | `latex-thesis-zh` | 中文 LaTeX 学位论文 | [/zh/skills/latex-thesis-zh/](/zh/skills/latex-thesis-zh/) |
 | `typst-paper` | Typst 论文 | [/zh/skills/typst-paper/](/zh/skills/typst-paper/) |
+| `bib-search-citation` | 本地 `.bib` 文献库检索与引用提取 | [/zh/skills/bib-search-citation/](/zh/skills/bib-search-citation/) |
 | `paper-audit` | 投稿前审查与复审 | [/zh/skills/paper-audit/](/zh/skills/paper-audit/) |
 | `industrial-ai-research` | Industrial AI 文献调研 | [/zh/skills/industrial-ai-research/](/zh/skills/industrial-ai-research/) |
 

@@ -30,6 +30,7 @@ Recommended: install directly with `npx skills`.
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
+npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
 npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
 
@@ -44,6 +45,7 @@ Typical folders:
 - `academic-writing-skills/latex-paper-en`
 - `academic-writing-skills/latex-thesis-zh`
 - `academic-writing-skills/typst-paper`
+- `academic-writing-skills/bib-search-citation`
 - `academic-writing-skills/paper-audit`
 - `academic-writing-skills/industrial-ai-research`
 
@@ -54,6 +56,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
 Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
+Copy-Item -Recurse "academic-writing-skills/bib-search-citation" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/paper-audit" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/industrial-ai-research" "$env:USERPROFILE/.claude/skills/"
 ```
