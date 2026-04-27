@@ -23,6 +23,7 @@ python scripts/audit.py thesis.tex --lang zh --venue thesis-zh
 | Scenario | Recommended Mode | Why |
 |----------|-----------------|-----|
 | "Is my paper ready to submit?" | `quick-audit` | Fast readiness analysis |
+| "I have three days before submission" | `quick-audit` | Final-week mechanical readiness screen |
 | "What would reviewers say?" | `deep-review` | Reviewer-style issue bundle and roadmap |
 | "Can my student submit this?" | `gate` | Fast pass/fail check |
 | "Quick sanity check before deadline" | `gate` | Fastest, checks essentials only |
@@ -38,6 +39,9 @@ The quick-audit report contains:
 2. **Scores Table**: Per-dimension scores with issue counts (Critical/Major/Minor)
 3. **Issues List**: All findings sorted by severity
 4. **Pre-Submission Checklist**: Pass/fail for each checklist item
+5. **PRESUBMISSION findings**: deterministic final-week checks for em dashes,
+   AI-tone term frequency, abstract result gaps, LaTeX citation/label/equation
+   hygiene, paragraph-shape weak signals, and concrete captions
 
 **How to read scores**:
 - **5.0+**: Excellent — minor polish only
@@ -56,6 +60,10 @@ The deep review report adds:
 - **Major / Moderate / Minor Issues**: quote-anchored structured findings
 - **Revision Roadmap**: prioritized fix list
 - **Recommendation**: score summary, if requested
+- **Phase 0 Automated Findings**: script context, including `PRESUBMISSION`
+  findings. Full/editor focus may promote high-signal mechanical issues into
+  the `pre_submission_readiness` lane; methodology/theory/literature/logic
+  focus keeps them out of the final focused bundle.
 
 The peer review report adds:
 - **Summary**: 1-2 concise paragraphs in academic-review tone
@@ -68,6 +76,17 @@ The peer review report adds:
 Binary verdict:
 - **PASS**: All mandatory checks passed, no critical issues
 - **FAIL**: Blocking issues found — must fix before submission
+
+`PRESUBMISSION` Major and Minor findings are advisory in `gate`; they do not
+fail the gate unless the script reports Critical.
+
+## Severity Mapping
+
+| PRESUBMISSION source taxonomy | quick/gate severity | deep-review bundle severity |
+|-------------------------------|---------------------|-----------------------------|
+| CRITICAL | Critical / P0 | major + gate blocker |
+| MAJOR | Major / P1 | moderate |
+| MINOR | Minor / P2 | minor or Phase 0 only |
 
 ## PDF Input Considerations
 
@@ -82,8 +101,13 @@ PDF mode has inherent limitations:
 | Grammar analysis | Full | Good | Good |
 | Logic analysis | Full | Good | Good |
 | Bibliography | Full | Skipped | Skipped |
+| PRESUBMISSION text checks | Full | Text-only | Text-only |
+| PRESUBMISSION source hygiene | Full | Skipped | Skipped |
 
-**Recommendation**: Use source files (.tex/.typ) whenever possible for maximum accuracy. Use PDF mode for quick reviews when source is unavailable.
+**Recommendation**: Use source files (.tex/.typ) whenever possible for maximum
+accuracy. Use PDF mode for quick reviews when source is unavailable; PDF mode
+will explicitly skip citation-tie, label, numbered-equation, and source-caption
+checks.
 
 ## Addressing Issues
 

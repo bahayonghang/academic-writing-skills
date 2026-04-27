@@ -157,6 +157,7 @@ DIMENSION_MAP: dict[str, list[str]] = {
     "checklist": ["quality", "clarity", "significance", "originality"],
     "references": ["clarity", "quality"],
     "visual": ["clarity"],
+    "presubmission": ["clarity", "quality"],
     "literature_grounding": ["quality", "significance", "originality"],
 }
 

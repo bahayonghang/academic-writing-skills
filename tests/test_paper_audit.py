@@ -442,6 +442,13 @@ class TestAuditModule:
         script = _resolve_script("nonexistent_check", "en", ".tex")
         assert script is None
 
+    def test_resolve_script_presubmission(self) -> None:
+        from audit import _resolve_script
+
+        script = _resolve_script("presubmission", "en", ".tex")
+        assert script is not None
+        assert script.name == "pre_submission_check.py"
+
     def test_run_checklist_basic(self) -> None:
         from audit import _run_checklist
 
@@ -480,6 +487,13 @@ This is clean text with no issues.
 
         assert "experiment" in DIMENSION_MAP
         assert "quality" in DIMENSION_MAP["experiment"]
+
+    def test_mode_checks_schedule_presubmission(self) -> None:
+        from audit import MODE_CHECKS
+
+        assert "presubmission" in MODE_CHECKS["quick-audit"]
+        assert "presubmission" in MODE_CHECKS["gate"]
+        assert "presubmission" in MODE_CHECKS["re-audit"]
 
     def test_run_audit_passes_cross_section_to_logic(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -532,6 +546,78 @@ This is clean text with no issues.
         result = audit.run_audit(str(tex), mode="self-check", lang="en")
         assert "analyze_experiment.py" in calls
         assert any(issue.module == "EXPERIMENT" for issue in result.issues)
+
+    def test_gate_presubmission_major_stays_advisory(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import audit
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(
+            "\\documentclass{article}\n\\begin{document}\n"
+            "\\begin{abstract}A method improves accuracy by 8.0 percent.\\end{abstract}\n"
+            "\\section{Introduction}\nText.\n\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        def fake_run(script_path, file_path, extra_args=None):
+            if Path(script_path).name == "pre_submission_check.py":
+                return (
+                    0,
+                    "% PRESUBMISSION (Line 4) [Severity: Major] [Priority: P1]: [G1] issue",
+                    "",
+                )
+            return 0, "", ""
+
+        monkeypatch.setattr(audit, "_run_check_script", fake_run)
+        monkeypatch.setattr(
+            audit,
+            "_run_checklist",
+            lambda *args, **kwargs: [ChecklistItem("Checklist clean", True)],
+        )
+
+        result = audit.run_audit(str(tex), mode="gate", lang="en")
+        report = render_gate_report(result)
+
+        assert any(issue.module == "PRESUBMISSION" for issue in result.issues)
+        assert "PASS" in report
+        assert "Blocking Issues (must fix)" not in report
+
+    def test_gate_presubmission_critical_blocks(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import audit
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(
+            "\\documentclass{article}\n\\begin{document}\n"
+            "\\begin{abstract}A method improves accuracy by 8.0 percent.\\end{abstract}\n"
+            "\\section{Introduction}\nText.\n\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        def fake_run(script_path, file_path, extra_args=None):
+            if Path(script_path).name == "pre_submission_check.py":
+                return (
+                    0,
+                    "% PRESUBMISSION (Line 4) [Severity: Critical] [Priority: P0]: [A0] blocker",
+                    "",
+                )
+            return 0, "", ""
+
+        monkeypatch.setattr(audit, "_run_check_script", fake_run)
+        monkeypatch.setattr(
+            audit,
+            "_run_checklist",
+            lambda *args, **kwargs: [ChecklistItem("Checklist clean", True)],
+        )
+
+        result = audit.run_audit(str(tex), mode="gate", lang="en")
+        report = render_gate_report(result)
+
+        assert "FAIL" in report
+        assert "Blocking Issues" in report
+        assert any(issue.module == "PRESUBMISSION" for issue in result.issues)
 
 
 # ============================================================
@@ -819,9 +905,11 @@ class TestScholarEval:
 
         assert "references" in DIMENSION_MAP
         assert "visual" in DIMENSION_MAP
+        assert "presubmission" in DIMENSION_MAP
         assert "clarity" in DIMENSION_MAP["references"]
         assert "quality" in DIMENSION_MAP["references"]
         assert "clarity" in DIMENSION_MAP["visual"]
+        assert "quality" in DIMENSION_MAP["presubmission"]
 
 
 # ============================================================

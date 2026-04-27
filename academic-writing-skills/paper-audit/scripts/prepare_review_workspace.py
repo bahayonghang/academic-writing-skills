@@ -183,6 +183,7 @@ def _copy_workspace_references(workspace: Path) -> None:
         "CONSOLIDATION_RULES.md",
         "CHECKLIST.md",
         "QUALITATIVE_STANDARDS.md",
+        "PRE_SUBMISSION_RULES.md",
     )
     for name in minimal_refs:
         src = source_dir / name

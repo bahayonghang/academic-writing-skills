@@ -4,24 +4,26 @@ description: Deep-review-first audit for Chinese and English academic papers acr
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "4.4"
-  last_updated: "2026-04-09"
+  version: "4.5"
+  last_updated: "2026-04-27"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v4.4
+# Paper Audit Skill v4.5
 
 `paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
+
+Version 4.5 adds a script-backed `PRESUBMISSION` layer for final-week mechanical checks: em dashes, AI-tone term frequency, abstract completeness, LaTeX citation/label/equation hygiene, paragraph-shape weak signals, and concrete captions. This layer supports existing modes; it is not a separate public mode.
 
 Use it for audit and review. Do not use it as the first tool for source editing, sentence rewriting, or build fixing.
 
 ## What This Skill Produces
 
-- `quick-audit`: fast submission-readiness screen with script-backed findings
+- `quick-audit`: fast submission-readiness screen with script-backed findings, including `PRESUBMISSION`
 - `deep-review`: reviewer-style structured issue bundle with major/moderate/minor findings
-- `gate`: PASS/FAIL decision calibrated for submission blockers
-- `re-audit`: compare current issue bundle against a previous audit
+- `gate`: PASS/FAIL decision calibrated for submission blockers; `PRESUBMISSION` Major/Minor findings remain advisory
+- `re-audit`: compare current issue bundle against a previous audit, including mechanical regression findings
 - `polish`: precheck-only handoff into a polishing workflow
 
 The primary product is no longer just a score. For `deep-review`, the main outputs are:
@@ -49,12 +51,14 @@ The primary product is no longer just a score. For `deep-review`, the main outpu
 - Be conservative with OCR noise, formatting quirks, and obvious copy-editing trivia.
 - Review like a careful reader: understand the author's intended meaning before flagging an issue.
 - For literature findings, judge whether the gap is evidence-backed and fairly positioned; do not rewrite the prose inside `paper-audit`.
+- For `PRESUBMISSION`, map CRITICAL/MAJOR/MINOR to Critical/Major/Minor script severities; only Critical or failed checklist items can fail `gate`.
+- In PDF mode, do not guess source-only hygiene. Report text-proven items and note that LaTeX/Typst source checks were skipped.
 
 ## Mode Selection
 
 | Requested intent | Mode |
 |---|---|
-| "check my paper", "quick audit", "submission readiness" | `quick-audit` |
+| "check my paper", "quick audit", "submission readiness", "pre-submission review", "投稿前检查" | `quick-audit` |
 | "review my paper", "simulate peer review", "harsh review", "deep review" | `deep-review` |
 | "is this ready to submit", "gate this submission", "blockers only" | `gate` |
 | "did I fix these issues", "re-audit", "compare against old review" | `re-audit` |
@@ -121,6 +125,7 @@ Read these references before running reviewer-style work:
 3. `references/CHECKLIST.md`
 4. `references/CONSOLIDATION_RULES.md`
 5. `references/ISSUE_SCHEMA.md`
+6. `references/PRE_SUBMISSION_RULES.md`
 
 The deep-review workflow uses a 16-part issue taxonomy:
 
@@ -157,6 +162,7 @@ Parse `$ARGUMENTS`, lock the paper path, and infer the mode if the user did not 
    - `Submission Blockers` first
    - then `Quality Improvements`
    - then checklist items
+   - call out `PRESUBMISSION` mechanical findings separately when they matter
    - mark quick-audit findings with `[Script]` provenance
 3. If the user clearly wants reviewer-depth critique after the quick screen, escalate to `deep-review`.
 
@@ -197,7 +203,7 @@ Run:
 uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
 ```
 
-Treat this as **Phase 0 only**. It supplies script-backed context and scores, not the final review.
+Treat this as **Phase 0 only**. It supplies script-backed context and scores, not the final review. `PRESUBMISSION` findings stay here for focused theory/literature/methodology/logic reviews; only full/editor deep-review can promote high-signal mechanical findings into the `pre_submission_readiness` lane.
 
 #### Phase 3: Committee + Review Lanes
 
@@ -259,6 +265,7 @@ Then dispatch reviewer tasks for:
   - evaluation fairness and reproducibility
   - self-standard consistency
   - prior-art and novelty grounding
+  - pre-submission readiness (full/editor focus only)
 
 Each lane writes a JSON array into `comments/`.
 
@@ -302,7 +309,8 @@ Summarize:
 4. Present EIC screening results first (verdict + score + justification).
 5. List blockers next.
 6. Keep advisory items separate from blockers.
-7. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
+7. Keep `PRESUBMISSION` Major/Minor items advisory; only Critical mechanical findings can block the gate.
+8. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
 
 ### `re-audit`
 
@@ -365,6 +373,7 @@ Always prefer:
 | `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
 | `references/ISSUE_SCHEMA.md` | canonical JSON schema |
 | `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
+| `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules, severity mapping, and PDF/source limits |
 | `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
 | `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
 
@@ -373,6 +382,7 @@ Always prefer:
 | Script | Purpose |
 |---|---|
 | `scripts/audit.py` | Phase 0 audit and mode entrypoint |
+| `scripts/pre_submission_check.py` | deterministic `PRESUBMISSION` mechanical audit layer |
 | `scripts/prepare_review_workspace.py` | create deep-review workspace |
 | `scripts/build_claim_map.py` | extract headline claims and closure targets |
 | `scripts/consolidate_review_findings.py` | deduplicate comment JSONs |

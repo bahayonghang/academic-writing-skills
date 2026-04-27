@@ -45,6 +45,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
     ],
     "deep-review": [
         "format",
@@ -59,6 +60,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
     ],
     # Legacy aliases kept for one compatibility cycle.
     "self-check": [
@@ -74,6 +76,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
     ],
     "review": [
         "format",
@@ -88,6 +91,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
     ],
     "gate": [
         "format",
@@ -96,6 +100,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
         "checklist",
     ],
     "polish": ["logic", "sentences"],  # Fast rule-based only; agents handle the rest
@@ -112,6 +117,7 @@ MODE_CHECKS: dict[str, list[str]] = {
         "pseudocode",
         "references",
         "visual",
+        "presubmission",
     ],
 }
 
@@ -141,11 +147,13 @@ FOCUS_TO_ALLOWED_LANES: dict[str, set[str]] = {
         "evaluation_fairness_and_reproducibility",
         "self_standard_consistency",
         "prior_art_and_novelty_grounding",
+        "pre_submission_readiness",
     },
     "editor": {
         "section_intro_related",
         "claims_vs_evidence",
         "prior_art_and_novelty_grounding",
+        "pre_submission_readiness",
     },
     "theory": {
         "section_intro_related",
@@ -179,7 +187,12 @@ FOCUS_TO_COMMITTEE_ROLES: dict[str, tuple[str, ...]] = {
 }
 
 ROLE_TO_REVIEW_LANES: dict[str, set[str]] = {
-    "editor": {"section_intro_related", "claims_vs_evidence", "prior_art_and_novelty_grounding"},
+    "editor": {
+        "section_intro_related",
+        "claims_vs_evidence",
+        "prior_art_and_novelty_grounding",
+        "pre_submission_readiness",
+    },
     "theory": {"section_intro_related", "claims_vs_evidence", "prior_art_and_novelty_grounding"},
     "literature": {"section_intro_related", "prior_art_and_novelty_grounding"},
     "methodology": {
@@ -286,14 +299,15 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
         "consistency": "check_consistency.py",
         "references": "check_references.py",
         "visual": "visual_check.py",
+        "presubmission": "pre_submission_check.py",
     }
 
     script_name = script_map.get(check_name)
     if not script_name:
         return None
 
-    # visual check lives only in paper-audit's own scripts directory
-    if check_name == "visual":
+    # paper-audit-owned checks live only in this skill's scripts directory
+    if check_name in {"visual", "presubmission"}:
         path = SCRIPTS_AUDIT / script_name
         return path if path.exists() else None
 
@@ -861,6 +875,100 @@ def _write_lane_outputs(
     return raw_issues
 
 
+def _section_for_phase0_issue(line_no: int | None, section_index: list[dict]) -> str:
+    """Map a phase-0 script line number to a prepared workspace section."""
+    if line_no is None:
+        return "unknown"
+    for section in section_index:
+        start = int(section.get("start_line", 0) or 0)
+        end = int(section.get("end_line", 0) or 0)
+        if int(section.get("line_base", 1) or 1) == 0:
+            start += 1
+            end += 1
+        if start <= line_no <= end:
+            return str(section.get("section_key", "unknown") or "unknown")
+    return "unknown"
+
+
+def _presubmission_comment_type(message: str) -> str:
+    """Classify mechanical pre-submission findings for the issue schema."""
+    lowered = message.lower()
+    if "abstract" in lowered or "missing" in lowered:
+        return "missing_information"
+    return "presentation"
+
+
+def _presubmission_issue_title(message: str) -> str:
+    """Remove rule IDs and keep a concise title for reviewer bundles."""
+    cleaned = re.sub(r"^\[[^\]]+\]\s*", "", message).strip()
+    cleaned = cleaned.rstrip(".")
+    if len(cleaned) <= 96:
+        return cleaned
+    return cleaned[:93].rstrip() + "..."
+
+
+def _presubmission_root_key(message: str) -> str:
+    """Derive a stable root-cause key from the rule ID when present."""
+    match = re.match(r"\[([A-Z0-9]+)\]", message)
+    if match:
+        return f"presubmission-{match.group(1).lower()}"
+    return "presubmission-readiness"
+
+
+def _presubmission_phase0_issues(
+    phase0_result: AuditResult,
+    section_index: list[dict],
+) -> list[dict]:
+    """Convert high-signal PRESUBMISSION findings into deep-review lane issues."""
+    lane_issues: list[dict] = []
+    for issue in phase0_result.issues:
+        if issue.module != "PRESUBMISSION" or issue.severity not in {"Critical", "Major"}:
+            continue
+        source_section = _section_for_phase0_issue(issue.line, section_index)
+        if source_section == "unknown" and "abstract" in issue.message.lower():
+            source_section = "abstract"
+        severity = "major" if issue.severity == "Critical" else "moderate"
+        lane_issues.append(
+            _make_fallback_issue(
+                title=_presubmission_issue_title(issue.message),
+                quote="",
+                explanation=(
+                    f"{issue.message} This is a mechanical pre-submission readiness "
+                    "finding and should be fixed before the final submission package."
+                ),
+                comment_type=_presubmission_comment_type(issue.message),
+                severity=severity,
+                source_section=source_section,
+                review_lane="pre_submission_readiness",
+                source_kind="script",
+                confidence="high",
+                related_sections=[source_section] if source_section != "unknown" else [],
+                gate_blocker=issue.severity == "Critical",
+            )
+            | {"root_cause_key": _presubmission_root_key(issue.message)}
+        )
+    return lane_issues
+
+
+def _write_presubmission_lane_outputs(
+    review_dir: Path,
+    phase0_result: AuditResult,
+    section_index: list[dict],
+    *,
+    focus: str,
+) -> list[dict]:
+    """Write the pre-submission readiness lane for full/editor deep-review only."""
+    if focus not in {"full", "editor"}:
+        return []
+    lane_issues = _presubmission_phase0_issues(phase0_result, section_index)
+    if not lane_issues:
+        return []
+    comments_dir = review_dir / "comments"
+    comments_dir.mkdir(parents=True, exist_ok=True)
+    _write_lane_file(comments_dir, "pre_submission_readiness", lane_issues)
+    return lane_issues
+
+
 def _issues_for_committee_role(role: str, issues: list[dict]) -> list[dict]:
     """Select a focused subset of issue-bundle items for one committee role."""
     role_lanes = ROLE_TO_REVIEW_LANES.get(role, set())
@@ -1352,6 +1460,7 @@ def run_deep_review(
     )
 
     _write_lane_outputs(review_dir, section_index, claim_map, focus=focus)
+    _write_presubmission_lane_outputs(review_dir, phase0_result, section_index, focus=focus)
 
     from consolidate_review_findings import consolidate_findings, load_comment_files
 

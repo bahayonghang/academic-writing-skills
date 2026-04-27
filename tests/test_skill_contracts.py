@@ -295,7 +295,7 @@ def test_paper_audit_skill_argument_hint_matches_cli_contract() -> None:
     skill_root = SKILLS_ROOT / "paper-audit"
     skill_md = (skill_root / "SKILL.md").read_text(encoding="utf-8")
 
-    assert "# Paper Audit Skill v4.4" in skill_md
+    assert "# Paper Audit Skill v4.5" in skill_md
     assert "--report-style deep-review|peer-review" in skill_md
     assert "--focus full|editor|theory|literature|methodology|logic" in skill_md
     assert "--format md|json" in skill_md

@@ -181,6 +181,42 @@
         {"type": "not_contains", "text": "review_lane", "description": "raw lane metadata suppressed"},
         {"type": "not_contains", "text": "source_kind", "description": "raw source_kind metadata suppressed"}
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "My deadline is in three days. Run a quick pre-submission mechanical check and flag em-dashes, AI-tone vocabulary, abstract result gaps, and LaTeX hygiene separately from deeper reviewer concerns.",
+      "expected_output": "Route to quick-audit and surface the PRESUBMISSION mechanical layer with script provenance, without switching to a new public pre-submission mode.",
+      "files": ["evals/fixtures/quick_audit_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "quick-audit", "description": "quick-audit remains the public route"},
+        {"type": "regex", "pattern": "(PRESUBMISSION|pre-submission|mechanical)", "description": "pre-submission layer surfaced"},
+        {"type": "regex", "pattern": "(em.?dash|AI-tone|abstract|LaTeX)", "description": "mechanical rule families mentioned"},
+        {"type": "regex", "pattern": "\\[Script\\]", "description": "script provenance preserved"}
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Gate this paper before IEEE submission. Do not fail it just for AI-tone wording or em-dash cleanup, but show those advisory findings if they exist.",
+      "expected_output": "Run gate mode, keep PASS/FAIL calibrated to Critical blockers and failed checklist items, and show Major PRESUBMISSION findings as advisory.",
+      "files": ["evals/fixtures/gate_ieee_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "gate", "description": "gate mode selected"},
+        {"type": "regex", "pattern": "(PASS|FAIL|Verdict)", "description": "gate verdict visible"},
+        {"type": "regex", "pattern": "(advisory|recommendation|Non-Blocking)", "description": "Major mechanical issues are advisory"},
+        {"type": "regex", "pattern": "(PRESUBMISSION|AI-tone|em.?dash)", "description": "mechanical findings are visible when present"}
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Deep-review this paper with focus ONLY on methodology. Do not let grammar, formatting, or pre-submission mechanical checks pollute the final methodology issue bundle.",
+      "expected_output": "Use deep-review --focus methodology, keep PRESUBMISSION in Phase 0 context only, and exclude pre_submission_readiness from the focused final issue bundle.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "deep-review", "description": "deep-review mode selected"},
+        {"type": "regex", "pattern": "(focus|methodology|SRQR|Methodology)", "description": "methodology focus visible"},
+        {"type": "not_contains", "text": "pre_submission_readiness", "description": "focused bundle not polluted by pre-submission lane"},
+        {"type": "regex", "pattern": "(Phase 0|automated|context)", "description": "mechanical findings remain contextual"}
+      ]
     }
   ]
 }

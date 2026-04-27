@@ -22,7 +22,16 @@ Default `deep-review` lanes:
 - `evaluation_fairness_and_reproducibility`
 - `self_standard_consistency`
 - `prior_art_and_novelty_grounding`
+- `pre_submission_readiness` (full/editor focus only; populated from high-signal
+  `PRESUBMISSION` script findings)
 
 ## Output rule
 
 Every lane must output JSON findings matching `ISSUE_SCHEMA.md`.
+
+`pre_submission_readiness` is intentionally narrow. It can contain Critical or
+Major mechanical issues such as em dashes, repeated AI-tone vocabulary,
+abstract result gaps, or source hygiene problems, but it must not absorb
+methodology, theory, literature, or claim-validity reviewer work. When
+`--focus methodology|theory|literature|logic` is selected, keep these findings
+only in Phase 0 automated context.

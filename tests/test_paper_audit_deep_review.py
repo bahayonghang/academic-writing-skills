@@ -241,6 +241,7 @@ We show strong results.
     assert (workspace / "paper_summary.md").exists()
     assert (workspace / "committee").exists()
     assert (workspace / "references" / "DEEP_REVIEW_CRITERIA.md").exists()
+    assert (workspace / "references" / "PRE_SUBMISSION_RULES.md").exists()
 
     section_index = json.loads((workspace / "section_index.json").read_text(encoding="utf-8"))
     assert any(section["section_key"] == "introduction" for section in section_index)
@@ -369,6 +370,7 @@ We conclude that the method is broadly superior.
         issue["review_lane"] == "evaluation_fairness_and_reproducibility" for issue in payload
     )
     assert any(issue["review_lane"] == "section_methods" for issue in payload)
+    assert any(issue["review_lane"] == "pre_submission_readiness" for issue in payload)
 
 
 def test_compute_committee_score_applies_desk_reject_cap() -> None:
@@ -489,6 +491,7 @@ We conclude the method is broadly superior.
         "notation_and_numeric_consistency",
         "evaluation_fairness_and_reproducibility",
     }
+    assert "pre_submission_readiness" not in lanes
     assert (Path(result.artifact_dir) / "committee" / "methodology.md").exists()
     assert not (Path(result.artifact_dir) / "committee" / "theory.md").exists()
 
