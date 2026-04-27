@@ -49,6 +49,7 @@ uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py 
 
 ```bash
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
+uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.py paper.tex --json
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus methodology
 ```

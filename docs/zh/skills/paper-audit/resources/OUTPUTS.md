@@ -7,6 +7,7 @@
 对于 `quick-audit`、`gate` 和 `polish` precheck，主产物是可读报告：
 
 - severity 分级问题
+- 出现时包含 `PRESUBMISSION` 机械检查发现
 - checklist 结果
 - score summary
 - gate verdict（如果是 `gate`）
@@ -33,6 +34,10 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 - `gate_blocker`
 - `quote_verified`
 
+full/editor deep-review 可能包含由高信号 `PRESUBMISSION` 发现生成的
+`pre_submission_readiness` lane。methodology、theory、literature、logic 聚焦深审
+只把这些机械发现留在 Phase 0 自动上下文。
+
 ### `overall_assessment.txt`
 
 简短总评。应说明：
@@ -50,6 +55,7 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 - overall assessment
 - major / moderate / minor issues
 - Phase 0 自动审查结果
+- 脚本 provenance，包括 `PRESUBMISSION` 发现
 - score summary
 - revision roadmap
 

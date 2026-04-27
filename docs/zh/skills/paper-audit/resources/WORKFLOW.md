@@ -2,7 +2,8 @@
 
 `paper-audit` 现在分成两层：
 
-- 面向 `quick-audit`、`gate`、`polish` precheck 的脚本优先审查
+- 面向 `quick-audit`、`gate`、`re-audit`、`polish` precheck 的脚本优先审查
+- 接入 `quick-audit`、`gate`、`re-audit` 和 `deep-review` Phase 0 的 `PRESUBMISSION` 机械检查
 - 面向 `deep-review` 的审稿人风格深审
 
 最常见的误解是把 `audit.py --mode deep-review` 当成完整深审。它实际上只是 Phase 0 自动审查。
@@ -36,11 +37,14 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 这一层提供：
 
 - 脚本化检查结果
+- `PRESUBMISSION` 机械检查结果
 - 评分指示器
 - venue / checklist 上下文
 - 后续 reviewer lanes 的输入
 
-但它不会直接生成最终的结构化问题清单。
+但它不会直接生成最终的结构化问题清单。full/editor focus 可把高信号
+`PRESUBMISSION` 发现写入 `pre_submission_readiness`；methodology、theory、
+literature、logic 聚焦深审只把它们作为 Phase 0 上下文。
 
 ### Phase 3：运行委员会预审（deep-review 默认）
 
@@ -78,6 +82,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 - evaluation fairness and reproducibility
 - self-consistency of standards
 - prior-art and novelty grounding
+- pre-submission readiness（仅 full/editor focus）
 
 ### Phase 6：合并与校验
 
@@ -104,6 +109,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 适合：
 
 - 投稿前快速筛查
+- 投稿前最后几天的机械检查，例如 em dash、AI-tone、摘要结果缺口、LaTeX hygiene
 - 决定是否值得做更深层审稿
 - CI 风格脚本报告
 
@@ -118,6 +124,9 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 - PASS / FAIL 判定
 - blocker 清单
 - IEEE 伪代码硬规则检查
+
+`gate` 只因 Critical 或 checklist 失败而 FAIL；`PRESUBMISSION` 的 Major/Minor
+保持 advisory。
 
 ## Re-Audit 工作流
 

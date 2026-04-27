@@ -5,6 +5,7 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents.
 ## Use It For
 
 - quick readiness screening before submission
+- final-week mechanical checks for em dashes, AI-tone vocabulary, abstract result gaps, and LaTeX hygiene
 - reviewer-style deep critique
 - pass/fail submission gating
 - revision verification against an older audit
@@ -23,8 +24,8 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents.
 | Mode | Use when | Script |
 | --- | --- | --- |
 | `quick-audit` | you want a fast readiness pass | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
-| `deep-review` | you want a reviewer-style issue bundle and roadmap | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
-| `gate` | you want pass/fail blockers only | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
+| `deep-review` | you want a reviewer-style issue bundle and roadmap; Phase 0 includes `PRESUBMISSION` context | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
+| `gate` | you want pass/fail blockers only; Major/Minor mechanical findings stay advisory | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
 | `polish` | you want a precheck before polishing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | you want to compare against a previous report | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |
 
@@ -36,6 +37,7 @@ Legacy aliases:
 ## How to Choose a Mode
 
 - choose `quick-audit` if you want a fast script-backed screen
+- choose `quick-audit` for "pre-submission review" or "submission in three days" requests
 - choose `deep-review` if you want reviewer-style critique and a roadmap
 - choose `gate` if you only care about blockers
 - choose `re-audit` if you already have an older report
@@ -45,13 +47,14 @@ Legacy aliases:
 
 1. Prepare workspace with `prepare_review_workspace.py`
 2. Run Phase 0 automated audit with `audit.py --mode deep-review`
-3. Run Academic Pre-Review Committee by default:
+3. Keep `PRESUBMISSION` findings as Phase 0 context; full/editor focus can promote high-signal mechanical findings into `pre_submission_readiness`
+4. Run Academic Pre-Review Committee by default:
    - Editor -> Theory -> Literature -> Methodology -> Logic
    - or restrict with `--focus editor|theory|literature|methodology|logic`
-4. Dispatch section and cross-cutting review lanes
-5. Consolidate comment JSONs
-6. Verify quotes
-7. Render `review_report.md` and `peer_review_report.md`
+5. Dispatch section and cross-cutting review lanes
+6. Consolidate comment JSONs
+7. Verify quotes
+8. Render `review_report.md` and `peer_review_report.md`
 
 ## Main outputs
 
@@ -70,6 +73,7 @@ Legacy aliases:
 - [Outputs](./resources/OUTPUTS.md)
 - [CLI and Examples](./resources/CLI_AND_EXAMPLES.md)
 - [Deep Review Criteria](./resources/DEEP_REVIEW_CRITERIA.md)
+- [Pre-Submission Rules](./resources/PRE_SUBMISSION_RULES.md)
 - [Checklist](./resources/CHECKLIST.md)
 - [Qualitative Standards](./resources/QUALITATIVE_STANDARDS.md)
 - [Editor-in-Chief Agent](./resources/editor_in_chief_agent.md)
@@ -108,6 +112,7 @@ Re-audit this revision against the previous report.
 ## Important Notes
 
 - `audit.py --mode deep-review` is only Phase 0, not the full reviewer workflow.
+- `PRESUBMISSION` is a mechanical layer inside existing modes, not a new public mode.
 - The primary deep-review product is the structured issue bundle, not the score summary.
-- Use source files when possible; PDF input is supported but weaker for formula- and notation-heavy papers.
+- Use source files when possible; PDF input runs text-only pre-submission checks and skips LaTeX/Typst source hygiene.
 - `--focus literature` is critique-only: it checks synthesis quality, contradiction handling, and gap legitimacy, but does not rewrite the related-work prose.

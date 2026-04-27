@@ -5,6 +5,7 @@
 ## 适用场景
 
 - 投稿前快速筛查
+- 投稿前最后几天的机械检查：em dash、AI-tone、摘要结果缺口、LaTeX hygiene
 - 模拟审稿人式深审
 - 投稿门禁 PASS/FAIL 判断
 - 基于旧报告的修订回归复检
@@ -23,8 +24,8 @@
 | 模式 | 适用场景 | 脚本 |
 | --- | --- | --- |
 | `quick-audit` | 想先做一次快速就绪性检查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
-| `deep-review` | 想拿到结构化问题清单和修订路线图 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
-| `gate` | 只看阻塞性问题与结论 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
+| `deep-review` | 想拿到结构化问题清单和修订路线图；Phase 0 包含 `PRESUBMISSION` 上下文 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
+| `gate` | 只看阻塞性问题与结论；Major/Minor 机械问题保持 advisory | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
 | `polish` | 想在润色前先做安全检查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | 想对照旧报告做回归复检 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |
 
@@ -36,6 +37,7 @@
 ## 如何选模式
 
 - 只想快速看风险时用 `quick-audit`
+- 说“pre-submission review / 投稿前三天检查”时仍用 `quick-audit`
 - 想模拟审稿人并拿到路线图时用 `deep-review`
 - 只关心 blocker 时用 `gate`
 - 已有旧报告、要看修订效果时用 `re-audit`
@@ -45,13 +47,14 @@
 
 1. 用 `prepare_review_workspace.py` 准备 workspace
 2. 用 `audit.py --mode deep-review` 生成 Phase 0 自动审查
-3. 默认执行学术预审委员会：
+3. `PRESUBMISSION` 发现默认留在 Phase 0；full/editor focus 可提升为 `pre_submission_readiness`
+4. 默认执行学术预审委员会：
    - Editor -> Theory -> Literature -> Methodology -> Logic
    - 或用 `--focus editor|theory|literature|methodology|logic` 限定单维度
-4. 派发 section lanes 和 cross-cutting lanes
-5. 合并评论 JSON
-6. 校验 quote
-7. 生成 `review_report.md` 与 `peer_review_report.md`
+5. 派发 section lanes 和 cross-cutting lanes
+6. 合并评论 JSON
+7. 校验 quote
+8. 生成 `review_report.md` 与 `peer_review_report.md`
 
 ## 主要产物
 
@@ -70,6 +73,7 @@
 - [输出产物](./resources/OUTPUTS.md)
 - [命令与示例](./resources/CLI_AND_EXAMPLES.md)
 - [深度审查标准](./resources/DEEP_REVIEW_CRITERIA.md)
+- [投稿前机械规则](./resources/PRE_SUBMISSION_RULES.md)
 - [审查清单](./resources/CHECKLIST.md)
 - [定性研究标准](./resources/QUALITATIVE_STANDARDS.md)
 - [主编智能体](./resources/editor_in_chief_agent.md)
@@ -108,6 +112,7 @@
 ## 重要说明
 
 - `audit.py --mode deep-review` 只是 Phase 0，不是完整深审。
+- `PRESUBMISSION` 是接入现有模式的机械层，不是新的公开模式。
 - deep-review 的主产物是结构化问题清单，而不是分数本身。
-- 能用源文件时优先用源文件；PDF 虽可用，但对公式和符号密集论文更弱。
+- 能用源文件时优先用源文件；PDF 只运行文本类投稿前检查，并跳过 LaTeX/Typst 源码 hygiene。
 - `--focus literature` 只负责判断综述是否公平、gap 是否真实、冲突是否被保留，不负责代写文献综述正文。

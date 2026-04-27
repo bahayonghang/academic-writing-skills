@@ -2,7 +2,8 @@
 
 `paper-audit` now has two distinct layers:
 
-- **script-first screening** for `quick-audit`, `gate`, and `polish` precheck
+- **script-first screening** for `quick-audit`, `gate`, `re-audit`, and `polish` precheck
+- **PRESUBMISSION mechanical checks** inside `quick-audit`, `gate`, `re-audit`, and `deep-review` Phase 0
 - **reviewer-style deep review** for `deep-review`
 
 The main mistake to avoid is treating `audit.py --mode deep-review` as the entire deep review. It is only the Phase 0 automated layer.
@@ -38,6 +39,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 What this phase gives you:
 
 - script-backed checks
+- `PRESUBMISSION` mechanical findings
 - score indicators
 - venue and checklist context
 - inputs for later reviewer lanes
@@ -47,6 +49,10 @@ What it does **not** give you:
 - the final structured issue bundle
 - major / moderate / minor reviewer findings
 - final roadmap
+
+For full/editor focus, high-signal `PRESUBMISSION` findings can be written to
+the `pre_submission_readiness` lane. For focused methodology, theory,
+literature, or logic reviews, they remain context only.
 
 ### Phase 3: Run committee review (default for deep-review)
 
@@ -86,6 +92,7 @@ Typical cross-cutting lanes:
 - evaluation fairness and reproducibility
 - self-consistency of standards
 - prior-art and novelty grounding
+- pre-submission readiness (full/editor focus only)
 
 These lanes inspect global consistency and paper-level validity threats.
 
@@ -116,6 +123,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 Best for:
 
 - final-day submission checks
+- final-week mechanical checks such as em dashes, AI-tone terms, abstract result gaps, and LaTeX hygiene
 - initial screening before deeper review
 - CI-friendly script-based reporting
 
@@ -132,6 +140,9 @@ Best for:
 - PASS / FAIL decisions
 - venue gate checks
 - IEEE pseudocode hard-rule review
+
+Gate fails only on Critical issues or failed checklist items. Major/Minor
+`PRESUBMISSION` findings stay advisory.
 
 ## Re-Audit Workflow
 

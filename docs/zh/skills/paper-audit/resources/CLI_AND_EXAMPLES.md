@@ -16,6 +16,13 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 
 - 什么会阻止投稿？
 - 在做完整深审前，先该修什么？
+- 投稿前几天是否还有 em dash、AI-tone、摘要结果缺口或 LaTeX hygiene 问题？
+
+直接运行机械检查：
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.py paper.tex --json
+```
 
 ## Deep-Review
 
@@ -50,6 +57,9 @@ uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_rep
 
 此时优先交付的 reader-facing 产物是 `peer_review_report.md`，而 `review_report.md` 仍保留为证据更完整的深审报告。
 
+聚焦深审注意：`--focus methodology|theory|literature|logic` 时，
+`PRESUBMISSION` 发现只留在 Phase 0 上下文，不污染最终 focused issue bundle。
+
 ## IEEE Gate
 
 ```bash
@@ -61,6 +71,7 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --m
 - PASS / FAIL
 - blocker 清单
 - 伪代码硬规则与建议项分离
+- `PRESUBMISSION` Major/Minor advisory 与 blocker 分离
 
 ## Re-Audit
 
@@ -81,11 +92,16 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 ```
 
 如果论文公式和符号很多，优先使用 `.tex` 或 `.typ`。
+PDF 只运行文本类 `PRESUBMISSION` 检查，并跳过 LaTeX/Typst 源码 hygiene。
 
 ## 自然语言请求示例
 
 ```text
 对 paper.tex 做一次 quick-audit，把 blocker 放在最前面。
+```
+
+```text
+投稿前三天做一次机械检查，重点扫 AI-tone 和 em dash。
 ```
 
 ```text

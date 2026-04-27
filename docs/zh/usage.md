@@ -124,6 +124,7 @@ uv run python -m pytest tests/
 推荐选择：
 
 - 想快速做脚本化筛查时用 `quick-audit`
+- 投稿前最后几天的机械检查也用 `quick-audit`
 - 想拿到审稿人风格问题清单和路线图时用 `deep-review`
 - `deep-review` 默认走委员会预审（`Editor -> Theory -> Literature -> Methodology -> Logic`）
 - 只看单一维度时，用 `--focus editor|theory|literature|methodology|logic`
@@ -151,6 +152,7 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
 uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate
+uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.py paper.tex --json
 ```
 
 ## 如何选流程
@@ -165,7 +167,8 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 
 ### 你快投稿了
 
-在编译和文献都稳定后，再使用 `paper-audit`。
+在编译和文献都稳定后，再使用 `paper-audit`。投稿前机械检查由
+`PRESUBMISSION` 层接入 `quick-audit` 和 `gate`；PDF 输入只运行文本类检查。
 
 ### 你要检索 `.bib` 文献库或直接返回引用片段
 
@@ -180,5 +183,5 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 
 - 写作类技能通常返回面向问题的建议和脚本化诊断。
 - `bib-search-citation` 返回结构化检索结果、可选原始 BibTeX，以及可直接使用的引用片段。
-- `paper-audit` 返回 severity 分级报告、结构化问题清单、修订路线图，以及可选 score summary。
+- `paper-audit` 返回 severity 分级报告、`PRESUBMISSION` 机械发现、结构化问题清单、修订路线图，以及可选 score summary。
 - 调研类输出应明确区分已验证证据与推断。

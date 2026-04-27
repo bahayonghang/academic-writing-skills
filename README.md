@@ -21,44 +21,10 @@
 
 ## Installation
 
-### Method 1: skills (Recommended)
-
 Install via [skills](https://github.com/bahayonghang/skills), the community skill manager for Claude Code:
 
 ```bash
-# Install individual skills
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
-npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
-npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
-
-# Or install everything at once
 npx skills add github.com/bahayonghang/academic-writing-skills
-```
-
-### Method 2: Manual Installation
-
-```bash
-git clone https://github.com/bahayonghang/academic-writing-skills.git
-cd academic-writing-skills/academic-writing-skills
-```
-
-**Linux / macOS**
-
-```bash
-mkdir -p ~/.claude/skills
-cp -r latex-paper-en latex-thesis-zh typst-paper bib-search-citation paper-audit industrial-ai-research ~/.claude/skills/
-```
-
-**Windows (PowerShell)**
-
-```powershell
-New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","bib-search-citation","paper-audit","industrial-ai-research")) {
-    Copy-Item -Recurse $skill "$env:USERPROFILE/.claude/skills/"
-}
 ```
 
 ---
@@ -150,16 +116,6 @@ Fast bibliography search and citation extraction for BibTeX or BibLaTeX `.bib` l
 | **Preview** | JSON search output can be piped into `preview_bib_search.py` for compact human review |
 | **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints |
 
-```bash
-uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
-uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "TimeMachine raw:true cite:both limit:1" | uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py
-```
-
-Docs:
-
-- [Overview](docs/skills/bib-search-citation/index.md)
-- [Query Syntax](docs/skills/bib-search-citation/resources/query-syntax.md)
-
 ### paper-audit
 
 Deep-review-first paper audit with layered checks, structured issue bundles, and submission gating.
@@ -168,6 +124,7 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 |---|---|
 | **Input** | `.tex`, `.typ`, `.pdf` files |
 | **Modes** | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification) |
+| **PRESUBMISSION Layer** | Final-week mechanical checks for em dashes, AI-tone term frequency, abstract result gaps, LaTeX hygiene, equation references, and concrete captions; PDF mode runs text-only checks |
 | **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md` |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
@@ -202,24 +159,6 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | `gate` | You only care about blockers | PASS/FAIL + blocking issues |
 | `re-audit` | You want to verify revisions | Issue-status comparison |
 
-```bash
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
-uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py review_results/paper-slug --style peer-review
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
-```
-
-Compatibility aliases:
-
-- `self-check` -> `quick-audit`
-- `review` -> `deep-review`
-
-Docs:
-
-- [Overview](docs/skills/paper-audit/index.md)
-- [Workflow](docs/skills/paper-audit/resources/WORKFLOW.md)
-- [Outputs](docs/skills/paper-audit/resources/OUTPUTS.md)
 
 ### industrial-ai-research
 

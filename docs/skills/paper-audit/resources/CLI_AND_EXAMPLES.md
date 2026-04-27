@@ -16,6 +16,13 @@ Use when you want a fast answer to:
 
 - what blocks submission?
 - what should I fix before a full review?
+- are there final-week mechanical issues such as em dashes, AI-tone vocabulary, abstract result gaps, or LaTeX hygiene problems?
+
+Direct mechanical checker:
+
+```bash
+uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.py paper.tex --json
+```
 
 ## Deep Review
 
@@ -50,6 +57,10 @@ Review this manuscript like an SCI journal reviewer and give me Summary, Major I
 
 The final reader-facing artifact for that request is `peer_review_report.md`, while `review_report.md` remains the richer evidence bundle.
 
+Focused deep-review note: `PRESUBMISSION` findings stay in Phase 0 context for
+`--focus methodology|theory|literature|logic` and do not pollute the focused
+issue bundle.
+
 ## IEEE Gate
 
 ```bash
@@ -61,6 +72,7 @@ Use when you want:
 - PASS / FAIL
 - hard blockers
 - advisory pseudocode guidance separated from blockers
+- advisory `PRESUBMISSION` Major/Minor findings separated from blockers
 
 ## Re-Audit
 
@@ -83,11 +95,17 @@ uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --m
 ```
 
 Prefer source files when possible. PDF deep review is still useful, but OCR / extraction limitations reduce confidence for formula and notation-heavy papers.
+PDF input runs text-only `PRESUBMISSION` checks and skips LaTeX/Typst source
+hygiene.
 
 ## Example Natural-Language Requests
 
 ```text
 Run a quick-audit on paper.tex and list blockers first.
+```
+
+```text
+Run a pre-submission mechanical check three days before the deadline and flag AI-tone or em-dash issues.
 ```
 
 ```text

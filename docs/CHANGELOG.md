@@ -5,6 +5,7 @@
 ## [Unreleased] - 2026-04-01
 
 ### Added
+- 为 `paper-audit` v4.5 新增 `PRESUBMISSION` 投稿前机械审计层、`pre_submission_readiness` lane、PDF/source 差异说明，以及中英文 docs 资源页。
 - 为 `latex-paper-en`、`latex-thesis-zh`、`typst-paper` 新增 Abstract 模块：五元素摘要结构诊断（`analyze_abstract.py`）。
 - 为 `latex-paper-en`、`latex-thesis-zh`、`typst-paper` 新增 Tables 模块：三线表合规检查（`check_tables.py`）与表格生成（`generate_table.py`）。
 - 为 `latex-paper-en`、`typst-paper` 新增 Adapt 模块：跨 venue 格式适配工作流。

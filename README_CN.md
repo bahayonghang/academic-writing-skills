@@ -21,44 +21,10 @@
 
 ## 安装方法
 
-### 方式 1：使用 skills（推荐）
-
 通过 [skills](https://github.com/bahayonghang/skills)（Claude Code 社区技能管理器）安装：
 
 ```bash
-# 安装单个技能
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
-npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
-npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
-
-# 或一次性安装所有技能
 npx skills add github.com/bahayonghang/academic-writing-skills
-```
-
-### 方式 2：手动安装
-
-```bash
-git clone https://github.com/bahayonghang/academic-writing-skills.git
-cd academic-writing-skills/academic-writing-skills
-```
-
-**Linux / macOS**
-
-```bash
-mkdir -p ~/.claude/skills
-cp -r latex-paper-en latex-thesis-zh typst-paper bib-search-citation paper-audit industrial-ai-research ~/.claude/skills/
-```
-
-**Windows (PowerShell)**
-
-```powershell
-New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","bib-search-citation","paper-audit","industrial-ai-research")) {
-    Copy-Item -Recurse $skill "$env:USERPROFILE/.claude/skills/"
-}
 ```
 
 ---
@@ -150,16 +116,6 @@ foreach ($skill in @("latex-paper-en","latex-thesis-zh","typst-paper","bib-searc
 | **预览** | JSON 结果可继续管道给 `preview_bib_search.py`，生成紧凑的人类可读摘要 |
 | **特殊判断** | `has:code` 会从 URL、annotation、keywords、note 类字段和 abstract 中推断代码可用性 |
 
-```bash
-uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
-uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "TimeMachine raw:true cite:both limit:1" | uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py
-```
-
-文档：
-
-- [概览](docs/zh/skills/bib-search-citation/index.md)
-- [查询语法](docs/zh/skills/bib-search-citation/resources/query-syntax.md)
-
 ### paper-audit
 
 以深度审稿为核心的多格式论文审查工具，包含结构化问题清单、修订路线图与投稿门控。
@@ -168,6 +124,7 @@ uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py 
 |---|---|
 | **输入** | `.tex`、`.typ`、`.pdf` 文件 |
 | **模式** | `quick-audit`（快速筛查）· `deep-review`（审稿人风格深审）· `gate`（投稿门控）· `re-audit`（修订回归）|
+| **PRESUBMISSION 层** | 投稿前最后几天的机械检查：em dash、AI-tone 词频、摘要结果缺口、LaTeX hygiene、公式引用、具体 caption；PDF 只运行文本类检查 |
 | **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`peer_review_report.md`、`revision_roadmap.md` |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
@@ -201,25 +158,6 @@ uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py 
 | `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 + 可选 `peer_review_report.md` |
 | `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
 | `re-audit` | 想验证修订效果 | 问题状态对比 |
-
-```bash
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --scholar-eval
-uv run python academic-writing-skills/paper-audit/scripts/render_deep_review_report.py review_results/paper-slug --style peer-review
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee
-uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md
-```
-
-兼容别名：
-
-- `self-check` -> `quick-audit`
-- `review` -> `deep-review`
-
-文档：
-
-- [概览](docs/zh/skills/paper-audit/index.md)
-- [工作流](docs/zh/skills/paper-audit/resources/WORKFLOW.md)
-- [输出产物](docs/zh/skills/paper-audit/resources/OUTPUTS.md)
 
 ### industrial-ai-research
 

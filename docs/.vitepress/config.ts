@@ -202,6 +202,7 @@ function paperAuditItems(prefix: string) {
     { text: isZh ? '输出产物' : 'Outputs', link: `${r}/OUTPUTS` },
     { text: isZh ? '命令与示例' : 'CLI & Examples', link: `${r}/CLI_AND_EXAMPLES` },
     { text: isZh ? '深度审查标准' : 'Deep Review Criteria', link: `${r}/DEEP_REVIEW_CRITERIA` },
+    { text: isZh ? '投稿前机械规则' : 'Pre-Submission Rules', link: `${r}/PRE_SUBMISSION_RULES` },
     { text: isZh ? '审查清单' : 'Checklist', link: `${r}/CHECKLIST` },
     { text: isZh ? '定性研究标准' : 'Qualitative Standards', link: `${r}/QUALITATIVE_STANDARDS` },
     { text: isZh ? '主编智能体' : 'Editor-in-Chief Agent', link: `${r}/editor_in_chief_agent` },

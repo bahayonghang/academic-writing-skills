@@ -5,12 +5,14 @@
 Use when:
 
 - you want a fast readiness screen
+- you want the final-week `PRESUBMISSION` mechanical layer
 - you want checklist, severity, and score indicators
 - you are not ready to invest in a full reviewer workflow
 
 Main output:
 
 - script-backed audit report
+- `PRESUBMISSION` findings for em dashes, AI-tone terms, abstract result gaps, source hygiene, and concrete captions
 - checklist items
 - score summary
 
@@ -53,6 +55,11 @@ Important note:
 
 `audit.py --mode deep-review` is Phase 0 only. Complete deep review also needs workspace prep, reviewer lanes, consolidation, and final rendering.
 
+Phase 0 includes the `PRESUBMISSION` layer. Full/editor focus may promote
+high-signal mechanical findings to `pre_submission_readiness`; focused
+methodology, theory, literature, and logic reviews keep them out of the final
+focused issue bundle.
+
 ## `gate`
 
 Use when:
@@ -66,6 +73,9 @@ Main output:
 - gate verdict
 - blocker list
 - advisory items separated from blockers
+
+`PRESUBMISSION` Major/Minor findings are advisory. Only Critical findings and
+failed checklist items make the gate fail.
 
 ## `re-audit`
 
@@ -103,3 +113,7 @@ These aliases are still accepted for one compatibility cycle:
 - `review` -> `deep-review`
 
 Use the canonical names in all new docs, scripts, and examples.
+
+Requests such as "pre-submission review" or "check this three days before the
+deadline" should still route to `quick-audit` or `gate`; do not introduce a
+separate public pre-submission mode.

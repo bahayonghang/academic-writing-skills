@@ -126,6 +126,7 @@ Modes:
 Recommended routing:
 
 - use `quick-audit` for fast script-backed screening
+- use `quick-audit` for final-week pre-submission mechanical checks
 - use `deep-review` when you need reviewer-style findings, issue bundles, and a roadmap
 - deep-review defaults to committee-style pre-review (`Editor -> Theory -> Literature -> Methodology -> Logic`)
 - use `--focus editor|theory|literature|methodology|logic` when you only want one dimension
@@ -153,6 +154,7 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py
 uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check
 uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"
 uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.pdf --mode gate
+uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.py paper.tex --json
 ```
 
 ## Choosing the Right Workflow
@@ -168,6 +170,8 @@ Use `grammar`, `sentences`, `logic`, `expression`, `deai`, or `experiment` on th
 ### You are about to submit
 
 Use `paper-audit` after your compile and bibliography steps are already stable.
+For final-week mechanical checks, the `PRESUBMISSION` layer runs inside
+`quick-audit` and `gate`; PDF inputs get text-only checks.
 
 ### You need to search a `.bib` library or return citation snippets
 
@@ -186,5 +190,5 @@ Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds
 
 - Writing skills usually return issue-oriented suggestions and script-backed diagnostics.
 - `bib-search-citation` returns structured search results, optional raw BibTeX, and citation-ready snippets.
-- `paper-audit` returns severity-rated reports, structured issue bundles, revision roadmaps, reviewer-style `peer_review_report.md`, and optional score summaries.
+- `paper-audit` returns severity-rated reports, `PRESUBMISSION` mechanical findings, structured issue bundles, revision roadmaps, reviewer-style `peer_review_report.md`, and optional score summaries.
 - Research output should separate verified evidence from inference.

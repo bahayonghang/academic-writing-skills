@@ -9,6 +9,7 @@ For `quick-audit`, `gate`, and `polish` precheck, the main product is a rendered
 Typical contents:
 
 - severity-rated issues
+- `PRESUBMISSION` mechanical findings when present
 - checklist results
 - score summary
 - gate verdict, if applicable
@@ -37,6 +38,11 @@ Typical fields:
 - `gate_blocker`
 - `quote_verified`
 
+Full/editor deep-review may include a `pre_submission_readiness` review lane
+derived from high-signal `PRESUBMISSION` findings. Focused methodology,
+theory, literature, and logic reviews keep those findings in Phase 0 automated
+context only.
+
 This file is the source of truth for:
 
 - final reviewer findings
@@ -62,6 +68,7 @@ Expected sections:
 - overall assessment
 - major / moderate / minor issues
 - Phase 0 automated findings
+- script provenance, including `PRESUBMISSION` findings
 - score summary
 - revision roadmap
 
