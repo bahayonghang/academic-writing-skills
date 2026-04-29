@@ -12,6 +12,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 SKILLS_ROOT = REPO_ROOT / "academic-writing-skills"
+MAX_SKILL_DESCRIPTION_CHARS = 1024
 _DEFAULT_MANDATORY_SECTIONS = [
     "## Capability Summary",
     "## Triggering",
@@ -122,6 +123,31 @@ ROUTER_ROW_RE = re.compile(
 )
 
 
+def _frontmatter_description(skill_md: str) -> str:
+    lines = skill_md.splitlines()
+    assert lines and lines[0] == "---"
+
+    for index, line in enumerate(lines[1:], start=1):
+        if line == "---":
+            break
+        if not line.startswith("description:"):
+            continue
+
+        value = line.removeprefix("description:").strip()
+        if value.startswith((">", "|")):
+            block_lines: list[str] = []
+            for block_line in lines[index + 1 :]:
+                if block_line == "---" or (block_line and not block_line[0].isspace()):
+                    break
+                if block_line.strip():
+                    block_lines.append(block_line.strip())
+            return " ".join(block_lines)
+
+        return value.strip("\"'")
+
+    raise AssertionError("missing frontmatter description")
+
+
 def _iter_skill_text_files(root: Path) -> list[Path]:
     return [
         path
@@ -171,6 +197,16 @@ def test_skill_markdown_contract() -> None:
             assert f"`{module_name}`" in skill_md, f"{skill_name} missing module `{module_name}`"
         if config.get("expects_uv_commands", False):
             assert "uv run python" in skill_md
+
+
+def test_skill_frontmatter_description_stays_within_runtime_limit() -> None:
+    for skill_name in SKILLS:
+        skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        description = _frontmatter_description(skill_md)
+        assert len(description) <= MAX_SKILL_DESCRIPTION_CHARS, (
+            f"{skill_name} description has {len(description)} characters; "
+            f"limit is {MAX_SKILL_DESCRIPTION_CHARS}"
+        )
 
 
 def test_skill_command_examples_use_uv_run_python() -> None:
