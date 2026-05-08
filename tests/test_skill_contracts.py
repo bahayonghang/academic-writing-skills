@@ -26,6 +26,13 @@ _DEFAULT_MANDATORY_SECTIONS = [
     "## Example Requests",
 ]
 SKILLS = {
+    "bib-search-citation": {
+        "modules": ["query", "spec-json", "spec-file", "preview"],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
+        "enforce_command_hygiene": True,
+    },
     "industrial-ai-research": {
         "modules": [
             "research",

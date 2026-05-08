@@ -7,8 +7,7 @@ description: >-
   venue, DOI, arXiv ID, keywords, annotation, abstract, or entry type. Handles
   Zotero-exported libraries. Supports compact search expressions such as
   author:, year-gte, type:, and has:, combined filters, research-oriented
-  output fields, raw
-  BibTeX export, and LaTeX/Typst citation snippet generation.
+  output fields, raw BibTeX export, and LaTeX/Typst citation snippets.
 category: docs-writing-publishing
 tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
 version: "1.1.0"
@@ -17,37 +16,74 @@ allowed-tools: Read, Bash
 
 # Bib Search Citation
 
-## Overview
+## Capability Summary
 
-Use this skill when the user provides a `.bib` file and wants research-oriented retrieval rather than just a single citation key lookup. This skill is designed for large bibliographies with mixed standard and custom fields, including fields such as `shorttitle`, `annotation`, `keywords`, `abstract`, and `file`.
+Use this skill when the user provides a local `.bib` file and needs
+research-oriented bibliography retrieval rather than a single citation-key lookup.
+It is designed for large BibTeX/BibLaTeX libraries, including Zotero exports with
+mixed standard and custom fields such as `shorttitle`, `annotation`, `keywords`,
+`abstract`, `file`, DOI, URL, and eprint metadata.
 
-Follow this workflow:
+The skill can:
 
-1. Identify the `.bib` file to use.
-2. If `rtk` is available, prefer it for exploratory steps such as locating `.bib` files and inspecting representative fields.
-3. Translate the user's request into either a JSON search spec or a compact query expression.
-4. Run `scripts/search_bib.py` on the `.bib` file and keep its JSON output uncompressed.
-5. Optionally pipe the JSON into `scripts/preview_bib_search.py` for a compact human-readable summary.
-6. Review the results and present the best matches clearly.
-7. Include LaTeX and/or Typst citation snippets whenever the user asks for them or would benefit from them.
+- search by topic words and field-specific filters
+- filter by author, year, entry type, DOI, arXiv/eprint, PDF, code, keywords,
+  annotation, or abstract
+- return stable JSON for downstream tooling
+- generate compact human-readable previews from JSON results
+- emit LaTeX and Typst citation snippets
+- return raw BibTeX only when exact export or manual verification requires it
 
-## Input expectations
+## Triggering
 
-The typical input is:
+Use this skill for requests such as:
 
-- one `.bib` file provided by the user
-- a natural-language research query
-- optional structured filters such as year range, entry type, author, DOI presence, code availability, or custom field matches
-- optional compact filters such as `author:cheng year>=2024 has:code type:article`
-- optional output preferences such as `latex`, `typst`, `both`, or raw BibTeX
+- "Search my `.bib` file for recent Mamba forecasting papers."
+- "Find entries by Cheng after 2024 that have code and return cite snippets."
+- "Show the raw BibTeX for the best TimeMachine match."
+- "Filter Zotero-exported entries whose annotation mentions CodeAvailable."
+- "Preview the JSON output from a saved bibliography search."
 
-If the user gives a natural-language request only, infer a reasonable search spec and say what assumptions you made. If the user writes a compact filter expression directly, preserve it as closely as possible instead of converting it into vague prose.
+If the user gives only a natural-language request, infer a conservative search
+spec and state the assumptions. If the user gives a compact filter expression,
+preserve it as closely as possible instead of translating it into vague prose.
 
-## Search planning
+## Do Not Use
 
-Before running the script, map the request into a search spec.
+Do not use this skill for:
 
-### Common spec fields
+- validating citations already used inside a `.tex` or `.typ` project
+- compiling, formatting, or diagnosing manuscript source trees
+- rewriting related-work prose
+- online literature discovery when there is no local bibliography file
+- inventing missing bibliographic metadata that is not present in the `.bib` file
+
+For manuscript citation integrity, use the relevant writing skill's bibliography
+module. For online paper discovery, use a research-oriented workflow and verify
+metadata from external sources before adding it to a library.
+
+## Module Router
+
+| Module | Best for | Command |
+| --- | --- | --- |
+| `query` | one-shot compact search with inline filters | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --query 'mamba forecasting author:Cheng year>=2024 has:code cite:both limit:5'` |
+| `spec-json` | structured search spec generated from a complex request | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
+| `spec-file` | repeatable saved search workflow | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-file search.json` |
+| `preview` | compact human-readable summary after JSON search output exists | `uv run python -B $SKILL_DIR/scripts/preview_bib_search.py --input results.json` |
+
+Keep `search_bib.py` as the source of truth for parsing, filtering, scoring,
+sorting, raw BibTeX preservation, and citation snippet generation. Treat
+`preview_bib_search.py` as a renderer only.
+
+## Required Inputs
+
+Minimum inputs:
+
+- path to one local `.bib` file
+- either a compact `--query`, inline `--spec-json`, or saved `--spec-file`
+- optional sort, limit, citation-mode, raw BibTeX, or returned-field preferences
+
+Common search spec fields:
 
 - `query`: free-text topic query
 - `filters.year_min`, `filters.year_max`, `filters.years_in`, `filters.exclude_years`
@@ -57,195 +93,142 @@ Before running the script, map the request into a search spec.
 - `filters.field_contains`, `filters.field_excludes`
 - `sort`: `relevance`, `year_desc`, `year_asc`, or `title`
 - `limit`: default 5 unless the user asks for more
-- `return_fields`: fields to expose in the answer
-- `include_raw_bib`: `true` when the user asks for the original entry or when exact export matters
+- `return_fields`: fields to expose in the JSON result
+- `include_raw_bib`: `true` only when the user asks for original entries or exact export
 - `citation_mode`: `latex`, `typst`, `both`, or `none`
 
-### Heuristics for natural-language requests
+## Output Contract
 
-Use these defaults unless the user says otherwise:
+When presenting results to the user, use this order:
 
-- research discovery request -> `sort: relevance`
-- no explicit limit -> `limit: 5`
-- no explicit field list -> return the research-oriented default fields: `key`, `title`, `shorttitle`, `author`, `year`, `venue`, `doi`, `eprint`, `keywords`, `annotation`, `abstract`
-- asks for "original", "full entry", or "bib" -> `include_raw_bib: true`
-- asks for both LaTeX and Typst, or just says "citation" in a mixed writing workflow -> `citation_mode: both`
-
-### Compact query language
-
-The script can parse direct query expressions inside `--query`, and it can also parse them when they appear inside `spec.query`.
-
-Supported compact operators:
-
-- `author:cheng`
-- `year>=2024`
-- `year:2024` or `year:2023,2024`
-- `type:article,misc`
-- `-type:misc`
-- `has:code,doi`
-- `-has:pdf`
-- `annotation:CodeAvailable`
-- `keywords:mamba`
-- `sort:year_desc`
-- `limit:10`
-- `fields:key,title,year,doi`
-- `cite:latex`, `cite:typst`, or `cite:both`
-- `raw:true`
-
-Unstructured tokens that do not match the compact syntax remain part of the topic query.
-
-### Supported `has` values
-
-The script supports these useful `has` values:
-
-- `doi`
-- `abstract`
-- `keywords`
-- `annotation`
-- `shorttitle`
-- `eprint`
-- `pdf`
-- `code`
-
-`code` is inferred from fields such as `url`, `abstract`, `keywords`, `annotation`, `note`, or `howpublished` that mention GitHub, GitLab, code, repository, or source.
-
-For more examples, see `references/query-syntax.md`.
-
-## Running the script
-
-Run the script with a JSON spec, a spec file, or a compact query.
-
-## RTK Fast Path
-
-If `rtk` is available, prefer it only for model-facing exploration:
-
-- locate bibliography files with `rtk find . -name "*.bib"`
-- inspect a representative slice with `rtk read /path/to/library.bib -l aggressive -m 80`
-- confirm whether fields such as DOI, keywords, annotation, or eprint are present with `rtk grep "doi|keywords|annotation|eprint" /path/to/library.bib`
-
-Keep machine-readable search results on the raw script path:
-
-- use raw `python scripts/search_bib.py ...` whenever another tool or script needs JSON
-- do not wrap `search_bib.py` output with RTK compression
-- use `python scripts/preview_bib_search.py` only after JSON has already been produced
-
-### Inline JSON example
-
-```bash
-python scripts/search_bib.py \
-  --bib /path/to/library.bib \
-  --spec-json '{
-    "query": "mamba time series forecasting author:Cheng year>=2024 has:code",
-    "sort": "relevance",
-    "limit": 5,
-    "citation_mode": "both",
-    "include_raw_bib": false
-  }'
-```
-
-### Compact query example
-
-```bash
-python scripts/search_bib.py \
-  --bib /path/to/library.bib \
-  --query 'mamba time series forecasting author:Cheng year>=2024 has:code type:article,misc cite:both limit:5'
-```
-
-### Spec file example
-
-```bash
-python scripts/search_bib.py --bib /path/to/library.bib --spec-file /path/to/spec.json
-```
-
-### Human-readable preview example
-
-```bash
-python scripts/search_bib.py \
-  --bib /path/to/library.bib \
-  --query 'mamba time series forecasting author:Cheng year>=2024 has:code type:article,misc cite:both limit:5' \
-| python scripts/preview_bib_search.py
-```
-
-If the user uploads a `.bib` file into the conversation, first make sure you know its local path in the execution environment, then run the script against that file.
-
-## Output expectations
-
-When presenting results to the user, prefer this order:
-
-1. brief summary of how many strong matches were found
-2. top matches with the requested research fields
-3. citation snippets in the requested format
-4. raw BibTeX only when requested or materially useful
+1. Briefly state how many matches were found and which filters were applied.
+2. List top matches with requested research fields.
+3. Include LaTeX and/or Typst snippets when requested or useful.
+4. Include raw BibTeX only when requested or materially needed.
+5. If no entries match, suggest specific filter relaxations.
 
 For each selected entry, usually include:
 
 - citation key
 - title and optional shorttitle
 - authors
-- year and venue
+- year and venue/journal/booktitle
 - DOI and/or eprint when present
-- the most relevant supporting fields for the query, such as keywords, annotation, or a short abstract excerpt
+- the supporting fields that made the entry relevant, such as keywords,
+  annotation, or a short abstract excerpt
 
-If the user asked for a compact query, it is helpful to echo the interpreted filters briefly, especially when negation or multiple field filters are involved.
+If the user supplied compact filters, echo the interpreted filters when negation,
+field filters, or mixed citation/export options could otherwise be ambiguous.
 
-When using the preview helper:
+## Workflow
 
-- treat it as a compact rendering of the JSON, not as a separate search engine
-- keep `search_bib.py` as the source of truth for filtering, scoring, sorting, and citations
-- do not rely on the preview output when exact raw BibTeX preservation matters
+1. Identify the `.bib` file path. If multiple candidates exist, use the one the
+   user named or ask one concise clarification only if choosing would be risky.
+2. If `rtk` is available, use it only for model-facing exploration such as locating
+   `.bib` files or inspecting representative fields.
+3. Translate the request into a compact query or JSON search spec.
+4. Run `search_bib.py` with `uv run python -B` and preserve the JSON output.
+5. Optionally run `preview_bib_search.py` after JSON output exists.
+6. Inspect the result payload before answering.
+7. Report matches, citation snippets, raw entries, or empty-result recovery advice
+   according to the output contract.
 
-## Citation formatting rules
+RTK fast path guidance:
 
-### LaTeX
+- locate bibliography files with `rtk find . -name "*.bib"`
+- inspect a representative slice with `rtk read /path/to/library.bib -l aggressive -m 80`
+- confirm fields with `rtk grep "doi|keywords|annotation|eprint" /path/to/library.bib`
+- do not wrap machine-readable `search_bib.py` JSON output with RTK compression
 
-When `citation_mode` includes `latex`, expose:
+## Search Planning
 
-- `\\cite{key}`
-- `\\parencite{key}`
-- `\\textcite{key}`
+Use these defaults unless the user says otherwise:
 
-These are intended for `biblatex` workflows. If the user only wants one form, show only that form.
+- research discovery request -> `sort: relevance`
+- no explicit limit -> `limit: 5`
+- no explicit field list -> return `key`, `title`, `shorttitle`, `author`, `year`,
+  `venue`, `doi`, `eprint`, `keywords`, `annotation`, and `abstract`
+- asks for "original", "full entry", or "bib" -> `include_raw_bib: true`
+- asks for citation snippets in a mixed LaTeX/Typst workflow -> `citation_mode: both`
 
-### Typst
+Supported compact operators include:
 
-When `citation_mode` includes `typst`, expose:
+- `author:cheng`
+- `year>=2024`, `year<=2025`, `year:2024`, `year:2023,2024`
+- `type:article,misc`, `-type:misc`
+- `has:code,doi`, `-has:pdf`
+- `annotation:CodeAvailable`, `keywords:mamba`, `abstract:photovoltaic`
+- `sort:year_desc`, `limit:10`, `fields:key,title,year,doi`
+- `cite:latex`, `cite:typst`, `cite:both`, `cite:none`
+- `raw:true`
 
-- `@key` when the key is simple enough for shorthand usage
-- `#cite(<key>)` when shorthand is fine
-- `#cite(label("key"))` when the key contains characters that make shorthand fragile
+The useful `has` values are `doi`, `abstract`, `keywords`, `annotation`,
+`shorttitle`, `eprint`, `pdf`, and `code`. The `code` flag is inferred from
+fields such as `url`, `abstract`, `keywords`, `annotation`, `note`, and
+`howpublished` when they mention GitHub, GitLab, code, repository, or source.
 
-If the script reports `typst.needs_label = true`, prefer the explicit `label("...")` form instead of shorthand.
+## Safety Boundaries
 
-## Result quality checks
+- Do not fabricate missing titles, authors, venues, DOIs, URLs, or eprint IDs.
+- Treat raw BibTeX as source data; preserve it exactly when quoting or exporting.
+- Do not claim an entry strongly supports a manuscript claim unless the relevant
+  fields actually support that relationship.
+- If the `.bib` file is malformed, report that entries may have been skipped
+  instead of silently presenting the result set as complete.
+- Keep online discovery out of this skill unless the user explicitly asks to
+  extend beyond the local bibliography and the external metadata is verified.
+- Do not edit the user's `.bib` file unless they explicitly ask for a rewrite or
+  export operation.
 
-Before answering:
+## Reference Map
 
-- make sure the returned entries satisfy the user's explicit filters
-- do not overclaim topic relevance; if results are only approximate, say so
-- when several entries are similar, explain the difference briefly
-- preserve raw BibTeX exactly when quoting the original entry
+- `scripts/search_bib.py`: parses `.bib` files, applies filters, ranks results,
+  and formats citation snippets.
+- `scripts/preview_bib_search.py`: renders `search_bib.py` JSON into a compact
+  human-readable summary.
+- `references/query-syntax.md`: maps natural-language requests into compact query
+  expressions and JSON search specs.
+- `examples/compact-query.md`: typical topic search with filters and citations.
+- `examples/raw-bib-export.md`: exact-entry export workflow.
+- `examples/preview-summary.md`: JSON search plus preview rendering workflow.
 
-## Error handling
+## Example Requests
+
+```text
+Search references.bib for Cheng papers after 2024 on Mamba forecasting and return both LaTeX and Typst citations.
+```
+
+```text
+Find entries in library.bib whose annotation contains CodeAvailable and show the raw BibTeX.
+```
+
+```text
+List the newest transformer forecasting papers in references.bib, but exclude misc entries and require DOI.
+```
+
+```text
+Find the best TimeMachine match in references.bib and return one raw entry plus cite snippets.
+```
+
+## Error Handling
 
 ### Parse errors
 
-If the `.bib` file contains malformed entries (unbalanced braces, encoding issues, truncated fields), the script skips those entries silently and processes the rest. When a file fails to parse entirely, check the encoding (the script assumes UTF-8) and look for obvious structural corruption such as missing closing braces.
+If a `.bib` file contains malformed entries, the script processes the valid
+entries it can parse. When unexpectedly few entries are returned, inspect the
+file encoding and look for obvious structural corruption such as missing closing
+braces.
 
 ### Empty result sets
 
-When zero entries match, suggest broadening the search:
+When zero entries match, suggest broadening the search in this order:
 
-- remove `has:` constraints (e.g. `has:code` excludes many entries)
-- widen the year range or drop it entirely
-- use fewer or shorter topic keywords
-- check author name spelling or try partial matches
+1. remove `has:` constraints such as `has:code`
+2. widen or remove the year range
+3. use fewer or shorter topic keywords
+4. check author spelling or try partial-name matches
 
-### Large file performance
+### Large files
 
-The script is pure Python with a linear scan and no external dependencies. For typical academic libraries (up to ~10,000 entries) it completes in seconds. For very large files (50,000+ entries), expect proportionally longer runtimes but no functional issues.
-
-## Resources
-
-- `scripts/search_bib.py`: parses `.bib` files, applies filters, ranks results, and formats citation snippets
-- `scripts/preview_bib_search.py`: renders `search_bib.py` JSON into a compact human-readable summary
-- `references/query-syntax.md`: examples for mapping user requests into structured search specs and compact expressions
+The helper scripts use linear scans and no external parser dependency. For very
+large libraries, expect proportionally longer runtime but the same JSON contract.
