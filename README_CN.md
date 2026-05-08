@@ -4,6 +4,7 @@
 
 > 专注于学术论文后期排版精修、文献检索与校验、格式校验与深度润色——拒绝从零代写，全面提升既有文本质量。
 >
+> 推荐模型：**Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
 > 推荐平台：**Claude Code · Codex · Antigravity**
 
 ## 技能一览
@@ -24,7 +25,7 @@
 通过 [skills](https://github.com/bahayonghang/skills)（Claude Code 社区技能管理器）安装：
 
 ```bash
-npx skills add github.com/bahayonghang/academic-writing-skills
+npx skills add bahayonghang/academic-writing-skills
 ```
 
 ---

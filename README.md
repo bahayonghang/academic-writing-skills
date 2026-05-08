@@ -4,6 +4,7 @@
 
 > Post-writing polish and validation for academic papers — format checks, bibliography search and verification, grammar analysis, de-AI editing, and experiment narrative generation. Focused on enhancing existing text quality, not generating from scratch.
 >
+> Recommended models: **Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
 > Recommended platforms: **Claude Code · Codex · Antigravity**
 
 ## Skills at a Glance
@@ -24,7 +25,7 @@
 Install via [skills](https://github.com/bahayonghang/skills), the community skill manager for Claude Code:
 
 ```bash
-npx skills add github.com/bahayonghang/academic-writing-skills
+npx skills add bahayonghang/academic-writing-skills
 ```
 
 ---
@@ -158,7 +159,6 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap + optional `peer_review_report.md` |
 | `gate` | You only care about blockers | PASS/FAIL + blocking issues |
 | `re-audit` | You want to verify revisions | Issue-status comparison |
-
 
 ### industrial-ai-research
 

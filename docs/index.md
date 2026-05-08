@@ -38,6 +38,7 @@ features:
   - icon: 🛠️
     title: "Script-backed"
     details: "The docs now align with the repository reality: Python scripts live under each skill's `scripts/`, and repo-local examples use `uv run python ...`."
+
 ---
 
 ## What This Site Covers
