@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships five skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
+Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships six skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
 
 ## Build & Development Commands
 
@@ -15,7 +15,7 @@ Task runner: `just` (requires `uv` for Python). All commands run through `uv run
 | `just install` | `uv sync --extra dev` — install all deps |
 | `just lint` | `ruff format --check . && ruff check .` |
 | `just typecheck` | `pyright` |
-| `just test` | `python -m pytest tests/` |
+| `just test` | `python -m pytest tests/ academic-writing-skills/*/tests/` |
 | `just ci` | lint → typecheck → test (full pipeline) |
 | `just fix` | `ruff format . && ruff check --fix .` |
 | `just docs` | VitePress dev server (`cd docs && npm run docs:dev`) |
@@ -41,13 +41,14 @@ academic-writing-skills/{skill-name}/
 └── agents/           # Agent persona definitions (paper-audit, industrial-ai-research)
 ```
 
-### Five Skills
+### Six Skills
 
 | Skill | Input | Purpose |
 |---|---|---|
 | `latex-paper-en` | `.tex` | English conference/journal papers (IEEE, ACM, NeurIPS, ICML) |
 | `latex-thesis-zh` | `.tex` | Chinese degree theses (GB/T 7714-2015; thuthesis, pkuthss, etc.) |
 | `typst-paper` | `.typ` | Bilingual Typst papers with millisecond compilation |
+| `bib-search-citation` | `.bib` | Search and cite local BibTeX/BibLaTeX libraries |
 | `paper-audit` | `.tex`/`.typ`/`.pdf` | Multi-perspective pre-submission audit with scoring |
 | `industrial-ai-research` | topic query | Literature synthesis for industrial AI domains (no scripts) |
 

@@ -82,3 +82,8 @@ tmp/
 ref/
 
 review_results/
+
+# File-based planning artifacts
+task_plan.md
+findings.md
+progress.md

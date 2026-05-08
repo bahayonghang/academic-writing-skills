@@ -5,7 +5,7 @@ metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
   version: "1.3"
-  last_updated: "2026-04-15"
+  last_updated: "2026-05-03"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(typst *)
 ---

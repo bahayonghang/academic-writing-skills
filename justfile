@@ -89,7 +89,7 @@ typecheck:
 # 运行测试
 test:
     @echo "  → 运行单元测试..."
-    @uv run --extra dev python -m pytest tests/
+    @uv run --extra dev python -m pytest tests/ academic-writing-skills/*/tests/
     @echo "  ✓ 测试通过"
 
 # 清理缓存文件
