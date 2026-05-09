@@ -1,6 +1,6 @@
 [project]
 name = "academic-writing-skills"
-version = "3.0.0"
+version = "3.1.0"
 description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers (Recommended platforms: Claude Code, Codex, Antigravity)"
 readme = "README.md"
 requires-python = ">=3.10"

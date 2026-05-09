@@ -5,9 +5,13 @@ description: >-
   research workflows. Use when a user wants to find papers, search a
   bibliography, filter a library, or look up references by topic, author, year,
   venue, DOI, arXiv ID, keywords, annotation, abstract, or entry type. Handles
-  Zotero-exported libraries. Supports compact search expressions such as
-  author:, year-gte, type:, and has:, combined filters, research-oriented
-  output fields, raw BibTeX export, and LaTeX/Typst citation snippets.
+  Zotero-exported libraries. Trigger for Chinese prompts such as "搜文献库",
+  "查 BibTeX", "查文献", "翻文献库", "找引用", "查 Zotero 导出",
+  "搜搜我的 .bib", "在文献库里找 Mamba 论文", "查 Cheng 2024 的引用",
+  "整理参考文献", or "导出 BibTeX 条目". Supports compact search expressions
+  such as author:, year-gte, type:, and has:, combined filters,
+  research-oriented output fields, raw BibTeX export, and LaTeX/Typst citation
+  snippets.
 category: docs-writing-publishing
 tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
 version: "1.1.0"
