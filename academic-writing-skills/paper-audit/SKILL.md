@@ -1,6 +1,6 @@
 ---
 name: paper-audit
-description: Deep-review-first audit for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants reviewer-style paper critique, pre-submission readiness checks, pass/fail gate decisions, structured revision roadmaps, journal-style peer review reports, or re-audits of revised manuscripts. Trigger even if the user only says "review my paper", "check if this is ready to submit", "audit this PDF", "simulate peer review", "write a SCI review report", "give me Summary / Major Issues / Minor Issues / Recommendation", "find the biggest problems in this manuscript", or "re-check whether I fixed the review issues". Do not use for direct source editing or compilation-heavy repair; route those to the format-specific writing skills instead.
+description: Reviewer-style audit and submission gate for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants peer-review critique, pre-submission readiness checks, pass/fail gate decisions, blocker triage, structured revision roadmaps, journal-style peer review reports, or re-audits of revised manuscripts. Trigger for prompts like "review my paper", "act as a reviewer", "simulate peer review", "audit this PDF", "is this ready to submit", "gate-check before submission", "find the biggest problems in this manuscript", "write a SCI review report", "give me Summary / Major Issues / Minor Issues / Recommendation", "re-check whether I fixed the review issues", and Chinese variants such as "审稿", "帮我审稿", "投稿门控", "挡稿", "投稿前体检", "把把关", "重新审一遍", "看看能不能投", "出审稿意见", "重大/次要问题清单". Do not use for direct source editing, polishing, or compilation-heavy repair; route those to the format-specific writing skills instead.
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
@@ -12,21 +12,34 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 
 # Paper Audit Skill v4.5
 
-`paper-audit` is now **deep-review-first**. Its core job is to behave like a serious reviewer: find technical, methodological, claim-level, and cross-section issues; keep script-backed findings separate from reviewer judgment; and return a structured issue bundle plus a revision roadmap.
+`paper-audit` is **deep-review-first**. Its core job is to behave like a
+serious reviewer: find technical, methodological, claim-level, and
+cross-section issues; keep script-backed findings separate from reviewer
+judgment; and return a structured issue bundle plus a revision roadmap.
 
-Version 4.5 adds a script-backed `PRESUBMISSION` layer for final-week mechanical checks: em dashes, AI-tone term frequency, abstract completeness, LaTeX citation/label/equation hygiene, paragraph-shape weak signals, and concrete captions. This layer supports existing modes; it is not a separate public mode.
+Version 4.5 adds a script-backed `PRESUBMISSION` layer for final-week
+mechanical checks (em dashes, AI-tone term frequency, abstract completeness,
+LaTeX citation/label/equation hygiene, paragraph-shape weak signals, concrete
+captions). It plugs into existing modes; it is not a separate public mode.
+See `references/PRESUBMISSION_GUIDE.md` for mode integration.
 
-Use it for audit and review. Do not use it as the first tool for source editing, sentence rewriting, or build fixing.
+Use it for audit and review. Do not use it as the first tool for source
+editing, sentence rewriting, or build fixing.
 
 ## What This Skill Produces
 
-- `quick-audit`: fast submission-readiness screen with script-backed findings, including `PRESUBMISSION`
-- `deep-review`: reviewer-style structured issue bundle with major/moderate/minor findings
-- `gate`: PASS/FAIL decision calibrated for submission blockers; `PRESUBMISSION` Major/Minor findings remain advisory
-- `re-audit`: compare current issue bundle against a previous audit, including mechanical regression findings
+- `quick-audit`: fast submission-readiness screen with script-backed findings,
+  including `PRESUBMISSION`
+- `deep-review`: reviewer-style structured issue bundle with major/moderate/
+  minor findings
+- `gate`: PASS/FAIL decision calibrated for submission blockers;
+  `PRESUBMISSION` Major/Minor findings remain advisory
+- `re-audit`: compare current issue bundle against a previous audit, including
+  mechanical regression findings
 - `polish`: precheck-only handoff into a polishing workflow
 
-The primary product is no longer just a score. For `deep-review`, the main outputs are:
+The primary product is no longer just a score. For `deep-review`, the main
+outputs are:
 
 - `final_issues.json`
 - `overall_assessment.txt`
@@ -44,15 +57,23 @@ The primary product is no longer just a score. For `deep-review`, the main outpu
 
 ## Critical Rules
 
-- Never rewrite the paper source unless the user explicitly switches to an editing skill.
+- Never rewrite the paper source unless the user explicitly switches to an
+  editing skill.
 - Never fabricate references, baselines, or reviewer evidence.
 - Always distinguish `[Script]` from `[LLM]` findings.
-- Always anchor reviewer findings to a quote, section, or exact textual location.
-- Be conservative with OCR noise, formatting quirks, and obvious copy-editing trivia.
-- Review like a careful reader: understand the author's intended meaning before flagging an issue.
-- For literature findings, judge whether the gap is evidence-backed and fairly positioned; do not rewrite the prose inside `paper-audit`.
-- For `PRESUBMISSION`, map CRITICAL/MAJOR/MINOR to Critical/Major/Minor script severities; only Critical or failed checklist items can fail `gate`.
-- In PDF mode, do not guess source-only hygiene. Report text-proven items and note that LaTeX/Typst source checks were skipped.
+- Always anchor reviewer findings to a quote, section, or exact textual
+  location.
+- Be conservative with OCR noise, formatting quirks, and obvious copy-editing
+  trivia.
+- Review like a careful reader: understand the author's intended meaning
+  before flagging an issue.
+- For literature findings, judge whether the gap is evidence-backed and
+  fairly positioned; do not rewrite the prose inside `paper-audit`.
+- For `PRESUBMISSION`, map CRITICAL/MAJOR/MINOR to Critical/Major/Minor
+  script severities; only Critical or failed checklist items can fail `gate`.
+  Full mode-integration matrix lives in `references/PRESUBMISSION_GUIDE.md`.
+- In PDF mode, do not guess source-only hygiene. Report text-proven items
+  and note that LaTeX/Typst source checks were skipped.
 
 ## Mode Selection
 
@@ -69,52 +90,8 @@ Legacy aliases still work for one compatibility cycle:
 - `self-check` -> `quick-audit`
 - `review` -> `deep-review`
 
-## Input Resolution
-
-- Resolve the paper path first and keep the user-provided relative path when it already works.
-- Infer the paper format from the extension (`.tex`, `.typ`, `.pdf`) before choosing checks or parser behavior.
-- Infer `report-style` from the request: use `peer-review` when the user asks for journal-review prose such as Summary / Major Issues / Minor Issues / Recommendation; otherwise default to `deep-review`.
-- Infer output language from the request first, then fall back to the paper language when the request is ambiguous.
-- For `re-audit`, require `--previous-report PATH`. If it is missing, stop immediately and ask only for that path instead of running a fresh audit.
-- State the locked mode, report style, focus, language, and venue (if known) before running commands when any of them were inferred rather than explicitly provided.
-
-## Presentation Surface
-
-- `deep-review`: make the issue bundle, revision roadmap, and artifact paths the primary summary surface. It is acceptable to mention schema-level fields such as review lanes or source provenance here.
-- `peer-review`: make reviewer prose the primary summary surface. Do not expose raw internal keys like `review_lane`, `source_kind`, or `root_cause_key` in the top-level prose summary; keep them inside the artifact bundle.
-- `gate`: show verdict first, then EIC screening, then blockers, then advisory recommendations.
-- `re-audit`: show status buckets (`FULLY_ADDRESSED`, `PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`) before any new audit commentary.
-
-## Committee Focus Routing (deep-review)
-
-For `deep-review`, use the **Academic Pre-Review Committee** by default. This is a 5-role review pass:
-
-1. Editor (desk-reject screen)
-2. Reviewer 1 (theory contribution)
-3. Reviewer 3 (literature dialogue / gap)
-4. Reviewer 2 (methodology transparency)
-5. Reviewer 4 (logic chain)
-
-If the user requests a single dimension, run only the matching committee role(s).
-
-Literature focus means:
-- verify whether the literature is thematically synthesized or merely enumerated
-- verify whether contradictions are acknowledged rather than flattened
-- verify whether the claimed gap is genuine instead of manufactured by selective citation
-- do **not** rewrite the related-work prose; hand that off to the format-specific writing skill when needed
-
-If `--focus ...` is provided, it overrides keyword inference:
-- `--focus full` (default)
-- `--focus editor|theory|literature|methodology|logic`
-
-Keyword map (English + Chinese):
-- editor: "desk reject", "pre-screen", "editor", "EIC", "主编", "预筛", "初筛"
-- theory: "theory", "contribution", "novelty", "theoretical dialogue", "理论", "贡献", "创新性"
-- literature: "related work", "literature", "research gap", "citation", "文献", "综述", "Research Gap", "引用", "gap is fake", "选择性引用"
-- methodology: "methods", "sample", "coding", "data", "design", "SRQR", "方法", "样本", "编码", "数据", "研究设计", "透明度"
-- logic: "logic", "argument", "causal", "structure", "论证", "因果", "逻辑", "结构"
-
-Output language: match the user's request language. If ambiguous, match the paper language.
+For per-mode workflow steps, input resolution rules, presentation surface
+rules, and committee focus routing, see `references/MODE_GUIDE.md`.
 
 ## Review Standard
 
@@ -126,6 +103,8 @@ Read these references before running reviewer-style work:
 4. `references/CONSOLIDATION_RULES.md`
 5. `references/ISSUE_SCHEMA.md`
 6. `references/PRE_SUBMISSION_RULES.md`
+7. `references/PRESUBMISSION_GUIDE.md`
+8. `references/MODE_GUIDE.md`
 
 The deep-review workflow uses a 16-part issue taxonomy:
 
@@ -148,193 +127,78 @@ The deep-review workflow uses a 16-part issue taxonomy:
 
 ## Workflow
 
-### Common Step 0
-
-Parse `$ARGUMENTS`, lock the paper path, and infer the mode if the user did not provide one. State the inferred mode before running commands if you had to infer it.
+Each mode has the same shape: parse `$ARGUMENTS`, lock the paper path, infer
+mode/report-style/focus/language if not provided, then run the canonical
+command. Detailed phase steps are in `references/MODE_GUIDE.md`.
 
 ### `quick-audit`
 
-1. Run:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode quick-audit ...
-   ```
-2. Present a concise report:
-   - `Submission Blockers` first
-   - then `Quality Improvements`
-   - then checklist items
-   - call out `PRESUBMISSION` mechanical findings separately when they matter
-   - mark quick-audit findings with `[Script]` provenance
-3. If the user clearly wants reviewer-depth critique after the quick screen, escalate to `deep-review`.
+```bash
+uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode quick-audit ...
+```
+
+Present `Submission Blockers` -> `Quality Improvements` -> checklist; call
+out `PRESUBMISSION` mechanical findings with `[Script]` provenance. Escalate
+to `deep-review` when the user wants reviewer-depth critique.
 
 ### `deep-review`
 
-Use this as the default reviewer-style path.
+Five phases (see `references/MODE_GUIDE.md` for full detail):
 
-If the user explicitly wants a submission-style reviewer report (for example: “SCI reviewer”,
-“journal review report”, “Summary / Major Issues / Minor Issues / Recommendation”, or “审稿报告”),
-keep the same deep-review evidence pipeline but make `peer_review_report.md` the **Primary View**
-in the combined CLI summary while keeping `review_report.md` as the richer evidence bundle. In this path, keep raw schema fields inside artifacts rather than the reviewer-facing prose.
+1. **Workspace prep**:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/prepare_review_workspace.py" <paper> --output-dir ./review_results
+   ```
+2. **Phase 0 automated audit**:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
+   ```
+3. **Phase 3A committee** — dispatch 5 committee agents (editor, theory,
+   literature, methodology, logic) and write `committee/consensus.md`.
+4. **Phase 3B section + cross-cutting lanes** — section, claims-vs-evidence,
+   notation, evaluation fairness, self-consistency, prior-art, and
+   pre-submission readiness (full/editor focus only).
+5. **Consolidation**:
+   ```bash
+   uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" <review_dir>
+   uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" <review_dir> --write-back
+   uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir>
+   ```
 
-#### Phase 1: Prepare workspace
-
-Run:
-
-```bash
-uv run python -B "$SKILL_DIR/scripts/prepare_review_workspace.py" <paper> --output-dir ./review_results
-```
-
-This creates:
-
-- `full_text.md`
-- `metadata.json`
-- `section_index.json`
-- `claim_map.json`
-- `paper_summary.md`
-- `sections/*.md`
-- `comments/`
-- `references/` (minimal copies for reviewer agents)
-- `committee/` (committee reviewer artifacts)
-
-#### Phase 2: Phase 0 automated audit
-
-Run:
-
-```bash
-uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
-```
-
-Treat this as **Phase 0 only**. It supplies script-backed context and scores, not the final review. `PRESUBMISSION` findings stay here for focused theory/literature/methodology/logic reviews; only full/editor deep-review can promote high-signal mechanical findings into the `pre_submission_readiness` lane.
-
-#### Phase 3: Committee + Review Lanes
-
-##### Phase 3A: Academic Pre-Review Committee (default)
-
-Decide committee focus:
-- If `--focus ...` is provided, use it.
-- Otherwise infer from the user request using the keyword map in "Committee Focus Routing".
-- If nothing matches, default to `full` (all five roles).
-
-Dispatch the committee reviewers (in this exact order) and have them write artifacts into the workspace:
-
-1. `agents/committee_editor_agent.md`
-   - write: `committee/editor.md`
-   - write: `comments/committee_editor.json`
-2. `agents/committee_theory_agent.md`
-   - write: `committee/theory.md`
-   - write: `comments/committee_theory.json`
-3. `agents/committee_literature_agent.md`
-   - write: `committee/literature.md`
-   - write: `comments/committee_literature.json`
-4. `agents/committee_methodology_agent.md`
-   - write: `committee/methodology.md`
-   - write: `comments/committee_methodology.json`
-5. `agents/committee_logic_agent.md`
-   - write: `committee/logic.md`
-   - write: `comments/committee_logic.json`
-
-If subagents are unavailable, run the committee reviewers inline, but keep the same file outputs.
-
-Then write: `committee/consensus.md`
-- include: overall score (1-10), ordered priorities, and the top 3 issues to fix first
-- scoring formula:
-  - start at 9.0
-  - subtract: `1.5 * (# major) + 0.7 * (# moderate) + 0.2 * (# minor)`
-  - floor at 1.0
-  - if Editor verdict is Desk Reject, cap at 4.0
-
-Note: `render_deep_review_report.py` automatically embeds `committee/*.md` into `review_report.md` when present.
-
-##### Phase 3B: Section and cross-cutting review lanes (coverage)
-
-Read:
-
-- `references/SUBAGENT_TEMPLATES.md`
-- `references/REVIEW_LANE_GUIDE.md`
-
-Then dispatch reviewer tasks for:
-
-- section lanes
-  - introduction / related work
-  - methods
-  - results
-  - discussion / conclusion
-  - appendix, if present
-- cross-cutting lanes
-  - claims vs evidence
-  - notation and numeric consistency
-  - evaluation fairness and reproducibility
-  - self-standard consistency
-  - prior-art and novelty grounding
-  - pre-submission readiness (full/editor focus only)
-
-Each lane writes a JSON array into `comments/`.
-
-If subagents are unavailable, use the built-in deterministic fallback lane pass in `scripts/audit.py` so the workflow still writes lane-compatible JSON into `comments/` before consolidation.
-
-#### Phase 4: Consolidation
-
-Run:
-
-```bash
-uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" <review_dir>
-uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" <review_dir> --write-back
-uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir>
-```
-
-Consolidation rules:
-
-- merge exact duplicates
-- keep distinct paper-level consequences separate even if they share a root cause
-- preserve singleton findings unless clearly false positive
-- assign `comment_type`, `severity`, `confidence`, and `root_cause_key`
-
-#### Phase 5: Present result
-
-Summarize:
-
-- 1 short paragraph overall assessment
-- counts of major / moderate / minor issues
-- 3 highest-priority revision items
-- identify the **Primary View** selected by `--report-style`
-- path to `review_report.md`, `peer_review_report.md`, and `final_issues.json`
+When the user explicitly asks for journal-review prose, set
+`--report-style peer-review` so `peer_review_report.md` becomes the **Primary
+View** while `review_report.md` stays as the richer evidence bundle.
 
 ### `gate`
 
-1. Run:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode gate ...
-   ```
-2. **EIC Screening** (Phase 0.5): Read `agents/editor_in_chief_agent.md` and perform the editor-in-chief desk-reject screening on the paper's title, abstract, and introduction. This evaluates pitch quality, venue fit, fatal flaws, and presentation baseline. A desk-reject verdict is a gate blocker.
-3. Report PASS/FAIL.
-4. Present EIC screening results first (verdict + score + justification).
-5. List blockers next.
-6. Keep advisory items separate from blockers.
-7. Keep `PRESUBMISSION` Major/Minor items advisory; only Critical mechanical findings can block the gate.
-8. For IEEE pseudocode checks, make it explicit which issues are mandatory and which are only IEEE-safe recommendations.
+```bash
+uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode gate ...
+```
+
+Run **EIC Screening** (Phase 0.5) using `agents/editor_in_chief_agent.md`
+first; report PASS/FAIL; verdict -> EIC -> blockers -> advisory. A desk-reject
+verdict is a gate blocker. Critical `PRESUBMISSION` only blocks the gate.
 
 ### `re-audit`
 
-1. Requires `--previous-report PATH`.
-2. Run:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode re-audit --previous-report <path> ...
-   ```
-3. If both old and new `final_issues.json` bundles are available, also run:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/diff_review_issues.py" <old_final_issues.json> <new_final_issues.json>
-   ```
-4. Present:
-   - root-cause-aware status labels: `FULLY_ADDRESSED`, `PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`
-   - use structured prior issue bundles when available, but still accept Markdown previous reports
+Requires `--previous-report PATH`.
+
+```bash
+uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode re-audit --previous-report <path> ...
+uv run python -B "$SKILL_DIR/scripts/diff_review_issues.py" <old_final_issues.json> <new_final_issues.json>
+```
+
+Present root-cause-aware status labels: `FULLY_ADDRESSED`,
+`PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`.
 
 ### `polish`
 
-1. Run the audit precheck:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
-   ```
-2. If blockers exist, stop and report them.
-3. Only proceed into polishing if the precheck is safe.
+```bash
+uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
+```
+
+If blockers exist, stop and report them. Only proceed into polishing if the
+precheck is safe.
 
 ## Output Contract
 
@@ -368,12 +232,14 @@ Always prefer:
 
 | File | Purpose |
 |---|---|
+| `references/MODE_GUIDE.md` | per-mode workflow detail, phase steps, committee focus routing |
+| `references/PRESUBMISSION_GUIDE.md` | `PRESUBMISSION` mode-integration behavior matrix |
 | `references/REVIEW_CRITERIA.md` | top-level audit scoring and mapping |
-| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy (16 dimensions) and leniency rules |
+| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy and leniency rules |
 | `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
 | `references/ISSUE_SCHEMA.md` | canonical JSON schema |
 | `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
-| `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules, severity mapping, and PDF/source limits |
+| `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules and term list |
 | `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
 | `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
 
@@ -416,12 +282,15 @@ Specialized deep-review agents (read their files for activation criteria):
 - `critical_reviewer_agent.md` — devil's advocate with C3-C5 checks
 - `domain_reviewer_agent.md` — domain expertise with A1-A7 assessments
 - `methodology_reviewer_agent.md` — methodology rigor with B3-B10 checks
-- `literature_reviewer_agent.md` — evidence-based literature verification (optional, `--literature-search`)
+- `literature_reviewer_agent.md` — evidence-based literature verification
+  (optional, `--literature-search`)
 
 ## Examples
 
-- “Review this manuscript like a serious conference reviewer and tell me the biggest validity risks.”
-- “Run a quick audit on `paper.tex` and tell me what blocks submission.”
-- “Gate this IEEE submission and separate blockers from recommendations.”
-- “Re-audit this revision against my previous report.”
-- “Audit only the literature positioning and tell me whether the claimed gap is real or fabricated by selective citation.”
+- "Review this manuscript like a serious conference reviewer and tell me the
+  biggest validity risks."
+- "Run a quick audit on `paper.tex` and tell me what blocks submission."
+- "Gate this IEEE submission and separate blockers from recommendations."
+- "Re-audit this revision against my previous report."
+- "Audit only the literature positioning and tell me whether the claimed gap
+  is real or fabricated by selective citation."
