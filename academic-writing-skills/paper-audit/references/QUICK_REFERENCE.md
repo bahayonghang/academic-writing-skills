@@ -1,5 +1,9 @@
 # Quick Reference
 
+Read next:
+- `references/MODE_GUIDE.md` — full per-mode workflow, phase steps, committee focus routing
+- `references/PRESUBMISSION_GUIDE.md` — `PRESUBMISSION` mode-integration matrix
+
 ## Modes
 
 | Mode | Purpose |
