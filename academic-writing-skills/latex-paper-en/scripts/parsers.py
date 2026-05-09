@@ -262,8 +262,6 @@ class TypstParser(DocumentParser):
 
         preserved.sort(key=lambda x: x["start"])
 
-        # Extract visible logic... (duplicated, could refactor to base)
-        # But keeping separate for now to be safe
         visible_parts = []
         last_end = 0
         for item in preserved:
@@ -311,6 +309,7 @@ def get_parser(file_path: Any) -> DocumentParser:
 
 
 def _normalize_whitespace(text: str) -> str:
+    """Collapse whitespace to single spaces."""
     return re.sub(r"\s+", " ", text).strip()
 
 
