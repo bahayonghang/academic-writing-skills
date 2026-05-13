@@ -621,3 +621,63 @@ def test_analyze_experiment_flags_unlayered_discussion_zh(tmp_path: Path):
     findings = analyze_experiment_zh.analyze(tex, "discussion")
     joined = "\n".join(findings)
     assert "layered structure" in joined
+
+
+# ── deai_check.py (Stage 1 — data-driven AI tone checkers, ZH) ────────────────
+
+
+def _ai_tone_sample_zh(tmp_path: Path) -> Path:
+    tex = tmp_path / "ai_tone_zh.tex"
+    tex.write_text(
+        "\\chapter{绪论}\n"
+        "近年来，深度学习取得了显著进展。本文提出一种新颖方法。\n"
+        "首先，模型架构是核心，关键模块的核心思想是核心层的核心创新！\n"
+        "\n"
+        "首先，我们设计了第一阶段。\n"
+        "\n"
+        "首先，我们设计了第二阶段。\n"
+        "\n"
+        "首先，我们设计了第三阶段。\n"
+        "\n"
+        "综上所述，本文的研究是全面深入的。\n"
+        "\n"
+        "由此可见，这种设计是核心中的核心！\n",
+        encoding="utf-8",
+    )
+    return tex
+
+
+def test_deai_zh_term_threshold_flags_chinese_term(tmp_path: Path) -> None:
+    tex = _ai_tone_sample_zh(tmp_path)
+    checker = deai_check.ChineseAITraceChecker(tex)
+    analysis = checker.analyze_document()
+    cats = {t["category"] for t in analysis["document_traces"]}
+    assert "term_threshold" in cats
+    core_hits = [t for t in analysis["document_traces"] if "核心" in t["pattern"]]
+    assert core_hits, "expected '核心' to exceed per-doc cap"
+
+
+def test_deai_zh_burstiness_flags_repeated_opening(tmp_path: Path) -> None:
+    tex = _ai_tone_sample_zh(tmp_path)
+    checker = deai_check.ChineseAITraceChecker(tex)
+    result = checker.check_section("introduction")
+    cats = {t["category"] for t in result["traces"]}
+    assert "burstiness" in cats
+
+
+def test_deai_zh_throat_clearing_flags_summary_lead(tmp_path: Path) -> None:
+    tex = _ai_tone_sample_zh(tmp_path)
+    checker = deai_check.ChineseAITraceChecker(tex)
+    result = checker.check_section("introduction")
+    patterns = {t["pattern"] for t in result["traces"] if t["category"] == "throat_clearing"}
+    assert any("综上所述" in p or "由此可见" in p or "首先" in p for p in patterns)
+
+
+def test_deai_zh_punctuation_flags_chinese_exclamation(tmp_path: Path) -> None:
+    tex = _ai_tone_sample_zh(tmp_path)
+    checker = deai_check.ChineseAITraceChecker(tex)
+    analysis = checker.analyze_document()
+    excl = [
+        t for t in analysis["document_traces"] if t["pattern"] == "punctuation:exclamation_in_body"
+    ]
+    assert excl, "expected exclamation in body to be flagged"

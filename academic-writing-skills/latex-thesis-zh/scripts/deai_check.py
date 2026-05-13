@@ -23,6 +23,95 @@ except ImportError:
     from parsers import get_parser
 
 
+# --- AI tone thresholds (data-driven via references/AI_TONE_THRESHOLDS.yaml) ---
+
+THRESHOLDS_FILENAME = "AI_TONE_THRESHOLDS.yaml"
+
+DEFAULT_THRESHOLDS = {
+    "term_thresholds": {
+        "首先": 4,
+        "其次": 4,
+        "然而": 5,
+        "此外": 4,
+        "因此": 6,
+        "另外": 3,
+        "进而": 3,
+        "而且": 4,
+        "显然": 3,
+        "通常": 4,
+        "一般": 5,
+        "尤其": 3,
+        "显著": 5,
+        "全面": 3,
+        "深入": 3,
+        "大量": 3,
+        "众多": 3,
+        "重要": 5,
+        "关键": 5,
+        "核心": 4,
+        "基本": 4,
+        "主要": 5,
+        "最为": 3,
+        "极为": 3,
+        "尤为": 3,
+    },
+    "burstiness": {
+        "consecutive_paragraphs": 3,
+        "opening_token_count": 4,
+    },
+    "throat_clearing": {
+        "patterns": [
+            r"^综上所述",
+            r"^总而言之",
+            r"^总的来说",
+            r"^由此可见",
+            r"^值得(?:指出|注意)的是",
+            r"^需要(?:指出|说明)的是",
+            r"^不难(?:发现|看出)",
+            r"^众所周知",
+            r"^毋庸讳言",
+            r"^首先[,，]",
+            r"^其次[,，]",
+            r"^然而[,，]",
+            r"^此外[,，]",
+            r"^一方面",
+            r"^另一方面",
+        ],
+    },
+    "punctuation": {
+        "max_em_dashes_per_doc": 5,
+        "ban_exclamation_in_body": True,
+    },
+}
+
+
+def _load_thresholds(script_dir: Path) -> dict:
+    """读取 references/AI_TONE_THRESHOLDS.yaml；缺失时使用脚本内默认值。
+
+    yaml 文件是 DEFAULT_THRESHOLDS 之上的可选覆盖层。部分字段缺省时按 key 合并，
+    用户只想调一个阈值不必复述全部配置。
+    """
+    import yaml  # PyYAML; required project dependency
+
+    merged = {
+        k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
+    }
+    yaml_path = script_dir.parent / "references" / THRESHOLDS_FILENAME
+    if not yaml_path.exists():
+        return merged
+
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    if not isinstance(data, dict):
+        raise ValueError(f"{THRESHOLDS_FILENAME} 顶层必须是映射")
+    for k, v in data.items():
+        if k in merged and isinstance(merged[k], dict) and isinstance(v, dict):
+            merged[k].update(v)
+        else:
+            merged[k] = v
+    return merged
+
+
 class ChineseAITraceChecker:
     """Detect AI writing traces in Chinese documents."""
 
@@ -92,6 +181,10 @@ class ChineseAITraceChecker:
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
+        self.thresholds = _load_thresholds(Path(__file__).parent)
+        self._throat_clearing_re = [
+            re.compile(p) for p in self.thresholds["throat_clearing"]["patterns"]
+        ]
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives (Chinese)."""
@@ -184,6 +277,8 @@ class ChineseAITraceChecker:
         parallel_issues = self._check_parallel_sentences(section_name)
         results["traces"].extend(parallel_issues)
         results["traces"].extend(self._check_low_information_density(section_name))
+        results["traces"].extend(self._check_burstiness(section_name))
+        results["traces"].extend(self._check_throat_clearing(section_name))
         results["trace_count"] = len(results["traces"])
 
         return results
@@ -296,13 +391,203 @@ class ChineseAITraceChecker:
             }
         ]
 
+    # --- Paragraph helper for burstiness / throat_clearing -------------------
+
+    def _iter_section_paragraphs(self, section_name: str) -> list[list[tuple[int, str]]]:
+        """按章节切分段落：空行或纯注释行作为段落分隔。"""
+        if section_name not in self.section_ranges:
+            return []
+        start, end = self.section_ranges[section_name]
+
+        paragraphs: list[list[tuple[int, str]]] = []
+        current: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            stripped = self.lines[i].strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                if current:
+                    paragraphs.append(current)
+                    current = []
+                continue
+            visible = self.parser.extract_visible_text(stripped).strip()
+            if not visible:
+                continue
+            current.append((i + 1, visible))
+        if current:
+            paragraphs.append(current)
+        return paragraphs
+
+    # --- Checker: burstiness（段落首字符重复） -----------------------------
+
+    def _check_burstiness(self, section_name: str) -> list[dict]:
+        cfg = self.thresholds["burstiness"]
+        window = max(2, int(cfg.get("consecutive_paragraphs", 3)))
+        k = max(1, int(cfg.get("opening_token_count", 4)))
+
+        paragraphs = self._iter_section_paragraphs(section_name)
+        if len(paragraphs) < window:
+            return []
+
+        def opening_key(para: list[tuple[int, str]]) -> str:
+            return para[0][1][:k]
+
+        traces: list[dict] = []
+        reported_starts: set[int] = set()
+        for i in range(len(paragraphs) - window + 1):
+            window_paras = paragraphs[i : i + window]
+            keys = [opening_key(p) for p in window_paras]
+            if not keys[0]:
+                continue
+            if len(set(keys)) == 1 and window_paras[0][0][0] not in reported_starts:
+                reported_starts.add(window_paras[0][0][0])
+                traces.append(
+                    {
+                        "line": window_paras[0][0][0],
+                        "text": f"连续 {window} 段以「{keys[0]}」开头",
+                        "original": window_paras[0][0][1],
+                        "pattern": "burstiness:parallel_opening",
+                        "category": "burstiness",
+                        "section": section_name,
+                        "suggestion_type": "parallel_opening",
+                    }
+                )
+        return traces
+
+    # --- Checker: throat-clearing（段首清嗓子） ----------------------------
+
+    def _check_throat_clearing(self, section_name: str) -> list[dict]:
+        if not self._throat_clearing_re:
+            return []
+        paragraphs = self._iter_section_paragraphs(section_name)
+        traces: list[dict] = []
+        for para in paragraphs:
+            line_no, first_text = para[0]
+            for compiled in self._throat_clearing_re:
+                if compiled.search(first_text):
+                    traces.append(
+                        {
+                            "line": line_no,
+                            "text": first_text[:160],
+                            "original": first_text,
+                            "pattern": f"throat_clearing:{compiled.pattern}",
+                            "category": "throat_clearing",
+                            "section": section_name,
+                            "suggestion_type": "throat_clearing",
+                        }
+                    )
+                    break
+        return traces
+
+    # --- Document-level visible-text helper --------------------------------
+
+    def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
+        out: list[tuple[int, str, str]] = []
+        section_lookup: dict[int, str] = {}
+        for name, (start, end) in self.section_ranges.items():
+            for ln in range(start, min(end, len(self.lines)) + 1):
+                section_lookup.setdefault(ln, name)
+        for i, line in enumerate(self.lines, start=1):
+            stripped = line.strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(stripped).strip()
+            if not visible:
+                continue
+            out.append((i, section_lookup.get(i, "document"), visible))
+        return out
+
+    # --- Checker: term overuse（文档级 substring 计数） --------------------
+
+    def _check_term_threshold(self) -> list[dict]:
+        term_caps: dict[str, int] = {
+            w: int(n) for w, n in self.thresholds["term_thresholds"].items()
+        }
+        if not term_caps:
+            return []
+        visible_lines = self._iter_visible_lines()
+        counts: dict[str, list] = {}
+        for line_no, section, text in visible_lines:
+            for w in term_caps:
+                hits = text.count(w)
+                if not hits:
+                    continue
+                if w not in counts:
+                    counts[w] = [0, line_no, section]
+                counts[w][0] += hits
+        traces: list[dict] = []
+        for word, (count, first_line, section) in counts.items():
+            cap = term_caps[word]
+            if count <= cap:
+                continue
+            traces.append(
+                {
+                    "line": first_line,
+                    "text": f"「{word}」全文出现 {count} 次（上限 {cap}）",
+                    "original": "",
+                    "pattern": f"term_threshold:{word}",
+                    "category": "term_threshold",
+                    "section": section,
+                    "suggestion_type": "term_overuse",
+                }
+            )
+        traces.sort(key=lambda t: (t["section"], t["line"]))
+        return traces
+
+    # --- Checker: punctuation（破折号 / 感叹号） --------------------------
+
+    def _check_punctuation(self) -> list[dict]:
+        cfg = self.thresholds["punctuation"]
+        max_em = int(cfg.get("max_em_dashes_per_doc", 5))
+        ban_excl = bool(cfg.get("ban_exclamation_in_body", True))
+        visible_lines = self._iter_visible_lines()
+        em_total = 0
+        first_em: tuple[int, str] | None = None
+        excl_hits: list[tuple[int, str, str]] = []
+        for line_no, section, text in visible_lines:
+            em_in_line = text.count("——") + text.count("—") + text.count("---")
+            if em_in_line:
+                em_total += em_in_line
+                if first_em is None:
+                    first_em = (line_no, section)
+            if ban_excl and ("！" in text or "!" in text):
+                excl_hits.append((line_no, section, text))
+        traces: list[dict] = []
+        if first_em is not None and em_total > max_em:
+            line_no, section = first_em
+            traces.append(
+                {
+                    "line": line_no,
+                    "text": f"全文破折号 {em_total} 处（上限 {max_em}）",
+                    "original": "",
+                    "pattern": "punctuation:em_dash_overuse",
+                    "category": "punctuation",
+                    "section": section,
+                    "suggestion_type": "punctuation_pattern",
+                }
+            )
+        for line_no, section, text in excl_hits:
+            traces.append(
+                {
+                    "line": line_no,
+                    "text": text[:160],
+                    "original": text,
+                    "pattern": "punctuation:exclamation_in_body",
+                    "category": "punctuation",
+                    "section": section,
+                    "suggestion_type": "punctuation_pattern",
+                }
+            )
+        return traces
+
     def analyze_document(self) -> dict:
         analysis = {
             "total_lines": len(self.lines),
             "sections": {},
+            "document_traces": [],
         }
         for section_name in self.section_ranges:
             analysis["sections"][section_name] = self.check_section(section_name)
+        analysis["document_traces"].extend(self._check_term_threshold())
+        analysis["document_traces"].extend(self._check_punctuation())
         return analysis
 
     def calculate_density_score(self, result: dict) -> float:
@@ -326,6 +611,19 @@ class ChineseAITraceChecker:
                         "instruction": self._get_instruction(trace["suggestion_type"]),
                     }
                 )
+        for trace in analysis.get("document_traces", []):
+            suggestions.append(
+                {
+                    "file": str(self.file_path),
+                    "line": trace["line"],
+                    "section": trace.get("section", "document"),
+                    "category": trace["category"],
+                    "issue": trace["text"],
+                    "pattern": trace["pattern"],
+                    "suggestion_key": trace["suggestion_type"],
+                    "instruction": self._get_instruction(trace["suggestion_type"]),
+                }
+            )
         return suggestions
 
     def _get_instruction(self, key: str) -> str:
@@ -357,6 +655,10 @@ class ChineseAITraceChecker:
             "filler_remove": "删除此填充连接词，直接陈述核心观点.",
             "vary_opening": "变换句式开头，避免机械排比结构.",
             "increase_information_density": "补入具体方法、对比对象、数据或结论，不要只说空泛价值判断.",
+            "term_overuse": "降低该词在全文的出现次数；换词或用数据替代.",
+            "parallel_opening": "连续段落首字雷同，至少改写一段为不同句法.",
+            "throat_clearing": "删除段首套话，直接陈述论点.",
+            "punctuation_pattern": "减少破折号堆叠，正文勿用感叹号.",
         }
         return instructions.get(key, "请改写得更具体、客观。")
 
@@ -394,6 +696,20 @@ class ChineseAITraceChecker:
                     report.append(f"  第{trace['line']}行 [{trace['category']}]")
                     report.append(f"    {trace['text'][:80]}")
                     report.append(f"    -> 建议: {self._get_instruction(trace['suggestion_type'])}")
+
+        doc_traces = analysis.get("document_traces", [])
+        if doc_traces:
+            report.append("")
+            report.append("-" * 70)
+            report.append("全文级痕迹")
+            report.append("-" * 70)
+            for trace in doc_traces:
+                report.append(
+                    f"  第{trace['line']}行 [{trace['category']}] "
+                    f"({trace.get('section', 'document')})"
+                )
+                report.append(f"    {trace['text'][:80]}")
+                report.append(f"    -> 建议: {self._get_instruction(trace['suggestion_type'])}")
 
         return "\n".join(report)
 

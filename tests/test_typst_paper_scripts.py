@@ -356,3 +356,68 @@ def test_typst_deai_detects_low_information_density_in_chinese(tmp_path: Path) -
     result = checker.check_section("introduction")
     categories = {trace["category"] for trace in result["traces"]}
     assert "low_information_density" in categories
+
+
+# ── deai_check.py (Stage 1 — data-driven AI tone checkers, Typst) ────────────
+
+
+def _ai_tone_sample_typ(tmp_path: Path) -> Path:
+    typ = tmp_path / "ai_tone.typ"
+    typ.write_text(
+        '#set heading(numbering: "1.")\n\n'
+        "= Introduction\n\n"
+        "Notably, this paper proposes a novel approach. The novel approach is "
+        "robust --- clearly the most novel one --- with novel ideas in this novel work!\n\n"
+        "Furthermore, the system is effective.\n\n"
+        "Furthermore, the design is comprehensive.\n\n"
+        "Furthermore, the experiments are comprehensive.\n\n"
+        "It is worth noting that the result is correct.\n",
+        encoding="utf-8",
+    )
+    return typ
+
+
+def test_deai_typst_term_threshold_flags_novel(tmp_path: Path) -> None:
+    typ = _ai_tone_sample_typ(tmp_path)
+    checker = deai_typst.AITraceChecker(typ)
+    analysis = checker.analyze_document()
+    cats = {t["category"] for t in analysis["document_traces"]}
+    assert "term_threshold" in cats
+
+
+def test_deai_typst_burstiness_flags_furthermore(tmp_path: Path) -> None:
+    typ = _ai_tone_sample_typ(tmp_path)
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("introduction")
+    cats = {t["category"] for t in result["traces"]}
+    assert "burstiness" in cats
+
+
+def test_deai_typst_throat_clearing_flags_paragraph_lead(tmp_path: Path) -> None:
+    typ = _ai_tone_sample_typ(tmp_path)
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("introduction")
+    cats = {t["category"] for t in result["traces"]}
+    assert "throat_clearing" in cats
+
+
+def test_deai_typst_punctuation_flags_exclamation_in_body(tmp_path: Path) -> None:
+    typ = _ai_tone_sample_typ(tmp_path)
+    checker = deai_typst.AITraceChecker(typ)
+    analysis = checker.analyze_document()
+    excl = [
+        t for t in analysis["document_traces"] if t["pattern"] == "punctuation:exclamation_in_body"
+    ]
+    assert excl, "expected '!' in body to be flagged"
+
+
+def test_deai_typst_bilingual_chinese_term(tmp_path: Path) -> None:
+    typ = tmp_path / "zh_typ.typ"
+    typ.write_text(
+        "= 方法\n\n本节核心是模型核心。核心思想是核心层的核心架构！\n",
+        encoding="utf-8",
+    )
+    checker = deai_typst.AITraceChecker(typ)
+    analysis = checker.analyze_document()
+    hits = [t for t in analysis["document_traces"] if "核心" in t["pattern"]]
+    assert hits, "expected substring-based Chinese term to be counted"

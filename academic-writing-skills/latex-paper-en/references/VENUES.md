@@ -1,5 +1,11 @@
 # Venue-Specific Requirements
 
+> **Summary index.** Each venue lives as its own snapshot under
+> `../templates/`; load `templates/<venue>.md` directly when the user names a
+> specific venue (`ieee`, `acm`, `neurips`, `icml`, `springer-lncs`).
+> This file remains the cross-venue overview (quick-reference table,
+> pre-submission checklist, resubmission conversions, figure specs).
+
 
 ## Table of Contents
 

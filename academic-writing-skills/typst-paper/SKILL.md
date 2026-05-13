@@ -54,7 +54,7 @@ Do not use this skill for:
 | Module | Use when | Primary command | Read next |
 | --- | --- | --- | --- |
 | `compile` | Typst build, export, font, or watch issues | `uv run python $SKILL_DIR/scripts/compile.py main.typ` | `references/modules/COMPILE.md` |
-| `format` | Venue/layout review for a Typst paper | `uv run python $SKILL_DIR/scripts/check_format.py main.typ` | `references/modules/FORMAT.md` |
+| `format` | Venue/layout review for a Typst paper | `uv run python $SKILL_DIR/scripts/check_format.py main.typ` | `references/modules/FORMAT.md` (load `templates/<venue>.md` instead of the full `references/VENUES.md` when a venue is named) |
 | `bibliography` | BibTeX or Hayagriva validation | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --typ main.typ` | `references/modules/BIBLIOGRAPHY.md` |
 | `grammar` | Grammar cleanup on Typst prose | `uv run python $SKILL_DIR/scripts/analyze_grammar.py main.typ --section introduction` | `references/modules/GRAMMAR.md` |
 | `sentences` | Long or dense sentence diagnostics | `uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction` | `references/modules/SENTENCES.md` |
@@ -107,15 +107,17 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 
 ## Safety Boundaries
 
-- Never invent citations, labels, or experimental claims.
-- Never rewrite Typst references, labels, or math content by default.
-- Keep compile diagnostics separate from prose rewrites so the user can validate each step.
+- Don't invent citations, labels, or experimental claims — fabricated evidence is harder to retract once the user trusts it than a clearly flagged gap.
+- Leave `@cite`, `<label>`, math blocks, and Typst macros untouched by default — a stray edit there is far harder to spot in a diff than a prose edit, and Typst surfaces those errors only at compile time.
+- Keep compile diagnostics separate from prose rewrites — bundling them encourages the user to apply both at once and lose track of which change broke what.
 
 ## Reference Map
 
 - `references/TYPST_SYNTAX.md`: Typst syntax reminders and pitfalls.
 - `references/STYLE_GUIDE.md`: paper-writing style baseline.
 - `references/CITATION_VERIFICATION.md`: citation verification workflow.
+- `references/VENUES.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS).
+- `templates/`: per-venue snapshots loaded on demand. Files: `ieee.md`, `acm.md`, `neurips.md`.
 - `references/modules/`: module-specific Typst commands and choices.
 - `references/modules/PSEUDOCODE.md`: IEEE-like defaults for Typst pseudocode.
 

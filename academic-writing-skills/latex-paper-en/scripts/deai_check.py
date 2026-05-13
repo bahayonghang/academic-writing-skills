@@ -23,6 +23,84 @@ except ImportError:
     from parsers import get_parser
 
 
+# --- AI tone thresholds (data-driven via references/AI_TONE_THRESHOLDS.yaml) ---
+
+THRESHOLDS_FILENAME = "AI_TONE_THRESHOLDS.yaml"
+
+DEFAULT_THRESHOLDS = {
+    "term_thresholds": {
+        "significant": 5,
+        "comprehensive": 3,
+        "effective": 5,
+        "novel": 4,
+        "robust": 4,
+        "important": 5,
+        "various": 5,
+        "several": 5,
+        "numerous": 3,
+        "furthermore": 3,
+        "moreover": 3,
+        "notably": 3,
+        "remarkable": 3,
+        "remarkably": 3,
+        "obvious": 3,
+        "obviously": 3,
+        "clearly": 4,
+    },
+    "burstiness": {
+        "consecutive_paragraphs": 3,
+        "opening_token_count": 2,
+    },
+    "throat_clearing": {
+        "patterns": [
+            r"^In order to better\b",
+            r"^In this (?:section|chapter|paper|work),\s+we\b",
+            r"^It is worth (?:noting|mentioning) that\b",
+            r"^It should be noted that\b",
+            r"^As (?:mentioned|stated|discussed) (?:earlier|before|above|previously)\b",
+            r"^Notably,",
+            r"^Furthermore,",
+            r"^Moreover,",
+            r"^In summary,",
+            r"^To summarize,",
+        ],
+    },
+    "punctuation": {
+        "max_em_dashes_per_doc": 5,
+        "ban_exclamation_in_body": True,
+    },
+}
+
+
+def _load_thresholds(script_dir: Path) -> dict:
+    """Load tone thresholds from references/AI_TONE_THRESHOLDS.yaml.
+
+    The YAML file is an optional user-overridable layer on top of
+    DEFAULT_THRESHOLDS. When absent, the defaults are used as-is.
+    Partial overrides are merged per-key so a user can tune one threshold
+    without restating the others.
+    """
+    import yaml  # PyYAML; required project dependency
+
+    merged = {
+        k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
+    }
+    yaml_path = script_dir.parent / "references" / THRESHOLDS_FILENAME
+    if not yaml_path.exists():
+        return merged
+
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    if not isinstance(data, dict):
+        raise ValueError(f"{THRESHOLDS_FILENAME} must contain a top-level mapping")
+    for k, v in data.items():
+        if k in merged and isinstance(merged[k], dict) and isinstance(v, dict):
+            merged[k].update(v)
+        else:
+            merged[k] = v
+    return merged
+
+
 class AITraceChecker:
     """Detect AI writing traces."""
 
@@ -80,6 +158,10 @@ class AITraceChecker:
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
+        self.thresholds = _load_thresholds(Path(__file__).parent)
+        self._throat_clearing_re = [
+            re.compile(p, re.IGNORECASE) for p in self.thresholds["throat_clearing"]["patterns"]
+        ]
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives."""
@@ -181,6 +263,8 @@ class AITraceChecker:
                 results["traces"].extend(matches)
 
         results["traces"].extend(self._check_low_information_density(section_name))
+        results["traces"].extend(self._check_burstiness(section_name))
+        results["traces"].extend(self._check_throat_clearing(section_name))
         results["trace_count"] = len(results["traces"])
         return results
 
@@ -238,15 +322,218 @@ class AITraceChecker:
             }
         ]
 
+    # --- Paragraph helper for burstiness / throat_clearing -------------------
+
+    def _iter_section_paragraphs(self, section_name: str) -> list[list[tuple[int, str]]]:
+        """Group a section's visible lines into paragraphs.
+
+        A paragraph is a run of non-blank, non-comment lines whose
+        extract_visible_text() is non-empty. Blank or comment-only lines
+        separate paragraphs.
+        """
+        if section_name not in self.section_ranges:
+            return []
+        start, end = self.section_ranges[section_name]
+
+        paragraphs: list[list[tuple[int, str]]] = []
+        current: list[tuple[int, str]] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            stripped = self.lines[i].strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                if current:
+                    paragraphs.append(current)
+                    current = []
+                continue
+            visible = self.parser.extract_visible_text(stripped).strip()
+            if not visible:
+                continue
+            current.append((i + 1, visible))
+        if current:
+            paragraphs.append(current)
+        return paragraphs
+
+    # --- Checker: burstiness (parallel paragraph openings) ------------------
+
+    def _check_burstiness(self, section_name: str) -> list[dict]:
+        cfg = self.thresholds["burstiness"]
+        window = max(2, int(cfg.get("consecutive_paragraphs", 3)))
+        k = max(1, int(cfg.get("opening_token_count", 2)))
+
+        paragraphs = self._iter_section_paragraphs(section_name)
+        if len(paragraphs) < window:
+            return []
+
+        def opening_key(para: list[tuple[int, str]]) -> str:
+            first_text = para[0][1]
+            tokens = re.findall(r"[A-Za-z][A-Za-z'-]*", first_text)
+            return " ".join(t.lower() for t in tokens[:k])
+
+        traces: list[dict] = []
+        reported_starts: set[int] = set()
+        for i in range(len(paragraphs) - window + 1):
+            window_paras = paragraphs[i : i + window]
+            keys = [opening_key(p) for p in window_paras]
+            if not keys[0]:
+                continue
+            if len(set(keys)) == 1 and window_paras[0][0][0] not in reported_starts:
+                reported_starts.add(window_paras[0][0][0])
+                traces.append(
+                    {
+                        "line": window_paras[0][0][0],
+                        "text": (f"{window} consecutive paragraphs open with '{keys[0]}'"),
+                        "original": window_paras[0][0][1],
+                        "pattern": "burstiness:parallel_opening",
+                        "category": "burstiness",
+                        "section": section_name,
+                        "suggestion_type": "parallel_opening",
+                    }
+                )
+        return traces
+
+    # --- Checker: throat-clearing paragraph leads ---------------------------
+
+    def _check_throat_clearing(self, section_name: str) -> list[dict]:
+        if not self._throat_clearing_re:
+            return []
+        paragraphs = self._iter_section_paragraphs(section_name)
+        traces: list[dict] = []
+        for para in paragraphs:
+            line_no, first_text = para[0]
+            for compiled in self._throat_clearing_re:
+                if compiled.search(first_text):
+                    traces.append(
+                        {
+                            "line": line_no,
+                            "text": first_text[:160],
+                            "original": first_text,
+                            "pattern": f"throat_clearing:{compiled.pattern}",
+                            "category": "throat_clearing",
+                            "section": section_name,
+                            "suggestion_type": "throat_clearing",
+                        }
+                    )
+                    break
+        return traces
+
+    # --- Document-level visible-text helper ---------------------------------
+
+    def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
+        """Yield (line_no, section_name, visible_text) for every non-blank,
+        non-comment line in the document.
+        """
+        out: list[tuple[int, str, str]] = []
+        section_lookup: dict[int, str] = {}
+        for name, (start, end) in self.section_ranges.items():
+            for ln in range(start, min(end, len(self.lines)) + 1):
+                section_lookup.setdefault(ln, name)
+        for i, line in enumerate(self.lines, start=1):
+            stripped = line.strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(stripped).strip()
+            if not visible:
+                continue
+            out.append((i, section_lookup.get(i, "document"), visible))
+        return out
+
+    # --- Checker: term overuse (document-level word-count threshold) --------
+
+    def _check_term_threshold(self) -> list[dict]:
+        term_caps: dict[str, int] = {
+            w.lower(): int(n) for w, n in self.thresholds["term_thresholds"].items()
+        }
+        if not term_caps:
+            return []
+        visible_lines = self._iter_visible_lines()
+        word_re = re.compile(r"\b[A-Za-z][A-Za-z'-]*\b")
+        # word -> (count, first_line_no, first_section)
+        counts: dict[str, list] = {}
+        for line_no, section, text in visible_lines:
+            for m in word_re.finditer(text):
+                w = m.group(0).lower()
+                if w not in term_caps:
+                    continue
+                if w not in counts:
+                    counts[w] = [0, line_no, section]
+                counts[w][0] += 1
+        traces: list[dict] = []
+        for word, (count, first_line, section) in counts.items():
+            cap = term_caps[word]
+            if count <= cap:
+                continue
+            traces.append(
+                {
+                    "line": first_line,
+                    "text": f"'{word}' used {count} times (cap {cap})",
+                    "original": "",
+                    "pattern": f"term_threshold:{word}",
+                    "category": "term_threshold",
+                    "section": section,
+                    "suggestion_type": "term_overuse",
+                }
+            )
+        traces.sort(key=lambda t: (t["section"], t["line"]))
+        return traces
+
+    # --- Checker: punctuation pattern (em-dash overuse, body-level "!") ----
+
+    def _check_punctuation(self) -> list[dict]:
+        cfg = self.thresholds["punctuation"]
+        max_em = int(cfg.get("max_em_dashes_per_doc", 5))
+        ban_excl = bool(cfg.get("ban_exclamation_in_body", True))
+        visible_lines = self._iter_visible_lines()
+        em_total = 0
+        first_em: tuple[int, str] | None = None
+        excl_hits: list[tuple[int, str, str]] = []
+        for line_no, section, text in visible_lines:
+            em_in_line = text.count("---") + text.count("—")
+            if em_in_line:
+                em_total += em_in_line
+                if first_em is None:
+                    first_em = (line_no, section)
+            if ban_excl and "!" in text:
+                excl_hits.append((line_no, section, text))
+        traces: list[dict] = []
+        if first_em is not None and em_total > max_em:
+            line_no, section = first_em
+            traces.append(
+                {
+                    "line": line_no,
+                    "text": f"{em_total} em-dashes across document (cap {max_em})",
+                    "original": "",
+                    "pattern": "punctuation:em_dash_overuse",
+                    "category": "punctuation",
+                    "section": section,
+                    "suggestion_type": "punctuation_pattern",
+                }
+            )
+        for line_no, section, text in excl_hits:
+            traces.append(
+                {
+                    "line": line_no,
+                    "text": text[:160],
+                    "original": text,
+                    "pattern": "punctuation:exclamation_in_body",
+                    "category": "punctuation",
+                    "section": section,
+                    "suggestion_type": "punctuation_pattern",
+                }
+            )
+        return traces
+
     def analyze_document(self) -> dict:
         """Analyze entire document."""
         analysis = {
             "total_lines": len(self.lines),
             "sections": {},
+            "document_traces": [],
         }
 
         for section_name in self.section_ranges:
             analysis["sections"][section_name] = self.check_section(section_name)
+
+        analysis["document_traces"].extend(self._check_term_threshold())
+        analysis["document_traces"].extend(self._check_punctuation())
 
         return analysis
 
@@ -272,6 +559,19 @@ class AITraceChecker:
                         "instruction": self._get_instruction(trace["suggestion_type"]),
                     }
                 )
+        for trace in analysis.get("document_traces", []):
+            suggestions.append(
+                {
+                    "file": str(self.file_path),
+                    "line": trace["line"],
+                    "section": trace.get("section", "document"),
+                    "category": trace["category"],
+                    "issue": trace["text"],
+                    "pattern": trace["pattern"],
+                    "suggestion_key": trace["suggestion_type"],
+                    "instruction": self._get_instruction(trace["suggestion_type"]),
+                }
+            )
         return suggestions
 
     def _get_instruction(self, key: str) -> str:
@@ -299,6 +599,10 @@ class AITraceChecker:
             "context_direct": "Start directly with the problem/context.",
             "cite_examples": "Provide citation examples.",
             "increase_information_density": "Replace boilerplate with concrete methods, comparators, evidence, and results.",
+            "term_overuse": "Reduce repeated use of this word; vary vocabulary or quantify the claim.",
+            "parallel_opening": "Vary the opening syntax across consecutive paragraphs.",
+            "throat_clearing": "Cut the leading boilerplate; start with the claim.",
+            "punctuation_pattern": "Avoid em-dash overuse and exclamation marks in body sections.",
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
 
@@ -339,6 +643,22 @@ class AITraceChecker:
                     report.append(
                         f"    -> Suggestion: {self._get_instruction(trace['suggestion_type'])}"
                     )
+
+        doc_traces = analysis.get("document_traces", [])
+        if doc_traces:
+            report.append("")
+            report.append("-" * 70)
+            report.append("DOCUMENT-LEVEL TRACES")
+            report.append("-" * 70)
+            for trace in doc_traces:
+                report.append(
+                    f"  Line {trace['line']} [{trace['category']}] "
+                    f"({trace.get('section', 'document')})"
+                )
+                report.append(f"    {trace['text'][:80]}")
+                report.append(
+                    f"    -> Suggestion: {self._get_instruction(trace['suggestion_type'])}"
+                )
 
         return "\n".join(report)
 
