@@ -757,3 +757,209 @@ class TestLogicChainAnalysis:
     def test_c5_has_causal_inversion(self) -> None:
         content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
         assert "causal inversion" in content.lower()
+
+
+def test_demote_unverified_confidence_downgrades_false_only() -> None:
+    from verify_quotes import demote_unverified_confidence
+
+    issues = [
+        {"title": "verified", "confidence": "high", "quote_verified": True},
+        {"title": "unverified", "confidence": "high", "quote_verified": False},
+        {"title": "no flag", "confidence": "medium"},
+    ]
+    demoted = demote_unverified_confidence(issues)
+    assert demoted[0]["confidence"] == "high"
+    assert demoted[1]["confidence"] == "unverified"
+    assert demoted[2]["confidence"] == "medium"
+    # Original list must not be mutated in-place.
+    assert issues[1]["confidence"] == "high"
+
+
+def test_verify_quotes_does_not_touch_confidence_without_write_back() -> None:
+    from verify_quotes import verify_quotes
+
+    issues = [
+        {"title": "missing", "quote": "ghost text", "confidence": "high"},
+    ]
+    updated = verify_quotes("paper body without that text", issues)
+    assert updated[0]["quote_verified"] is False
+    # Default probe path stays non-destructive: caller decides whether to commit.
+    assert updated[0]["confidence"] == "high"
+
+
+def test_verify_quotes_cli_write_back_demotes_missing_quotes(tmp_path) -> None:
+    import subprocess
+    import sys
+
+    review_dir = tmp_path / "review"
+    review_dir.mkdir()
+    (review_dir / "full_text.md").write_text("Exact phrase appears here.", encoding="utf-8")
+    bundle = [
+        {"title": "ok", "quote": "Exact phrase appears here.", "confidence": "high"},
+        {"title": "ghost", "quote": "missing quote", "confidence": "high"},
+    ]
+    issues_path = review_dir / "final_issues.json"
+    issues_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    script = Path(__file__).resolve().parent.parent / (
+        "academic-writing-skills/paper-audit/scripts/verify_quotes.py"
+    )
+    result = subprocess.run(
+        [sys.executable, "-B", str(script), str(review_dir), "--write-back"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    # Exit code is non-zero when at least one quote is missing — that's expected.
+    assert result.returncode == 1
+
+    written = json.loads(issues_path.read_text(encoding="utf-8"))
+    assert written[0]["quote_verified"] is True
+    assert written[0]["confidence"] == "high"
+    assert written[1]["quote_verified"] is False
+    assert written[1]["confidence"] == "unverified"
+
+
+def test_consolidate_preserves_unverified_confidence() -> None:
+    from consolidate_review_findings import sanitize_issue
+
+    sanitized = sanitize_issue(
+        {
+            "title": "ghost claim",
+            "quote": "made-up text",
+            "explanation": "explanation",
+            "comment_type": "claim_accuracy",
+            "severity": "moderate",
+            "confidence": "unverified",
+            "source_kind": "llm",
+            "quote_verified": False,
+        }
+    )
+    assert sanitized["confidence"] == "unverified"
+
+
+def test_consolidate_order_demotes_unverified_below_low() -> None:
+    from consolidate_review_findings import CONFIDENCE_ORDER
+
+    assert CONFIDENCE_ORDER["unverified"] > CONFIDENCE_ORDER["low"]
+    assert CONFIDENCE_ORDER["low"] > CONFIDENCE_ORDER["medium"]
+    assert CONFIDENCE_ORDER["medium"] > CONFIDENCE_ORDER["high"]
+
+
+def test_apply_frame_lock_advisory_downgrades_confidence_and_tags_explanation() -> None:
+    from consolidate_review_findings import (
+        CONFIDENCE_DOWNGRADE,
+        apply_frame_lock_advisory,
+    )
+
+    issues = [
+        {"confidence": "high", "explanation": "base"},
+        {"confidence": "medium", "explanation": "second"},
+        {"confidence": "low", "explanation": "third"},
+        {"confidence": "unverified", "explanation": "fourth"},
+    ]
+    apply_frame_lock_advisory(issues, 0.75)
+
+    assert issues[0]["confidence"] == CONFIDENCE_DOWNGRADE["high"] == "medium"
+    assert issues[1]["confidence"] == "low"
+    assert issues[2]["confidence"] == "low"
+    assert issues[3]["confidence"] == "unverified"
+    for issue in issues:
+        assert "frame_lock_alert" in issue["explanation"]
+        assert "surrender_rate=0.75" in issue["explanation"]
+
+
+def test_apply_frame_lock_advisory_is_idempotent() -> None:
+    from consolidate_review_findings import apply_frame_lock_advisory
+
+    issues = [{"confidence": "high", "explanation": "base"}]
+    apply_frame_lock_advisory(issues, 0.61)
+    once = issues[0]["explanation"]
+    apply_frame_lock_advisory(issues, 0.61)
+    twice = issues[0]["explanation"]
+    assert once == twice  # second call must not duplicate advisory
+
+
+def test_load_comment_files_applies_frame_lock_when_rate_exceeds_threshold(
+    tmp_path,
+) -> None:
+    from consolidate_review_findings import FRAME_LOCK_THRESHOLD, load_comment_files
+
+    comments = tmp_path / "comments"
+    comments.mkdir()
+    (comments / "critical_reviewer.json").write_text(
+        json.dumps(
+            {
+                "reviewer": "critical",
+                "issues": [
+                    {
+                        "title": "Claim outruns evidence",
+                        "quote": "We achieve state-of-the-art efficiency.",
+                        "explanation": "broad claim",
+                        "comment_type": "claim_accuracy",
+                        "severity": "major",
+                        "confidence": "high",
+                        "source_kind": "llm",
+                        "source_section": "abstract",
+                    }
+                ],
+                "challenges_made": 10,
+                "surrenders": 7,
+                "surrender_rate": FRAME_LOCK_THRESHOLD + 0.05,
+                "frame_lock_alert": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    findings = load_comment_files(comments)
+    assert len(findings) == 1
+    issue = findings[0]
+    assert issue["confidence"] == "medium"  # demoted from high
+    assert "frame_lock_alert" in issue["explanation"]
+
+
+def test_load_comment_files_skips_frame_lock_when_rate_below_threshold(tmp_path) -> None:
+    from consolidate_review_findings import FRAME_LOCK_THRESHOLD, load_comment_files
+
+    comments = tmp_path / "comments"
+    comments.mkdir()
+    (comments / "critical_reviewer.json").write_text(
+        json.dumps(
+            {
+                "reviewer": "critical",
+                "issues": [
+                    {
+                        "title": "Claim outruns evidence",
+                        "quote": "We achieve state-of-the-art efficiency.",
+                        "explanation": "broad claim",
+                        "comment_type": "claim_accuracy",
+                        "severity": "major",
+                        "confidence": "high",
+                        "source_kind": "llm",
+                        "source_section": "abstract",
+                    }
+                ],
+                "surrender_rate": FRAME_LOCK_THRESHOLD,  # equal, not exceeding
+                "frame_lock_alert": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    findings = load_comment_files(comments)
+    assert findings[0]["confidence"] == "high"
+    assert "frame_lock_alert" not in findings[0]["explanation"]
+
+
+def test_critical_reviewer_agent_documents_surrender_protocol() -> None:
+    agent_path = (
+        Path(__file__).resolve().parent.parent
+        / "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md"
+    )
+    text = agent_path.read_text(encoding="utf-8")
+    assert "Surrender-Rate Protocol" in text
+    assert "challenges_made" in text
+    assert "surrenders" in text
+    assert "surrender_rate" in text
+    assert "frame_lock_alert" in text

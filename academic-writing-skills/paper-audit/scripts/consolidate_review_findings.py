@@ -8,9 +8,25 @@ import re
 from pathlib import Path
 
 SEVERITY_ORDER = {"major": 0, "moderate": 1, "minor": 2}
-CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2}
+CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2, "unverified": 3}
 VALID_TYPES = {"methodology", "claim_accuracy", "presentation", "missing_information"}
 VALID_SOURCE_KINDS = {"llm", "script"}
+
+FRAME_LOCK_THRESHOLD = 0.6
+"""Surrender rate above which a reviewer file is treated as frame-locked.
+
+Issues that originated from a reviewer payload exposing
+``surrender_rate > FRAME_LOCK_THRESHOLD`` are demoted by one confidence step
+and tagged with an advisory note. The gate decision is not modified — this is
+informational, not a blocker.
+"""
+
+CONFIDENCE_DOWNGRADE = {
+    "high": "medium",
+    "medium": "low",
+    "low": "low",
+    "unverified": "unverified",
+}
 
 
 def slugify(value: str) -> str:
@@ -59,16 +75,55 @@ def sanitize_issue(issue: dict) -> dict:
     }
 
 
+def apply_frame_lock_advisory(issues: list[dict], rate: float) -> list[dict]:
+    """Demote confidence and tag explanation when a reviewer file is frame-locked.
+
+    Mutates each issue in place: confidence drops by one step (high -> medium,
+    medium -> low, low stays, unverified stays) and a short advisory marker is
+    appended to ``explanation`` so the downstream report can surface why the
+    confidence was lowered. The advisory is appended at most once per issue.
+    """
+    advisory = f"(advisory: frame_lock_alert, surrender_rate={rate:.2f})"
+    for issue in issues:
+        issue["confidence"] = CONFIDENCE_DOWNGRADE.get(issue["confidence"], issue["confidence"])
+        if advisory not in issue["explanation"]:
+            issue["explanation"] = (issue["explanation"] + " " + advisory).strip()
+    return issues
+
+
 def load_comment_files(comments_dir: Path) -> list[dict]:
-    """Load every JSON file from the comments directory."""
+    """Load every JSON file from the comments directory.
+
+    Recognises two payload shapes per file:
+    * a plain list of issues (legacy / lane output)
+    * a dict ``{"issues": [...], "surrender_rate": float, ...}`` (critical
+      reviewer style). When ``surrender_rate > FRAME_LOCK_THRESHOLD``, the
+      file's issues are demoted via :func:`apply_frame_lock_advisory`.
+    """
     findings: list[dict] = []
     for path in sorted(comments_dir.glob("*.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
-        items = payload if isinstance(payload, list) else payload.get("issues", [])
+        if isinstance(payload, dict):
+            items = payload.get("issues", []) or []
+            rate_raw = payload.get("surrender_rate")
+            try:
+                rate_value = float(rate_raw) if rate_raw is not None else None
+            except (TypeError, ValueError):
+                rate_value = None
+        else:
+            items = payload
+            rate_value = None
+
+        batch: list[dict] = []
         for raw_issue in items:
             issue = sanitize_issue(raw_issue)
             issue["source_file"] = path.name
-            findings.append(issue)
+            batch.append(issue)
+
+        if rate_value is not None and rate_value > FRAME_LOCK_THRESHOLD:
+            batch = apply_frame_lock_advisory(batch, rate_value)
+
+        findings.extend(batch)
     return findings
 
 

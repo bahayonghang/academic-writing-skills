@@ -57,20 +57,14 @@ outputs are:
 
 ## Critical Rules
 
-- Never rewrite the paper source unless the user explicitly switches to an
-  editing skill.
-- Never fabricate references, baselines, or reviewer evidence.
-- Always distinguish `[Script]` from `[LLM]` findings.
-- Always anchor reviewer findings to a quote, section, or exact textual
-  location.
-- Be conservative with OCR noise, formatting quirks, and obvious copy-editing
-  trivia.
-- Review like a careful reader: understand the author's intended meaning
-  before flagging an issue.
-- For literature findings, judge whether the gap is evidence-backed and
-  fairly positioned; do not rewrite the prose inside `paper-audit`.
-- For `PRESUBMISSION`, map CRITICAL/MAJOR/MINOR to Critical/Major/Minor
-  script severities; only Critical or failed checklist items can fail `gate`.
+- Don't rewrite the paper source — `paper-audit` is a reviewer, not an editor; switch skills explicitly if the user wants prose changes, so review evidence stays separable from edits.
+- Don't fabricate references, baselines, or reviewer evidence — invented citations and made-up reviewer voices undermine every other finding in the bundle.
+- Distinguish `[Script]` from `[LLM]` findings — script-backed items have a deterministic anchor the user can rerun, while LLM findings need a quote or section to be falsifiable.
+- Anchor every reviewer finding to a quote, section, or exact textual location — unanchored complaints become impossible to audit on a re-pass.
+- Be conservative with OCR noise, formatting quirks, and copy-editing trivia — flagging cosmetic noise inflates the report and buries the real issues.
+- Read like a careful reader before flagging — understand the author's intended meaning first so the issue captures a real misread, not a strawman.
+- For literature findings, judge whether the gap is evidence-backed and fairly positioned, and don't rewrite the prose inside `paper-audit` — keep prose rewrites in the format-specific writing skills where they can be reviewed in isolation.
+- For `PRESUBMISSION`, map CRITICAL / MAJOR / MINOR to Critical / Major / Minor script severities; only Critical or failed checklist items can fail `gate` — otherwise mechanical findings drown out the substantive ones.
   Full mode-integration matrix lives in `references/PRESUBMISSION_GUIDE.md`.
 - In PDF mode, do not guess source-only hygiene. Report text-proven items
   and note that LaTeX/Typst source checks were skipped.
@@ -211,7 +205,7 @@ For `deep-review`, the final issue schema is:
   "explanation": "why this matters and what remains problematic",
   "comment_type": "methodology|claim_accuracy|presentation|missing_information",
   "severity": "major|moderate|minor",
-  "confidence": "high|medium|low",
+  "confidence": "high|medium|low|unverified",
   "source_kind": "script|llm",
   "source_section": "methods",
   "related_sections": ["results", "appendix"],
