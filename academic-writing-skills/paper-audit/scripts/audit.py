@@ -29,6 +29,25 @@ from report_generator import (
 )
 from verify_quotes import verify_quotes
 
+TOP_LEVEL_DEEP_REVIEW_ARTIFACTS: tuple[str, ...] = (
+    "metadata.json",
+    "phase0_context.md",
+    "all_comments.json",
+    "final_issues.json",
+    "overall_assessment.txt",
+    "revision_roadmap.md",
+    "review_report.md",
+    "peer_review_report.md",
+)
+
+REQUIRED_REVIEW_WORKSPACE_FILES: tuple[str, ...] = (
+    "metadata.json",
+    "section_index.json",
+    "claim_map.json",
+    "full_text.md",
+    "paper_summary.md",
+)
+
 # --- Mode Configuration ---
 
 MODE_CHECKS: dict[str, list[str]] = {
@@ -808,12 +827,42 @@ def _selected_lanes_for_focus(focus: str) -> set[str]:
     return FOCUS_TO_ALLOWED_LANES.get(focus, FOCUS_TO_ALLOWED_LANES["full"])
 
 
+def _load_completed_lanes(review_dir: Path) -> set[str]:
+    """Return completed lane identifiers recorded in this workspace checkpoint."""
+    from checkpoint import load_checkpoint
+
+    checkpoint = load_checkpoint(review_dir)
+    if checkpoint is None:
+        return set()
+    return {str(lane) for lane in checkpoint.get("completed_lanes", [])}
+
+
+def _register_artifact_if_present(review_dir: Path, relative_path: str) -> None:
+    """Add an artifact to checkpoint generated_files if it exists."""
+    target = review_dir / relative_path
+    if not target.exists():
+        return
+    from checkpoint import register_generated_file
+
+    register_generated_file(review_dir, relative_path)
+
+
+def _register_json_lane_artifact(review_dir: Path, lane_name: str) -> None:
+    _register_artifact_if_present(review_dir, f"comments/{lane_name}.json")
+
+
+def _register_committee_role_artifacts(review_dir: Path, role: str) -> None:
+    _register_artifact_if_present(review_dir, f"committee/{role}.md")
+    _register_artifact_if_present(review_dir, f"comments/committee_{role}.json")
+
+
 def _write_lane_outputs(
     review_dir: Path,
     section_index: list[dict],
     claim_map: dict,
     *,
     focus: str = "full",
+    resume: bool = False,
 ) -> list[dict]:
     """Create fallback lane outputs inside comments/ and return all raw issues."""
     sections_dir = review_dir / "sections"
@@ -823,6 +872,7 @@ def _write_lane_outputs(
     section_texts: dict[str, str] = {}
     raw_issues: list[dict] = []
     allowed_lanes = _selected_lanes_for_focus(focus)
+    completed_lanes = _load_completed_lanes(review_dir) if resume else set()
 
     for section in section_index:
         section_key = section.get("section_key", "")
@@ -837,24 +887,40 @@ def _write_lane_outputs(
         lane_name = _lane_from_section(section_key)
         if lane_name not in allowed_lanes:
             continue
+        if lane_name in completed_lanes:
+            continue
         lane_issues = _fallback_section_lane_issues(section_key, section_text, claim_map)
         if lane_issues:
             _write_lane_file(comments_dir, lane_name, lane_issues)
             raw_issues.extend(lane_issues)
+            if resume:
+                from checkpoint import mark_lane_completed
+
+                mark_lane_completed(review_dir, lane_name)
+                _register_json_lane_artifact(review_dir, lane_name)
 
     cross_cutting = _fallback_cross_cutting_issues(claim_map, section_texts)
     lane_buckets: dict[str, list[dict]] = {}
     for issue in cross_cutting:
         if issue["review_lane"] not in allowed_lanes:
             continue
+        if issue["review_lane"] in completed_lanes:
+            continue
         lane_buckets.setdefault(issue["review_lane"], []).append(issue)
         raw_issues.append(issue)
 
     for lane_name, lane_issues in lane_buckets.items():
         _write_lane_file(comments_dir, lane_name, lane_issues)
+        if resume:
+            from checkpoint import mark_lane_completed
+
+            mark_lane_completed(review_dir, lane_name)
+            _register_json_lane_artifact(review_dir, lane_name)
 
     if not raw_issues:
         placeholder_lane = next(iter(sorted(allowed_lanes)), "self_standard_consistency")
+        if placeholder_lane in completed_lanes:
+            return raw_issues
         placeholder = [
             _make_fallback_issue(
                 title="Deep review requires manual reviewer judgment",
@@ -871,6 +937,11 @@ def _write_lane_outputs(
         ]
         _write_lane_file(comments_dir, placeholder_lane, placeholder)
         raw_issues.extend(placeholder)
+        if resume:
+            from checkpoint import mark_lane_completed
+
+            mark_lane_completed(review_dir, placeholder_lane)
+            _register_json_lane_artifact(review_dir, placeholder_lane)
 
     return raw_issues
 
@@ -956,9 +1027,12 @@ def _write_presubmission_lane_outputs(
     section_index: list[dict],
     *,
     focus: str,
+    resume: bool = False,
 ) -> list[dict]:
     """Write the pre-submission readiness lane for full/editor deep-review only."""
     if focus not in {"full", "editor"}:
+        return []
+    if resume and "pre_submission_readiness" in _load_completed_lanes(review_dir):
         return []
     lane_issues = _presubmission_phase0_issues(phase0_result, section_index)
     if not lane_issues:
@@ -966,6 +1040,11 @@ def _write_presubmission_lane_outputs(
     comments_dir = review_dir / "comments"
     comments_dir.mkdir(parents=True, exist_ok=True)
     _write_lane_file(comments_dir, "pre_submission_readiness", lane_issues)
+    if resume:
+        from checkpoint import mark_lane_completed
+
+        mark_lane_completed(review_dir, "pre_submission_readiness")
+        _register_json_lane_artifact(review_dir, "pre_submission_readiness")
     return lane_issues
 
 
@@ -1201,6 +1280,7 @@ def _write_committee_artifacts(
     issues: list[dict],
     *,
     focus: str,
+    resume: bool = False,
 ) -> tuple[float | None, str]:
     """Write deterministic committee markdown/json artifacts for the selected focus."""
     committee_dir = review_dir / "committee"
@@ -1209,8 +1289,14 @@ def _write_committee_artifacts(
     comments_dir.mkdir(parents=True, exist_ok=True)
 
     selected_roles = FOCUS_TO_COMMITTEE_ROLES.get(focus, FOCUS_TO_COMMITTEE_ROLES["full"])
+    completed_lanes = _load_completed_lanes(review_dir) if resume else set()
     rendered_role = False
     for role in selected_roles:
+        lane_name = f"committee_{role}"
+        if lane_name in completed_lanes:
+            _register_committee_role_artifacts(review_dir, role)
+            rendered_role = True
+            continue
         role_issues = _issues_for_committee_role(role, issues)
         if role == "editor":
             markdown = _render_editor_committee_markdown(role_issues, phase0_result=phase0_result)
@@ -1228,10 +1314,16 @@ def _write_committee_artifacts(
             json.dumps(_committee_issue_copies(role, role_issues), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
+        if resume:
+            from checkpoint import mark_lane_completed
+
+            mark_lane_completed(review_dir, lane_name)
+            _register_committee_role_artifacts(review_dir, role)
         rendered_role = True
 
     if focus == "full":
         _write_committee_consensus(review_dir, phase0_result, issues)
+        _register_artifact_if_present(review_dir, "committee/consensus.md")
         editor_verdict = _extract_editor_verdict_from_markdown(
             (committee_dir / "editor.md").read_text(encoding="utf-8")
         )
@@ -1254,6 +1346,66 @@ def _write_lane_file(comments_dir: Path, lane_name: str, lane_issues: list[dict]
         json.dumps(lane_issues, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
+
+
+def _load_prepared_review_workspace(review_dir: Path) -> tuple[dict, list[dict], dict]:
+    """Load and validate the minimal files required to resume a prepared workspace."""
+    missing = [
+        relative_path
+        for relative_path in REQUIRED_REVIEW_WORKSPACE_FILES
+        if not (review_dir / relative_path).exists()
+    ]
+    if missing:
+        raise FileNotFoundError(
+            f"Prepared review workspace is missing required file(s): {', '.join(missing)}"
+        )
+    metadata = json.loads((review_dir / "metadata.json").read_text(encoding="utf-8"))
+    section_index = json.loads((review_dir / "section_index.json").read_text(encoding="utf-8"))
+    claim_map = json.loads((review_dir / "claim_map.json").read_text(encoding="utf-8"))
+    if not isinstance(metadata, dict):
+        raise ValueError("Prepared review workspace metadata.json must contain an object")
+    if not isinstance(section_index, list):
+        raise ValueError("Prepared review workspace section_index.json must contain a list")
+    if not isinstance(claim_map, dict):
+        raise ValueError("Prepared review workspace claim_map.json must contain an object")
+    return metadata, section_index, claim_map
+
+
+def _ensure_review_checkpoint(review_dir: Path) -> None:
+    """Ensure checkpoint.json exists for older prepared workspaces."""
+    from checkpoint import init_checkpoint, load_checkpoint
+
+    if load_checkpoint(review_dir) is not None:
+        return
+    init_checkpoint(
+        review_dir,
+        generated_files=[
+            relative_path
+            for relative_path in REQUIRED_REVIEW_WORKSPACE_FILES
+            if (review_dir / relative_path).exists()
+        ],
+    )
+
+
+def _mark_phase(review_dir: Path, phase: str, status: str, *, enabled: bool) -> None:
+    if not enabled:
+        return
+    from checkpoint import mark_phase
+
+    mark_phase(review_dir, phase, status)
+
+
+def _mark_deep_review_suspended(review_dir: Path, *, enabled: bool) -> None:
+    if not enabled:
+        return
+    from checkpoint import set_status
+
+    set_status(review_dir, "suspended")
+
+
+def _register_top_level_artifacts(review_dir: Path) -> None:
+    for relative_path in TOP_LEVEL_DEEP_REVIEW_ARTIFACTS:
+        _register_artifact_if_present(review_dir, relative_path)
 
 
 def _build_overall_assessment(issues: list[dict]) -> str:
@@ -1426,98 +1578,145 @@ def run_deep_review(
     tavily_key: str = "",
     s2_key: str = "",
     regression: bool = False,
+    review_dir: str | None = None,
+    no_resume: bool = False,
 ) -> AuditResult:
     """Run the end-to-end deep-review workflow with deterministic fallback lanes."""
     source_path = str(Path(file_path).resolve())
-    review_dir = prepare_workspace(source_path)
-    metadata = json.loads((review_dir / "metadata.json").read_text(encoding="utf-8"))
-    metadata["review_focus"] = focus
-    (review_dir / "metadata.json").write_text(
-        json.dumps(metadata, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    section_index = json.loads((review_dir / "section_index.json").read_text(encoding="utf-8"))
-    claim_map = json.loads((review_dir / "claim_map.json").read_text(encoding="utf-8"))
-
-    phase0_result = run_audit(
-        file_path=source_path,
-        mode="quick-audit",
-        pdf_mode=pdf_mode,
-        venue=venue,
-        lang=lang,
-        focus=focus,
-        online=online,
-        email=email,
-        scholar_eval=scholar_eval,
-        literature_search=literature_search,
-        tavily_key=tavily_key,
-        s2_key=s2_key,
-        regression=regression,
-    )
-    (review_dir / "phase0_context.md").write_text(
-        export_phase0_context(phase0_result),
-        encoding="utf-8",
+    resume_enabled = review_dir is not None
+    workspace = (
+        Path(review_dir).resolve() if review_dir is not None else prepare_workspace(source_path)
     )
 
-    _write_lane_outputs(review_dir, section_index, claim_map, focus=focus)
-    _write_presubmission_lane_outputs(review_dir, phase0_result, section_index, focus=focus)
+    if resume_enabled:
+        if no_resume:
+            from checkpoint import reset_checkpoint
 
-    from consolidate_review_findings import consolidate_findings, load_comment_files
+            reset_checkpoint(workspace)
+            print(f"[checkpoint] reset at {workspace / 'checkpoint.json'}")
+        else:
+            _ensure_review_checkpoint(workspace)
+    metadata, section_index, claim_map = _load_prepared_review_workspace(workspace)
 
-    findings = [
-        normalize_deep_review_issue_dict(issue)
-        for issue in load_comment_files(review_dir / "comments")
-    ]
-    consolidated = consolidate_findings(findings)
-    verified = [
-        normalize_deep_review_issue_dict(issue)
-        for issue in verify_quotes(
-            (review_dir / "full_text.md").read_text(encoding="utf-8"), consolidated
+    try:
+        if resume_enabled:
+            from checkpoint import set_status
+
+            set_status(workspace, "in_progress")
+
+        metadata["review_focus"] = focus
+        (workspace / "metadata.json").write_text(
+            json.dumps(metadata, indent=2, ensure_ascii=False),
+            encoding="utf-8",
         )
-    ]
+        _register_artifact_if_present(workspace, "metadata.json")
 
-    (review_dir / "all_comments.json").write_text(
-        json.dumps(findings, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    (review_dir / "final_issues.json").write_text(
-        json.dumps(verified, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+        _mark_phase(workspace, "phase0_audit", "in_progress", enabled=resume_enabled)
+        phase0_result = run_audit(
+            file_path=source_path,
+            mode="quick-audit",
+            pdf_mode=pdf_mode,
+            venue=venue,
+            lang=lang,
+            focus=focus,
+            online=online,
+            email=email,
+            scholar_eval=scholar_eval,
+            literature_search=literature_search,
+            tavily_key=tavily_key,
+            s2_key=s2_key,
+            regression=regression,
+        )
+        (workspace / "phase0_context.md").write_text(
+            export_phase0_context(phase0_result),
+            encoding="utf-8",
+        )
+        _register_artifact_if_present(workspace, "phase0_context.md")
+        _mark_phase(workspace, "phase0_audit", "completed", enabled=resume_enabled)
 
-    overall_assessment = _build_overall_assessment(verified)
-    (review_dir / "overall_assessment.txt").write_text(overall_assessment + "\n", encoding="utf-8")
-    revision_roadmap = _build_revision_roadmap(verified)
-    _write_revision_roadmap(review_dir, revision_roadmap)
-    _write_committee_artifacts(review_dir, phase0_result, verified, focus=focus)
+        _mark_phase(workspace, "lanes", "in_progress", enabled=resume_enabled)
+        _write_lane_outputs(workspace, section_index, claim_map, focus=focus, resume=resume_enabled)
+        _write_presubmission_lane_outputs(
+            workspace, phase0_result, section_index, focus=focus, resume=resume_enabled
+        )
+        _mark_phase(workspace, "lanes", "completed", enabled=resume_enabled)
 
-    issue_bundle = [coerce_deep_review_issue(issue) for issue in verified]
-    result = AuditResult(
-        file_path=source_path,
-        language=lang or metadata.get("language", "en"),
-        mode="deep-review",
-        venue=venue,
-        issues=phase0_result.issues,
-        issue_bundle=issue_bundle,
-        checklist=phase0_result.checklist,
-        summary=(review_dir / "paper_summary.md").read_text(encoding="utf-8"),
-        overall_assessment=overall_assessment,
-        revision_roadmap=revision_roadmap,
-        section_index=section_index,
-        artifact_dir=str(review_dir),
-        review_focus=focus,
-        scholar_eval_result=phase0_result.scholar_eval_result,
-        literature_context=phase0_result.literature_context,
-    )
-    (review_dir / "review_report.md").write_text(
-        render_deep_review_report(result),
-        encoding="utf-8",
-    )
-    (review_dir / "peer_review_report.md").write_text(
-        render_peer_review_report(result),
-        encoding="utf-8",
-    )
-    return result
+        from consolidate_review_findings import consolidate_findings, load_comment_files
+
+        _mark_phase(workspace, "consolidation", "in_progress", enabled=resume_enabled)
+        findings = [
+            normalize_deep_review_issue_dict(issue)
+            for issue in load_comment_files(workspace / "comments")
+        ]
+        consolidated = consolidate_findings(findings)
+        verified = [
+            normalize_deep_review_issue_dict(issue)
+            for issue in verify_quotes(
+                (workspace / "full_text.md").read_text(encoding="utf-8"), consolidated
+            )
+        ]
+
+        (workspace / "all_comments.json").write_text(
+            json.dumps(findings, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        (workspace / "final_issues.json").write_text(
+            json.dumps(verified, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        overall_assessment = _build_overall_assessment(verified)
+        (workspace / "overall_assessment.txt").write_text(
+            overall_assessment + "\n", encoding="utf-8"
+        )
+        revision_roadmap = _build_revision_roadmap(verified)
+        _write_revision_roadmap(workspace, revision_roadmap)
+        _register_top_level_artifacts(workspace)
+        _mark_phase(workspace, "consolidation", "completed", enabled=resume_enabled)
+
+        _mark_phase(workspace, "committee", "in_progress", enabled=resume_enabled)
+        _write_committee_artifacts(
+            workspace, phase0_result, verified, focus=focus, resume=resume_enabled
+        )
+        _mark_phase(workspace, "committee", "completed", enabled=resume_enabled)
+
+        _mark_phase(workspace, "present", "in_progress", enabled=resume_enabled)
+        issue_bundle = [coerce_deep_review_issue(issue) for issue in verified]
+        result = AuditResult(
+            file_path=source_path,
+            language=lang or metadata.get("language", "en"),
+            mode="deep-review",
+            venue=venue,
+            issues=phase0_result.issues,
+            issue_bundle=issue_bundle,
+            checklist=phase0_result.checklist,
+            summary=(workspace / "paper_summary.md").read_text(encoding="utf-8"),
+            overall_assessment=overall_assessment,
+            revision_roadmap=revision_roadmap,
+            section_index=section_index,
+            artifact_dir=str(workspace),
+            review_focus=focus,
+            scholar_eval_result=phase0_result.scholar_eval_result,
+            literature_context=phase0_result.literature_context,
+        )
+        (workspace / "review_report.md").write_text(
+            render_deep_review_report(result),
+            encoding="utf-8",
+        )
+        (workspace / "peer_review_report.md").write_text(
+            render_peer_review_report(result),
+            encoding="utf-8",
+        )
+        _register_top_level_artifacts(workspace)
+        _mark_phase(workspace, "present", "completed", enabled=resume_enabled)
+        if resume_enabled:
+            from checkpoint import set_status
+
+            set_status(workspace, "completed")
+        return result
+    except Exception:
+        _mark_deep_review_suspended(workspace, enabled=resume_enabled)
+        raise
 
 
 def _run_checklist(
@@ -2058,6 +2257,8 @@ def run_audit(
     tavily_key: str = "",
     s2_key: str = "",
     regression: bool = False,
+    review_dir: str | None = None,
+    no_resume: bool = False,
 ) -> AuditResult:
     """
     Run a complete paper audit.
@@ -2110,6 +2311,8 @@ def run_audit(
             tavily_key=tavily_key,
             s2_key=s2_key,
             regression=regression,
+            review_dir=review_dir,
+            no_resume=no_resume,
         )
 
     # Step 1: Extract text
@@ -2828,6 +3031,17 @@ Examples:
         default="md",
         help="Output format: 'md' for Markdown (default) or 'json' for CI/CD integration",
     )
+    parser.add_argument(
+        "--review-dir",
+        default=None,
+        help="Path to a prepared deep-review workspace; required to read or reset checkpoint state.",
+    )
+    parser.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="Reset the deep-review checkpoint at --review-dir before running, "
+        "forcing every phase / lane to execute again. Workspace artifacts are kept.",
+    )
 
     args = parser.parse_args()
 
@@ -2865,7 +3079,16 @@ Examples:
                 tavily_key=getattr(args, "tavily_key", ""),
                 s2_key=getattr(args, "s2_key", ""),
                 regression=getattr(args, "regression", False),
+                review_dir=getattr(args, "review_dir", None),
+                no_resume=getattr(args, "no_resume", False),
             )
+
+            if args.mode == "deep-review" and args.review_dir:
+                from checkpoint import load_checkpoint, summarize_checkpoint
+
+                checkpoint = load_checkpoint(args.review_dir)
+                if checkpoint is not None:
+                    print(summarize_checkpoint(checkpoint))
 
         report = (
             render_json_report(result)

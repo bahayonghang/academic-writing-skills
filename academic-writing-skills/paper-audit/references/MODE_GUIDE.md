@@ -217,6 +217,49 @@ Summarize:
 8. For IEEE pseudocode checks, make it explicit which issues are mandatory and
    which are only IEEE-safe recommendations.
 
+## Resume Protocol
+
+Deep-review writes a `checkpoint.json` at the workspace root so a session that
+got interrupted (token budget, agent timeout, user `Ctrl-C`) can pick up where
+it left off instead of restarting Phase 1.
+
+### Files
+
+- `<review_dir>/checkpoint.json` — schema defined in `scripts/checkpoint.py`.
+- Status lifecycle: `prepared` -> `in_progress` -> `suspended` -> `completed`.
+- Phase list mirrors Phase 1-5: `prepare`, `phase0_audit`, `committee`,
+  `lanes`, `consolidation`, `present`.
+
+### Reading
+
+- `scripts/audit.py --review-dir <review_dir>` prints
+  `[checkpoint] status=... lanes_completed=N lanes_suspended=M` on launch
+  before running Phase 0. When the user types "continue" / "继续", treat
+  any entry in `completed_lanes` as already done and dispatch only the
+  remaining `lanes` / `committee` agents.
+
+### Updating
+
+When dispatching a lane or committee agent, instruct it to call
+`checkpoint.mark_lane_completed(<review_dir>, <lane_name>)` (or
+`mark_lane_suspended` on partial failure). Phase 3B lane templates should use
+the `review_lane` value (e.g. `claims_vs_evidence`,
+`notation_and_numeric_consistency`) as the lane identifier so consolidation
+can correlate.
+
+### Reset
+
+- `scripts/audit.py --review-dir <review_dir> --no-resume` calls
+  `checkpoint.reset_checkpoint`, restoring the checkpoint to its initial
+  `prepared` state without deleting any workspace artifacts. Use it when the
+  user explicitly asks for a clean rerun.
+
+### Workspace boundary
+
+The checkpoint lives only inside `<review_dir>/`. The audit tool does not
+touch the user's working directory and does not delete other files inside the
+workspace. Resuming is non-destructive.
+
 ## `re-audit`
 
 1. Requires `--previous-report PATH`.
