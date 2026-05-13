@@ -6,10 +6,19 @@ import argparse
 import json
 from pathlib import Path
 
+from render_revision_trajectory import write_trajectory
+
 
 def load_issues(path: Path) -> list[dict]:
-    """Load issue bundle JSON from a file path."""
-    return json.loads(path.read_text(encoding="utf-8"))
+    """Load issue list from a final_issues.json file.
+
+    Accepts either a top-level list (legacy schema) or a dict containing
+    an ``issues`` key (extended schema with ``round_scores``).
+    """
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(payload, list):
+        return payload
+    return payload.get("issues", []) or []
 
 
 def diff_issues(previous: list[dict], current: list[dict]) -> dict:
@@ -45,10 +54,38 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Diff two deep-review issue bundle files")
     parser.add_argument("previous", help="Path to old final_issues.json")
     parser.add_argument("current", help="Path to new final_issues.json")
+    parser.add_argument(
+        "--trajectory-output",
+        default=None,
+        help="Optional path for revision_trajectory.md (defaults next to <current>).",
+    )
+    parser.add_argument(
+        "--no-trajectory",
+        action="store_true",
+        help="Skip writing revision_trajectory.md even when round_scores are present.",
+    )
     args = parser.parse_args()
 
-    diff = diff_issues(load_issues(Path(args.previous)), load_issues(Path(args.current)))
+    previous_path = Path(args.previous)
+    current_path = Path(args.current)
+
+    diff = diff_issues(load_issues(previous_path), load_issues(current_path))
     print(json.dumps(diff, indent=2, ensure_ascii=False))
+
+    if not args.no_trajectory:
+        trajectory_path = (
+            Path(args.trajectory_output).resolve()
+            if args.trajectory_output
+            else current_path.resolve().parent / "revision_trajectory.md"
+        )
+        body = write_trajectory(
+            previous_path.resolve(),
+            current_path.resolve(),
+            trajectory_path,
+        )
+        if body:
+            print(f"[trajectory] wrote {trajectory_path}")
+
     return 0
 
 
