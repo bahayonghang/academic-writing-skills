@@ -234,6 +234,8 @@ Read `references/report-modes.md` and follow the selected mode exactly.
 | `survey-write` | Evidence packs complete (Phase S3) | Draft prose per H3 | `references/modules/SURVEY_WRITER.md` |
 | `survey-merge` | All sections complete (Phase S4) | Merge, quality gate, optional LaTeX handoff | `references/modules/SURVEY_MERGE.md` |
 
+This skill is LLM-driven and does not include executable scripts. All phases are executed through web search, structured synthesis, and prompting.
+
 ## Quality Bar
 
 Read `references/quality-checklist.md` before finalizing.

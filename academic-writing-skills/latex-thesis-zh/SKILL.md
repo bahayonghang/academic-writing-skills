@@ -110,7 +110,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 
 ## Reference Map
 
-- `references/COMPILATION.md`: compilation strategy and toolchain diagnosis.
+- `references/COMPILATION.md`: compilation strategy and toolchain diagnosis（顶层概述；模块执行时读 `references/modules/COMPILE.md`）.
 - `references/GB_STANDARD.md`: GB/T 7714 and bibliography-related checks.
 - `references/STRUCTURE_GUIDE.md`: thesis structure expectations and chapter mapping.
 - `references/LOGIC_COHERENCE.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
