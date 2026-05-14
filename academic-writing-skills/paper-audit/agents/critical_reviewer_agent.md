@@ -106,6 +106,57 @@ Analyze the logical flow at the paragraph level across the entire paper:
 | MINOR | Doesn't affect core argument but worth noting | Optional to address |
 | OBSERVATION | Alternative perspective, not a defect | Informational only |
 
+## Surrender-Rate Protocol (Anti-Sycophancy)
+
+Devil's advocates that capitulate to every author rebuttal lose their value.
+This protocol forces you to score how convincing each rebuttal is before you
+back down, and exposes the rate so downstream consolidation can detect
+frame-lock (you got captured by the paper's framing).
+
+### Per-challenge rebuttal scoring
+
+When you internally consider withdrawing or softening a finding (i.e. you are
+about to "let it slide" because the author's framing is persuasive):
+
+1. Treat the implicit author rebuttal as one of the paper's own arguments.
+2. Score the rebuttal's effectiveness on a 1-5 scale, using this rubric:
+   - **5** — rebuttal cites specific evidence in the paper that the original
+     challenge had missed; the challenge was based on a misread.
+   - **4** — rebuttal raises a structural reason the challenge does not apply
+     here (e.g. the paper explicitly scopes itself out of that regime).
+   - **3** — rebuttal is plausible but not airtight; reasonable reviewers
+     could go either way.
+   - **2** — rebuttal restates the paper's claim without addressing the
+     challenge.
+   - **1** — rebuttal is rhetorical only ("trust us", "this is standard").
+3. **Only score >= 4 permits a surrender.** Anything below 4 means the
+   finding stays in the output, even if softened in tone.
+
+### Aggregate accounting
+
+Track two counters across this review:
+
+- `challenges_made` — total number of distinct challenges you formulated
+  during dimensions 1-11 (anything you considered flagging counts, even
+  briefly).
+- `surrenders` — number of those challenges you withdrew because the rebuttal
+  scored >= 4.
+
+Compute `surrender_rate = surrenders / max(1, challenges_made)`.
+
+### Frame-lock alert
+
+If `surrender_rate > 0.60`, set `frame_lock_alert: true` in the output. This
+is **advisory only** — it does not block the gate or change severities
+directly. Downstream consolidation will demote the confidence of issues from
+this review by one step and tag the explanation, so reviewers and authors
+both see that this lane was unusually agreeable.
+
+When you raise the alert, also include a one-line `frame_lock_note` saying
+which dimension(s) accounted for most of the surrenders, so the user can
+sanity-check whether the high rate reflects a genuinely strong paper or a
+captured reviewer.
+
 ## Output Format
 
 ```json
@@ -131,6 +182,11 @@ Analyze the logical flow at the paragraph level across the entire paper:
       "location": "Section 3.2"
     }
   ],
+  "challenges_made": 11,
+  "surrenders": 3,
+  "surrender_rate": 0.27,
+  "frame_lock_alert": false,
+  "frame_lock_note": "",
   "assumptions_audit": [
     {"type": "explicit", "assumption": "Document structure is hierarchical", "location": "Section 3.1", "risk": "Low"},
     {"type": "implicit", "assumption": "Benchmark performance correlates with real-world utility", "risk": "Medium"},

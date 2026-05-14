@@ -1,5 +1,11 @@
 # Venue-Specific Requirements for Typst Papers
 
+> **Summary index.** Each venue lives as its own snapshot under
+> `../templates/`; load `templates/<venue>.md` directly when the user names a
+> specific venue (`ieee`, `acm`, `neurips`). This file remains the
+> cross-venue overview (comparison table, common mistakes, pre-submission
+> checklist, resubmission conversions, figure specs).
+
 
 ## Table of Contents
 

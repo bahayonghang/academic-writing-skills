@@ -1,6 +1,6 @@
 [project]
 name = "academic-writing-skills"
-version = "3.0.0"
+version = "4.0.0"
 description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers (Recommended platforms: Claude Code, Codex, Antigravity)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -72,10 +72,15 @@ known-first-party = ["academic-writing-skills"]
 include = ["academic-writing-skills", "tests"]
 exclude = ["**/__pycache__", "**/node_modules", ".venv", "docs"]
 pythonVersion = "3.10"
-typeCheckingMode = "off"
+typeCheckingMode = "basic"
 reportMissingImports = false
 reportMissingModuleSource = false
 reportMissingTypeStubs = false
+reportAttributeAccessIssue = "warning"
+reportArgumentType = "warning"
+reportCallIssue = "warning"
+reportOperatorIssue = "warning"
+reportGeneralTypeIssues = "warning"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

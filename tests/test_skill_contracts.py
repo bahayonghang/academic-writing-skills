@@ -26,6 +26,13 @@ _DEFAULT_MANDATORY_SECTIONS = [
     "## Example Requests",
 ]
 SKILLS = {
+    "bib-search-citation": {
+        "modules": ["query", "spec-json", "spec-file", "preview"],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
+        "enforce_command_hygiene": True,
+    },
     "industrial-ai-research": {
         "modules": [
             "research",
@@ -54,6 +61,9 @@ SKILLS = {
             "pseudocode",
             "deai",
             "experiment",
+            "tables",
+            "abstract",
+            "adapt",
         ],
         "min_examples": 5,
         "min_evals": 6,
@@ -73,6 +83,8 @@ SKILLS = {
             "logic",
             "literature",
             "experiment",
+            "tables",
+            "abstract",
         ],
         "min_examples": 3,
         "min_evals": 5,
@@ -80,7 +92,7 @@ SKILLS = {
         "router_help": True,
     },
     "paper-audit": {
-        "modules": ["self-check", "review", "gate", "polish", "re-audit"],
+        "modules": ["quick-audit", "deep-review", "gate", "re-audit", "polish"],
         "mandatory_sections": [
             "## What This Skill Produces",
             "## Do Not Use",
@@ -110,6 +122,9 @@ SKILLS = {
             "pseudocode",
             "deai",
             "experiment",
+            "tables",
+            "abstract",
+            "adapt",
         ],
         "min_examples": 3,
         "min_evals": 5,

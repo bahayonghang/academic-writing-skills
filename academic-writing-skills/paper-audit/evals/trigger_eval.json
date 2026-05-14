@@ -1,0 +1,95 @@
+{
+  "skill_name": "paper-audit",
+  "queries": [
+    {
+      "query": "Review my manuscript like a serious conference reviewer and tell me the biggest validity risks.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Run a quick audit on paper.tex and tell me what blocks submission.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Gate this IEEE submission and separate blockers from advisory recommendations.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Re-audit this revision against my previous review report and tell me what's still open.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Audit only the literature positioning and tell me whether the claimed gap is real or fabricated.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "审稿一下这篇论文，给我一份重大/次要问题清单。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "投稿前体检一下，看看能不能投。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "把把关，重新审一遍这篇修改稿，跟上一轮意见对比。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Write a SCI-style peer review report with Summary / Major Issues / Minor Issues / Recommendation.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Audit this PDF as a journal reviewer would and flag the methodology weaknesses.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Simulate peer review for my .typ manuscript and produce major/minor findings.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Proofread my IEEE conference paper and fix grammar issues directly in the .tex file.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
+    },
+    {
+      "query": "Fix my Typst compile error in main.typ.",
+      "should_trigger": false,
+      "category": "negative-overlap-typst"
+    },
+    {
+      "query": "检查我的中文硕士学位论文 GB/T 7714 格式问题。",
+      "should_trigger": false,
+      "category": "negative-overlap-zh"
+    },
+    {
+      "query": "Search my references.bib for Mamba forecasting papers after 2024.",
+      "should_trigger": false,
+      "category": "negative-overlap-bib"
+    },
+    {
+      "query": "Polish a single paragraph of my paper's introduction without changing meaning.",
+      "should_trigger": false,
+      "category": "negative-overlap-polish"
+    },
+    {
+      "query": "Help me draft a cover letter for journal submission.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "Set up a Docker container for my deep learning experiments.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    }
+  ]
+}

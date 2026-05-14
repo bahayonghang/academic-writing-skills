@@ -5,6 +5,10 @@ Source attribution: adapted from
 (license: CC-BY-4.0). This reference keeps the rule structure and severity
 calibration while fitting `paper-audit`'s deep-review-first architecture.
 
+This file lists the deterministic rules and the AI-tone term list. For how
+those rules plug into each mode (gate behavior, deep-review promotion, PDF
+skip rules, regression in re-audit), see `references/PRESUBMISSION_GUIDE.md`.
+
 ## Purpose
 
 `paper-audit` uses this layer as a deterministic final-week check, not as a

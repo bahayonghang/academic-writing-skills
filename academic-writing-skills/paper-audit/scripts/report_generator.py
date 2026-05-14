@@ -390,7 +390,7 @@ def _compress_peer_review_opening(research_question: str, thesis: str) -> str:
 
 def _sort_deep_review_issues(issues: list[DeepReviewIssue]) -> list[DeepReviewIssue]:
     """Sort structured findings by severity, confidence, and location."""
-    confidence_order = {"high": 0, "medium": 1, "low": 2}
+    confidence_order = {"high": 0, "medium": 1, "low": 2, "unverified": 3}
     return sorted(
         issues,
         key=lambda issue: (

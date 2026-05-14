@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 from build_claim_map import build_claim_map
+from checkpoint import init_checkpoint
 from detect_language import detect_language
 from parsers import extract_title, get_parser
 
@@ -266,6 +267,16 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
     )
     write_summary_stub(workspace, metadata["title"], claim_map, section_index, section_texts)
     _copy_workspace_references(workspace)
+    init_checkpoint(
+        workspace,
+        generated_files=[
+            "full_text.md",
+            "metadata.json",
+            "section_index.json",
+            "claim_map.json",
+            "paper_summary.md",
+        ],
+    )
     return workspace
 
 

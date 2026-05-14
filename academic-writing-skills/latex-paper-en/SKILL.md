@@ -56,7 +56,7 @@ Do not use this skill for:
 | Module | Use when | Primary command | Read next |
 | --- | --- | --- | --- |
 | `compile` | Build fails or the user wants a fresh compile | `uv run python -B $SKILL_DIR/scripts/compile.py main.tex` | `references/modules/COMPILE.md` |
-| `format` | User asks for LaTeX or venue formatting review | `uv run python -B $SKILL_DIR/scripts/check_format.py main.tex` | `references/modules/FORMAT.md` |
+| `format` | User asks for LaTeX or venue formatting review | `uv run python -B $SKILL_DIR/scripts/check_format.py main.tex` | `references/modules/FORMAT.md` (load `templates/<venue>.md` instead of the full `references/VENUES.md` when a venue is named) |
 | `bibliography` | Missing citations, unused entries, BibTeX validation | `uv run python -B $SKILL_DIR/scripts/verify_bib.py references.bib --tex main.tex` | `references/modules/BIBLIOGRAPHY.md` |
 | `grammar` | Grammar and surface-level language fixes | `uv run python -B $SKILL_DIR/scripts/analyze_grammar.py main.tex --section introduction` | `references/modules/GRAMMAR.md` |
 | `sentences` | Long, dense, or hard-to-read sentences | `uv run python -B $SKILL_DIR/scripts/analyze_sentences.py main.tex --section introduction` | `references/modules/SENTENCES.md` |
@@ -110,14 +110,15 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 
 ## Safety Boundaries
 
-- Never invent citations, metrics, baselines, or experimental results.
-- Never rewrite bibliography keys, references, labels, or math by default.
-- Treat generated text as proposals; keep source-preserving checks separate from prose rewriting.
+- Don't invent citations, metrics, baselines, or experimental results — fabricated evidence is harder to retract once the user trusts it than a clearly flagged gap.
+- Leave `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments untouched by default — a stray edit there is far harder to spot in a diff than a prose edit, and breaks compilation silently.
+- Treat generated prose as proposals, not commits — keep source-preserving checks separate from rewriting so the user can validate each step.
 
 ## Reference Map
 
 - `references/STYLE_GUIDE.md`: tone and style defaults.
-- `references/VENUES.md`: venue-specific expectations.
+- `references/VENUES.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS / ICML / Springer LNCS).
+- `templates/`: per-venue snapshots loaded on demand. Files: `ieee.md`, `acm.md`, `neurips.md`, `icml.md`, `springer-lncs.md`.
 - `references/CITATION_VERIFICATION.md`: citation verification workflow.
 - `references/REVIEWER_PERSPECTIVE.md`: reviewer-style heuristics for figures and clarity.
 - `references/modules/`: module-by-module commands and decision notes.

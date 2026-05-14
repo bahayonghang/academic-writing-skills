@@ -27,15 +27,15 @@ Recommended: install directly with `npx skills`.
 
 ```bash
 # Install individual skills
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-paper-en
-npx skills add github.com/bahayonghang/academic-writing-skills/latex-thesis-zh
-npx skills add github.com/bahayonghang/academic-writing-skills/typst-paper
-npx skills add github.com/bahayonghang/academic-writing-skills/bib-search-citation
-npx skills add github.com/bahayonghang/academic-writing-skills/paper-audit
-npx skills add github.com/bahayonghang/academic-writing-skills/industrial-ai-research
+npx skills add bahayonghang/academic-writing-skills/latex-paper-en
+npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
+npx skills add bahayonghang/academic-writing-skills/typst-paper
+npx skills add bahayonghang/academic-writing-skills/bib-search-citation
+npx skills add bahayonghang/academic-writing-skills/paper-audit
+npx skills add bahayonghang/academic-writing-skills/industrial-ai-research
 
 # Or install all skills at once
-npx skills add github.com/bahayonghang/academic-writing-skills
+npx skills add bahayonghang/academic-writing-skills
 ```
 
 If you prefer manual installation, copy the skill folders you need into your Claude skill directory.
@@ -95,7 +95,7 @@ From the repo root:
 ```bash
 uv run ruff check .
 uv run pyright
-uv run python -m pytest tests/
+uv run python -m pytest tests/ academic-writing-skills/*/tests/
 ```
 
 ## Run the Docs Site

@@ -160,6 +160,7 @@ def get_parser(file_path: Any) -> DocumentParser:
 
 
 def _normalize_whitespace(text: str) -> str:
+    """Collapse whitespace to single spaces."""
     return re.sub(r"\s+", " ", text).strip()
 
 

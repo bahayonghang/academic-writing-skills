@@ -54,7 +54,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 | Module | Use when | Primary command | Read next |
 | --- | --- | --- | --- |
 | `compile` | Thesis build fails or toolchain is unclear | `uv run python $SKILL_DIR/scripts/compile.py main.tex` | `references/modules/COMPILE.md` |
-| `format` | User asks about thesis formatting or GB/T 7714 layout | `uv run python $SKILL_DIR/scripts/check_format.py main.tex` | `references/modules/FORMAT.md` |
+| `format` | User asks about thesis formatting or GB/T 7714 layout | `uv run python $SKILL_DIR/scripts/check_format.py main.tex` | `references/modules/FORMAT.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
 | `structure` | Need chapter/section map or thesis skeleton overview | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex` | `references/STRUCTURE_GUIDE.md` |
 | `consistency` | Terms, abbreviations, or naming drift across chapters | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms` | `references/modules/CONSISTENCY.md` |
 | `template` | Need to identify or validate thesis class/template | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex` | `references/modules/TEMPLATE.md` |
@@ -104,20 +104,21 @@ allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), 
 
 ## Safety Boundaries
 
-- Never fabricate citations, funding statements, acknowledgements, or academic claims.
-- Never rewrite `\cite{}`, `\ref{}`, `\label{}`, math blocks, or bibliography keys unless explicitly asked.
-- Treat title suggestions, de-AI revisions, and logic comments as proposals; keep source-preserving checks separate from edits.
+- Don't fabricate citations, funding statements, acknowledgements, or academic claims — invented attribution is far harder for a defense committee to retract than a flagged blank.
+- Leave `\cite{}`, `\ref{}`, `\label{}`, math blocks, bibliography keys, and template macros untouched unless the user explicitly opts in — silent edits there break compilation and template-specific numbering rules without obvious diff signals.
+- Treat title suggestions, de-AI revisions, and logic comments as proposals — keep source-preserving checks (compile / structure / consistency) separate from rewriting so the user can validate each step before committing.
 
 ## Reference Map
 
-- `references/COMPILATION.md`: compilation strategy and toolchain diagnosis.
+- `references/COMPILATION.md`: compilation strategy and toolchain diagnosis（顶层概述；模块执行时读 `references/modules/COMPILE.md`）.
 - `references/GB_STANDARD.md`: GB/T 7714 and bibliography-related checks.
 - `references/STRUCTURE_GUIDE.md`: thesis structure expectations and chapter mapping.
 - `references/LOGIC_COHERENCE.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
 - `references/TITLE_OPTIMIZATION.md`: Chinese academic title heuristics.
 - `references/DEAI_GUIDE.md`: de-AI review heuristics.
 - `references/modules/EXPERIMENT.md`: experiment-chapter review criteria.
-- `references/UNIVERSITIES/`: school/template-specific constraints after template detection.
+- `references/UNIVERSITIES/`: legacy school-by-school index, kept for backward compatibility.
+- `templates/`: per-template snapshots loaded on demand. Files: `generic.md`, `thuthesis.md`, `pkuthss.md`.
 
 只读取当前模块所需的参考文件，避免一次加载整套指南。
 

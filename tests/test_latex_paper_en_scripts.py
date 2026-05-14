@@ -708,3 +708,85 @@ Experiments on three datasets show consistent gains in both MAE and RMSE.
     result = checker.check_section("introduction")
     categories = {trace["category"] for trace in result["traces"]}
     assert "low_information_density" not in categories
+
+
+# ── deai_check.py (Stage 1 — data-driven AI tone checkers) ────────────────────
+
+
+def _ai_tone_sample(tmp_path: Path) -> Path:
+    tex = tmp_path / "ai_tone.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+Notably, this paper proposes a novel approach. The novel approach is robust.
+Our novel framework demonstrates significant performance ---
+clearly the most novel one --- with novel ideas everywhere!
+
+Furthermore, the system is effective.
+
+Furthermore, the design is comprehensive.
+
+Furthermore, the experiments are comprehensive.
+
+It is worth noting that the result is correct.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    return tex
+
+
+def test_deai_term_threshold_flags_overused_word(tmp_path: Path) -> None:
+    tex = _ai_tone_sample(tmp_path)
+    checker = deai_module.AITraceChecker(tex)
+    analysis = checker.analyze_document()
+    cats = {t["category"] for t in analysis["document_traces"]}
+    assert "term_threshold" in cats
+    novel_traces = [t for t in analysis["document_traces"] if "novel" in t["pattern"]]
+    assert novel_traces, "expected 'novel' to exceed its per-doc threshold"
+
+
+def test_deai_burstiness_flags_parallel_paragraph_openings(tmp_path: Path) -> None:
+    tex = _ai_tone_sample(tmp_path)
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    cats = {t["category"] for t in result["traces"]}
+    assert "burstiness" in cats
+
+
+def test_deai_throat_clearing_flags_paragraph_leads(tmp_path: Path) -> None:
+    tex = _ai_tone_sample(tmp_path)
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    cats = {t["category"] for t in result["traces"]}
+    assert "throat_clearing" in cats
+
+
+def test_deai_punctuation_flags_exclamation_in_body(tmp_path: Path) -> None:
+    tex = _ai_tone_sample(tmp_path)
+    checker = deai_module.AITraceChecker(tex)
+    analysis = checker.analyze_document()
+    excl = [
+        t for t in analysis["document_traces"] if t["pattern"] == "punctuation:exclamation_in_body"
+    ]
+    assert excl, "expected exclamation mark in body to be flagged"
+
+
+def test_deai_yaml_override_lowers_term_cap(tmp_path: Path) -> None:
+    tex = tmp_path / "novel.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+A novel method is presented. The method is then evaluated.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex)
+    # Default cap for "novel" is 4; force it down so a single use triggers.
+    checker.thresholds["term_thresholds"]["novel"] = 0
+    analysis = checker.analyze_document()
+    novel = [t for t in analysis["document_traces"] if "novel" in t["pattern"]]
+    assert novel, "expected lowered cap to trigger a term_threshold trace"
