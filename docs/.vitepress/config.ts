@@ -210,12 +210,6 @@ function paperAuditItems(prefix: string) {
   ]
 }
 
-function industrialAiItems(prefix: string) {
-  const base = `${prefix}/industrial-ai-research`
-  return [
-    { text: prefix.startsWith('/zh') ? '概览' : 'Overview', link: `${base}/` },
-  ]
-}
 
 function buildSidebar(prefix: string) {
   const isZh = prefix.startsWith('/zh')
@@ -261,11 +255,6 @@ function buildSidebar(prefix: string) {
       collapsed: false,
       items: paperAuditItems(prefix),
     },
-    {
-      text: isZh ? 'Industrial AI 调研' : 'Industrial AI Research',
-      collapsed: false,
-      items: industrialAiItems(prefix),
-    },
   ]
 }
 
@@ -277,7 +266,7 @@ function buildSidebar(prefix: string) {
 export default defineConfig({
   title: "Academic Writing Skills",
   description:
-    "Skill-first documentation for LaTeX, Typst, bibliography, paper audit, and research workflows",
+    "Skill-first documentation for LaTeX, Typst, bibliography, paper audit, and writing workflows",
 
   // Base URL for GitHub Pages
   base: '/academic-writing-skills/',

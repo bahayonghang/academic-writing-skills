@@ -9,7 +9,6 @@
 | Typst 论文 | `typst-paper` |
 | 想检索或提取引用的 `.bib` 文献库 | `bib-search-citation` |
 | 想在投稿前做统一审查的论文 | `paper-audit` |
-| 想做 Industrial AI 文献调研的话题 | `industrial-ai-research` |
 
 ## 2. 先跑一条真实命令
 

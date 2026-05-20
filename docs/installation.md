@@ -32,7 +32,6 @@ npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-audit
-npx skills add bahayonghang/academic-writing-skills/industrial-ai-research
 
 # Or install all skills at once
 npx skills add bahayonghang/academic-writing-skills
@@ -47,7 +46,6 @@ Typical folders:
 - `academic-writing-skills/typst-paper`
 - `academic-writing-skills/bib-search-citation`
 - `academic-writing-skills/paper-audit`
-- `academic-writing-skills/industrial-ai-research`
 
 ### Manual Copy Example
 
@@ -58,7 +56,6 @@ Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.
 Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/bib-search-citation" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/paper-audit" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/industrial-ai-research" "$env:USERPROFILE/.claude/skills/"
 ```
 
 Adjust the target directory to your local skill runtime if you are not using `~/.claude/skills`.

@@ -1,6 +1,6 @@
 # Skills
 
-This repository currently documents six top-level skills.
+This repository currently documents five top-level skills.
 
 | Skill | Scope | Entry |
 | --- | --- | --- |
@@ -9,7 +9,6 @@ This repository currently documents six top-level skills.
 | `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
 | `bib-search-citation` | Search and cite local `.bib` libraries | [/skills/bib-search-citation/](/skills/bib-search-citation/) |
 | `paper-audit` | Multi-format paper auditing | [/skills/paper-audit/](/skills/paper-audit/) |
-| `industrial-ai-research` | Industrial AI literature research | [/skills/industrial-ai-research/](/skills/industrial-ai-research/) |
 
 ## How to Read These Pages
 

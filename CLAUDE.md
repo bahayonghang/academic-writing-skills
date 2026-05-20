@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships six skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
+Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships five skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
 
 ## Build & Development Commands
 
@@ -38,10 +38,10 @@ academic-writing-skills/{skill-name}/
 ├── references/       # Decision-making guides, style rules, forbidden terms
 │   └── modules/      # Per-module detailed references
 ├── examples/         # Concrete usage examples
-└── agents/           # Agent persona definitions (paper-audit, industrial-ai-research)
+└── agents/           # Agent persona definitions (paper-audit)
 ```
 
-### Six Skills
+### Five Skills
 
 | Skill | Input | Purpose |
 |---|---|---|
@@ -50,7 +50,6 @@ academic-writing-skills/{skill-name}/
 | `typst-paper` | `.typ` | Bilingual Typst papers with millisecond compilation |
 | `bib-search-citation` | `.bib` | Search and cite local BibTeX/BibLaTeX libraries |
 | `paper-audit` | `.tex`/`.typ`/`.pdf` | Multi-perspective pre-submission audit with scoring |
-| `industrial-ai-research` | topic query | Literature synthesis for industrial AI domains (no scripts) |
 
 ### Parser Hierarchy
 

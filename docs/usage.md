@@ -40,7 +40,6 @@ uv run python -m pytest tests/
 | `typst-paper` | `.typ` | Typst paper compile and review |
 | `bib-search-citation` | `.bib` | Search, filter, preview, and cite bibliography entries |
 | `paper-audit` | `.tex`, `.typ`, `.pdf` | Readiness checks and structured review |
-| `industrial-ai-research` | topic | Literature research and synthesis |
 
 ## Module Summary
 
@@ -133,17 +132,6 @@ Recommended routing:
 - use `gate` for blockers only
 - use `re-audit` when a previous report already exists
 
-### `industrial-ai-research`
-
-Deliverable modes:
-- `research-brief`
-- `literature-map`
-- `venue-ranked survey`
-- `research-gap memo`
-- `survey-draft`
-
-This skill starts with intake questions before synthesis.
-
 ## Common Commands
 
 ```bash
@@ -178,17 +166,8 @@ For final-week mechanical checks, the `PRESUBMISSION` layer runs inside
 Use `bib-search-citation`, not the writing skills. It works on the bibliography file itself,
 not on the paper source tree.
 
-### You are not editing a paper yet, only researching
-
-Use `industrial-ai-research`, not the writing skills.
-
-### You want to draft a full survey paper
-
-Use `industrial-ai-research` with the `survey-draft` deliverable mode. It builds an outline, assembles evidence packs, writes section-by-section, and optionally hands off to `latex-paper-en` for LaTeX formatting.
-
 ## Output Expectations
 
 - Writing skills usually return issue-oriented suggestions and script-backed diagnostics.
 - `bib-search-citation` returns structured search results, optional raw BibTeX, and citation-ready snippets.
 - `paper-audit` returns severity-rated reports, `PRESUBMISSION` mechanical findings, structured issue bundles, revision roadmaps, reviewer-style `peer_review_report.md`, and optional score summaries.
-- Research output should separate verified evidence from inference.

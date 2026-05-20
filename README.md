@@ -2,6 +2,10 @@
 
 [中文版](README_CN.md)
 
+This collection of skills grew out of my day-to-day paper-writing workflow and
+has been iteratively refined over time. It may still have many shortcomings or
+rough edges; if needed, please fork it and adapt it yourself.
+
 > Post-writing polish and validation for academic papers — format checks, bibliography search and verification, grammar analysis, de-AI editing, and experiment narrative generation. Focused on enhancing existing text quality, not generating from scratch.
 >
 > Recommended models: **Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
@@ -16,7 +20,6 @@
 | [`typst-paper`](#typst-paper) | Fast-compile bilingual papers | `.typ` |
 | [`bib-search-citation`](#bib-search-citation) | Fast search and citation extraction from `.bib` libraries | `.bib` |
 | [`paper-audit`](#paper-audit) | Deep-review-first paper audit and submission gate | `.tex` `.typ` `.pdf` |
-| [`industrial-ai-research`](#industrial-ai-research) | Industrial AI literature synthesis & gap analysis | — |
 
 ---
 
@@ -159,20 +162,6 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap + optional `peer_review_report.md` |
 | `gate` | You only care about blockers | PASS/FAIL + blocking issues |
 | `re-audit` | You want to verify revisions | Issue-status comparison |
-
-### industrial-ai-research
-
-Structured literature synthesis focused on Industrial AI domains.
-
-| Category | Capability |
-|---|---|
-| **Domains** | Predictive maintenance, intelligent scheduling, anomaly detection, smart manufacturing, CPS, robotics |
-| **Intake** | Asks for report language, deliverable mode, time window, and emphasis before synthesizing |
-| **Retrieval** | Prioritizes recent arXiv + top IEEE/automation venues (T-ASE, CASE, T-II) |
-| **Outputs** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
-| **Survey Draft** | Taxonomy-driven outline → per-section evidence packs → section-by-section writing → merge with quality gate; optional LaTeX handoff |
-| **Report Structure** | Search scope → source buckets → shortlisted papers → synthesis → next-step recommendations |
-| **Synthesis Rule** | Preserve contradictions, write through consensus → disagreement → limitations → gap, and never flatten conflicting evidence into fake agreement |
 
 ---
 
@@ -390,26 +379,21 @@ academic-writing-skills/
 │       ├── search_bib.py           # Search, filter, rank, and cite `.bib` entries
 │       └── preview_bib_search.py   # Compact human-readable preview for JSON results
 │
-├── paper-audit/
-│   ├── SKILL.md
-│   ├── agents/ · examples/ · templates/
-│   ├── references/
-│   │   └── SCHOLAR_EVAL_GUIDE.md
-│   └── scripts/
-│       ├── audit.py                # Main orchestrator
-│       ├── parsers.py              # Shared parser base
-│       ├── pdf_parser.py           # PDF text & metadata extraction
-│       ├── visual_check.py         # PDF layout & rendering analysis
-│       ├── check_pseudocode.py     # Routed from sibling skills for IEEE pseudocode checks
-│       ├── check_references.py     # Reference integrity
-│       ├── detect_language.py      # Language detection
-│       ├── scholar_eval.py         # 8-dimension ScholarEval scoring
-│       └── report_generator.py     # Structured audit report output
-│
-└── industrial-ai-research/
+└── paper-audit/
     ├── SKILL.md
-    ├── agents/ · examples/
-    └── references/                 # Source policy, venue priority list
+    ├── agents/ · examples/ · templates/
+    ├── references/
+    │   └── SCHOLAR_EVAL_GUIDE.md
+    └── scripts/
+        ├── audit.py                # Main orchestrator
+        ├── parsers.py              # Shared parser base
+        ├── pdf_parser.py           # PDF text & metadata extraction
+        ├── visual_check.py         # PDF layout & rendering analysis
+        ├── check_pseudocode.py     # Routed from sibling skills for IEEE pseudocode checks
+        ├── check_references.py     # Reference integrity
+        ├── detect_language.py      # Language detection
+        ├── scholar_eval.py         # 8-dimension ScholarEval scoring
+        └── report_generator.py     # Structured audit report output
 ```
 
 ---

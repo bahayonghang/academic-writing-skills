@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "面向 LaTeX、Typst、文献库检索、论文审查与调研的技能文档"
+  text: "面向 LaTeX、Typst、文献库检索、论文审查与写作流程的技能文档"
   tagline: "文档内容直接按仓库中的 SKILL.md 重构，优先反映真实能力与真实脚本入口。"
   actions:
     - theme: brand
@@ -32,9 +32,6 @@ features:
   - icon: 🔬
     title: "`paper-audit`"
     details: "统一支持 `.tex`、`.typ`、`.pdf` 的深度审稿优先论文审查，覆盖快速筛查、深审、门禁、润色与复审模式。"
-  - icon: 🧭
-    title: "`industrial-ai-research`"
-    details: "面向 Industrial AI 的按 venue 分层调研流程，包含 intake、来源优先级和固定报告模式。"
   - icon: 🛠️
     title: "以脚本为准"
     details: "文档示例命令统一对齐仓库约束，Python 脚本使用 `uv run python ...`，而不是过时的裸 `python`。"
@@ -60,7 +57,6 @@ features:
 | `typst-paper` | Typst 论文 | [/zh/skills/typst-paper/](/zh/skills/typst-paper/) |
 | `bib-search-citation` | 本地 `.bib` 文献库检索与引用提取 | [/zh/skills/bib-search-citation/](/zh/skills/bib-search-citation/) |
 | `paper-audit` | 投稿前审查与复审 | [/zh/skills/paper-audit/](/zh/skills/paper-audit/) |
-| `industrial-ai-research` | Industrial AI 文献调研 | [/zh/skills/industrial-ai-research/](/zh/skills/industrial-ai-research/) |
 
 ## 快速路径
 

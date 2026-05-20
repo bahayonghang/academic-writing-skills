@@ -38,7 +38,6 @@ uv run python -m pytest tests/
 | `typst-paper` | `.typ` | Typst 论文编译与审阅 |
 | `bib-search-citation` | `.bib` | 文献库检索、预览与引用提取 |
 | `paper-audit` | `.tex`、`.typ`、`.pdf` | 投稿前检查与结构化审查 |
-| `industrial-ai-research` | topic | 文献调研与综合 |
 
 ## 模块总览
 
@@ -131,17 +130,6 @@ uv run python -m pytest tests/
 - 只看 blocker 时用 `gate`
 - 已有旧报告、想验证修订效果时用 `re-audit`
 
-### `industrial-ai-research`
-
-交付模式：
-- `research-brief`
-- `literature-map`
-- `venue-ranked survey`
-- `research-gap memo`
-- `survey-draft`
-
-这个技能会先做 intake，再开始综合。
-
 ## 常见命令
 
 ```bash
@@ -175,13 +163,8 @@ uv run python academic-writing-skills/paper-audit/scripts/pre_submission_check.p
 用 `bib-search-citation`，不要先用写作技能。它处理的是文献库文件本身，
 不是论文源文件树。
 
-### 你还没开始写，只是在做调研
-
-用 `industrial-ai-research`，不要先用写作技能。
-
 ## 输出预期
 
 - 写作类技能通常返回面向问题的建议和脚本化诊断。
 - `bib-search-citation` 返回结构化检索结果、可选原始 BibTeX，以及可直接使用的引用片段。
 - `paper-audit` 返回 severity 分级报告、`PRESUBMISSION` 机械发现、结构化问题清单、修订路线图，以及可选 score summary。
-- 调研类输出应明确区分已验证证据与推断。

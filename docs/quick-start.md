@@ -9,7 +9,6 @@
 | A Typst paper | `typst-paper` |
 | A `.bib` library you want to search or cite from | `bib-search-citation` |
 | A paper you want to audit before submission | `paper-audit` |
-| An Industrial AI topic to research | `industrial-ai-research` |
 
 ## 2. Try One Real Command
 

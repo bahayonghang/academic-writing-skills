@@ -24,7 +24,7 @@ Schema (keep in sync with skill-creator/scripts/run_loop.py):
 
 Health rules enforced here:
 
-* one ``trigger_eval.json`` per shipped skill (six total)
+* one ``trigger_eval.json`` per shipped skill (five total)
 * ``skill_name`` matches both the directory name and the SKILL.md frontmatter
 * ``queries`` has at least 12 items, at least 5 positives, at least 5 negatives
 * every entry has the three required fields with the right types
@@ -59,7 +59,6 @@ SKILL_NAMES = (
     "typst-paper",
     "bib-search-citation",
     "paper-audit",
-    "industrial-ai-research",
 )
 
 MIN_QUERIES = 12
@@ -168,32 +167,4 @@ def test_trigger_eval_queries_are_unique_within_skill(
     assert not duplicates, (
         f"{skill_name}: duplicate queries detected — each prompt must be "
         f"distinct so trigger rates are well-defined: {duplicates}"
-    )
-
-
-def test_industrial_ai_research_keeps_non_industrial_verticals_negative(
-    trigger_evals: dict[str, dict],
-) -> None:
-    """Keep the research skill narrow instead of drifting into generic AI search."""
-    entries = trigger_evals["industrial-ai-research"]["queries"]
-    domain_mismatch_negatives = [
-        entry["query"].lower()
-        for entry in entries
-        if not entry["should_trigger"] and entry["category"] == "negative-overlap-domain-mismatch"
-    ]
-
-    required_terms = {
-        "clinical": ("clinical", "electronic health records"),
-        "education": ("education", "classroom", "student"),
-        "generic LLM security": ("jailbreak", "red-teaming"),
-    }
-    missing = {
-        label: terms
-        for label, terms in required_terms.items()
-        if not any(all(term in query for term in terms) for query in domain_mismatch_negatives)
-    }
-
-    assert not missing, (
-        "industrial-ai-research must keep non-industrial AI verticals negative "
-        f"so its trigger boundary stays narrow: {missing}"
     )

@@ -32,7 +32,6 @@ npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-audit
-npx skills add bahayonghang/academic-writing-skills/industrial-ai-research
 
 # 或一次性安装全部技能
 npx skills add bahayonghang/academic-writing-skills
@@ -47,7 +46,6 @@ npx skills add bahayonghang/academic-writing-skills
 - `academic-writing-skills/typst-paper`
 - `academic-writing-skills/bib-search-citation`
 - `academic-writing-skills/paper-audit`
-- `academic-writing-skills/industrial-ai-research`
 
 ### 手动复制示例
 
@@ -58,7 +56,6 @@ Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.
 Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/bib-search-citation" "$env:USERPROFILE/.claude/skills/"
 Copy-Item -Recurse "academic-writing-skills/paper-audit" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/industrial-ai-research" "$env:USERPROFILE/.claude/skills/"
 ```
 
 如果你的运行时不是 `~/.claude/skills`，把目标路径替换成你的实际技能目录即可。
