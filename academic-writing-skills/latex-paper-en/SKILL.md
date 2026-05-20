@@ -4,7 +4,7 @@ description: English LaTeX paper assistant for existing .tex conference and jour
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
-  version: "5.0.0"
+  version: "5.1.0"
   last_updated: "2026-05-20"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(pdflatex *), Bash(xelatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *), Bash(chktex *)

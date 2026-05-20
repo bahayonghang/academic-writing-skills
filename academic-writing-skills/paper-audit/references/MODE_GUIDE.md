@@ -26,6 +26,34 @@ Read next:
   before running commands when any of them were inferred rather than explicitly
   provided.
 
+### Auto-Detection at Intake
+
+Surface these conditions to the user as a prompt; never auto-switch modes
+without confirmation. The goal is to catch obvious mode mismatches before
+running a wrong workflow.
+
+- **Previous report present**: if a file named `*audit_report*`,
+  `*review_report*`, `*final_issues*.json`, or matching `--previous-report`
+  semantics is present in the paper's directory or the current working
+  directory, ask whether the user wants `re-audit` mode.
+- **Revision markers in the paper**: if the source contains
+  `\latextrackchanges`, `changes` package macros, `track-changes`,
+  `changeBars`, `\added{`, `\deleted{`, `\replaced{`, `<changes>`, or a
+  `Revision History` section, ask whether this is a revised submission and
+  whether `re-audit` is intended.
+- **Polish mode on a long paper**: if mode is `polish` but the paper exceeds
+  30 pages or 25k words, ask whether `deep-review` is more appropriate before
+  proceeding.
+- **Reviewer letter detected**: if the input or working directory contains a
+  reviewer-letter-shaped file (markers: `Reviewer 1`, `R1:`, `审稿人 1`,
+  `Editor's Comments`, `Decision Letter`), dispatch
+  `agents/revision_coach_agent.md` first to parse it into a structured
+  roadmap, then feed the roadmap into `re-audit`.
+
+Always present the detected signal in plain language ("found
+`final_issues.old.json` next to the paper — this looks like a re-audit") and
+let the user confirm or decline.
+
 ## Presentation Surface
 
 - `deep-review`: make the issue bundle, revision roadmap, and artifact paths

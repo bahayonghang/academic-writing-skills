@@ -4,7 +4,7 @@ description: Search and cite from local BibTeX or BibLaTeX .bib libraries, inclu
 metadata:
   category: docs-writing-publishing
   tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
-  version: "5.0.0"
+  version: "5.1.0"
   last_updated: "2026-05-20"
 argument-hint: "[library.bib] [--query QUERY]"
 allowed-tools: Read, Bash

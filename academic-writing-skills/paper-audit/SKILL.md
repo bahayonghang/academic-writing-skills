@@ -4,13 +4,13 @@ description: Reviewer-style audit and submission gate for Chinese and English ac
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "5.0.0"
+  version: "5.1.0"
   last_updated: "2026-05-20"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v5.0
+# Paper Audit Skill v5.1
 
 `paper-audit` is **deep-review-first**. Its core job is to behave like a
 serious reviewer: find technical, methodological, claim-level, and
@@ -101,6 +101,8 @@ Read these references before running reviewer-style work:
 8. `references/CLAIM_EVIDENCE_CONTRACT.md`
 9. `references/DATA_AVAILABILITY_ADVISORY.md`
 10. `references/MODE_GUIDE.md`
+11. `references/editorial_decision_standards.md`
+12. `references/quality_rubrics.md`
 
 The deep-review workflow uses a 16-part issue taxonomy:
 
@@ -247,6 +249,9 @@ Always prefer:
 | `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules and term list |
 | `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
 | `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
+| `references/editorial_decision_standards.md` | cross-reviewer arbitration rules and decision matrix |
+| `references/quality_rubrics.md` | five-dimension scoring rubric with calibrated tiers |
+| `references/TROUBLESHOOTING.md` | operational errors plus review-quality failure paths (F1-F8) |
 
 ## Scripts
 
@@ -281,6 +286,8 @@ Default deep-review lanes live in `agents/`:
 - `prior_art_reviewer_agent.md`
 - `synthesis_agent.md`
 - `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)
+- `revision_coach_agent.md` — parse free-form reviewer letters into a
+  structured roadmap (used in `re-audit` mode)
 
 Specialized deep-review agents (read their files for activation criteria):
 

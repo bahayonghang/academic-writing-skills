@@ -4,7 +4,7 @@ description: Typst academic paper assistant for existing .typ manuscripts in Eng
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
-  version: "5.0.0"
+  version: "5.1.0"
   last_updated: "2026-05-20"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(typst *)

@@ -17,13 +17,17 @@ Default `deep-review` lanes:
 
 ## Cross-cutting lanes
 
-- `claims_vs_evidence`
-- `notation_and_numeric_consistency`
-- `evaluation_fairness_and_reproducibility`
-- `self_standard_consistency`
-- `prior_art_and_novelty_grounding`
-- `pre_submission_readiness` (full/editor focus only; populated from high-signal
-  `PRESUBMISSION` script findings)
+- `claims_vs_evidence` — max 8 issues
+- `notation_and_numeric_consistency` — max 10 issues
+- `evaluation_fairness_and_reproducibility` — max 8 issues
+- `self_standard_consistency` — max 6 issues
+- `prior_art_and_novelty_grounding` — max 6 issues
+- `pre_submission_readiness` — max 12 issues (full/editor focus only;
+  populated from high-signal `PRESUBMISSION` script findings)
+
+Per-lane focus directives, DO/DON'T rules, and grouping conventions live in
+`SUBAGENT_TEMPLATES.md`. Output limits prevent LLM filler; recurring issues
+collapse into one entry with multiple example locations.
 
 ## Output rule
 

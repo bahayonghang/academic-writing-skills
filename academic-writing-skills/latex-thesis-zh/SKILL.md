@@ -4,7 +4,7 @@ description: Chinese LaTeX degree thesis assistant for existing .tex projects on
 metadata:
   category: academic-writing
   tags: [latex, thesis, chinese, phd, master, xelatex, gb7714, thuthesis, pkuthss, compilation, bibliography, structure]
-  version: "5.0.0"
+  version: "5.1.0"
   last_updated: "2026-05-20"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *)
