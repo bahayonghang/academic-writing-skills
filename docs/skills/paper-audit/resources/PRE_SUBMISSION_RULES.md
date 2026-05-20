@@ -1,8 +1,8 @@
 # Pre-Submission Rules
 
-`paper-audit` v4.5 adds a deterministic `PRESUBMISSION` layer for the final
-3-5 days before submission. It is integrated into existing modes; there is no
-separate public `pre-submission` mode.
+`paper-audit` ships a deterministic `PRESUBMISSION` layer (introduced in v4.5)
+for the final 3-5 days before submission. It is integrated into existing
+modes; there is no separate public `pre-submission` mode.
 
 Source attribution: adapted from
 `ref/Supervisor-Skills/plugins/phd-research/skills/pre-submission-reviewer`

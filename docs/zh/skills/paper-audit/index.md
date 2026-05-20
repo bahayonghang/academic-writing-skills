@@ -114,5 +114,10 @@
 - `audit.py --mode deep-review` 只是 Phase 0，不是完整深审。
 - `PRESUBMISSION` 是接入现有模式的机械层，不是新的公开模式。
 - deep-review 的主产物是结构化问题清单，而不是分数本身。
+- `claim_map.json` 继续保留旧的 headline/closure 字段，同时新增 advisory
+  claim candidates，记录 evidence anchors、support strength、missing evidence
+  和 bounded wording。
+- Data availability 检查默认是 advisory；只有 venue 明确要求且 central source
+  data 缺失时才作为投稿阻塞。
 - 能用源文件时优先用源文件；PDF 只运行文本类投稿前检查，并跳过 LaTeX/Typst 源码 hygiene。
 - `--focus literature` 只负责判断综述是否公平、gap 是否真实、冲突是否被保留，不负责代写文献综述正文。

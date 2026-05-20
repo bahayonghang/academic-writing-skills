@@ -35,6 +35,11 @@ Typical fields:
 - `related_sections`
 - `root_cause_key`
 - `review_lane`
+- `evidence_anchor` (optional)
+- `claim_strength` (optional)
+- `missing_evidence` (optional)
+- `allowed_wording` (optional)
+- `forbidden_wording` (optional)
 - `gate_blocker`
 - `quote_verified`
 
@@ -123,7 +128,11 @@ Maps logical sections to line ranges and workspace section files.
 
 ### `claim_map.json`
 
-Records headline claims and closure targets. Used by cross-cutting review lanes.
+Records headline claims, closure targets, and additive claim-candidate records.
+Each claim candidate may include visible evidence anchors, claim strength,
+missing-evidence notes, bounded allowed wording, and forbidden wording families.
+Legacy `headline_claims`, `closure_targets`, and `section_claims` remain present
+for existing consumers.
 
 ### `paper_summary.md`
 

@@ -13,7 +13,19 @@ When the user requests to generate or optimize a figure or table caption, follow
 - **Tables**: Use standard expressions like "Comparison with", "Ablation study on", or "Results on". Avoid flowery words like "showcase" or "depict"—instead use "show", "compare", or "present".
 - **Remove "AI flavor"**: Keep the vocabulary precise and simple. Avoid overcomplicated or obscure words.
 
-## 3. Formatting & Output Restrictions
+## 3. Evidence Boundary
+
+- A figure caption may summarize a visible pattern or comparison, but exact
+  values need a readable label, table, or metric anchor.
+- A table caption may name the exact comparison or ablation but must not add a
+  winner, significance, or causal explanation that is absent from the table or
+  surrounding text.
+- If a caption carries a claim, identify the evidence anchor implicitly or
+  explicitly: figure panel, table column, metric, dataset, or section.
+- If the user asks for a stronger caption than the artifact supports, keep the
+  caption descriptive and mark the missing evidence instead of inventing it.
+
+## 4. Formatting & Output Restrictions
 
 - **Output pure text**: Do NOT prepend "Figure 1:" or "Table 1:". Output only the title text itself.
 - **LaTeX compatibility**:
@@ -21,7 +33,7 @@ When the user requests to generate or optimize a figure or table caption, follow
   - Preserve math formulas exactly as they are (keep the `$` symbols).
 - Output the English text only. Do not output any extra dialog or explanations unless the user asks.
 
-## 4. Execution Example
+## 5. Execution Example
 
 **User Input:** 
 "帮我写一段表达：本表展示了我们在ImageNet数据集上的消融实验结果，主要对比了不同深度下的精度。"

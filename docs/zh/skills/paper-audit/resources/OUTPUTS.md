@@ -31,6 +31,11 @@ deep-review 的主产物，也是结构化问题清单的事实来源。
 - `related_sections`
 - `root_cause_key`
 - `review_lane`
+- `evidence_anchor`（可选）
+- `claim_strength`（可选）
+- `missing_evidence`（可选）
+- `allowed_wording`（可选）
+- `forbidden_wording`（可选）
 - `gate_blocker`
 - `quote_verified`
 
@@ -104,7 +109,11 @@ deep-review 的委员会共识产物。
 
 ### `claim_map.json`
 
-记录 headline claims 和 closure targets，给 cross-cutting lanes 使用。
+记录 headline claims、closure targets 和 additive claim-candidate records。
+每条 claim candidate 可包含 visible evidence anchors、claim strength、
+missing-evidence notes、bounded allowed wording，以及 forbidden wording
+families。旧的 `headline_claims`、`closure_targets`、`section_claims` 仍保留，
+兼容已有消费者。
 
 ### `paper_summary.md`
 

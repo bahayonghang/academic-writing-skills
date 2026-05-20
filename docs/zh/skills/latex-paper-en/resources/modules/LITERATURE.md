@@ -9,3 +9,9 @@
 推荐链条：
 
 `共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点`
+
+## Claim-Evidence 边界
+
+当文献综述中出现 gap、novelty 或 contribution 句子时，输出 claim、
+可见 evidence anchor、support strength、missing evidence 与 bounded wording。
+citation key 只能证明该来源被引用，不等于它已经支撑论文中的具体句子。

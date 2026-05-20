@@ -1,6 +1,6 @@
 # 投稿前机械规则
 
-`paper-audit` v4.5 新增确定性的 `PRESUBMISSION` 层，用于投稿前最后
+`paper-audit` 提供确定性的 `PRESUBMISSION` 层（v4.5 引入），用于投稿前最后
 3 到 5 天的机械审计。它被接入现有模式，不新增公开的 `pre-submission`
 模式。
 

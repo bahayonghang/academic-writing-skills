@@ -57,6 +57,9 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Online Verify** | CrossRef + Semantic Scholar bibliography verification (no API key required) |
 | **Translation** | Chinese → English academic translation with domain-term awareness |
 
+Claim-evidence guidance now treats citation keys and `.bib` hits as provenance,
+not proof of claim support; uncertain support is marked instead of invented.
+
 ### latex-thesis-zh
 
 Chinese degree thesis editing conforming to GB/T 7714-2015 and major university templates.
@@ -120,6 +123,10 @@ Fast bibliography search and citation extraction for BibTeX or BibLaTeX `.bib` l
 | **Preview** | JSON search output can be piped into `preview_bib_search.py` for compact human review |
 | **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints |
 
+Search results expose provenance fields such as DOI, arXiv, and URL for later
+verification. A local `.bib` match does not prove the paper supports a specific
+manuscript claim.
+
 ### paper-audit
 
 Deep-review-first paper audit with layered checks, structured issue bundles, and submission gating.
@@ -130,6 +137,7 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | **Modes** | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification) |
 | **PRESUBMISSION Layer** | Final-week mechanical checks for em dashes, AI-tone term frequency, abstract result gaps, LaTeX hygiene, equation references, and concrete captions; PDF mode runs text-only checks |
 | **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md` |
+| **Claim-Evidence Map** | Additive `claim_candidates` with evidence anchors, support strength, missing evidence, and bounded wording |
 | **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
 | **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
 | **Pseudocode Audit** | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments |
@@ -141,6 +149,7 @@ Deep-review-first paper audit with layered checks, structured issue bundles, and
 | **De-AI** | Reduce AI writing traces across the whole document |
 | **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
 | **Review Scope Note** | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
+| **Data Availability Advisory** | Checks whether central claims have source-data / artifact anchors; blocks only when venue-required central evidence is missing |
 | **Literature Boundary** | `--focus literature` judges whether the gap is real and the literature positioning is fair; it does not rewrite the section. Use the format-specific writing skills for prose changes |
 
 **Audit workflow layers**

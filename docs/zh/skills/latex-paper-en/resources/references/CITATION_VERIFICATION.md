@@ -28,6 +28,21 @@
 - [ ] **Step 5**: Add verified BibTeX to bibliography
 - [ ] **Step 6**: If ANY step fails → mark as placeholder, inform user
 
+## Verification Layers
+
+Keep these layers separate in user-facing output:
+
+1. **Entry format valid** — the BibTeX/BibLaTeX entry parses and has required
+   fields.
+2. **Canonical metadata exists** — DOI, arXiv, publisher landing page, or
+   trusted index metadata confirms the paper identity.
+3. **Claim support verified** — the cited paper actually supports the
+   manuscript sentence or paragraph.
+
+A local citation key, `.bib` match, DOI, or metadata hit is not enough to claim
+Layer 3. When Layer 3 is not checked, write `CITATION_SUPPORT_NEEDED` or tell
+the author that claim-level support remains unverified.
+
 ## API-Based Verification
 
 ### Search with Semantic Scholar
@@ -103,6 +118,7 @@ Then verify results with Semantic Scholar API and fetch BibTeX via DOI.
 | Paper exists but can't fetch BibTeX | Mark placeholder, inform user |
 | Uncertain if paper exists | Mark `[CITATION NEEDED]`, inform user |
 | "I think there's a paper about X" | **NEVER cite** — search first or mark placeholder |
+| Citation key exists but claim support is unknown | Keep the key, mark `CITATION_SUPPORT_NEEDED` |
 
 ## Placeholder Format
 

@@ -8,6 +8,9 @@ The Experiment Analysis module leverages LLM capabilities to generate cohesive, 
 - **Deep Analysis**: Focuses on SOTA comparison, ablation studies, and efficiency trade-offs rather than mere numerical reporting.
 - **Objective Tone**: Ensures descriptions remain scientifically rigorous without exaggerated claims.
 - **Formatting Constraints**: Strictly avoids `\textbf{}` or `\begin{itemize}` as per IEEE and ACM guidelines.
+- **Claim-Evidence Boundary**: Keeps result claims tied to visible metrics,
+  tables, figures, datasets, and baselines; metric-only observations stay
+  bounded to the reported setting.
 
 ## Usage
 
@@ -24,3 +27,5 @@ When triggered, the assistant follows these rules:
 2. Must use `\paragraph{Title Case Heading}` for the topic sentence.
 3. Must use active, concise phrasing and present tense for conclusions.
 4. Outputs raw LaTeX block for drop-in replacement.
+5. Must mark missing evidence instead of promoting unsupported winner,
+   significance, or universal claims.
