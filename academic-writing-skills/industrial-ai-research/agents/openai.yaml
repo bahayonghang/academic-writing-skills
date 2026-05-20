@@ -1,4 +1,0 @@
-interface:
-  display_name: "Industrial AI Research"
-  short_description: "Research Industrial AI literature with intake locking, venue-aware sourcing, contradiction-first synthesis, and outline-first survey drafting"
-  default_prompt: "Research Industrial AI literature, resolve as many intake fields as possible from my prompt, ask only for unresolved intake items, lock the chosen mode/window/emphasis, and prioritize arXiv plus top IEEE and automation venues."

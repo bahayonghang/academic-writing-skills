@@ -2,6 +2,9 @@
 
 [English](README.md)
 
+这些 skills 是我在日常写论文的过程中不断迭代优化出来的，可能会有许多不足和缺陷，
+如果有需要，请自行 fork 和修改。
+
 > 专注于学术论文后期排版精修、文献检索与校验、格式校验与深度润色——拒绝从零代写，全面提升既有文本质量。
 >
 > 推荐模型：**Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
@@ -16,7 +19,6 @@
 | [`typst-paper`](#typst-paper) | 快速编译双语论文 | `.typ` |
 | [`bib-search-citation`](#bib-search-citation) | `.bib` 文献库快速检索与引用提取 | `.bib` |
 | [`paper-audit`](#paper-audit) | 深度审稿优先的论文审查与投稿门控 | `.tex` `.typ` `.pdf` |
-| [`industrial-ai-research`](#industrial-ai-research) | Industrial AI 文献综合与研究缺口分析 | — |
 
 ---
 
@@ -159,20 +161,6 @@ npx skills add bahayonghang/academic-writing-skills
 | `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 + 可选 `peer_review_report.md` |
 | `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
 | `re-audit` | 想验证修订效果 | 问题状态对比 |
-
-### industrial-ai-research
-
-聚焦 Industrial AI 领域的结构化文献综合工具。
-
-| 类别 | 功能 |
-|---|---|
-| **研究领域** | 预测性维护、智能调度、异常检测、智能制造、CPS、机器人 |
-| **前置确认** | 综合前先确认报告语言、交付模式、时间窗口和研究侧重点 |
-| **检索策略** | 优先近期 arXiv + 顶级 IEEE/自动化 venue（T-ASE、CASE、T-II）|
-| **输出格式** | research-brief · literature-map · venue-ranked survey · research-gap memo · survey-draft |
-| **综述初稿** | 分类体系大纲 → 逐节证据包 → 逐节写作 → 合并 + 质量门；可选 LaTeX 移交 |
-| **报告结构** | 检索范围 → 来源分桶 → 候选论文 → 综合结论 → 下一步建议 |
-| **综合规则** | 综述写作必须保留冲突证据，按照“共识 → 分歧 → 局限 → 空白”组织，禁止把相互矛盾的研究强行写成统一结论 |
 
 ---
 
@@ -390,26 +378,21 @@ academic-writing-skills/
 │       ├── search_bib.py           # `.bib` 条目检索、过滤、排序与引用输出
 │       └── preview_bib_search.py   # JSON 结果的紧凑人工预览
 │
-├── paper-audit/
-│   ├── SKILL.md
-│   ├── agents/ · examples/ · templates/
-│   ├── references/
-│   │   └── SCHOLAR_EVAL_GUIDE.md
-│   └── scripts/
-│       ├── audit.py                # 主编排器
-│       ├── parsers.py              # 共享解析基类
-│       ├── pdf_parser.py           # PDF 文本与元数据提取
-│       ├── visual_check.py         # PDF 排版渲染分析
-│       ├── check_pseudocode.py     # 通过 sibling route 调用的 IEEE 伪代码检查
-│       ├── check_references.py     # 引用完整性
-│       ├── detect_language.py      # 语言检测
-│       ├── scholar_eval.py         # 8 维度 ScholarEval 评分
-│       └── report_generator.py     # 结构化审查报告输出
-│
-└── industrial-ai-research/
+└── paper-audit/
     ├── SKILL.md
-    ├── agents/ · examples/
-    └── references/                 # 来源策略、venue 优先级列表
+    ├── agents/ · examples/ · templates/
+    ├── references/
+    │   └── SCHOLAR_EVAL_GUIDE.md
+    └── scripts/
+        ├── audit.py                # 主编排器
+        ├── parsers.py              # 共享解析基类
+        ├── pdf_parser.py           # PDF 文本与元数据提取
+        ├── visual_check.py         # PDF 排版渲染分析
+        ├── check_pseudocode.py     # 通过 sibling route 调用的 IEEE 伪代码检查
+        ├── check_references.py     # 引用完整性
+        ├── detect_language.py      # 语言检测
+        ├── scholar_eval.py         # 8 维度 ScholarEval 评分
+        └── report_generator.py     # 结构化审查报告输出
 ```
 
 ---

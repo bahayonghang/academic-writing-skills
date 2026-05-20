@@ -1,6 +1,6 @@
 # 技能总览
 
-当前文档覆盖 6 个顶层技能。
+当前文档覆盖 5 个顶层技能。
 
 | 技能 | 适用范围 | 入口 |
 | --- | --- | --- |
@@ -9,7 +9,6 @@
 | `typst-paper` | 现有 Typst 论文 | [/zh/skills/typst-paper/](/zh/skills/typst-paper/) |
 | `bib-search-citation` | 本地 `.bib` 文献库检索与引用提取 | [/zh/skills/bib-search-citation/](/zh/skills/bib-search-citation/) |
 | `paper-audit` | 多格式论文审查 | [/zh/skills/paper-audit/](/zh/skills/paper-audit/) |
-| `industrial-ai-research` | Industrial AI 文献调研 | [/zh/skills/industrial-ai-research/](/zh/skills/industrial-ai-research/) |
 
 ## 阅读方式
 

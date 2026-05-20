@@ -25,11 +25,8 @@ SCRIPT_DIR_AUDIT = (
     Path(__file__).parent.parent / "academic-writing-skills" / "paper-audit" / "scripts"
 )
 
-# Note: industrial-ai-research has no SCRIPT_DIR by design — it is a pure LLM
-# workflow with no scripts/ directory. Its test (test_industrial_ai_research_skill.py)
-# is a metadata smoke test that walks SKILL_DIR directly, so no sys.path entry is
-# needed. bib-search-citation ships its own tests/ inside the skill folder and is
-# discovered via the `just test` glob `academic-writing-skills/*/tests/`.
+# bib-search-citation ships its own tests/ inside the skill folder and is discovered
+# via the `just test` glob `academic-writing-skills/*/tests/`.
 
 # Only add EN to sys.path (existing tests rely on bare `import parsers` etc.)
 if str(SCRIPT_DIR_EN) not in sys.path:

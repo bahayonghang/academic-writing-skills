@@ -33,18 +33,6 @@ SKILLS = {
         "expects_uv_commands": True,
         "enforce_command_hygiene": True,
     },
-    "industrial-ai-research": {
-        "modules": [
-            "research",
-            "survey-outline",
-            "survey-evidence",
-            "survey-write",
-            "survey-merge",
-        ],
-        "min_examples": 4,
-        "min_evals": 4,
-        "expects_uv_commands": False,
-    },
     "latex-paper-en": {
         "modules": [
             "compile",

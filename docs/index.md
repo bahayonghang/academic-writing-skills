@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Skill-first docs for LaTeX, Typst, bibliography, audit, and research workflows"
+  text: "Skill-first docs for LaTeX, Typst, bibliography, audit, and writing workflows"
   tagline: "Documentation rebuilt from the actual SKILL.md contracts in this repository."
   actions:
     - theme: brand
@@ -32,9 +32,6 @@ features:
   - icon: 🔬
     title: "`paper-audit`"
     details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf` with quick-audit, deep-review, gate, polish, and re-audit workflows plus a journal-style peer review report output."
-  - icon: 🧭
-    title: "`industrial-ai-research`"
-    details: "Venue-aware Industrial AI literature workflow with mandatory intake, source prioritization, structured report modes, and survey draft generation."
   - icon: 🛠️
     title: "Script-backed"
     details: "The docs now align with the repository reality: Python scripts live under each skill's `scripts/`, and repo-local examples use `uv run python ...`."
@@ -61,7 +58,6 @@ The primary source of truth is each skill's `SKILL.md`. These docs summarize and
 | `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
 | `bib-search-citation` | Search and cite local `.bib` libraries | [/skills/bib-search-citation/](/skills/bib-search-citation/) |
 | `paper-audit` | Pre-submission checks and reviews | [/skills/paper-audit/](/skills/paper-audit/) |
-| `industrial-ai-research` | Industrial AI literature research | [/skills/industrial-ai-research/](/skills/industrial-ai-research/) |
 
 ## Core Principles
 
@@ -86,6 +82,5 @@ academic-writing-skills/
 ├─ typst-paper/
 ├─ bib-search-citation/
 ├─ paper-audit/
-├─ industrial-ai-research/
 └─ docs/
 ```
