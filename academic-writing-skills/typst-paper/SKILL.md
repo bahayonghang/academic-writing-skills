@@ -1,11 +1,11 @@
 ---
 name: typst-paper
-description: Typst academic paper assistant for existing `.typ` manuscripts in English or Chinese. Use whenever the user wants Typst compile/export diagnosis, venue formatting, BibTeX or Hayagriva bibliography checks, grammar, sentence-length, logic, abstract, title, table, pseudocode, experiment-section, de-AI, translation, expression, related-work synthesis, research-gap derivation, journal adaptation, or submission-readiness help on a Typst paper. Trigger even if the prompt mentions only a .typ file, typst compile/export error, typst bibliography, one section rewrite, rewrite related work, research gap, three-line table, check abstract, reformat for another journal, algorithm-figure, lovelace, or algorithmic.
+description: Typst academic paper assistant for existing .typ manuscripts in English or Chinese. Use for Typst compile and export diagnosis, venue formatting, BibTeX or Hayagriva bibliography checks, grammar, logic, abstract, title, table, pseudocode (algorithmic, algorithm-figure, lovelace), experiment-section review, related-work synthesis, research-gap derivation, journal adaptation, de-AI polish, translation, or submission readiness. Trigger for prompts like "fix my .typ build", "check Hayagriva bibliography", "rewrite related work in Typst", "derive research gap", "review lovelace pseudocode", "three-line table in Typst", "Typst 编译报错", "Typst 文献", or "Typst 论文换投". Use latex-paper-en or latex-thesis-zh for .tex sources, and paper-audit for reviewer-style critique.
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
-  version: "1.3"
-  last_updated: "2026-05-03"
+  version: "5.0.0"
+  last_updated: "2026-05-20"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(typst *)
 ---

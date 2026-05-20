@@ -1,11 +1,11 @@
 ---
 name: latex-thesis-zh
-description: Chinese LaTeX thesis assistant for existing .tex degree thesis projects (XeLaTeX/LuaLaTeX/latexmk). Use this skill whenever a user works on a Chinese master's or doctoral thesis needing compilation, GB/T 7714 bibliography checks, chapter structure mapping, template detection (thuthesis, pkuthss), terminology consistency, logic coherence review, literature review restructuring, related-work synthesis, research-gap derivation, heading lead-in checks, title optimization, de-AI editing, experiment chapter review, three-line table validation, or abstract structure diagnosis. Trigger even for single issues like "帮我编译论文", "检查国标格式", "看看绪论逻辑", "文献综述太像罗列", "研究空白没推出来", "毕业论文", "学位论文", "硕士/博士论文", "三线表", "检查摘要", or "摘要结构".
+description: Chinese LaTeX degree thesis assistant for existing .tex projects on XeLaTeX, LuaLaTeX, or latexmk (thuthesis, pkuthss, and similar templates). Use for compile diagnosis, GB/T 7714-2015 bibliography checks, chapter structure mapping, template detection, terminology consistency, logic coherence review, literature review restructuring, research-gap derivation, heading lead-in checks, three-line table validation, abstract diagnosis, title optimization, or de-AI editing on Chinese theses. Trigger for prompts like "帮我编译论文", "检查国标格式", "看看绪论逻辑", "文献综述太像罗列", "研究空白没推出来", "毕业论文", "学位论文", "硕士/博士论文", "三线表", or "检查摘要结构". Use latex-paper-en for English conference or journal papers, and paper-audit for reviewer-style critique.
 metadata:
   category: academic-writing
   tags: [latex, thesis, chinese, phd, master, xelatex, gb7714, thuthesis, pkuthss, compilation, bibliography, structure]
-  version: "1.3"
-  last_updated: "2026-04-15"
+  version: "5.0.0"
+  last_updated: "2026-05-20"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(xelatex *), Bash(lualatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *)
 ---

@@ -217,6 +217,18 @@
         {"type": "not_contains", "text": "pre_submission_readiness", "description": "focused bundle not polluted by pre-submission lane"},
         {"type": "regex", "pattern": "(Phase 0|automated|context)", "description": "mechanical findings remain contextual"}
       ]
+    },
+    {
+      "id": 20,
+      "prompt": "Deep-review this paper and use the claim-evidence map to separate unsupported headline claims, citation-support-needed claims, and table-backed result claims.",
+      "expected_output": "Route to deep-review, preserve claim-evidence map terminology, and distinguish unsupported claims from citation metadata and table-backed metric evidence.",
+      "files": ["evals/fixtures/claim_evidence_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(claim.evidence|claim-evidence|claim map|unsupported)", "description": "claim-evidence framing visible"},
+        {"type": "regex", "pattern": "(citation support|supports this manuscript sentence|metadata)", "description": "citation support is not collapsed into metadata existence"},
+        {"type": "regex", "pattern": "(Table|metric|12\\.4|evidence anchor)", "description": "table-backed metric claim stays anchored"}
+      ]
     }
   ]
 }
