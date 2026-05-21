@@ -58,3 +58,43 @@ python diff_review_issues.py old_final_issues.json new_final_issues.json
 - `review_report.md`
 - `peer_review_report.md`
 - `revision_roadmap.md`
+
+## Common Misclassifications
+
+A short list of recurring LLM errors during `paper-audit` runs. When in doubt,
+consult the cited reference and resolve in favor of the more conservative
+classification.
+
+- **Promoting a single em-dash to a gate blocker.** PRE_SUBMISSION_RULES G1
+  treats em-dash overuse as Major only above the threshold. A single em-dash
+  is not a gate-blocking finding. See `PRE_SUBMISSION_RULES.md` G1.
+- **Re-finding a section issue inside a cross-cutting lane.** If a finding
+  already lives in `section_methods` or `section_results`, it should not be
+  re-reported by `claims_vs_evidence` or `notation_and_numeric_consistency`
+  unless the cross-cutting view adds a new dimension. See
+  `CONSOLIDATION_RULES.md`.
+- **Treating ScholarEval N/A as a Major issue.** N/A means the dimension was
+  not exercised (often because `--literature-search` was not requested), not
+  that the paper failed it. See `SCHOLAR_EVAL_GUIDE.md`.
+- **Emitting issue severity inside `quick-audit`.** `quick-audit` produces a
+  readiness screen, not a reviewer-grade verdict. Severity assignment lives in
+  `deep-review` synthesis. See `MODE_GUIDE.md`.
+- **Silently merging singleton CRITICAL findings.** Synthesis must preserve
+  singleton CRITICAL findings unless explicitly downgraded by Arbitration
+  Priority 1 (Evidence Principle). See `synthesis_agent.md` Forbidden
+  Operations.
+- **Over-merging across `review_lane` boundaries.** Lane provenance must
+  survive consolidation. Findings from different lanes can be linked via
+  `root_cause_key` without losing their lane attribution. See
+  `CONSOLIDATION_RULES.md` and `ISSUE_SCHEMA.md`.
+- **Treating PDF mode as a degraded LaTeX mode.** PDF runs intentionally skip
+  source-only checks (bibliography hygiene, label resolution, compile
+  warnings). Findings that reference LaTeX macros from a PDF input are
+  TROUBLESHOOTING F5. See `TROUBLESHOOTING.md`.
+- **Letting EIC `Desk Reject` override committee consensus in
+  `deep-review`.** EIC is a 90-second pitch screener; its verdict is binding
+  only in `gate` mode. See `editor_in_chief_agent.md` and TROUBLESHOOTING F8.
+- **Inflating issue lists past lane output limits.** Each cross-cutting lane
+  has a max-issues budget in `REVIEW_LANE_GUIDE.md`. Recurring patterns must
+  collapse into one issue with multiple example locations rather than emit
+  one issue per occurrence.

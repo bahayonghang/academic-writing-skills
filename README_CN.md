@@ -56,6 +56,9 @@ npx skills add bahayonghang/academic-writing-skills
 | **在线验证** | CrossRef + Semantic Scholar 文献验证（无需 API 密钥）|
 | **翻译** | 中译英学术翻译，自动识别领域术语 |
 
+Claim-evidence 指南会把 citation key 和 `.bib` 命中视为 provenance，
+而不是 claim support 证明；无法确认的支撑关系会被标记，不会被补写。
+
 ### latex-thesis-zh
 
 符合 GB/T 7714-2015 及主流高校模板的中文学位论文编辑工具。
@@ -119,6 +122,9 @@ npx skills add bahayonghang/academic-writing-skills
 | **预览** | JSON 结果可继续管道给 `preview_bib_search.py`，生成紧凑的人类可读摘要 |
 | **特殊判断** | `has:code` 会从 URL、annotation、keywords、note 类字段和 abstract 中推断代码可用性 |
 
+检索结果会暴露 DOI、arXiv、URL 等 provenance 字段，供后续验证使用。
+本地 `.bib` 命中不等于该文献已经支撑论文中的具体论断。
+
 ### paper-audit
 
 以深度审稿为核心的多格式论文审查工具，包含结构化问题清单、修订路线图与投稿门控。
@@ -129,6 +135,7 @@ npx skills add bahayonghang/academic-writing-skills
 | **模式** | `quick-audit`（快速筛查）· `deep-review`（审稿人风格深审）· `gate`（投稿门控）· `re-audit`（修订回归）|
 | **PRESUBMISSION 层** | 投稿前最后几天的机械检查：em dash、AI-tone 词频、摘要结果缺口、LaTeX hygiene、公式引用、具体 caption；PDF 只运行文本类检查 |
 | **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`peer_review_report.md`、`revision_roadmap.md` |
+| **Claim-Evidence Map** | additive `claim_candidates`，记录 evidence anchors、support strength、missing evidence 与 bounded wording |
 | **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
 | **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
 | **伪代码审查** | IEEE gate 检查浮动算法环境、caption/label/引用顺序，并把行号与长注释归为建议项而非硬阻塞 |
@@ -140,6 +147,7 @@ npx skills add bahayonghang/academic-writing-skills
 | **去AI化** | 全文降低 AI 写作痕迹 |
 | **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
 | **审查范围说明** | Phase 0 负责脚本化审查；`deep-review` 进一步加入 claim-evidence、符号/数值一致性、评估公平性、自我标准一致性、先验工作定位等 reviewer lanes |
+| **Data Availability Advisory** | 检查 central claims 是否有 source-data / artifact anchors；只有 venue 要求且 central evidence 缺失时才阻塞 |
 | **文献边界** | `--focus literature` 负责判断 research gap 是否真实、文献定位是否公平，不负责代写综述正文；需要改写时请转交对应写作类 skill |
 
 **审查工作流层级**

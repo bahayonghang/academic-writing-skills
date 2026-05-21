@@ -1,11 +1,11 @@
 ---
 name: latex-paper-en
-description: English LaTeX academic paper assistant for existing `.tex` journal or conference manuscripts (IEEE, ACM, Springer, NeurIPS, ICML, etc.). Use whenever the user wants compile/build diagnosis, venue formatting, BibTeX/Biber or citation checks, grammar, sentence-length, logic, abstract, title, figure, table, pseudocode, experiment-section, de-AI, translation, expression, related-work synthesis, research-gap derivation, journal adaptation, or submission-readiness help on a LaTeX paper. Trigger for prompts like proofread my paper, fix my LaTeX, check manuscript, improve writing, rewrite related work, research gap, booktabs/three-line table, Algorithm 1, algorithm2e, algorithmicx, algpseudocodex, Require/Ensure, or 换投 when a .tex project is present.
+description: English LaTeX paper assistant for existing .tex conference and journal manuscripts (IEEE, ACM, Springer, NeurIPS, ICML). Use for compile diagnosis, venue formatting, BibTeX or Biber checks, grammar, logic, abstract, title, figure, table, pseudocode (algorithm2e, algorithmicx, algpseudocodex), experiment-section review, related-work synthesis, research-gap derivation, journal adaptation, de-AI polish, translation, or submission readiness. Trigger for prompts like "proofread my LaTeX paper", "fix my .tex build", "rewrite related work", "derive research gap", "check booktabs table", "review algorithm2e pseudocode", "改投会议", or "换投期刊". Use latex-thesis-zh for Chinese degree theses, typst-paper for .typ projects, and paper-audit for reviewer-style critique.
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
-  version: "1.3"
-  last_updated: "2026-04-15"
+  version: "5.1.0"
+  last_updated: "2026-05-20"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Bash(pdflatex *), Bash(xelatex *), Bash(latexmk *), Bash(bibtex *), Bash(biber *), Bash(chktex *)
 ---

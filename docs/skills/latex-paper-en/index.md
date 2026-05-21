@@ -98,6 +98,9 @@ Rewrite the Related Work so it reads like a synthesis instead of a paper list, b
 - Expected output is source-preserving review feedback, usually LaTeX-oriented comments, not silent rewrites.
 - Eval coverage now includes pseudocode prompts for IEEE float migration, caption/label hygiene, and advisory-vs-mandatory wording.
 - Use `literature` when the request is specifically about rewriting or re-structuring Related Work. Keep `logic` for intro funnel and cross-section closure.
+- Claim-evidence checks distinguish visible anchors from actual support: a
+  citation key or `.bib` hit is not enough to prove the cited paper supports
+  the manuscript sentence.
 - Anti-citation-stacking: max 2 clustered citations per sentence without individual discussion. Sentences with 3+ stacked references are flagged as AI writing traces in Introduction and Related Work.
 - The `logic` module now checks literature review quality (A1: author enumeration, A3: gap derivation) and cross-section logic chain closure (C3: intro claims answered in conclusion). Use `--cross-section` for full-document closure checks.
 - The `experiment` module now checks discussion depth (B3), results-literature echo (B4), and conclusion completeness (B5: findings + implications + limitations).

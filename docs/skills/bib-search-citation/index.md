@@ -64,6 +64,8 @@ Find the best TimeMachine match in references.bib and return one raw entry plus 
   `cite:`, and `raw:true`.
 - `has:code` is inferred from fields such as `url`, `annotation`, `keywords`, `note`,
   `howpublished`, and `abstract`.
+- A `.bib` match, citation key, DOI, arXiv ID, or URL is bibliography
+  provenance, not proof that the paper supports a manuscript claim.
 - If the query contains only filters and no topic words, the sort mode controls result order.
 - Malformed entries may be skipped during parsing, so unexpectedly small result sets can come
   from broken BibTeX structure or encoding issues.

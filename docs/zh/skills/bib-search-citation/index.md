@@ -64,5 +64,7 @@
   `cite:` 和 `raw:true`。
 - `has:code` 会从 `url`、`annotation`、`keywords`、`note`、`howpublished`、
   `abstract` 等字段推断。
+- `.bib` 命中、citation key、DOI、arXiv ID 或 URL 只是文献来源线索，
+  不等于该文献已经支撑了论文中的具体论断。
 - 如果查询里只有过滤条件，没有主题词，结果顺序主要由 sort 决定。
 - 如果命中数量异常偏少，可能是某些 BibTeX 条目结构损坏或编码异常，导致解析时被跳过。

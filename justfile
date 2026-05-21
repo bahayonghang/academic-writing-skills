@@ -17,6 +17,7 @@ help:
     @echo "  just lint              - 运行格式和代码检查"
     @echo "  just typecheck         - 运行类型检查"
     @echo "  just test              - 运行测试"
+    @echo "  just check-versions    - 校验所有 skills 与 pyproject 版本一致"
     @echo "  just ci                - 运行完整 CI 流程"
     @echo ""
     @echo "🔧 代码修复："
@@ -44,18 +45,27 @@ ci:
     @echo "  🚀 开始执行 CI 流程"
     @echo "════════════════════════════════════════════════════════════════"
     @echo ""
-    @echo "🔍 步骤 1/3: Ruff 代码检查..."
+    @echo "🔢 步骤 1/4: 校验 skills 版本与 pyproject 一致..."
+    @just check-versions
+    @echo ""
+    @echo "🔍 步骤 2/4: Ruff 代码检查..."
     @just lint
     @echo ""
-    @echo "🔍 步骤 2/3: Pyright 类型检查..."
+    @echo "🔍 步骤 3/4: Pyright 类型检查..."
     @just typecheck
     @echo ""
-    @echo "🧪 步骤 3/3: 运行测试..."
+    @echo "🧪 步骤 4/4: 运行测试..."
     @just test
     @echo ""
     @echo "════════════════════════════════════════════════════════════════"
     @echo "  ✅ CI 流程执行完成！"
     @echo "════════════════════════════════════════════════════════════════"
+
+# 校验所有 SKILL.md 版本与 pyproject.toml 一致
+check-versions:
+    @echo "  → 校验 skills 版本与 pyproject.toml 对齐..."
+    @uv run --extra dev python -m pytest tests/test_skill_versions.py -q
+    @echo "  ✓ 版本一致性检查通过"
 
 # 代码格式化和 lint 检查
 lint:

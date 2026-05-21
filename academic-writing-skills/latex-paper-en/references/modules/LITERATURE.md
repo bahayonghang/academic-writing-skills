@@ -24,8 +24,25 @@ Use this exact reasoning chain when proposing prose:
 4. **Gap**: the unresolved condition the paper targets
 5. **This paper**: how the present work enters that gap
 
+## Claim-Evidence Map
+
+When the literature review contains a gap, novelty, or contribution claim,
+summarize it with the claim-evidence contract from
+`references/CLAIM_EVIDENCE_CONTRACT.md`:
+
+- `claim`: the exact gap or contribution sentence.
+- `evidence_anchor`: cited prior work, section quote, or `missing`.
+- `claim_strength`: `unsupported`, `observed`, `supported`, or `strong`.
+- `missing_evidence`: closest prior work, comparison dimension, or claim-support
+  check that is still absent.
+- `allowed_wording`: bounded gap wording that does not overstate what the cited
+  literature proves.
+
 ## Hard Boundaries
 
 - Do not invent citations or add uncited claims.
 - Keep `\cite{}`, `\ref{}`, `\label{}`, and math untouched unless the user explicitly asks for source edits.
 - If the evidence in the section is too thin, say that the gap is unsupported instead of forcing one.
+- A citation key only proves that a source is cited; it does not prove the
+  cited source supports the exact manuscript claim until claim support is
+  checked.

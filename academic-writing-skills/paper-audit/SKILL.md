@@ -1,23 +1,23 @@
 ---
 name: paper-audit
-description: Reviewer-style audit and submission gate for Chinese and English academic papers across LaTeX, Typst, and PDF formats. Use whenever the user wants peer-review critique, pre-submission readiness checks, pass/fail gate decisions, blocker triage, structured revision roadmaps, journal-style peer review reports, or re-audits of revised manuscripts. Trigger for prompts like "review my paper", "act as a reviewer", "simulate peer review", "audit this PDF", "is this ready to submit", "gate-check before submission", "find the biggest problems in this manuscript", "write a SCI review report", "give me Summary / Major Issues / Minor Issues / Recommendation", "re-check whether I fixed the review issues", and Chinese variants such as "审稿", "帮我审稿", "投稿门控", "挡稿", "投稿前体检", "把把关", "重新审一遍", "看看能不能投", "出审稿意见", "重大/次要问题清单". Do not use for direct source editing, polishing, or compilation-heavy repair; route those to the format-specific writing skills instead.
+description: Reviewer-style audit and submission gate for Chinese and English academic papers in LaTeX, Typst, or PDF format. Use for peer-review critique, pre-submission readiness checks, pass/fail gate decisions, blocker triage, structured revision roadmaps, journal-style review reports, or re-audits of revised manuscripts. Trigger for prompts like "review my paper", "act as a reviewer", "audit this PDF", "is this ready to submit", "gate-check before submission", "write an SCI review report with Summary/Major/Minor/Recommendation", "re-check whether I fixed the review issues", "审稿", "帮我审稿", "投稿门控", "投稿前体检", "重新审一遍", "看看能不能投", or "重大/次要问题清单". Do not use for source editing, sentence polishing, or compilation repair; route those to latex-paper-en, latex-thesis-zh, or typst-paper instead.
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
-  version: "4.5"
-  last_updated: "2026-04-27"
+  version: "5.1.0"
+  last_updated: "2026-05-20"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v4.5
+# Paper Audit Skill v5.1
 
 `paper-audit` is **deep-review-first**. Its core job is to behave like a
 serious reviewer: find technical, methodological, claim-level, and
 cross-section issues; keep script-backed findings separate from reviewer
 judgment; and return a structured issue bundle plus a revision roadmap.
 
-Version 4.5 adds a script-backed `PRESUBMISSION` layer for final-week
+This version ships a script-backed `PRESUBMISSION` layer for final-week
 mechanical checks (em dashes, AI-tone term frequency, abstract completeness,
 LaTeX citation/label/equation hygiene, paragraph-shape weak signals, concrete
 captions). It plugs into existing modes; it is not a separate public mode.
@@ -98,7 +98,11 @@ Read these references before running reviewer-style work:
 5. `references/ISSUE_SCHEMA.md`
 6. `references/PRE_SUBMISSION_RULES.md`
 7. `references/PRESUBMISSION_GUIDE.md`
-8. `references/MODE_GUIDE.md`
+8. `references/CLAIM_EVIDENCE_CONTRACT.md`
+9. `references/DATA_AVAILABILITY_ADVISORY.md`
+10. `references/MODE_GUIDE.md`
+11. `references/editorial_decision_standards.md`
+12. `references/quality_rubrics.md`
 
 The deep-review workflow uses a 16-part issue taxonomy:
 
@@ -211,6 +215,13 @@ For `deep-review`, the final issue schema is:
   "related_sections": ["results", "appendix"],
   "root_cause_key": "shared-normalized-key",
   "review_lane": "claims_vs_evidence",
+  "evidence_anchor": [
+    {"type": "citation|figure_or_table|metric|section|analysis_artifact", "text": "visible anchor"}
+  ],
+  "claim_strength": "unsupported|observed|supported|strong",
+  "missing_evidence": ["specific support that is absent or unverified"],
+  "allowed_wording": "bounded wording that stays within the evidence",
+  "forbidden_wording": ["unbounded wording that would require stronger evidence"],
   "gate_blocker": false,
   "quote_verified": true
 }
@@ -232,10 +243,15 @@ Always prefer:
 | `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy and leniency rules |
 | `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
 | `references/ISSUE_SCHEMA.md` | canonical JSON schema |
+| `references/CLAIM_EVIDENCE_CONTRACT.md` | optional claim candidate / evidence anchor contract |
+| `references/DATA_AVAILABILITY_ADVISORY.md` | source-data and FAIR metadata advisory boundary |
 | `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
 | `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules and term list |
 | `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
 | `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
+| `references/editorial_decision_standards.md` | cross-reviewer arbitration rules and decision matrix |
+| `references/quality_rubrics.md` | five-dimension scoring rubric with calibrated tiers |
+| `references/TROUBLESHOOTING.md` | operational errors plus review-quality failure paths (F1-F8) |
 
 ## Scripts
 
@@ -244,7 +260,7 @@ Always prefer:
 | `scripts/audit.py` | Phase 0 audit and mode entrypoint |
 | `scripts/pre_submission_check.py` | deterministic `PRESUBMISSION` mechanical audit layer |
 | `scripts/prepare_review_workspace.py` | create deep-review workspace |
-| `scripts/build_claim_map.py` | extract headline claims and closure targets |
+| `scripts/build_claim_map.py` | extract headline claims, closure targets, and additive `claim_candidates` |
 | `scripts/consolidate_review_findings.py` | deduplicate comment JSONs |
 | `scripts/verify_quotes.py` | verify exact quote presence |
 | `scripts/render_deep_review_report.py` | render final Markdown report |
@@ -270,6 +286,8 @@ Default deep-review lanes live in `agents/`:
 - `prior_art_reviewer_agent.md`
 - `synthesis_agent.md`
 - `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)
+- `revision_coach_agent.md` — parse free-form reviewer letters into a
+  structured roadmap (used in `re-audit` mode)
 
 Specialized deep-review agents (read their files for activation criteria):
 

@@ -1,20 +1,12 @@
 ---
 name: bib-search-citation
-description: >-
-  Search, filter, and format entries from BibTeX or BibLaTeX .bib files for
-  research workflows. Use when a user wants to find papers, search a
-  bibliography, filter a library, or look up references by topic, author, year,
-  venue, DOI, arXiv ID, keywords, annotation, abstract, or entry type. Handles
-  Zotero-exported libraries. Trigger for Chinese prompts such as "搜文献库",
-  "查 BibTeX", "查文献", "翻文献库", "找引用", "查 Zotero 导出",
-  "搜搜我的 .bib", "在文献库里找 Mamba 论文", "查 Cheng 2024 的引用",
-  "整理参考文献", or "导出 BibTeX 条目". Supports compact search expressions
-  such as author:, year-gte, type:, and has:, combined filters,
-  research-oriented output fields, raw BibTeX export, and LaTeX/Typst citation
-  snippets.
-category: docs-writing-publishing
-tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
-version: "1.1.0"
+description: Search and cite from local BibTeX or BibLaTeX .bib libraries, including Zotero exports with custom fields like shorttitle, annotation, keywords, abstract, file, DOI, URL, and eprint. Use when the user wants to find papers, filter a bibliography, or generate citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, or abstract. Supports compact filter expressions like author:, year-gte, type:, has:, raw BibTeX export, and LaTeX/Typst citation output. Trigger for prompts like "search my bib", "find Mamba paper in my library", "export BibTeX entries", "搜文献库", "查 BibTeX", "找引用", "在文献库里找 Mamba", or "整理参考文献". Do not use for writing or polishing manuscripts; route those to latex-paper-en, latex-thesis-zh, or typst-paper.
+metadata:
+  category: docs-writing-publishing
+  tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
+  version: "5.1.0"
+  last_updated: "2026-05-20"
+argument-hint: "[library.bib] [--query QUERY]"
 allowed-tools: Read, Bash
 ---
 
@@ -120,6 +112,8 @@ For each selected entry, usually include:
 - DOI and/or eprint when present
 - the supporting fields that made the entry relevant, such as keywords,
   annotation, or a short abstract excerpt
+- a provenance note when useful: local `.bib` matches and citation snippets are
+  bibliography evidence, not proof that the paper supports a manuscript claim
 
 If the user supplied compact filters, echo the interpreted filters when negation,
 field filters, or mixed citation/export options could otherwise be ambiguous.
@@ -177,6 +171,9 @@ fields such as `url`, `abstract`, `keywords`, `annotation`, `note`, and
 - Treat raw BibTeX as source data; preserve it exactly when quoting or exporting.
 - Do not claim an entry strongly supports a manuscript claim unless the relevant
   fields actually support that relationship.
+- Treat DOI, arXiv, URL, and citation keys as provenance handoff fields. They
+  help a later verifier check claim support, but they are not themselves
+  claim-support proof.
 - If the `.bib` file is malformed, report that entries may have been skipped
   instead of silently presenting the result set as complete.
 - Keep online discovery out of this skill unless the user explicitly asks to

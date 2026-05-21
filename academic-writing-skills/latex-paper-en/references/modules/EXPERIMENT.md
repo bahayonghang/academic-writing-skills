@@ -21,6 +21,28 @@ uv run python -B scripts/analyze_experiment.py main.tex --section results
 - missing efficiency comparison
 - conclusions that go beyond the evidence shown
 
+## Claim-Evidence Map
+
+For any result, comparison, ablation, significance, or efficiency claim, emit a
+compact claim-evidence map when helpful:
+
+- `claim`: exact sentence or caption claim.
+- `evidence_anchor`: table, figure, metric, section, or `missing`.
+- `claim_strength`:
+  - `unsupported` when no local result, metric, figure, table, or method anchor
+    supports the claim.
+  - `observed` when a metric appears but dataset/baseline/unit of analysis is
+    incomplete.
+  - `supported` when the claim is tied to a visible result anchor but still
+    needs boundary checks.
+  - `strong` only when metric plus figure/table/artifact support is visible and
+    the setting is bounded.
+- `missing_evidence`: required baseline, ablation, variance, source table, or
+  data artifact.
+- `allowed_wording`: wording bounded to the reported setting.
+- `forbidden_wording`: winner, significance, or universal claims that require
+  stronger evidence.
+
 ## Raw Script Output
 
 ```latex
@@ -33,6 +55,8 @@ uv run python -B scripts/analyze_experiment.py main.tex --section results
 - Keep the final response in LaTeX-friendly review comment style.
 - Do not rewrite the experiment section unless the user explicitly asks for revised prose.
 - Never invent baselines, metrics, significance claims, or efficiency numbers.
+- Do not promote a metric-only observation into a universal result. Keep dataset,
+  sample, baseline, and measurement boundaries visible.
 
 ---
 

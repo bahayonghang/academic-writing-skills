@@ -114,5 +114,10 @@ Re-audit this revision against the previous report.
 - `audit.py --mode deep-review` is only Phase 0, not the full reviewer workflow.
 - `PRESUBMISSION` is a mechanical layer inside existing modes, not a new public mode.
 - The primary deep-review product is the structured issue bundle, not the score summary.
+- `claim_map.json` now keeps legacy headline/closure fields and adds advisory
+  claim candidates with evidence anchors, support strength, missing evidence,
+  and bounded wording fields.
+- Data availability checks are advisory unless a venue-required central source
+  data gap should block submission.
 - Use source files when possible; PDF input runs text-only pre-submission checks and skips LaTeX/Typst source hygiene.
 - `--focus literature` is critique-only: it checks synthesis quality, contradiction handling, and gap legitimacy, but does not rewrite the related-work prose.
