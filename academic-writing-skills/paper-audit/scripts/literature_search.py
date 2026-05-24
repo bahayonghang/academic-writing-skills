@@ -122,7 +122,7 @@ class SemanticScholarClient:
 class ArxivClient:
     """Client for arXiv API."""
 
-    BASE_URL = "http://export.arxiv.org/api/query"
+    BASE_URL = "https://export.arxiv.org/api/query"
     NS = {"atom": "http://www.w3.org/2005/Atom"}
 
     def search(self, query: str, max_results: int = 10) -> list[SearchResult]:

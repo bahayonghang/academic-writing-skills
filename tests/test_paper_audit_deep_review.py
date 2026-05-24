@@ -305,7 +305,10 @@ def test_verify_quotes_marks_missing_quotes() -> None:
     assert updated[1]["quote_verified"] is False
 
 
-def test_run_deep_review_creates_workspace_artifacts_and_issue_bundle(tmp_path: Path) -> None:
+def test_run_deep_review_creates_workspace_artifacts_and_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_deep_review
 
     tex = tmp_path / "paper.tex"
@@ -331,6 +334,7 @@ We conclude that the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_deep_review(str(tex), lang="en")
 
     artifact_dir = Path(result.artifact_dir)
@@ -416,7 +420,10 @@ def test_run_deep_review_caps_score_from_editor_verdict(tmp_path: Path) -> None:
     assert float(match.group(1)) <= 4.0
 
 
-def test_run_audit_deep_review_dispatches_to_issue_bundle(tmp_path: Path) -> None:
+def test_run_audit_deep_review_dispatches_to_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
     from render_deep_review_report import load_result
 
@@ -439,6 +446,7 @@ We conclude the gains are broadly effective.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_audit(str(tex), mode="deep-review", lang="en")
     reloaded = load_result(Path(result.artifact_dir))
 
@@ -453,7 +461,10 @@ We conclude the gains are broadly effective.
     assert reloaded.section_index == result.section_index
 
 
-def test_run_audit_deep_review_focus_methodology_limits_issue_bundle(tmp_path: Path) -> None:
+def test_run_audit_deep_review_focus_methodology_limits_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
 
     tex = tmp_path / "paper.tex"
@@ -477,6 +488,7 @@ We conclude the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
     payload = json.loads(
         (Path(result.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
@@ -522,7 +534,10 @@ This paper introduces a bounded method.
     assert not any("File not found" in issue.message for issue in result.issues)
 
 
-def test_repeated_deep_review_runs_clear_stale_workspace_artifacts(tmp_path: Path) -> None:
+def test_repeated_deep_review_runs_clear_stale_workspace_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
 
     tex = tmp_path / "paper.tex"
@@ -546,10 +561,17 @@ We conclude the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     full = run_audit(str(tex), mode="deep-review", focus="full", lang="en")
     assert (Path(full.artifact_dir) / "committee" / "theory.md").exists()
 
-    focused = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
+    focused = run_audit(
+        str(tex),
+        mode="deep-review",
+        focus="methodology",
+        lang="en",
+        overwrite_workspace=True,
+    )
 
     focused_committee = Path(focused.artifact_dir) / "committee" / "theory.md"
     focused_payload = json.loads(

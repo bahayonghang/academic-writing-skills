@@ -144,14 +144,17 @@ class LaTeXCompiler:
 
         return True, "All tools available"
 
+    def _engine_shell_mode_arg(self) -> str:
+        """Return the explicit shell-escape mode passed to TeX engines."""
+        return "-shell-escape" if self.shell_escape else "-no-shell-escape"
+
     def _latexmk_engine_args(self) -> list[str]:
-        """Build latexmk engine args with optional shell-escape."""
+        """Build latexmk engine args with explicit shell-escape mode."""
         if self.compiler not in self.COMPILERS:
             return ["-pdf"]
 
         engine = self.compiler
-        if self.shell_escape:
-            engine = f"{engine} -shell-escape"
+        engine = f"{engine} {self._engine_shell_mode_arg()}"
 
         if self.compiler == "pdflatex":
             return ["-pdf", f"-pdflatex={engine} %O %S"]
@@ -264,12 +267,11 @@ class LaTeXCompiler:
                 cmd = [
                     "latexmk",
                     "-xelatex",
+                    f"-xelatex=xelatex {self._engine_shell_mode_arg()} %O %S",
                     "-interaction=nonstopmode",
                     "-synctex=1",
                     "-file-line-error",
                 ]
-                if self.shell_escape:
-                    cmd.append("-shell-escape")
                 if outdir:
                     cmd.append(f"-outdir={outdir}")
                 cmd.append(str(self.tex_file))
@@ -277,19 +279,22 @@ class LaTeXCompiler:
                 cmd = [
                     "latexmk",
                     "-lualatex",
+                    f"-lualatex=lualatex {self._engine_shell_mode_arg()} %O %S",
                     "-interaction=nonstopmode",
                     "-synctex=1",
                     "-file-line-error",
                 ]
-                if self.shell_escape:
-                    cmd.append("-shell-escape")
                 if outdir:
                     cmd.append(f"-outdir={outdir}")
                 cmd.append(str(self.tex_file))
             elif step in ("xelatex", "lualatex"):
-                cmd = [step, "-interaction=nonstopmode", "-synctex=1", str(self.tex_file)]
-                if self.shell_escape:
-                    cmd.insert(2, "-shell-escape")
+                cmd = [
+                    step,
+                    "-interaction=nonstopmode",
+                    "-synctex=1",
+                    self._engine_shell_mode_arg(),
+                    str(self.tex_file),
+                ]
             elif step == "bibtex":
                 cmd = ["bibtex", tex_base]
             elif step == "biber":
@@ -406,7 +411,12 @@ Examples:
     parser.add_argument(
         "--shell-escape",
         action="store_true",
-        help="启用 shell-escape (仅用于可信源)",
+        help="启用 shell-escape (需要 --trusted-source)",
+    )
+    parser.add_argument(
+        "--trusted-source",
+        action="store_true",
+        help="确认 LaTeX 源文件可信后再启用 shell-escape",
     )
     parser.add_argument("--clean", action="store_true", help="清理辅助文件")
     parser.add_argument("--clean-all", action="store_true", help="清理所有生成文件 (含 PDF)")
@@ -422,6 +432,13 @@ Examples:
 
     if tex_path.suffix != ".tex":
         print(f"[WARNING] 文件扩展名不是 .tex: {args.tex_file}")
+
+    if args.shell_escape and not args.trusted_source:
+        print(
+            "[ERROR] --shell-escape 可执行 LaTeX 源文件中的命令。"
+            "确认源文件可信后再同时传入 --trusted-source。"
+        )
+        sys.exit(1)
 
     # Create compiler instance
     compiler = LaTeXCompiler(

@@ -221,6 +221,58 @@ def test_audit_cli_without_review_dir_does_not_touch_checkpoint(tmp_path: Path) 
     assert "[checkpoint]" not in proc.stdout
 
 
+def test_prepare_review_workspace_refuses_implicit_overwrite(tmp_path: Path) -> None:
+    from prepare_review_workspace import prepare_workspace
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Overwrite Safety Test}
+\begin{document}
+\begin{abstract}We test workspace overwrite safety.\end{abstract}
+\section{Introduction}
+Content.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "review_results"
+    workspace = prepare_workspace(str(tex), output_dir=str(output_dir))
+    sentinel = workspace / "sentinel.txt"
+    sentinel.write_text("keep", encoding="utf-8")
+
+    with pytest.raises(FileExistsError):
+        prepare_workspace(str(tex), output_dir=str(output_dir))
+
+    assert sentinel.exists()
+
+
+def test_prepare_review_workspace_allows_explicit_overwrite(tmp_path: Path) -> None:
+    from prepare_review_workspace import prepare_workspace
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Overwrite Safety Test}
+\begin{document}
+\begin{abstract}We test workspace overwrite safety.\end{abstract}
+\section{Introduction}
+Content.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "review_results"
+    workspace = prepare_workspace(str(tex), output_dir=str(output_dir))
+    sentinel = workspace / "sentinel.txt"
+    sentinel.write_text("replace", encoding="utf-8")
+
+    overwritten = prepare_workspace(str(tex), output_dir=str(output_dir), overwrite=True)
+
+    assert overwritten == workspace
+    assert not sentinel.exists()
+
+
 def test_run_deep_review_resume_skips_completed_lane(tmp_path: Path) -> None:
     from audit import run_deep_review
     from prepare_review_workspace import prepare_workspace

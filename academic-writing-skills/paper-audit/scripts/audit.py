@@ -1580,12 +1580,15 @@ def run_deep_review(
     regression: bool = False,
     review_dir: str | None = None,
     no_resume: bool = False,
+    overwrite_workspace: bool = False,
 ) -> AuditResult:
     """Run the end-to-end deep-review workflow with deterministic fallback lanes."""
     source_path = str(Path(file_path).resolve())
     resume_enabled = review_dir is not None
     workspace = (
-        Path(review_dir).resolve() if review_dir is not None else prepare_workspace(source_path)
+        Path(review_dir).resolve()
+        if review_dir is not None
+        else prepare_workspace(source_path, overwrite=overwrite_workspace)
     )
 
     if resume_enabled:
@@ -2259,6 +2262,7 @@ def run_audit(
     regression: bool = False,
     review_dir: str | None = None,
     no_resume: bool = False,
+    overwrite_workspace: bool = False,
 ) -> AuditResult:
     """
     Run a complete paper audit.
@@ -2273,6 +2277,7 @@ def run_audit(
         tavily_key: API key for Tavily search (or env TAVILY_API_KEY).
         s2_key: API key for Semantic Scholar (or env S2_API_KEY).
         regression: Use regression scoring model instead of weighted average.
+        overwrite_workspace: Replace an existing auto-created deep-review workspace.
 
     Returns:
         AuditResult with all findings.
@@ -2313,6 +2318,7 @@ def run_audit(
             regression=regression,
             review_dir=review_dir,
             no_resume=no_resume,
+            overwrite_workspace=overwrite_workspace,
         )
 
     # Step 1: Extract text
@@ -3042,6 +3048,11 @@ Examples:
         help="Reset the deep-review checkpoint at --review-dir before running, "
         "forcing every phase / lane to execute again. Workspace artifacts are kept.",
     )
+    parser.add_argument(
+        "--overwrite-workspace",
+        action="store_true",
+        help="Replace an existing auto-created deep-review workspace when --review-dir is omitted.",
+    )
 
     args = parser.parse_args()
 
@@ -3081,6 +3092,7 @@ Examples:
                 regression=getattr(args, "regression", False),
                 review_dir=getattr(args, "review_dir", None),
                 no_resume=getattr(args, "no_resume", False),
+                overwrite_workspace=getattr(args, "overwrite_workspace", False),
             )
 
             if args.mode == "deep-review" and args.review_dir:
@@ -3106,7 +3118,7 @@ Examples:
         has_critical = any(i.severity == "Critical" for i in result.issues)
         return 1 if has_critical else 0
 
-    except (FileNotFoundError, ValueError) as e:
+    except (FileNotFoundError, FileExistsError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 2
 

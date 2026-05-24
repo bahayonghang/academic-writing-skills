@@ -254,6 +254,39 @@ class TestLiteratureSearchMocked:
         assert isinstance(results, list)
 
 
+class TestArxivHttpsClient:
+    """Tests for the arXiv client transport contract."""
+
+    def test_arxiv_base_url_uses_https(self) -> None:
+        from literature_search import ArxivClient
+
+        assert ArxivClient.BASE_URL.startswith("https://")
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_arxiv_search_builds_https_request(self, mock_urlopen) -> None:
+        from literature_search import ArxivClient
+
+        xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <id>https://arxiv.org/abs/2401.00001</id>
+    <title>Secure Academic Search</title>
+    <summary>Transport safety test.</summary>
+    <published>2024-01-01T00:00:00Z</published>
+    <author><name>Ada Lovelace</name></author>
+  </entry>
+</feed>"""
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = xml
+        mock_urlopen.return_value = response
+
+        results = ArxivClient().search("secure academic search", max_results=1)
+
+        requested_url = mock_urlopen.call_args.args[0].full_url
+        assert requested_url.startswith("https://export.arxiv.org/api/query?")
+        assert results[0].title == "Secure Academic Search"
+
+
 # ============================================================
 # literature_compare tests
 # ============================================================

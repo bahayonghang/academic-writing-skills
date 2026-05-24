@@ -15,10 +15,12 @@ Purpose: Diagnose and fix compilation issues in Chinese LaTeX thesis projects.
 Create `.latexmkrc` in project root:
 ```perl
 $pdf_mode = 5;  # xelatex
-$xelatex = 'xelatex -interaction=nonstopmode -shell-escape %O %S';
+$xelatex = 'xelatex -interaction=nonstopmode -no-shell-escape %O %S';
 $bibtex_use = 2;
 $biber = 'biber %O %S';
 ```
+
+Enable `-shell-escape` only for sources you have explicitly verified as trusted.
 
 ## Common Issues
 
