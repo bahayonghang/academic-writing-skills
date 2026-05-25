@@ -1588,7 +1588,11 @@ def run_deep_review(
     workspace = (
         Path(review_dir).resolve()
         if review_dir is not None
-        else prepare_workspace(source_path, overwrite=overwrite_workspace)
+        else prepare_workspace(
+            source_path,
+            overwrite=overwrite_workspace,
+            overwrite_hint="--overwrite-workspace",
+        )
     )
 
     if resume_enabled:

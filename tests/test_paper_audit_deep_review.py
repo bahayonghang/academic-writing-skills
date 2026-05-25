@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 
+import pytest
 from report_generator import (
     AuditResult,
     DeepReviewIssue,
@@ -586,6 +587,40 @@ We conclude the method is broadly superior.
         "notation_and_numeric_consistency",
         "evaluation_fairness_and_reproducibility",
     }
+
+
+def test_repeated_deep_review_without_overwrite_reports_audit_flag(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    from audit import run_audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Overwrite Flag Hint Test}
+\begin{document}
+\begin{abstract}
+We test repeated deep review workspace handling.
+\end{abstract}
+\section{Introduction}
+This paper compares against a baseline.
+\section{Results}
+The model improves accuracy by 5.2.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+    run_audit(str(tex), mode="deep-review", lang="en")
+
+    with pytest.raises(FileExistsError) as exc_info:
+        run_audit(str(tex), mode="deep-review", lang="en")
+
+    message = str(exc_info.value)
+    assert "--overwrite-workspace" in message
+    assert "--overwrite to replace" not in message
 
 
 def test_diff_review_issues_reports_statuses() -> None:

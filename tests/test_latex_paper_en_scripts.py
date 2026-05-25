@@ -72,9 +72,11 @@ def test_compile_outdir_applies_to_default_latexmk(
 def test_compile_shell_escape_requires_trusted_source(tmp_path: Path) -> None:
     tex = tmp_path / "main.tex"
     tex.write_text("\\documentclass{article}\\begin{document}x\\end{document}", encoding="utf-8")
+    compile_script = compile_module.__file__
+    assert compile_script is not None
 
     result = subprocess.run(
-        [sys.executable, "-B", str(Path(compile_module.__file__)), str(tex), "--shell-escape"],
+        [sys.executable, "-B", str(Path(compile_script)), str(tex), "--shell-escape"],
         capture_output=True,
         text=True,
         check=False,
@@ -207,6 +209,22 @@ def test_check_figures_rejects_paths_outside_project(tmp_path: Path) -> None:
 
     assert figures[0]["status"] == "MISSING"
     assert figures[0]["abs_path"] is None
+
+
+def test_check_figures_allows_normalized_paths_inside_project(tmp_path: Path) -> None:
+    project_dir = tmp_path / "paper"
+    figures_dir = project_dir / "figures"
+    figures_dir.mkdir(parents=True)
+    fig = project_dir / "fig.png"
+    fig.write_bytes(b"not-a-real-png")
+    tex = project_dir / "main.tex"
+    tex.write_text("\\includegraphics{figures/../fig.png}", encoding="utf-8")
+
+    checker = check_figures_module.FigureChecker(tex)
+    figures = checker.find_figures()
+
+    assert figures[0]["status"] == "FOUND"
+    assert figures[0]["abs_path"] == fig
 
 
 def test_check_figures_help_does_not_advertise_json() -> None:

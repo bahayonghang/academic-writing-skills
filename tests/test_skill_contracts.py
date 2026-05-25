@@ -222,9 +222,7 @@ def test_skill_security_boundaries_are_declared() -> None:
 
 def test_latex_reference_configs_disable_shell_escape_by_default() -> None:
     bad_lines: list[str] = []
-    unsafe_engine_config = re.compile(
-        r"\$[a-z]*latex\s*=\s*['\"][^'\"]*(?<!no)-shell-escape"
-    )
+    unsafe_engine_config = re.compile(r"\$[a-z]*latex\s*=\s*['\"][^'\"]*(?<!no)-shell-escape")
     for skill_name in ("latex-paper-en", "latex-thesis-zh"):
         for path in (SKILLS_ROOT / skill_name / "references").rglob("*.md"):
             for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):

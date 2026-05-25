@@ -200,6 +200,7 @@ def prepare_workspace(
     output_dir: str = "./review_results",
     *,
     overwrite: bool = False,
+    overwrite_hint: str = "--overwrite",
 ) -> Path:
     """Create deep-review workspace files and return the workspace path."""
     source = Path(input_path).resolve()
@@ -223,7 +224,7 @@ def prepare_workspace(
         if not overwrite:
             raise FileExistsError(
                 f"Review workspace already exists: {workspace}. "
-                "Pass --overwrite to replace it, or choose a different --output-dir."
+                f"Pass {overwrite_hint} to replace it, or choose a different --output-dir."
             )
         shutil.rmtree(workspace)
     sections_dir = workspace / "sections"

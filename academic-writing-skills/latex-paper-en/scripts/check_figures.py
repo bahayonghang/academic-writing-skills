@@ -89,10 +89,6 @@ class FigureChecker:
 
     def _resolve_path(self, rel_path: str) -> Optional[Path]:
         """Resolve image path using graphics_paths."""
-        raw_path = Path(rel_path)
-        if raw_path.is_absolute() or ".." in raw_path.parts:
-            return None
-
         # Clean path extensions if missing (common in LaTeX)
         extensions = ["", ".pdf", ".png", ".jpg", ".jpeg", ".eps"]
 
@@ -100,13 +96,13 @@ class FigureChecker:
             # Try exact path
             candidate = base_path / rel_path
             if self._is_within_root(candidate) and candidate.exists():
-                return candidate
+                return candidate.resolve()
 
             # Try with extensions
             for ext in extensions:
                 candidate_ext = base_path / (rel_path + ext)
                 if self._is_within_root(candidate_ext) and candidate_ext.exists():
-                    return candidate_ext
+                    return candidate_ext.resolve()
 
         return None
 
