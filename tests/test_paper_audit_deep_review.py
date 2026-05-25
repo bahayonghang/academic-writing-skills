@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 
+import pytest
 from report_generator import (
     AuditResult,
     DeepReviewIssue,
@@ -305,7 +306,10 @@ def test_verify_quotes_marks_missing_quotes() -> None:
     assert updated[1]["quote_verified"] is False
 
 
-def test_run_deep_review_creates_workspace_artifacts_and_issue_bundle(tmp_path: Path) -> None:
+def test_run_deep_review_creates_workspace_artifacts_and_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_deep_review
 
     tex = tmp_path / "paper.tex"
@@ -331,6 +335,7 @@ We conclude that the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_deep_review(str(tex), lang="en")
 
     artifact_dir = Path(result.artifact_dir)
@@ -416,7 +421,10 @@ def test_run_deep_review_caps_score_from_editor_verdict(tmp_path: Path) -> None:
     assert float(match.group(1)) <= 4.0
 
 
-def test_run_audit_deep_review_dispatches_to_issue_bundle(tmp_path: Path) -> None:
+def test_run_audit_deep_review_dispatches_to_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
     from render_deep_review_report import load_result
 
@@ -439,6 +447,7 @@ We conclude the gains are broadly effective.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_audit(str(tex), mode="deep-review", lang="en")
     reloaded = load_result(Path(result.artifact_dir))
 
@@ -453,7 +462,10 @@ We conclude the gains are broadly effective.
     assert reloaded.section_index == result.section_index
 
 
-def test_run_audit_deep_review_focus_methodology_limits_issue_bundle(tmp_path: Path) -> None:
+def test_run_audit_deep_review_focus_methodology_limits_issue_bundle(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
 
     tex = tmp_path / "paper.tex"
@@ -477,6 +489,7 @@ We conclude the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     result = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
     payload = json.loads(
         (Path(result.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
@@ -522,7 +535,10 @@ This paper introduces a bounded method.
     assert not any("File not found" in issue.message for issue in result.issues)
 
 
-def test_repeated_deep_review_runs_clear_stale_workspace_artifacts(tmp_path: Path) -> None:
+def test_repeated_deep_review_runs_clear_stale_workspace_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     from audit import run_audit
 
     tex = tmp_path / "paper.tex"
@@ -546,10 +562,17 @@ We conclude the method is broadly superior.
         encoding="utf-8",
     )
 
+    monkeypatch.chdir(tmp_path)
     full = run_audit(str(tex), mode="deep-review", focus="full", lang="en")
     assert (Path(full.artifact_dir) / "committee" / "theory.md").exists()
 
-    focused = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
+    focused = run_audit(
+        str(tex),
+        mode="deep-review",
+        focus="methodology",
+        lang="en",
+        overwrite_workspace=True,
+    )
 
     focused_committee = Path(focused.artifact_dir) / "committee" / "theory.md"
     focused_payload = json.loads(
@@ -564,6 +587,40 @@ We conclude the method is broadly superior.
         "notation_and_numeric_consistency",
         "evaluation_fairness_and_reproducibility",
     }
+
+
+def test_repeated_deep_review_without_overwrite_reports_audit_flag(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    from audit import run_audit
+
+    tex = tmp_path / "paper.tex"
+    tex.write_text(
+        r"""
+\title{Overwrite Flag Hint Test}
+\begin{document}
+\begin{abstract}
+We test repeated deep review workspace handling.
+\end{abstract}
+\section{Introduction}
+This paper compares against a baseline.
+\section{Results}
+The model improves accuracy by 5.2.
+\end{document}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+    run_audit(str(tex), mode="deep-review", lang="en")
+
+    with pytest.raises(FileExistsError) as exc_info:
+        run_audit(str(tex), mode="deep-review", lang="en")
+
+    message = str(exc_info.value)
+    assert "--overwrite-workspace" in message
+    assert "--overwrite to replace" not in message
 
 
 def test_diff_review_issues_reports_statuses() -> None:

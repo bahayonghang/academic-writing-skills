@@ -195,7 +195,13 @@ def _copy_workspace_references(workspace: Path) -> None:
         shutil.copy2(src, dest_dir / name)
 
 
-def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> Path:
+def prepare_workspace(
+    input_path: str,
+    output_dir: str = "./review_results",
+    *,
+    overwrite: bool = False,
+    overwrite_hint: str = "--overwrite",
+) -> Path:
     """Create deep-review workspace files and return the workspace path."""
     source = Path(input_path).resolve()
     if not source.exists():
@@ -215,6 +221,11 @@ def prepare_workspace(input_path: str, output_dir: str = "./review_results") -> 
 
     workspace = Path(output_dir).resolve() / slug
     if workspace.exists():
+        if not overwrite:
+            raise FileExistsError(
+                f"Review workspace already exists: {workspace}. "
+                f"Pass {overwrite_hint} to replace it, or choose a different --output-dir."
+            )
         shutil.rmtree(workspace)
     sections_dir = workspace / "sections"
     comments_dir = workspace / "comments"
@@ -290,9 +301,14 @@ def main() -> int:
         default="./review_results",
         help="Parent directory for workspace output (default: ./review_results)",
     )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Replace an existing workspace for the same paper slug",
+    )
     args = parser.parse_args()
 
-    workspace = prepare_workspace(args.input, output_dir=args.output_dir)
+    workspace = prepare_workspace(args.input, output_dir=args.output_dir, overwrite=args.overwrite)
     print(f"WORKSPACE: {workspace}")
     return 0
 

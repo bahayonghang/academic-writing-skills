@@ -66,6 +66,24 @@ def test_compile_outdir_applies_to_default_latexmk(
     assert code == 0
     assert commands
     assert "-outdir=build" in commands[0]
+    assert any("-no-shell-escape" in token for token in commands[0])
+
+
+def test_compile_shell_escape_requires_trusted_source(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text("\\documentclass{article}\\begin{document}x\\end{document}", encoding="utf-8")
+    compile_script = compile_module.__file__
+    assert compile_script is not None
+
+    result = subprocess.run(
+        [sys.executable, "-B", str(Path(compile_script)), str(tex), "--shell-escape"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "--trusted-source" in result.stdout
 
 
 def test_compile_biber_fallback_for_unknown_compiler(
@@ -175,6 +193,38 @@ def test_check_figures_pillow_missing_degrades_gracefully(
     issues = checker.check_quality(figure)
 
     assert any("Pillow not installed" in issue for issue in issues)
+
+
+def test_check_figures_rejects_paths_outside_project(tmp_path: Path) -> None:
+    outside_dir = tmp_path / "outside"
+    project_dir = tmp_path / "paper"
+    outside_dir.mkdir()
+    project_dir.mkdir()
+    (outside_dir / "secret.png").write_bytes(b"not-a-real-png")
+    tex = project_dir / "main.tex"
+    tex.write_text("\\includegraphics{../outside/secret.png}", encoding="utf-8")
+
+    checker = check_figures_module.FigureChecker(tex)
+    figures = checker.find_figures()
+
+    assert figures[0]["status"] == "MISSING"
+    assert figures[0]["abs_path"] is None
+
+
+def test_check_figures_allows_normalized_paths_inside_project(tmp_path: Path) -> None:
+    project_dir = tmp_path / "paper"
+    figures_dir = project_dir / "figures"
+    figures_dir.mkdir(parents=True)
+    fig = project_dir / "fig.png"
+    fig.write_bytes(b"not-a-real-png")
+    tex = project_dir / "main.tex"
+    tex.write_text("\\includegraphics{figures/../fig.png}", encoding="utf-8")
+
+    checker = check_figures_module.FigureChecker(tex)
+    figures = checker.find_figures()
+
+    assert figures[0]["status"] == "FOUND"
+    assert figures[0]["abs_path"] == fig
 
 
 def test_check_figures_help_does_not_advertise_json() -> None:

@@ -70,7 +70,7 @@ import xml.etree.ElementTree as ET
 
 def search_arxiv(query: str, max_results: int = 5):
     """Search arXiv for papers."""
-    url = f"http://export.arxiv.org/api/query?search_query=all:{query}&max_results={max_results}"
+    url = f"https://export.arxiv.org/api/query?search_query=all:{query}&max_results={max_results}"
     response = requests.get(url)
     root = ET.fromstring(response.text)
     ns = {"atom": "http://www.w3.org/2005/Atom"}

@@ -38,6 +38,14 @@ class FigureChecker:
         self.graphics_paths = [self.root_dir]
         self._parse_graphics_path()
 
+    def _is_within_root(self, path: Path) -> bool:
+        """Return True when a path stays inside the paper project directory."""
+        try:
+            path.resolve().relative_to(self.root_dir.resolve())
+            return True
+        except ValueError:
+            return False
+
     def _parse_graphics_path(self):
         r"""Parse \graphicspath{{path1}{path2}} from LaTeX."""
         match = re.search(r"\\graphicspath\{(.*?)\}", self.content, re.DOTALL)
@@ -45,7 +53,7 @@ class FigureChecker:
             paths = re.findall(r"\{([^}]+)\}", match.group(1))
             for p in paths:
                 full_path = self.root_dir / p.strip()
-                if full_path.exists():
+                if full_path.exists() and self._is_within_root(full_path):
                     self.graphics_paths.append(full_path)
 
     def find_figures(self) -> list[dict]:
@@ -87,14 +95,14 @@ class FigureChecker:
         for base_path in self.graphics_paths:
             # Try exact path
             candidate = base_path / rel_path
-            if candidate.exists():
-                return candidate
+            if self._is_within_root(candidate) and candidate.exists():
+                return candidate.resolve()
 
             # Try with extensions
             for ext in extensions:
                 candidate_ext = base_path / (rel_path + ext)
-                if candidate_ext.exists():
-                    return candidate_ext
+                if self._is_within_root(candidate_ext) and candidate_ext.exists():
+                    return candidate_ext.resolve()
 
         return None
 

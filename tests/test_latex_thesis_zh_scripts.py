@@ -2,6 +2,7 @@
 
 import importlib.util
 import re
+import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -391,6 +392,22 @@ class TestCompileZh:
         assert code == 0
         assert compiler.recipe == "xelatex-biber"
         assert any("biber" in str(cmd) for cmd in calls)
+
+    def test_shell_escape_requires_trusted_source(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\documentclass{ctexbook}\\begin{document}你好\\end{document}", encoding="utf-8"
+        )
+
+        result = subprocess.run(
+            [sys.executable, "-B", str(_ZH_DIR / "compile.py"), str(tex), "--shell-escape"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 1
+        assert "--trusted-source" in result.stdout
 
 
 # ── verify_bib.py (zh) ────────────────────────────────────────

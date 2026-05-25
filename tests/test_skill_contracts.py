@@ -202,6 +202,47 @@ def test_skill_markdown_contract() -> None:
             assert "uv run python" in skill_md
 
 
+def test_skill_security_boundaries_are_declared() -> None:
+    for skill_name in SKILLS:
+        skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        assert "untrusted" in skill_md.lower(), f"{skill_name} must mark source data untrusted"
+
+    assert "allowed-tools: Read, Bash(uv *)" in (
+        SKILLS_ROOT / "bib-search-citation" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    for skill_name in ("latex-paper-en", "latex-thesis-zh", "typst-paper"):
+        skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        assert "allowed-tools: Read, Glob, Grep, Bash(uv *)" in skill_md
+        assert "Bash(latexmk *)" not in skill_md
+        assert "Bash(typst *)" not in skill_md
+    for skill_name in ("latex-paper-en", "latex-thesis-zh"):
+        skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        assert "--trusted-source" in skill_md
+
+
+def test_latex_reference_configs_disable_shell_escape_by_default() -> None:
+    bad_lines: list[str] = []
+    unsafe_engine_config = re.compile(r"\$[a-z]*latex\s*=\s*['\"][^'\"]*(?<!no)-shell-escape")
+    for skill_name in ("latex-paper-en", "latex-thesis-zh"):
+        for path in (SKILLS_ROOT / skill_name / "references").rglob("*.md"):
+            for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+                if unsafe_engine_config.search(line):
+                    bad_lines.append(f"{path}:{line_no}: {line.strip()}")
+    assert not bad_lines, "\n".join(bad_lines)
+
+
+def test_arxiv_references_use_https() -> None:
+    bad_lines: list[str] = []
+    insecure_arxiv_url = "http://" + "export.arxiv.org/api/query"
+    for path in REPO_ROOT.rglob("*"):
+        if not path.is_file() or path.suffix not in {".md", ".py"}:
+            continue
+        for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            if insecure_arxiv_url in line:
+                bad_lines.append(f"{path}:{line_no}: {line.strip()}")
+    assert not bad_lines, "\n".join(bad_lines)
+
+
 def test_skill_frontmatter_description_stays_within_runtime_limit() -> None:
     for skill_name in SKILLS:
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
