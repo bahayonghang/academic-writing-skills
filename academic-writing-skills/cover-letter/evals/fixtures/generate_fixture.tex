@@ -1,0 +1,63 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+
+\title{Adaptive Latency-Aware Inference for Streaming Anomaly Detection}
+
+\author{
+  \IEEEauthorblockN{Jia Wei, Sara Patel, Michael Reyes}
+  \IEEEauthorblockA{Department of Computer Science, Example University, USA}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We address the problem of anomaly detection on streaming sensor data under
+tight latency budgets. We introduce ALAI, an adaptive inference framework that
+combines lightweight feature gating with a learned exit policy. On the
+SWaT-Stream benchmark, ALAI reduces inference latency by 47\% with no F1
+degradation. On WADI-Stream, ALAI matches the F1 of the strongest baseline
+while running 2.1x faster. The framework requires no architectural change to
+the underlying detector.
+\end{abstract}
+
+\section{Introduction}
+Industrial monitoring increasingly relies on streaming anomaly detection
+\cite{aud24,sl23}. Existing detectors prioritize accuracy and run at
+fixed depth regardless of input complexity. We argue that streaming
+deployment requires a latency-aware policy that gates computation when the
+detector is confident.
+
+\section{Our Contributions}
+\begin{itemize}
+\item We propose ALAI, an adaptive inference framework that gates intermediate
+features in a pretrained streaming anomaly detector based on an exit policy
+learned with reinforcement signal.
+\item We show that ALAI reduces inference latency by 47\% on SWaT-Stream with
+no measurable F1 loss compared to the full-depth detector.
+\item We provide an open evaluation protocol on SWaT-Stream and WADI-Stream and
+release the gating policy weights.
+\end{itemize}
+
+\section{Method}
+ALAI consists of a feature gating module and a learned exit head. Section~3
+details the training objective; Section~4 the streaming inference loop.
+
+\section{Experiments}
+On SWaT-Stream, ALAI achieves F1 of 0.91 against a full-depth baseline of 0.91,
+with 47\% latency reduction. On WADI-Stream, ALAI achieves F1 of 0.86 at
+2.1x speedup over the strongest baseline.
+
+\section{Discussion}
+Our results suggest that streaming anomaly detectors can be made latency-aware
+without sacrificing accuracy. We do not claim improvements outside the two
+benchmarks tested.
+
+\section{Conclusion}
+We presented ALAI, a latency-aware adaptive inference framework for streaming
+anomaly detection. ALAI delivers a 47\% latency reduction on SWaT-Stream and a
+2.1x speedup on WADI-Stream while matching baseline F1.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}

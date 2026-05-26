@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cover Letter"
+  short_description: "Generate, optimize, align-check, and journal-fit-check a submission cover letter against an existing LaTeX manuscript"
+  default_prompt: "Generate, optimize, align-check, or journal-fit-check a submission cover letter for a LaTeX paper; infer the right mode from the request, read the manuscript when available for claim alignment, and apply the chosen journal template plus tier strategy."

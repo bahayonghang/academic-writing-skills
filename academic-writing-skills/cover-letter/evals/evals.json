@@ -1,0 +1,144 @@
+{
+  "skill_name": "cover-letter",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate a Nature cover letter from this LaTeX manuscript: evals/fixtures/generate_fixture.tex.",
+      "expected_output": "Route to generate mode, run extract_manuscript_facts.py, synthesize the letter using templates/nature.md plus references/LETTER_STRUCTURE.md, and append an align-check + presubmission block.",
+      "files": ["evals/fixtures/generate_fixture.tex"],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(generate|extract_manuscript_facts)",
+          "description": "generate mode invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Nature|broad scientific|paradigm)",
+          "description": "Nature framing used"
+        },
+        {
+          "type": "regex",
+          "pattern": "(ALIGNCHECK|PRESUBMISSION|align-check)",
+          "description": "default integration verified"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Polish my draft cover letter at evals/fixtures/optimize_fixture_letter.md for an IEEE TPAMI submission and verify it does not overclaim relative to evals/fixtures/generate_fixture.tex.",
+      "expected_output": "Route to optimize mode, run presubmission_check.py + align_check.py, surface AI-tone + opener-cliché + overclaim findings, return diff-style suggestions without overwriting the file.",
+      "files": [
+        "evals/fixtures/optimize_fixture_letter.md",
+        "evals/fixtures/generate_fixture.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(optimize|presubmission_check|align_check)",
+          "description": "optimize mode invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(AI-tone|opener|cliché|groundbreaking|revolutionary)",
+          "description": "AI-tone or cliché finding present"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\[Severity:",
+          "description": "LaTeX-comment finding format"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Check whether my cover letter at evals/fixtures/align_check_fixture_letter.md overclaims compared to evals/fixtures/generate_fixture.tex.",
+      "expected_output": "Route to align-check mode, run align_check.py, surface unsupported claims (e.g. the $1.2M cost savings or 12 sensor modalities not in manuscript).",
+      "files": [
+        "evals/fixtures/align_check_fixture_letter.md",
+        "evals/fixtures/generate_fixture.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(align-check|align_check|claim_accuracy|claim_strength)",
+          "description": "align-check terms"
+        },
+        {
+          "type": "regex",
+          "pattern": "(unsupported|missing|overclaim)",
+          "description": "overclaim language present"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Is this Nature cover letter at evals/fixtures/journal_fit_fixture_letter.md actually framed for Nature, or should I retarget to IEEE TPAMI?",
+      "expected_output": "Route to journal-fit mode, run journal_fit_check.py twice (nature, ieee-trans), report per-axis HIGH/MEDIUM/LOW and recommend the better-fit venue.",
+      "files": ["evals/fixtures/journal_fit_fixture_letter.md"],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(journal-fit|journal_fit_check|scope_fit|novelty_framing)",
+          "description": "journal-fit mode invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(HIGH|MEDIUM|LOW)",
+          "description": "categorical verdict"
+        },
+        {
+          "type": "regex",
+          "pattern": "(nature|ieee-trans|tpami)",
+          "description": "venue comparison"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Run a pre-submission check on evals/fixtures/optimize_fixture_letter.md against the NeurIPS template.",
+      "expected_output": "Route to presubmission_check.py with --journal neurips, surface AI-tone, opener-cliché, banned-phrase findings; absence of LaTeX label / equation rules.",
+      "files": ["evals/fixtures/optimize_fixture_letter.md"],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(presubmission|PRESUBMISSION)",
+          "description": "presubmission scope"
+        },
+        {
+          "type": "regex",
+          "pattern": "(neurips|dual_submission|reproducibility)",
+          "description": "venue-conditional check"
+        },
+        {
+          "type": "not_contains",
+          "text": "L4",
+          "description": "no equation rule applied"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Generate a CVPR cover letter from evals/fixtures/generate_fixture.tex, then verify the result against the manuscript before printing.",
+      "expected_output": "Two-step run: generate (with CVPR template) → align-check; ensure quantitative anchors trace to manuscript headline_numbers (47% and 2.1x).",
+      "files": ["evals/fixtures/generate_fixture.tex"],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(CVPR|cvpr|vision)",
+          "description": "CVPR framing"
+        },
+        {
+          "type": "regex",
+          "pattern": "(47%|2\\.1x)",
+          "description": "manuscript numbers preserved"
+        },
+        {
+          "type": "regex",
+          "pattern": "(align-check|ALIGNCHECK)",
+          "description": "default verification ran"
+        }
+      ]
+    }
+  ]
+}

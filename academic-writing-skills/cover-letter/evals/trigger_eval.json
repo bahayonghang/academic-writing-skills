@@ -1,0 +1,85 @@
+{
+  "skill_name": "cover-letter",
+  "queries": [
+    {
+      "query": "Write me a Nature cover letter for the paper in main.tex.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Help me draft a submission letter for my IEEE TPAMI manuscript at main.tex.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Check whether my cover letter overclaims compared to my LaTeX manuscript.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "请帮我给这篇 LaTeX 论文写一份 Nature 投稿信。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Is this CVPR cover letter framed correctly, or should I retarget to TPAMI?",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Polish my cover_letter.md for a NeurIPS submission, but keep it under 400 words.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Run a pre-submission readiness check on my Nature cover letter; what declarations am I missing?",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "I need an editor letter that summarizes the contributions in main.tex without exaggerating.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Act as a strict reviewer and write a peer-review report on my paper with major/minor issues.",
+      "should_trigger": false,
+      "category": "negative-overlap-paper-audit"
+    },
+    {
+      "query": "Gate-check my submission and tell me whether the paper itself is ready to send.",
+      "should_trigger": false,
+      "category": "negative-overlap-paper-audit"
+    },
+    {
+      "query": "Proofread my IEEE conference paper main.tex and tighten the abstract.",
+      "should_trigger": false,
+      "category": "negative-overlap-latex-paper-en"
+    },
+    {
+      "query": "Search my references.bib for Mamba forecasting papers after 2024.",
+      "should_trigger": false,
+      "category": "negative-overlap-bib-search-citation"
+    },
+    {
+      "query": "Help me write a Typst-formatted cover letter from main.typ.",
+      "should_trigger": false,
+      "category": "negative-typst-unsupported"
+    },
+    {
+      "query": "Draft a tailored cover letter for a software engineer job application at a startup.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "Help me write a vacation request email to my manager.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "Reply to reviewers point-by-point for my rebuttal letter.",
+      "should_trigger": false,
+      "category": "negative-response-letter-deferred"
+    }
+  ]
+}

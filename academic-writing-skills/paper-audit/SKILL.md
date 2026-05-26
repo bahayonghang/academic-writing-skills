@@ -54,6 +54,7 @@ outputs are:
 - free-form literature survey writing
 - paragraph-level related-work rewriting
 - cosmetic grammar cleanup without an audit goal
+- cover letter generation / optimization / claim alignment — route to `cover-letter`
 
 ## Critical Rules
 
