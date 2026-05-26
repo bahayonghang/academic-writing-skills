@@ -108,15 +108,15 @@ uv run python -B "$SKILL_DIR/scripts/prepare_review_workspace.py" <paper> --outp
 
 This creates:
 
-- `full_text.md`
-- `metadata.json`
-- `section_index.json`
-- `claim_map.json`
-- `paper_summary.md`
-- `sections/*.md`
-- `comments/`
-- `references/` (minimal copies for reviewer agents)
-- `committee/` (committee reviewer artifacts)
+- `artifacts/meta/full_text.md`
+- `artifacts/meta/metadata.json`
+- `artifacts/data/section_index.json`
+- `artifacts/data/claim_map.json`
+- `artifacts/summary/paper_summary.md`
+- `artifacts/sections/*.md`
+- `artifacts/comments/`
+- `artifacts/references/` (minimal copies for reviewer agents)
+- `artifacts/committee/` (committee reviewer artifacts)
 
 ### Phase 2: Phase 0 automated audit
 
@@ -224,7 +224,8 @@ Summarize:
 - counts of major / moderate / minor issues
 - 3 highest-priority revision items
 - identify the **Primary View** selected by `--report-style`
-- path to `review_report.md`, `peer_review_report.md`, and `final_issues.json`
+- path to `review_report.md`, `revision_suggestions.md` (root), and
+  `artifacts/data/final_issues.json` / `artifacts/summary/peer_review_report.md`
 
 ## `gate`
 

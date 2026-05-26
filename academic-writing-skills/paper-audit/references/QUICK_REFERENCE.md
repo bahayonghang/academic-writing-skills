@@ -1,18 +1,19 @@
 # Quick Reference
 
 Read next:
+
 - `references/MODE_GUIDE.md` — full per-mode workflow, phase steps, committee focus routing
 - `references/PRESUBMISSION_GUIDE.md` — `PRESUBMISSION` mode-integration matrix
 
 ## Modes
 
-| Mode | Purpose |
-|---|---|
-| `quick-audit` | fast readiness screen with `PRESUBMISSION` mechanical checks |
-| `deep-review` | reviewer-style structured critique; Phase 0 includes `PRESUBMISSION` |
-| `gate` | PASS/FAIL submission gate; Major/Minor mechanical findings are advisory |
-| `re-audit` | compare current paper against earlier audit, including mechanical regressions |
-| `polish` | precheck before a polishing workflow |
+| Mode          | Purpose                                                                       |
+| ------------- | ----------------------------------------------------------------------------- |
+| `quick-audit` | fast readiness screen with `PRESUBMISSION` mechanical checks                  |
+| `deep-review` | reviewer-style structured critique; Phase 0 includes `PRESUBMISSION`          |
+| `gate`        | PASS/FAIL submission gate; Major/Minor mechanical findings are advisory       |
+| `re-audit`    | compare current paper against earlier audit, including mechanical regressions |
+| `polish`      | precheck before a polishing workflow                                          |
 
 Legacy aliases:
 
@@ -53,11 +54,13 @@ python diff_review_issues.py old_final_issues.json new_final_issues.json
 
 ## Main outputs
 
-- `final_issues.json`
-- `overall_assessment.txt`
 - `review_report.md`
-- `peer_review_report.md`
-- `revision_roadmap.md`
+- `revision_suggestions.md`
+- `review_report.html`
+- `revision_suggestions.html`
+- `artifacts/data/final_issues.json`
+- `artifacts/summary/overall_assessment.txt`
+- `artifacts/summary/peer_review_report.md`
 
 ## Common Misclassifications
 

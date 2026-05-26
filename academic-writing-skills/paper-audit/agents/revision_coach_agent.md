@@ -113,7 +113,7 @@ Emit the roadmap document and a JSON shadow file compatible with
 
 Write two artifacts to the re-audit workspace:
 
-### `revision_roadmap.md`
+### `revision_suggestions.md`
 
 ```markdown
 # Revision Roadmap

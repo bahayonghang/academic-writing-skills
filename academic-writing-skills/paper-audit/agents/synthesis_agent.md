@@ -8,7 +8,7 @@ Turn lane outputs plus Phase 0 audit evidence into:
 
 - `final_issues.json`
 - `overall_assessment.txt`
-- `revision_roadmap.md`
+- `revision_suggestions.md`
 
 ## Rules
 
@@ -24,11 +24,11 @@ Turn lane outputs plus Phase 0 audit evidence into:
 
 Apply panel-relative thresholds defined in `references/editorial_decision_standards.md`.
 
-| Quantifier | Definition | Use case |
-|---|---|---|
-| `any` | predicate holds for >= 1 reviewer/lane | flag isolated CRITICAL findings |
-| `majority` | for N >= 3 lanes, fires when >= ceil(N/2) + 1 agree | standard consensus signal |
-| `all` | predicate holds for every reviewer/lane | hard-gate signals (e.g. desk-reject convergence) |
+| Quantifier | Definition                                          | Use case                                         |
+| ---------- | --------------------------------------------------- | ------------------------------------------------ |
+| `any`      | predicate holds for >= 1 reviewer/lane              | flag isolated CRITICAL findings                  |
+| `majority` | for N >= 3 lanes, fires when >= ceil(N/2) + 1 agree | standard consensus signal                        |
+| `all`      | predicate holds for every reviewer/lane             | hard-gate signals (e.g. desk-reject convergence) |
 
 Consensus labels follow `editorial_decision_standards.md`:
 
@@ -55,9 +55,9 @@ For each issue group:
 - if all reporting lanes agree on severity, label `[CONSENSUS-ALL]` or `[CONSENSUS-MAJORITY]`
 - if severities span >= 2 levels, OR if one lane reports CRITICAL while others report MINOR,
   label `[SPLIT]` and apply Arbitration Priority 1-3 from `editorial_decision_standards.md`:
-    1. **Evidence Principle** — the position backed by specific textual evidence outweighs general impressions
-    2. **Expertise Principle** — on domain-specific disputes, weight the relevant specialist lane higher
-    3. **Conservative Principle** — when evidence and expertise are balanced, lean toward the more critical assessment
+  1. **Evidence Principle** — the position backed by specific textual evidence outweighs general impressions
+  2. **Expertise Principle** — on domain-specific disputes, weight the relevant specialist lane higher
+  3. **Conservative Principle** — when evidence and expertise are balanced, lean toward the more critical assessment
 
 ### Step 3: Apply Decision Matrix
 
@@ -68,7 +68,7 @@ Use `references/quality_rubrics.md` weighted scoring to assign final severity:
 - `moderate` is Priority 2 in the roadmap, should-fix
 - `minor` is Priority 3 in the roadmap, optional
 
-Emit `revision_roadmap.md` grouped by priority. Cite the consensus label per item.
+Emit `revision_suggestions.md` grouped by priority. Cite the consensus label per item.
 
 ## Forbidden Operations
 
@@ -94,5 +94,5 @@ Emit `revision_roadmap.md` grouped by priority. Cite the consensus label per ite
 ## Output discipline
 
 - `overall_assessment.txt` should be short, calibrated, and name the top 2-3 concerns
-- `revision_roadmap.md` should group actions by priority and cite consensus labels
+- `revision_suggestions.md` should group actions by priority and cite consensus labels
 - the final bundle should be sorted major -> moderate -> minor (critical surfaces in `gate` mode separately)

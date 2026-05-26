@@ -6,7 +6,7 @@ metadata:
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "5.1.0"
   last_updated: "2026-05-20"
-argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--previous-report PATH] [--literature-search] [--scholar-eval] [--overwrite-workspace] [--format md|json]"
+argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--scholar-eval] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
@@ -38,14 +38,32 @@ editing, sentence rewriting, or build fixing.
   mechanical regression findings
 - `polish`: precheck-only handoff into a polishing workflow
 
-The primary product is no longer just a score. For `deep-review`, the main
-outputs are:
+The primary product is no longer just a score. For `deep-review`, the
+workspace root contains exactly four files for the reader:
 
-- `final_issues.json`
-- `overall_assessment.txt`
-- `review_report.md`
-- `peer_review_report.md`
-- `revision_roadmap.md`
+- `review_report.md` — the primary deep-review report
+- `revision_suggestions.md` — concrete fix recommendations for each
+  Major/Moderate issue, including suggested rewrites (when applicable)
+- `review_report.html` — HTML twin of the primary report
+- `revision_suggestions.html` — HTML twin of the suggestions
+
+Everything else lives under `artifacts/` for verification and tooling:
+
+- `artifacts/summary/` — `paper_summary.md`, `overall_assessment.txt`,
+  `peer_review_report.md`
+- `artifacts/data/` — `final_issues.json`, `all_comments.json`,
+  `claim_map.json`, `section_index.json`, `revision_suggestions.json`,
+  `revision_trajectory.md`
+- `artifacts/meta/` — `metadata.json`, `checkpoint.json`,
+  `phase0_context.md`, `full_text.md`
+- `artifacts/sections/`, `artifacts/comments/`, `artifacts/committee/`,
+  `artifacts/references/`
+
+The report language is controlled by `--lang en|zh` (default: auto-detect
+from `metadata.json`, fallback `en`). The language switch only affects
+report headings, labels, and table headers — issue quotes, source tags
+(`[Script]`, `[LLM]`), and structured field values stay in their original
+form.
 
 ## Do Not Use
 
@@ -173,12 +191,21 @@ Five phases (see `references/MODE_GUIDE.md` for full detail):
    ```bash
    uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" <review_dir>
    uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" <review_dir> --write-back
-   uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir>
+   uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir> --lang $LANG
+   uv run python -B "$SKILL_DIR/scripts/render_html_report.py" <review_dir> --lang $LANG
    ```
 
 When the user explicitly asks for journal-review prose, set
-`--report-style peer-review` so `peer_review_report.md` becomes the **Primary
-View** while `review_report.md` stays as the richer evidence bundle.
+`--report-style peer-review`. `review_report.md` remains the primary
+artifact in the workspace root; `peer_review_report.md` is generated as
+a companion under `artifacts/summary/` for that style.
+
+After consolidation, the deep-review workflow optionally invokes
+`agents/revision_suggestion_agent.md` to produce
+`artifacts/data/revision_suggestions.json` with concrete original/suggested
+text pairs and additional actions. When the file is present,
+`revision_suggestions.md` and its HTML twin pick it up automatically; when
+absent, both fall back to the priority/section roadmap skeleton.
 
 ### `gate`
 
@@ -271,12 +298,15 @@ Always prefer:
 | Script | Purpose |
 |---|---|
 | `scripts/audit.py` | Phase 0 audit and mode entrypoint |
+| `scripts/paths.py` | `WorkspaceLayout` — single source of truth for artifact paths |
+| `scripts/i18n.py` | English/Chinese string dictionary for report rendering |
 | `scripts/pre_submission_check.py` | deterministic `PRESUBMISSION` mechanical audit layer |
 | `scripts/prepare_review_workspace.py` | create deep-review workspace |
 | `scripts/build_claim_map.py` | extract headline claims, closure targets, and additive `claim_candidates` |
 | `scripts/consolidate_review_findings.py` | deduplicate comment JSONs |
 | `scripts/verify_quotes.py` | verify exact quote presence |
 | `scripts/render_deep_review_report.py` | render final Markdown report |
+| `scripts/render_html_report.py` | render HTML twins of review_report and revision_suggestions |
 | `scripts/diff_review_issues.py` | compare old vs new issue bundles |
 
 ## Reviewer Lanes
@@ -301,6 +331,9 @@ Default deep-review lanes live in `agents/`:
 - `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)
 - `revision_coach_agent.md` — parse free-form reviewer letters into a
   structured roadmap (used in `re-audit` mode)
+- `revision_suggestion_agent.md` — convert each Major/Moderate issue into
+  an original/suggested text pair plus additional actions; produces
+  `artifacts/data/revision_suggestions.json`
 
 Specialized deep-review agents (read their files for activation criteria):
 
