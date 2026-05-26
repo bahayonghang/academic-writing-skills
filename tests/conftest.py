@@ -24,6 +24,9 @@ SCRIPT_DIR_TYPST = (
 SCRIPT_DIR_AUDIT = (
     Path(__file__).parent.parent / "academic-writing-skills" / "paper-audit" / "scripts"
 )
+SCRIPT_DIR_COVER_LETTER = (
+    Path(__file__).parent.parent / "academic-writing-skills" / "cover-letter" / "scripts"
+)
 
 # bib-search-citation ships its own tests/ inside the skill folder and is discovered
 # via the `just test` glob `academic-writing-skills/*/tests/`.
@@ -39,6 +42,11 @@ if str(SCRIPT_DIR_ZH) not in sys.path:
 # Add paper-audit scripts for audit tests
 if str(SCRIPT_DIR_AUDIT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR_AUDIT))
+
+# Cover-letter scripts: appended so they do NOT shadow the canonical EN/AUDIT
+# parsers. Cover-letter tests use importlib to load these scripts explicitly.
+if str(SCRIPT_DIR_COVER_LETTER) not in sys.path:
+    sys.path.append(str(SCRIPT_DIR_COVER_LETTER))
 
 
 def _cleanup_runtime_artifacts() -> None:

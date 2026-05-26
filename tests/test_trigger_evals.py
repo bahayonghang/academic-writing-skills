@@ -59,6 +59,7 @@ SKILL_NAMES = (
     "typst-paper",
     "bib-search-citation",
     "paper-audit",
+    "cover-letter",
 )
 
 MIN_QUERIES = 12

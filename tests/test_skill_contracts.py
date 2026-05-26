@@ -33,6 +33,13 @@ SKILLS = {
         "expects_uv_commands": True,
         "enforce_command_hygiene": True,
     },
+    "cover-letter": {
+        "modules": ["generate", "optimize", "align-check", "journal-fit", "presubmission"],
+        "min_examples": 4,
+        "min_evals": 6,
+        "expects_uv_commands": True,
+        "router_help": True,
+    },
     "latex-paper-en": {
         "modules": [
             "compile",
@@ -450,3 +457,7 @@ def test_latex_thesis_zh_module_router_commands_match_script_help() -> None:
 
 def test_typst_paper_module_router_commands_match_script_help() -> None:
     _assert_module_router_commands_match_script_help("typst-paper")
+
+
+def test_cover_letter_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("cover-letter")

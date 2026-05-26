@@ -39,6 +39,7 @@ PARSER_FILES: dict[str, Path] = {
     "zh": SKILLS_ROOT / "latex-thesis-zh" / "scripts" / "parsers.py",
     "typst": SKILLS_ROOT / "typst-paper" / "scripts" / "parsers.py",
     "audit": SKILLS_ROOT / "paper-audit" / "scripts" / "parsers.py",
+    "cover_letter": SKILLS_ROOT / "cover-letter" / "scripts" / "parsers.py",
 }
 
 
@@ -73,20 +74,20 @@ def _hash_obj(obj: Any) -> str:
 # (dotted attribute on module, list of skill keys that must hash-match)
 ALIGNMENTS: list[tuple[str, list[str]]] = [
     # Free helpers shared verbatim
-    ("_normalize_whitespace", ["en", "zh", "typst", "audit"]),
-    ("_extract_balanced_block", ["en", "typst", "audit"]),
-    ("_strip_typst_markup", ["en", "typst", "audit"]),
-    ("_strip_latex_markup", ["en", "audit"]),
+    ("_normalize_whitespace", ["en", "zh", "typst", "audit", "cover_letter"]),
+    ("_extract_balanced_block", ["en", "typst", "audit", "cover_letter"]),
+    ("_strip_typst_markup", ["en", "typst", "audit", "cover_letter"]),
+    ("_strip_latex_markup", ["en", "audit", "cover_letter"]),
     # Class-level pattern lists (data, not source)
-    ("LatexParser.PRESERVE_PATTERNS", ["en", "zh", "audit"]),
-    ("TypstParser.PRESERVE_PATTERNS", ["en", "zh", "typst", "audit"]),
+    ("LatexParser.PRESERVE_PATTERNS", ["en", "zh", "audit", "cover_letter"]),
+    ("TypstParser.PRESERVE_PATTERNS", ["en", "zh", "typst", "audit", "cover_letter"]),
     # Concrete parser methods (ZH variants are intentionally cosmetic-different)
-    ("LatexParser.extract_visible_text", ["en", "audit"]),
-    ("TypstParser.extract_visible_text", ["en", "typst", "audit"]),
+    ("LatexParser.extract_visible_text", ["en", "audit", "cover_letter"]),
+    ("TypstParser.extract_visible_text", ["en", "typst", "audit", "cover_letter"]),
     # Title / abstract / citation extractors that paper-audit re-exports
-    ("extract_title", ["en", "audit"]),
-    ("extract_abstract", ["en", "audit"]),
-    ("extract_latex_citation_keys", ["en", "audit"]),
+    ("extract_title", ["en", "audit", "cover_letter"]),
+    ("extract_abstract", ["en", "audit", "cover_letter"]),
+    ("extract_latex_citation_keys", ["en", "audit", "cover_letter"]),
 ]
 
 
@@ -133,8 +134,8 @@ def test_required_abc_signatures_aligned(parser_modules: dict[str, ModuleType]) 
 
 
 def test_clean_text_is_canonical_only(parser_modules: dict[str, ModuleType]) -> None:
-    """``clean_text`` is part of EN / Typst / Audit; ZH intentionally omits it."""
-    for key in ("en", "typst", "audit"):
+    """``clean_text`` is part of EN / Typst / Audit / cover-letter; ZH intentionally omits it."""
+    for key in ("en", "typst", "audit", "cover_letter"):
         assert "clean_text" in vars(parser_modules[key].DocumentParser), (
             f"{key}: ABC missing clean_text — keep it aligned with the canonical copy"
         )
