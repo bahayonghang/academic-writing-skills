@@ -1,6 +1,6 @@
 # Skills
 
-This repository currently documents five top-level skills.
+This repository currently documents six top-level skills.
 
 | Skill | Scope | Entry |
 | --- | --- | --- |
@@ -9,6 +9,7 @@ This repository currently documents five top-level skills.
 | `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
 | `bib-search-citation` | Search and cite local `.bib` libraries | [/skills/bib-search-citation/](/skills/bib-search-citation/) |
 | `paper-audit` | Multi-format paper auditing | [/skills/paper-audit/](/skills/paper-audit/) |
+| `cover-letter` | Submission cover letters for LaTeX manuscripts | [/skills/cover-letter/](/skills/cover-letter/) |
 
 ## How to Read These Pages
 

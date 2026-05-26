@@ -19,6 +19,7 @@
 | [`typst-paper`](#typst-paper) | 快速编译双语论文 | `.typ` |
 | [`bib-search-citation`](#bib-search-citation) | `.bib` 文献库快速检索与引用提取 | `.bib` |
 | [`paper-audit`](#paper-audit) | 深度审稿优先的论文审查与投稿门控 | `.tex` `.typ` `.pdf` |
+| [`cover-letter`](#cover-letter) | 投稿信生成 / 优化 / 与论文对齐校验 / 期刊匹配度评估 | `.tex` + 投稿信草稿 |
 
 ---
 
@@ -169,6 +170,32 @@ Claim-evidence 指南会把 citation key 和 `.bib` 命中视为 provenance，
 | `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 + 可选 `peer_review_report.md` |
 | `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
 | `re-audit` | 想验证修订效果 | 问题状态对比 |
+
+### cover-letter
+
+面向已有 LaTeX 论文的投稿信生成、优化、claim 对齐校验、期刊匹配度评分与投稿前机械检查。
+
+| 类别 | 功能 |
+|---|---|
+| **输入** | LaTeX 论文源文件（`main.tex`）+ 可选投稿信草稿（`.md` 或 `.tex`）|
+| **模式** | `generate` · `optimize` · `align-check` · `journal-fit` · `presubmission` |
+| **Claim 对齐** | 抽取 `47%`、`2.1x`、模态数量、内存降低、部署、成本等投稿信论断；只报告无支撑或范围过强的 claim |
+| **期刊匹配** | 从 scope fit、novelty framing、evidence density、format compliance 四个维度给出 HIGH / MEDIUM / LOW |
+| **投稿前检查** | 必要声明、字数限制、开头套话、禁用短语、AI-tone 词频、段落形态 |
+| **输出协议** | JSON finding 使用小写 `severity`（`major` / `moderate` / `minor`），并包含 `priority`、`source_kind`、`comment_type` |
+| **边界** | 不改论文源文件、不处理 Typst、不写 rebuttal；除非明确要求，否则不联网抓取期刊最新政策 |
+
+**快速使用**
+
+```bash
+uv run python -B academic-writing-skills/cover-letter/scripts/cover_letter.py \
+  --mode align-check \
+  --manuscript main.tex \
+  --letter cover_letter.md \
+  --json
+```
+
+统一入口还支持 `--mode generate`、`optimize`、`journal-fit`、`presubmission`；`scripts/` 下原有单功能脚本继续保留。
 
 ---
 

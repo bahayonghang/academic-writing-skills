@@ -4,23 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships five skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
+Academic Writing Skills is a Claude Code skill suite (v3.0.0) for post-writing polish and validation of academic papers. It ships six skills under `academic-writing-skills/`, each installable to `~/.claude/skills/`. Python 3.10+, MIT license.
 
 ## Build & Development Commands
 
 Task runner: `just` (requires `uv` for Python). All commands run through `uv run --extra dev`.
 
-| Command | What it does |
-|---|---|
-| `just install` | `uv sync --extra dev` — install all deps |
-| `just lint` | `ruff format --check . && ruff check .` |
-| `just typecheck` | `pyright` |
-| `just test` | `python -m pytest tests/ academic-writing-skills/*/tests/` |
-| `just ci` | lint → typecheck → test (full pipeline) |
-| `just fix` | `ruff format . && ruff check --fix .` |
-| `just docs` | VitePress dev server (`cd docs && npm run docs:dev`) |
-| `just doc-build` | Build static docs site |
-| `just clean` | Remove `__pycache__`, `.pytest_cache`, `.ruff_cache` |
+| Command          | What it does                                               |
+| ---------------- | ---------------------------------------------------------- |
+| `just install`   | `uv sync --extra dev` — install all deps                   |
+| `just lint`      | `ruff format --check . && ruff check .`                    |
+| `just typecheck` | `pyright`                                                  |
+| `just test`      | `python -m pytest tests/ academic-writing-skills/*/tests/` |
+| `just ci`        | lint → typecheck → test (full pipeline)                    |
+| `just fix`       | `ruff format . && ruff check --fix .`                      |
+| `just docs`      | VitePress dev server (`cd docs && npm run docs:dev`)       |
+| `just doc-build` | Build static docs site                                     |
+| `just clean`     | Remove `__pycache__`, `.pytest_cache`, `.ruff_cache`       |
 
 Run a single test file: `uv run --extra dev python -m pytest tests/test_parsers.py`
 Run a single test function: `uv run --extra dev python -m pytest tests/test_parsers.py::test_latex_split_sections`
@@ -30,6 +30,7 @@ Run a single test function: `uv run --extra dev python -m pytest tests/test_pars
 ### Skill Layout Convention
 
 Each skill directory follows this structure:
+
 ```
 academic-writing-skills/{skill-name}/
 ├── SKILL.md          # Entry point & contract (Claude reads this to activate)
@@ -41,19 +42,21 @@ academic-writing-skills/{skill-name}/
 └── agents/           # Agent persona definitions (paper-audit)
 ```
 
-### Five Skills
+### Six Skills
 
-| Skill | Input | Purpose |
-|---|---|---|
-| `latex-paper-en` | `.tex` | English conference/journal papers (IEEE, ACM, NeurIPS, ICML) |
-| `latex-thesis-zh` | `.tex` | Chinese degree theses (GB/T 7714-2015; thuthesis, pkuthss, etc.) |
-| `typst-paper` | `.typ` | Bilingual Typst papers with millisecond compilation |
-| `bib-search-citation` | `.bib` | Search and cite local BibTeX/BibLaTeX libraries |
-| `paper-audit` | `.tex`/`.typ`/`.pdf` | Multi-perspective pre-submission audit with scoring |
+| Skill                 | Input                       | Purpose                                                                   |
+| --------------------- | --------------------------- | ------------------------------------------------------------------------- |
+| `latex-paper-en`      | `.tex`                      | English conference/journal papers (IEEE, ACM, NeurIPS, ICML)              |
+| `latex-thesis-zh`     | `.tex`                      | Chinese degree theses (GB/T 7714-2015; thuthesis, pkuthss, etc.)          |
+| `typst-paper`         | `.typ`                      | Bilingual Typst papers with millisecond compilation                       |
+| `bib-search-citation` | `.bib`                      | Search and cite local BibTeX/BibLaTeX libraries                           |
+| `paper-audit`         | `.tex`/`.typ`/`.pdf`        | Multi-perspective pre-submission audit with scoring                       |
+| `cover-letter`        | `.tex` + cover letter draft | Generate / optimize / align-check / journal-fit a submission cover letter |
 
 ### Parser Hierarchy
 
 All script-based skills share a common `DocumentParser` ABC in their `scripts/parsers.py`:
+
 - `DocumentParser` (ABC) → `LatexParser`, `TypstParser`
 - Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`
 - Each skill has its own copy of `parsers.py` (not a shared import) — keep them aligned when changing shared behavior.
@@ -61,16 +64,19 @@ All script-based skills share a common `DocumentParser` ABC in their `scripts/pa
 ### Test Structure
 
 Tests in `tests/` import scripts via `sys.path` manipulation in `conftest.py`. The conftest exports path constants:
+
 - `SCRIPT_DIR_EN` — latex-paper-en/scripts
 - `SCRIPT_DIR_ZH` — latex-thesis-zh/scripts
 - `SCRIPT_DIR_TYPST` — typst-paper/scripts
 - `SCRIPT_DIR_AUDIT` — paper-audit/scripts
+- `SCRIPT_DIR_COVER_LETTER` — cover-letter/scripts
 
-Only `SCRIPT_DIR_EN` and `SCRIPT_DIR_AUDIT` are added to `sys.path` by default. Tests use bare imports like `from parsers import LatexParser`.
+Only `SCRIPT_DIR_EN` and `SCRIPT_DIR_AUDIT` are added to `sys.path` by default. Tests use bare imports like `from parsers import LatexParser`. `SCRIPT_DIR_COVER_LETTER` is appended (not prepended) so cover-letter tests load scripts via `importlib.util.spec_from_file_location` to avoid shadowing the canonical EN/AUDIT parsers.
 
 ### paper-audit Agent System
 
 `paper-audit` uses four reviewer agents that produce independent assessments, then a synthesis agent consolidates them:
+
 - `methodology_reviewer_agent.md` — research design, statistical rigor
 - `domain_reviewer_agent.md` — literature coverage, theoretical framework
 - `critical_reviewer_agent.md` — logical fallacies, argument challenges

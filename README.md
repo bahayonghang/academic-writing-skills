@@ -13,13 +13,14 @@ rough edges; if needed, please fork it and adapt it yourself.
 
 ## Skills at a Glance
 
-| Skill | Best For | Input Formats |
-|---|---|---|
-| [`latex-paper-en`](#latex-paper-en) | English papers — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
-| [`latex-thesis-zh`](#latex-thesis-zh) | Chinese degree theses — GB/T 7714 / thuthesis / pkuthss | `.tex` |
-| [`typst-paper`](#typst-paper) | Fast-compile bilingual papers | `.typ` |
-| [`bib-search-citation`](#bib-search-citation) | Fast search and citation extraction from `.bib` libraries | `.bib` |
-| [`paper-audit`](#paper-audit) | Deep-review-first paper audit and submission gate | `.tex` `.typ` `.pdf` |
+| Skill                                         | Best For                                                                 | Input Formats               |
+| --------------------------------------------- | ------------------------------------------------------------------------ | --------------------------- |
+| [`latex-paper-en`](#latex-paper-en)           | English papers — IEEE / ACM / NeurIPS / ICML / Springer                  | `.tex`                      |
+| [`latex-thesis-zh`](#latex-thesis-zh)         | Chinese degree theses — GB/T 7714 / thuthesis / pkuthss                  | `.tex`                      |
+| [`typst-paper`](#typst-paper)                 | Fast-compile bilingual papers                                            | `.typ`                      |
+| [`bib-search-citation`](#bib-search-citation) | Fast search and citation extraction from `.bib` libraries                | `.bib`                      |
+| [`paper-audit`](#paper-audit)                 | Deep-review-first paper audit and submission gate                        | `.tex` `.typ` `.pdf`        |
+| [`cover-letter`](#cover-letter)               | Submission cover letter: generate / optimize / align-check / journal-fit | `.tex` + cover letter draft |
 
 ---
 
@@ -39,23 +40,23 @@ npx skills add bahayonghang/academic-writing-skills
 
 English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues.
 
-| Category | Capability |
-|---|---|
-| **Format & Compile** | ChkTeX linting; pdfLaTeX / XeLaTeX / LuaLaTeX via latexmk |
-| **Grammar** | Chinglish detection, weak-verb replacement, subject-verb agreement |
-| **Sentences** | Complex sentence decomposition (auto-triggers at > 50 words) |
-| **Expression** | Academic tone improvement, expression restructuring |
-| **Logic** | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment |
-| **Literature** | Dedicated related-work synthesis checks and rewrite blueprints: thematic clustering, comparative analysis, and research-gap derivation |
-| **Title** | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100 |
-| **Captions** | Title/Sentence-case, AI-flavor-free figure and table captions |
-| **Pseudocode** | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
-| **Experiments** | Cohesive result paragraphs with SOTA comparison, ablation analysis, discussion layering, and conclusion completeness |
-| **De-AI** | Humanize AI-written passages while preserving all LaTeX syntax; flags low-information boilerplate |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
-| **References** | Undefined `\ref{}`, unreferenced `\label{}`, missing captions; BibTeX format validation |
-| **Online Verify** | CrossRef + Semantic Scholar bibliography verification (no API key required) |
-| **Translation** | Chinese → English academic translation with domain-term awareness |
+| Category                   | Capability                                                                                                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Format & Compile**       | ChkTeX linting; pdfLaTeX / XeLaTeX / LuaLaTeX via latexmk                                                                                                                   |
+| **Grammar**                | Chinglish detection, weak-verb replacement, subject-verb agreement                                                                                                          |
+| **Sentences**              | Complex sentence decomposition (auto-triggers at > 50 words)                                                                                                                |
+| **Expression**             | Academic tone improvement, expression restructuring                                                                                                                         |
+| **Logic**                  | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment                                                           |
+| **Literature**             | Dedicated related-work synthesis checks and rewrite blueprints: thematic clustering, comparative analysis, and research-gap derivation                                      |
+| **Title**                  | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100                                                                                              |
+| **Captions**               | Title/Sentence-case, AI-flavor-free figure and table captions                                                                                                               |
+| **Pseudocode**             | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
+| **Experiments**            | Cohesive result paragraphs with SOTA comparison, ablation analysis, discussion layering, and conclusion completeness                                                        |
+| **De-AI**                  | Humanize AI-written passages while preserving all LaTeX syntax; flags low-information boilerplate                                                                           |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work                                                                                         |
+| **References**             | Undefined `\ref{}`, unreferenced `\label{}`, missing captions; BibTeX format validation                                                                                     |
+| **Online Verify**          | CrossRef + Semantic Scholar bibliography verification (no API key required)                                                                                                 |
+| **Translation**            | Chinese → English academic translation with domain-term awareness                                                                                                           |
 
 Claim-evidence guidance now treats citation keys and `.bib` hits as provenance,
 not proof of claim support; uncertain support is marked instead of invented.
@@ -64,64 +65,64 @@ not proof of claim support; uncertain support is marked instead of invented.
 
 Chinese degree thesis editing conforming to GB/T 7714-2015 and major university templates.
 
-| Category | Capability |
-|---|---|
-| **Structure** | Multi-file thesis mapping; chapter/section completeness check |
-| **Bibliography** | GB/T 7714-2015 compliance; BibTeX format validation |
-| **Templates** | thuthesis / pkuthss / ustcthesis / fduthesis auto-detection |
-| **Chinese Style** | Oral-expression detection, terminology consistency |
-| **Logic** | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure |
-| **Literature** | Thesis-specific literature review diagnosis and rewrite blueprint: no author/year listing, stronger comparison, evidence-backed gap derivation |
-| **Title** | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates |
-| **Captions** | Bilingual English/Chinese captions following top-conference standards |
-| **Experiments** | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness |
-| **De-AI** | Reduce AI writing traces; preserves all LaTeX commands; flags low-information rhetoric |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work chapters |
-| **Compile** | XeLaTeX / LuaLaTeX with full CJK font support |
-| **References** | Same integrity checks as `latex-paper-en`; online verification supported |
+| Category                   | Capability                                                                                                                                     |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Structure**              | Multi-file thesis mapping; chapter/section completeness check                                                                                  |
+| **Bibliography**           | GB/T 7714-2015 compliance; BibTeX format validation                                                                                            |
+| **Templates**              | thuthesis / pkuthss / ustcthesis / fduthesis auto-detection                                                                                    |
+| **Chinese Style**          | Oral-expression detection, terminology consistency                                                                                             |
+| **Logic**                  | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure                                          |
+| **Literature**             | Thesis-specific literature review diagnosis and rewrite blueprint: no author/year listing, stronger comparison, evidence-backed gap derivation |
+| **Title**                  | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates                                                                             |
+| **Captions**               | Bilingual English/Chinese captions following top-conference standards                                                                          |
+| **Experiments**            | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness                    |
+| **De-AI**                  | Reduce AI writing traces; preserves all LaTeX commands; flags low-information rhetoric                                                         |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work chapters                                                   |
+| **Compile**                | XeLaTeX / LuaLaTeX with full CJK font support                                                                                                  |
+| **References**             | Same integrity checks as `latex-paper-en`; online verification supported                                                                       |
 
 **Supported university templates**
 
-| University | Template | Notes |
-|---|---|---|
-| Tsinghua | thuthesis | Figure numbering: 图 3-1 |
-| Peking | pkuthss | Nomenclature chapter required |
-| USTC | ustcthesis | — |
-| Fudan | fduthesis | — |
-| Generic | ctexbook | GB/T 7713.1-2006 baseline |
+| University | Template   | Notes                         |
+| ---------- | ---------- | ----------------------------- |
+| Tsinghua   | thuthesis  | Figure numbering: 图 3-1      |
+| Peking     | pkuthss    | Nomenclature chapter required |
+| USTC       | ustcthesis | —                             |
+| Fudan      | fduthesis  | —                             |
+| Generic    | ctexbook   | GB/T 7713.1-2006 baseline     |
 
 ### typst-paper
 
 Bilingual Typst paper editing with millisecond-level compilation.
 
-| Category | Capability |
-|---|---|
-| **Compile** | Typst CLI wrapper with error summarization |
-| **Format** | Page settings, text formatting, citation syntax |
-| **Grammar** | Same checks as `latex-paper-en`, adapted for Typst syntax |
-| **Logic** | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure |
-| **Literature** | Related-work synthesis checks and rewrite blueprints while preserving `@cite` anchors and Typst labels |
-| **Title** | Bilingual (English/Chinese) title generation and optimization |
-| **Captions** | Bilingual captions following IEEE/ACM standards |
-| **Pseudocode** | IEEE-like review for `algorithmic`, `algorithm-figure`, and `lovelace`, including wrapper, caption, style hook, and comment-length checks |
-| **Experiments** | Cohesive result paragraphs for journal/conference papers, including discussion layering checks |
-| **De-AI** | Humanize AI-written passages in English or Chinese; preserves `@cite`, `<label>`, `$...$` |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work |
-| **Venues** | IEEE, ACM, Springer, NeurIPS template guidance |
-| **References** | Undefined `@ref`, unreferenced labels; online verification supported |
+| Category                   | Capability                                                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Compile**                | Typst CLI wrapper with error summarization                                                                                                |
+| **Format**                 | Page settings, text formatting, citation syntax                                                                                           |
+| **Grammar**                | Same checks as `latex-paper-en`, adapted for Typst syntax                                                                                 |
+| **Logic**                  | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure                                       |
+| **Literature**             | Related-work synthesis checks and rewrite blueprints while preserving `@cite` anchors and Typst labels                                    |
+| **Title**                  | Bilingual (English/Chinese) title generation and optimization                                                                             |
+| **Captions**               | Bilingual captions following IEEE/ACM standards                                                                                           |
+| **Pseudocode**             | IEEE-like review for `algorithmic`, `algorithm-figure`, and `lovelace`, including wrapper, caption, style hook, and comment-length checks |
+| **Experiments**            | Cohesive result paragraphs for journal/conference papers, including discussion layering checks                                            |
+| **De-AI**                  | Humanize AI-written passages in English or Chinese; preserves `@cite`, `<label>`, `$...$`                                                 |
+| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work                                                       |
+| **Venues**                 | IEEE, ACM, Springer, NeurIPS template guidance                                                                                            |
+| **References**             | Undefined `@ref`, unreferenced labels; online verification supported                                                                      |
 
 ### bib-search-citation
 
 Fast bibliography search and citation extraction for BibTeX or BibLaTeX `.bib` libraries.
 
-| Category | Capability |
-|---|---|
-| **Input** | BibTeX / BibLaTeX `.bib`, including Zotero-exported libraries |
-| **Search** | Topic, author, year, venue, DOI, arXiv, keywords, annotation, abstract, and entry type |
-| **Filters** | Compact filters such as `author:` `year>=` `type:` `has:` plus negation |
-| **Output** | Research fields, raw BibTeX, LaTeX snippets (`\cite{}` / `\parencite{}` / `\textcite{}`), and Typst snippets (`@key` / `#cite(...)`) |
-| **Preview** | JSON search output can be piped into `preview_bib_search.py` for compact human review |
-| **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints |
+| Category          | Capability                                                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Input**         | BibTeX / BibLaTeX `.bib`, including Zotero-exported libraries                                                                        |
+| **Search**        | Topic, author, year, venue, DOI, arXiv, keywords, annotation, abstract, and entry type                                               |
+| **Filters**       | Compact filters such as `author:` `year>=` `type:` `has:` plus negation                                                              |
+| **Output**        | Research fields, raw BibTeX, LaTeX snippets (`\cite{}` / `\parencite{}` / `\textcite{}`), and Typst snippets (`@key` / `#cite(...)`) |
+| **Preview**       | JSON search output can be piped into `preview_bib_search.py` for compact human review                                                |
+| **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints                             |
 
 Search results expose provenance fields such as DOI, arXiv, and URL for later
 verification. A local `.bib` match does not prove the paper supports a specific
@@ -131,46 +132,72 @@ manuscript claim.
 
 Deep-review-first paper audit with layered checks, structured issue bundles, and submission gating.
 
-| Category | Capability |
-|---|---|
-| **Input** | `.tex`, `.typ`, `.pdf` files |
-| **Modes** | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification) |
-| **PRESUBMISSION Layer** | Final-week mechanical checks for em dashes, AI-tone term frequency, abstract result gaps, LaTeX hygiene, equation references, and concrete captions; PDF mode runs text-only checks |
-| **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md` |
-| **Claim-Evidence Map** | Additive `claim_candidates` with evidence anchors, support strength, missing evidence, and bounded wording |
-| **Reference Integrity** | Undefined refs, unreferenced labels, missing captions, numbering gaps |
-| **Caption Audit** | Title/Sentence case enforcement; AI-flavor removal |
-| **Pseudocode Audit** | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments |
-| **Experiment Narrative** | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness |
-| **Deep Review Outputs** | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `revision_roadmap.md` |
-| **ScholarEval** | 8-dimension quality scoring (1–10) with publication readiness label |
-| **NeurIPS Scoring** | Quality / Clarity / Significance / Originality on 1–6 scale |
-| **Online Verify** | CrossRef + Semantic Scholar (add `--online`); no API key required |
-| **De-AI** | Reduce AI writing traces across the whole document |
-| **Citation Stacking** | Detects 3+ clustered citations without individual discussion in Introduction/Related Work |
-| **Review Scope Note** | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
-| **Data Availability Advisory** | Checks whether central claims have source-data / artifact anchors; blocks only when venue-required central evidence is missing |
-| **Literature Boundary** | `--focus literature` judges whether the gap is real and the literature positioning is fair; it does not rewrite the section. Use the format-specific writing skills for prose changes |
+| Category                       | Capability                                                                                                                                                                                      |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Input**                      | `.tex`, `.typ`, `.pdf` files                                                                                                                                                                    |
+| **Modes**                      | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification)                                                           |
+| **PRESUBMISSION Layer**        | Final-week mechanical checks for em dashes, AI-tone term frequency, abstract result gaps, LaTeX hygiene, equation references, and concrete captions; PDF mode runs text-only checks             |
+| **Deep Review Outputs**        | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md`                                                                               |
+| **Claim-Evidence Map**         | Additive `claim_candidates` with evidence anchors, support strength, missing evidence, and bounded wording                                                                                      |
+| **Reference Integrity**        | Undefined refs, unreferenced labels, missing captions, numbering gaps                                                                                                                           |
+| **Caption Audit**              | Title/Sentence case enforcement; AI-flavor removal                                                                                                                                              |
+| **Pseudocode Audit**           | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments                                                  |
+| **Experiment Narrative**       | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness                                                                                         |
+| **Deep Review Outputs**        | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `revision_roadmap.md`                                                                                                        |
+| **ScholarEval**                | 8-dimension quality scoring (1–10) with publication readiness label                                                                                                                             |
+| **NeurIPS Scoring**            | Quality / Clarity / Significance / Originality on 1–6 scale                                                                                                                                     |
+| **Online Verify**              | CrossRef + Semantic Scholar (add `--online`); no API key required                                                                                                                               |
+| **De-AI**                      | Reduce AI writing traces across the whole document                                                                                                                                              |
+| **Citation Stacking**          | Detects 3+ clustered citations without individual discussion in Introduction/Related Work                                                                                                       |
+| **Review Scope Note**          | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
+| **Data Availability Advisory** | Checks whether central claims have source-data / artifact anchors; blocks only when venue-required central evidence is missing                                                                  |
+| **Literature Boundary**        | `--focus literature` judges whether the gap is real and the literature positioning is fair; it does not rewrite the section. Use the format-specific writing skills for prose changes           |
 
 **Audit workflow layers**
 
-| Layer | Check |
-|---|---|
-| L0 | Quick audit / gate script pass |
-| L1 | Deep-review workspace prep (sections, summary, claim map) |
-| L2 | Section review lanes |
-| L3 | Cross-cutting review lanes |
-| L4 | Consolidation + quote verification |
-| L5 | Final report + roadmap + optional score summary |
+| Layer | Check                                                     |
+| ----- | --------------------------------------------------------- |
+| L0    | Quick audit / gate script pass                            |
+| L1    | Deep-review workspace prep (sections, summary, claim map) |
+| L2    | Section review lanes                                      |
+| L3    | Cross-cutting review lanes                                |
+| L4    | Consolidation + quote verification                        |
+| L5    | Final report + roadmap + optional score summary           |
 
 **Quick usage**
 
-| Mode | Use when | Main output |
-|---|---|---|
-| `quick-audit` | You want a fast readiness screen | Script-backed report + checklist + score summary |
+| Mode          | Use when                         | Main output                                                          |
+| ------------- | -------------------------------- | -------------------------------------------------------------------- |
+| `quick-audit` | You want a fast readiness screen | Script-backed report + checklist + score summary                     |
 | `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap + optional `peer_review_report.md` |
-| `gate` | You only care about blockers | PASS/FAIL + blocking issues |
-| `re-audit` | You want to verify revisions | Issue-status comparison |
+| `gate`        | You only care about blockers     | PASS/FAIL + blocking issues                                          |
+| `re-audit`    | You want to verify revisions     | Issue-status comparison                                              |
+
+### cover-letter
+
+Submission cover-letter generation, optimization, claim alignment, journal-fit scoring, and final mechanical checks for existing LaTeX manuscripts.
+
+| Category | Capability |
+| --- | --- |
+| **Input** | LaTeX manuscript (`main.tex`) plus optional cover letter draft (`.md` or `.tex`) |
+| **Modes** | `generate` · `optimize` · `align-check` · `journal-fit` · `presubmission` |
+| **Claim Alignment** | Extracts claim candidates such as `47%`, `2.1x`, modality counts, memory reductions, deployment, and cost claims; reports only unsupported or over-scoped claims |
+| **Journal Fit** | Scores scope fit, novelty framing, evidence density, and format compliance as HIGH / MEDIUM / LOW |
+| **Pre-submission Checks** | Required declarations, word limit, opener clichés, banned phrases, AI-tone frequency, and paragraph shape |
+| **Output Schema** | JSON findings use lowercase `severity` (`major` / `moderate` / `minor`), `priority`, `source_kind`, and `comment_type` |
+| **Boundaries** | Does not edit the manuscript, does not support Typst sources, does not write rebuttals, and does not fetch live journal policies unless explicitly requested |
+
+**Quick usage**
+
+```bash
+uv run python -B academic-writing-skills/cover-letter/scripts/cover_letter.py \
+  --mode align-check \
+  --manuscript main.tex \
+  --letter cover_letter.md \
+  --json
+```
+
+The unified CLI also supports `--mode generate`, `optimize`, `journal-fit`, and `presubmission`; legacy single-purpose scripts remain available in `academic-writing-skills/cover-letter/scripts/`.
 
 ---
 
@@ -185,15 +212,15 @@ compile my paper with xelatex-biber
 build the LaTeX document
 ```
 
-| Recipe | Steps | Use Case |
-|---|---|---|
-| `xelatex` | XeLaTeX only | Quick Chinese compile |
-| `pdflatex` | PDFLaTeX only | Quick English compile |
-| `latexmk` | LaTeXmk auto | Auto dependency handling |
-| `xelatex-biber` | xelatex → biber → xelatex × 2 | Chinese + Biber (Recommended) |
-| `xelatex-bibtex` | xelatex → bibtex → xelatex × 2 | Chinese + BibTeX |
-| `pdflatex-biber` | pdflatex → biber → pdflatex × 2 | English + Biber |
-| `pdflatex-bibtex` | pdflatex → bibtex → pdflatex × 2 | English + BibTeX |
+| Recipe            | Steps                            | Use Case                      |
+| ----------------- | -------------------------------- | ----------------------------- |
+| `xelatex`         | XeLaTeX only                     | Quick Chinese compile         |
+| `pdflatex`        | PDFLaTeX only                    | Quick English compile         |
+| `latexmk`         | LaTeXmk auto                     | Auto dependency handling      |
+| `xelatex-biber`   | xelatex → biber → xelatex × 2    | Chinese + Biber (Recommended) |
+| `xelatex-bibtex`  | xelatex → bibtex → xelatex × 2   | Chinese + BibTeX              |
+| `pdflatex-biber`  | pdflatex → biber → pdflatex × 2  | English + Biber               |
+| `pdflatex-bibtex` | pdflatex → bibtex → pdflatex × 2 | English + BibTeX              |
 
 ### De-AI Editing
 
@@ -300,11 +327,11 @@ All suggestions use diff-comment style with mandatory severity and priority fiel
 % ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
 ```
 
-| Severity | Meaning |
-|---|---|
+| Severity | Meaning                                                                                |
+| -------- | -------------------------------------------------------------------------------------- |
 | Critical | Blocks submission (compilation failure, undefined reference, missing required section) |
-| Major | Significantly affects quality (grammar error, logic gap, non-compliant format) |
-| Minor | Polish-level improvement (word choice, style consistency) |
+| Major    | Significantly affects quality (grammar error, logic gap, non-compliant format)         |
+| Minor    | Polish-level improvement (word choice, style consistency)                              |
 
 ---
 
@@ -409,13 +436,13 @@ academic-writing-skills/
 
 ## Failure Handling
 
-| Problem | Fix |
-|---|---|
-| Missing LaTeX tools | Install TeX Live / MiKTeX; ensure `latexmk` and `chktex` are in `PATH` |
-| Missing Typst CLI | `cargo install typst-cli` or install via package manager |
-| Compilation error | Summarize the first error block and request the relevant `.log` snippet |
-| Missing script | Verify working directory points to the skill's root folder |
-| PDF analysis fails | Install `pdfplumber` (`uv sync --extra dev`) |
+| Problem             | Fix                                                                     |
+| ------------------- | ----------------------------------------------------------------------- |
+| Missing LaTeX tools | Install TeX Live / MiKTeX; ensure `latexmk` and `chktex` are in `PATH`  |
+| Missing Typst CLI   | `cargo install typst-cli` or install via package manager                |
+| Compilation error   | Summarize the first error block and request the relevant `.log` snippet |
+| Missing script      | Verify working directory points to the skill's root folder              |
+| PDF analysis fails  | Install `pdfplumber` (`uv sync --extra dev`)                            |
 
 ---
 

@@ -210,6 +210,14 @@ function paperAuditItems(prefix: string) {
   ]
 }
 
+function coverLetterItems(prefix: string) {
+  const base = `${prefix}/cover-letter`
+  const isZh = prefix.startsWith('/zh')
+  return [
+    { text: isZh ? '概览' : 'Overview', link: `${base}/` },
+  ]
+}
+
 
 function buildSidebar(prefix: string) {
   const isZh = prefix.startsWith('/zh')
@@ -254,6 +262,11 @@ function buildSidebar(prefix: string) {
       text: isZh ? '论文审查 (paper-audit)' : 'Paper Audit (paper-audit)',
       collapsed: false,
       items: paperAuditItems(prefix),
+    },
+    {
+      text: isZh ? '投稿信 (cover-letter)' : 'Cover Letters (cover-letter)',
+      collapsed: false,
+      items: coverLetterItems(prefix),
     },
   ]
 }
