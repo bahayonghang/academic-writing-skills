@@ -6,6 +6,8 @@ import argparse
 import json
 from pathlib import Path
 
+from paths import WorkspaceLayout
+
 UNVERIFIED_CONFIDENCE = "unverified"
 """Confidence label applied when an issue's quote is not found in the source."""
 
@@ -59,8 +61,9 @@ def main() -> int:
     args = parser.parse_args()
 
     review_dir = Path(args.review_dir).resolve()
-    full_text = (review_dir / "full_text.md").read_text(encoding="utf-8")
-    issues_path = review_dir / "final_issues.json"
+    layout = WorkspaceLayout(review_dir)
+    full_text = layout.full_text.read_text(encoding="utf-8")
+    issues_path = layout.final_issues
     issues = json.loads(issues_path.read_text(encoding="utf-8"))
     updated = verify_quotes(full_text, issues)
     verified_count = sum(1 for issue in updated if issue.get("quote_verified"))

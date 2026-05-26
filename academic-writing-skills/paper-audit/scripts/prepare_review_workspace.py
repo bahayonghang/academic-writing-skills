@@ -13,6 +13,7 @@ from build_claim_map import build_claim_map
 from checkpoint import init_checkpoint
 from detect_language import detect_language
 from parsers import extract_title, get_parser
+from paths import WorkspaceLayout
 
 
 def slugify(value: str) -> str:
@@ -123,7 +124,7 @@ def build_section_index(content: str, parser, fmt: str) -> list[dict]:
 
 
 def write_summary_stub(
-    workspace: Path,
+    layout: WorkspaceLayout,
     title: str,
     claim_map: dict,
     section_index: list[dict],
@@ -163,18 +164,19 @@ def write_summary_stub(
         lines.extend([f"- {claim}" for claim in closure_targets])
     else:
         lines.append("- No closure target was extracted automatically.")
-    (workspace / "paper_summary.md").write_text("\n".join(lines), encoding="utf-8")
+    layout.paper_summary.write_text("\n".join(lines), encoding="utf-8")
 
 
-def _copy_workspace_references(workspace: Path) -> None:
+def _copy_workspace_references(layout: WorkspaceLayout) -> None:
     """Copy a small reference set into the workspace for reviewer agents.
 
-    Reviewer lane templates read `<review_dir>/references/...`, so keep the workspace
-    self-contained even when the audit is run from other working directories.
+    Reviewer lane templates read ``<review_dir>/artifacts/references/...``, so keep
+    the workspace self-contained even when the audit is run from other working
+    directories.
     """
     skill_root = Path(__file__).resolve().parent.parent
     source_dir = skill_root / "references"
-    dest_dir = workspace / "references"
+    dest_dir = layout.references_dir
     dest_dir.mkdir(parents=True, exist_ok=True)
 
     minimal_refs = (
@@ -227,15 +229,11 @@ def prepare_workspace(
                 f"Pass {overwrite_hint} to replace it, or choose a different --output-dir."
             )
         shutil.rmtree(workspace)
-    sections_dir = workspace / "sections"
-    comments_dir = workspace / "comments"
-    committee_dir = workspace / "committee"
-    sections_dir.mkdir(parents=True, exist_ok=True)
-    comments_dir.mkdir(parents=True, exist_ok=True)
-    committee_dir.mkdir(parents=True, exist_ok=True)
 
-    full_text_path = workspace / "full_text.md"
-    full_text_path.write_text(visible_text if visible_text else content, encoding="utf-8")
+    layout = WorkspaceLayout(workspace)
+    layout.ensure_dirs()
+
+    layout.full_text.write_text(visible_text if visible_text else content, encoding="utf-8")
 
     section_index = build_section_index(content, parser, fmt)
     lines = content.splitlines()
@@ -249,10 +247,9 @@ def prepare_workspace(
         )
         body = parser.clean_text(raw_body, keep_structure=True) if fmt != ".pdf" else raw_body
         section_texts[section["section_key"]] = body
-        (sections_dir / section["file_name"]).write_text(body, encoding="utf-8")
+        layout.section_file(section["file_name"]).write_text(body, encoding="utf-8")
 
-    section_index_path = workspace / "section_index.json"
-    section_index_path.write_text(
+    layout.section_index.write_text(
         json.dumps(section_index, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
@@ -261,7 +258,7 @@ def prepare_workspace(
         section_index,
         section_texts=section_texts,
     )
-    (workspace / "claim_map.json").write_text(
+    layout.claim_map.write_text(
         json.dumps(claim_map, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
@@ -274,21 +271,15 @@ def prepare_workspace(
         "format": fmt,
         "generated_at": datetime.now().isoformat(),
     }
-    (workspace / "metadata.json").write_text(
+    layout.metadata.write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-    write_summary_stub(workspace, metadata["title"], claim_map, section_index, section_texts)
-    _copy_workspace_references(workspace)
+    write_summary_stub(layout, metadata["title"], claim_map, section_index, section_texts)
+    _copy_workspace_references(layout)
     init_checkpoint(
         workspace,
-        generated_files=[
-            "full_text.md",
-            "metadata.json",
-            "section_index.json",
-            "claim_map.json",
-            "paper_summary.md",
-        ],
+        generated_files=layout.initial_generated_files(),
     )
     return workspace
 

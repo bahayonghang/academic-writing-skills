@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from paths import WorkspaceLayout
 from report_generator import (
     AuditResult,
     coerce_deep_review_issue,
@@ -31,9 +32,9 @@ def _read_text_if_exists(path: Path, *, strip: bool = False) -> str:
     return text.strip() if strip else text
 
 
-def _load_revision_roadmap(review_dir: Path) -> list[dict]:
-    """Load roadmap items from revision_roadmap.md if present."""
-    roadmap_path = review_dir / "revision_roadmap.md"
+def _load_revision_roadmap(layout: WorkspaceLayout) -> list[dict]:
+    """Load roadmap items from revision_suggestions.md if present."""
+    roadmap_path = layout.revision_suggestions_md
     if not roadmap_path.exists():
         return []
 
@@ -41,8 +42,14 @@ def _load_revision_roadmap(review_dir: Path) -> list[dict]:
     current_priority = ""
     for raw_line in roadmap_path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
-        if line.startswith("## "):
+        if line.startswith("### Priority "):
+            current_priority = line.removeprefix("### ").strip().split(" ---")[0].strip()
+            continue
+        if line.startswith("## Priority "):
             current_priority = line.removeprefix("## ").strip()
+            continue
+        if line.startswith("## "):
+            # Top-level section like "## Revision Roadmap" — keep prior priority context.
             continue
         if not line.startswith("- [ ] "):
             continue
@@ -63,9 +70,10 @@ def _load_revision_roadmap(review_dir: Path) -> list[dict]:
 
 def load_result(review_dir: Path) -> AuditResult:
     """Load workspace artifacts into an AuditResult for rendering."""
-    metadata = _read_json_if_exists(review_dir / "metadata.json", {}) or {}
-    final_issues = _read_json_if_exists(review_dir / "final_issues.json", []) or []
-    section_index = _read_json_if_exists(review_dir / "section_index.json", []) or []
+    layout = WorkspaceLayout(review_dir)
+    metadata = _read_json_if_exists(layout.metadata, {}) or {}
+    final_issues = _read_json_if_exists(layout.final_issues, []) or []
+    section_index = _read_json_if_exists(layout.section_index, []) or []
 
     return AuditResult(
         file_path=metadata.get("source_path", metadata.get("title", "paper")),
@@ -73,10 +81,10 @@ def load_result(review_dir: Path) -> AuditResult:
         mode="deep-review",
         review_focus=metadata.get("review_focus", "full"),
         issue_bundle=[coerce_deep_review_issue(issue) for issue in final_issues],
-        summary=_read_text_if_exists(review_dir / "paper_summary.md"),
-        overall_assessment=_read_text_if_exists(review_dir / "overall_assessment.txt", strip=True),
+        summary=_read_text_if_exists(layout.paper_summary),
+        overall_assessment=_read_text_if_exists(layout.overall_assessment, strip=True),
         section_index=section_index,
-        revision_roadmap=_load_revision_roadmap(review_dir),
+        revision_roadmap=_load_revision_roadmap(layout),
         artifact_dir=str(review_dir),
     )
 
@@ -91,21 +99,36 @@ def main() -> int:
         help="Report style to render (defaults to deep-review)",
     )
     parser.add_argument(
+        "--lang",
+        choices=("en", "zh"),
+        default=None,
+        help="Report language (defaults to metadata.json language, fallback en)",
+    )
+    parser.add_argument(
         "--output",
         "-o",
-        help="Optional output path (defaults to <review_dir>/review_report.md or peer_review_report.md)",
+        help=(
+            "Optional output path "
+            "(defaults to <review_dir>/review_report.md or "
+            "<review_dir>/artifacts/summary/peer_review_report.md)"
+        ),
     )
     args = parser.parse_args()
 
     review_dir = Path(args.review_dir).resolve()
+    layout = WorkspaceLayout(review_dir)
     result = load_result(review_dir)
+    lang = args.lang or result.language or "en"
+    if lang not in {"en", "zh"}:
+        lang = "en"
     if args.style == "peer-review":
-        report = render_peer_review_report(result)
-        default_output = review_dir / "peer_review_report.md"
+        report = render_peer_review_report(result, lang=lang)
+        default_output = layout.peer_review_report
     else:
-        report = render_deep_review_report(result)
-        default_output = review_dir / "review_report.md"
+        report = render_deep_review_report(result, lang=lang)
+        default_output = layout.review_report_md
     output_path = Path(args.output).resolve() if args.output else default_output
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(report, encoding="utf-8")
     print(f"Report written to {output_path}")
     return 0

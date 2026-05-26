@@ -12,6 +12,8 @@ import argparse
 import json
 from pathlib import Path
 
+from paths import WorkspaceLayout
+
 DEGRADATION_THRESHOLD = 5.0
 """Default per-dimension drop (R_prev - R_current) that triggers a ⚠️↓ marker."""
 
@@ -156,11 +158,14 @@ def main() -> int:
 
     previous_path = Path(args.previous).resolve()
     current_path = Path(args.current).resolve()
-    output_path = (
-        Path(args.output).resolve()
-        if args.output
-        else current_path.parent / "revision_trajectory.md"
-    )
+    if args.output:
+        output_path = Path(args.output).resolve()
+    else:
+        workspace_root = _infer_workspace_root(current_path)
+        if workspace_root is not None:
+            output_path = WorkspaceLayout(workspace_root).revision_trajectory
+        else:
+            output_path = current_path.parent / "revision_trajectory.md"
 
     body = write_trajectory(
         previous_path,
@@ -174,6 +179,17 @@ def main() -> int:
 
     print(f"Revision trajectory written to {output_path}")
     return 0
+
+
+def _infer_workspace_root(final_issues_path: Path) -> Path | None:
+    """Walk up from a final_issues.json path to the workspace root, or None."""
+    candidate = final_issues_path.parent
+    for _ in range(5):
+        layout = WorkspaceLayout(candidate)
+        if layout.final_issues.resolve() == final_issues_path.resolve():
+            return candidate
+        candidate = candidate.parent
+    return None
 
 
 if __name__ == "__main__":

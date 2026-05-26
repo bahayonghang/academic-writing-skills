@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
+from i18n import normalize_lang, t
+
 # --- Data Models ---
 
 
@@ -175,12 +177,12 @@ SEVERITY_DEDUCTIONS: dict[str, float] = {
 }
 
 SCORE_LABELS: list[tuple[float, str]] = [
-    (5.5, "Strong Accept"),
-    (4.5, "Accept"),
-    (3.5, "Borderline Accept"),
-    (2.5, "Borderline Reject"),
-    (1.5, "Reject"),
-    (0.0, "Strong Reject"),
+    (5.5, "score.strong_accept"),
+    (4.5, "score.accept"),
+    (3.5, "score.borderline_accept"),
+    (2.5, "score.borderline_reject"),
+    (1.5, "score.reject"),
+    (0.0, "score.strong_reject"),
 ]
 
 DEEP_REVIEW_SEVERITY_ORDER: dict[str, int] = {
@@ -224,10 +226,24 @@ JOURNAL_RECOMMENDATION_ORDER: tuple[str, ...] = (
 )
 
 DEEP_REVIEW_SECTIONS: tuple[tuple[str, str], ...] = (
-    ("major", "Major Issues"),
-    ("moderate", "Moderate Issues"),
-    ("minor", "Minor Issues"),
+    ("major", "section.major_issues"),
+    ("moderate", "section.moderate_issues"),
+    ("minor", "section.minor_issues"),
 )
+
+RECOMMENDATION_KEYS: dict[str, str] = {
+    "Accept": "rec.accept",
+    "Minor Revision": "rec.minor_revision",
+    "Major Revision": "rec.major_revision",
+    "Reject": "rec.reject",
+}
+
+RECOMMENDATION_RATIONALE_KEYS: dict[str, str] = {
+    "Accept": "rec.accept.rationale",
+    "Minor Revision": "rec.minor_revision.rationale",
+    "Major Revision": "rec.major_revision.rationale",
+    "Reject": "rec.reject.rationale",
+}
 
 
 def coerce_deep_review_issue(issue: DeepReviewIssue | dict[str, Any]) -> DeepReviewIssue:
@@ -248,11 +264,62 @@ def normalize_deep_review_issue_dict(issue: DeepReviewIssue | dict[str, Any]) ->
 
 
 def _score_label(score: float) -> str:
-    """Map numeric score to NeurIPS-style label."""
-    for threshold, label in SCORE_LABELS:
+    """Map numeric score to the i18n key for its NeurIPS-style label."""
+    for threshold, key in SCORE_LABELS:
         if score >= threshold:
-            return label
-    return "Strong Reject"
+            return key
+    return "score.strong_reject"
+
+
+def _score_label_text(score: float, lang: str) -> str:
+    """Map numeric score directly to the localized label string."""
+    return t(_score_label(score), lang)
+
+
+def _recommendation_display(recommendation: str, lang: str) -> str:
+    """Localized display string for a journal recommendation value."""
+    return t(RECOMMENDATION_KEYS.get(recommendation, "rec.minor_revision"), lang)
+
+
+def _recommendation_rationale(recommendation: str, lang: str) -> str:
+    """Localized rationale string for a journal recommendation value."""
+    return t(
+        RECOMMENDATION_RATIONALE_KEYS.get(recommendation, "rec.minor_revision.rationale"),
+        lang,
+    )
+
+
+def _severity_display(severity: str, lang: str) -> str:
+    """Localized display string for an issue severity value."""
+    key = f"severity.{severity.lower()}"
+    return t(key, lang)
+
+
+def _dimension_display(dim: str, lang: str) -> str:
+    """Localized display string for a score dimension."""
+    return t(f"dimension.{dim}", lang)
+
+
+def _build_metadata_bar(result: "AuditResult", lang: str, *, mode_label: str | None = None) -> str:
+    """Return the common ``**Paper**: ... | **Language**: ... | **Mode**: ...`` line."""
+    paper = t("common.paper", lang)
+    language = t("common.language", lang)
+    mode = t("common.mode", lang)
+    mode_text = mode_label or result.mode
+    return (
+        f"{paper}: `{result.file_path}` | "
+        f"{language}: {result.language.upper()} | "
+        f"{mode}: {mode_text}"
+    )
+
+
+def _build_generated_line(lang: str, venue: str = "") -> str:
+    """Return the ``**Generated**: ... | **Venue**: ...`` line."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    base = f"{t('common.generated', lang)}: {now}"
+    if venue:
+        base += f" | {t('common.venue', lang)}: {venue}"
+    return base
 
 
 def calculate_scores(issues: list[AuditIssue]) -> dict[str, float]:
@@ -499,9 +566,9 @@ def _peer_review_issue_text(issue: DeepReviewIssue) -> str:
     ).strip()
 
 
-def render_peer_review_report(result: AuditResult) -> str:
+def render_peer_review_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a concise journal-style reviewer report from deep-review artifacts."""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    lang = normalize_lang(lang)
     issues = _sort_deep_review_issues(result.issue_bundle)
     issue_counts = _count_deep_review_issues(issues)
     recommendation = _journal_recommendation(issues)
@@ -509,42 +576,44 @@ def render_peer_review_report(result: AuditResult) -> str:
     minor_issues = [issue for issue in issues if issue.severity in {"moderate", "minor"}][:4]
 
     lines = [
-        "# Peer Review Report",
+        t("title.peer_review", lang),
         "",
-        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: deep-review",
-        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+        _build_metadata_bar(result, lang, mode_label="deep-review"),
+        _build_generated_line(lang, result.venue),
     ]
     if result.artifact_dir:
-        lines.append(f"**Artifacts**: `{result.artifact_dir}`")
-    lines.extend(["", "## Summary", "", _build_peer_review_summary(result, issue_counts), ""])
+        lines.append(f"{t('common.artifacts', lang)}: `{result.artifact_dir}`")
+    lines.extend(
+        [
+            "",
+            t("section.summary", lang),
+            "",
+            _build_peer_review_summary(result, issue_counts),
+            "",
+        ]
+    )
 
-    lines.extend(["## Major Issues", ""])
+    lines.extend([t("section.major_issues", lang), ""])
     if major_issues:
         for idx, issue in enumerate(major_issues, 1):
             lines.append(f"{idx}. {_peer_review_issue_text(issue)}")
             lines.append("")
     else:
-        lines.append(
-            "1. No major validity-threatening issue was identified in the current deep-review bundle."
-        )
+        lines.append(f"1. {t('status.no_major_issue', lang)}")
         lines.append("")
 
-    lines.extend(["## Minor Issues", ""])
+    lines.extend([t("section.minor_issues", lang), ""])
     if minor_issues:
         for idx, issue in enumerate(minor_issues, 1):
             lines.append(f"{idx}. {_peer_review_issue_text(issue)}")
             lines.append("")
     else:
-        lines.append("1. No minor issue requiring additional comment was identified.")
+        lines.append(f"1. {t('status.no_minor_issue', lang)}")
         lines.append("")
 
-    rationale = {
-        "Accept": "The central contribution appears supportable and only non-substantive edits remain.",
-        "Minor Revision": "The paper is potentially publishable, but several clarifications or limited corrections are still needed.",
-        "Major Revision": "The paper may become publishable, but key issues still affect the credibility, completeness, or transparency of the claims.",
-        "Reject": "The current version has unresolved issues that materially weaken the core conclusions or submission readiness.",
-    }[recommendation]
-    lines.extend(["## Recommendation", "", f"**{recommendation}**. {rationale}"])
+    rec_label = _recommendation_display(recommendation, lang)
+    rec_rationale = _recommendation_rationale(recommendation, lang)
+    lines.extend([t("section.recommendation", lang), "", f"**{rec_label}**. {rec_rationale}"])
     return "\n".join(lines)
 
 
@@ -553,9 +622,12 @@ def _committee_signal_from_artifacts(artifact_dir: str) -> tuple[float | None, s
     if not artifact_dir:
         return None, ""
 
-    consensus_path = Path(artifact_dir) / "committee" / "consensus.md"
+    consensus_path = Path(artifact_dir) / "artifacts" / "committee" / "consensus.md"
     if not consensus_path.exists():
-        return None, ""
+        # Legacy flat layout fallback
+        consensus_path = Path(artifact_dir) / "committee" / "consensus.md"
+        if not consensus_path.exists():
+            return None, ""
 
     text = consensus_path.read_text(encoding="utf-8")
     score_match = re.search(r"Overall Score:\s*([0-9]+(?:\.[0-9]+)?)\/10", text)
@@ -576,8 +648,10 @@ def render_deep_review_summary(
     result: AuditResult,
     *,
     primary_style: str = "deep-review",
+    lang: str = "en",
 ) -> str:
     """Render the compact CLI-facing deep-review summary with both report paths."""
+    lang = normalize_lang(lang)
     primary_style = (
         primary_style if primary_style in {"deep-review", "peer-review"} else "deep-review"
     )
@@ -590,55 +664,60 @@ def render_deep_review_summary(
     issue_counts = _count_deep_review_issues(issues)
     recommendation = _journal_recommendation(issues)
     committee_score, editor_verdict = _committee_signal_from_artifacts(result.artifact_dir)
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     lines = [
-        "# Deep Review Summary",
+        t("title.deep_review_summary", lang),
         "",
-        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: deep-review",
-        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+        _build_metadata_bar(result, lang, mode_label="deep-review"),
+        _build_generated_line(lang, result.venue),
     ]
     if result.review_focus != "full":
-        lines.append(f"**Focus**: `{result.review_focus}`")
+        lines.append(f"{t('common.focus', lang)}: `{result.review_focus}`")
     lines.extend(
         [
-            f"**Primary View**: `{primary_style}`",
+            f"{t('common.primary_view', lang)}: `{primary_style}`",
             "",
-            "## Overall Assessment",
+            t("section.overall_assessment", lang),
             "",
-            result.overall_assessment
-            or "Deep review completed. Inspect the primary artifact and issue bundle before revising.",
+            result.overall_assessment or t("status.deep_review_default_assessment", lang),
             "",
-            "## Decision Signals",
+            t("section.decision_signals", lang),
             "",
         ]
     )
     if committee_score is not None:
-        lines.append(f"- **Committee Score**: {committee_score:.1f}/10")
+        lines.append(f"- {t('label.committee_score', lang)}: {committee_score:.1f}/10")
     if editor_verdict:
-        lines.append(f"- **Editor Verdict**: {editor_verdict}")
+        lines.append(f"- {t('label.editor_verdict', lang)}: {editor_verdict}")
+    bundle_summary = t(
+        "status.issue_bundle_template",
+        lang,
+        major=issue_counts["major"],
+        moderate=issue_counts["moderate"],
+        minor=issue_counts["minor"],
+    )
     lines.extend(
         [
-            f"- **Reviewer Recommendation**: {recommendation}",
-            (
-                f"- **Issue Bundle**: {issue_counts['major']} major / {issue_counts['moderate']} moderate / "
-                f"{issue_counts['minor']} minor"
-            ),
+            f"- {t('label.reviewer_recommendation', lang)}: "
+            f"{_recommendation_display(recommendation, lang)}",
+            f"- {t('label.issue_bundle', lang)}: {bundle_summary}",
             "",
-            "## Artifacts",
+            t("common.artifacts", lang) + ":",
             "",
-            f"- **Primary**: `{_artifact_path(result, primary_name)}`",
-            f"- **Companion**: `{_artifact_path(result, companion_name)}`",
-            f"- **Structured Issues**: `{_artifact_path(result, 'final_issues.json')}`",
-            f"- **Revision Roadmap**: `{_artifact_path(result, 'revision_roadmap.md')}`",
+            f"- {t('label.primary', lang)}: `{_artifact_path(result, primary_name)}`",
+            f"- {t('label.companion', lang)}: `{_artifact_path(result, companion_name)}`",
+            f"- {t('label.structured_issues', lang)}: "
+            f"`{_artifact_path(result, 'artifacts/data/final_issues.json')}`",
+            f"- {t('label.revision_suggestions', lang)}: "
+            f"`{_artifact_path(result, 'revision_suggestions.md')}`",
         ]
     )
     return "\n".join(lines)
 
 
-def render_deep_review_report(result: AuditResult) -> str:
+def render_deep_review_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a deep-review-first Markdown report."""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    lang = normalize_lang(lang)
     issues = _sort_deep_review_issues(result.issue_bundle)
     issue_counts = _count_deep_review_issues(issues)
     recommendation = _journal_recommendation(issues)
@@ -646,49 +725,54 @@ def render_deep_review_report(result: AuditResult) -> str:
     committee_score, editor_verdict = _committee_signal_from_artifacts(result.artifact_dir)
 
     lines = [
-        "# Deep Review Report",
+        t("title.deep_review", lang),
         "",
-        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: {result.mode}",
-        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+        _build_metadata_bar(result, lang),
+        _build_generated_line(lang, result.venue),
     ]
     if result.review_focus != "full":
-        lines.append(f"**Focus**: `{result.review_focus}`")
+        lines.append(f"{t('common.focus', lang)}: `{result.review_focus}`")
     if result.mode_alias_used:
-        lines.append(
-            f"**Compatibility Note**: legacy mode alias `{result.mode_alias_used}` mapped to `{result.mode}`."
+        compat_note = t(
+            "common.compat_note_template",
+            lang,
+            alias=result.mode_alias_used,
+            mode=result.mode,
         )
+        lines.append(f"{t('common.compatibility_note', lang)}: {compat_note}")
     if result.artifact_dir:
-        lines.append(f"**Artifacts**: `{result.artifact_dir}`")
-    lines.extend(["", "## Overall Assessment", ""])
+        lines.append(f"{t('common.artifacts', lang)}: `{result.artifact_dir}`")
+    lines.extend(["", t("section.overall_assessment", lang), ""])
 
     if result.overall_assessment:
         lines.append(result.overall_assessment)
     else:
-        lines.append(
-            "Deep review completed. Inspect the structured issue list below for the highest-impact "
-            "claim, methodology, and consistency risks before revising."
-        )
+        lines.append(t("status.deep_review_default_assessment_long", lang))
     lines.extend(
         [
             "",
-            f"- **Major**: {issue_counts['major']}",
-            f"- **Moderate**: {issue_counts['moderate']}",
-            f"- **Minor**: {issue_counts['minor']}",
+            f"- {t('label.major', lang)}: {issue_counts['major']}",
+            f"- {t('label.moderate', lang)}: {issue_counts['moderate']}",
+            f"- {t('label.minor', lang)}: {issue_counts['minor']}",
             "",
         ]
     )
 
     committee_blocks: list[str] = []
     if result.artifact_dir:
-        committee_dir = Path(result.artifact_dir) / "committee"
+        committee_dir = Path(result.artifact_dir) / "artifacts" / "committee"
+        if not committee_dir.exists():
+            legacy_dir = Path(result.artifact_dir) / "committee"
+            if legacy_dir.exists():
+                committee_dir = legacy_dir
         if committee_dir.exists():
             ordered = [
-                ("editor.md", "### Editor (Desk Reject Screen)"),
-                ("theory.md", "### Reviewer 1 (Theory Contribution)"),
-                ("literature.md", "### Reviewer 3 (Literature Dialogue)"),
-                ("methodology.md", "### Reviewer 2 (Methodology & Transparency)"),
-                ("logic.md", "### Reviewer 4 (Logic Chain)"),
-                ("consensus.md", "### Committee Consensus"),
+                ("editor.md", t("subsection.committee.editor", lang)),
+                ("theory.md", t("subsection.committee.theory", lang)),
+                ("literature.md", t("subsection.committee.literature", lang)),
+                ("methodology.md", t("subsection.committee.methodology", lang)),
+                ("logic.md", t("subsection.committee.logic", lang)),
+                ("consensus.md", t("subsection.committee.consensus", lang)),
             ]
             for filename, heading in ordered:
                 path = committee_dir / filename
@@ -700,75 +784,101 @@ def render_deep_review_report(result: AuditResult) -> str:
                 committee_blocks.extend([heading, "", text, ""])
 
     if committee_blocks:
-        lines.extend(["## Academic Pre-Review Committee", ""])
+        lines.extend([t("section.committee", lang), ""])
         lines.extend(committee_blocks)
 
     if result.summary:
-        lines.extend(["## Paper Summary", "", result.summary, ""])
+        lines.extend([t("section.paper_summary", lang), "", result.summary, ""])
 
     if result.issue_bundle:
-        for severity, title in DEEP_REVIEW_SECTIONS:
+        for severity, title_key in DEEP_REVIEW_SECTIONS:
             bucket = [issue for issue in issues if issue.severity == severity]
             if not bucket:
                 continue
-            lines.extend([f"## {title}", ""])
+            lines.extend([t(title_key, lang), ""])
             for idx, issue in enumerate(bucket, 1):
-                related = ", ".join(issue.related_sections) if issue.related_sections else "—"
+                related = (
+                    ", ".join(issue.related_sections)
+                    if issue.related_sections
+                    else t("misc.dash", lang)
+                )
                 source_label = SOURCE_KIND_LABELS.get(issue.source_kind, "[LLM]")
                 lines.append(f"### {severity[:1].upper()}{idx}: {issue.title}")
-                lines.append(f"- **Type**: {issue.comment_type}")
-                lines.append(f"- **Source**: {source_label} via `{issue.review_lane or 'review'}`")
-                lines.append(f"- **Confidence**: {issue.confidence}")
-                lines.append(f"- **Section**: {issue.source_section or 'unknown'}")
-                lines.append(f"- **Related Sections**: {related}")
+                lines.append(f"- {t('label.type', lang)}: {issue.comment_type}")
+                lines.append(
+                    f"- {t('label.source', lang)}: {source_label} via "
+                    f"`{issue.review_lane or t('misc.review_default_lane', lang)}`"
+                )
+                lines.append(f"- {t('label.confidence', lang)}: {issue.confidence}")
+                lines.append(
+                    f"- {t('label.section', lang)}: "
+                    f"{issue.source_section or t('misc.section_unknown', lang)}"
+                )
+                lines.append(f"- {t('label.related_sections', lang)}: {related}")
                 if issue.root_cause_key:
-                    lines.append(f"- **Root Cause Key**: `{issue.root_cause_key}`")
+                    lines.append(f"- {t('label.root_cause_key', lang)}: `{issue.root_cause_key}`")
                 if issue.quote_verified is not None:
-                    lines.append(f"- **Quote Verified**: {'yes' if issue.quote_verified else 'no'}")
-                lines.append(f"- **Quote**: `{issue.quote}`" if issue.quote else "- **Quote**: —")
-                lines.append(f"- **Explanation**: {issue.explanation}")
+                    verified_text = (
+                        t("label.yes", lang) if issue.quote_verified else t("label.no", lang)
+                    )
+                    lines.append(f"- {t('label.quote_verified', lang)}: {verified_text}")
+                if issue.quote:
+                    lines.append(f"- {t('label.quote', lang)}: `{issue.quote}`")
+                else:
+                    lines.append(f"- {t('label.quote', lang)}: {t('misc.dash', lang)}")
+                lines.append(f"- {t('label.explanation', lang)}: {issue.explanation}")
                 lines.append("")
 
     if result.issues:
-        lines.extend(["## Phase 0 Automated Findings", ""])
+        lines.extend([t("section.phase0_findings", lang), ""])
         modules: dict[str, list[AuditIssue]] = {}
         for issue in result.issues:
             modules.setdefault(issue.module, []).append(issue)
 
         for module_name in sorted(modules.keys()):
-            lines.extend([f"### [Script] {module_name}", ""])
-            lines.extend(["| Line | Severity | Issue |", "|------|----------|-------|"])
+            lines.extend([t("subsection.script_module_template", lang, module=module_name), ""])
+            lines.extend([t("table.findings_header", lang), t("table.findings_sep", lang)])
             for issue in modules[module_name]:
                 loc = str(issue.line) if issue.line else "---"
                 lines.append(f"| {loc} | {issue.severity} | {issue.message} |")
             lines.append("")
 
-    lines.extend(["## Decision Signals", ""])
+    lines.extend([t("section.decision_signals", lang), ""])
     if committee_score is not None:
-        lines.append(f"- **Committee Score**: {committee_score:.1f}/10")
+        lines.append(f"- {t('label.committee_score', lang)}: {committee_score:.1f}/10")
     if editor_verdict:
-        lines.append(f"- **Editor Verdict**: {editor_verdict}")
+        lines.append(f"- {t('label.editor_verdict', lang)}: {editor_verdict}")
+    bundle_summary = t(
+        "status.issue_bundle_template",
+        lang,
+        major=issue_counts["major"],
+        moderate=issue_counts["moderate"],
+        minor=issue_counts["minor"],
+    )
     lines.extend(
         [
-            f"- **Reviewer Recommendation**: {recommendation}",
-            (
-                f"- **Issue Bundle**: {issue_counts['major']} major / {issue_counts['moderate']} moderate / "
-                f"{issue_counts['minor']} minor"
-            ),
+            f"- {t('label.reviewer_recommendation', lang)}: "
+            f"{_recommendation_display(recommendation, lang)}",
+            f"- {t('label.issue_bundle', lang)}: {bundle_summary}",
             "",
         ]
     )
 
     if roadmap:
-        lines.extend(["## Revision Roadmap", ""])
+        lines.extend([t("section.revision_roadmap", lang), ""])
+        priority_subsection_keys = {
+            "Priority 1": "subsection.priority_1",
+            "Priority 2": "subsection.priority_2",
+            "Priority 3": "subsection.priority_3",
+        }
         for priority in ("Priority 1", "Priority 2", "Priority 3"):
             items = [item for item in roadmap if item.get("priority") == priority]
             if not items:
                 continue
-            lines.extend([f"### {priority}", ""])
+            lines.extend([t(priority_subsection_keys[priority], lang), ""])
             for item in items:
                 source = item.get("source", "[LLM]")
-                section = item.get("section", "unknown")
+                section = item.get("section", t("misc.section_unknown", lang))
                 title = item.get("title", "Untitled issue")
                 lines.append(f"- [ ] {title} ({source}; {section})")
             lines.append("")
@@ -776,24 +886,26 @@ def render_deep_review_report(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
-def render_polish_precheck_report(result: AuditResult, precheck: dict) -> str:
+def render_polish_precheck_report(result: AuditResult, precheck: dict, *, lang: str = "en") -> str:
     """Render precheck summary shown before Critic agent is spawned."""
+    lang = normalize_lang(lang)
     lines = [
-        "# Polish Precheck Report",
+        t("title.polish_precheck", lang),
         "",
-        f"**File**: `{result.file_path}` | **Language**: {result.language.upper()} "
-        f"| **Style**: {precheck.get('style', 'A')}",
+        f"{t('common.file', lang)}: `{result.file_path}` | "
+        f"{t('common.language', lang)}: {result.language.upper()} "
+        f"| {t('common.style', lang)}: {precheck.get('style', 'A')}",
     ]
     if precheck.get("journal"):
-        lines[-1] += f" | **Journal**: {precheck['journal']}"
+        lines[-1] += f" | {t('common.journal', lang)}: {precheck['journal']}"
     lines += [""]
 
     # Section map table
     lines += [
-        "## Detected Sections",
+        t("section.detected_sections", lang),
         "",
-        "| Section | Lines | Words |",
-        "|---------|-------|-------|",
+        t("table.sections_header", lang),
+        t("table.sections_sep", lang),
     ]
     for sec, meta in precheck.get("sections", {}).items():
         lines.append(f"| {sec} | {meta['start']}-{meta['end']} | {meta['word_count']} |")
@@ -802,106 +914,118 @@ def render_polish_precheck_report(result: AuditResult, precheck: dict) -> str:
     # Blockers
     blockers = precheck.get("blockers", [])
     if blockers:
-        lines += ["## Blockers (must fix before polish)", ""]
+        lines += [t("section.blockers_polish", lang), ""]
         for b in blockers:
             loc = f"(Line {b['line']}) " if b.get("line") else ""
             lines.append(f"- **[{b['module']}]** {loc}{b['message']}")
-        lines += ["", "Resolve these Critical issues and re-run before proceeding."]
+        lines += ["", t("status.resolve_critical_and_rerun", lang)]
     else:
-        lines += ["## Status: Ready for Critic Phase", ""]
+        lines += [t("section.ready_for_critic", lang), ""]
 
     n_logic = len(precheck.get("precheck_issues", []))
     n_expr = len(precheck.get("expression_issues", []))
-    lines.append(f"**Pre-check findings**: {n_logic} logic, {n_expr} expression issues")
+    findings_summary = t(
+        "status.precheck_findings_template", lang, logic=n_logic, expression=n_expr
+    )
+    lines.append(f"{t('label.precheck_findings', lang)}: {findings_summary}")
     if precheck.get("non_imrad"):
-        lines += ["", "> **Note**: Non-standard section structure detected."]
+        lines += ["", f"> {t('status.non_imrad_note', lang)}"]
     return "\n".join(lines)
 
 
 # --- Report Renderers ---
 
 
-def render_self_check_report(result: AuditResult) -> str:
+def render_self_check_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a quick-audit-style Markdown report."""
+    lang = normalize_lang(lang)
     scores = calculate_scores(result.issues)
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
     blockers = [issue for issue in result.issues if issue.severity == "Critical"]
     quality_improvements = [issue for issue in result.issues if issue.severity != "Critical"]
 
     lines = [
-        "# Paper Audit Report",
+        t("title.audit", lang),
         "",
-        f"**File**: `{result.file_path}` | **Language**: {result.language.upper()} | **Mode**: {result.mode}",
-        f"**Generated**: {now}" + (f" | **Venue**: {result.venue}" if result.venue else ""),
+        f"{t('common.file', lang)}: `{result.file_path}` | "
+        f"{t('common.language', lang)}: {result.language.upper()} | "
+        f"{t('common.mode', lang)}: {result.mode}",
+        _build_generated_line(lang, result.venue),
         "",
     ]
 
     # Executive Summary
     total = len(result.issues)
     critical = sum(1 for i in result.issues if i.severity == "Critical")
-    label = _score_label(scores["overall"])
+    label = _score_label_text(scores["overall"], lang)
+    exec_summary = t(
+        "status.executive_template",
+        lang,
+        total=total,
+        critical=critical,
+        overall=scores["overall"],
+        label=label,
+    )
     lines.extend(
         [
-            "## Executive Summary",
+            t("section.executive_summary", lang),
             "",
-            f"Found **{total} issues** ({critical} critical). "
-            f"Overall score: **{scores['overall']:.1f}/6.0** ({label}).",
+            exec_summary,
             "",
         ]
     )
 
     # Submission blockers first.
-    lines.extend(["## Submission Blockers", ""])
+    lines.extend([t("section.submission_blockers", lang), ""])
     if blockers:
         for issue in blockers:
             loc = f"(Line {issue.line}) " if issue.line else ""
             lines.append(
                 f"- [Script] **[{issue.module}]** {loc}"
-                f"[Severity: {issue.severity}] [Priority: {issue.priority}]: "
-                f"{issue.message}"
+                f"[{t('label.severity', lang)}: {issue.severity}] "
+                f"[Priority: {issue.priority}]: {issue.message}"
             )
             if issue.original:
-                lines.append(f"  - Original: `{issue.original}`")
+                lines.append(f"  - {t('label.original', lang)}: `{issue.original}`")
             if issue.revised:
-                lines.append(f"  - Revised: `{issue.revised}`")
+                lines.append(f"  - {t('label.suggested', lang)}: `{issue.revised}`")
             if issue.rationale:
-                lines.append(f"  - Rationale: {issue.rationale}")
+                lines.append(f"  - {t('label.rationale', lang)}: {issue.rationale}")
     else:
-        lines.append("- No submission blockers detected.")
+        lines.append(t("status.no_submission_blockers", lang))
     lines.append("")
 
     # High-signal quality improvements next.
-    lines.extend(["## Quality Improvements", ""])
+    lines.extend([t("section.quality_improvements", lang), ""])
     if quality_improvements:
-        for severity, heading in [
-            ("Major", "### High-Signal Quality Issues"),
-            ("Minor", "### Additional Quality Improvements"),
+        for severity, heading_key in [
+            ("Major", "subsection.high_signal_quality_issues"),
+            ("Minor", "subsection.additional_quality_improvements"),
         ]:
             sev_issues = [issue for issue in quality_improvements if issue.severity == severity]
             if not sev_issues:
                 continue
-            lines.extend([heading, ""])
+            lines.extend([t(heading_key, lang), ""])
             for issue in sev_issues:
                 loc = f"(Line {issue.line}) " if issue.line else ""
                 lines.append(
                     f"- [Script] **[{issue.module}]** {loc}"
-                    f"[Severity: {issue.severity}] [Priority: {issue.priority}]: "
-                    f"{issue.message}"
+                    f"[{t('label.severity', lang)}: {issue.severity}] "
+                    f"[Priority: {issue.priority}]: {issue.message}"
                 )
                 if issue.original:
-                    lines.append(f"  - Original: `{issue.original}`")
+                    lines.append(f"  - {t('label.original', lang)}: `{issue.original}`")
                 if issue.revised:
-                    lines.append(f"  - Revised: `{issue.revised}`")
+                    lines.append(f"  - {t('label.suggested', lang)}: `{issue.revised}`")
                 if issue.rationale:
-                    lines.append(f"  - Rationale: {issue.rationale}")
+                    lines.append(f"  - {t('label.rationale', lang)}: {issue.rationale}")
             lines.append("")
     else:
-        lines.append("- No quality improvements identified.")
+        lines.append(t("status.no_quality_improvements", lang))
         lines.append("")
 
     # Checklist
     if result.checklist:
-        lines.extend(["## Pre-Submission Checklist", ""])
+        lines.extend([t("section.pre_submission_checklist", lang), ""])
         for item in result.checklist:
             mark = "x" if item.passed else " "
             lines.append(f"- [{mark}] {item.description}")
@@ -923,21 +1047,21 @@ def render_self_check_report(result: AuditResult) -> str:
 
     lines.extend(
         [
-            "## Scores",
+            t("section.scores", lang),
             "",
-            "| Dimension | Score | Issues (C/M/m) | Key Finding |",
-            "|-----------|-------|-----------------|-------------|",
+            t("table.scores_audit_header", lang),
+            t("table.scores_audit_sep", lang),
         ]
     )
     for dim in ["quality", "clarity", "significance", "originality"]:
         dim_issues = dim_issues_map[dim]
-        key_finding = dim_issues[0].message[:50] + "..." if dim_issues else "No issues"
+        key_finding = dim_issues[0].message[:50] + "..." if dim_issues else "—"
         lines.append(
-            f"| {dim.capitalize()} | {scores[dim]:.1f} | "
+            f"| {_dimension_display(dim, lang)} | {scores[dim]:.1f} | "
             f"{_count_issues(dim_issues)} | {key_finding} |"
         )
     lines.append(
-        f"| **Overall** | **{scores['overall']:.1f}** | "
+        f"| **{_dimension_display('overall', lang)}** | **{scores['overall']:.1f}** | "
         f"{_count_issues(result.issues)} | **{label}** |"
     )
     lines.append("")
@@ -945,32 +1069,34 @@ def render_self_check_report(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
-def render_review_report(result: AuditResult) -> str:
+def render_review_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a peer-review simulation Markdown report."""
     if result.issue_bundle or result.mode == "deep-review":
-        return render_deep_review_report(result)
+        return render_deep_review_report(result, lang=lang)
 
+    lang = normalize_lang(lang)
     scores = calculate_scores(result.issues)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
-    label = _score_label(scores["overall"])
+    label = _score_label_text(scores["overall"], lang)
 
     lines = [
-        "# Peer Review Report",
+        t("title.peer_review", lang),
         "",
-        f"**Paper**: `{result.file_path}` | **Language**: {result.language.upper()}",
-        f"**Generated**: {now}"
-        + (f" | **Venue**: {result.venue}" if result.venue else "")
-        + " | **Review Round**: 1",
+        f"{t('common.paper', lang)}: `{result.file_path}` | "
+        f"{t('common.language', lang)}: {result.language.upper()}",
+        f"{t('common.generated', lang)}: {now}"
+        + (f" | {t('common.venue', lang)}: {result.venue}" if result.venue else "")
+        + f" | {t('common.review_round', lang)}: 1",
         "",
     ]
 
     # Summary
     if result.summary:
-        lines.extend(["## Paper Summary", "", result.summary, ""])
+        lines.extend([t("section.paper_summary", lang), "", result.summary, ""])
 
     # Strengths (structured: S1, S2, ...)
     if result.strengths:
-        lines.extend(["## Strengths", ""])
+        lines.extend([t("section.strengths", lang), ""])
         for idx, s in enumerate(result.strengths, 1):
             if isinstance(s, dict):
                 lines.append(f"### S{idx}: {s.get('title', 'Strength')}")
@@ -981,28 +1107,34 @@ def render_review_report(result: AuditResult) -> str:
 
     # Weaknesses (structured: Problem + Why + Suggestion + Severity)
     if result.weaknesses:
-        lines.extend(["## Weaknesses", ""])
+        lines.extend([t("section.weaknesses", lang), ""])
         for idx, w in enumerate(result.weaknesses, 1):
             if isinstance(w, dict):
                 lines.append(f"### W{idx}: {w.get('title', 'Weakness')}")
-                lines.append(f"- **Problem**: {w.get('problem', w.get('title', ''))}")
-                lines.append(f"- **Why it matters**: {w.get('why', 'Impacts paper quality')}")
-                lines.append(f"- **Suggestion**: {w.get('suggestion', 'See detailed issues')}")
-                lines.append(f"- **Severity**: {w.get('severity', 'Major')}")
+                lines.append(
+                    f"- {t('label.problem', lang)}: {w.get('problem', w.get('title', ''))}"
+                )
+                lines.append(
+                    f"- {t('label.why_it_matters', lang)}: {w.get('why', 'Impacts paper quality')}"
+                )
+                lines.append(
+                    f"- {t('label.suggestion', lang)}: {w.get('suggestion', 'See detailed issues')}"
+                )
+                lines.append(f"- {t('label.severity', lang)}: {w.get('severity', 'Major')}")
             else:
                 lines.append(f"### W{idx}: {w}")
             lines.append("")
 
     # Questions
     if result.questions:
-        lines.extend(["## Questions for Authors", ""])
+        lines.extend([t("section.questions_for_authors", lang), ""])
         for idx, q in enumerate(result.questions, 1):
             lines.append(f"{idx}. {q}")
         lines.append("")
 
     # Detailed Automated Findings (grouped by module)
     if result.issues:
-        lines.extend(["## Detailed Automated Findings", ""])
+        lines.extend([t("section.detailed_automated_findings", lang), ""])
         # Group by module
         modules: dict[str, list[AuditIssue]] = {}
         for issue in result.issues:
@@ -1021,8 +1153,8 @@ def render_review_report(result: AuditResult) -> str:
                 [
                     f"### {module_name}",
                     "",
-                    "| Line | Severity | Issue |",
-                    "|------|----------|-------|",
+                    t("table.findings_header", lang),
+                    t("table.findings_sep", lang),
                 ]
             )
             for issue in module_issues:
@@ -1033,20 +1165,21 @@ def render_review_report(result: AuditResult) -> str:
     # Score & Recommendation
     lines.extend(
         [
-            "## Overall Assessment",
+            t("section.overall_assessment", lang),
             "",
-            "| Dimension | Score | Label |",
-            "|-----------|-------|-------|",
+            t("table.dimension_header", lang),
+            t("table.dimension_sep", lang),
         ]
     )
     for dim in ["quality", "clarity", "significance", "originality"]:
-        dim_label = _score_label(scores[dim])
-        lines.append(f"| {dim.capitalize()} | {scores[dim]:.1f}/6.0 | {dim_label} |")
+        dim_label = _score_label_text(scores[dim], lang)
+        lines.append(f"| {_dimension_display(dim, lang)} | {scores[dim]:.1f}/6.0 | {dim_label} |")
     lines.extend(
         [
-            f"| **Overall** | **{scores['overall']:.1f}/6.0** | **{label}** |",
+            f"| **{_dimension_display('overall', lang)}** | "
+            f"**{scores['overall']:.1f}/6.0** | **{label}** |",
             "",
-            f"**Recommendation**: {label}",
+            f"{t('label.recommendation_bold', lang)}: {label}",
             "",
         ]
     )
@@ -1057,24 +1190,24 @@ def render_review_report(result: AuditResult) -> str:
     minor = [i for i in result.issues if i.severity == "Minor"]
 
     if critical or major or minor:
-        lines.extend(["## Revision Roadmap", ""])
+        lines.extend([t("section.revision_roadmap", lang), ""])
 
         if critical:
-            lines.extend(["### Priority 1 --- Must Address (Blocking)", ""])
+            lines.extend([t("subsection.priority_1", lang), ""])
             for idx, issue in enumerate(critical, 1):
                 loc = f" (Line {issue.line})" if issue.line else ""
                 lines.append(f"- [ ] R{idx}: [{issue.module}]{loc} {issue.message}")
             lines.append("")
 
         if major:
-            lines.extend(["### Priority 2 --- Strongly Recommended", ""])
+            lines.extend([t("subsection.priority_2", lang), ""])
             for idx, issue in enumerate(major, 1):
                 loc = f" (Line {issue.line})" if issue.line else ""
                 lines.append(f"- [ ] S{idx}: [{issue.module}]{loc} {issue.message}")
             lines.append("")
 
         if minor:
-            lines.extend(["### Priority 3 --- Optional Improvements", ""])
+            lines.extend([t("subsection.priority_3", lang), ""])
             for issue in minor:
                 loc = f" (Line {issue.line})" if issue.line else ""
                 lines.append(f"- [ ] [{issue.module}]{loc} {issue.message}")
@@ -1083,37 +1216,41 @@ def render_review_report(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
-def render_gate_report(result: AuditResult) -> str:
+def render_gate_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a quality gate pass/fail Markdown report."""
+    lang = normalize_lang(lang)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     blocking = [i for i in result.issues if i.severity == "Critical"]
     passed = len(blocking) == 0 and all(item.passed for item in result.checklist)
-    verdict = "PASS" if passed else "FAIL"
+    verdict = t("verdict.pass", lang) if passed else t("verdict.fail", lang)
 
     lines = [
-        "# Quality Gate Report",
+        t("title.gate", lang),
         "",
-        f"**File**: `{result.file_path}` | **Language**: {result.language.upper()}",
-        f"**Generated**: {now}",
+        f"{t('common.file', lang)}: `{result.file_path}` | "
+        f"{t('common.language', lang)}: {result.language.upper()}",
+        f"{t('common.generated', lang)}: {now}",
         "",
-        f"## Verdict: {verdict}",
+        t("section.verdict_template", lang, verdict=verdict),
         "",
     ]
 
     # Blocking Issues
     if blocking:
-        lines.extend(["## Blocking Issues (must fix)", ""])
+        lines.extend([t("section.blocking_issues", lang), ""])
         for issue in blocking:
             loc = f"(Line {issue.line}) " if issue.line else ""
-            lines.append(f"- [BLOCKING] **[{issue.module}]** {loc}{issue.message}")
+            lines.append(
+                f"- {t('verdict.blocking_mark', lang)} **[{issue.module}]** {loc}{issue.message}"
+            )
         lines.append("")
 
     # Checklist
     if result.checklist:
-        lines.extend(["## Checklist", ""])
+        lines.extend([t("section.checklist", lang), ""])
         for item in result.checklist:
-            status = "[PASS]" if item.passed else "[FAIL]"
+            status = t("verdict.pass_mark", lang) if item.passed else t("verdict.fail_mark", lang)
             lines.append(f"- {status} {item.description}")
             if not item.passed and item.details:
                 lines.append(f"  - {item.details}")
@@ -1122,12 +1259,14 @@ def render_gate_report(result: AuditResult) -> str:
     # Non-blocking issues (informational)
     non_blocking = [i for i in result.issues if i.severity != "Critical"]
     if non_blocking:
-        lines.extend(["## Advisory Recommendations (non-blocking)", ""])
-        lines.append("These are advisory recommendations, not submission blockers.")
+        lines.extend([t("section.advisory_recommendations", lang), ""])
+        lines.append(t("status.advisory_intro", lang))
         lines.append("")
         for issue in non_blocking:
             loc = f"(Line {issue.line}) " if issue.line else ""
-            lines.append(f"- [INFO] **[{issue.module}]** {loc}{issue.message}")
+            lines.append(
+                f"- {t('verdict.info_mark', lang)} **[{issue.module}]** {loc}{issue.message}"
+            )
         lines.append("")
 
     return "\n".join(lines)
@@ -1199,67 +1338,71 @@ def render_json_report(result: AuditResult) -> str:
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
-def render_reaudit_report(result: AuditResult) -> str:
+def render_reaudit_report(result: AuditResult, *, lang: str = "en") -> str:
     """Render a re-audit comparison report.
 
     Shows which prior issues were addressed, partially addressed,
     still present, and which new issues appeared.
     """
+    lang = normalize_lang(lang)
     lines: list[str] = []
     data = result.reaudit_data or {}
     summary = data.get("summary", {})
     classifications = data.get("classifications", [])
     new_issues = data.get("new_issues", [])
 
-    lines.append("# Re-Audit Report")
+    lines.append(t("title.reaudit", lang))
     lines.append("")
     lines.append(
-        f"**File**: `{result.file_path}` | **Language**: {result.language} | **Mode**: re-audit"
+        f"{t('common.file', lang)}: `{result.file_path}` | "
+        f"{t('common.language', lang)}: {result.language} | "
+        f"{t('common.mode', lang)}: re-audit"
     )
     if result.venue:
-        lines.append(f"**Venue**: {result.venue}")
-    lines.append(f"**Previous Report**: `{data.get('previous_report', 'N/A')}`")
-    lines.append(f"**Generated**: {datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}")
+        lines.append(f"{t('common.venue', lang)}: {result.venue}")
+    lines.append(f"{t('common.previous_report', lang)}: `{data.get('previous_report', 'N/A')}`")
+    lines.append(f"{t('common.generated', lang)}: {datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}")
     lines.append("")
 
     # Summary
     lines.append("---")
     lines.append("")
-    lines.append("## Revision Summary")
+    lines.append(t("section.revision_summary", lang))
     lines.append("")
     total_prior = data.get("prior_issue_count", 0)
     fixed = summary.get("fully_addressed", 0)
     partial = summary.get("partially_addressed", 0)
     remaining = summary.get("not_addressed", 0)
     new_count = summary.get("new", 0)
-    lines.append("| Metric | Count |")
-    lines.append("|--------|-------|")
-    lines.append(f"| Prior issues | {total_prior} |")
-    lines.append(f"| Fully addressed | {fixed} |")
-    lines.append(f"| Partially addressed | {partial} |")
-    lines.append(f"| Not addressed | {remaining} |")
-    lines.append(f"| New issues | {new_count} |")
+    lines.append(t("table.metric_header", lang))
+    lines.append(t("table.metric_sep", lang))
+    lines.append(f"| {t('metric.prior_issues', lang)} | {total_prior} |")
+    lines.append(f"| {t('metric.fully_addressed', lang)} | {fixed} |")
+    lines.append(f"| {t('metric.partially_addressed', lang)} | {partial} |")
+    lines.append(f"| {t('metric.not_addressed', lang)} | {remaining} |")
+    lines.append(f"| {t('metric.new_issues', lang)} | {new_count} |")
     lines.append("")
 
     # Progress indicator
     if total_prior > 0:
         pct = round((fixed / total_prior) * 100)
-        lines.append(f"**Resolution rate**: {pct}% ({fixed}/{total_prior} fully resolved)")
+        rate_detail = t(
+            "status.resolution_rate_template", lang, pct=pct, fixed=fixed, total=total_prior
+        )
+        lines.append(f"{t('label.resolution_rate', lang)}: {rate_detail}")
     lines.append("")
 
     # Prior issue verification
     if classifications:
         lines.append("---")
         lines.append("")
-        lines.append("## Prior Issue Verification")
+        lines.append(t("section.prior_issue_verification", lang))
         lines.append("")
-        lines.append(
-            "| # | root_cause_key | Module | Prior Severity | Status | Current | Message |"
-        )
-        lines.append("|---|----------------|--------|---------------|--------|---------|---------|")
+        lines.append(t("table.prior_header", lang))
+        lines.append(t("table.prior_sep", lang))
         for idx, c in enumerate(classifications, 1):
-            cur_sev = c.get("current_severity") or "\u2014"
-            root_cause = c.get("root_cause_key") or "root cause unavailable"
+            cur_sev = c.get("current_severity") or t("misc.dash", lang)
+            root_cause = c.get("root_cause_key") or t("metric.root_cause_unavailable", lang)
             msg = c["prior_message"]
             if len(msg) > 80:
                 msg = msg[:77] + "..."
@@ -1273,12 +1416,12 @@ def render_reaudit_report(result: AuditResult) -> str:
     if new_issues:
         lines.append("---")
         lines.append("")
-        lines.append("## New Issues (not in previous report)")
+        lines.append(t("section.new_issues", lang))
         lines.append("")
-        lines.append("| # | Module | Line | Severity | Issue |")
-        lines.append("|---|--------|------|----------|-------|")
+        lines.append(t("table.new_issues_header", lang))
+        lines.append(t("table.new_issues_sep", lang))
         for idx, ni in enumerate(new_issues, 1):
-            loc = str(ni.get("line")) if ni.get("line") else "\u2014"
+            loc = str(ni.get("line")) if ni.get("line") else t("misc.dash", lang)
             lines.append(f"| {idx} | {ni['module']} | {loc} | {ni['severity']} | {ni['message']} |")
         lines.append("")
 
@@ -1287,59 +1430,159 @@ def render_reaudit_report(result: AuditResult) -> str:
     overall = scores.get("overall", 6.0)
     lines.append("---")
     lines.append("")
-    lines.append("## Current Scores")
+    lines.append(t("section.current_scores", lang))
     lines.append("")
-    lines.append("| Dimension | Score |")
-    lines.append("|-----------|-------|")
+    lines.append(t("table.dimension_simple_header", lang))
+    lines.append(t("table.dimension_simple_sep", lang))
     for dim in ("quality", "clarity", "significance", "originality"):
-        lines.append(f"| {dim.title()} | {scores.get(dim, 6.0):.1f} / 6.0 |")
-    lines.append(f"| **Overall** | **{overall:.2f} / 6.0** |")
+        lines.append(f"| {_dimension_display(dim, lang)} | {scores.get(dim, 6.0):.1f} / 6.0 |")
+    lines.append(f"| **{_dimension_display('overall', lang)}** | **{overall:.2f} / 6.0** |")
     lines.append("")
 
     # Recommendation
     lines.append("---")
     lines.append("")
     if remaining == 0 and new_count == 0:
-        lines.append("*All prior issues resolved and no new issues found. Ready for next step.*")
+        lines.append(t("status.all_prior_resolved", lang))
     elif remaining == 0:
-        lines.append(
-            f"*All prior issues resolved, but {new_count} new issue(s) detected. "
-            f"Review new issues before proceeding.*"
-        )
+        lines.append(t("status.all_prior_resolved_new_only", lang, new_count=new_count))
     else:
-        lines.append(
-            f"*{remaining} prior issue(s) still unresolved. Continue revision and re-run audit.*"
-        )
+        lines.append(t("status.remaining_unresolved", lang, remaining=remaining))
     lines.append("")
 
     return "\n".join(lines)
 
 
-def render_report(result: AuditResult, *, report_style: str = "deep-review") -> str:
+def render_revision_suggestions_report(
+    result: AuditResult,
+    suggestions: list[dict] | None = None,
+    *,
+    lang: str = "en",
+) -> str:
+    """Render ``revision_suggestions.md`` from issue bundle + optional sidecar.
+
+    The roadmap-only fallback is used when ``suggestions`` is empty or missing
+    — useful before the dedicated suggestion agent has run. When suggestions
+    are present, each entry pairs an issue with concrete original/suggested
+    text and rationale.
+    """
+    lang = normalize_lang(lang)
+    suggestions = suggestions or []
+    issues = _sort_deep_review_issues(result.issue_bundle)
+    roadmap = result.revision_roadmap or _default_revision_roadmap(result.issue_bundle)
+
+    lines = [
+        t("title.revision_suggestions", lang),
+        "",
+        _build_metadata_bar(result, lang, mode_label=result.mode or "deep-review"),
+        _build_generated_line(lang, result.venue),
+        "",
+        t("suggestions.opening", lang),
+        "",
+    ]
+
+    # Roadmap overview ----------------------------------------------------
+    if roadmap:
+        priority_keys = {
+            "Priority 1": "subsection.priority_1",
+            "Priority 2": "subsection.priority_2",
+            "Priority 3": "subsection.priority_3",
+        }
+        lines.extend([t("section.revision_roadmap", lang), ""])
+        for priority in ("Priority 1", "Priority 2", "Priority 3"):
+            items = [item for item in roadmap if item.get("priority") == priority]
+            if not items:
+                continue
+            lines.extend([t(priority_keys[priority], lang), ""])
+            for item in items:
+                source = item.get("source", "[LLM]")
+                section = item.get("section", t("misc.section_unknown", lang))
+                title = item.get("title", "Untitled issue")
+                lines.append(f"- [ ] {title} ({source}; {section})")
+            lines.append("")
+
+    # Detailed suggestions ------------------------------------------------
+    if suggestions:
+        lines.extend([t("section.suggestions_breakdown", lang), ""])
+        for entry in suggestions:
+            issue_id = entry.get("issue_id") or ""
+            title = entry.get("title") or entry.get("issue_title") or "Untitled issue"
+            heading = t("suggestions.entry_title", lang, label=issue_id or "S", title=title)
+            lines.append(heading)
+            severity_raw = entry.get("severity", "")
+            severity_text = _severity_display(severity_raw, lang) if severity_raw else ""
+            section_text = entry.get("section") or t("misc.section_unknown", lang)
+            meta_bits = [f"{t('label.section', lang)}: {section_text}"]
+            if severity_text:
+                meta_bits.append(f"{t('label.severity', lang)}: {severity_text}")
+            if entry.get("root_cause_key"):
+                meta_bits.append(f"{t('label.root_cause_key', lang)}: `{entry['root_cause_key']}`")
+            lines.append(" · ".join(meta_bits))
+            lines.append("")
+            original_text = (entry.get("original_text") or "").strip()
+            suggested_text = (entry.get("suggested_text") or "").strip()
+            rationale_text = (entry.get("rationale") or "").strip()
+            actions = [a for a in entry.get("additional_actions", []) if a]
+            if original_text:
+                lines.append(f"**{t('suggestions.original_block', lang)}**")
+                lines.append("")
+                for paragraph in original_text.splitlines() or [original_text]:
+                    lines.append(f"> {paragraph}" if paragraph else ">")
+                lines.append("")
+            if suggested_text:
+                lines.append(f"**{t('suggestions.suggested_block', lang)}**")
+                lines.append("")
+                for paragraph in suggested_text.splitlines() or [suggested_text]:
+                    lines.append(f"> {paragraph}" if paragraph else ">")
+                lines.append("")
+            elif not actions:
+                lines.append(t("suggestions.no_suggestion_text", lang))
+                lines.append("")
+            if rationale_text:
+                lines.append(f"**{t('suggestions.rationale_block', lang)}**: {rationale_text}")
+                lines.append("")
+            if actions:
+                lines.append(f"**{t('suggestions.actions_block', lang)}**")
+                for action in actions:
+                    lines.append(f"- {action}")
+                lines.append("")
+    elif not roadmap and not issues:
+        lines.append(t("status.no_revision_suggestions", lang))
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def render_report(
+    result: AuditResult, *, report_style: str = "deep-review", lang: str = "en"
+) -> str:
     """
     Render the appropriate report based on audit mode.
 
     Args:
         result: Complete audit result.
+        report_style: For deep-review mode, the primary view style.
+        lang: Report language (``en`` or ``zh``).
 
     Returns:
         Formatted Markdown report string.
     """
+    lang = normalize_lang(lang)
     if result.mode == "deep-review":
-        report = render_deep_review_summary(result, primary_style=report_style)
+        report = render_deep_review_summary(result, primary_style=report_style, lang=lang)
     elif result.mode == "review":
-        report = render_review_report(result)
+        report = render_review_report(result, lang=lang)
     elif result.mode == "quick-audit":
-        report = render_self_check_report(result)
+        report = render_self_check_report(result, lang=lang)
     elif result.mode == "gate":
-        report = render_gate_report(result)
+        report = render_gate_report(result, lang=lang)
     elif result.mode == "re-audit":
-        report = render_reaudit_report(result)
+        report = render_reaudit_report(result, lang=lang)
     elif result.mode == "polish":
         # For polish mode, render_self_check_report shows precheck issues
-        report = render_self_check_report(result)
+        report = render_self_check_report(result, lang=lang)
     else:
-        report = render_self_check_report(result)
+        report = render_self_check_report(result, lang=lang)
 
     # Append ScholarEval report if available
     if result.scholar_eval_result is not None:

@@ -7,6 +7,8 @@ import json
 import re
 from pathlib import Path
 
+from paths import WorkspaceLayout
+
 SEVERITY_ORDER = {"major": 0, "moderate": 1, "minor": 2}
 CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2, "unverified": 3}
 VALID_TYPES = {"methodology", "claim_accuracy", "presentation", "missing_information"}
@@ -176,15 +178,16 @@ def main() -> int:
     args = parser.parse_args()
 
     review_dir = Path(args.review_dir).resolve()
-    comments_dir = review_dir / "comments"
-    findings = load_comment_files(comments_dir)
+    layout = WorkspaceLayout(review_dir)
+    findings = load_comment_files(layout.comments_dir)
     consolidated = consolidate_findings(findings)
 
-    (review_dir / "all_comments.json").write_text(
+    layout.all_comments.parent.mkdir(parents=True, exist_ok=True)
+    layout.all_comments.write_text(
         json.dumps(findings, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-    (review_dir / "final_issues.json").write_text(
+    layout.final_issues.write_text(
         json.dumps(consolidated, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )

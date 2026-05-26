@@ -14,7 +14,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from detect_language import detect_language
+from i18n import normalize_lang
 from parsers import get_parser
+from paths import WorkspaceLayout
 from prepare_review_workspace import prepare_workspace
 from report_generator import (
     AuditIssue,
@@ -26,26 +28,27 @@ from report_generator import (
     render_json_report,
     render_peer_review_report,
     render_report,
+    render_revision_suggestions_report,
 )
 from verify_quotes import verify_quotes
 
 TOP_LEVEL_DEEP_REVIEW_ARTIFACTS: tuple[str, ...] = (
-    "metadata.json",
-    "phase0_context.md",
-    "all_comments.json",
-    "final_issues.json",
-    "overall_assessment.txt",
-    "revision_roadmap.md",
+    "artifacts/meta/metadata.json",
+    "artifacts/meta/phase0_context.md",
+    "artifacts/data/all_comments.json",
+    "artifacts/data/final_issues.json",
+    "artifacts/summary/overall_assessment.txt",
+    "revision_suggestions.md",
     "review_report.md",
-    "peer_review_report.md",
+    "artifacts/summary/peer_review_report.md",
 )
 
 REQUIRED_REVIEW_WORKSPACE_FILES: tuple[str, ...] = (
-    "metadata.json",
-    "section_index.json",
-    "claim_map.json",
-    "full_text.md",
-    "paper_summary.md",
+    "artifacts/meta/metadata.json",
+    "artifacts/data/section_index.json",
+    "artifacts/data/claim_map.json",
+    "artifacts/meta/full_text.md",
+    "artifacts/summary/paper_summary.md",
 )
 
 # --- Mode Configuration ---
@@ -848,12 +851,12 @@ def _register_artifact_if_present(review_dir: Path, relative_path: str) -> None:
 
 
 def _register_json_lane_artifact(review_dir: Path, lane_name: str) -> None:
-    _register_artifact_if_present(review_dir, f"comments/{lane_name}.json")
+    _register_artifact_if_present(review_dir, f"artifacts/comments/{lane_name}.json")
 
 
 def _register_committee_role_artifacts(review_dir: Path, role: str) -> None:
-    _register_artifact_if_present(review_dir, f"committee/{role}.md")
-    _register_artifact_if_present(review_dir, f"comments/committee_{role}.json")
+    _register_artifact_if_present(review_dir, f"artifacts/committee/{role}.md")
+    _register_artifact_if_present(review_dir, f"artifacts/comments/committee_{role}.json")
 
 
 def _write_lane_outputs(
@@ -865,8 +868,9 @@ def _write_lane_outputs(
     resume: bool = False,
 ) -> list[dict]:
     """Create fallback lane outputs inside comments/ and return all raw issues."""
-    sections_dir = review_dir / "sections"
-    comments_dir = review_dir / "comments"
+    layout = WorkspaceLayout(review_dir)
+    sections_dir = layout.sections_dir
+    comments_dir = layout.comments_dir
     comments_dir.mkdir(parents=True, exist_ok=True)
 
     section_texts: dict[str, str] = {}
@@ -1037,7 +1041,8 @@ def _write_presubmission_lane_outputs(
     lane_issues = _presubmission_phase0_issues(phase0_result, section_index)
     if not lane_issues:
         return []
-    comments_dir = review_dir / "comments"
+    layout = WorkspaceLayout(review_dir)
+    comments_dir = layout.comments_dir
     comments_dir.mkdir(parents=True, exist_ok=True)
     _write_lane_file(comments_dir, "pre_submission_readiness", lane_issues)
     if resume:
@@ -1283,8 +1288,9 @@ def _write_committee_artifacts(
     resume: bool = False,
 ) -> tuple[float | None, str]:
     """Write deterministic committee markdown/json artifacts for the selected focus."""
-    committee_dir = review_dir / "committee"
-    comments_dir = review_dir / "comments"
+    layout = WorkspaceLayout(review_dir)
+    committee_dir = layout.committee_dir
+    comments_dir = layout.comments_dir
     committee_dir.mkdir(parents=True, exist_ok=True)
     comments_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1350,6 +1356,7 @@ def _write_lane_file(comments_dir: Path, lane_name: str, lane_issues: list[dict]
 
 def _load_prepared_review_workspace(review_dir: Path) -> tuple[dict, list[dict], dict]:
     """Load and validate the minimal files required to resume a prepared workspace."""
+    layout = WorkspaceLayout(review_dir)
     missing = [
         relative_path
         for relative_path in REQUIRED_REVIEW_WORKSPACE_FILES
@@ -1359,9 +1366,9 @@ def _load_prepared_review_workspace(review_dir: Path) -> tuple[dict, list[dict],
         raise FileNotFoundError(
             f"Prepared review workspace is missing required file(s): {', '.join(missing)}"
         )
-    metadata = json.loads((review_dir / "metadata.json").read_text(encoding="utf-8"))
-    section_index = json.loads((review_dir / "section_index.json").read_text(encoding="utf-8"))
-    claim_map = json.loads((review_dir / "claim_map.json").read_text(encoding="utf-8"))
+    metadata = json.loads(layout.metadata.read_text(encoding="utf-8"))
+    section_index = json.loads(layout.section_index.read_text(encoding="utf-8"))
+    claim_map = json.loads(layout.claim_map.read_text(encoding="utf-8"))
     if not isinstance(metadata, dict):
         raise ValueError("Prepared review workspace metadata.json must contain an object")
     if not isinstance(section_index, list):
@@ -1451,8 +1458,14 @@ def _build_revision_roadmap(issues: list[dict]) -> list[dict]:
 
 
 def _write_revision_roadmap(review_dir: Path, roadmap: list[dict]) -> None:
-    """Persist the revision roadmap in Markdown form for workspace consumers."""
-    lines = ["# Revision Roadmap", ""]
+    """Persist the revision suggestions skeleton in Markdown form for workspace consumers.
+
+    Writes a roadmap-only fallback to ``revision_suggestions.md``. When the
+    revision-suggestion agent runs, ``render_revision_suggestions_report``
+    overwrites this with a fully detailed view.
+    """
+    layout = WorkspaceLayout(review_dir)
+    lines = ["# Revision Suggestions", ""]
     for priority in ("Priority 1", "Priority 2", "Priority 3"):
         items = [item for item in roadmap if item.get("priority") == priority]
         if not items:
@@ -1460,10 +1473,11 @@ def _write_revision_roadmap(review_dir: Path, roadmap: list[dict]) -> None:
         lines.extend([f"## {priority}", ""])
         for item in items:
             lines.append(
-                f"- [ ] {item.get('title', 'Untitled issue')} ({item.get('source', '[LLM]')}; {item.get('section', 'unknown')})"
+                f"- [ ] {item.get('title', 'Untitled issue')} "
+                f"({item.get('source', '[LLM]')}; {item.get('section', 'unknown')})"
             )
         lines.append("")
-    (review_dir / "revision_roadmap.md").write_text("\n".join(lines), encoding="utf-8")
+    layout.revision_suggestions_md.write_text("\n".join(lines), encoding="utf-8")
 
 
 def _extract_editor_verdict_from_markdown(editor_md: str) -> str | None:
@@ -1512,7 +1526,8 @@ def _write_committee_consensus(
     issues: list[dict],
 ) -> None:
     """Write committee/consensus.md with enforced score policy."""
-    committee_dir = review_dir / "committee"
+    layout = WorkspaceLayout(review_dir)
+    committee_dir = layout.committee_dir
     committee_dir.mkdir(parents=True, exist_ok=True)
 
     editor_path = committee_dir / "editor.md"
@@ -1594,13 +1609,15 @@ def run_deep_review(
             overwrite_hint="--overwrite-workspace",
         )
     )
+    layout = WorkspaceLayout(workspace)
+    layout.ensure_dirs()
 
     if resume_enabled:
         if no_resume:
             from checkpoint import reset_checkpoint
 
             reset_checkpoint(workspace)
-            print(f"[checkpoint] reset at {workspace / 'checkpoint.json'}")
+            print(f"[checkpoint] reset at {layout.checkpoint}")
         else:
             _ensure_review_checkpoint(workspace)
     metadata, section_index, claim_map = _load_prepared_review_workspace(workspace)
@@ -1612,11 +1629,11 @@ def run_deep_review(
             set_status(workspace, "in_progress")
 
         metadata["review_focus"] = focus
-        (workspace / "metadata.json").write_text(
+        layout.metadata.write_text(
             json.dumps(metadata, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-        _register_artifact_if_present(workspace, "metadata.json")
+        _register_artifact_if_present(workspace, "artifacts/meta/metadata.json")
 
         _mark_phase(workspace, "phase0_audit", "in_progress", enabled=resume_enabled)
         phase0_result = run_audit(
@@ -1634,11 +1651,11 @@ def run_deep_review(
             s2_key=s2_key,
             regression=regression,
         )
-        (workspace / "phase0_context.md").write_text(
+        layout.phase0_context.write_text(
             export_phase0_context(phase0_result),
             encoding="utf-8",
         )
-        _register_artifact_if_present(workspace, "phase0_context.md")
+        _register_artifact_if_present(workspace, "artifacts/meta/phase0_context.md")
         _mark_phase(workspace, "phase0_audit", "completed", enabled=resume_enabled)
 
         _mark_phase(workspace, "lanes", "in_progress", enabled=resume_enabled)
@@ -1653,29 +1670,25 @@ def run_deep_review(
         _mark_phase(workspace, "consolidation", "in_progress", enabled=resume_enabled)
         findings = [
             normalize_deep_review_issue_dict(issue)
-            for issue in load_comment_files(workspace / "comments")
+            for issue in load_comment_files(layout.comments_dir)
         ]
         consolidated = consolidate_findings(findings)
         verified = [
             normalize_deep_review_issue_dict(issue)
-            for issue in verify_quotes(
-                (workspace / "full_text.md").read_text(encoding="utf-8"), consolidated
-            )
+            for issue in verify_quotes(layout.full_text.read_text(encoding="utf-8"), consolidated)
         ]
 
-        (workspace / "all_comments.json").write_text(
+        layout.all_comments.write_text(
             json.dumps(findings, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-        (workspace / "final_issues.json").write_text(
+        layout.final_issues.write_text(
             json.dumps(verified, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
 
         overall_assessment = _build_overall_assessment(verified)
-        (workspace / "overall_assessment.txt").write_text(
-            overall_assessment + "\n", encoding="utf-8"
-        )
+        layout.overall_assessment.write_text(overall_assessment + "\n", encoding="utf-8")
         revision_roadmap = _build_revision_roadmap(verified)
         _write_revision_roadmap(workspace, revision_roadmap)
         _register_top_level_artifacts(workspace)
@@ -1688,6 +1701,7 @@ def run_deep_review(
         _mark_phase(workspace, "committee", "completed", enabled=resume_enabled)
 
         _mark_phase(workspace, "present", "in_progress", enabled=resume_enabled)
+        report_lang = normalize_lang(lang or metadata.get("language", "en"))
         issue_bundle = [coerce_deep_review_issue(issue) for issue in verified]
         result = AuditResult(
             file_path=source_path,
@@ -1697,7 +1711,7 @@ def run_deep_review(
             issues=phase0_result.issues,
             issue_bundle=issue_bundle,
             checklist=phase0_result.checklist,
-            summary=(workspace / "paper_summary.md").read_text(encoding="utf-8"),
+            summary=layout.paper_summary.read_text(encoding="utf-8"),
             overall_assessment=overall_assessment,
             revision_roadmap=revision_roadmap,
             section_index=section_index,
@@ -1706,14 +1720,29 @@ def run_deep_review(
             scholar_eval_result=phase0_result.scholar_eval_result,
             literature_context=phase0_result.literature_context,
         )
-        (workspace / "review_report.md").write_text(
-            render_deep_review_report(result),
+        layout.review_report_md.write_text(
+            render_deep_review_report(result, lang=report_lang),
             encoding="utf-8",
         )
-        (workspace / "peer_review_report.md").write_text(
-            render_peer_review_report(result),
+        layout.peer_review_report.write_text(
+            render_peer_review_report(result, lang=report_lang),
             encoding="utf-8",
         )
+
+        # Revision suggestions: roadmap-only fallback by default; agent enriches.
+        revision_suggestions_data: list[dict] = []
+        if layout.revision_suggestions_json.exists():
+            try:
+                payload = json.loads(layout.revision_suggestions_json.read_text(encoding="utf-8"))
+                if isinstance(payload, list):
+                    revision_suggestions_data = payload
+            except (OSError, json.JSONDecodeError):
+                revision_suggestions_data = []
+        layout.revision_suggestions_md.write_text(
+            render_revision_suggestions_report(result, revision_suggestions_data, lang=report_lang),
+            encoding="utf-8",
+        )
+
         _register_top_level_artifacts(workspace)
         _mark_phase(workspace, "present", "completed", enabled=resume_enabled)
         if resume_enabled:
@@ -3106,10 +3135,15 @@ Examples:
                 if checkpoint is not None:
                     print(summarize_checkpoint(checkpoint))
 
+        report_lang = normalize_lang(args.lang or getattr(result, "language", "") or "en")
         report = (
             render_json_report(result)
             if args.format == "json"
-            else render_report(result, report_style=getattr(args, "report_style", "deep-review"))
+            else render_report(
+                result,
+                report_style=getattr(args, "report_style", "deep-review"),
+                lang=report_lang,
+            )
         )
 
         if args.output:
@@ -3117,6 +3151,17 @@ Examples:
             print(f"\n[audit] Report saved to: {args.output}")
         else:
             print("\n" + report)
+
+        # Auto-render HTML for deep-review (best-effort, non-fatal).
+        if args.mode == "deep-review" and getattr(result, "artifact_dir", ""):
+            try:
+                from render_html_report import render_html_reports
+
+                render_html_reports(Path(result.artifact_dir), lang=report_lang)
+            except ImportError:
+                pass
+            except Exception as html_err:
+                print(f"[audit] HTML render skipped: {html_err}", file=sys.stderr)
 
         # Exit code: 1 if critical issues found, 0 otherwise
         has_critical = any(i.severity == "Critical" for i in result.issues)

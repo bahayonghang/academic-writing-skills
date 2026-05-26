@@ -19,6 +19,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from paths import WorkspaceLayout
+
 CHECKPOINT_FILENAME = "checkpoint.json"
 CHECKPOINT_VERSION = 1
 
@@ -49,7 +51,7 @@ def _now() -> str:
 
 
 def _checkpoint_path(review_dir: Path | str) -> Path:
-    return Path(review_dir) / CHECKPOINT_FILENAME
+    return WorkspaceLayout(review_dir).checkpoint
 
 
 def init_checkpoint(
@@ -96,9 +98,9 @@ def save_checkpoint(review_dir: Path | str, payload: dict) -> None:
     """Persist a checkpoint payload, refreshing ``updated_at``."""
     payload = dict(payload)
     payload["updated_at"] = _now()
-    _checkpoint_path(review_dir).write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    path = _checkpoint_path(review_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def _require_checkpoint(review_dir: Path | str) -> dict:

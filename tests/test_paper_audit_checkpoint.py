@@ -9,7 +9,6 @@ from pathlib import Path
 
 import pytest
 from checkpoint import (
-    CHECKPOINT_FILENAME,
     CHECKPOINT_VERSION,
     DEFAULT_PHASES,
     VALID_STATUSES,
@@ -24,6 +23,7 @@ from checkpoint import (
     set_status,
     summarize_checkpoint,
 )
+from paths import WorkspaceLayout
 
 
 def test_init_checkpoint_writes_default_schema(tmp_path: Path) -> None:
@@ -38,7 +38,7 @@ def test_init_checkpoint_writes_default_schema(tmp_path: Path) -> None:
     assert payload["completed_lanes"] == []
     assert payload["suspended_lanes"] == []
     assert payload["generated_files"] == []
-    assert (tmp_path / CHECKPOINT_FILENAME).is_file()
+    assert WorkspaceLayout(tmp_path).checkpoint.is_file()
 
 
 def test_init_checkpoint_records_generated_files_sorted(tmp_path: Path) -> None:
@@ -187,7 +187,7 @@ def test_audit_cli_no_resume_resets_checkpoint(tmp_path: Path) -> None:
         text=True,
     )
 
-    payload = json.loads((review_dir / CHECKPOINT_FILENAME).read_text(encoding="utf-8"))
+    payload = json.loads(WorkspaceLayout(review_dir).checkpoint.read_text(encoding="utf-8"))
     assert payload["status"] == "prepared"
     assert payload["completed_lanes"] == []
     assert payload["generated_files"] == ["full_text.md"]
@@ -298,6 +298,7 @@ We conclude the method is broadly superior.
         encoding="utf-8",
     )
     review_dir = prepare_workspace(str(tex), output_dir=str(tmp_path / "review_results"))
+    layout = WorkspaceLayout(review_dir)
     sentinel = [
         {
             "title": "Sentinel claim review",
@@ -313,8 +314,8 @@ We conclude the method is broadly superior.
             "gate_blocker": False,
         }
     ]
-    comments_dir = review_dir / "comments"
-    comments_dir.mkdir(exist_ok=True)
+    comments_dir = layout.comments_dir
+    comments_dir.mkdir(parents=True, exist_ok=True)
     sentinel_path = comments_dir / "claims_vs_evidence.json"
     sentinel_path.write_text(json.dumps(sentinel, indent=2), encoding="utf-8")
     mark_lane_completed(review_dir, "claims_vs_evidence")
@@ -324,15 +325,15 @@ We conclude the method is broadly superior.
 
     assert result.artifact_dir == str(review_dir.resolve())
     assert json.loads(sentinel_path.read_text(encoding="utf-8")) == sentinel
-    assert (review_dir / "final_issues.json").exists()
-    assert (review_dir / "review_report.md").exists()
-    assert (review_dir / "committee" / "consensus.md").exists()
+    assert layout.final_issues.exists()
+    assert layout.review_report_md.exists()
+    assert (layout.committee_dir / "consensus.md").exists()
 
     checkpoint = load_checkpoint(review_dir)
     assert checkpoint is not None
     assert checkpoint["status"] == "completed"
     assert "claims_vs_evidence" in checkpoint["completed_lanes"]
-    assert "phase0_context.md" in checkpoint["generated_files"]
-    assert "final_issues.json" in checkpoint["generated_files"]
+    assert "artifacts/meta/phase0_context.md" in checkpoint["generated_files"]
+    assert "artifacts/data/final_issues.json" in checkpoint["generated_files"]
     assert "review_report.md" in checkpoint["generated_files"]
     assert any(issue.title == "Sentinel claim review" for issue in result.issue_bundle)

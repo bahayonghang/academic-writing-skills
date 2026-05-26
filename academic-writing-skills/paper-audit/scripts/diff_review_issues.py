@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from paths import WorkspaceLayout
 from render_revision_trajectory import write_trajectory
 
 
@@ -73,11 +74,17 @@ def main() -> int:
     print(json.dumps(diff, indent=2, ensure_ascii=False))
 
     if not args.no_trajectory:
-        trajectory_path = (
-            Path(args.trajectory_output).resolve()
-            if args.trajectory_output
-            else current_path.resolve().parent / "revision_trajectory.md"
-        )
+        if args.trajectory_output:
+            trajectory_path = Path(args.trajectory_output).resolve()
+        else:
+            # current_path may be `<workspace>/artifacts/data/final_issues.json`
+            # so map to <workspace>/artifacts/data/revision_trajectory.md when possible.
+            resolved_current = current_path.resolve()
+            workspace_root = _infer_workspace_root(resolved_current)
+            if workspace_root is not None:
+                trajectory_path = WorkspaceLayout(workspace_root).revision_trajectory
+            else:
+                trajectory_path = resolved_current.parent / "revision_trajectory.md"
         body = write_trajectory(
             previous_path.resolve(),
             current_path.resolve(),
@@ -87,6 +94,17 @@ def main() -> int:
             print(f"[trajectory] wrote {trajectory_path}")
 
     return 0
+
+
+def _infer_workspace_root(final_issues_path: Path) -> Path | None:
+    """Walk up from a final_issues.json path to the workspace root, or None."""
+    candidate = final_issues_path.parent
+    for _ in range(5):
+        layout = WorkspaceLayout(candidate)
+        if layout.final_issues.resolve() == final_issues_path.resolve():
+            return candidate
+        candidate = candidate.parent
+    return None
 
 
 if __name__ == "__main__":

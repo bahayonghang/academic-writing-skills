@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 import pytest
+from paths import WorkspaceLayout
 from report_generator import (
     AuditResult,
     DeepReviewIssue,
@@ -235,16 +236,17 @@ We show strong results.
     )
 
     workspace = prepare_workspace(str(tex), output_dir=str(tmp_path / "review_results"))
-    assert (workspace / "full_text.md").exists()
-    assert (workspace / "metadata.json").exists()
-    assert (workspace / "section_index.json").exists()
-    assert (workspace / "claim_map.json").exists()
-    assert (workspace / "paper_summary.md").exists()
-    assert (workspace / "committee").exists()
-    assert (workspace / "references" / "DEEP_REVIEW_CRITERIA.md").exists()
-    assert (workspace / "references" / "PRE_SUBMISSION_RULES.md").exists()
+    layout = WorkspaceLayout(workspace)
+    assert layout.full_text.exists()
+    assert layout.metadata.exists()
+    assert layout.section_index.exists()
+    assert layout.claim_map.exists()
+    assert layout.paper_summary.exists()
+    assert layout.committee_dir.exists()
+    assert (layout.references_dir / "DEEP_REVIEW_CRITERIA.md").exists()
+    assert (layout.references_dir / "PRE_SUBMISSION_RULES.md").exists()
 
-    section_index = json.loads((workspace / "section_index.json").read_text(encoding="utf-8"))
+    section_index = json.loads(layout.section_index.read_text(encoding="utf-8"))
     assert any(section["section_key"] == "introduction" for section in section_index)
 
 
@@ -339,21 +341,22 @@ We conclude that the method is broadly superior.
     result = run_deep_review(str(tex), lang="en")
 
     artifact_dir = Path(result.artifact_dir)
+    layout = WorkspaceLayout(artifact_dir)
     assert artifact_dir.exists()
-    assert (artifact_dir / "final_issues.json").exists()
-    assert (artifact_dir / "all_comments.json").exists()
-    assert (artifact_dir / "overall_assessment.txt").exists()
-    assert (artifact_dir / "revision_roadmap.md").exists()
-    assert (artifact_dir / "phase0_context.md").exists()
-    assert (artifact_dir / "review_report.md").exists()
-    assert (artifact_dir / "committee" / "consensus.md").exists()
-    assert (artifact_dir / "claim_map.json").exists()
-    assert (artifact_dir / "section_index.json").exists()
+    assert layout.final_issues.exists()
+    assert layout.all_comments.exists()
+    assert layout.overall_assessment.exists()
+    assert layout.revision_suggestions_md.exists()
+    assert layout.phase0_context.exists()
+    assert layout.review_report_md.exists()
+    assert (layout.committee_dir / "consensus.md").exists()
+    assert layout.claim_map.exists()
+    assert layout.section_index.exists()
     assert result.issue_bundle
     assert result.revision_roadmap
     assert result.section_index
 
-    payload = json.loads((artifact_dir / "final_issues.json").read_text(encoding="utf-8"))
+    payload = json.loads(layout.final_issues.read_text(encoding="utf-8"))
     first_issue = payload[0]
     assert first_issue["severity"] in {"major", "moderate", "minor"}
     assert first_issue["source_kind"] in {"llm", "script"}
@@ -396,8 +399,9 @@ def test_run_deep_review_caps_score_from_editor_verdict(tmp_path: Path) -> None:
     from audit import _write_committee_consensus
 
     review_dir = tmp_path / "workspace"
-    committee_dir = review_dir / "committee"
-    committee_dir.mkdir(parents=True, exist_ok=True)
+    layout = WorkspaceLayout(review_dir)
+    layout.ensure_dirs()
+    committee_dir = layout.committee_dir
     (committee_dir / "editor.md").write_text(
         "## Editor Pre-Screen\n\nVerdict: Desk Reject\n",
         encoding="utf-8",
@@ -491,9 +495,8 @@ We conclude the method is broadly superior.
 
     monkeypatch.chdir(tmp_path)
     result = run_audit(str(tex), mode="deep-review", focus="methodology", lang="en")
-    payload = json.loads(
-        (Path(result.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
-    )
+    layout = WorkspaceLayout(Path(result.artifact_dir))
+    payload = json.loads(layout.final_issues.read_text(encoding="utf-8"))
     lanes = {issue["review_lane"] for issue in payload}
 
     assert result.review_focus == "methodology"
@@ -505,8 +508,8 @@ We conclude the method is broadly superior.
         "evaluation_fairness_and_reproducibility",
     }
     assert "pre_submission_readiness" not in lanes
-    assert (Path(result.artifact_dir) / "committee" / "methodology.md").exists()
-    assert not (Path(result.artifact_dir) / "committee" / "theory.md").exists()
+    assert (layout.committee_dir / "methodology.md").exists()
+    assert not (layout.committee_dir / "theory.md").exists()
 
 
 def test_run_audit_relative_path_does_not_report_missing_existing_file(
@@ -564,7 +567,8 @@ We conclude the method is broadly superior.
 
     monkeypatch.chdir(tmp_path)
     full = run_audit(str(tex), mode="deep-review", focus="full", lang="en")
-    assert (Path(full.artifact_dir) / "committee" / "theory.md").exists()
+    full_layout = WorkspaceLayout(Path(full.artifact_dir))
+    assert (full_layout.committee_dir / "theory.md").exists()
 
     focused = run_audit(
         str(tex),
@@ -574,10 +578,9 @@ We conclude the method is broadly superior.
         overwrite_workspace=True,
     )
 
-    focused_committee = Path(focused.artifact_dir) / "committee" / "theory.md"
-    focused_payload = json.loads(
-        (Path(focused.artifact_dir) / "final_issues.json").read_text(encoding="utf-8")
-    )
+    focused_layout = WorkspaceLayout(Path(focused.artifact_dir))
+    focused_committee = focused_layout.committee_dir / "theory.md"
+    focused_payload = json.loads(focused_layout.final_issues.read_text(encoding="utf-8"))
     focused_lanes = {issue["review_lane"] for issue in focused_payload}
 
     assert not focused_committee.exists()
@@ -850,12 +853,14 @@ def test_verify_quotes_cli_write_back_demotes_missing_quotes(tmp_path) -> None:
 
     review_dir = tmp_path / "review"
     review_dir.mkdir()
-    (review_dir / "full_text.md").write_text("Exact phrase appears here.", encoding="utf-8")
+    layout = WorkspaceLayout(review_dir)
+    layout.ensure_dirs()
+    layout.full_text.write_text("Exact phrase appears here.", encoding="utf-8")
     bundle = [
         {"title": "ok", "quote": "Exact phrase appears here.", "confidence": "high"},
         {"title": "ghost", "quote": "missing quote", "confidence": "high"},
     ]
-    issues_path = review_dir / "final_issues.json"
+    issues_path = layout.final_issues
     issues_path.write_text(json.dumps(bundle), encoding="utf-8")
 
     script = Path(__file__).resolve().parent.parent / (
