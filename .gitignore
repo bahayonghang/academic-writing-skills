@@ -90,3 +90,9 @@ review_results/
 task_plan.md
 findings.md
 progress.md
+
+# Local docs state
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/node_modules/
+docs/.omc/
