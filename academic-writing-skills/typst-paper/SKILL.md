@@ -1,6 +1,6 @@
 ---
 name: typst-paper
-description: Typst academic paper assistant for existing .typ manuscripts in English or Chinese. Use for Typst compile and export diagnosis, venue formatting, BibTeX or Hayagriva bibliography checks, grammar, logic, abstract, title, table, pseudocode (algorithmic, algorithm-figure, lovelace), experiment-section review, related-work synthesis, research-gap derivation, journal adaptation, de-AI polish, translation, or submission readiness. Trigger for prompts like "fix my .typ build", "check Hayagriva bibliography", "rewrite related work in Typst", "derive research gap", "review lovelace pseudocode", "three-line table in Typst", "Typst 编译报错", "Typst 文献", or "Typst 论文换投". Use latex-paper-en or latex-thesis-zh for .tex sources, and paper-audit for reviewer-style critique.
+description: Typst paper assistant for existing .typ manuscripts in English or Chinese. Use for compile/export diagnosis, venue formatting, BibTeX or Hayagriva checks, grammar, logic, abstract/title, tables, pseudocode, related work, research-gap framing, adaptation, de-AI polish, translation, and submission readiness. Use LaTeX skills for .tex sources.
 metadata:
   category: academic-writing
   tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]

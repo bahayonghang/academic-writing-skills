@@ -1,6 +1,6 @@
 ---
 name: cover-letter
-description: Submission cover letter assistant for academic papers. Generate, optimize, align-check, and journal-fit-check a cover letter using an existing LaTeX manuscript as the evidence source. Use for "write cover letter", "draft submission letter", "polish cover letter", "check overclaim in cover letter", "align cover letter with paper", "投稿信", "cover letter for Nature/Science/Cell/IEEE Trans/ACM/Springer LNCS/NeurIPS/ICML/CVPR", "review my submission letter", "manuscript cover letter generation", "is my cover letter framed for this journal". Use latex-paper-en for source edits to main.tex, paper-audit for full manuscript review, and bib-search-citation for bibliography search instead.
+description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence and target venue framing. Do not use for editing main.tex, full manuscript audit, or bibliography search.
 metadata:
   category: academic-writing
   tags: [cover-letter, submission, latex, manuscript, journal, conference, claim-evidence, align-check, journal-fit]

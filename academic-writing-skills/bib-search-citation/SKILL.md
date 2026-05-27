@@ -1,6 +1,6 @@
 ---
 name: bib-search-citation
-description: Search and cite from local BibTeX or BibLaTeX .bib libraries, including Zotero exports with custom fields like shorttitle, annotation, keywords, abstract, file, DOI, URL, and eprint. Use when the user wants to find papers, filter a bibliography, or generate citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, or abstract. Supports compact filter expressions like author:, year-gte, type:, has:, raw BibTeX export, and LaTeX/Typst citation output. Trigger for prompts like "search my bib", "find Mamba paper in my library", "export BibTeX entries", "搜文献库", "查 BibTeX", "找引用", "在文献库里找 Mamba", or "整理参考文献". Do not use for writing or polishing manuscripts; route those to latex-paper-en, latex-thesis-zh, or typst-paper.
+description: Search and cite from local BibTeX/BibLaTeX .bib libraries, including Zotero exports. Use to find, filter, preview, export, or generate LaTeX/Typst citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, abstract, fields, or compact filters. Do not use for manuscript writing or polishing.
 metadata:
   category: docs-writing-publishing
   tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]

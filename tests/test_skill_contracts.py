@@ -12,7 +12,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 SKILLS_ROOT = REPO_ROOT / "academic-writing-skills"
-MAX_SKILL_DESCRIPTION_CHARS = 1024
+MIN_SKILL_DESCRIPTION_CHARS = 120
+MAX_SKILL_DESCRIPTION_CHARS = 400
 _DEFAULT_MANDATORY_SECTIONS = [
     "## Capability Summary",
     "## Triggering",
@@ -254,9 +255,10 @@ def test_skill_frontmatter_description_stays_within_runtime_limit() -> None:
     for skill_name in SKILLS:
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
         description = _frontmatter_description(skill_md)
-        assert len(description) <= MAX_SKILL_DESCRIPTION_CHARS, (
-            f"{skill_name} description has {len(description)} characters; "
-            f"limit is {MAX_SKILL_DESCRIPTION_CHARS}"
+        description_len = len(description)
+        assert MIN_SKILL_DESCRIPTION_CHARS <= description_len <= MAX_SKILL_DESCRIPTION_CHARS, (
+            f"{skill_name} description has {description_len} characters; "
+            f"expected {MIN_SKILL_DESCRIPTION_CHARS}-{MAX_SKILL_DESCRIPTION_CHARS}"
         )
 
 

@@ -1,6 +1,6 @@
 ---
 name: latex-paper-en
-description: English LaTeX paper assistant for existing .tex conference and journal manuscripts (IEEE, ACM, Springer, NeurIPS, ICML). Use for compile diagnosis, venue formatting, BibTeX or Biber checks, grammar, logic, abstract, title, figure, table, pseudocode (algorithm2e, algorithmicx, algpseudocodex), experiment-section review, related-work synthesis, research-gap derivation, journal adaptation, de-AI polish, translation, or submission readiness. Trigger for prompts like "proofread my LaTeX paper", "fix my .tex build", "rewrite related work", "derive research gap", "check booktabs table", "review algorithm2e pseudocode", "改投会议", or "换投期刊". Use latex-thesis-zh for Chinese degree theses, typst-paper for .typ projects, and paper-audit for reviewer-style critique.
+description: English LaTeX assistant for existing .tex conference or journal papers. Use for compile, venue formatting, bibliography, grammar, logic, abstract/title, figures, tables, pseudocode, related work, research gaps, adaptation, de-AI polish, translation, and submission readiness. Use latex-thesis-zh for Chinese theses and paper-audit for critique.
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]

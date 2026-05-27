@@ -1,6 +1,6 @@
 ---
 name: paper-audit
-description: Reviewer-style audit and submission gate for Chinese and English academic papers in LaTeX, Typst, or PDF format. Use for peer-review critique, pre-submission readiness checks, pass/fail gate decisions, blocker triage, structured revision roadmaps, journal-style review reports, or re-audits of revised manuscripts. Trigger for prompts like "review my paper", "act as a reviewer", "audit this PDF", "is this ready to submit", "gate-check before submission", "write an SCI review report with Summary/Major/Minor/Recommendation", "re-check whether I fixed the review issues", "审稿", "帮我审稿", "投稿门控", "投稿前体检", "重新审一遍", "看看能不能投", or "重大/次要问题清单". Do not use for source editing, sentence polishing, or compilation repair; route those to latex-paper-en, latex-thesis-zh, or typst-paper instead.
+description: Reviewer-style audit and submission gate for academic papers in .tex, .typ, or .pdf. Use for peer-review critique, pre-submission readiness, pass/fail gate decisions, blocker triage, revision roadmaps, journal-style reports, or re-audits. Do not use for source editing, sentence polishing, bibliography search, or compile repair.
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
