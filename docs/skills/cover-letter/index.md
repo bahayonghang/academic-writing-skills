@@ -1,50 +1,81 @@
-# cover-letter
+# `cover-letter`
 
-`cover-letter` prepares submission cover letters for existing LaTeX manuscripts. It drafts, reviews, and verifies the letter without editing the manuscript.
+Submission cover-letter assistant for existing LaTeX manuscripts. It generates, optimizes, and checks editor-facing letters while keeping every strong letter claim tied to manuscript evidence.
 
-## When to Use
+## Use It For
 
-- Generate a first cover-letter draft from `main.tex`.
-- Optimize an existing `cover_letter.md` or `cover_letter.tex`.
-- Check whether letter claims overstate manuscript evidence.
-- Score whether the pitch fits a bundled venue template.
-- Run final declaration, length, cliché, and tone checks.
+- Generate a cover letter draft from `main.tex`.
+- Optimize an existing `cover_letter.md` or `cover_letter.tex` without overwriting it.
+- Align-check novelty, contribution, numeric, and scope claims against the manuscript.
+- Check whether the letter is framed for a bundled journal or conference template.
+- Run final declaration, length, cliché, AI-tone, and paragraph-shape checks.
 
-## Unified CLI
+## Do Not Use It For
 
-```bash
-uv run python -B academic-writing-skills/cover-letter/scripts/cover_letter.py \
-  --mode align-check \
-  --manuscript main.tex \
-  --letter cover_letter.md \
-  --journal nature \
-  --json
+- Editing the manuscript source; use `latex-paper-en` or `latex-thesis-zh`.
+- Full reviewer-style manuscript critique; use `paper-audit`.
+- Searching bibliography files; use `bib-search-citation`.
+- Typst manuscripts; this version supports LaTeX manuscripts only.
+- Rebuttal or response-to-reviewer letters.
+
+## Mode Router
+
+| Mode | Use when | Primary command |
+| --- | --- | --- |
+| `generate` | You have a manuscript but no letter draft | `uv run python academic-writing-skills/cover-letter/scripts/cover_letter.py --mode generate --manuscript main.tex --journal nature --json` |
+| `optimize` | You have a draft and want safer framing | `uv run python academic-writing-skills/cover-letter/scripts/cover_letter.py --mode optimize --letter cover_letter.md --manuscript main.tex --journal nature --json` |
+| `align-check` | You need to verify claims against the paper | `uv run python academic-writing-skills/cover-letter/scripts/cover_letter.py --mode align-check --letter cover_letter.md --manuscript main.tex --json` |
+| `journal-fit` | You need venue fit scoring | `uv run python academic-writing-skills/cover-letter/scripts/cover_letter.py --mode journal-fit --letter cover_letter.md --journal nature --json` |
+| `presubmission` | You need final mechanical checks | `uv run python academic-writing-skills/cover-letter/scripts/cover_letter.py --mode presubmission --letter cover_letter.md --journal nature --json` |
+
+Supported bundled venues: `nature`, `science`, `cell`, `ieee-trans`, `acm`, `springer-lncs`, `neurips`, `icml`, `cvpr`, and `generic`.
+
+## Minimum Inputs
+
+- `--manuscript main.tex` for `generate` and `align-check`.
+- `--letter cover_letter.md` or `--letter cover_letter.tex` for `optimize`, `align-check`, `journal-fit`, and `presubmission`.
+- `--journal <venue>` for journal-fit and venue-specific pre-submission rules.
+- `--json` when you want a machine-readable issue bundle.
+
+## Script Entry Points
+
+| Script | Purpose |
+| --- | --- |
+| `cover_letter.py` | Unified public CLI for all five modes |
+| `extract_manuscript_facts.py` | Deterministic facts extraction from the manuscript |
+| `build_letter_claim_map.py` | Cover-letter claim inventory |
+| `align_check.py` / `verify_letter_against_manuscript.py` | Claim-evidence verification |
+| `journal_fit_check.py` | Venue-fit scoring |
+| `presubmission_check.py` | Declaration, length, cliché, and tone checks |
+
+## Output Artifacts
+
+- `generate` returns manuscript facts plus a deterministic draft scaffold with placeholders for unknown editor or declaration fields.
+- `optimize` returns line-anchored suggestions and claim-evidence warnings; it does not overwrite the draft.
+- `align-check` returns unsupported, over-scoped, or missing-evidence claim findings.
+- `journal-fit` returns HIGH / MEDIUM / LOW axis verdicts and mapped findings.
+- `presubmission` returns mechanical findings for required declarations, length, cliché, tone, and paragraph shape.
+
+Findings use `severity`, `priority`, `source_kind`, and `comment_type`; script-backed findings are intended to be rerunnable.
+
+## Common Requests
+
+```text
+Generate a Nature cover letter from main.tex and include placeholders where metadata is missing.
 ```
 
-Supported modes:
+```text
+Optimize cover_letter.md for an IEEE Transactions submission, but do not edit the file directly.
+```
 
-| Mode | Required inputs | Output |
-| --- | --- | --- |
-| `generate` | `--manuscript main.tex` | Facts blob plus a deterministic draft scaffold |
-| `optimize` | `--letter cover_letter.md`; `--manuscript` recommended | Mechanical and claim-evidence findings |
-| `align-check` | `--letter cover_letter.md --manuscript main.tex` | Unsupported or over-scoped claim findings |
-| `journal-fit` | `--letter cover_letter.md --journal <venue>` | HIGH / MEDIUM / LOW axis verdicts plus findings |
-| `presubmission` | `--letter cover_letter.md --journal <venue>` | Declaration, length, cliché, tone, and paragraph findings |
+```text
+Check whether every strong claim in this cover letter is supported by main.tex.
+```
 
-## Output Protocol
+```text
+Score this letter for NeurIPS journal-fit style framing and tell me the weakest axis.
+```
 
-JSON findings use:
-
-- `severity`: `major`, `moderate`, or `minor`
-- `priority`: `P1`, `P2`, or `P3`
-- `source_kind`: usually `script`
-- `comment_type`: `claim_accuracy`, `journal_fit`, `declaration_missing`, `presentation`, or `tone`
-
-`journal-fit` keeps its HIGH / MEDIUM / LOW verdict scale and maps LOW to `major` / `P1`, MEDIUM to `moderate` / `P2`, and HIGH to no issue.
-
-## Boundaries
-
-- Only LaTeX manuscripts are supported.
-- The skill does not modify `main.tex`.
-- It does not write rebuttals or response-to-reviewer letters.
-- It does not fetch live journal policies unless explicitly requested; bundled templates are snapshots.
+```text
+Run final pre-submission checks on cover_letter.md before I paste it into the submission system.
+```

@@ -6,8 +6,11 @@ function excludeFromLocalSearch(relativePath: string): boolean {
   return (
     normalized.startsWith('plans/') ||
     normalized.startsWith('report/') ||
-    normalized.includes('/resources/references/') ||
-    normalized.includes('resources/references/')
+    // Keep local search focused on task-facing pages: landing, quick start,
+    // usage, and skill overview pages. Long module/reference/resource pages
+    // remain browsable through the sidebar but stay out of the generated index.
+    normalized.includes('/resources/') ||
+    normalized.includes('resources/')
   )
 }
 
@@ -259,14 +262,14 @@ function buildSidebar(prefix: string) {
       items: bibSearchCitationItems(prefix),
     },
     {
-      text: isZh ? '论文审查 (paper-audit)' : 'Paper Audit (paper-audit)',
-      collapsed: false,
-      items: paperAuditItems(prefix),
-    },
-    {
       text: isZh ? '投稿信 (cover-letter)' : 'Cover Letters (cover-letter)',
       collapsed: false,
       items: coverLetterItems(prefix),
+    },
+    {
+      text: isZh ? '论文审查 (paper-audit)' : 'Paper Audit (paper-audit)',
+      collapsed: false,
+      items: paperAuditItems(prefix),
     },
   ]
 }
@@ -279,7 +282,7 @@ function buildSidebar(prefix: string) {
 export default defineConfig({
   title: "Academic Writing Skills",
   description:
-    "Skill-first documentation for LaTeX, Typst, bibliography, paper audit, and writing workflows",
+    "Skill-first documentation for LaTeX, Typst, bibliography search, paper audit, and academic cover-letter workflows",
 
   // Base URL for GitHub Pages
   base: '/academic-writing-skills/',
@@ -293,6 +296,12 @@ export default defineConfig({
   transformPageData(pageData) {
     if (excludeFromLocalSearch(pageData.relativePath)) {
       pageData.frontmatter.search = false
+      return {
+        frontmatter: {
+          ...pageData.frontmatter,
+          search: false
+        }
+      }
     }
   },
 
@@ -316,6 +325,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Installation', link: '/installation' },
       { text: 'Skills', link: '/skills/' },
+      { text: 'Cover Letter', link: '/skills/cover-letter/' },
       { text: 'Usage', link: '/usage' },
       { text: 'GitHub', link: 'https://github.com/bahayonghang/academic-writing-skills' }
     ],
@@ -336,7 +346,19 @@ export default defineConfig({
 
     // Search
     search: {
-      provider: 'local'
+      provider: 'local',
+      options: {
+        // VitePress local search builds its index by rendering raw Markdown,
+        // before transformPageData frontmatter mutations are visible. Filter
+        // long reference/resource pages at render time so only task-facing
+        // entry pages enter the local MiniSearch payload.
+        _render(src, env, md) {
+          if (excludeFromLocalSearch(env.relativePath)) {
+            return ''
+          }
+          return md.render(src, env)
+        }
+      }
     },
 
     // Edit link
@@ -361,6 +383,7 @@ export default defineConfig({
           { text: '首页', link: '/zh/' },
           { text: '安装', link: '/zh/installation' },
           { text: '技能', link: '/zh/skills/' },
+          { text: '投稿信', link: '/zh/skills/cover-letter/' },
           { text: '使用', link: '/zh/usage' },
           { text: 'GitHub', link: 'https://github.com/bahayonghang/academic-writing-skills' }
         ],
@@ -412,7 +435,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#0066cc' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
-    ['meta', { property: 'og:title', content: 'Academic Writing Skills | LaTeX, Typst, and Bibliography Workflows for Claude Code' }],
+    ['meta', { property: 'og:title', content: 'Academic Writing Skills | LaTeX, Typst, Paper Audit, Bibliography, and Cover Letter Workflows' }],
     ['meta', { property: 'og:site_name', content: 'Academic Writing Skills' }],
     ['meta', { property: 'og:url', content: 'https://github.com/bahayonghang/academic-writing-skills' }]
   ]

@@ -1,104 +1,82 @@
 # `paper-audit`
 
-Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents.
+Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents. It is a reviewer and gate-checking workflow, not a source editor.
 
 ## Use It For
 
-- quick readiness screening before submission
-- final-week mechanical checks for em dashes, AI-tone vocabulary, abstract result gaps, and LaTeX hygiene
-- reviewer-style deep critique
-- pass/fail submission gating
-- revision verification against an older audit
-- polish precheck before style-focused editing
+- Quick submission-readiness screening.
+- Final-week mechanical checks for em dashes, AI-tone vocabulary, abstract result gaps, citation/label/equation hygiene, and paragraph-shape weak signals.
+- Reviewer-style deep critique with major/moderate/minor findings.
+- PASS/FAIL gate decisions calibrated for submission blockers.
+- Re-audits that compare a revision against a previous audit.
+- Review workspaces with traceable artifacts, claim maps, quote checks, and revision trajectories.
 
 ## Do Not Use It For
 
-- direct source editing as the first step
-- compilation debugging as the main task
-- free-form literature survey writing
-- related-work paragraph rewriting
-- purely cosmetic copy-editing without an audit goal
+- Direct `.tex` or `.typ` source editing as the first step.
+- Compilation repair as the main task.
+- Paragraph-level polishing without an audit goal.
+- Free-form literature survey writing.
+- Cover-letter generation or claim alignment; use `cover-letter`.
 
-## Modes
+## Mode Router
 
-| Mode | Use when | Script |
+| Mode | Use when | Primary command |
 | --- | --- | --- |
-| `quick-audit` | you want a fast readiness pass | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
-| `deep-review` | you want a reviewer-style issue bundle and roadmap; Phase 0 includes `PRESUBMISSION` context | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
-| `gate` | you want pass/fail blockers only; Major/Minor mechanical findings stay advisory | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
-| `polish` | you want a precheck before polishing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
-| `re-audit` | you want to compare against a previous report | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |
+| `quick-audit` | You want a fast script-backed readiness screen | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
+| `deep-review` | You need reviewer-style findings, workspace artifacts, and a revision roadmap | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus full` |
+| `gate` | You only care about hard submission blockers | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee` |
+| `polish` | You want precheck-only handoff before style editing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
+| `re-audit` | You have a previous report and need regression comparison | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md` |
 
-Legacy aliases:
+Compatibility aliases: `self-check` -> `quick-audit`; `review` -> `deep-review`.
 
-- `self-check` -> `quick-audit`
-- `review` -> `deep-review`
+## Minimum Inputs
 
-## How to Choose a Mode
+- `paper.tex`, `paper.typ`, or `paper.pdf`.
+- Optional `--venue`, `--lang en|zh`, and `--report-style deep-review|peer-review`.
+- Optional `--focus full|editor|theory|literature|methodology|logic` for deep-review.
+- `--previous-report` for `re-audit`.
+- `--review-dir` when continuing or rendering an existing review workspace.
 
-- choose `quick-audit` if you want a fast script-backed screen
-- choose `quick-audit` for "pre-submission review" or "submission in three days" requests
-- choose `deep-review` if you want reviewer-style critique and a roadmap
-- choose `gate` if you only care about blockers
-- choose `re-audit` if you already have an older report
-- choose `polish` only when you need a pre-polish safety check
+## Script Entry Points
 
-## Deep-review at a Glance
+| Script | Purpose |
+| --- | --- |
+| `audit.py` | Public mode router for quick-audit, deep-review, gate, polish, and re-audit |
+| `prepare_review_workspace.py` | Creates the review workspace for deep review |
+| `build_claim_map.py` | Extracts headline claims, closure targets, and claim candidates |
+| `check_citations.py` / `check_references.py` | Citation and reference hygiene checks |
+| `verify_quotes.py` | Verifies report quotes against source text |
+| `render_deep_review_report.py` | Renders Markdown deep-review reports |
+| `render_html_report.py` | Renders bilingual HTML report twins |
+| `render_revision_trajectory.py` | Produces the revision trajectory artifact |
+| `diff_review_issues.py` | Supports re-audit comparison |
 
-1. Prepare workspace with `prepare_review_workspace.py`
-2. Run Phase 0 automated audit with `audit.py --mode deep-review`
-3. Keep `PRESUBMISSION` findings as Phase 0 context; full/editor focus can promote high-signal mechanical findings into `pre_submission_readiness`
-4. Run Academic Pre-Review Committee by default:
-   - Editor -> Theory -> Literature -> Methodology -> Logic
-   - or restrict with `--focus editor|theory|literature|methodology|logic`
-5. Dispatch section and cross-cutting review lanes
-6. Consolidate comment JSONs
-7. Verify quotes
-8. Render `review_report.md` and `peer_review_report.md`
+## Output Artifacts
 
-## Main outputs
+For `deep-review`, the workspace root is reader-facing:
 
-- `final_issues.json`
-- `overall_assessment.txt`
-- `review_report.md`
-- `peer_review_report.md`
-- `revision_roadmap.md`
-- `committee/consensus.md`
-- optional committee notes under `committee/*.md`
+- `review_report.md` and `review_report.html`
+- `revision_suggestions.md` and `revision_suggestions.html`
 
-## Read This Next
+Supporting artifacts live under `artifacts/`:
 
-- [Workflow](./resources/WORKFLOW.md)
-- [Modes](./resources/MODES.md)
-- [Outputs](./resources/OUTPUTS.md)
-- [CLI and Examples](./resources/CLI_AND_EXAMPLES.md)
-- [Deep Review Criteria](./resources/DEEP_REVIEW_CRITERIA.md)
-- [Pre-Submission Rules](./resources/PRE_SUBMISSION_RULES.md)
-- [Checklist](./resources/CHECKLIST.md)
-- [Qualitative Standards](./resources/QUALITATIVE_STANDARDS.md)
-- [Editor-in-Chief Agent](./resources/editor_in_chief_agent.md)
-- [Troubleshooting](./resources/TROUBLESHOOTING.md)
+- `artifacts/summary/paper_summary.md`, `overall_assessment.txt`, `peer_review_report.md`
+- `artifacts/data/final_issues.json`, `all_comments.json`, `claim_map.json`, `section_index.json`, `revision_suggestions.json`, `revision_trajectory.md`
+- `artifacts/meta/metadata.json`, `checkpoint.json`, `phase0_context.md`, `full_text.md`
+- `artifacts/sections/`, `artifacts/comments/`, `artifacts/committee/`, and `artifacts/references/`
 
-## Good First Requests
+The report language is controlled by `--lang en|zh`. Headings and labels switch language; issue quotes, source tags, and structured field values stay faithful to the source.
+
+## Common Requests
 
 ```text
 Run a quick-audit on paper.tex and tell me what blocks submission.
 ```
 
 ```text
-Deep-review this manuscript like a conference reviewer and give me a revision roadmap.
-```
-
-```text
-Deep-review this manuscript with the full Academic Pre-Review Committee and give me the top 3 fixes first.
-```
-
-```text
-Deep-review this manuscript but focus only on methodology transparency and SRQR gaps.
-```
-
-```text
-Audit only the literature positioning and tell me whether the claimed gap is real or manufactured by selective citation.
+Deep-review this manuscript like a journal reviewer and produce the review workspace plus HTML report.
 ```
 
 ```text
@@ -106,18 +84,17 @@ Gate this IEEE paper and separate hard blockers from advisory pseudocode recomme
 ```
 
 ```text
-Re-audit this revision against the previous report.
+Audit only the literature positioning and tell me whether the claimed gap is real or selectively framed.
+```
+
+```text
+Re-audit this revised manuscript against report_v1.md and summarize resolved vs unresolved issues.
 ```
 
 ## Important Notes
 
-- `audit.py --mode deep-review` is only Phase 0, not the full reviewer workflow.
-- `PRESUBMISSION` is a mechanical layer inside existing modes, not a new public mode.
-- The primary deep-review product is the structured issue bundle, not the score summary.
-- `claim_map.json` now keeps legacy headline/closure fields and adds advisory
-  claim candidates with evidence anchors, support strength, missing evidence,
-  and bounded wording fields.
-- Data availability checks are advisory unless a venue-required central source
-  data gap should block submission.
-- Use source files when possible; PDF input runs text-only pre-submission checks and skips LaTeX/Typst source hygiene.
-- `--focus literature` is critique-only: it checks synthesis quality, contradiction handling, and gap legitimacy, but does not rewrite the related-work prose.
+- `PRESUBMISSION` is an internal mechanical layer plugged into existing modes, not a separate public mode.
+- Full/editor deep-review may promote high-signal pre-submission findings into `pre_submission_readiness`; other focused reviews keep them as Phase 0 context.
+- `claim_map.json` distinguishes visible anchors from support strength; a citation key alone does not prove support.
+- Data availability findings are advisory unless a venue-required central source gap should block submission.
+- PDF input runs text-only checks and skips LaTeX/Typst source hygiene.

@@ -1,64 +1,62 @@
 # `typst-paper`
 
-Typst academic paper assistant for existing `.typ` projects in English or Chinese.
+Typst academic paper assistant for existing `.typ` manuscripts in English or Chinese. It mirrors the paper-writing workflow while respecting Typst syntax, labels, bibliography formats, and pseudocode conventions.
 
 ## Use It For
 
-- Typst compile or export issues
-- format and venue checks
-- bibliography validation for BibTeX or Hayagriva
-- grammar, sentence, logic, and expression review
-- literature review quality checks and rewrite blueprints (thematic organization, comparison, gap derivation)
-- discussion depth, results-literature echo, and conclusion completeness
-- cross-section logic chain closure
-- translation and bilingual polishing
-- title optimization
-- IEEE-like pseudocode review for `algorithmic`, `algorithm-figure`, and `lovelace`
-- de-AI cleanup
-- experiment-section review
-- anti-citation-stacking checks (Introduction and Related Work)
-- abstract structural analysis (five-element model)
-- three-line table compliance checking and generation
-- venue-to-venue format adaptation
+- Typst compile/export, font, and watch issues.
+- Venue formatting and layout checks.
+- BibTeX or Hayagriva bibliography validation.
+- Grammar, sentence, expression, translation, title, abstract, table, and de-AI review.
+- Logic, literature synthesis, research-gap derivation, cross-section closure, and experiment-section review.
+- IEEE-like pseudocode review for `algorithmic`, `algorithm-figure`, and `lovelace`.
+
+## Do Not Use It For
+
+- LaTeX-first papers; use `latex-paper-en` or `latex-thesis-zh`.
+- DOCX/PDF-only edits without Typst source.
+- Reviewer-style scoring or gate decisions; use `paper-audit`.
+- Cover-letter tasks.
 
 ## Module Router
 
-| Module | Best for | Script |
+| Module | Use when | Primary command |
 | --- | --- | --- |
-| `compile` | build, export, or font issues | `uv run python academic-writing-skills/typst-paper/scripts/compile.py main.typ` |
-| `format` | layout or style checks | `uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.typ` |
+| `compile` | Build, export, or font issues | `uv run python academic-writing-skills/typst-paper/scripts/compile.py main.typ` |
+| `format` | Layout or venue style checks | `uv run python academic-writing-skills/typst-paper/scripts/check_format.py main.typ` |
 | `bibliography` | BibTeX or Hayagriva validation | `uv run python academic-writing-skills/typst-paper/scripts/verify_bib.py references.bib --typ main.typ` |
-| `grammar` | grammar cleanup | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
-| `sentences` | long or dense sentence review | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
-| `logic` | coherence, introduction funnel, lit review quality, abstract/conclusion alignment, cross-section closure | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
-| `literature` | related-work synthesis, comparative analysis, and research-gap derivation | `uv run python academic-writing-skills/typst-paper/scripts/analyze_literature.py main.typ --section related` |
-| `expression` | academic tone polish | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
-| `translation` | Chinese and English academic translation | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
-| `title` | title checking or optimization | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
-| `pseudocode` | IEEE-like review of `algorithmic` / `algorithm-figure` / `lovelace` blocks | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
-| `deai` | reduce English or Chinese AI writing traces, including low-information filler | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
-| `experiment` | experiment-section review, discussion depth/layering, conclusion completeness | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
-| `abstract` | five-element abstract structural diagnosis | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
-| `tables` | three-line table compliance and generation | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
-| `caption` | figure and table caption quality review | LLM-driven (no standalone script) |
-| `adapt` | venue-to-venue format adaptation | LLM-driven (see [Adaptation Workflow](./resources/references/JOURNAL_ADAPTATION_WORKFLOW)) |
+| `grammar` | Grammar cleanup | `uv run python academic-writing-skills/typst-paper/scripts/analyze_grammar.py main.typ --section introduction` |
+| `sentences` | Long or dense sentence review | `uv run python academic-writing-skills/typst-paper/scripts/analyze_sentences.py main.typ --section introduction` |
+| `logic` | Coherence, intro funnel, abstract/conclusion alignment, or closure | `uv run python academic-writing-skills/typst-paper/scripts/analyze_logic.py main.typ --section methods` |
+| `literature` | Related-work synthesis and gap derivation | `uv run python academic-writing-skills/typst-paper/scripts/analyze_literature.py main.typ --section related` |
+| `expression` | Academic tone polish | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
+| `translation` | Chinese/English academic translation | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
+| `title` | Title checking or optimization | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
+| `pseudocode` | `algorithmic`, `algorithm-figure`, or `lovelace` review | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
+| `deai` | English or Chinese AI-trace checks | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
+| `experiment` | Experiment write-up and discussion layering | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
+| `abstract` | Five-element abstract diagnosis | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
+| `tables` | Table structure and three-line checks | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
+| `caption` | Figure/table caption quality review | LLM-driven module |
+| `adapt` | Venue-to-venue adaptation | LLM-driven workflow |
 
 ## Minimum Inputs
 
-- entry file such as `main.typ`
-- optional section name for targeted analysis
-- optional bibliography path; BibTeX and Hayagriva sources are both supported
-- for `pseudocode`, mention whether the target is IEEE-like so the checker can treat wrapper and caption rules more strictly
-- for `translation`, a local section target or pasted passage both work as long as Typst labels and math should be preserved
+- Entry file such as `main.typ`.
+- Optional section name for local analysis.
+- Bibliography path; BibTeX and Hayagriva are both supported.
+- Venue or IEEE-like context for pseudocode and formatting.
 
-## Good First Requests
+## Output Artifacts
+
+- Typst-ready diagnostics and review comments.
+- Source-preserving suggestions that keep `@cite`, labels, math, and Typst structure intact by default.
+- Module-level findings that can feed later audit or submission workflows.
+
+## Common Requests
 
 ```text
 Compile main.typ and explain the first error.
-```
-
-```text
-Check the abstract for grammar and academic tone.
 ```
 
 ```text
@@ -66,20 +64,15 @@ Verify references.bib against main.typ.
 ```
 
 ```text
-Review this algorithm-figure block for caption, style-algorithm, and line-number issues.
+Review this algorithm-figure block for caption and line-number issues.
 ```
 
 ```text
-Rewrite the Related Work in my Typst paper so it sounds like a synthesis instead of a citation list.
+Rewrite-plan the Related Work so it becomes synthesis rather than citation listing.
 ```
 
 ## Notes
 
-- This skill is not for LaTeX-first projects.
-- Keep `@cite`, labels, and math intact unless you explicitly want edits.
-- Expected output is Typst-ready, source-preserving review feedback rather than silent rewrites.
-- Eval coverage now includes pseudocode prompts for algorithm-figure checks and lovelace wrapper guidance.
-- Use `literature` for Related Work rewriting and synthesis; keep `logic` for intro funnel and cross-section closure.
-- The `logic` module checks literature review quality (A1: author enumeration, A3: gap derivation) and cross-section logic chain closure (C3). Use `--cross-section` for full-document closure checks.
-- The `experiment` module checks discussion depth (B3), results-literature echo (B4), and conclusion completeness (B5: findings + implications + limitations).
-- Anti-citation-stacking: max 2 clustered citations per sentence without individual discussion. Sentences with 3+ stacked references are flagged as AI writing traces in Introduction and Related Work.
+- Run the smallest module that can answer the request before escalating to broader review.
+- Preserve citations, labels, math, and source structure unless the user explicitly asks for edits.
+- Use `paper-audit` after source-level compile and bibliography checks are stable when the goal is submission readiness.

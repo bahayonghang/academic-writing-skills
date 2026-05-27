@@ -1,104 +1,82 @@
 # `paper-audit`
 
-面向 LaTeX、Typst 和 PDF 的深度审稿优先论文审查技能。
+面向 LaTeX、Typst 和 PDF 的深度审稿优先论文审查技能。它是 reviewer 和投稿门禁流程，不是源码编辑器。
 
 ## 适用场景
 
-- 投稿前快速筛查
-- 投稿前最后几天的机械检查：em dash、AI-tone、摘要结果缺口、LaTeX hygiene
-- 模拟审稿人式深审
-- 投稿门禁 PASS/FAIL 判断
-- 基于旧报告的修订回归复检
-- 润色前 precheck
+- 投稿前快速就绪性筛查。
+- 最后一周机械检查：em dash、AI-tone、摘要结果缺口、citation/label/equation hygiene、段落形态弱信号。
+- 模拟审稿人的 major / moderate / minor 深度批评。
+- 按投稿 blocker 校准的 PASS/FAIL 门禁判断。
+- 对照旧报告验证修订是否解决问题。
+- 生成可追踪的 review workspace、claim map、quote check 和 revision trajectory。
 
 ## 不适用场景
 
-- 一上来就做源文件改写
-- 把编译修复当主任务
-- 单独做文献综述写作
-- 代写 related work 正文
-- 没有审查目标、只做纯 copy-editing
+- 一上来就直接修改 `.tex` 或 `.typ` 源码。
+- 把编译修复当主任务。
+- 没有审查目标的逐句润色。
+- 单独代写文献综述。
+- 投稿信生成或 claim 对齐；请用 `cover-letter`。
 
-## 模式
+## 模式路由
 
-| 模式 | 适用场景 | 脚本 |
+| 模式 | 适用场景 | 主命令 |
 | --- | --- | --- |
-| `quick-audit` | 想先做一次快速就绪性检查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
-| `deep-review` | 想拿到结构化问题清单和修订路线图；Phase 0 包含 `PRESUBMISSION` 上下文 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review` |
-| `gate` | 只看阻塞性问题与结论；Major/Minor 机械问题保持 advisory | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate` |
-| `polish` | 想在润色前先做安全检查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
-| `re-audit` | 想对照旧报告做回归复检 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report.md` |
+| `quick-audit` | 快速脚本化就绪性筛查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
+| `deep-review` | 需要审稿式问题清单、workspace 和修订路线图 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus full` |
+| `gate` | 只关心硬性投稿 blocker | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee` |
+| `polish` | 润色前需要 precheck-only handoff | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
+| `re-audit` | 有旧报告，需要做回归比较 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md` |
 
-兼容别名：
+兼容别名：`self-check` -> `quick-audit`；`review` -> `deep-review`。
 
-- `self-check` -> `quick-audit`
-- `review` -> `deep-review`
+## 最小输入
 
-## 如何选模式
+- `paper.tex`、`paper.typ` 或 `paper.pdf`。
+- 可选 `--venue`、`--lang en|zh`、`--report-style deep-review|peer-review`。
+- deep-review 可选 `--focus full|editor|theory|literature|methodology|logic`。
+- `re-audit` 需要 `--previous-report`。
+- 继续或渲染已有 workspace 时提供 `--review-dir`。
 
-- 只想快速看风险时用 `quick-audit`
-- 说“pre-submission review / 投稿前三天检查”时仍用 `quick-audit`
-- 想模拟审稿人并拿到路线图时用 `deep-review`
-- 只关心 blocker 时用 `gate`
-- 已有旧报告、要看修订效果时用 `re-audit`
-- 想润色前先做安全检查时用 `polish`
+## 脚本入口
 
-## Deep-review 概览
+| 脚本 | 用途 |
+| --- | --- |
+| `audit.py` | quick-audit、deep-review、gate、polish、re-audit 的公开入口 |
+| `prepare_review_workspace.py` | 准备 deep-review workspace |
+| `build_claim_map.py` | 抽取 headline claims、closure targets 和 claim candidates |
+| `check_citations.py` / `check_references.py` | 引用与参考文献 hygiene 检查 |
+| `verify_quotes.py` | 校验报告 quote 是否来自源文本 |
+| `render_deep_review_report.py` | 渲染 Markdown 深审报告 |
+| `render_html_report.py` | 渲染双语 HTML 报告 |
+| `render_revision_trajectory.py` | 生成 revision trajectory |
+| `diff_review_issues.py` | 支持 re-audit 对比 |
 
-1. 用 `prepare_review_workspace.py` 准备 workspace
-2. 用 `audit.py --mode deep-review` 生成 Phase 0 自动审查
-3. `PRESUBMISSION` 发现默认留在 Phase 0；full/editor focus 可提升为 `pre_submission_readiness`
-4. 默认执行学术预审委员会：
-   - Editor -> Theory -> Literature -> Methodology -> Logic
-   - 或用 `--focus editor|theory|literature|methodology|logic` 限定单维度
-5. 派发 section lanes 和 cross-cutting lanes
-6. 合并评论 JSON
-7. 校验 quote
-8. 生成 `review_report.md` 与 `peer_review_report.md`
+## 输出产物
 
-## 主要产物
+`deep-review` 的 workspace 根目录面向读者：
 
-- `final_issues.json`
-- `overall_assessment.txt`
-- `review_report.md`
-- `peer_review_report.md`
-- `revision_roadmap.md`
-- `committee/consensus.md`
-- 可选委员会分角色文件 `committee/*.md`
+- `review_report.md` 与 `review_report.html`
+- `revision_suggestions.md` 与 `revision_suggestions.html`
 
-## 继续阅读
+支撑产物位于 `artifacts/`：
 
-- [工作流](./resources/WORKFLOW.md)
-- [模式说明](./resources/MODES.md)
-- [输出产物](./resources/OUTPUTS.md)
-- [命令与示例](./resources/CLI_AND_EXAMPLES.md)
-- [深度审查标准](./resources/DEEP_REVIEW_CRITERIA.md)
-- [投稿前机械规则](./resources/PRE_SUBMISSION_RULES.md)
-- [审查清单](./resources/CHECKLIST.md)
-- [定性研究标准](./resources/QUALITATIVE_STANDARDS.md)
-- [主编智能体](./resources/editor_in_chief_agent.md)
-- [常见问题](./resources/TROUBLESHOOTING.md)
+- `artifacts/summary/paper_summary.md`、`overall_assessment.txt`、`peer_review_report.md`
+- `artifacts/data/final_issues.json`、`all_comments.json`、`claim_map.json`、`section_index.json`、`revision_suggestions.json`、`revision_trajectory.md`
+- `artifacts/meta/metadata.json`、`checkpoint.json`、`phase0_context.md`、`full_text.md`
+- `artifacts/sections/`、`artifacts/comments/`、`artifacts/committee/`、`artifacts/references/`
 
-## 推荐提示词
+报告语言由 `--lang en|zh` 控制。标题、标签和表头会切换语言；issue quote、source tag 和结构化字段值保持原文。
+
+## 常见请求
 
 ```text
 对 paper.tex 做一次 quick-audit，告诉我什么会阻止投稿。
 ```
 
 ```text
-像顶会审稿人一样 deep-review 这篇论文，并给我修订路线图。
-```
-
-```text
-用完整学术预审委员会 deep-review 这篇论文，并按优先级给出最先改的三个问题。
-```
-
-```text
-对这篇论文 deep-review，但只看方法论透明度和 SRQR 缺口。
-```
-
-```text
-只审查文献定位与 research gap 是否真实，不要改写正文。
+像期刊审稿人一样 deep-review 这篇论文，并产出 review workspace 和 HTML 报告。
 ```
 
 ```text
@@ -106,18 +84,17 @@
 ```
 
 ```text
-基于旧报告对这篇修订稿做 re-audit。
+只审查文献定位，判断 research gap 是真实问题还是选择性引用制造出来的。
+```
+
+```text
+基于 report_v1.md 对这篇修订稿做 re-audit，总结已解决和未解决问题。
 ```
 
 ## 重要说明
 
-- `audit.py --mode deep-review` 只是 Phase 0，不是完整深审。
 - `PRESUBMISSION` 是接入现有模式的机械层，不是新的公开模式。
-- deep-review 的主产物是结构化问题清单，而不是分数本身。
-- `claim_map.json` 继续保留旧的 headline/closure 字段，同时新增 advisory
-  claim candidates，记录 evidence anchors、support strength、missing evidence
-  和 bounded wording。
-- Data availability 检查默认是 advisory；只有 venue 明确要求且 central source
-  data 缺失时才作为投稿阻塞。
-- 能用源文件时优先用源文件；PDF 只运行文本类投稿前检查，并跳过 LaTeX/Typst 源码 hygiene。
-- `--focus literature` 只负责判断综述是否公平、gap 是否真实、冲突是否被保留，不负责代写文献综述正文。
+- full/editor deep-review 可把高信号投稿前发现提升到 `pre_submission_readiness`；其他 focus 默认保留在 Phase 0 上下文。
+- `claim_map.json` 区分可见锚点和支撑强度；citation key 本身不等于真实支撑。
+- Data availability 默认 advisory；只有 venue 明确要求且 central source data 缺失时才阻塞投稿。
+- PDF 输入只做文本类检查，跳过 LaTeX/Typst 源码 hygiene。

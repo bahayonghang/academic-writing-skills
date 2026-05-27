@@ -1,71 +1,65 @@
 # `bib-search-citation`
 
-Fast `.bib` library search and citation extraction for BibTeX and BibLaTeX workflows.
+Fast `.bib` library search and citation extraction for BibTeX and BibLaTeX workflows, including Zotero exports with custom metadata fields.
 
 ## Use It For
 
-- searching large `.bib` libraries by topic
-- filtering entries by author, year, type, DOI, arXiv, keywords, annotation, or abstract
-- generating LaTeX and Typst citation snippets from matched entries
-- returning raw BibTeX for export or manual verification
-- triaging Zotero-exported libraries with mixed custom fields
-- checking which entries appear to include code, PDF, DOI, keywords, or abstracts
+- Search large `.bib` libraries by topic words and field-specific filters.
+- Filter by author, year, entry type, DOI, arXiv/eprint, PDF, code, keywords, annotation, or abstract.
+- Generate LaTeX and Typst citation snippets.
+- Return raw BibTeX for export or manual verification.
+- Preview JSON search results as compact human-readable summaries.
 
 ## Do Not Use It For
 
-- validating citations inside a `.tex` or `.typ` project
-- compile or format diagnostics
-- rewriting related-work prose
-- online paper discovery when there is no local bibliography file
+- Validate citations already used inside a `.tex` or `.typ` project; use the writing skill bibliography module.
+- Compile, format, or edit manuscripts.
+- Rewrite Related Work prose.
+- Online literature discovery when no local bibliography exists.
+- Treat a citation key as proof that a manuscript claim is supported.
 
-## Search Router
+## Module Router
 
-| Surface | Best for | Command |
+| Surface | Use when | Primary command |
 | --- | --- | --- |
-| `query` | one-shot compact search | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"` |
-| `spec-json` | repeatable structured filters | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-json '{"query":"mamba time series forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
-| `spec-file` | saved search workflow | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-file search.json` |
-| `preview` | compact human-readable summary after JSON output | `uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py --input results.json` |
+| `query` | One-shot compact search | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"` |
+| `spec-json` | Structured filters are clearer than a compact query | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
+| `spec-file` | You need a repeatable saved search | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-file search.json` |
+| `preview` | You already have JSON results and need a short summary | `uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py --input results.json` |
 
 ## Minimum Inputs
 
-- a `.bib` file path
-- either a compact query or a JSON spec
-- optional sort, limit, and citation-mode preferences
-- optional request for raw BibTeX or custom returned fields
+- Path to one local `.bib` file.
+- Compact `--query`, inline `--spec-json`, or saved `--spec-file`.
+- Optional sort, limit, citation mode, raw BibTeX, or returned-field preferences.
 
-## Good First Requests
+## Output Artifacts
+
+- Structured JSON search results.
+- Optional raw BibTeX entries.
+- LaTeX and/or Typst citation snippets.
+- Compact preview output via `preview_bib_search.py`.
+
+## Common Requests
 
 ```text
 Search references.bib for Cheng papers after 2024 on Mamba forecasting and return both LaTeX and Typst citations.
 ```
 
 ```text
-Find entries in library.bib whose annotation contains CodeAvailable and show the raw BibTeX.
+Find entries whose annotation contains CodeAvailable and show raw BibTeX.
 ```
 
 ```text
-List the newest transformer forecasting papers in references.bib, but exclude misc entries and require DOI.
+List the newest transformer forecasting papers but require DOI and exclude misc entries.
 ```
 
 ```text
-Find the best TimeMachine match in references.bib and return one raw entry plus cite snippets.
+Find the best TimeMachine match and return one raw entry plus citation snippets.
 ```
 
-## Read This Next
+## Notes
 
-- [Query Syntax](./resources/query-syntax.md)
-
-## Important Notes
-
-- `search_bib.py` is the source of truth for filtering, ranking, and citation formatting.
-- `preview_bib_search.py` only renders JSON results into a shorter summary.
-- Compact filters support `author:`, `year>=`, `year<=`, `type:`, `has:`, `fields:`,
-  `cite:`, and `raw:true`.
-- `has:code` is inferred from fields such as `url`, `annotation`, `keywords`, `note`,
-  `howpublished`, and `abstract`.
-- A `.bib` match, citation key, DOI, arXiv ID, or URL is bibliography
-  provenance, not proof that the paper supports a manuscript claim.
-- If the query contains only filters and no topic words, the sort mode controls result order.
-- Malformed entries may be skipped during parsing, so unexpectedly small result sets can come
-  from broken BibTeX structure or encoding issues.
+- Run the smallest module that can answer the request before escalating to broader review.
+- Preserve citations, labels, math, and source structure unless the user explicitly asks for edits.
+- Use `paper-audit` after source-level compile and bibliography checks are stable when the goal is submission readiness.
