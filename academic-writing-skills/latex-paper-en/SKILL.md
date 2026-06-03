@@ -1,6 +1,12 @@
 ---
 name: latex-paper-en
-description: English LaTeX assistant for existing .tex conference or journal papers. Use for compile, venue formatting, bibliography, grammar, logic, abstract/title, figures, tables, pseudocode, related work, research gaps, adaptation, de-AI polish, translation, and submission readiness. Use latex-thesis-zh for Chinese theses and paper-audit for critique.
+description: >-
+  This skill should be used when the user asks to "proofread my paper", "fix my LaTeX",
+  "compile my paper", "check my manuscript", "improve writing", "rewrite related work", "find
+  research gap", "format bibliography", "make a three-line table", "write pseudocode", "check
+  citations", "format for IEEE/ACM/Springer/NeurIPS", "换投", or works on an English .tex
+  journal/conference manuscript and needs compilation help, venue formatting, or
+  submission-readiness checks.
 metadata:
   category: academic-writing
   tags: [latex, paper, english, ieee, acm, springer, neurips, icml, compilation, grammar, bibliography, figures, pseudocode, algorithmicx, algpseudocodex]
