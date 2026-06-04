@@ -113,6 +113,15 @@ def parse_args() -> argparse.Namespace:
         "--return-fields",
         help="Comma-separated result fields when using --query, for example key,title,year,abstract",
     )
+    parser.add_argument(
+        "--recent-window",
+        type=int,
+        help="Years counted as 'recent' for the additive meta.recency report (default 3)",
+    )
+    parser.add_argument(
+        "--claim",
+        help="A claim sentence; adds a per-result claim_support block (lexical overlap only)",
+    )
     return parser.parse_args()
 
 
@@ -163,13 +172,28 @@ def spec_from_compact_args(args: argparse.Namespace) -> dict[str, Any]:
         spec["return_fields"] = [
             item.strip() for item in args.return_fields.split(",") if item.strip()
         ]
+    if args.recent_window is not None:
+        spec["recent_window"] = args.recent_window
+    if args.claim:
+        spec["claim"] = args.claim
     return spec
 
 
 def maybe_contains_query_syntax(text: str) -> bool:
     if re.search(r"\byear\s*(?:>=|<=|>|<|:|=)\s*\d{4}\b", text, flags=re.IGNORECASE):
         return True
-    compact_markers = ["author:", "type:", "has:", "sort:", "limit:", "fields:", "cite:", "raw:"]
+    compact_markers = [
+        "author:",
+        "type:",
+        "has:",
+        "sort:",
+        "limit:",
+        "fields:",
+        "cite:",
+        "raw:",
+        "recent:",
+        "claim:",
+    ]
     lowered = text.lower()
     return any(marker in lowered for marker in compact_markers)
 
@@ -327,6 +351,10 @@ def spec_from_compact_query(query_text: str) -> dict[str, Any]:
             spec["citation_mode"] = payload
         elif kind == "include_raw_bib":
             spec["include_raw_bib"] = payload
+        elif kind == "recent_window":
+            spec["recent_window"] = payload
+        elif kind == "claim":
+            spec["claim"] = payload
         elif kind == "filter":
             merge_filter_dict(filters, payload)
         else:
@@ -372,6 +400,10 @@ def parse_query_token(token: str) -> tuple[str, Any] | None:
         return ("citation_mode", lowered)
     if field == "raw":
         return ("include_raw_bib", parse_bool(value))
+    if field == "recent":
+        return ("recent_window", int(value))
+    if field == "claim":
+        return ("claim", value)
 
     # Generic field filter.
     target_field = field.lower()
@@ -822,6 +854,66 @@ def latex_citations(key: str) -> dict[str, str]:
     }
 
 
+def _recency_block(selected: Sequence[tuple[float, dict[str, Any]]], window: int) -> dict[str, Any]:
+    """Additive meta report: how many returned results are recent.
+
+    Recency is defined relative to the current calendar year so the threshold
+    stays correct over time without hardcoding a year. Purely informational —
+    it never filters results.
+    """
+    from datetime import date
+
+    current_year = date.today().year
+    threshold = current_year - int(window) + 1
+    years = [year for _, entry in selected if (year := entry.get("year"))]
+    block: dict[str, Any] = {
+        "window_years": int(window),
+        "recent_threshold": threshold,
+        "with_year": len(years),
+        "recent_count": 0,
+        "recent_share": None,
+        "note": "no year metadata in returned results",
+    }
+    if not years:
+        return block
+    recent = sum(1 for year in years if year >= threshold)
+    share = round(recent / len(years), 3)
+    block["recent_count"] = recent
+    block["recent_share"] = share
+    if share >= 0.8:
+        block["note"] = f"{recent}/{len(years)} returned results are from {threshold} or later"
+    else:
+        block["note"] = (
+            f"only {recent}/{len(years)} returned results are from {threshold} or later; "
+            "consider widening the year range or prioritizing recent work"
+        )
+    return block
+
+
+def _claim_support(entry: dict[str, Any], claim: str) -> dict[str, Any]:
+    """Per-result lexical-overlap report against a user-supplied claim sentence.
+
+    This is a provenance hand-off, not evidence: a high overlap means the entry
+    mentions the same words, not that it supports the claim.
+    """
+    claim_tokens = set(tokenize(claim))
+    matched_fields = [
+        field
+        for field in ("title", "shorttitle", "abstract", "keywords", "annotation")
+        if entry.get(field) and claim_tokens & set(tokenize(entry.get(field, "")))
+    ]
+    shared = sorted(claim_tokens & set(tokenize(entry.get("search_blob", ""))))
+    return {
+        "claim": claim,
+        "relevance": score_entry(entry, claim),
+        "matched_fields": matched_fields,
+        "shared_terms": shared[:10],
+        "provenance": (
+            "Lexical overlap only — NOT proof the paper supports the claim; verify the source."
+        ),
+    }
+
+
 def format_result(entry: dict[str, Any], spec: dict[str, Any], score: float) -> dict[str, Any]:
     return_fields = spec.get("return_fields") or DEFAULT_FIELDS
     result: dict[str, Any] = {
@@ -841,6 +933,9 @@ def format_result(entry: dict[str, Any], spec: dict[str, Any], score: float) -> 
         result["citations"] = citations
     if spec.get("include_raw_bib"):
         result["raw_bib"] = entry["raw_bib"]
+    claim = spec.get("claim")
+    if claim:
+        result["claim_support"] = _claim_support(entry, claim)
     return result
 
 
@@ -899,6 +994,7 @@ def run_search(entries: Sequence[dict[str, Any]], spec: dict[str, Any]) -> dict[
             "matched_entries": len(filtered),
             "returned_entries": len(selected),
             "applied_filters": filters,
+            "recency": _recency_block(selected, spec.get("recent_window", 3)),
         },
         "results": [format_result(entry, spec, score) for score, entry in selected],
     }

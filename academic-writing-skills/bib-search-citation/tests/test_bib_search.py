@@ -131,3 +131,45 @@ def test_preview_reports_invalid_payload(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(sys, "stdin", io.StringIO(""))
     with pytest.raises(ValueError, match="expected JSON input"):
         preview_bib_search.load_payload(type("Args", (), {"input": None})())
+
+
+# ── A3: recency report (additive meta) + optional claim binding ───────────────
+
+
+def test_recency_block_present_and_additive():
+    """meta.recency is always reported; results stay free of claim_support."""
+    payload = run_search("--query", "forecasting recent:50 limit:5")
+    recency = payload["meta"]["recency"]
+    assert recency["window_years"] == 50
+    assert recency["with_year"] == len(payload["results"])
+    # A 50-year window covers every fixture entry, so all are 'recent'.
+    assert recency["recent_count"] == recency["with_year"]
+    assert recency["recent_share"] == 1.0
+    # Regression guard: no --claim means no claim_support on any result.
+    assert all("claim_support" not in result for result in payload["results"])
+
+
+def test_recent_window_one_flags_aging():
+    """A 1-year window (only the current year counts) trips the aging note."""
+    payload = run_search("--query", "forecasting recent:1 limit:5")
+    recency = payload["meta"]["recency"]
+    assert recency["window_years"] == 1
+    # Fixtures top out at 2025, so none fall inside a current-year-only window.
+    assert recency["recent_count"] == 0
+    assert "consider widening" in recency["note"]
+
+
+def test_claim_binding_adds_support_block_with_provenance():
+    payload = run_search(
+        "--query",
+        "forecasting limit:3",
+        "--claim",
+        "hybrid mamba photovoltaic forecasting",
+    )
+    supported = [r for r in payload["results"] if r.get("claim_support")]
+    assert supported, "expected at least one result to carry a claim_support block"
+    block = supported[0]["claim_support"]
+    assert block["claim"] == "hybrid mamba photovoltaic forecasting"
+    assert isinstance(block["relevance"], (int, float))
+    assert block["matched_fields"], "expected matched fields for a strongly overlapping entry"
+    assert "NOT proof" in block["provenance"]

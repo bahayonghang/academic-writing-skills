@@ -3,9 +3,20 @@ name: bib-search-citation
 description: Search and cite from local BibTeX/BibLaTeX .bib libraries, including Zotero exports. Use to find, filter, preview, export, or generate LaTeX/Typst citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, abstract, fields, or compact filters. Do not use for manuscript writing or polishing.
 metadata:
   category: docs-writing-publishing
-  tags: [bibtex, biblatex, citation, latex, typst, bibliography, research, zotero, bib]
-  version: "5.1.0"
-  last_updated: "2026-05-20"
+  tags:
+    [
+      bibtex,
+      biblatex,
+      citation,
+      latex,
+      typst,
+      bibliography,
+      research,
+      zotero,
+      bib,
+    ]
+  version: "5.2.0"
+  last_updated: "2026-06-04"
 argument-hint: "[library.bib] [--query QUERY]"
 allowed-tools: Read, Bash(uv *)
 ---
@@ -60,12 +71,12 @@ metadata from external sources before adding it to a library.
 
 ## Module Router
 
-| Module | Best for | Command |
-| --- | --- | --- |
-| `query` | one-shot compact search with inline filters | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --query 'mamba forecasting author:Cheng year>=2024 has:code cite:both limit:5'` |
-| `spec-json` | structured search spec generated from a complex request | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
-| `spec-file` | repeatable saved search workflow | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-file search.json` |
-| `preview` | compact human-readable summary after JSON search output exists | `uv run python -B $SKILL_DIR/scripts/preview_bib_search.py --input results.json` |
+| Module      | Best for                                                       | Command                                                                                                                                                                 |
+| ----------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `query`     | one-shot compact search with inline filters                    | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --query 'mamba forecasting author:Cheng year>=2024 has:code cite:both limit:5'`                 |
+| `spec-json` | structured search spec generated from a complex request        | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
+| `spec-file` | repeatable saved search workflow                               | `uv run python -B $SKILL_DIR/scripts/search_bib.py --bib references.bib --spec-file search.json`                                                                        |
+| `preview`   | compact human-readable summary after JSON search output exists | `uv run python -B $SKILL_DIR/scripts/preview_bib_search.py --input results.json`                                                                                        |
 
 Keep `search_bib.py` as the source of truth for parsing, filtering, scoring,
 sorting, raw BibTeX preservation, and citation snippet generation. Treat
@@ -102,6 +113,7 @@ When presenting results to the user, use this order:
 3. Include LaTeX and/or Typst snippets when requested or useful.
 4. Include raw BibTeX only when requested or materially needed.
 5. If no entries match, suggest specific filter relaxations.
+6. Surface the additive `meta.recency` report when recency matters, and the per-result `claim_support` block when `--claim` was supplied — always repeating its provenance caveat (lexical overlap is not proof of support).
 
 For each selected entry, usually include:
 
@@ -159,6 +171,8 @@ Supported compact operators include:
 - `sort:year_desc`, `limit:10`, `fields:key,title,year,doi`
 - `cite:latex`, `cite:typst`, `cite:both`, `cite:none`
 - `raw:true`
+- `recent:3` (recency window for the additive `meta.recency` report; or `--recent-window`)
+- `claim:"..."` (adds per-result `claim_support`; prefer `--claim` for claims with spaces)
 
 The useful `has` values are `doi`, `abstract`, `keywords`, `annotation`,
 `shorttitle`, `eprint`, `pdf`, and `code`. The `code` flag is inferred from

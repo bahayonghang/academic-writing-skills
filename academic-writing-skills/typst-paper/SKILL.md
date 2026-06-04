@@ -3,9 +3,26 @@ name: typst-paper
 description: Typst paper assistant for existing .typ manuscripts in English or Chinese. Use for compile/export diagnosis, venue formatting, BibTeX or Hayagriva checks, grammar, logic, abstract/title, tables, pseudocode, related work, research-gap framing, adaptation, de-AI polish, translation, and submission readiness. Use LaTeX skills for .tex sources.
 metadata:
   category: academic-writing
-  tags: [typst, paper, chinese, english, ieee, acm, springer, neurips, compilation, grammar, bibliography, hayagriva, pseudocode, algorithmic, lovelace]
-  version: "5.1.0"
-  last_updated: "2026-05-20"
+  tags:
+    [
+      typst,
+      paper,
+      chinese,
+      english,
+      ieee,
+      acm,
+      springer,
+      neurips,
+      compilation,
+      grammar,
+      bibliography,
+      hayagriva,
+      pseudocode,
+      algorithmic,
+      lovelace,
+    ]
+  version: "5.2.0"
+  last_updated: "2026-06-04"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -51,24 +68,24 @@ Do not use this skill for:
 
 ## Module Router
 
-| Module | Use when | Primary command | Read next |
-| --- | --- | --- | --- |
-| `compile` | Typst build, export, font, or watch issues | `uv run python $SKILL_DIR/scripts/compile.py main.typ` | `references/modules/COMPILE.md` |
-| `format` | Venue/layout review for a Typst paper | `uv run python $SKILL_DIR/scripts/check_format.py main.typ` | `references/modules/FORMAT.md` (load `templates/<venue>.md` instead of the full `references/VENUES.md` when a venue is named) |
-| `bibliography` | BibTeX or Hayagriva validation | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --typ main.typ` | `references/modules/BIBLIOGRAPHY.md` |
-| `grammar` | Grammar cleanup on Typst prose | `uv run python $SKILL_DIR/scripts/analyze_grammar.py main.typ --section introduction` | `references/modules/GRAMMAR.md` |
-| `sentences` | Long or dense sentence diagnostics | `uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction` | `references/modules/SENTENCES.md` |
-| `logic` | Argument flow, introduction funnel, cross-section closure, and abstract/conclusion alignment review | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.typ --section methods` | `references/modules/LOGIC.md` |
-| `literature` | Related Work is list-like, under-compared, or missing a literature-backed gap | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.typ --section related` | `references/modules/LITERATURE.md` |
-| `expression` | Tone and expression polishing | `uv run python $SKILL_DIR/scripts/improve_expression.py main.typ --section methods` | `references/modules/EXPRESSION.md` |
-| `translation` | Chinese/English academic translation in Typst context | `uv run python $SKILL_DIR/scripts/translate_academic.py input_zh.txt --domain deep-learning` | `references/modules/TRANSLATION.md` |
-| `title` | Generate, compare, or optimize Typst paper titles | `uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check` | `references/modules/TITLE.md` |
-| `pseudocode` | Review `algorithmic` / `algorithm-figure` / `lovelace` output for IEEE-like safety, captions, and comment length | `uv run python $SKILL_DIR/scripts/check_pseudocode.py main.typ --venue ieee` | `references/modules/PSEUDOCODE.md` |
-| `deai` | Reduce English or Chinese AI-writing traces while preserving Typst syntax | `uv run python $SKILL_DIR/scripts/deai_check.py main.typ --section introduction` | `references/modules/DEAI.md` |
-| `experiment` | Inspect experiment-section clarity, discussion layering, and reporting quality | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.typ --section experiment` | `references/modules/EXPERIMENT.md` |
-| `tables` | Table structure validation, three-line table generation | `uv run python $SKILL_DIR/scripts/check_tables.py main.typ` | `references/modules/TABLES.md` |
-| `abstract` | Abstract five-element structure diagnosis and word count validation | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.typ` | `references/modules/ABSTRACT.md` |
-| `adapt` | Journal adaptation: reformat paper for a different venue | (LLM-driven workflow) | references/modules/ADAPT.md |
+| Module         | Use when                                                                                                         | Primary command                                                                              | Read next                                                                                                                     |
+| -------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `compile`      | Typst build, export, font, or watch issues                                                                       | `uv run python $SKILL_DIR/scripts/compile.py main.typ`                                       | `references/modules/COMPILE.md`                                                                                               |
+| `format`       | Venue/layout review for a Typst paper                                                                            | `uv run python $SKILL_DIR/scripts/check_format.py main.typ`                                  | `references/modules/FORMAT.md` (load `templates/<venue>.md` instead of the full `references/VENUES.md` when a venue is named) |
+| `bibliography` | BibTeX or Hayagriva validation                                                                                   | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --typ main.typ`               | `references/modules/BIBLIOGRAPHY.md`                                                                                          |
+| `grammar`      | Grammar cleanup on Typst prose                                                                                   | `uv run python $SKILL_DIR/scripts/analyze_grammar.py main.typ --section introduction`        | `references/modules/GRAMMAR.md`                                                                                               |
+| `sentences`    | Long or dense sentence diagnostics                                                                               | `uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction`      | `references/modules/SENTENCES.md`                                                                                             |
+| `logic`        | Argument flow, introduction funnel, cross-section closure, and abstract/conclusion alignment review              | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.typ --section methods`               | `references/modules/LOGIC.md`                                                                                                 |
+| `literature`   | Related Work is list-like, under-compared, or missing a literature-backed gap                                    | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.typ --section related`          | `references/modules/LITERATURE.md`                                                                                            |
+| `expression`   | Tone and expression polishing                                                                                    | `uv run python $SKILL_DIR/scripts/improve_expression.py main.typ --section methods`          | `references/modules/EXPRESSION.md`                                                                                            |
+| `translation`  | Chinese/English academic translation in Typst context                                                            | `uv run python $SKILL_DIR/scripts/translate_academic.py input_zh.txt --domain deep-learning` | `references/modules/TRANSLATION.md`                                                                                           |
+| `title`        | Generate, compare, or optimize Typst paper titles                                                                | `uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check`                        | `references/modules/TITLE.md`                                                                                                 |
+| `pseudocode`   | Review `algorithmic` / `algorithm-figure` / `lovelace` output for IEEE-like safety, captions, and comment length | `uv run python $SKILL_DIR/scripts/check_pseudocode.py main.typ --venue ieee`                 | `references/modules/PSEUDOCODE.md`                                                                                            |
+| `deai`         | Reduce English or Chinese AI-writing traces while preserving Typst syntax                                        | `uv run python $SKILL_DIR/scripts/deai_check.py main.typ --section introduction`             | `references/modules/DEAI.md`                                                                                                  |
+| `experiment`   | Inspect experiment-section clarity, discussion layering, and reporting quality                                   | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.typ --section experiment`       | `references/modules/EXPERIMENT.md`                                                                                            |
+| `tables`       | Table structure validation, three-line table generation                                                          | `uv run python $SKILL_DIR/scripts/check_tables.py main.typ`                                  | `references/modules/TABLES.md`                                                                                                |
+| `abstract`     | Abstract five-element structure diagnosis and word count validation                                              | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.typ`                              | `references/modules/ABSTRACT.md`                                                                                              |
+| `adapt`        | Journal adaptation: reformat paper for a different venue                                                         | (LLM-driven workflow)                                                                        | references/modules/ADAPT.md                                                                                                   |
 
 ## Routing Rules
 
@@ -77,6 +94,8 @@ Do not use this skill for:
 - Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `pseudocode` / `tables` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` -> `title` / `expression` / `translation` / `adapt`.
 - For bibliography requests, decide BibTeX vs Hayagriva before running the script; do not guess the format after the fact.
 - Prefer `logic` for abstract-introduction-conclusion alignment, introduction funnel breaks, or contribution drift; prefer `literature` only when the user is specifically asking for Related Work synthesis, comparison, or gap derivation.
+- For whole-paper motivation/red-thread questions ("does every introduction promise get tested and resolved?"), run `logic` with `--motivation-thread`; it appends a read-only Promise Map + Closure Map heuristic and leaves default `logic` output unchanged.
+- For graded de-AI / AIGC-dimension analysis, run `deai` with `--tier light|medium|heavy`; it scales thresholds, adds a bilingual D1 sentence-length check, and labels findings by dimension (D1-D5). Omitting `--tier` keeps the default output.
 - Keep `pseudocode` for `algorithm-figure`, `algorithmic`, `lovelace`, caption, wrapper, and IEEE-like style-hook issues even when the user phrases them as formatting problems.
 - If a command fails, report the exact command and exit code before suggesting the next fallback; do not silently replace a failed script run with a generic prose review.
 

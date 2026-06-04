@@ -532,7 +532,275 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
     return out
 
 
-def analyze(file_path: Path, section: str | None = None, cross_section: bool = False) -> list[str]:
+# ── 动机主线闭合诊断（可选开关：--motivation-thread）──
+#
+# 只读诊断：把绪论的每条承诺/主张映射到后文的呼应位置。它是启发式的
+# （关键词 + 词面重叠），每条结论都标 [Script] 并提示人工复核，与上面的
+# 跨章节（C3）检查口吻一致，绝不改写源文件。
+
+_THREAD_STOPWORDS = {
+    "the",
+    "a",
+    "an",
+    "and",
+    "for",
+    "with",
+    "via",
+    "that",
+    "this",
+    "these",
+    "those",
+    "from",
+    "into",
+    "onto",
+    "our",
+    "ours",
+    "their",
+    "such",
+    "more",
+    "most",
+    "than",
+    "then",
+    "thus",
+    "also",
+    "which",
+    "while",
+    "where",
+    "when",
+    "paper",
+    "work",
+    "study",
+    "propose",
+    "proposed",
+    "present",
+    "presents",
+    "presented",
+    "introduce",
+    "introduces",
+    "method",
+    "methods",
+    "approach",
+    "approaches",
+    "model",
+    "models",
+    "framework",
+    "results",
+    "result",
+    "show",
+    "shows",
+    "shown",
+    "using",
+    "used",
+    "based",
+    "novel",
+    "new",
+    "main",
+    "contribution",
+    "contributions",
+    "achieve",
+    "achieves",
+    "improve",
+    "improves",
+    "improvement",
+    "demonstrate",
+    "demonstrates",
+}
+
+
+def _thread_tokens(text: str) -> set[str]:
+    """用于重叠匹配的内容 token：英文词（>=4 字符、非停用词）+ 中文字符二元组，
+    使启发式在中英混排文本上也能工作。"""
+    lowered = text.lower()
+    tokens: set[str] = set()
+    for word in re.findall(r"[a-z][a-z'-]{3,}", lowered):
+        if word not in _THREAD_STOPWORDS:
+            tokens.add(word)
+    for run in re.findall(r"[一-鿿]{2,}", lowered):
+        for i in range(len(run) - 1):
+            tokens.add(run[i : i + 2])
+    return tokens
+
+
+def _thread_best_match(
+    promise_tokens: set[str], candidates: list[tuple[int, str]], min_overlap: int = 2
+) -> tuple[int, int] | None:
+    """返回重叠度最高的候选行 (行号, 重叠数)，没有达到阈值则返回 None。"""
+    best_line = None
+    best_score = 0
+    for line_no, text in candidates:
+        overlap = len(promise_tokens & _thread_tokens(text))
+        if overlap > best_score:
+            best_score = overlap
+            best_line = line_no
+    if best_line is not None and best_score >= min_overlap:
+        return best_line, best_score
+    return None
+
+
+_THREAD_INTRO_KW = ("introduction", "绪论", "引言")
+_THREAD_RELATED_KW = ("related", "literature review", "文献综述", "相关工作")
+_THREAD_CLOSURE_KW = (
+    "discussion",
+    "analysis",
+    "conclusion",
+    "讨论",
+    "分析",
+    "结论",
+    "总结",
+    "展望",
+)
+_LATEX_HEADING_RE = re.compile(r"\\(?:chapter|(?:sub)*section|paragraph)\*?\s*\{([^}]*)\}")
+_TYPST_HEADING_RE = re.compile(r"^=+\s+(.*)$")
+
+
+def _thread_headings(lines: list[str], parser) -> list[tuple[int, str]]:
+    """通用标题扫描，返回 (行号, 小写标题)。
+
+    与 parser 的已知章节关键词表不同，这里把任意标题都视为边界，因此常见的
+    复数/复合标题（'Experiments'、'Experimental Results'、'Results and
+    Discussion'）仍能正确切出证据正文区。仅由可选的动机主线诊断使用，其它逻辑
+    不依赖它。
+    """
+    is_typst = parser.get_comment_prefix() == "//"
+    heads: list[tuple[int, str]] = []
+    for i, raw in enumerate(lines, 1):
+        stripped = raw.strip()
+        match = _TYPST_HEADING_RE.match(stripped) if is_typst else _LATEX_HEADING_RE.match(stripped)
+        if match:
+            heads.append((i, match.group(1).strip().lower()))
+    return heads
+
+
+def _check_motivation_thread(
+    lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    """全篇红线诊断：承诺映射 + 闭合映射。
+
+    承诺映射：绪论的每条承诺（"本文提出 X"）-> 实验/结果中可能验证它的一行。
+    闭合映射：绪论的每条主张 -> 讨论/结论中可能回应它的一行。
+    """
+    p = parser.get_comment_prefix()
+    out: list[str] = []
+    heads = _thread_headings(lines, parser)
+    intro_pos = next(
+        (idx for idx, (_, title) in enumerate(heads) if any(k in title for k in _THREAD_INTRO_KW)),
+        None,
+    )
+    if intro_pos is None and "introduction" not in sections:
+        return [f"{p} 动机主线 [Script]：未找到绪论，跳过红线诊断。"]
+
+    if intro_pos is not None:
+        intro_line = heads[intro_pos][0]
+        intro_end = heads[intro_pos + 1][0] - 1 if intro_pos + 1 < len(heads) else len(lines)
+    else:
+        intro_line, intro_end = sections["introduction"]
+
+    closure_line = next(
+        (
+            ln
+            for ln, title in heads
+            if ln > intro_end and any(k in title for k in _THREAD_CLOSURE_KW)
+        ),
+        None,
+    )
+    related_ranges: list[tuple[int, int]] = []
+    for j, (ln, title) in enumerate(heads):
+        if any(k in title for k in _THREAD_RELATED_KW):
+            end = heads[j + 1][0] - 1 if j + 1 < len(heads) else len(lines)
+            related_ranges.append((ln, end))
+
+    promises = [
+        (ln, txt)
+        for ln, txt in _section_visible_lines(lines, (intro_line, intro_end), parser)
+        if CONTRIBUTION_KEYWORDS_ZH.search(txt)
+    ]
+    evidence_end = closure_line - 1 if closure_line else len(lines)
+    evidence_lines = [
+        (ln, txt)
+        for ln, txt in _section_visible_lines(lines, (intro_end + 1, evidence_end), parser)
+        if not any(lo <= ln <= hi for lo, hi in related_ranges)
+    ]
+    closure_lines = (
+        _section_visible_lines(lines, (closure_line, len(lines)), parser) if closure_line else []
+    )
+
+    out.append(f"{p} 动机主线 [Script]（启发式）：全篇红线闭合诊断。")
+    out.append(f"{p} 说明：基于关键词 + 词面重叠的启发式，可能误报，请人工复核。")
+    out.append("")
+
+    # ── 承诺映射 ──
+    out.append(f"{p} 动机主线：承诺映射（绪论承诺 -> 实验/结果证据）")
+    if not promises:
+        out.append(
+            f"{p} - 绪论中未检测到明确的“本文提出/贡献”承诺 [Severity: Moderate] [Priority: P2]。"
+        )
+    else:
+        for idx, (ln, txt) in enumerate(promises[:10], 1):
+            if not evidence_lines:
+                out.append(
+                    f"{p} - P{idx}（绪论 L{ln}）-> [未找到正文证据] [Severity: Major] [Priority: P1]："
+                    "绪论与结论之间没有正文"
+                )
+                continue
+            match = _thread_best_match(_thread_tokens(txt), evidence_lines)
+            if match:
+                out.append(
+                    f"{p} - P{idx}（绪论 L{ln}）-> 证据 L{match[0]} [已匹配, overlap={match[1]}]"
+                )
+            else:
+                out.append(
+                    f"{p} - P{idx}（绪论 L{ln}）-> [未找到证据] [Severity: Major] [Priority: P1]："
+                    "承诺未在实验/结果中验证"
+                )
+                out.append(f"{p}   承诺: {txt[:100]}")
+    out.append("")
+
+    # ── 闭合映射 ──
+    out.append(f"{p} 动机主线：闭合映射（绪论主张 -> 讨论/结论收口）")
+    if not promises:
+        out.append(f"{p} - 没有可闭合的明确主张。")
+    elif not closure_lines:
+        out.append(f"{p} - [缺少讨论/结论章节] [Severity: Major] [Priority: P1]：主张无法闭合。")
+    else:
+        for idx, (ln, txt) in enumerate(promises[:10], 1):
+            match = _thread_best_match(_thread_tokens(txt), closure_lines)
+            if match:
+                out.append(
+                    f"{p} - C{idx}（绪论 L{ln}）-> 收口 L{match[0]} [已闭合, overlap={match[1]}]"
+                )
+            else:
+                out.append(
+                    f"{p} - C{idx}（绪论 L{ln}）-> [未闭合] [Severity: Major] [Priority: P1]："
+                    "主张未在讨论/结论中回应"
+                )
+    out.append("")
+
+    # ── 游离证据（轻量、限量）──
+    if promises and evidence_lines:
+        promise_union: set[str] = set()
+        for _, txt in promises:
+            promise_union |= _thread_tokens(txt)
+        orphans = [
+            (ln, txt)
+            for ln, txt in evidence_lines
+            if TRIAD_RESULT_RE_ZH.search(txt)
+            and re.search(r"\d", txt)
+            and not (_thread_tokens(txt) & promise_union)
+        ]
+        if orphans:
+            out.append(f"{p} 动机主线：游离证据（结果无法追溯到任一绪论承诺）")
+            for ln, txt in orphans[:5]:
+                out.append(f"{p} - 证据 L{ln} [Severity: Moderate] [Priority: P2]: {txt[:90]}")
+            out.append("")
+    return out
+
+
+def analyze(
+    file_path: Path,
+    section: str | None = None,
+    cross_section: bool = False,
+    motivation_thread: bool = False,
+) -> list[str]:
     parser = get_parser(file_path)
     content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
@@ -610,6 +878,8 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
             out.extend(_check_cross_section_closure(lines, sections, parser))
         if not section:
             out.extend(_check_tri_section_alignment(content, lines, sections, parser))
+        if motivation_thread and not section:
+            out.extend(_check_motivation_thread(lines, sections, parser))
 
     if not out:
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
@@ -625,13 +895,18 @@ def main() -> int:
         action="store_true",
         help="启用跨章节逻辑链闭合检查",
     )
+    cli.add_argument(
+        "--motivation-thread",
+        action="store_true",
+        help="运行全篇动机红线诊断（承诺映射 + 闭合映射）",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
         return 1
 
-    print("\n".join(analyze(args.file, args.section, args.cross_section)))
+    print("\n".join(analyze(args.file, args.section, args.cross_section, args.motivation_thread)))
     return 0
 
 

@@ -69,3 +69,17 @@ The proposed method improves performance in the experiments...
 | Conclusion | 回答研究问题，不引入新实验 | 可执行未来工作 |
 
 参考：[DEAI_GUIDE.md](../references/DEAI_GUIDE.md)
+
+## 分级模式（`--tier`）与 D1-D5 维度
+
+`--tier {light|medium|heavy}` 为**可选开关**。不传时输出与原来完全一致；传入时：
+
+- **缩放阈值**：`light` 报得更少（放宽上限），`heavy` 报得更多（收紧上限），`medium` 保持现有阈值；
+- **启用 D1 句长检查**：标记句长变异系数过低（机械均匀节奏）的章节，中英双语；
+- **为每条结论标注 AIGC 维度** D1-D5 并附一句 teaching note（检测器为何标记该模式）。
+
+```bash
+uv run python scripts/deai_check.py main.typ --analyze --tier heavy
+```
+
+五个维度面向可读性，**不针对任何具体检测平台**：D1 句长变化、D2 段落结构、D3 信息密度、D4 连接词频率、D5 术语-语境匹配。阈值（含 `sentence_length.cv_threshold`）仍可经 `references/AI_TONE_THRESHOLDS.yaml` 覆盖。

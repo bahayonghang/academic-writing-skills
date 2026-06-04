@@ -376,7 +376,297 @@ def _check_cross_section_closure(
     return out
 
 
-def analyze(file_path: Path, section: str | None = None, cross_section: bool = False) -> list[str]:
+# ── Motivation red-thread closure diagnostic (opt-in: --motivation-thread) ──
+#
+# Read-only diagnostic that maps each Introduction promise/claim to its
+# downstream echo. It is intentionally heuristic (keyword + token overlap) and
+# every finding is tagged [Script] with a manual-verification note, in the same
+# spirit as the cross-section (C3) check above. It never rewrites the source.
+
+_THREAD_STOPWORDS = {
+    "the",
+    "a",
+    "an",
+    "and",
+    "for",
+    "with",
+    "via",
+    "that",
+    "this",
+    "these",
+    "those",
+    "from",
+    "into",
+    "onto",
+    "our",
+    "ours",
+    "their",
+    "such",
+    "more",
+    "most",
+    "than",
+    "then",
+    "thus",
+    "also",
+    "which",
+    "while",
+    "where",
+    "when",
+    "paper",
+    "work",
+    "study",
+    "propose",
+    "proposed",
+    "present",
+    "presents",
+    "presented",
+    "introduce",
+    "introduces",
+    "method",
+    "methods",
+    "approach",
+    "approaches",
+    "model",
+    "models",
+    "framework",
+    "results",
+    "result",
+    "show",
+    "shows",
+    "shown",
+    "using",
+    "used",
+    "based",
+    "novel",
+    "new",
+    "main",
+    "contribution",
+    "contributions",
+    "achieve",
+    "achieves",
+    "improve",
+    "improves",
+    "improvement",
+    "demonstrate",
+    "demonstrates",
+}
+
+
+def _thread_tokens(text: str) -> set[str]:
+    """Content tokens for overlap matching: English words (>=4 chars, non-stop)
+    plus CJK character bigrams so the heuristic also works on mixed-language
+    manuscripts."""
+    lowered = text.lower()
+    tokens: set[str] = set()
+    for word in re.findall(r"[a-z][a-z'-]{3,}", lowered):
+        if word not in _THREAD_STOPWORDS:
+            tokens.add(word)
+    for run in re.findall(r"[一-鿿]{2,}", lowered):
+        for i in range(len(run) - 1):
+            tokens.add(run[i : i + 2])
+    return tokens
+
+
+def _thread_best_match(
+    promise_tokens: set[str], candidates: list[tuple[int, str]], min_overlap: int = 2
+) -> tuple[int, int] | None:
+    """Return (line_no, overlap) of the best-overlapping candidate line, or None."""
+    best_line = None
+    best_score = 0
+    for line_no, text in candidates:
+        overlap = len(promise_tokens & _thread_tokens(text))
+        if overlap > best_score:
+            best_score = overlap
+            best_line = line_no
+    if best_line is not None and best_score >= min_overlap:
+        return best_line, best_score
+    return None
+
+
+_THREAD_INTRO_KW = ("introduction", "绪论", "引言")
+_THREAD_RELATED_KW = ("related", "literature review", "文献综述", "相关工作")
+_THREAD_CLOSURE_KW = (
+    "discussion",
+    "analysis",
+    "conclusion",
+    "讨论",
+    "分析",
+    "结论",
+    "总结",
+    "展望",
+)
+_LATEX_HEADING_RE = re.compile(r"\\(?:chapter|(?:sub)*section|paragraph)\*?\s*\{([^}]*)\}")
+_TYPST_HEADING_RE = re.compile(r"^=+\s+(.*)$")
+
+
+def _thread_headings(lines: list[str], parser) -> list[tuple[int, str]]:
+    """Generic heading scan returning (line_no, lowercased title).
+
+    Unlike the parser's known-section table, this treats ANY heading as a
+    boundary, so common plural/compound titles ('Experiments', 'Experimental
+    Results', 'Results and Discussion') still delimit the evidence body. Used
+    only by the opt-in motivation-thread diagnostic; nothing else relies on it.
+    """
+    is_typst = parser.get_comment_prefix() == "//"
+    heads: list[tuple[int, str]] = []
+    for i, raw in enumerate(lines, 1):
+        stripped = raw.strip()
+        match = _TYPST_HEADING_RE.match(stripped) if is_typst else _LATEX_HEADING_RE.match(stripped)
+        if match:
+            heads.append((i, match.group(1).strip().lower()))
+    return heads
+
+
+def _check_motivation_thread(
+    lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    """Full-paper red-thread diagnostic: Promise Map + Closure Map.
+
+    Promise Map: each Introduction promise ("we propose X") -> a Results/
+    Experiment line that plausibly tests it.
+    Closure Map: each Introduction claim -> a Discussion/Conclusion line that
+    plausibly resolves it.
+    """
+    p = parser.get_comment_prefix()
+    out: list[str] = []
+    heads = _thread_headings(lines, parser)
+    intro_pos = next(
+        (idx for idx, (_, title) in enumerate(heads) if any(k in title for k in _THREAD_INTRO_KW)),
+        None,
+    )
+    if intro_pos is None and "introduction" not in sections:
+        return [
+            f"{p} MOTIVATION-THREAD [Script]: Introduction not found; red-thread diagnostic skipped."
+        ]
+
+    if intro_pos is not None:
+        intro_line = heads[intro_pos][0]
+        intro_end = heads[intro_pos + 1][0] - 1 if intro_pos + 1 < len(heads) else len(lines)
+    else:
+        intro_line, intro_end = sections["introduction"]
+
+    closure_line = next(
+        (
+            ln
+            for ln, title in heads
+            if ln > intro_end and any(k in title for k in _THREAD_CLOSURE_KW)
+        ),
+        None,
+    )
+    related_ranges: list[tuple[int, int]] = []
+    for j, (ln, title) in enumerate(heads):
+        if any(k in title for k in _THREAD_RELATED_KW):
+            end = heads[j + 1][0] - 1 if j + 1 < len(heads) else len(lines)
+            related_ranges.append((ln, end))
+
+    promises = [
+        (ln, txt)
+        for ln, txt in _section_visible_lines(lines, (intro_line, intro_end), parser)
+        if CONTRIBUTION_KEYWORDS_EN.search(txt)
+    ]
+    evidence_end = closure_line - 1 if closure_line else len(lines)
+    evidence_lines = [
+        (ln, txt)
+        for ln, txt in _section_visible_lines(lines, (intro_end + 1, evidence_end), parser)
+        if not any(lo <= ln <= hi for lo, hi in related_ranges)
+    ]
+    closure_lines = (
+        _section_visible_lines(lines, (closure_line, len(lines)), parser) if closure_line else []
+    )
+
+    out.append(
+        f"{p} MOTIVATION-THREAD [Script] (heuristic): full-paper red-thread closure diagnostic."
+    )
+    out.append(
+        f"{p} Note: keyword + token-overlap heuristic; verify manually, false positives possible."
+    )
+    out.append("")
+
+    # ── Promise Map ──
+    out.append(
+        f"{p} MOTIVATION-THREAD: Promise Map (Introduction promise -> Results/Experiment evidence)"
+    )
+    if not promises:
+        out.append(
+            f"{p} - No explicit 'we propose / contribution' promise detected in Introduction "
+            "[Severity: Moderate] [Priority: P2]."
+        )
+    else:
+        for idx, (ln, txt) in enumerate(promises[:10], 1):
+            if not evidence_lines:
+                out.append(
+                    f"{p} - P{idx} (Intro L{ln}) -> [NO EVIDENCE BODY FOUND] "
+                    "[Severity: Major] [Priority: P1]: no body text between Introduction and Conclusion"
+                )
+                continue
+            match = _thread_best_match(_thread_tokens(txt), evidence_lines)
+            if match:
+                out.append(
+                    f"{p} - P{idx} (Intro L{ln}) -> Evidence L{match[0]} "
+                    f"[matched, overlap={match[1]}]"
+                )
+            else:
+                out.append(
+                    f"{p} - P{idx} (Intro L{ln}) -> [NO EVIDENCE FOUND] "
+                    "[Severity: Major] [Priority: P1]: promise not tested in the body"
+                )
+                out.append(f"{p}   Promise: {txt[:100]}")
+    out.append("")
+
+    # ── Closure Map ──
+    out.append(
+        f"{p} MOTIVATION-THREAD: Closure Map (Introduction claim -> Discussion/Conclusion closure)"
+    )
+    if not promises:
+        out.append(f"{p} - No explicit claim to close.")
+    elif not closure_lines:
+        out.append(
+            f"{p} - [NO DISCUSSION/CONCLUSION SECTION] [Severity: Major] [Priority: P1]: "
+            "claims cannot be closed."
+        )
+    else:
+        for idx, (ln, txt) in enumerate(promises[:10], 1):
+            match = _thread_best_match(_thread_tokens(txt), closure_lines)
+            if match:
+                out.append(
+                    f"{p} - C{idx} (Intro L{ln}) -> Closure L{match[0]} [closed, overlap={match[1]}]"
+                )
+            else:
+                out.append(
+                    f"{p} - C{idx} (Intro L{ln}) -> [UNCLOSED] [Severity: Major] [Priority: P1]: "
+                    "claim not resolved in Discussion/Conclusion"
+                )
+    out.append("")
+
+    # ── Evidence-without-promise (lightweight, capped) ──
+    if promises and evidence_lines:
+        promise_union: set[str] = set()
+        for _, txt in promises:
+            promise_union |= _thread_tokens(txt)
+        orphans = [
+            (ln, txt)
+            for ln, txt in evidence_lines
+            if TRIAD_RESULT_RE.search(txt)
+            and re.search(r"\d", txt)
+            and not (_thread_tokens(txt) & promise_union)
+        ]
+        if orphans:
+            out.append(
+                f"{p} MOTIVATION-THREAD: Evidence-without-promise "
+                "(results not traceable to an Introduction promise)"
+            )
+            for ln, txt in orphans[:5]:
+                out.append(f"{p} - Evidence L{ln} [Severity: Moderate] [Priority: P2]: {txt[:90]}")
+            out.append("")
+    return out
+
+
+def analyze(
+    file_path: Path,
+    section: str | None = None,
+    cross_section: bool = False,
+    motivation_thread: bool = False,
+) -> list[str]:
     parser = get_parser(file_path)
     content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
@@ -451,6 +741,8 @@ def analyze(file_path: Path, section: str | None = None, cross_section: bool = F
             out.extend(_check_cross_section_closure(lines, sections, parser))
         if not section:
             out.extend(_check_tri_section_alignment(content, lines, sections, parser))
+        if motivation_thread and not section:
+            out.extend(_check_motivation_thread(lines, sections, parser))
 
     if not out:
         out.append("% LOGIC/METHODOLOGY: No rule-based coherence issues detected.")
@@ -468,13 +760,18 @@ def main() -> int:
         action="store_true",
         help="Enable cross-section logic chain closure check",
     )
+    cli.add_argument(
+        "--motivation-thread",
+        action="store_true",
+        help="Run full-paper motivation red-thread diagnostic (promise map + closure map)",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
         print(f"[ERROR] File not found: {args.file}", file=sys.stderr)
         return 1
 
-    print("\n".join(analyze(args.file, args.section, args.cross_section)))
+    print("\n".join(analyze(args.file, args.section, args.cross_section, args.motivation_thread)))
     return 0
 
 

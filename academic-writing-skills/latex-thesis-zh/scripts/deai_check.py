@@ -82,6 +82,11 @@ DEFAULT_THRESHOLDS = {
         "max_em_dashes_per_doc": 5,
         "ban_exclamation_in_body": True,
     },
+    # D1（句长单调）：句长变异系数过低 = 机械均匀。仅在传入 --tier 时启用。
+    "sentence_length": {
+        "min_sentences": 5,
+        "cv_threshold": 0.30,
+    },
 }
 
 
@@ -110,6 +115,65 @@ def _load_thresholds(script_dir: Path) -> dict:
         else:
             merged[k] = v
     return merged
+
+
+# --- 分级缩放 + AIGC 检测维度标签（仅在传入 --tier 时使用）---
+#
+# 维度沿用 5 个通用 AIGC 风格轴（面向可读性，不针对任何具体检测平台）：
+#   D1 句长变化 / D2 段落结构 / D3 信息密度 / D4 连接词频率 / D5 术语-语境匹配。
+
+DIMENSION_MAP = {
+    "sentence_length": "D1",
+    "burstiness": "D2",
+    "throat_clearing": "D2",
+    "parallel_structure": "D2",
+    "punctuation": "D2",
+    "low_information_density": "D3",
+    "term_threshold": "D4",
+    "filler_connector": "D4",
+    "empty_phrase": "D5",
+    "vague_quantifier": "D5",
+    "template_expr": "D5",
+    "over_confident": "D5",
+}
+
+TEACHING_NOTES = {
+    "D1": "句长高度一致会显得机械；长短句交替更自然。",
+    "D2": "段首雷同、套话开头、破折号堆叠都是模板化的信号。",
+    "D3": "大段空泛少证据显得注水；补入具体方法、数字、对比。",
+    "D4": "连接词（因此/此外/首先……）过密是典型的 AI 腔。",
+    "D5": "脱离具体内容的笼统褒义词是最常见的 AI 指纹。",
+}
+
+_TIER_FACTORS = {
+    # 词频上限倍率, cv 阈值倍率, 破折号上限倍率
+    "light": (1.5, 0.7, 1.6),
+    "medium": (1.0, 1.0, 1.0),
+    "heavy": (0.6, 1.4, 0.6),
+}
+
+
+def _apply_tier(thresholds: dict, tier: str) -> dict:
+    """按强度缩放阈值。``medium`` 为空操作（保持现状）；``light`` 报得更少，
+    ``heavy`` 报得更多。"""
+    if tier == "medium" or tier not in _TIER_FACTORS:
+        return thresholds
+    term_factor, cv_factor, em_factor = _TIER_FACTORS[tier]
+    scaled = {
+        k: (dict(v) if isinstance(v, dict) else list(v) if isinstance(v, list) else v)
+        for k, v in thresholds.items()
+    }
+    for word, cap in scaled.get("term_thresholds", {}).items():
+        scaled["term_thresholds"][word] = max(1, int(round(cap * term_factor)))
+    sentence_cfg = scaled.get("sentence_length", {})
+    if "cv_threshold" in sentence_cfg:
+        sentence_cfg["cv_threshold"] = round(sentence_cfg["cv_threshold"] * cv_factor, 3)
+    punctuation_cfg = scaled.get("punctuation", {})
+    if "max_em_dashes_per_doc" in punctuation_cfg:
+        punctuation_cfg["max_em_dashes_per_doc"] = max(
+            1, int(round(punctuation_cfg["max_em_dashes_per_doc"] * em_factor))
+        )
+    return scaled
 
 
 class ChineseAITraceChecker:
@@ -174,14 +238,17 @@ class ChineseAITraceChecker:
     }
     EVIDENCE_MARKERS = re.compile(r"(\\cite\{|@\w+|\d+(?:\.\d+)?%?)")
 
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
         self.content = file_path.read_text(encoding="utf-8", errors="ignore")
         self.lines = self.content.split("\n")
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
+        self.tier = tier
         self.thresholds = _load_thresholds(Path(__file__).parent)
+        if tier:
+            self.thresholds = _apply_tier(self.thresholds, tier)
         self._throat_clearing_re = [
             re.compile(p) for p in self.thresholds["throat_clearing"]["patterns"]
         ]
@@ -279,6 +346,8 @@ class ChineseAITraceChecker:
         results["traces"].extend(self._check_low_information_density(section_name))
         results["traces"].extend(self._check_burstiness(section_name))
         results["traces"].extend(self._check_throat_clearing(section_name))
+        if self.tier:
+            results["traces"].extend(self._check_sentence_length_variance(section_name))
         results["trace_count"] = len(results["traces"])
 
         return results
@@ -388,6 +457,49 @@ class ChineseAITraceChecker:
                 "category": "low_information_density",
                 "section": section_name,
                 "suggestion_type": "increase_information_density",
+            }
+        ]
+
+    # --- Checker: D1 句长单调（需 --tier，按中文标点断句） ------------------
+
+    def _check_sentence_length_variance(self, section_name: str) -> list[dict]:
+        """标记句长过于一致的章节。
+
+        自然写作的句长是起伏的（长短交替）；AI 文本往往句长均匀。这里计算句长
+        （以中文字符 + 英文词为单位）的变异系数（标准差/均值），低于阈值即标记。
+        受 --tier 控制，默认输出不变。
+        """
+        cfg = self.thresholds.get("sentence_length", {})
+        min_sentences = int(cfg.get("min_sentences", 5))
+        cv_threshold = float(cfg.get("cv_threshold", 0.30))
+
+        paragraphs = self._iter_section_paragraphs(section_name)
+        if not paragraphs:
+            return []
+        text = " ".join(visible for para in paragraphs for _, visible in para)
+        sentences = [s for s in re.split(r"[。！？.!?]+", text) if s.strip()]
+        lengths = [len(re.findall(r"[A-Za-z]+|[一-鿿]", s)) for s in sentences]
+        lengths = [length for length in lengths if length > 0]
+        if len(lengths) < min_sentences:
+            return []
+
+        mean = sum(lengths) / len(lengths)
+        if mean <= 0:
+            return []
+        variance = sum((value - mean) ** 2 for value in lengths) / len(lengths)
+        cv = (variance**0.5) / mean
+        if cv >= cv_threshold:
+            return []
+
+        return [
+            {
+                "line": paragraphs[0][0][0],
+                "text": f"句长变异系数 CV={cv:.2f}，共 {len(lengths)} 句（阈值 {cv_threshold}）",
+                "original": "",
+                "pattern": "sentence_length_uniformity",
+                "category": "sentence_length",
+                "section": section_name,
+                "suggestion_type": "vary_sentence_length",
             }
         ]
 
@@ -624,6 +736,12 @@ class ChineseAITraceChecker:
                     "instruction": self._get_instruction(trace["suggestion_type"]),
                 }
             )
+        if self.tier:
+            for item in suggestions:
+                dim = DIMENSION_MAP.get(item["category"])
+                if dim:
+                    item["dimension"] = dim
+                    item["teaching_note"] = TEACHING_NOTES.get(dim, "")
         return suggestions
 
     def _get_instruction(self, key: str) -> str:
@@ -659,8 +777,16 @@ class ChineseAITraceChecker:
             "parallel_opening": "连续段落首字雷同，至少改写一段为不同句法.",
             "throat_clearing": "删除段首套话，直接陈述论点.",
             "punctuation_pattern": "减少破折号堆叠，正文勿用感叹号.",
+            "vary_sentence_length": "长短句交替，打破机械均匀的句长节奏.",
         }
         return instructions.get(key, "请改写得更具体、客观。")
+
+    def _dim_tag(self, category: str) -> str:
+        """仅在 --tier 激活时返回 ` [D#]` 维度标签。"""
+        if not self.tier:
+            return ""
+        dim = DIMENSION_MAP.get(category)
+        return f" [{dim}]" if dim else ""
 
     def generate_report(self, analysis: dict) -> str:
         report = []
@@ -669,6 +795,8 @@ class ChineseAITraceChecker:
         report.append("=" * 70)
         report.append(f"文件: {self.file_path}")
         report.append(f"总行数: {analysis['total_lines']}")
+        if self.tier:
+            report.append(f"强度: {self.tier}（已启用 D1-D5 维度标签）")
         report.append("")
 
         section_scores = []
@@ -693,7 +821,10 @@ class ChineseAITraceChecker:
             if result["traces"]:
                 report.append(f"\n{section_name.upper()}:")
                 for trace in result["traces"][:10]:
-                    report.append(f"  第{trace['line']}行 [{trace['category']}]")
+                    report.append(
+                        f"  第{trace['line']}行 [{trace['category']}]"
+                        f"{self._dim_tag(trace['category'])}"
+                    )
                     report.append(f"    {trace['text'][:80]}")
                     report.append(f"    -> 建议: {self._get_instruction(trace['suggestion_type'])}")
 
@@ -705,7 +836,8 @@ class ChineseAITraceChecker:
             report.append("-" * 70)
             for trace in doc_traces:
                 report.append(
-                    f"  第{trace['line']}行 [{trace['category']}] "
+                    f"  第{trace['line']}行 [{trace['category']}]"
+                    f"{self._dim_tag(trace['category'])} "
                     f"({trace.get('section', 'document')})"
                 )
                 report.append(f"    {trace['text'][:80]}")
@@ -722,6 +854,13 @@ def main():
     parser.add_argument("--score", action="store_true", help="仅输出章节得分")
     parser.add_argument("--fix-suggestions", action="store_true", help="生成 JSON 修复建议")
     parser.add_argument("--output", type=Path, help="保存结果到文件")
+    parser.add_argument(
+        "--tier",
+        choices=["light", "medium", "heavy"],
+        default=None,
+        help="可选分级模式：缩放阈值，增加 D1 句长检查与 D1-D5 维度标签。"
+        "不传则保持默认（不变）行为。",
+    )
 
     args = parser.parse_args()
 
@@ -729,7 +868,7 @@ def main():
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
         sys.exit(1)
 
-    checker = ChineseAITraceChecker(args.file)
+    checker = ChineseAITraceChecker(args.file, tier=args.tier)
 
     if args.fix_suggestions:
         analysis = checker.analyze_document()

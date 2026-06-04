@@ -516,3 +516,19 @@ MAE。相比最佳基线（Transformer），本文方法平均将 MAE
 - [FORBIDDEN_TERMS.md](FORBIDDEN_TERMS.md)：受保护术语列表
 - [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md)：学位论文结构要求
 - [GB_STANDARD.md](GB_STANDARD.md)：GB/T 7714 格式规范
+
+---
+
+## 分级模式（`--tier`）与 D1-D5 维度
+
+`--tier {light|medium|heavy}` 为**可选开关**。不传时输出与原来完全一致；传入时：
+
+- **缩放阈值**：`light` 报得更少（放宽上限），`heavy` 报得更多（收紧上限），`medium` 保持现有阈值；
+- **启用 D1 句长检查**：按中文标点断句，标记句长变异系数过低（机械均匀）的章节；
+- **为每条结论标注 AIGC 维度** D1-D5 并附一句 teaching note（检测器为何标记该模式）。
+
+```powershell
+uv run python scripts/deai_check.py main.tex --analyze --tier heavy
+```
+
+五个维度面向可读性，**不针对知网/维普等任何具体检测平台**：D1 句长变化、D2 段落结构、D3 信息密度、D4 连接词频率、D5 术语-语境匹配。阈值（含 `sentence_length.cv_threshold`）仍可经 `references/AI_TONE_THRESHOLDS.yaml` 覆盖。

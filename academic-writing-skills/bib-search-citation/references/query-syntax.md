@@ -75,6 +75,8 @@ Use the JSON form when the workflow already has a structured spec or when many f
 - `fields:key,title,year,doi` -> restrict returned fields
 - `cite:latex` / `cite:typst` / `cite:both`
 - `raw:true` -> include raw BibTeX
+- `recent:3` -> set the recency window (years) for the additive `meta.recency` report; also available as the `--recent-window` flag
+- `claim:"low-latency forecasting"` -> attach a per-result `claim_support` block (lexical overlap only); also available as the `--claim` flag (preferred for claims with spaces)
 
 ### Notes
 
@@ -85,6 +87,31 @@ Use the JSON form when the workflow already has a structured spec or when many f
 - Negated generic field filters are written like `-annotation:survey`.
 - RTK can help discover `.bib` files and inspect field coverage, but it should not replace the raw JSON output of `scripts/search_bib.py`.
 - If you want a compact human-readable summary after the search, pipe the JSON into `scripts/preview_bib_search.py` instead of changing the query syntax.
+
+## Recency report and claim binding (additive)
+
+Both features are additive and never filter or reorder results.
+
+- **Recency** is always reported under `meta.recency`: `window_years`, `recent_threshold`
+  (computed from the current calendar year, so it stays correct over time),
+  `with_year`, `recent_count`, `recent_share`, and a `note` that warns when fewer than
+  80% of returned results fall inside the window. Tune the window with `recent:N` or
+  `--recent-window N` (default 3).
+- **Claim binding** runs only when a claim is supplied via `--claim "..."` (preferred) or
+  `claim:"..."`. Each result then gains a `claim_support` block with `relevance`,
+  `matched_fields`, `shared_terms`, and a `provenance` note. This is lexical overlap, **not**
+  proof of support — keep it as a verification hand-off, never as evidence the paper backs
+  the claim.
+
+JSON spec form:
+
+```json
+{
+  "query": "low-latency time-series forecasting",
+  "recent_window": 3,
+  "claim": "our sparse attention reduces inference latency"
+}
+```
 
 ## Natural-language mapping examples
 

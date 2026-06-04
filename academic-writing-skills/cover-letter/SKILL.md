@@ -3,8 +3,19 @@ name: cover-letter
 description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence and target venue framing. Do not use for editing main.tex, full manuscript audit, or bibliography search.
 metadata:
   category: academic-writing
-  tags: [cover-letter, submission, latex, manuscript, journal, conference, claim-evidence, align-check, journal-fit]
-  version: "5.1.0"
+  tags:
+    [
+      cover-letter,
+      submission,
+      latex,
+      manuscript,
+      journal,
+      conference,
+      claim-evidence,
+      align-check,
+      journal-fit,
+    ]
+  version: "5.2.0"
   last_updated: "2026-05-26"
 argument-hint: "--mode generate|optimize|align-check|journal-fit|presubmission --manuscript main.tex --letter cover_letter.md --journal nature|science|cell|ieee-trans|acm|springer-lncs|neurips|icml|cvpr|generic [--json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
@@ -45,13 +56,13 @@ Prefer this skill over generic prose-writing tools whenever the request mentions
 
 ## Module Router
 
-| Module | Use when | Primary command | Read next |
-| --- | --- | --- | --- |
-| `generate` | User wants a cover letter drafted from an existing manuscript | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode generate --manuscript main.tex --journal nature --json` | `references/LETTER_STRUCTURE.md`, `references/JOURNAL_TIERS.md`, `templates/<venue>.md` |
-| `optimize` | User has a cover letter draft and wants it polished | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode optimize --letter cover_letter.md --manuscript main.tex --journal nature --json` | `references/PRESUBMISSION_RULES.md`, `references/FORBIDDEN_PHRASES.md` |
-| `align-check` | User wants to verify cover-letter claims against the manuscript | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode align-check --letter cover_letter.md --manuscript main.tex --json` | `references/CLAIM_EVIDENCE_CONTRACT.md`, `references/ISSUE_SCHEMA.md` |
-| `journal-fit` | User wants to know if the letter is framed for the target venue | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode journal-fit --letter cover_letter.md --journal nature --json` | `references/JOURNAL_TIERS.md`, `templates/<venue>.md` |
-| `presubmission` | User wants declaration, length, cliché, and tone checks only | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode presubmission --letter cover_letter.md --journal nature --json` | `references/PRESUBMISSION_RULES.md`, `templates/<venue>.md` |
+| Module          | Use when                                                        | Primary command                                                                                                                              | Read next                                                                               |
+| --------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `generate`      | User wants a cover letter drafted from an existing manuscript   | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode generate --manuscript main.tex --journal nature --json`                          | `references/LETTER_STRUCTURE.md`, `references/JOURNAL_TIERS.md`, `templates/<venue>.md` |
+| `optimize`      | User has a cover letter draft and wants it polished             | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode optimize --letter cover_letter.md --manuscript main.tex --journal nature --json` | `references/PRESUBMISSION_RULES.md`, `references/FORBIDDEN_PHRASES.md`                  |
+| `align-check`   | User wants to verify cover-letter claims against the manuscript | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode align-check --letter cover_letter.md --manuscript main.tex --json`               | `references/CLAIM_EVIDENCE_CONTRACT.md`, `references/ISSUE_SCHEMA.md`                   |
+| `journal-fit`   | User wants to know if the letter is framed for the target venue | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode journal-fit --letter cover_letter.md --journal nature --json`                    | `references/JOURNAL_TIERS.md`, `templates/<venue>.md`                                   |
+| `presubmission` | User wants declaration, length, cliché, and tone checks only    | `uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode presubmission --letter cover_letter.md --journal nature --json`                  | `references/PRESUBMISSION_RULES.md`, `templates/<venue>.md`                             |
 
 ## Required Inputs
 

@@ -129,8 +129,10 @@ SKILLS = {
     },
 }
 COMMAND_RE = re.compile(r"(^|[\s`(])python\s+\S")
+# Whitespace-tolerant so the row still parses whether the markdown table is
+# compact (`| `mod` | ... |`) or column-aligned by a formatter (`| `mod`   | ... |`).
 ROUTER_ROW_RE = re.compile(
-    r"^\| `(?P<module>[^`]+)` \| .*? \| `(?P<command>[^`]+)` \|", re.MULTILINE
+    r"^\|\s*`(?P<module>[^`]+)`\s*\|.*?\|\s*`(?P<command>[^`]+)`\s*\|", re.MULTILINE
 )
 
 

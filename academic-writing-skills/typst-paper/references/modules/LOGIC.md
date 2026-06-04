@@ -109,3 +109,21 @@ Introduction contribution claims must be answered in the Conclusion. The script 
 
 Activate with `--cross-section` flag or full-document analysis (no `--section`).
 
+---
+
+## Motivation Red-Thread Closure (opt-in: `--motivation-thread`)
+
+A strong paper is one problem→solution arc: every Introduction promise should be *tested* in Results/Experiments and *resolved* in Discussion/Conclusion. This opt-in diagnostic is additive — without the flag the normal logic output is unchanged.
+
+```bash
+uv run python scripts/analyze_logic.py main.typ --motivation-thread
+```
+
+Produces (read-only, all `[Script]`, comment prefix `//`):
+
+- **Promise Map** — each Introduction promise → best-overlapping Results/Experiment line; `[NO EVIDENCE FOUND]` = promise never tested.
+- **Closure Map** — each Introduction claim → best-overlapping Discussion/Conclusion line; `[UNCLOSED]` = claim never resolved.
+- **Evidence-without-promise** — numeric Results lines that trace to no Introduction promise.
+
+Mechanism: keyword + content-token overlap (English words ≥4 chars plus CJK bigrams), so it works on English and Chinese Typst papers alike. It is a heuristic navigation aid, not a verdict — the report says so and asks for manual verification.
+

@@ -323,6 +323,61 @@ def test_typst_analyze_logic_flags_tri_section_misalignment(tmp_path: Path) -> N
     assert "misaligned" in joined
 
 
+# ── analyze_logic.py (A1: Motivation Red-Thread Closure for Typst) ──
+
+
+def test_typst_analyze_logic_motivation_thread_flags_untested_promise(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+本文提出 FastFormer，一种稀疏注意力机制以降低推理延迟。
+= 实验
+训练数据集包含五万个气象样本，覆盖三年观测。
+= 结论
+该气象数据集将支撑未来研究。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ, motivation_thread=True)
+    joined = "\n".join(findings)
+    assert "MOTIVATION-THREAD: Promise Map" in joined
+    assert "[NO EVIDENCE FOUND]" in joined
+
+
+def test_typst_analyze_logic_motivation_thread_matches_closed_loop(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+本文提出 FastFormer，一种稀疏注意力机制以降低推理延迟。
+= 实验
+FastFormer 通过稀疏注意力将推理延迟降低了 42%。
+= 结论
+本文证明了 FastFormer 借助稀疏注意力显著降低推理延迟。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ, motivation_thread=True)
+    joined = "\n".join(findings)
+    assert "[matched" in joined
+    assert "[closed" in joined
+    assert "[NO EVIDENCE FOUND]" not in joined
+    assert "[UNCLOSED]" not in joined
+
+
+def test_typst_analyze_logic_motivation_thread_off_by_default(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+本文提出 FastFormer 以降低推理延迟。
+= 结论
+本文证明了方法有效。
+""",
+        encoding="utf-8",
+    )
+    findings = analyze_logic_typst.analyze(typ)
+    assert "MOTIVATION-THREAD" not in "\n".join(findings)
+
+
 def test_typst_analyze_experiment_flags_unlayered_discussion(tmp_path: Path) -> None:
     typ = tmp_path / "main.typ"
     typ.write_text(
@@ -421,3 +476,38 @@ def test_deai_typst_bilingual_chinese_term(tmp_path: Path) -> None:
     analysis = checker.analyze_document()
     hits = [t for t in analysis["document_traces"] if "核心" in t["pattern"]]
     assert hits, "expected substring-based Chinese term to be counted"
+
+
+# ── deai_check.py (A2: --tier grading + D1 sentence-length, Typst) ────────────
+
+_UNIFORM_TYP = (
+    "= 方法\n"
+    "模型在数据上训练。模型在数据上测试。模型在数据上调优。"
+    "模型在数据上评分。模型在磁盘上保存。模型再次被加载。\n"
+)
+
+
+def test_typst_deai_tier_flags_uniform_sentence_length(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(_UNIFORM_TYP, encoding="utf-8")
+    checker = deai_typst.AITraceChecker(typ, tier="heavy")
+    result = checker.check_section("method")
+    assert any(t["category"] == "sentence_length" for t in result["traces"])
+
+
+def test_typst_deai_default_omits_tier_only_checks(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(_UNIFORM_TYP, encoding="utf-8")
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("method")
+    assert not any(t["category"] == "sentence_length" for t in result["traces"])
+    suggestions = checker.generate_suggestions_json(checker.analyze_document())
+    assert all("dimension" not in s for s in suggestions)
+
+
+def test_typst_deai_tier_adds_dimension_labels(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text("= 方法\n\n本节显著提升了性能，新颖方法被广泛使用。\n", encoding="utf-8")
+    checker = deai_typst.AITraceChecker(typ, tier="medium")
+    suggestions = checker.generate_suggestions_json(checker.analyze_document())
+    assert any(s.get("dimension") for s in suggestions)

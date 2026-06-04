@@ -572,6 +572,44 @@ class TestAnalyzeLogicZh:
         joined = "\n".join(findings)
         assert "摘要、创新点/贡献来源、结论之间可能存在错位" in joined
 
+    def test_motivation_thread_flags_untested_promise(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本文提出 FastFormer，一种稀疏注意力机制以降低推理延迟。\n"
+            "\\chapter{实验}\n训练数据集包含五万个气象样本，覆盖三年观测。\n"
+            "\\chapter{结论}\n该气象数据集将支撑未来研究。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex, motivation_thread=True)
+        joined = "\n".join(findings)
+        assert "动机主线：承诺映射" in joined
+        assert "[未找到证据]" in joined
+
+    def test_motivation_thread_matches_closed_loop(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本文提出 FastFormer，一种稀疏注意力机制以降低推理延迟。\n"
+            "\\chapter{实验}\nFastFormer 通过稀疏注意力将推理延迟降低了 42\\%。\n"
+            "\\chapter{结论}\n本文证明了 FastFormer 借助稀疏注意力显著降低推理延迟。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex, motivation_thread=True)
+        joined = "\n".join(findings)
+        assert "[已匹配" in joined
+        assert "[已闭合" in joined
+        assert "[未找到证据]" not in joined
+        assert "[未闭合]" not in joined
+
+    def test_motivation_thread_off_by_default(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本文提出 FastFormer 以降低推理延迟。\n"
+            "\\chapter{结论}\n本文证明了方法有效。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        assert "动机主线" not in "\n".join(findings)
+
 
 # ── deai_check.py (WP6: AI Filler Connectors + Parallel) ──────
 
@@ -622,6 +660,40 @@ class TestDeaiCheckEnhanced:
         result = checker.check_section("introduction")
         categories = {trace["category"] for trace in result["traces"]}
         assert "low_information_density" in categories
+
+    _UNIFORM = (
+        "\\chapter{绪论}\n"
+        "模型在数据上训练。模型在数据上测试。模型在数据上调优。"
+        "模型在数据上评分。模型在磁盘上保存。模型再次被加载。\n"
+    )
+
+    def test_tier_flags_uniform_sentence_length(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(self._UNIFORM, encoding="utf-8")
+        checker = deai_check.ChineseAITraceChecker(tex, tier="heavy")
+        result = checker.check_section("introduction")
+        assert any(t["category"] == "sentence_length" for t in result["traces"])
+
+    def test_tier_default_omits_tier_only_checks(self, tmp_path: Path):
+        """回归保护：不传 --tier 时不应出现 D1 与维度标签。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(self._UNIFORM, encoding="utf-8")
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("introduction")
+        assert not any(t["category"] == "sentence_length" for t in result["traces"])
+        suggestions = checker.generate_suggestions_json(checker.analyze_document())
+        assert all("dimension" not in s for s in suggestions)
+
+    def test_tier_adds_dimension_labels(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n近年来，该问题引起了广泛关注。\n"
+            "本文具有重要意义。\n本文开展了全面研究。\n本文取得了显著提升。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex, tier="medium")
+        suggestions = checker.generate_suggestions_json(checker.analyze_document())
+        assert any(s.get("dimension") for s in suggestions)
 
 
 def test_analyze_experiment_flags_unlayered_discussion_zh(tmp_path: Path):

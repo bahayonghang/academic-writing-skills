@@ -86,6 +86,12 @@ DEFAULT_THRESHOLDS = {
         "max_em_dashes_per_doc": 5,
         "ban_exclamation_in_body": True,
     },
+    # D1 (sentence-length uniformity): low coefficient of variation across
+    # sentence lengths reads as machine-even. Only consulted when --tier is set.
+    "sentence_length": {
+        "min_sentences": 5,
+        "cv_threshold": 0.30,
+    },
 }
 
 
@@ -114,6 +120,67 @@ def _load_thresholds(script_dir: Path) -> dict:
         else:
             merged[k] = v
     return merged
+
+
+# --- Tier scaling + AIGC detection-dimension labels (only used when --tier set) ---
+#
+# Dimensions follow the five generic AIGC stylistic axes (readability-oriented,
+# NOT tuned to evade any specific detector):
+#   D1 sentence-length variety / D2 paragraph structure /
+#   D3 information density / D4 connector frequency / D5 term-context matching.
+
+DIMENSION_MAP = {
+    "sentence_length": "D1",
+    "burstiness": "D2",
+    "throat_clearing": "D2",
+    "parallel_structure": "D2",
+    "punctuation": "D2",
+    "low_information_density": "D3",
+    "term_threshold": "D4",
+    "filler_connector": "D4",
+    "empty_phrase": "D5",
+    "vague_quantifier": "D5",
+    "template_expr": "D5",
+    "over_confident": "D5",
+}
+
+TEACHING_NOTES = {
+    "D1": "Uniform sentence lengths read as machine-even; vary short and long sentences.",
+    "D2": "Repeated paragraph openings / boilerplate leads / heavy em-dashes signal templated prose.",
+    "D3": "Long passages with little evidence look padded; add concrete methods, numbers, comparisons.",
+    "D4": "Over-frequent connectors (furthermore / 因此 / ...) are a strong AI-tone tell.",
+    "D5": "Generic praise words detached from specifics are the most common AI fingerprint.",
+}
+
+_TIER_FACTORS = {
+    # term cap multiplier, cv-threshold multiplier, em-dash cap multiplier
+    "light": (1.5, 0.7, 1.6),
+    "medium": (1.0, 1.0, 1.0),
+    "heavy": (0.6, 1.4, 0.6),
+}
+
+
+def _apply_tier(thresholds: dict, tier: str) -> dict:
+    """Scale thresholds by aggressiveness. ``medium`` is a no-op (current
+    behavior); ``light`` flags fewer items, ``heavy`` flags more."""
+    if tier == "medium" or tier not in _TIER_FACTORS:
+        return thresholds
+    term_factor, cv_factor, em_factor = _TIER_FACTORS[tier]
+    scaled = {
+        k: (dict(v) if isinstance(v, dict) else list(v) if isinstance(v, list) else v)
+        for k, v in thresholds.items()
+    }
+    for word, cap in scaled.get("term_thresholds", {}).items():
+        scaled["term_thresholds"][word] = max(1, int(round(cap * term_factor)))
+    sentence_cfg = scaled.get("sentence_length", {})
+    if "cv_threshold" in sentence_cfg:
+        sentence_cfg["cv_threshold"] = round(sentence_cfg["cv_threshold"] * cv_factor, 3)
+    punctuation_cfg = scaled.get("punctuation", {})
+    if "max_em_dashes_per_doc" in punctuation_cfg:
+        punctuation_cfg["max_em_dashes_per_doc"] = max(
+            1, int(round(punctuation_cfg["max_em_dashes_per_doc"] * em_factor))
+        )
+    return scaled
 
 
 class AITraceChecker:
@@ -188,14 +255,17 @@ class AITraceChecker:
     }
     EVIDENCE_MARKERS = re.compile(r"(#cite\(|@\w+|\b\d+(?:\.\d+)?%?\b|\\cite\{)")
 
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
         self.content = file_path.read_text(encoding="utf-8", errors="ignore")
         self.lines = self.content.split("\n")
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
+        self.tier = tier
         self.thresholds = _load_thresholds(Path(__file__).parent)
+        if tier:
+            self.thresholds = _apply_tier(self.thresholds, tier)
         self._throat_clearing_re = [
             re.compile(p, re.IGNORECASE) for p in self.thresholds["throat_clearing"]["patterns"]
         ]
@@ -304,6 +374,8 @@ class AITraceChecker:
         results["traces"].extend(self._check_low_information_density(section_name))
         results["traces"].extend(self._check_burstiness(section_name))
         results["traces"].extend(self._check_throat_clearing(section_name))
+        if self.tier:
+            results["traces"].extend(self._check_sentence_length_variance(section_name))
         results["trace_count"] = len(results["traces"])
         return results
 
@@ -392,6 +464,54 @@ class AITraceChecker:
                 "category": "low_information_density",
                 "section": section_name,
                 "suggestion_type": "increase_information_density",
+            }
+        ]
+
+    # --- Checker: D1 sentence-length uniformity (tier-gated, bilingual) -----
+
+    def _check_sentence_length_variance(self, section_name: str) -> list[dict]:
+        """Flag sections whose sentence lengths are suspiciously uniform.
+
+        Human prose is bursty (a mix of short and long sentences); AI prose
+        tends toward an even cadence. Length is counted in language-neutral
+        units (each English word and each CJK character counts as one), so the
+        check works on English and Chinese Typst papers. Tier-gated, so the
+        default output is unchanged.
+        """
+        cfg = self.thresholds.get("sentence_length", {})
+        min_sentences = int(cfg.get("min_sentences", 5))
+        cv_threshold = float(cfg.get("cv_threshold", 0.30))
+
+        paragraphs = self._iter_section_paragraphs(section_name)
+        if not paragraphs:
+            return []
+        text = " ".join(visible for para in paragraphs for _, visible in para)
+        sentences = [s for s in re.split(r"[.!?。！？]+", text) if s.strip()]
+        lengths = [len(re.findall(r"[A-Za-z]+|[一-鿿]", s)) for s in sentences]
+        lengths = [length for length in lengths if length > 0]
+        if len(lengths) < min_sentences:
+            return []
+
+        mean = sum(lengths) / len(lengths)
+        if mean <= 0:
+            return []
+        variance = sum((value - mean) ** 2 for value in lengths) / len(lengths)
+        cv = (variance**0.5) / mean
+        if cv >= cv_threshold:
+            return []
+
+        return [
+            {
+                "line": paragraphs[0][0][0],
+                "text": (
+                    f"sentence-length CV={cv:.2f} over {len(lengths)} sentences "
+                    f"(threshold {cv_threshold})"
+                ),
+                "original": "",
+                "pattern": "sentence_length_uniformity",
+                "category": "sentence_length",
+                "section": section_name,
+                "suggestion_type": "vary_sentence_length",
             }
         ]
 
@@ -649,6 +769,12 @@ class AITraceChecker:
                     "instruction": self._get_instruction(trace["suggestion_type"]),
                 }
             )
+        if self.tier:
+            for item in suggestions:
+                dim = DIMENSION_MAP.get(item["category"])
+                if dim:
+                    item["dimension"] = dim
+                    item["teaching_note"] = TEACHING_NOTES.get(dim, "")
         return suggestions
 
     def _get_instruction(self, key: str) -> str:
@@ -682,8 +808,18 @@ class AITraceChecker:
             "parallel_opening": "Vary the opening syntax across consecutive paragraphs.",
             "throat_clearing": "Cut the leading boilerplate; start with the claim.",
             "punctuation_pattern": "Avoid em-dash overuse and exclamation marks in body sections.",
+            "vary_sentence_length": (
+                "Mix short and long sentences to break the even, machine-like cadence."
+            ),
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
+
+    def _dim_tag(self, category: str) -> str:
+        """Return a ` [D#]` dimension tag for reports, only when --tier is active."""
+        if not self.tier:
+            return ""
+        dim = DIMENSION_MAP.get(category)
+        return f" [{dim}]" if dim else ""
 
     def generate_report(self, analysis: dict) -> str:
         """Generate human-readable analysis report."""
@@ -693,6 +829,8 @@ class AITraceChecker:
         report.append("=" * 70)
         report.append(f"File: {self.file_path}")
         report.append(f"Total lines: {analysis['total_lines']}")
+        if self.tier:
+            report.append(f"Tier: {self.tier} (dimension labels D1-D5 enabled)")
         report.append("")
 
         section_scores = []
@@ -717,7 +855,10 @@ class AITraceChecker:
             if result["traces"]:
                 report.append(f"\n{section_name.upper()}:")
                 for trace in result["traces"][:10]:
-                    report.append(f"  Line {trace['line']} [{trace['category']}]")
+                    report.append(
+                        f"  Line {trace['line']} [{trace['category']}]"
+                        f"{self._dim_tag(trace['category'])}"
+                    )
                     report.append(f"    {trace['text'][:80]}")
                     report.append(
                         f"    -> Suggestion: {self._get_instruction(trace['suggestion_type'])}"
@@ -731,7 +872,8 @@ class AITraceChecker:
             report.append("-" * 70)
             for trace in doc_traces:
                 report.append(
-                    f"  Line {trace['line']} [{trace['category']}] "
+                    f"  Line {trace['line']} [{trace['category']}]"
+                    f"{self._dim_tag(trace['category'])} "
                     f"({trace.get('section', 'document')})"
                 )
                 report.append(f"    {trace['text'][:80]}")
@@ -752,6 +894,13 @@ def main():
         "--fix-suggestions", action="store_true", help="Generate JSON suggestions for fixing"
     )
     parser.add_argument("--output", type=Path, help="Save report/json to file")
+    parser.add_argument(
+        "--tier",
+        choices=["light", "medium", "heavy"],
+        default=None,
+        help="Opt-in graded mode: scales thresholds, adds D1 sentence-length check "
+        "and D1-D5 dimension labels. Omit for the default (unchanged) behavior.",
+    )
 
     args = parser.parse_args()
 
@@ -762,7 +911,7 @@ def main():
     if not str(args.file).lower().endswith(".typ"):
         print(f"[WARNING] Expected .typ file, got: {args.file}", file=sys.stderr)
 
-    checker = AITraceChecker(args.file)
+    checker = AITraceChecker(args.file, tier=args.tier)
 
     if args.fix_suggestions:
         analysis = checker.analyze_document()

@@ -610,6 +610,73 @@ Future work will explore more datasets.
     assert "misaligned" in joined
 
 
+# ── analyze_logic.py (A1: Motivation Red-Thread Closure) ──────
+
+
+def test_analyze_logic_motivation_thread_flags_untested_promise(tmp_path: Path) -> None:
+    """An Introduction promise with no overlapping evidence is flagged."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We propose FastFormer, a sparse attention mechanism to reduce inference latency.
+\section{Experiments}
+The training dataset contains 50000 weather samples collected over three years.
+\section{Conclusion}
+The collected dataset will support future weather studies.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, motivation_thread=True)
+    joined = "\n".join(findings)
+    assert "MOTIVATION-THREAD: Promise Map" in joined
+    assert "[NO EVIDENCE FOUND]" in joined
+
+
+def test_analyze_logic_motivation_thread_matches_closed_loop(tmp_path: Path) -> None:
+    """A promise tested in Experiments and resolved in Conclusion maps cleanly."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We propose FastFormer, a sparse attention mechanism to reduce inference latency.
+\section{Experiments}
+FastFormer reduces inference latency by 42\% using sparse attention.
+\section{Conclusion}
+We have shown that FastFormer lowers inference latency with sparse attention.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex, motivation_thread=True)
+    joined = "\n".join(findings)
+    assert "[matched" in joined
+    assert "[closed" in joined
+    assert "[NO EVIDENCE FOUND]" not in joined
+    assert "[UNCLOSED]" not in joined
+
+
+def test_analyze_logic_motivation_thread_off_by_default(tmp_path: Path) -> None:
+    """Regression guard: without the flag, no motivation-thread output appears."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We propose FastFormer to reduce inference latency.
+\section{Conclusion}
+We have shown strong results.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    findings = logic_module.analyze(tex)
+    assert "MOTIVATION-THREAD" not in "\n".join(findings)
+
+
 # ── analyze_experiment.py (WP2: Discussion Depth) ─────────────
 
 
@@ -840,3 +907,50 @@ A novel method is presented. The method is then evaluated.
     analysis = checker.analyze_document()
     novel = [t for t in analysis["document_traces"] if "novel" in t["pattern"]]
     assert novel, "expected lowered cap to trigger a term_threshold trace"
+
+
+# ── deai_check.py (A2: --tier grading + D1 sentence-length) ───────────────────
+
+_UNIFORM_TEX = r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+The model is trained on data. The model is tested on data. The model is tuned on data. The model is scored on sets. The model is saved to disk. The model is loaded again.
+\end{document}
+"""
+
+
+def test_deai_tier_flags_uniform_sentence_length(tmp_path: Path) -> None:
+    """D1: uniform sentence lengths are flagged when --tier is set."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(_UNIFORM_TEX, encoding="utf-8")
+    checker = deai_module.AITraceChecker(tex, tier="heavy")
+    result = checker.check_section("introduction")
+    assert any(t["category"] == "sentence_length" for t in result["traces"])
+
+
+def test_deai_default_omits_tier_only_checks(tmp_path: Path) -> None:
+    """Regression guard: without --tier, D1 and dimension labels never appear."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(_UNIFORM_TEX, encoding="utf-8")
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    assert not any(t["category"] == "sentence_length" for t in result["traces"])
+    suggestions = checker.generate_suggestions_json(checker.analyze_document())
+    assert all("dimension" not in s for s in suggestions)
+
+
+def test_deai_tier_adds_dimension_labels(tmp_path: Path) -> None:
+    """With --tier, structured suggestions carry D1-D5 dimension labels."""
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+We present a novel approach. Various methods are then compared.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex, tier="medium")
+    suggestions = checker.generate_suggestions_json(checker.analyze_document())
+    assert any(s.get("dimension") for s in suggestions)

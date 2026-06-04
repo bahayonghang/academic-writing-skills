@@ -25,3 +25,17 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - Never invent new claims, metrics, baselines, or references while smoothing the prose.
 
 Reference: [DEAI_GUIDE.md](../DEAI_GUIDE.md)
+
+## Graded mode (`--tier`) and D1-D5 dimensions
+
+`--tier {light|medium|heavy}` is **opt-in**. Without it, the default output is exactly as before. When present, it:
+
+- **scales thresholds** — `light` flags fewer items (looser caps), `heavy` flags more (stricter caps); `medium` keeps the current thresholds;
+- **enables the D1 sentence-length check** — flags sections whose sentence-length coefficient of variation is suspiciously low (machine-even cadence);
+- **labels every finding with its AIGC dimension** D1-D5 and attaches a one-line teaching note (why detectors flag the pattern).
+
+```bash
+uv run python -B scripts/deai_check.py main.tex --analyze --tier heavy
+```
+
+The five dimensions are readability-oriented, **not** tuned to evade any specific detector: D1 sentence-length variety, D2 paragraph structure, D3 information density, D4 connector frequency, D5 term-context matching. Thresholds (including `sentence_length.cv_threshold`) remain overridable via `references/AI_TONE_THRESHOLDS.yaml`.
