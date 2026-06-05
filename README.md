@@ -3,470 +3,164 @@
 [中文版](README_CN.md)
 
 This collection of skills grew out of my day-to-day paper-writing workflow and
-has been iteratively refined over time. It may still have many shortcomings or
-rough edges; if needed, please fork it and adapt it yourself.
+has been iteratively refined over time. It may still have shortcomings or rough
+edges; if needed, please fork it and adapt it yourself.
 
-> Post-writing polish and validation for academic papers — format checks, bibliography search and verification, grammar analysis, de-AI editing, and experiment narrative generation. Focused on enhancing existing text quality, not generating from scratch.
+> Post-writing polish and validation for academic papers: format checks,
+> bibliography search and verification, grammar analysis, de-AI editing, and
+> experiment narrative review. Focused on improving existing drafts, not writing
+> papers from scratch.
 >
 > Recommended models: **Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
-> Recommended platforms: **Claude Code · Codex · Antigravity**
+> Recommended platforms: **Claude Code · Codex**
 
-## Skills at a Glance
+## Install
 
-| Skill                                         | Best For                                                                 | Input Formats               |
-| --------------------------------------------- | ------------------------------------------------------------------------ | --------------------------- |
-| [`latex-paper-en`](#latex-paper-en)           | English papers — IEEE / ACM / NeurIPS / ICML / Springer                  | `.tex`                      |
-| [`latex-thesis-zh`](#latex-thesis-zh)         | Chinese degree theses — GB/T 7714 / thuthesis / pkuthss                  | `.tex`                      |
-| [`typst-paper`](#typst-paper)                 | Fast-compile bilingual papers                                            | `.typ`                      |
-| [`bib-search-citation`](#bib-search-citation) | Fast search and citation extraction from `.bib` libraries                | `.bib`                      |
-| [`paper-audit`](#paper-audit)                 | Deep-review-first paper audit and submission gate                        | `.tex` `.typ` `.pdf`        |
-| [`cover-letter`](#cover-letter)               | Submission cover letter: generate / optimize / align-check / journal-fit | `.tex` + cover letter draft |
-
----
-
-## Installation
-
-Install via [skills](https://github.com/bahayonghang/skills), the community skill manager for Claude Code:
+Install the repository with skills:
 
 ```bash
 npx skills add bahayonghang/academic-writing-skills
 ```
 
----
+Then open Claude Code or Codex in your manuscript project and ask for the task in
+natural language. The root README is only a routing guide; the authoritative
+usage details live in each `SKILL.md` file and in the docs site.
 
-## Features
+## Choose A Skill
 
-### latex-paper-en
+| Skill | Use When | Main Inputs | Source Of Truth |
+| --- | --- | --- | --- |
+| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md) | Generate, optimize, align-check, preflight, or journal-fit-check a submission cover letter against an existing LaTeX manuscript. | `.tex`, optional `.md` or `.tex` letter draft | `cover-letter/SKILL.md` |
+| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md) | Run reviewer-style critique, submission gates, blocker triage, revision roadmaps, journal-style reports, or re-audits. | `.tex`, `.typ`, `.pdf` | `paper-audit/SKILL.md` |
+| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md) | Work on existing English LaTeX conference or journal papers: compile, formatting, grammar, logic, sections, references, figures, tables, pseudocode, title, translation, or de-AI polish. | `.tex` | `latex-paper-en/SKILL.md` |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md) | Work on existing Chinese LaTeX theses: compile diagnostics, GB/T 7714 references, university templates, chapter structure, terminology, logic, abstracts, titles, tables, and de-AI polish. | `.tex` | `latex-thesis-zh/SKILL.md` |
+| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md) | Work on existing English or Chinese Typst manuscripts: compile/export diagnostics, venue formatting, references, grammar, logic, tables, pseudocode, title, translation, or de-AI polish. | `.typ` | `typst-paper/SKILL.md` |
+| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | Search, filter, preview, export, or create LaTeX/Typst citation snippets from a local BibTeX or BibLaTeX library. | `.bib` | `bib-search-citation/SKILL.md` |
 
-English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues.
+Use the format-specific writing skills when you want source edits or polish. Use
+`paper-audit` when you want reviewer-style diagnosis without rewriting the
+source. Use `bib-search-citation` when the target is the bibliography library
+itself.
 
-| Category                   | Capability                                                                                                                                                                  |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Format & Compile**       | ChkTeX linting; pdfLaTeX / XeLaTeX / LuaLaTeX via latexmk                                                                                                                   |
-| **Grammar**                | Chinglish detection, weak-verb replacement, subject-verb agreement                                                                                                          |
-| **Sentences**              | Complex sentence decomposition (auto-triggers at > 50 words)                                                                                                                |
-| **Expression**             | Academic tone improvement, expression restructuring                                                                                                                         |
-| **Logic**                  | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment                                                           |
-| **Literature**             | Dedicated related-work synthesis checks and rewrite blueprints: thematic clustering, comparative analysis, and research-gap derivation                                      |
-| **Section Writing**        | Section-specific outlines, paragraph roles, rewrite plans, flow checks, and claim-evidence maps for Abstract through Conclusion                                            |
-| **Title**                  | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100                                                                                              |
-| **Captions**               | Title/Sentence-case, AI-flavor-free figure and table captions                                                                                                               |
-| **Pseudocode**             | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
-| **Experiments**            | Cohesive result paragraphs with SOTA comparison, ablation analysis, discussion layering, and conclusion completeness                                                        |
-| **De-AI**                  | Humanize AI-written passages while preserving all LaTeX syntax; flags low-information boilerplate                                                                           |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work                                                                                         |
-| **References**             | Undefined `\ref{}`, unreferenced `\label{}`, missing captions; BibTeX format validation                                                                                     |
-| **Online Verify**          | CrossRef + Semantic Scholar bibliography verification (no API key required)                                                                                                 |
-| **Translation**            | Chinese → English academic translation with domain-term awareness                                                                                                           |
+## One Real Command
 
-Claim-evidence guidance now treats citation keys and `.bib` hits as provenance,
-not proof of claim support; uncertain support is marked instead of invented.
-
-### latex-thesis-zh
-
-Chinese degree thesis editing conforming to GB/T 7714-2015 and major university templates.
-
-| Category                   | Capability                                                                                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Structure**              | Multi-file thesis mapping; chapter/section completeness check                                                                                  |
-| **Bibliography**           | GB/T 7714-2015 compliance; BibTeX format validation                                                                                            |
-| **Templates**              | thuthesis / pkuthss / ustcthesis / fduthesis auto-detection                                                                                    |
-| **Chinese Style**          | Oral-expression detection, terminology consistency                                                                                             |
-| **Logic**                  | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure                                          |
-| **Literature**             | Thesis-specific literature review diagnosis and rewrite blueprint: no author/year listing, stronger comparison, evidence-backed gap derivation |
-| **Chapter Mainline**       | Thesis-specific writing guidance for introduction funnel, method chapter motivation/design/advantage, experiment discussion, and conclusion closure |
-| **Title**                  | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates                                                                             |
-| **Captions**               | Bilingual English/Chinese captions following top-conference standards                                                                          |
-| **Experiments**            | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness                    |
-| **De-AI**                  | Reduce AI writing traces; preserves all LaTeX commands; flags low-information rhetoric                                                         |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work chapters                                                   |
-| **Compile**                | XeLaTeX / LuaLaTeX with full CJK font support                                                                                                  |
-| **References**             | Same integrity checks as `latex-paper-en`; online verification supported                                                                       |
-
-**Supported university templates**
-
-| University | Template   | Notes                         |
-| ---------- | ---------- | ----------------------------- |
-| Tsinghua   | thuthesis  | Figure numbering: 图 3-1      |
-| Peking     | pkuthss    | Nomenclature chapter required |
-| USTC       | ustcthesis | —                             |
-| Fudan      | fduthesis  | —                             |
-| Generic    | ctexbook   | GB/T 7713.1-2006 baseline     |
-
-### typst-paper
-
-Bilingual Typst paper editing with millisecond-level compilation.
-
-| Category                   | Capability                                                                                                                                |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Compile**                | Typst CLI wrapper with error summarization                                                                                                |
-| **Format**                 | Page settings, text formatting, citation syntax                                                                                           |
-| **Grammar**                | Same checks as `latex-paper-en`, adapted for Typst syntax                                                                                 |
-| **Logic**                  | AXES paragraph coherence, introduction funnel, abstract/conclusion alignment, cross-section closure                                       |
-| **Literature**             | Related-work synthesis checks and rewrite blueprints while preserving `@cite` anchors and Typst labels                                    |
-| **Title**                  | Bilingual (English/Chinese) title generation and optimization                                                                             |
-| **Captions**               | Bilingual captions following IEEE/ACM standards                                                                                           |
-| **Pseudocode**             | IEEE-like review for `algorithmic`, `algorithm-figure`, and `lovelace`, including wrapper, caption, style hook, and comment-length checks |
-| **Experiments**            | Cohesive result paragraphs for journal/conference papers, including discussion layering checks                                            |
-| **De-AI**                  | Humanize AI-written passages in English or Chinese; preserves `@cite`, `<label>`, `$...$`                                                 |
-| **Anti-Citation-Stacking** | Max 2 clustered citations per sentence; flags stacking in Introduction/Related Work                                                       |
-| **Venues**                 | IEEE, ACM, Springer, NeurIPS template guidance                                                                                            |
-| **References**             | Undefined `@ref`, unreferenced labels; online verification supported                                                                      |
-
-### bib-search-citation
-
-Fast bibliography search and citation extraction for BibTeX or BibLaTeX `.bib` libraries.
-
-| Category          | Capability                                                                                                                           |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Input**         | BibTeX / BibLaTeX `.bib`, including Zotero-exported libraries                                                                        |
-| **Search**        | Topic, author, year, venue, DOI, arXiv, keywords, annotation, abstract, and entry type                                               |
-| **Filters**       | Compact filters such as `author:` `year>=` `type:` `has:` plus negation                                                              |
-| **Output**        | Research fields, raw BibTeX, LaTeX snippets (`\cite{}` / `\parencite{}` / `\textcite{}`), and Typst snippets (`@key` / `#cite(...)`) |
-| **Preview**       | JSON search output can be piped into `preview_bib_search.py` for compact human review                                                |
-| **Special Cases** | `has:code` infers code availability from URL, annotation, keywords, note-like fields, and abstract hints                             |
-
-Search results expose provenance fields such as DOI, arXiv, and URL for later
-verification. A local `.bib` match does not prove the paper supports a specific
-manuscript claim.
-
-### paper-audit
-
-Deep-review-first paper audit with layered checks, structured issue bundles, and submission gating.
-
-| Category                       | Capability                                                                                                                                                                                      |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Input**                      | `.tex`, `.typ`, `.pdf` files                                                                                                                                                                    |
-| **Modes**                      | `quick-audit` (fast screen) · `deep-review` (reviewer-style critique) · `gate` (submission gate) · `re-audit` (revision verification)                                                           |
-| **PRESUBMISSION Layer**        | Final-week mechanical checks for em dashes, AI-tone term frequency, abstract result gaps, LaTeX hygiene, equation references, and concrete captions; PDF mode runs text-only checks             |
-| **Deep Review Outputs**        | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `peer_review_report.md`, `revision_roadmap.md`                                                                               |
-| **Claim-Evidence Map**         | Additive `claim_candidates` with evidence anchors, support strength, missing evidence, and bounded wording                                                                                      |
-| **Reference Integrity**        | Undefined refs, unreferenced labels, missing captions, numbering gaps                                                                                                                           |
-| **Caption Audit**              | Title/Sentence case enforcement; AI-flavor removal                                                                                                                                              |
-| **Pseudocode Audit**           | IEEE gate checks for floating algorithm environments, caption/label/reference hygiene, plus advisory checks for line numbers and long comments                                                  |
-| **Experiment Narrative**       | Checks paragraph cohesion, baseline comparisons, discussion depth/layering, and conclusion completeness                                                                                         |
-| **Deep Review Outputs**        | `final_issues.json`, `overall_assessment.txt`, `review_report.md`, `revision_roadmap.md`                                                                                                        |
-| **ScholarEval**                | 8-dimension quality scoring (1–10) with publication readiness label                                                                                                                             |
-| **NeurIPS Scoring**            | Quality / Clarity / Significance / Originality on 1–6 scale                                                                                                                                     |
-| **Online Verify**              | CrossRef + Semantic Scholar (add `--online`); no API key required                                                                                                                               |
-| **De-AI**                      | Reduce AI writing traces across the whole document                                                                                                                                              |
-| **Citation Stacking**          | Detects 3+ clustered citations without individual discussion in Introduction/Related Work                                                                                                       |
-| **Review Scope Note**          | Phase 0 is script-backed; `deep-review` adds quote-anchored reviewer lanes for claims-vs-evidence, notation/numeric consistency, evaluation fairness, self-consistency, and prior-art grounding |
-| **Data Availability Advisory** | Checks whether central claims have source-data / artifact anchors; blocks only when venue-required central evidence is missing                                                                  |
-| **Literature Boundary**        | `--focus literature` judges whether the gap is real and the literature positioning is fair; it does not rewrite the section. Use the format-specific writing skills for prose changes           |
-
-**Audit workflow layers**
-
-| Layer | Check                                                     |
-| ----- | --------------------------------------------------------- |
-| L0    | Quick audit / gate script pass                            |
-| L1    | Deep-review workspace prep (sections, summary, claim map) |
-| L2    | Section review lanes                                      |
-| L3    | Cross-cutting review lanes                                |
-| L4    | Consolidation + quote verification                        |
-| L5    | Final report + roadmap + optional score summary           |
-
-**Quick usage**
-
-| Mode          | Use when                         | Main output                                                          |
-| ------------- | -------------------------------- | -------------------------------------------------------------------- |
-| `quick-audit` | You want a fast readiness screen | Script-backed report + checklist + score summary                     |
-| `deep-review` | You want reviewer-style critique | Structured issue bundle + roadmap + optional `peer_review_report.md` |
-| `gate`        | You only care about blockers     | PASS/FAIL + blocking issues                                          |
-| `re-audit`    | You want to verify revisions     | Issue-status comparison                                              |
-
-### cover-letter
-
-Submission cover-letter generation, optimization, claim alignment, journal-fit scoring, and final mechanical checks for existing LaTeX manuscripts.
-
-| Category | Capability |
-| --- | --- |
-| **Input** | LaTeX manuscript (`main.tex`) plus optional cover letter draft (`.md` or `.tex`) |
-| **Modes** | `generate` · `optimize` · `align-check` · `journal-fit` · `presubmission` |
-| **Claim Alignment** | Extracts claim candidates such as `47%`, `2.1x`, modality counts, memory reductions, deployment, and cost claims; reports only unsupported or over-scoped claims |
-| **Journal Fit** | Scores scope fit, novelty framing, evidence density, and format compliance as HIGH / MEDIUM / LOW |
-| **Pre-submission Checks** | Required declarations, word limit, opener clichés, banned phrases, AI-tone frequency, and paragraph shape |
-| **Output Schema** | JSON findings use lowercase `severity` (`major` / `moderate` / `minor`), `priority`, `source_kind`, and `comment_type` |
-| **Boundaries** | Does not edit the manuscript, does not support Typst sources, does not write rebuttals, and does not fetch live journal policies unless explicitly requested |
-
-**Quick usage**
+Most workflows are natural-language driven, but helper scripts can be run
+directly. For example, search a local `.bib` file and return both LaTeX and Typst
+citations:
 
 ```bash
-uv run python -B academic-writing-skills/cover-letter/scripts/cover_letter.py \
-  --mode align-check \
-  --manuscript main.tex \
-  --letter cover_letter.md \
-  --json
+uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py \
+  --bib references.bib \
+  --query "mamba forecasting author:Cheng year>=2024 has:code" \
+  --citation-mode both \
+  --limit 5
 ```
 
-The unified CLI also supports `--mode generate`, `optimize`, `journal-fit`, and `presubmission`; legacy single-purpose scripts remain available in `academic-writing-skills/cover-letter/scripts/`.
+For script-specific flags, read the relevant `SKILL.md` first and treat the
+script `--help` output as the final command reference.
 
----
+## Typical Prompts
 
-## Quick Start
-
-Skills auto-trigger from natural language. Just open Claude Code and describe your task.
-
-### Compilation
-
-```
-compile my paper with xelatex-biber
-build the LaTeX document
+```text
+Compile my English LaTeX paper with latexmk and explain the first blocking error.
 ```
 
-| Recipe            | Steps                            | Use Case                      |
-| ----------------- | -------------------------------- | ----------------------------- |
-| `xelatex`         | XeLaTeX only                     | Quick Chinese compile         |
-| `pdflatex`        | PDFLaTeX only                    | Quick English compile         |
-| `latexmk`         | LaTeXmk auto                     | Auto dependency handling      |
-| `xelatex-biber`   | xelatex → biber → xelatex × 2    | Chinese + Biber (Recommended) |
-| `xelatex-bibtex`  | xelatex → bibtex → xelatex × 2   | Chinese + BibTeX              |
-| `pdflatex-biber`  | pdflatex → biber → pdflatex × 2  | English + Biber               |
-| `pdflatex-bibtex` | pdflatex → bibtex → pdflatex × 2 | English + BibTeX              |
-
-### De-AI Editing
-
-```
-deai check my introduction
-humanize this paragraph
-reduce AI writing traces in Section 3
+```text
+Check the introduction for logic gaps, citation stacking, and AI-like phrasing.
 ```
 
-Removes empty phrases, over-confident expressions, and mechanical parallel structures. Preserves all LaTeX/Typst commands.
-
-### Grammar & Style
-
-```
-check grammar in abstract
-improve academic tone in the related work section
-detect Chinglish in Section 2
+```text
+Run a paper-audit gate on main.tex and separate blockers from polish issues.
 ```
 
-### Logic & Methodology
-
-```
-check logical coherence in my introduction
-analyze methodological depth
-verify paragraph structure with AXES model
+```text
+Search references.bib for recent Mamba forecasting papers with code and return LaTeX and Typst citation snippets.
 ```
 
-### Title Optimization
-
-```
-optimize my paper title
-generate 5 title candidates for this paper
+```text
+Align-check this cover letter against main.tex and report unsupported claims only.
 ```
 
-Follows IEEE/ACM/Springer/NeurIPS best practices. Removes ineffective words ("Novel", "A Study of", "Research on"). Scores candidates 0–100. Ensures key terms appear in the first 65 characters (English) / 20 characters (Chinese).
+## Safety And Outputs
 
-### Experiment Analysis
+- The skills are for improving and validating existing academic material. They
+  should not invent experiments, citations, policies, or unsupported claims.
+- Citation keys, DOI, arXiv IDs, URLs, and local `.bib` matches are provenance
+  fields, not proof that a paper supports a manuscript claim.
+- Online checks are optional. When current venue rules or external metadata
+  matter, verify them from the original source before treating them as binding.
+- Source-editing suggestions should preserve LaTeX and Typst syntax and mark
+  required evidence as pending instead of filling it in.
+- Audit and helper-script outputs may be JSON, Markdown reports, or diff-comment
+  style findings with severity and priority.
 
-```
-analyze my experiment data and write results section
-generate ablation study analysis paragraph
-write a SOTA comparison paragraph from this table
-```
-
-Output: cohesive narrative paragraphs (LaTeX/Typst), not bullet lists.
-
-### Caption Optimization
-
-```
-generate IEEE-standard figure captions
-optimize this table caption
-generate bilingual caption for Figure 3
-```
-
-### Pseudocode & Algorithm Blocks
-
-```
-check whether this IEEE pseudocode still uses algorithm2e floats
-review this algorithm-figure block for caption and line-number issues
-make this pseudocode IEEE-safe without inventing a fake Algorithm 1 rule
-```
-
-### Reference & Bibliography
-
-```
-check figure references in my paper
-find undefined labels
-verify my bibliography
-search references.bib for Mamba forecasting papers after 2024 and return both LaTeX and Typst citations
-find entries in library.bib whose annotation says CodeAvailable and show raw BibTeX
-```
-
-Use `bib-search-citation` when the target is the `.bib` library itself rather than a `.tex` or `.typ` source tree.
-
-### Paper Audit
-
-```
-run a full audit on my paper
-check paper quality before submission
-audit my PDF for layout issues
-run paper-audit --online --scholar-eval
-```
-
-### Translation
-
-```
-translate this section to English
-中译英这个段落
-```
-
-Auto-detects domain terminology (Deep Learning, Time Series, Industrial Control).
-
----
-
-## Output Protocol
-
-All suggestions use diff-comment style with mandatory severity and priority fields:
+Example finding shape:
 
 ```latex
 % <MODULE> (Line <N>) [Severity: Critical|Major|Minor] [Priority: P0|P1|P2]: <Issue summary>
 % Before: <original text>
 % After:  <suggested text>
 % Rationale: <brief explanation>
-% ⚠️ [PENDING VERIFICATION]: <if evidence/metric is required>
+% [PENDING VERIFICATION]: <if evidence or metrics are required>
 ```
-
-| Severity | Meaning                                                                                |
-| -------- | -------------------------------------------------------------------------------------- |
-| Critical | Blocks submission (compilation failure, undefined reference, missing required section) |
-| Major    | Significantly affects quality (grammar error, logic gap, non-compliant format)         |
-| Minor    | Polish-level improvement (word choice, style consistency)                              |
-
----
 
 ## Requirements
 
-### LaTeX Skills (`latex-paper-en`, `latex-thesis-zh`)
-
 - Python 3.10+
-- TeX Live or MiKTeX (with `latexmk`, `chktex`)
-- Chinese documents: XeLaTeX + CJK fonts (SimSun, SimHei, KaiTi)
+- `uv` for running the bundled Python helpers
+- TeX Live or MiKTeX with `latexmk` and `chktex` for LaTeX workflows
+- XeLaTeX plus CJK fonts for Chinese LaTeX documents
+- Typst CLI for Typst workflows
+- `pdfplumber` for PDF-oriented audit workflows
+- Node.js and npm or `just` only when building the docs site locally
 
-### Typst Skill (`typst-paper`)
+## Repository Layout
 
-- Python 3.10+
-- Typst CLI (`cargo install typst-cli` or system package manager)
-- Chinese documents: Source Han Serif / Noto Serif CJK SC
-
-### Bibliography Search (`bib-search-citation`)
-
-- Python 3.10+
-- UTF-8 `.bib` file (BibTeX / BibLaTeX / Zotero export)
-
-### Paper Audit (`paper-audit`)
-
-- Python 3.10+
-- `pdfplumber` for PDF visual analysis (`uv sync` or `pip install pdfplumber`)
-
----
-
-## Project Structure
-
-```
+```text
 academic-writing-skills/
-├── latex-paper-en/
-│   ├── SKILL.md                    # Skill entry point & trigger keywords
-│   ├── agents/                     # Agent metadata
-│   ├── evals/                      # Evaluation cases
-│   ├── examples/                   # Example prompts
-│   ├── references/                 # Style guides, venue rules, forbidden terms
-│   └── scripts/
-│       ├── parsers.py              # LatexParser / TypstParser base
-│       ├── compile.py              # Unified compiler (pdflatex/xelatex/latexmk)
-│       ├── check_format.py         # ChkTeX wrapper
-│       ├── verify_bib.py           # BibTeX format validation
-│       ├── online_bib_verify.py    # CrossRef / Semantic Scholar lookup
-│       ├── check_references.py     # \ref / \label / caption integrity
-│       ├── check_figures.py        # Figure usage analysis
-│       ├── check_pseudocode.py     # IEEE-aware pseudocode checks
-│       ├── analyze_grammar.py      # Chinglish, weak verbs, agreement
-│       ├── analyze_sentences.py    # Long sentence decomposition
-│       ├── analyze_logic.py        # AXES coherence, transition signals
-│       ├── improve_expression.py   # Academic tone restructuring
-│       ├── optimize_title.py       # Title generation & scoring
-│       ├── analyze_experiment.py   # Experiment narrative generation
-│       ├── deai_check.py           # Single-passage de-AI
-│       ├── deai_batch.py           # Batch de-AI over full document
-│       ├── translate_academic.py   # CN→EN domain-aware translation
-│       └── extract_prose.py        # Plain-text extraction (skip math/env)
-│
-├── latex-thesis-zh/
-│   ├── SKILL.md
-│   ├── agents/ · evals/ · examples/ · references/
-│   └── scripts/                    # Same toolset as latex-paper-en plus:
-│       ├── map_structure.py        # Multi-file thesis structure mapper
-│       ├── detect_template.py      # Template auto-detection
-│       └── check_consistency.py    # Terminology & notation consistency
-│
-├── typst-paper/
-│   ├── SKILL.md
-│   ├── agents/ · evals/ · examples/
-│   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
-│   └── scripts/                    # Same toolset, Typst-syntax aware
-│       └── check_pseudocode.py     # IEEE-like Typst pseudocode checks
-│
-├── bib-search-citation/
-│   ├── SKILL.md
-│   ├── agents/
-│   ├── references/
-│   │   └── query-syntax.md
-│   └── scripts/
-│       ├── search_bib.py           # Search, filter, rank, and cite `.bib` entries
-│       └── preview_bib_search.py   # Compact human-readable preview for JSON results
-│
-└── paper-audit/
-    ├── SKILL.md
-    ├── agents/ · examples/ · templates/
-    ├── references/
-    │   └── SCHOLAR_EVAL_GUIDE.md
-    └── scripts/
-        ├── audit.py                # Main orchestrator
-        ├── parsers.py              # Shared parser base
-        ├── pdf_parser.py           # PDF text & metadata extraction
-        ├── visual_check.py         # PDF layout & rendering analysis
-        ├── check_pseudocode.py     # Routed from sibling skills for IEEE pseudocode checks
-        ├── check_references.py     # Reference integrity
-        ├── detect_language.py      # Language detection
-        ├── scholar_eval.py         # 8-dimension ScholarEval scoring
-        └── report_generator.py     # Structured audit report output
+├── academic-writing-skills/
+│   └── <skill>/
+│       ├── SKILL.md          # Skill entrypoint, triggers, routing, contracts
+│       ├── scripts/          # Optional executable helpers
+│       ├── references/       # Optional source-of-truth guidance
+│       ├── examples/         # Optional example prompts or workflows
+│       ├── templates/        # Optional output templates
+│       ├── evals/            # Optional evaluation cases
+│       └── agents/           # Optional agent metadata
+├── docs/                     # Documentation site
+├── tests/                    # Pytest coverage for contracts and helpers
+├── ref/                      # Supporting reference repositories or material
+├── .trellis/                 # Project workflow and guidance
+├── README.md
+└── README_CN.md
 ```
 
----
+Do not rely on the root README for module internals. Open the relevant
+`SKILL.md`, `references/`, and docs page when a workflow needs exact routing,
+flags, or output contracts.
 
-## Failure Handling
+## Documentation
 
-| Problem             | Fix                                                                     |
-| ------------------- | ----------------------------------------------------------------------- |
-| Missing LaTeX tools | Install TeX Live / MiKTeX; ensure `latexmk` and `chktex` are in `PATH`  |
-| Missing Typst CLI   | `cargo install typst-cli` or install via package manager                |
-| Compilation error   | Summarize the first error block and request the relevant `.log` snippet |
-| Missing script      | Verify working directory points to the skill's root folder              |
-| PDF analysis fails  | Install `pdfplumber` (`uv sync --extra dev`)                            |
+Full documentation is in [`docs/`](docs/) and [`docs/zh/`](docs/zh/).
 
----
+Run locally:
+
+```bash
+just docs
+```
+
+Build the static site:
+
+```bash
+just doc-build
+```
 
 ## Contributing
 
-Issues and pull requests are welcome. Please keep changes scoped to the relevant skill and run `just ci` before submitting.
+Issues and pull requests are welcome. Keep changes scoped to the relevant skill,
+update tests or docs when behavior changes, and run `just ci` before submitting
+when feasible.
 
 ## License
 
 Academic Use Only — Not for commercial use.
-
----
-
-## Documentation
-
-Full documentation is available at the [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) directory.
-
-**Run locally:**
-
-```bash
-cd docs
-npm install
-npm run docs:dev
-# Open http://localhost:5173
-```

@@ -2,469 +2,151 @@
 
 [English](README.md)
 
-这些 skills 是我在日常写论文的过程中不断迭代优化出来的，可能会有许多不足和缺陷，
+这些 skills 是我在日常写论文的过程中不断迭代优化出来的，可能仍有不足和缺陷。
 如果有需要，请自行 fork 和修改。
 
-> 专注于学术论文后期排版精修、文献检索与校验、格式校验与深度润色——拒绝从零代写，全面提升既有文本质量。
+> 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
+> 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
 > 推荐模型：**Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
-> 推荐平台：**Claude Code · Codex · Antigravity**
+> 推荐平台：**Claude Code · Codex**
 
-## 技能一览
+## 安装
 
-| 技能 | 适用场景 | 支持格式 |
-|---|---|---|
-| [`latex-paper-en`](#latex-paper-en) | 英文学术论文 — IEEE / ACM / NeurIPS / ICML / Springer | `.tex` |
-| [`latex-thesis-zh`](#latex-thesis-zh) | 中文学位论文 — GB/T 7714 / thuthesis / pkuthss | `.tex` |
-| [`typst-paper`](#typst-paper) | 快速编译双语论文 | `.typ` |
-| [`bib-search-citation`](#bib-search-citation) | `.bib` 文献库快速检索与引用提取 | `.bib` |
-| [`paper-audit`](#paper-audit) | 深度审稿优先的论文审查与投稿门控 | `.tex` `.typ` `.pdf` |
-| [`cover-letter`](#cover-letter) | 投稿信生成 / 优化 / 与论文对齐校验 / 期刊匹配度评估 | `.tex` + 投稿信草稿 |
-
----
-
-## 安装方法
-
-通过 [skills](https://github.com/bahayonghang/skills)（Claude Code 社区技能管理器）安装：
+通过 skills 安装本仓库：
 
 ```bash
 npx skills add bahayonghang/academic-writing-skills
 ```
 
----
+然后在你的论文项目中打开 Claude Code 或 Codex，用自然语言描述任务即可。
+根目录 README 只负责帮你选 skill；具体用法以各目录的 `SKILL.md` 和文档站为准。
 
-## 功能特性
+## 选择技能
 
-### latex-paper-en
+| 技能 | 适用场景 | 主要输入 | 权威入口 |
+| --- | --- | --- | --- |
+| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md) | 针对已有 LaTeX 论文生成、优化、对齐检查、投稿前检查或评估投稿信与期刊匹配度。 | `.tex`，可选 `.md` 或 `.tex` 投稿信草稿 | `cover-letter/SKILL.md` |
+| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md) | 做审稿人式深度批评、投稿门控、阻塞项归类、修订路线图、期刊风格报告或修订后复审。 | `.tex`、`.typ`、`.pdf` | `paper-audit/SKILL.md` |
+| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md) | 处理已有英文 LaTeX 会议或期刊论文：编译、格式、语法、逻辑、分节、引用、图表、伪代码、标题、翻译和去 AI 化润色。 | `.tex` | `latex-paper-en/SKILL.md` |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md) | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714 引用、高校模板、章节结构、术语、逻辑、摘要、标题、三线表和去 AI 化润色。 | `.tex` | `latex-thesis-zh/SKILL.md` |
+| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md) | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。 | `.typ` | `typst-paper/SKILL.md` |
+| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。 | `.bib` | `bib-search-citation/SKILL.md` |
 
-面向 IEEE、ACM、Springer、NeurIPS、ICML 等顶级期刊/会议的英文论文编辑工具。
+需要改写或润色源码时，使用对应格式的写作类 skill。需要审稿式诊断但不改源码时，
+使用 `paper-audit`。目标是文献库本身时，使用 `bib-search-citation`。
 
-| 类别 | 功能 |
-|---|---|
-| **格式与编译** | ChkTeX 语法检查；pdfLaTeX / XeLaTeX / LuaLaTeX（通过 latexmk）|
-| **语法** | 中式英语检测、弱动词替换、主谓一致性检查 |
-| **长难句** | 复杂句拆解（超过 50 词自动触发）|
-| **表达** | 学术语气改进、表达重构 |
-| **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、方法论深度、摘要/结论一致性检查 |
-| **文献综述** | 独立的 related work 综合分析与重写蓝图：主题聚合、比较分析、研究空白推导 |
-| **分节写作** | 面向 Abstract 到 Conclusion 的分节大纲、段落角色、改写方案、flow 检查和 claim-evidence map |
-| **标题** | IEEE/ACM/Springer 最佳实践生成；移除无效词；综合评分 0–100 |
-| **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
-| **伪代码** | 面向 `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 审查；检查浮动体、caption/label/引用顺序、长注释和行号建议 |
-| **实验分析** | 含 SOTA 对比、消融分析、discussion 分层与结论完整性的连贯叙事段落 |
-| **去AI化** | 人性化 AI 写作，完整保留所有 LaTeX 语法，并标出低信息密度空话 |
-| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
-| **引用** | 未定义 `\ref{}`、未引用 `\label{}`、缺少 caption；BibTeX 格式校验 |
-| **在线验证** | CrossRef + Semantic Scholar 文献验证（无需 API 密钥）|
-| **翻译** | 中译英学术翻译，自动识别领域术语 |
+## 一个真实命令
 
-Claim-evidence 指南会把 citation key 和 `.bib` 命中视为 provenance，
-而不是 claim support 证明；无法确认的支撑关系会被标记，不会被补写。
-
-### latex-thesis-zh
-
-符合 GB/T 7714-2015 及主流高校模板的中文学位论文编辑工具。
-
-| 类别 | 功能 |
-|---|---|
-| **结构** | 多文件论文结构映射；章节完整性检查 |
-| **参考文献** | GB/T 7714-2015 规范合规；BibTeX 格式校验 |
-| **模板** | thuthesis / pkuthss / ustcthesis / fduthesis 自动检测 |
-| **中文规范** | 口语化表达检测、术语一致性检查 |
-| **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、章节主线、跨章节逻辑链 |
-| **文献综述** | 面向学位论文的文献综述诊断与重写蓝图：拒绝作者年份流水账，强化比较分析与空白推导 |
-| **章节主线** | 面向绪论漏斗、方法章节动机/设计/优势、实验讨论分层、总结与展望闭合的学位论文写作指导 |
-| **标题** | 符合 GB/T 7713.1-2006 规范；中英文双语候选方案 |
-| **图表标题** | 顶会标准双语 Caption（中文 + 英文）|
-| **实验分析** | 含基线对比、消融覆盖、discussion 分层与结论完整性的核心期刊叙事段落 |
-| **去AI化** | 降低 AI 写作痕迹，完整保留所有 LaTeX 命令，并标出低信息密度套话 |
-| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/文献综述中的堆叠式并列引用 |
-| **编译** | XeLaTeX / LuaLaTeX 完整 CJK 字体支持 |
-| **引用** | 与 `latex-paper-en` 相同的完整性检查；支持在线验证 |
-
-**支持的高校模板**
-
-| 高校 | 模板名称 | 说明 |
-|---|---|---|
-| 清华大学 | thuthesis | 图表编号格式：图 3-1 |
-| 北京大学 | pkuthss | 需包含符号说明章节 |
-| 中国科学技术大学 | ustcthesis | — |
-| 复旦大学 | fduthesis | — |
-| 通用 | ctexbook | 遵循 GB/T 7713.1-2006 |
-
-### typst-paper
-
-毫秒级编译的双语 Typst 论文编辑工具。
-
-| 类别 | 功能 |
-|---|---|
-| **编译** | Typst CLI 封装，含错误摘要 |
-| **格式** | 页面设置、文本格式、引用语法检查 |
-| **语法** | 与 `latex-paper-en` 相同的检查，适配 Typst 语法 |
-| **逻辑** | AXES 段落衔接、绪论漏斗链、摘要/结论一致性、跨章节逻辑链 |
-| **文献综述** | 在保留 `@cite` anchors 与 Typst labels 的前提下，检查 related work 的综合性与研究空白链条 |
-| **标题** | 双语（中英文）标题生成与优化 |
-| **图表标题** | 遵循 IEEE/ACM 标准的双语 Caption |
-| **伪代码** | 面向 `algorithmic`、`algorithm-figure`、`lovelace` 的 IEEE-like 审查，检查 wrapper、caption、style hook 和注释长度 |
-| **实验分析** | 面向期刊/会议的连贯叙事段落，并检查 discussion 分层 |
-| **去AI化** | 中英文 Typst 去 AI 化；保留 `@cite`、`<label>`、`$...$` |
-| **反引用堆叠** | 每句最多 2 个并列引用；检测引言/相关工作中的堆叠式引用 |
-| **期刊模板** | IEEE、ACM、Springer、NeurIPS 模板指引 |
-| **引用** | 未定义 `@ref`、未引用标签；支持在线验证 |
-
-### bib-search-citation
-
-面向 BibTeX / BibLaTeX `.bib` 文献库的快速检索与引用提取工具。
-
-| 类别 | 功能 |
-|---|---|
-| **输入** | BibTeX / BibLaTeX `.bib`，支持 Zotero 导出的文献库 |
-| **检索** | 主题、作者、年份、venue、DOI、arXiv、keywords、annotation、abstract、条目类型 |
-| **过滤** | 支持 `author:` `year>=` `type:` `has:` 等紧凑过滤表达式，也支持排除条件 |
-| **输出** | 研究导向字段、原始 BibTeX、LaTeX 引用片段（`\cite{}` / `\parencite{}` / `\textcite{}`）与 Typst 引用片段（`@key` / `#cite(...)`） |
-| **预览** | JSON 结果可继续管道给 `preview_bib_search.py`，生成紧凑的人类可读摘要 |
-| **特殊判断** | `has:code` 会从 URL、annotation、keywords、note 类字段和 abstract 中推断代码可用性 |
-
-检索结果会暴露 DOI、arXiv、URL 等 provenance 字段，供后续验证使用。
-本地 `.bib` 命中不等于该文献已经支撑论文中的具体论断。
-
-### paper-audit
-
-以深度审稿为核心的多格式论文审查工具，包含结构化问题清单、修订路线图与投稿门控。
-
-| 类别 | 功能 |
-|---|---|
-| **输入** | `.tex`、`.typ`、`.pdf` 文件 |
-| **模式** | `quick-audit`（快速筛查）· `deep-review`（审稿人风格深审）· `gate`（投稿门控）· `re-audit`（修订回归）|
-| **PRESUBMISSION 层** | 投稿前最后几天的机械检查：em dash、AI-tone 词频、摘要结果缺口、LaTeX hygiene、公式引用、具体 caption；PDF 只运行文本类检查 |
-| **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`peer_review_report.md`、`revision_roadmap.md` |
-| **Claim-Evidence Map** | additive `claim_candidates`，记录 evidence anchors、support strength、missing evidence 与 bounded wording |
-| **引用完整性** | 未定义引用、未引用标签、缺少 caption、编号间隙 |
-| **Caption 审查** | Title/Sentence case 规范执行；移除 AI 味 |
-| **伪代码审查** | IEEE gate 检查浮动算法环境、caption/label/引用顺序，并把行号与长注释归为建议项而非硬阻塞 |
-| **实验叙事** | 段落连贯性、基线对比、discussion 深度/分层、结论完整性检查 |
-| **深审产物** | `final_issues.json`、`overall_assessment.txt`、`review_report.md`、`revision_roadmap.md` |
-| **ScholarEval** | 8 维度质量评分（1–10 分），附投稿可读性标签 |
-| **NeurIPS 评分** | Quality / Clarity / Significance / Originality 1–6 分 |
-| **在线验证** | CrossRef + Semantic Scholar（添加 `--online`）；无需 API 密钥 |
-| **去AI化** | 全文降低 AI 写作痕迹 |
-| **引用堆叠检测** | 检测引言/相关工作中 3 个及以上连续引用未逐篇讨论的 AI 写作痕迹 |
-| **审查范围说明** | Phase 0 负责脚本化审查；`deep-review` 进一步加入 claim-evidence、符号/数值一致性、评估公平性、自我标准一致性、先验工作定位等 reviewer lanes |
-| **Data Availability Advisory** | 检查 central claims 是否有 source-data / artifact anchors；只有 venue 要求且 central evidence 缺失时才阻塞 |
-| **文献边界** | `--focus literature` 负责判断 research gap 是否真实、文献定位是否公平，不负责代写综述正文；需要改写时请转交对应写作类 skill |
-
-**审查工作流层级**
-
-| 层级 | 检查内容 |
-|---|---|
-| L0 | `quick-audit` / `gate` 脚本审查 |
-| L1 | deep-review workspace 预处理（sections、summary、claim map）|
-| L2 | section review lanes |
-| L3 | cross-cutting review lanes |
-| L4 | 问题合并与 quote 校验 |
-| L5 | 最终报告、路线图与可选评分摘要 |
-
-**快速使用**
-
-| 模式 | 适用时机 | 主产物 |
-|---|---|---|
-| `quick-audit` | 想快速看投稿风险 | 脚本化报告 + checklist + score summary |
-| `deep-review` | 想模拟审稿人深审 | 结构化问题清单 + 修订路线图 + 可选 `peer_review_report.md` |
-| `gate` | 只关心 blocker | PASS/FAIL + 阻塞项 |
-| `re-audit` | 想验证修订效果 | 问题状态对比 |
-
-### cover-letter
-
-面向已有 LaTeX 论文的投稿信生成、优化、claim 对齐校验、期刊匹配度评分与投稿前机械检查。
-
-| 类别 | 功能 |
-|---|---|
-| **输入** | LaTeX 论文源文件（`main.tex`）+ 可选投稿信草稿（`.md` 或 `.tex`）|
-| **模式** | `generate` · `optimize` · `align-check` · `journal-fit` · `presubmission` |
-| **Claim 对齐** | 抽取 `47%`、`2.1x`、模态数量、内存降低、部署、成本等投稿信论断；只报告无支撑或范围过强的 claim |
-| **期刊匹配** | 从 scope fit、novelty framing、evidence density、format compliance 四个维度给出 HIGH / MEDIUM / LOW |
-| **投稿前检查** | 必要声明、字数限制、开头套话、禁用短语、AI-tone 词频、段落形态 |
-| **输出协议** | JSON finding 使用小写 `severity`（`major` / `moderate` / `minor`），并包含 `priority`、`source_kind`、`comment_type` |
-| **边界** | 不改论文源文件、不处理 Typst、不写 rebuttal；除非明确要求，否则不联网抓取期刊最新政策 |
-
-**快速使用**
+多数工作流通过自然语言触发，也可以直接运行辅助脚本。下面的命令会检索本地 `.bib`
+文件，并返回 LaTeX 与 Typst 引用片段：
 
 ```bash
-uv run python -B academic-writing-skills/cover-letter/scripts/cover_letter.py \
-  --mode align-check \
-  --manuscript main.tex \
-  --letter cover_letter.md \
-  --json
+uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py \
+  --bib references.bib \
+  --query "mamba forecasting author:Cheng year>=2024 has:code" \
+  --citation-mode both \
+  --limit 5
 ```
 
-统一入口还支持 `--mode generate`、`optimize`、`journal-fit`、`presubmission`；`scripts/` 下原有单功能脚本继续保留。
+具体参数请先阅读对应 `SKILL.md`；脚本的 `--help` 输出是最终命令参考。
 
----
+## 常用 Prompt
 
-## 快速开始
-
-技能根据自然语言自动触发。在 Claude Code 中描述你的任务即可。
-
-### 编译配置
-
-```
-用 xelatex-biber 编译我的论文
-compile my paper
+```text
+用 latexmk 编译我的英文 LaTeX 论文，并解释第一个阻塞错误。
 ```
 
-| 配置 | 步骤 | 适用场景 |
-|---|---|---|
-| `xelatex` | 仅 XeLaTeX | 中文快速编译 |
-| `pdflatex` | 仅 PDFLaTeX | 英文快速编译 |
-| `latexmk` | LaTeXmk 自动 | 自动处理依赖 |
-| `xelatex-biber` | xelatex → biber → xelatex × 2 | 中文 + Biber（推荐）|
-| `xelatex-bibtex` | xelatex → bibtex → xelatex × 2 | 中文 + BibTeX |
-| `pdflatex-biber` | pdflatex → biber → pdflatex × 2 | 英文 + Biber |
-| `pdflatex-bibtex` | pdflatex → bibtex → pdflatex × 2 | 英文 + BibTeX |
-
-### 去AI化编辑
-
-```
-去AI化这段引言
-降低这段文字的AI痕迹
-deai check my introduction
+```text
+检查引言中的逻辑缺口、引用堆叠和 AI 味表达。
 ```
 
-删除空话口号、过度确定表达、机械排比结构。完整保留所有 LaTeX/Typst 语法。
-
-### 语法与风格
-
-```
-检查摘要的语法
-提升相关工作章节的学术语气
-detect Chinglish in Section 2
+```text
+对 main.tex 运行 paper-audit gate，并区分 blocker 和 polish 问题。
 ```
 
-### 逻辑与方法论
-
-```
-检查引言的逻辑衔接
-分析方法论深度
-使用 AXES 模型验证段落结构
+```text
+在 references.bib 中检索近年的 Mamba forecasting 论文，要求有代码，并返回 LaTeX 和 Typst 引用片段。
 ```
 
-### 标题优化
-
-```
-优化我的论文标题
-为这篇论文生成 5 个标题候选方案
+```text
+把这封投稿信和 main.tex 做 align-check，只报告缺少论文支撑的 claim。
 ```
 
-遵循 IEEE/ACM/Springer/NeurIPS 最佳实践。移除无效词（"Novel"、"A Study of"、"关于……的研究"）。综合评分 0–100。确保关键词出现在前 65 字符（英文）/ 前 20 字（中文）。
+## 安全边界与输出
 
-### 实验分析
+- 这些 skills 用于改进和验证已有学术材料，不应虚构实验、引用、期刊政策或无支撑论断。
+- Citation key、DOI、arXiv ID、URL 和本地 `.bib` 命中只是 provenance 字段，
+  不等于文献已经支撑论文中的具体 claim。
+- 在线检查是可选能力。当最新期刊规则或外部元数据会影响结论时，应从原始来源核验后再视为依据。
+- 源码改写建议应保留 LaTeX 与 Typst 语法；缺少证据时标记为待补证，而不是替用户补造。
+- 审查与脚本输出可能是 JSON、Markdown 报告，也可能是带 severity 和 priority 的注释式 diff finding。
 
-```
-帮我分析这些实验数据，写成 IEEE 顶刊标准的段落
-生成消融实验分析段落
-根据这张表格写 SOTA 对比段落
-```
-
-输出：连贯叙事段落（LaTeX/Typst），非 itemize 列表。
-
-### 图表标题优化
-
-```
-生成符合顶会规范的图表标题
-优化这张图的标题
-生成图 3 的双语 caption
-```
-
-### 伪代码与算法块
-
-```
-检查这个 IEEE 伪代码是否还在用 algorithm2e 浮动体
-审查这个 algorithm-figure 的 caption 和行号
-把这段伪代码改成 IEEE-safe 的写法，但不要伪造 Algorithm 1 规则
-```
-
-### 参考文献
-
-```
-检查论文的图表引用
-查找未定义的标签
-验证参考文献
-在 references.bib 里找 2024 年后的 Mamba 时序预测论文，并返回 LaTeX 和 Typst 引用
-找出 library.bib 中 annotation 包含 CodeAvailable 的条目，并给我原始 BibTeX
-```
-
-当目标是 `.bib` 文献库本身，而不是 `.tex` / `.typ` 论文工程时，优先用 `bib-search-citation`。
-
-### 论文审查
-
-```
-帮我全面审查这篇论文
-投稿前检查论文质量
-审查我的 PDF 排版问题
-run paper-audit --online --scholar-eval
-```
-
-### 翻译
-
-```
-翻译这段文字为英文
-中译英这个章节
-```
-
-自动识别领域术语（深度学习、时间序列、工业控制）。
-
----
-
-## 输出协议
-
-所有建议采用注释式 diff 格式，包含必填的严重级别和优先级字段：
+示例 finding 形态：
 
 ```latex
 % <模块>（第 <N> 行）[Severity: Critical|Major|Minor] [Priority: P0|P1|P2]: <问题概述>
 % 原文：<原始文本>
 % 修改后：<建议文本>
 % 理由：<简要说明>
-% ⚠️ 【待补证】：<需要证据/数据时标记>
+% [PENDING VERIFICATION]: <需要证据或数据时标记>
 ```
-
-| 严重级别 | 含义 |
-|---|---|
-| Critical | 阻断投稿（编译失败、未定义引用、缺少必要章节）|
-| Major | 显著影响质量（语法错误、逻辑缺口、格式不合规）|
-| Minor | 润色级改进（用词选择、风格一致性）|
-
----
 
 ## 系统要求
 
-### LaTeX 技能（`latex-paper-en`、`latex-thesis-zh`）
-
 - Python 3.10+
-- TeX Live 或 MiKTeX（包含 `latexmk`、`chktex`）
-- 中文文档：XeLaTeX + CJK 字体（SimSun、SimHei、KaiTi）
+- `uv`，用于运行仓库内 Python 辅助脚本
+- TeX Live 或 MiKTeX，并包含 `latexmk` 与 `chktex`
+- 中文 LaTeX 文档需要 XeLaTeX 与 CJK 字体
+- Typst 工作流需要 Typst CLI
+- PDF 审查工作流需要 `pdfplumber`
+- 只有本地构建文档站时才需要 Node.js、npm 或 `just`
 
-### Typst 技能（`typst-paper`）
+## 仓库结构
 
-- Python 3.10+
-- Typst CLI（`cargo install typst-cli` 或通过包管理器安装）
-- 中文文档：思源宋体 / Noto Serif CJK SC
-
-### 文献检索（`bib-search-citation`）
-
-- Python 3.10+
-- UTF-8 编码的 `.bib` 文件（BibTeX / BibLaTeX / Zotero 导出）
-
-### 论文审查（`paper-audit`）
-
-- Python 3.10+
-- `pdfplumber`（PDF 视觉分析；运行 `uv sync` 或 `pip install pdfplumber`）
-
----
-
-## 项目结构
-
-```
+```text
 academic-writing-skills/
-├── latex-paper-en/
-│   ├── SKILL.md                    # Skill 入口与触发关键词
-│   ├── agents/                     # Agent 元数据
-│   ├── evals/                      # 评测用例
-│   ├── examples/                   # 示例 Prompt
-│   ├── references/                 # 风格指南、期刊规则、禁用术语
-│   └── scripts/
-│       ├── parsers.py              # LatexParser / TypstParser 基类
-│       ├── compile.py              # 统一编译器（pdflatex/xelatex/latexmk）
-│       ├── check_format.py         # ChkTeX 封装
-│       ├── verify_bib.py           # BibTeX 格式校验
-│       ├── online_bib_verify.py    # CrossRef / Semantic Scholar 查询
-│       ├── check_references.py     # \ref / \label / caption 完整性
-│       ├── check_figures.py        # 图片使用分析
-│       ├── check_pseudocode.py     # IEEE-aware 伪代码检查
-│       ├── analyze_grammar.py      # 中式英语、弱动词、主谓一致
-│       ├── analyze_sentences.py    # 长难句拆解
-│       ├── analyze_logic.py        # AXES 衔接、过渡信号词
-│       ├── improve_expression.py   # 学术语气重构
-│       ├── optimize_title.py       # 标题生成与评分
-│       ├── analyze_experiment.py   # 实验叙事生成
-│       ├── deai_check.py           # 单段去AI化
-│       ├── deai_batch.py           # 全文批量去AI化
-│       ├── translate_academic.py   # 中译英领域感知翻译
-│       └── extract_prose.py        # 纯文本提取（跳过数学/环境）
-│
-├── latex-thesis-zh/
-│   ├── SKILL.md
-│   ├── agents/ · evals/ · examples/ · references/
-│   └── scripts/                    # 与 latex-paper-en 相同，另含：
-│       ├── map_structure.py        # 多文件论文结构映射
-│       ├── detect_template.py      # 模板自动检测
-│       └── check_consistency.py    # 术语与符号一致性
-│
-├── typst-paper/
-│   ├── SKILL.md
-│   ├── agents/ · evals/ · examples/
-│   ├── references/                 # STYLE_GUIDE.md, TYPST_SYNTAX.md, DEAI_GUIDE.md
-│   └── scripts/                    # 同等工具链，适配 Typst 语法
-│       └── check_pseudocode.py     # IEEE-like Typst 伪代码检查
-│
-├── bib-search-citation/
-│   ├── SKILL.md
-│   ├── agents/
-│   ├── references/
-│   │   └── query-syntax.md
-│   └── scripts/
-│       ├── search_bib.py           # `.bib` 条目检索、过滤、排序与引用输出
-│       └── preview_bib_search.py   # JSON 结果的紧凑人工预览
-│
-└── paper-audit/
-    ├── SKILL.md
-    ├── agents/ · examples/ · templates/
-    ├── references/
-    │   └── SCHOLAR_EVAL_GUIDE.md
-    └── scripts/
-        ├── audit.py                # 主编排器
-        ├── parsers.py              # 共享解析基类
-        ├── pdf_parser.py           # PDF 文本与元数据提取
-        ├── visual_check.py         # PDF 排版渲染分析
-        ├── check_pseudocode.py     # 通过 sibling route 调用的 IEEE 伪代码检查
-        ├── check_references.py     # 引用完整性
-        ├── detect_language.py      # 语言检测
-        ├── scholar_eval.py         # 8 维度 ScholarEval 评分
-        └── report_generator.py     # 结构化审查报告输出
+├── academic-writing-skills/
+│   └── <skill>/
+│       ├── SKILL.md          # Skill 入口、触发、路由和输出契约
+│       ├── scripts/          # 可选的可执行辅助脚本
+│       ├── references/       # 可选的权威参考材料
+│       ├── examples/         # 可选示例 prompt 或工作流
+│       ├── templates/        # 可选输出模板
+│       ├── evals/            # 可选评测用例
+│       └── agents/           # 可选 agent 元数据
+├── docs/                     # 文档站
+├── tests/                    # 契约与辅助脚本的 pytest 测试
+├── ref/                      # 支持性参考仓库或材料
+├── .trellis/                 # 项目工作流与开发指导
+├── README.md
+└── README_CN.md
 ```
 
----
+不要把根目录 README 当作模块内部手册。需要精确路由、参数或输出契约时，请打开对应
+`SKILL.md`、`references/` 和文档页面。
 
-## 失败处理
+## 文档
 
-| 问题 | 解决方案 |
-|---|---|
-| 缺少 LaTeX 工具 | 安装 TeX Live / MiKTeX；确保 `latexmk` 和 `chktex` 已加入 `PATH` |
-| 缺少 Typst CLI | `cargo install typst-cli` 或通过包管理器安装 |
-| 编译失败 | 摘要首个错误块并提供相关 `.log` 片段 |
-| 缺少脚本 | 确认工作目录指向技能根目录 |
-| PDF 分析失败 | 安装 `pdfplumber`（`uv sync --extra dev`）|
+完整文档位于 [`docs/`](docs/) 和 [`docs/zh/`](docs/zh/)。
 
----
+本地预览：
+
+```bash
+just docs
+```
+
+构建静态站点：
+
+```bash
+just doc-build
+```
 
 ## 贡献
 
-欢迎提交 Issue 和 Pull Request！请将改动限定在相关技能范围内，并在提交前运行 `just ci`。
+欢迎提交 Issue 和 Pull Request。请将改动限定在相关 skill 范围内；行为变化需要同步测试
+或文档；条件允许时请在提交前运行 `just ci`。
 
 ## 许可证
 
 仅限学术用途 — 不得用于商业用途。
-
----
-
-## 文档
-
-完整文档请访问 [docs](https://github.com/bahayonghang/academic-writing-skills/tree/main/docs) 目录。
-
-**本地查看：**
-
-```bash
-cd docs
-npm install
-npm run docs:dev
-# 在浏览器中打开 http://localhost:5173
-```
