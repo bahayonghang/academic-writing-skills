@@ -83,6 +83,10 @@ tmp/
 **/.omc/
 **/.omx/
 ref/
+.agents/
+.codex/
+.trellis/
+
 
 review_results/
 
