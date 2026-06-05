@@ -59,6 +59,7 @@ SKILLS = {
             "experiment",
             "tables",
             "abstract",
+            "section-writing",
             "adapt",
         ],
         "min_examples": 5,
@@ -129,6 +130,29 @@ SKILLS = {
     },
 }
 COMMAND_RE = re.compile(r"(^|[\s`(])python\s+\S")
+REFERENCE_LAYOUTS = {
+    "latex-paper-en": {
+        "citations",
+        "deai",
+        "evidence",
+        "formatting",
+        "latex",
+        "modules",
+        "review",
+        "venues",
+        "writing",
+    },
+    "latex-thesis-zh": {
+        "citations",
+        "deai",
+        "formatting",
+        "latex",
+        "modules",
+        "university-templates",
+        "writing",
+    },
+}
+KEBAB_CASE_FILE_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:md|ya?ml)$")
 # Whitespace-tolerant so the row still parses whether the markdown table is
 # compact (`| `mod` | ... |`) or column-aligned by a formatter (`| `mod`   | ... |`).
 ROUTER_ROW_RE = re.compile(
@@ -239,6 +263,30 @@ def test_latex_reference_configs_disable_shell_escape_by_default() -> None:
                 if unsafe_engine_config.search(line):
                     bad_lines.append(f"{path}:{line_no}: {line.strip()}")
     assert not bad_lines, "\n".join(bad_lines)
+
+
+def test_latex_reference_layout_is_discoverable_and_kebab_case() -> None:
+    violations: list[str] = []
+    for skill_name, allowed_dirs in REFERENCE_LAYOUTS.items():
+        references_dir = SKILLS_ROOT / skill_name / "references"
+        top_files = [path.name for path in references_dir.iterdir() if path.is_file()]
+        if top_files:
+            violations.append(f"{skill_name}: top-level reference files: {sorted(top_files)}")
+
+        top_dirs = {path.name for path in references_dir.iterdir() if path.is_dir()}
+        unexpected_dirs = top_dirs - allowed_dirs
+        missing_dirs = allowed_dirs - top_dirs
+        if unexpected_dirs:
+            violations.append(f"{skill_name}: unexpected reference dirs: {sorted(unexpected_dirs)}")
+        if missing_dirs:
+            violations.append(f"{skill_name}: missing reference dirs: {sorted(missing_dirs)}")
+
+        for path in references_dir.rglob("*"):
+            if path.is_file() and not KEBAB_CASE_FILE_RE.fullmatch(path.name):
+                rel_path = path.relative_to(SKILLS_ROOT / skill_name).as_posix()
+                violations.append(f"{skill_name}: non-kebab-case reference file: {rel_path}")
+
+    assert not violations, "\n".join(violations)
 
 
 def test_arxiv_references_use_https() -> None:

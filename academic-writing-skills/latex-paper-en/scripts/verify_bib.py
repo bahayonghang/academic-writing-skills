@@ -429,7 +429,7 @@ class BibTeXVerifier:
             lines.append(
                 "[TIP] AI-generated citations have ~40% error rate. "
                 "Verify entries without DOI/URL using Semantic Scholar API or CrossRef. "
-                "See references/CITATION_VERIFICATION.md for verification workflow."
+                "See references/citations/verification.md for verification workflow."
             )
 
         if result["missing_in_bib"]:

@@ -66,9 +66,9 @@ def test_thesis_templates_match_universities_source_byte_for_byte() -> None:
         template = (ROOT / "latex-thesis-zh" / "templates" / template_name).read_text(
             encoding="utf-8"
         )
-        source = (ROOT / "latex-thesis-zh" / "references" / "UNIVERSITIES" / source_name).read_text(
-            encoding="utf-8"
-        )
+        source = (
+            ROOT / "latex-thesis-zh" / "references" / "university-templates" / source_name
+        ).read_text(encoding="utf-8")
         assert template == source, (
-            f"templates/{template_name} drifted from UNIVERSITIES/{source_name}"
+            f"templates/{template_name} drifted from university-templates/{source_name}"
         )

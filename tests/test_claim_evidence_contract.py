@@ -78,7 +78,7 @@ def test_citation_anchor_still_requires_claim_support_verification() -> None:
 
 def test_claim_evidence_reference_files_are_installed_and_linked() -> None:
     paper_contract = SKILLS_ROOT / "paper-audit/references/CLAIM_EVIDENCE_CONTRACT.md"
-    writing_contract = SKILLS_ROOT / "latex-paper-en/references/CLAIM_EVIDENCE_CONTRACT.md"
+    writing_contract = SKILLS_ROOT / "latex-paper-en/references/evidence/claim-evidence-contract.md"
     skill_md = (SKILLS_ROOT / "paper-audit/SKILL.md").read_text(encoding="utf-8")
 
     for path in (paper_contract, writing_contract):
@@ -100,10 +100,10 @@ def test_data_availability_advisory_documents_non_blocking_default() -> None:
 
 
 def test_latex_paper_references_use_claim_evidence_contract() -> None:
-    literature = (SKILLS_ROOT / "latex-paper-en/references/modules/LITERATURE.md").read_text(
+    literature = (SKILLS_ROOT / "latex-paper-en/references/modules/literature.md").read_text(
         encoding="utf-8"
     )
-    experiment = (SKILLS_ROOT / "latex-paper-en/references/modules/EXPERIMENT.md").read_text(
+    experiment = (SKILLS_ROOT / "latex-paper-en/references/modules/experiment.md").read_text(
         encoding="utf-8"
     )
 

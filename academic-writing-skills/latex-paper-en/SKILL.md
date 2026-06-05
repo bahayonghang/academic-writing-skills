@@ -1,6 +1,6 @@
 ---
 name: latex-paper-en
-description: English LaTeX assistant for existing .tex conference or journal papers. Use for compile, venue formatting, bibliography, grammar, logic, abstract/title, figures, tables, pseudocode, related work, research gaps, adaptation, de-AI polish, translation, and submission readiness. Use latex-thesis-zh for Chinese theses and paper-audit for critique.
+description: English LaTeX assistant for existing .tex conference or journal papers. Use for compile, venue formatting, bibliography, grammar, logic, section writing, abstract/title, figures, tables, pseudocode, related work, research gaps, adaptation, de-AI polish, translation, and submission readiness. Use latex-thesis-zh for Chinese theses and paper-audit for critique.
 metadata:
   category: academic-writing
   tags:
@@ -36,6 +36,7 @@ Use this skill for targeted work on an existing English LaTeX paper project. Kee
 - Compile and diagnose LaTeX build failures.
 - Audit formatting, bibliography, grammar, sentence length, argument logic, and figure quality.
 - Diagnose and rewrite-plan literature review sections around thematic synthesis, comparison, and gap derivation.
+- Plan or rewrite specific paper sections with paragraph roles, section outlines, claim-evidence maps, and reviewer-facing self-review.
 - Review IEEE-style pseudocode blocks, figure-wrapped algorithms, captions, labels, comments, and algorithm package choices.
 - Improve expression, translate academic prose, optimize titles, and reduce AI-writing traces.
 - Review experiment sections without rewriting citations, labels, or math.
@@ -49,6 +50,7 @@ Use this skill when the user has an existing English `.tex` paper project and wa
 - bibliography and citation validation
 - grammar, sentence, logic, or expression review
 - literature review restructuring, related-work synthesis, or research-gap derivation
+- section-specific drafting, rewrite planning, paragraph-role design, or claim-evidence self-review for Abstract, Introduction, Related Work, Method, Experiments, or Conclusion
 - translation of academic prose
 - title optimization
 - figure or caption quality checks
@@ -70,32 +72,35 @@ Do not use this skill for:
 
 ## Module Router
 
-| Module         | Use when                                                                                                       | Primary command                                                                              | Read next                                                                                                                     |
-| -------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `compile`      | Build fails or the user wants a fresh compile                                                                  | `uv run python -B $SKILL_DIR/scripts/compile.py main.tex`                                    | `references/modules/COMPILE.md`                                                                                               |
-| `format`       | User asks for LaTeX or venue formatting review                                                                 | `uv run python -B $SKILL_DIR/scripts/check_format.py main.tex`                               | `references/modules/FORMAT.md` (load `templates/<venue>.md` instead of the full `references/VENUES.md` when a venue is named) |
-| `bibliography` | Missing citations, unused entries, BibTeX validation                                                           | `uv run python -B $SKILL_DIR/scripts/verify_bib.py references.bib --tex main.tex`            | `references/modules/BIBLIOGRAPHY.md`                                                                                          |
-| `grammar`      | Grammar and surface-level language fixes                                                                       | `uv run python -B $SKILL_DIR/scripts/analyze_grammar.py main.tex --section introduction`     | `references/modules/GRAMMAR.md`                                                                                               |
-| `sentences`    | Long, dense, or hard-to-read sentences                                                                         | `uv run python -B $SKILL_DIR/scripts/analyze_sentences.py main.tex --section introduction`   | `references/modules/SENTENCES.md`                                                                                             |
-| `logic`        | Weak argument flow, unclear transitions, introduction funnel problems, or abstract/conclusion misalignment     | `uv run python -B $SKILL_DIR/scripts/analyze_logic.py main.tex --section methods`            | `references/modules/LOGIC.md`                                                                                                 |
-| `literature`   | Related Work is list-like, under-compared, or missing an evidence-backed research gap                          | `uv run python -B $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`       | `references/modules/LITERATURE.md`                                                                                            |
-| `expression`   | Academic tone polish without changing claims                                                                   | `uv run python -B $SKILL_DIR/scripts/improve_expression.py main.tex --section related`       | `references/modules/EXPRESSION.md`                                                                                            |
-| `translation`  | Chinese-to-English academic translation or bilingual polishing                                                 | `uv run python -B $SKILL_DIR/scripts/translate_academic.py input.txt --domain deep-learning` | `references/modules/TRANSLATION.md`                                                                                           |
-| `title`        | Generate, compare, or optimize paper titles                                                                    | `uv run python -B $SKILL_DIR/scripts/optimize_title.py main.tex --check`                     | `references/modules/TITLE.md`                                                                                                 |
-| `figures`      | Figure existence, extension, DPI, or caption review                                                            | `uv run python -B $SKILL_DIR/scripts/check_figures.py main.tex`                              | `references/REVIEWER_PERSPECTIVE.md`                                                                                          |
-| `pseudocode`   | IEEE-safe pseudocode review, `algorithm2e` cleanup, caption/label/reference checks, and comment-length review  | `uv run python -B $SKILL_DIR/scripts/check_pseudocode.py main.tex --venue ieee`              | `references/modules/PSEUDOCODE.md`                                                                                            |
-| `deai`         | Reduce AI-writing traces while preserving LaTeX syntax                                                         | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`          | `references/modules/DEAI.md`                                                                                                  |
-| `experiment`   | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments`   | `references/modules/EXPERIMENT.md`                                                                                            |
-| `tables`       | Table structure validation, three-line table generation, or booktabs review                                    | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex`                               | `references/modules/TABLES.md`                                                                                                |
-| `abstract`     | Abstract five-element structure diagnosis and word count validation                                            | `uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.tex`                           | `references/modules/ABSTRACT.md`                                                                                              |
-| `adapt`        | Journal adaptation: reformat paper for a different venue                                                       | (LLM-driven workflow)                                                                        | references/modules/ADAPT.md                                                                                                   |
+| Module            | Use when                                                                                                       | Primary command                                                                              | Read next                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `compile`         | Build fails or the user wants a fresh compile                                                                  | `uv run python -B $SKILL_DIR/scripts/compile.py main.tex`                                    | `references/modules/compile.md`                                                                                               |
+| `format`          | User asks for LaTeX or venue formatting review                                                                 | `uv run python -B $SKILL_DIR/scripts/check_format.py main.tex`                               | `references/modules/format.md` (load `templates/<venue>.md` instead of the full `references/venues/catalog.md` when a venue is named) |
+| `bibliography`    | Missing citations, unused entries, BibTeX validation                                                           | `uv run python -B $SKILL_DIR/scripts/verify_bib.py references.bib --tex main.tex`            | `references/modules/bibliography.md`                                                                                          |
+| `grammar`         | Grammar and surface-level language fixes                                                                       | `uv run python -B $SKILL_DIR/scripts/analyze_grammar.py main.tex --section introduction`     | `references/modules/grammar.md`                                                                                               |
+| `sentences`       | Long, dense, or hard-to-read sentences                                                                         | `uv run python -B $SKILL_DIR/scripts/analyze_sentences.py main.tex --section introduction`   | `references/modules/sentences.md`                                                                                             |
+| `logic`           | Weak argument flow, unclear transitions, introduction funnel problems, or abstract/conclusion misalignment     | `uv run python -B $SKILL_DIR/scripts/analyze_logic.py main.tex --section methods`            | `references/modules/logic.md`                                                                                                 |
+| `literature`      | Related Work is list-like, under-compared, or missing an evidence-backed research gap                          | `uv run python -B $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`       | `references/modules/literature.md`                                                                                            |
+| `section-writing` | Draft, rewrite-plan, paragraph-role, flow, or claim-evidence work for a specific paper section                 | (LLM-driven workflow)                                                                        | references/modules/section-writing.md                                                                                         |
+| `expression`      | Academic tone polish without changing claims                                                                   | `uv run python -B $SKILL_DIR/scripts/improve_expression.py main.tex --section related`       | `references/modules/expression.md`                                                                                            |
+| `translation`     | Chinese-to-English academic translation or bilingual polishing                                                 | `uv run python -B $SKILL_DIR/scripts/translate_academic.py input.txt --domain deep-learning` | `references/modules/translation.md`                                                                                           |
+| `title`           | Generate, compare, or optimize paper titles                                                                    | `uv run python -B $SKILL_DIR/scripts/optimize_title.py main.tex --check`                     | `references/modules/title.md`                                                                                                 |
+| `figures`         | Figure existence, extension, DPI, or caption review                                                            | `uv run python -B $SKILL_DIR/scripts/check_figures.py main.tex`                              | `references/review/reviewer-perspective.md`                                                                                          |
+| `pseudocode`      | IEEE-safe pseudocode review, `algorithm2e` cleanup, caption/label/reference checks, and comment-length review  | `uv run python -B $SKILL_DIR/scripts/check_pseudocode.py main.tex --venue ieee`              | `references/modules/pseudocode.md`                                                                                            |
+| `deai`            | Reduce AI-writing traces while preserving LaTeX syntax                                                         | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`          | `references/modules/deai.md`                                                                                                  |
+| `experiment`      | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments`   | `references/modules/experiment.md`                                                                                            |
+| `tables`          | Table structure validation, three-line table generation, or booktabs review                                    | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex`                               | `references/modules/tables.md`                                                                                                |
+| `abstract`        | Abstract five-element structure diagnosis and word count validation                                            | `uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.tex`                           | `references/modules/abstract.md`                                                                                              |
+| `adapt`           | Journal adaptation: reformat paper for a different venue                                                       | (LLM-driven workflow)                                                                        | references/modules/adapt.md                                                                                                   |
 
 ## Routing Rules
 
 - Infer the module from the user request before asking follow-up questions. Ask for the module only when two or more modules are equally plausible after keyword routing.
 - If the user asks for 2-3 compatible checks in one turn, run them sequentially instead of forcing a single-module reply.
-- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` -> `title` / `expression` / `translation` / `adapt`.
+- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
 - Prefer `logic` for cross-section alignment requests (abstract vs introduction vs conclusion), introduction funnel issues, or contribution drift; prefer `literature` only when the problem is specifically about Related Work organization, comparison, or gap derivation.
+- Prefer `section-writing` when the user asks to draft, rewrite, restructure, or reviewer-polish a specific section, or asks for paragraph roles, mini-outlines, reverse outlines, or claim-evidence maps. Prefer the diagnostic modules first when the user asks to check whether something is wrong.
+- For `section-writing`, load `references/modules/section-writing.md`, then exactly one active section guide from `references/writing/section-writing/` unless the user also asks for flow or self-review.
 - For whole-paper motivation/red-thread questions ("does every introduction promise get tested and resolved?"), run `logic` with `--motivation-thread`; it appends a read-only Promise Map + Closure Map heuristic and leaves default `logic` output unchanged.
 - For graded de-AI / AIGC-dimension analysis, run `deai` with `--tier light|medium|heavy`; it scales thresholds, adds a D1 sentence-length check, and labels findings by dimension (D1-D5). Omitting `--tier` keeps the default output.
 - Keep `experiment` for results, discussion, baseline, ablation, significance, limitation, and conclusion-completeness concerns even if the user phrases them as "logic" problems.
@@ -117,6 +122,7 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 - Report the exact command used and the exit code when a script fails.
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments unless the user explicitly asks for source edits.
 - For `literature`, default to diagnosis + rewrite blueprint first; only produce paragraph-level rewriting when the user explicitly asks for prose.
+- For `section-writing`, return a section objective, compact outline, paragraph roles, rewrite blueprint or prose proposal, claim-evidence map, and self-review checklist. Mark missing evidence instead of filling it.
 
 ## Workflow
 
@@ -144,13 +150,15 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 
 ## Reference Map
 
-- `references/STYLE_GUIDE.md`: tone and style defaults.
-- `references/VENUES.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS / ICML / Springer LNCS).
+- `references/writing/style-guide.md`: tone and style defaults.
+- `references/venues/catalog.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS / ICML / Springer LNCS).
 - `templates/`: per-venue snapshots loaded on demand. Files: `ieee.md`, `acm.md`, `neurips.md`, `icml.md`, `springer-lncs.md`.
-- `references/CITATION_VERIFICATION.md`: citation verification workflow.
-- `references/REVIEWER_PERSPECTIVE.md`: reviewer-style heuristics for figures and clarity.
+- `references/citations/verification.md`: citation verification workflow.
+- `references/review/reviewer-perspective.md`: reviewer-style heuristics for figures and clarity.
 - `references/modules/`: module-by-module commands and decision notes.
-- `references/modules/PSEUDOCODE.md`: IEEE-safe defaults for LaTeX pseudocode.
+- `references/modules/section-writing.md`: LLM-driven section-writing router and output contract.
+- `references/writing/section-writing/`: one-section-at-a-time writing guides for Abstract, Introduction, Related Work, Method, Experiments, Conclusion, paragraph flow, and self-review.
+- `references/modules/pseudocode.md`: IEEE-safe defaults for LaTeX pseudocode.
 
 Read only the file that matches the active module.
 
@@ -160,6 +168,8 @@ Read only the file that matches the active module.
 - “Check the introduction section for grammar and sentence length, but do not rewrite equations.”
 - “Audit figures and references in this ACM submission before I submit.”
 - “Rewrite the related work so it reads like a synthesis instead of a paper-by-paper list, but keep all citation anchors intact.”
+- “Give me a reviewer-facing rewrite plan for the Introduction with paragraph roles, a technical bottleneck, and a claim-evidence map.”
+- “Rewrite the Method overview and one module subsection, but preserve all `\ref{}` and equation macros.”
 - “Check whether this IEEE pseudocode still uses `algorithm2e` floats and tell me how to make it IEEE-safe.”
 - “Review the experiments section for overclaiming, missing ablations, and weak baseline comparisons.”
 

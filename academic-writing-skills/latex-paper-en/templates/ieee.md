@@ -1,6 +1,6 @@
 # IEEE Conferences/Journals (LaTeX)
 
-> Venue-specific snapshot extracted from `references/VENUES.md`. Load this
+> Venue-specific snapshot extracted from `references/venues/catalog.md`. Load this
 > file directly when the user names IEEE as the target venue, instead of
 > reading the full venue catalog.
 

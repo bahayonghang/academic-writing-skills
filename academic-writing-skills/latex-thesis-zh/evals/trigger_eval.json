@@ -52,6 +52,16 @@
       "category": "edge"
     },
     {
+      "query": "帮我把绪论改成背景、技术瓶颈、科学问题、本文贡献逐步收束的学位论文写作方案。",
+      "should_trigger": true,
+      "category": "writing-mainline"
+    },
+    {
+      "query": "检查方法章节是否每个模块都有动机、设计和技术优势，并和实验验证闭合。",
+      "should_trigger": true,
+      "category": "writing-mainline"
+    },
+    {
       "query": "Proofread my IEEE conference paper written in English LaTeX.",
       "should_trigger": false,
       "category": "negative-overlap-en"

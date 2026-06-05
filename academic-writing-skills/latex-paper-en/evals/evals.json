@@ -129,6 +129,50 @@
         {"type": "regex", "pattern": "(consensus|disagreement|limitation|gap)", "description": "rewrite blueprint present"},
         {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
       ]
+    },
+    {
+      "id": 13,
+      "prompt": "Give me a reviewer-facing rewrite plan for the Introduction of my LaTeX paper. I need paragraph roles, the technical bottleneck, and a claim-evidence map, but do not invent citations.",
+      "expected_output": "Route to section-writing, load the Introduction guidance, and return an introduction outline with paragraph roles, technical bottleneck, proposed solution flow, and claim-evidence map while preserving LaTeX anchors.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
+        {"type": "regex", "pattern": "(Introduction|paragraph roles|technical bottleneck|claim-evidence)", "description": "introduction writing contract covered"},
+        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Rewrite the Method overview and one module subsection around motivation, design, and technical advantage. Preserve all equations, \\ref{} anchors, and macros.",
+      "expected_output": "Route to section-writing, use the Method guide, and provide a method outline or prose proposal organized around module motivation, design, technical advantage, and evidence without changing LaTeX anchors.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
+        {"type": "regex", "pattern": "(motivation|design|technical advantage|module)", "description": "method module triad present"},
+        {"type": "regex", "pattern": "(preserve|unchanged|LaTeX|\\\\ref)", "description": "LaTeX preservation stated"}
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Help me revise the Conclusion so it answers the Introduction promises, summarizes evidence, and states limitations without overstating the experiments.",
+      "expected_output": "Route to section-writing, use the Conclusion guide, and return a closure plan with solved problem, evidence recap, implication, limitation, future work, and claim-evidence boundaries.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
+        {"type": "regex", "pattern": "(Conclusion|closure|evidence|limitation|future work)", "description": "conclusion roles present"},
+        {"type": "regex", "pattern": "(overstat|bounded|needs evidence|unsupported)", "description": "evidence boundary present"}
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Map every major claim in the Abstract, Introduction, and Experiments to visible evidence before suggesting wording changes.",
+      "expected_output": "Route to section-writing with self-review guidance, return a claim-evidence map across sections, and mark unsupported or needs-evidence claims instead of inventing results.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
+        {"type": "regex", "pattern": "(Claim:|Evidence:|Status:|claim-evidence)", "description": "claim-evidence map emitted"},
+        {"type": "regex", "pattern": "(needs evidence|unsupported|missing)", "description": "missing evidence marked"}
+      ]
     }
   ]
 }

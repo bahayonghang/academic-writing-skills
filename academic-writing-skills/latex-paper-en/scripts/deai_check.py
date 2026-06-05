@@ -23,9 +23,9 @@ except ImportError:
     from parsers import get_parser
 
 
-# --- AI tone thresholds (data-driven via references/AI_TONE_THRESHOLDS.yaml) ---
+# --- AI tone thresholds (data-driven via references/deai/tone-thresholds.yaml) ---
 
-THRESHOLDS_FILENAME = "AI_TONE_THRESHOLDS.yaml"
+THRESHOLDS_FILENAME = "tone-thresholds.yaml"
 
 DEFAULT_THRESHOLDS = {
     "term_thresholds": {
@@ -79,7 +79,7 @@ DEFAULT_THRESHOLDS = {
 
 
 def _load_thresholds(script_dir: Path) -> dict:
-    """Load tone thresholds from references/AI_TONE_THRESHOLDS.yaml.
+    """Load tone thresholds from references/deai/tone-thresholds.yaml.
 
     The YAML file is an optional user-overridable layer on top of
     DEFAULT_THRESHOLDS. When absent, the defaults are used as-is.
@@ -91,7 +91,7 @@ def _load_thresholds(script_dir: Path) -> dict:
     merged = {
         k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
     }
-    yaml_path = script_dir.parent / "references" / THRESHOLDS_FILENAME
+    yaml_path = script_dir.parent / "references" / "deai" / THRESHOLDS_FILENAME
     if not yaml_path.exists():
         return merged
 

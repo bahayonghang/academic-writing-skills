@@ -32,7 +32,7 @@ def generate_request(input_data: str) -> str:
     prompt = [
         "### 中文实验分析生成请求 (Experiment Analysis Request)",
         "请根据以下原始数据或草稿，生成符合中文顶刊与学位论文标准的完美实验分析段落。",
-        "务必严格遵守 `references/modules/EXPERIMENT.md` 中的所有约束条件。",
+        "务必严格遵守 `references/modules/experiment.md` 中的所有约束条件。",
         "",
         "#### 规范要点提醒:",
         "- 强制使用 `\\paragraph{核心结论概括}` 引导段落。",

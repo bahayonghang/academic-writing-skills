@@ -1,6 +1,6 @@
 # `latex-paper-en`
 
-English LaTeX paper assistant for existing `.tex` conference and journal manuscripts. It is the source-level workflow for compile, format, bibliography, language, logic, literature, pseudocode, tables, and experiment-section diagnostics.
+English LaTeX paper assistant for existing `.tex` conference and journal manuscripts. It is the source-level workflow for compile, format, bibliography, language, logic, literature, section-writing, pseudocode, tables, and experiment-section diagnostics.
 
 ## Use It For
 
@@ -9,6 +9,7 @@ English LaTeX paper assistant for existing `.tex` conference and journal manuscr
 - Bibliography and citation validation inside a `.tex` paper project.
 - Grammar, sentence, expression, translation, title, abstract, figure, table, and caption review.
 - Logic, literature synthesis, research-gap derivation, cross-section closure, and experiment-section review.
+- Section-specific rewrite planning for Abstract, Introduction, Related Work, Method, Experiments, and Conclusion with paragraph roles and claim-evidence maps.
 - IEEE-safe pseudocode review for `algorithm2e`, `algorithmicx`, and `algpseudocodex`.
 - De-AI review that preserves LaTeX syntax, citations, labels, and math.
 
@@ -31,6 +32,7 @@ English LaTeX paper assistant for existing `.tex` conference and journal manuscr
 | `sentences` | Long or dense sentence diagnostics | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_sentences.py main.tex --section introduction` |
 | `logic` | Coherence, intro funnel, abstract/conclusion alignment, or closure | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
 | `literature` | Related Work synthesis, comparison, and gap derivation | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_literature.py main.tex --section related` |
+| `section-writing` | Section-specific outline, paragraph roles, rewrite plan, and claim-evidence self-review | LLM-driven workflow |
 | `expression` | Academic tone polish | `uv run python academic-writing-skills/latex-paper-en/scripts/improve_expression.py main.tex --section related` |
 | `translation` | Chinese-to-English academic translation | `uv run python academic-writing-skills/latex-paper-en/scripts/translate_academic.py input.txt --domain deep-learning` |
 | `title` | Title checking or generation | `uv run python academic-writing-skills/latex-paper-en/scripts/optimize_title.py main.tex --check` |
@@ -72,6 +74,10 @@ Review this IEEE pseudocode for algorithm2e usage, caption safety, and label hyg
 
 ```text
 Analyze the Related Work and derive a synthesis-first rewrite plan.
+```
+
+```text
+Give me a reviewer-facing Introduction rewrite plan with paragraph roles and a claim-evidence map.
 ```
 
 ## Notes

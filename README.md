@@ -48,6 +48,7 @@ English academic paper editing for IEEE, ACM, Springer, NeurIPS, and ICML venues
 | **Expression**             | Academic tone improvement, expression restructuring                                                                                                                         |
 | **Logic**                  | Paragraph coherence (AXES model), introduction funnel checks, methodological depth, abstract/conclusion alignment                                                           |
 | **Literature**             | Dedicated related-work synthesis checks and rewrite blueprints: thematic clustering, comparative analysis, and research-gap derivation                                      |
+| **Section Writing**        | Section-specific outlines, paragraph roles, rewrite plans, flow checks, and claim-evidence maps for Abstract through Conclusion                                            |
 | **Title**                  | IEEE/ACM/Springer best-practice generation; removes filler words; scores 0–100                                                                                              |
 | **Captions**               | Title/Sentence-case, AI-flavor-free figure and table captions                                                                                                               |
 | **Pseudocode**             | IEEE-safe review for `algorithm2e`, `algorithmicx`, `algpseudocodex`; checks float usage, caption/label/reference hygiene, long comments, and advisory line-number defaults |
@@ -73,6 +74,7 @@ Chinese degree thesis editing conforming to GB/T 7714-2015 and major university 
 | **Chinese Style**          | Oral-expression detection, terminology consistency                                                                                             |
 | **Logic**                  | Paragraph coherence (AXES model), introduction funnel, chapter mainline checks, cross-section closure                                          |
 | **Literature**             | Thesis-specific literature review diagnosis and rewrite blueprint: no author/year listing, stronger comparison, evidence-backed gap derivation |
+| **Chapter Mainline**       | Thesis-specific writing guidance for introduction funnel, method chapter motivation/design/advantage, experiment discussion, and conclusion closure |
 | **Title**                  | GB/T 7713.1-2006 compliant; Chinese & English bilingual candidates                                                                             |
 | **Captions**               | Bilingual English/Chinese captions following top-conference standards                                                                          |
 | **Experiments**            | Chinese core-journal narrative paragraphs with baseline/ablation coverage, discussion layering, and conclusion completeness                    |

@@ -1,6 +1,6 @@
 # `latex-paper-en`
 
-面向现有 `.tex` 会议/期刊论文的英文 LaTeX 论文助手。它负责源码级编译、格式、文献、语言、逻辑、文献综述、伪代码、表格和实验章节诊断。
+面向现有 `.tex` 会议/期刊论文的英文 LaTeX 论文助手。它负责源码级编译、格式、文献、语言、逻辑、文献综述、分节写作、伪代码、表格和实验章节诊断。
 
 ## 适用场景
 
@@ -9,6 +9,7 @@
 - `.tex` 论文工程内的 bibliography 和 citation 验证。
 - 语法、长句、表达、翻译、标题、摘要、图表和 caption 审阅。
 - 逻辑、文献综述综合、研究空白推导、跨章节闭合与实验章节审阅。
+- 面向 Abstract、Introduction、Related Work、Method、Experiments 和 Conclusion 的分节改写方案、段落角色和 claim-evidence map。
 - `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 伪代码审查。
 - 保留 LaTeX 语法、citation、label 和 math 的去 AI 检查。
 
@@ -31,6 +32,7 @@
 | `sentences` | 长句或密集句诊断 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_sentences.py main.tex --section introduction` |
 | `logic` | 连贯性、绪论漏斗、摘要/结论一致性或闭合 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_logic.py main.tex --section methods` |
 | `literature` | Related Work 综合、比较和 gap 推导 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_literature.py main.tex --section related` |
+| `section-writing` | 分节大纲、段落角色、改写方案和 claim-evidence 自查 | LLM 驱动工作流 |
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/latex-paper-en/scripts/improve_expression.py main.tex --section related` |
 | `translation` | 中译英学术翻译 | `uv run python academic-writing-skills/latex-paper-en/scripts/translate_academic.py input.txt --domain deep-learning` |
 | `title` | 标题检查或生成 | `uv run python academic-writing-skills/latex-paper-en/scripts/optimize_title.py main.tex --check` |
@@ -72,4 +74,8 @@
 
 ```text
 分析 Related Work，并给出综合式重写方案。
+```
+
+```text
+给 Introduction 一个面向 reviewer 的改写方案，包含段落角色和 claim-evidence map。
 ```

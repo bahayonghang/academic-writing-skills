@@ -8,7 +8,7 @@ Chinese LaTeX degree-thesis assistant for existing `.tex` projects. It is optimi
 - Chapter/section structure mapping and template detection.
 - GB/T 7714 bibliography and thesis-format checks.
 - Term, abbreviation, and naming consistency across chapters.
-- Logic coherence, literature review quality, research-gap derivation, heading lead-ins, and cross-section closure.
+- Logic coherence, literature review quality, research-gap derivation, heading lead-ins, chapter-writing mainline, and cross-section closure.
 - Chinese abstract, title, experiment, de-AI, and table review.
 
 ## Do Not Use It For
@@ -65,6 +65,10 @@ Check references.bib for GB/T 7714 issues.
 
 ```text
 Turn this literature review into a thematic synthesis plan without adding citations.
+```
+
+```text
+Reshape the introduction into background, technical bottleneck, research question, and contribution closure.
 ```
 
 ## Notes

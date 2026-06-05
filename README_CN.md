@@ -47,6 +47,7 @@ npx skills add bahayonghang/academic-writing-skills
 | **表达** | 学术语气改进、表达重构 |
 | **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、方法论深度、摘要/结论一致性检查 |
 | **文献综述** | 独立的 related work 综合分析与重写蓝图：主题聚合、比较分析、研究空白推导 |
+| **分节写作** | 面向 Abstract 到 Conclusion 的分节大纲、段落角色、改写方案、flow 检查和 claim-evidence map |
 | **标题** | IEEE/ACM/Springer 最佳实践生成；移除无效词；综合评分 0–100 |
 | **图表标题** | Title/Sentence case 规范、无 AI 味的图表标题 |
 | **伪代码** | 面向 `algorithm2e`、`algorithmicx`、`algpseudocodex` 的 IEEE-safe 审查；检查浮动体、caption/label/引用顺序、长注释和行号建议 |
@@ -72,6 +73,7 @@ Claim-evidence 指南会把 citation key 和 `.bib` 命中视为 provenance，
 | **中文规范** | 口语化表达检测、术语一致性检查 |
 | **逻辑** | 段落衔接（AXES 模型）、绪论漏斗链、章节主线、跨章节逻辑链 |
 | **文献综述** | 面向学位论文的文献综述诊断与重写蓝图：拒绝作者年份流水账，强化比较分析与空白推导 |
+| **章节主线** | 面向绪论漏斗、方法章节动机/设计/优势、实验讨论分层、总结与展望闭合的学位论文写作指导 |
 | **标题** | 符合 GB/T 7713.1-2006 规范；中英文双语候选方案 |
 | **图表标题** | 顶会标准双语 Caption（中文 + 英文）|
 | **实验分析** | 含基线对比、消融覆盖、discussion 分层与结论完整性的核心期刊叙事段落 |

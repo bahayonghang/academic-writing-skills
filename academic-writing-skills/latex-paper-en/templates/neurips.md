@@ -1,6 +1,6 @@
 # NeurIPS (LaTeX)
 
-> Venue-specific snapshot extracted from `references/VENUES.md`. NeurIPS and
+> Venue-specific snapshot extracted from `references/venues/catalog.md`. NeurIPS and
 > ICML share most expectations; this file mirrors the joint section, with the
 > NeurIPS-specific numbers highlighted at the bottom. For ICML-specific
 > deltas (page limit, Broader Impact), open `icml.md`. Load this file
@@ -26,7 +26,7 @@
 
 ## NeurIPS-Specific Quick Reference
 
-> Copied verbatim from `references/VENUES.md` quick-reference table.
+> Copied verbatim from `references/venues/catalog.md` quick-reference table.
 
 - **Page limit (NeurIPS 2025)**: 9 pages (+0 camera-ready)
 - **Key requirement**: Mandatory checklist, lay summary

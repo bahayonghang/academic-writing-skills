@@ -52,6 +52,26 @@
       "category": "edge"
     },
     {
+      "query": "Give me a paragraph-role rewrite plan for the Introduction of my existing LaTeX paper, with a technical bottleneck and claim-evidence map.",
+      "should_trigger": true,
+      "category": "section-writing"
+    },
+    {
+      "query": "Rewrite the Method overview in main.tex around motivation, design, and technical advantage while preserving equations and \\ref{} anchors.",
+      "should_trigger": true,
+      "category": "section-writing"
+    },
+    {
+      "query": "Help me revise the Conclusion so it answers the Introduction promises and states limitations without overstating the experiments.",
+      "should_trigger": true,
+      "category": "section-writing"
+    },
+    {
+      "query": "Map the major claims in my Abstract, Introduction, and Experiments to visible evidence before suggesting wording changes.",
+      "should_trigger": true,
+      "category": "section-writing"
+    },
+    {
       "query": "Search my references.bib for Mamba forecasting papers after 2024.",
       "should_trigger": false,
       "category": "negative-overlap-bib"
@@ -80,6 +100,26 @@
       "query": "Write a survey on industrial anomaly detection with Industry 4.0 framing.",
       "should_trigger": false,
       "category": "negative-overlap-research"
+    },
+    {
+      "query": "Draft a full research paper from scratch about diffusion models without any existing .tex project.",
+      "should_trigger": false,
+      "category": "negative-overlap-research"
+    },
+    {
+      "query": "Polish the 绪论 and 文献综述 chapters of my Chinese master's thesis.",
+      "should_trigger": false,
+      "category": "negative-overlap-zh"
+    },
+    {
+      "query": "Run a full reviewer gate and decide whether this manuscript should be accepted.",
+      "should_trigger": false,
+      "category": "negative-overlap-audit"
+    },
+    {
+      "query": "Rewrite this non-LaTeX blog post introduction so it flows better.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
     },
     {
       "query": "Help me draft a vacation request email to my manager.",

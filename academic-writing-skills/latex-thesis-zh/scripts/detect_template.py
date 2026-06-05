@@ -30,7 +30,7 @@ TEMPLATE_REFERENCE_FILES = {
 
 
 def _reference_dir() -> Path:
-    return Path(__file__).resolve().parent.parent / "references" / "UNIVERSITIES"
+    return Path(__file__).resolve().parent.parent / "references" / "university-templates"
 
 
 def _reference_file(template_id: Optional[str]) -> Optional[Path]:
