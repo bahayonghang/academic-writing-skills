@@ -1,6 +1,10 @@
 ---
 name: paper-audit
-description: Reviewer-style audit and submission gate for academic papers in .tex, .typ, or .pdf. Use for peer-review critique, pre-submission readiness, pass/fail gate decisions, blocker triage, revision roadmaps, journal-style reports, or re-audits. Do not use for source editing, sentence polishing, bibliography search, or compile repair.
+description: Reviewer-style audit and submission gate for academic papers in .tex, .typ, or .pdf. Use for peer-review critique, readiness/gate decisions, blocker triage, revision roadmaps, journal-style reports, and re-audits. Do not use for source editing, sentence polishing, bibliography search, or compile repair.
+when_to_use: >-
+  Trigger on "review my paper", "act as a reviewer", "simulate peer review", "audit this paper",
+  "审稿", "投稿门控", "投稿前体检", "把把关", "看看能不能投", "出审稿意见",
+  "is this ready to submit", or requests for major/minor issues and revision priorities.
 metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]

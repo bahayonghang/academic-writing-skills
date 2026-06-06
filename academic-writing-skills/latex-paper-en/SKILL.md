@@ -1,6 +1,10 @@
 ---
 name: latex-paper-en
-description: English LaTeX assistant for existing .tex conference or journal papers. Use for compile, venue formatting, bibliography, grammar, logic, section writing, abstract/title, figures, tables, pseudocode, related work, research gaps, adaptation, de-AI polish, translation, and submission readiness. Use latex-thesis-zh for Chinese theses and paper-audit for critique.
+description: English LaTeX assistant for existing .tex journal or conference papers. Use for compile repair, venue formatting, bibliography/citation checks, section writing, logic, related work, tables, pseudocode, de-AI polish, translation, adaptation, and submission readiness; use latex-thesis-zh for Chinese theses and paper-audit for critique.
+when_to_use: >-
+  Trigger on prompts like "fix my LaTeX", "proofread my IEEE paper", "rewrite related work",
+  "find the research gap", "format citations", "make a three-line table", "write pseudocode",
+  "section rewrite plan", "claim-evidence map", "换投", or requests about an English .tex manuscript.
 metadata:
   category: academic-writing
   tags:

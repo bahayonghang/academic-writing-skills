@@ -1,6 +1,9 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714 参考文献、模板/章节结构、术语一致性、逻辑与文献综述、研究空白、摘要标题、三线表和去 AI 味修改。英文会议期刊论文用 latex-paper-en，审稿式总评用 paper-audit。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；英文论文用 latex-paper-en，审稿总评用 paper-audit。
+when_to_use: >-
+  触发于“帮我编译论文”“检查国标格式”“毕业论文/学位论文/硕士论文/博士论文”“看看绪论逻辑”
+  “文献综述太像罗列”“研究空白没推出来”“方法章节动机设计优势”“摘要结构”“三线表”等中文 LaTeX 学位论文请求。
 metadata:
   category: academic-writing
   tags:

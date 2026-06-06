@@ -1,6 +1,10 @@
 ---
 name: typst-paper
-description: Typst paper assistant for existing .typ manuscripts in English or Chinese. Use for compile/export diagnosis, venue formatting, BibTeX or Hayagriva checks, grammar, logic, abstract/title, tables, pseudocode, related work, research-gap framing, adaptation, de-AI polish, translation, and submission readiness. Use LaTeX skills for .tex sources.
+description: Typst paper assistant for existing .typ manuscripts in English or Chinese. Use for compile/export diagnosis, venue formatting, BibTeX/Hayagriva checks, grammar, logic, abstract/title, tables, pseudocode, related work, research-gap framing, adaptation, de-AI polish, translation, and submission readiness; use LaTeX skills for .tex.
+when_to_use: >-
+  Trigger on Typst/Hayagriva prompts like "fix main.typ", "typst compile error", "export PDF",
+  "check bibliography.yml", "format for IEEE/ACM", "rewrite related work", "research gap",
+  "table/pseudocode in Typst", "de-AI polish", or bilingual Typst paper polishing.
 metadata:
   category: academic-writing
   tags:

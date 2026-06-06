@@ -1,6 +1,10 @@
 ---
 name: cover-letter
-description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence and target venue framing. Do not use for editing main.tex, full manuscript audit, or bibliography search.
+description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence, novelty claims, reviewer-facing framing, and target venue expectations. Do not use for editing main.tex, full manuscript audit, or bibliography search.
+when_to_use: >-
+  Trigger on "write a cover letter", "journal submission letter", "align the cover letter with my manuscript",
+  "check novelty claims", "preflight before submission", "fit for Nature/IEEE/Elsevier",
+  or requests to summarize contributions for an editor without rewriting the paper.
 metadata:
   category: academic-writing
   tags:

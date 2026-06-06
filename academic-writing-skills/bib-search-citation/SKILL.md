@@ -1,6 +1,10 @@
 ---
 name: bib-search-citation
-description: Search and cite from local BibTeX/BibLaTeX .bib libraries, including Zotero exports. Use to find, filter, preview, export, or generate LaTeX/Typst citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, abstract, fields, or compact filters. Do not use for manuscript writing or polishing.
+description: Search and cite from local BibTeX/BibLaTeX .bib libraries, including Zotero exports. Use to find, filter, preview, export, or generate LaTeX/Typst citation snippets by topic, author, year, venue, DOI, arXiv ID, keywords, abstract, fields, recency, or claim support. Do not use for manuscript writing or polishing.
+when_to_use: >-
+  Trigger on prompts like "search my references.bib", "find papers by author/year/venue",
+  "Mamba papers after 2024", "generate \cite{} snippets", "export selected BibTeX",
+  "filter Zotero export", "check DOI/arXiv IDs", or "find citations supporting this claim".
 metadata:
   category: docs-writing-publishing
   tags:
