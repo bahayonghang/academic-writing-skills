@@ -1,6 +1,6 @@
 # `latex-paper-en`
 
-English LaTeX paper assistant for existing `.tex` conference and journal manuscripts. It is the source-level workflow for compile, format, bibliography, language, logic, literature, section-writing, pseudocode, tables, and experiment-section diagnostics.
+English LaTeX paper assistant for existing `.tex` conference and journal manuscripts. It is the source-level workflow for compile, format, bibliography, language, logic, literature, figures, captions, section-writing, pseudocode, tables, and experiment-section diagnostics.
 
 ## Use It For
 

@@ -85,7 +85,7 @@ uv run python -m pytest tests/
 
 ### `typst-paper`
 
-模块：`compile`、`format`、`bibliography`、`grammar`、`sentences`、`logic`、`literature`、`expression`、`translation`、`title`、`pseudocode`、`deai`、`experiment`、`abstract`、`tables`、`caption`、`adapt`。
+模块：`compile`、`format`、`bibliography`、`grammar`、`sentences`、`logic`、`literature`、`expression`、`translation`、`title`、`pseudocode`、`deai`、`experiment`、`abstract`、`tables`、`adapt`。
 
 ### `bib-search-citation`
 

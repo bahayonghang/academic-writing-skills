@@ -85,7 +85,7 @@ Recommended default for full-review work: run `structure` first.
 
 ### `typst-paper`
 
-Modules: `compile`, `format`, `bibliography`, `grammar`, `sentences`, `logic`, `literature`, `expression`, `translation`, `title`, `pseudocode`, `deai`, `experiment`, `abstract`, `tables`, `caption`, `adapt`.
+Modules: `compile`, `format`, `bibliography`, `grammar`, `sentences`, `logic`, `literature`, `expression`, `translation`, `title`, `pseudocode`, `deai`, `experiment`, `abstract`, `tables`, `adapt`.
 
 ### `bib-search-citation`
 

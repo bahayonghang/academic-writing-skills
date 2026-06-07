@@ -25,7 +25,7 @@ features:
     details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf`, with bilingual Markdown/HTML reports, review workspaces, revision trajectories, claim maps, and quote/citation checks."
   - icon: 📝
     title: "`latex-paper-en`"
-    details: "English LaTeX paper workflow for compile, format, bibliography, grammar, logic, literature synthesis, experiments, pseudocode, tables, and de-AI review."
+    details: "English LaTeX paper workflow for compile, format, bibliography, grammar, logic, literature synthesis, figures, captions, experiments, pseudocode, tables, and de-AI review."
   - icon: 📚
     title: "`latex-thesis-zh`"
     details: "Chinese thesis workflow for structure mapping, GB/T 7714 checks, template detection, compilation, consistency, logic, literature, abstract, and tables."

@@ -32,12 +32,11 @@
 | `expression` | 学术表达润色 | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | 中英学术翻译 | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | 标题检查或优化 | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
-| `pseudocode` | `algorithmic`、`algorithm-figure` 或 `lovelace` 审查 | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
+| `pseudocode` | `algorithmic`、`algorithm-figure` 或 `lovelace` 审查，包含 caption 和 wrapper 检查 | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
 | `deai` | 中英文 AI 痕迹检查 | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
 | `experiment` | 实验写法和讨论分层 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
 | `abstract` | 五元素摘要诊断 | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
 | `tables` | 表格结构和三线表检查 | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
-| `caption` | 图表 caption 质量审查 | LLM 驱动模块 |
 | `adapt` | 跨 venue 适配 | LLM 驱动工作流 |
 
 ## 最小输入

@@ -25,7 +25,7 @@ features:
     details: "支持 `.tex`、`.typ`、`.pdf` 的深度审稿优先审查，产出双语 Markdown/HTML 报告、review workspace、revision trajectory、claim map 与引用/quote 核查。"
   - icon: 📝
     title: "`latex-paper-en`"
-    details: "英文 LaTeX 论文的编译、格式、文献、语法、逻辑、文献综述、实验、伪代码、表格与去 AI 检查。"
+    details: "英文 LaTeX 论文的编译、格式、文献、语法、逻辑、文献综述、图像、caption、实验、伪代码、表格与去 AI 检查。"
   - icon: 📚
     title: "`latex-thesis-zh`"
     details: "中文学位论文的结构映射、GB/T 7714、模板检测、编译、一致性、逻辑、文献综述、摘要与表格检查。"

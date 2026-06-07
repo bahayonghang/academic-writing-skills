@@ -35,6 +35,7 @@ function latexPaperEnItems(prefix: string) {
         { text: 'Adapt', link: `${m}/adapt` },
         { text: 'Bibliography', link: `${m}/bibliography` },
         { text: 'Caption', link: `${m}/caption` },
+        { text: 'Figures', link: `${m}/figures` },
         { text: 'Compile', link: `${m}/compile` },
         { text: 'DeAI', link: `${m}/deai` },
         { text: 'Experiment', link: `${m}/experiment` },
@@ -48,7 +49,6 @@ function latexPaperEnItems(prefix: string) {
         { text: 'Tables', link: `${m}/tables` },
         { text: 'Title', link: `${m}/title` },
         { text: 'Translation', link: `${m}/translation` },
-        { text: 'Workflow', link: `${m}/workflow` },
       ],
     },
     {
@@ -103,6 +103,7 @@ function latexThesisZhItems(prefix: string) {
       text: prefix.startsWith('/zh') ? '模块' : 'Modules',
       collapsed: true,
       items: [
+        { text: 'Structure', link: `${m}/structure` },
         { text: 'Abstract', link: `${m}/abstract` },
         { text: 'Bibliography', link: `${m}/bibliography` },
         { text: 'Compile', link: `${m}/compile` },
@@ -111,6 +112,7 @@ function latexThesisZhItems(prefix: string) {
         { text: 'Experiment', link: `${m}/experiment` },
         { text: 'Format', link: `${m}/format` },
         { text: 'Logic', link: `${m}/logic` },
+        { text: 'Literature', link: `${m}/literature` },
         { text: 'Tables', link: `${m}/tables` },
         { text: 'Template', link: `${m}/template` },
         { text: 'Title', link: `${m}/title` },
@@ -174,7 +176,6 @@ function typstPaperItems(prefix: string) {
         { text: 'Tables', link: `${m}/TABLES` },
         { text: 'Title', link: `${m}/TITLE` },
         { text: 'Translation', link: `${m}/TRANSLATION` },
-        { text: 'Workflow', link: `${m}/WORKFLOW` },
       ],
     },
     {

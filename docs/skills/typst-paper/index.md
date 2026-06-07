@@ -32,12 +32,11 @@ Typst academic paper assistant for existing `.typ` manuscripts in English or Chi
 | `expression` | Academic tone polish | `uv run python academic-writing-skills/typst-paper/scripts/improve_expression.py main.typ --section methods` |
 | `translation` | Chinese/English academic translation | `uv run python academic-writing-skills/typst-paper/scripts/translate_academic.py input_zh.txt --domain deep-learning` |
 | `title` | Title checking or optimization | `uv run python academic-writing-skills/typst-paper/scripts/optimize_title.py main.typ --check` |
-| `pseudocode` | `algorithmic`, `algorithm-figure`, or `lovelace` review | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
+| `pseudocode` | `algorithmic`, `algorithm-figure`, or `lovelace` review, including caption and wrapper checks | `uv run python academic-writing-skills/typst-paper/scripts/check_pseudocode.py main.typ --venue ieee` |
 | `deai` | English or Chinese AI-trace checks | `uv run python academic-writing-skills/typst-paper/scripts/deai_check.py main.typ --section introduction` |
 | `experiment` | Experiment write-up and discussion layering | `uv run python academic-writing-skills/typst-paper/scripts/analyze_experiment.py main.typ --section experiment` |
 | `abstract` | Five-element abstract diagnosis | `uv run python academic-writing-skills/typst-paper/scripts/analyze_abstract.py main.typ` |
 | `tables` | Table structure and three-line checks | `uv run python academic-writing-skills/typst-paper/scripts/check_tables.py main.typ` |
-| `caption` | Figure/table caption quality review | LLM-driven module |
 | `adapt` | Venue-to-venue adaptation | LLM-driven workflow |
 
 ## Minimum Inputs
