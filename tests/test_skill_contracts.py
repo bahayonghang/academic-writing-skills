@@ -58,6 +58,7 @@ SKILLS = {
             "deai",
             "experiment",
             "tables",
+            "caption",
             "abstract",
             "section-writing",
             "adapt",

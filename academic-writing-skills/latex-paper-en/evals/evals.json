@@ -173,6 +173,40 @@
         {"type": "regex", "pattern": "(Claim:|Evidence:|Status:|claim-evidence)", "description": "claim-evidence map emitted"},
         {"type": "regex", "pattern": "(needs evidence|unsupported|missing)", "description": "missing evidence marked"}
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "Give me a reviewer-facing rewrite plan for the Introduction of my LaTeX paper. I need the 6-move funnel: stakes, structural gap, key abstraction, design intuition, contributions, and results preview. Preserve all citations and labels, and tell me which claims still need evidence.",
+      "expected_output": "Route to section-writing, load the Introduction guide, and return an outline with paragraph roles, a structural gap, a named abstraction, contributions, and a claim-evidence map while preserving LaTeX anchors.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
+        {"type": "regex", "pattern": "(Introduction|paragraph roles|structural gap|key abstraction|results preview|claim-evidence)", "description": "intro funnel and closure present"},
+        {"type": "regex", "pattern": "(evidence|gap|contribution)", "description": "evidence-driven framing present"},
+        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "My Related Work is just a paper-by-paper list. Reorganize it into 2-4 technical categories, state each category's structural limitation, and write one positioning sentence that shows how our approach differs. Keep citation anchors unchanged.",
+      "expected_output": "Route to literature, return category clustering and structural limitations, and produce a positioning sentence that differentiates the paper without rewriting citation anchors.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "literature", "description": "literature module routed"},
+        {"type": "regex", "pattern": "(category|structural limitation|positioning sentence|comparison)", "description": "related-work synthesis present"},
+        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Rewrite the Experiments section as a conference-paper narrative: anchor the setup compactly, compare against named baselines, add takeaways after each result cluster, then cover ablation and robustness. Keep the dataset names and metrics.",
+      "expected_output": "Route to experiment, return labeled setup anchoring, head-to-head comparison, takeaway paragraphs, ablation, and robustness notes instead of a flat results dump.",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "experiment", "description": "experiment module routed"},
+        {"type": "regex", "pattern": "(Takeaway|ablation|robustness|head-to-head|setup)", "description": "evaluation narrative present"},
+        {"type": "regex", "pattern": "(baseline|comparison|evidence)", "description": "evidence-backed comparison present"}
+      ]
     }
   ]
 }

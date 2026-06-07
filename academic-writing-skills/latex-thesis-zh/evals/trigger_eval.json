@@ -95,6 +95,46 @@
       "query": "帮我订一张明天去上海的高铁票。",
       "should_trigger": false,
       "category": "negative-unrelated"
+    },
+    {
+      "query": "帮我把中文学位论文的绪论改成背景、技术瓶颈、科学问题、本文贡献和章节安排的漏斗式写法，引用先别动。",
+      "should_trigger": true,
+      "category": "writing-intro-funnel"
+    },
+    {
+      "query": "我这段文献综述还是按作者年份排队，帮我按主题分组并写出共识、分歧、局限、空白和本文切入点。",
+      "should_trigger": true,
+      "category": "writing-literature-synthesis"
+    },
+    {
+      "query": "请把方法章节的写作主线梳理成动机、设计、技术优势和与上一章的递进关系。",
+      "should_trigger": true,
+      "category": "writing-method-mainline"
+    },
+    {
+      "query": "帮我检查摘要、创新点和结论是不是闭合：问题、方法、结果、贡献和局限有没有对应。",
+      "should_trigger": true,
+      "category": "writing-closure"
+    },
+    {
+      "query": "Please rewrite the introduction of my IEEE paper in English and keep the LaTeX commands intact.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
+    },
+    {
+      "query": "把这篇论文转成 Typst，然后顺手检查 Hayagriva 文献库有没有错。",
+      "should_trigger": false,
+      "category": "negative-overlap-typst"
+    },
+    {
+      "query": "帮我审一下这篇中文论文，列主要问题和次要问题，不用改正文。",
+      "should_trigger": false,
+      "category": "negative-overlap-audit"
+    },
+    {
+      "query": "我只是想搜一下 GB/T 7714 的参考文献来源，不需要改写任何章节。",
+      "should_trigger": false,
+      "category": "negative-overlap-bib"
     }
   ]
 }

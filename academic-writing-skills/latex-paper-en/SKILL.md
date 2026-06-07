@@ -39,6 +39,7 @@ Use this skill for targeted work on an existing English LaTeX paper project. Kee
 
 - Compile and diagnose LaTeX build failures.
 - Audit formatting, bibliography, grammar, sentence length, argument logic, and figure quality.
+- Review figure and table captions through a dedicated caption module when wording needs tightening.
 - Diagnose and rewrite-plan literature review sections around thematic synthesis, comparison, and gap derivation.
 - Plan or rewrite specific paper sections with paragraph roles, section outlines, claim-evidence maps, and reviewer-facing self-review.
 - Review IEEE-style pseudocode blocks, figure-wrapped algorithms, captions, labels, comments, and algorithm package choices.
@@ -94,6 +95,7 @@ Do not use this skill for:
 | `deai`            | Reduce AI-writing traces while preserving LaTeX syntax                                                         | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`          | `references/modules/deai.md`                                                                                                  |
 | `experiment`      | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments`   | `references/modules/experiment.md`                                                                                            |
 | `tables`          | Table structure validation, three-line table generation, or booktabs review                                    | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex`                               | `references/modules/tables.md`                                                                                                |
+| `caption`         | Figure/table caption wording and evidence-boundary review                                                      | (LLM-driven workflow)                                                                        | references/modules/caption.md                                                                                                  |
 | `abstract`        | Abstract five-element structure diagnosis and word count validation                                            | `uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.tex`                           | `references/modules/abstract.md`                                                                                              |
 | `adapt`           | Journal adaptation: reformat paper for a different venue                                                       | (LLM-driven workflow)                                                                        | references/modules/adapt.md                                                                                                   |
 
@@ -101,7 +103,7 @@ Do not use this skill for:
 
 - Infer the module from the user request before asking follow-up questions. Ask for the module only when two or more modules are equally plausible after keyword routing.
 - If the user asks for 2-3 compatible checks in one turn, run them sequentially instead of forcing a single-module reply.
-- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
+- Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
 - Prefer `logic` for cross-section alignment requests (abstract vs introduction vs conclusion), introduction funnel issues, or contribution drift; prefer `literature` only when the problem is specifically about Related Work organization, comparison, or gap derivation.
 - Prefer `section-writing` when the user asks to draft, rewrite, restructure, or reviewer-polish a specific section, or asks for paragraph roles, mini-outlines, reverse outlines, or claim-evidence maps. Prefer the diagnostic modules first when the user asks to check whether something is wrong.
 - For `section-writing`, load `references/modules/section-writing.md`, then exactly one active section guide from `references/writing/section-writing/` unless the user also asks for flow or self-review.
@@ -158,6 +160,7 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 - `references/venues/catalog.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS / ICML / Springer LNCS).
 - `templates/`: per-venue snapshots loaded on demand. Files: `ieee.md`, `acm.md`, `neurips.md`, `icml.md`, `springer-lncs.md`.
 - `references/citations/verification.md`: citation verification workflow.
+- `references/modules/caption.md`: figure/table caption wording and evidence-boundary review.
 - `references/review/reviewer-perspective.md`: reviewer-style heuristics for figures and clarity.
 - `references/modules/`: module-by-module commands and decision notes.
 - `references/modules/section-writing.md`: LLM-driven section-writing router and output contract.

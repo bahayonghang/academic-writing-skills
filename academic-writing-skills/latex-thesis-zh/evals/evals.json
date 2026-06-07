@@ -171,6 +171,39 @@
         {"type": "regex", "pattern": "(创新点|总结与展望|闭合|贡献|证据|局限)", "description": "three-way closure assessed"},
         {"type": "regex", "pattern": "[\\u4e00-\\u9fff]{5,}", "description": "Chinese output present"}
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "请把绪论写成背景 -> 技术瓶颈 -> 科学问题 -> 本文贡献 -> 章节安排的漏斗，不要直接跳到方法细节，也不要新增引用。",
+      "expected_output": "路由到 logic 模块，给出绪论漏斗、段落角色和证据状态，突出背景到科学问题再到贡献的收束关系。",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "logic", "description": "logic module routed"},
+        {"type": "regex", "pattern": "(背景|技术瓶颈|科学问题|本文贡献|章节安排|漏斗)", "description": "intro funnel present"},
+        {"type": "regex", "pattern": "(证据|闭合|贡献)", "description": "closure and evidence framing present"}
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "我的文献综述还是按作者年份罗列。请按主题分组，写出每组的共识、分歧、局限和空白，再给出本文切入点的过渡句。",
+      "expected_output": "路由到 literature 模块，返回主题化分组、比较分析和研究空白推导，而不是单纯的参考文献列表。",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "literature", "description": "literature module routed"},
+        {"type": "regex", "pattern": "(共识|分歧|局限|空白|切入点)", "description": "literature synthesis present"},
+        {"type": "regex", "pattern": "(主题|分组|比较)", "description": "theme-based organization present"}
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "请重写实验与讨论部分，让它按有效性、消融、机理解释、与前人比较、局限和启示分层展开，不要只重复表格里的数字。",
+      "expected_output": "路由到 experiment 模块，给出分层叙事和取证式讨论，而不是只做结果复述。",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "text": "experiment", "description": "experiment module routed"},
+        {"type": "regex", "pattern": "(有效性|消融|机理|比较|局限|启示)", "description": "discussion layering present"},
+        {"type": "regex", "pattern": "(分层|证据|启示)", "description": "layered explanation present"}
+      ]
     }
   ]
 }

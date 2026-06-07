@@ -107,6 +107,46 @@
       "category": "negative-overlap-research"
     },
     {
+      "query": "Give me a reviewer-facing rewrite plan for the Introduction of my LaTeX paper, with paragraph roles and a claim-evidence map.",
+      "should_trigger": true,
+      "category": "section-writing-introduction"
+    },
+    {
+      "query": "My Related Work is just a paper list. Reorganize it into themes, structural limitations, and a positioning sentence.",
+      "should_trigger": true,
+      "category": "section-writing-related-work"
+    },
+    {
+      "query": "Rewrite the Method overview around motivation, design, and technical advantage while preserving equations and \\ref{} anchors.",
+      "should_trigger": true,
+      "category": "section-writing-method"
+    },
+    {
+      "query": "Turn the experiments section into a narrative with setup anchoring, takeaways after each cluster, ablations, and robustness.",
+      "should_trigger": true,
+      "category": "section-writing-experiments"
+    },
+    {
+      "query": "Please act like a reviewer and write major/minor comments on my manuscript.",
+      "should_trigger": false,
+      "category": "negative-overlap-audit"
+    },
+    {
+      "query": "Check whether this Chinese master's thesis chapter needs a better research gap and title.",
+      "should_trigger": false,
+      "category": "negative-overlap-thesis"
+    },
+    {
+      "query": "Fix my Typst paper compile error in main.typ.",
+      "should_trigger": false,
+      "category": "negative-overlap-typst"
+    },
+    {
+      "query": "Search my reference library for papers on diffusion models published after 2024.",
+      "should_trigger": false,
+      "category": "negative-overlap-bib"
+    },
+    {
       "query": "Polish the 绪论 and 文献综述 chapters of my Chinese master's thesis.",
       "should_trigger": false,
       "category": "negative-overlap-zh"
