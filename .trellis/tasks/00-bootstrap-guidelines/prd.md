@@ -21,10 +21,10 @@ the rest conversationally.
 
 ## Status (update the checkboxes as you complete each item)
 
-- [ ] Fill guidelines for claude-scholar
-- [ ] Fill guidelines for PaperSpine
-- [ ] Fill guidelines for Research-Paper-Writing-Skills
-- [ ] Add code examples
+- [x] Fill guidelines for claude-scholar
+- [x] Fill guidelines for PaperSpine
+- [x] Fill guidelines for Research-Paper-Writing-Skills
+- [x] Add code examples
 
 ---
 
