@@ -6,6 +6,11 @@ This collection of skills grew out of my day-to-day paper-writing workflow and
 has been iteratively refined over time. It may still have shortcomings or rough
 edges; if needed, please fork it and adapt it yourself.
 
+> I have recently been writing my dissertation, so I will keep improving
+> `latex-thesis-zh` based on actual usage.
+> Note: `paper-audit` review reports are for reference only; please verify and
+> evaluate them yourself.
+>
 > Post-writing polish and validation for academic papers: format checks,
 > bibliography search and verification, grammar analysis, de-AI editing, and
 > experiment narrative review. Focused on improving existing drafts, not writing
