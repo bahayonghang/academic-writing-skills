@@ -186,6 +186,71 @@ CHAPTER_BRIDGE_KEYWORDS_ZH = (
     "延续前文",
 )
 
+# ── 正文章引言（承上启下两段式）专项检查 ─────────────────────
+#
+# 与 S1 通用导语检查互补：S1 管“标题后有没有导语”，本检查管正文章引言
+# 是否符合“承上启下、约两段”的学位论文约定。绪论第 1 章不在此范围，由
+# _check_introduction_funnel 负责，故按标题显式排除，避免重复诊断。
+
+# 启下：本章要做什么（与“本章/本节”同现时视为已交代本章任务）。
+CHAPTER_PREVIEW_KEYWORDS_ZH = (
+    "提出",
+    "设计",
+    "研究",
+    "介绍",
+    "给出",
+    "描述",
+    "构建",
+    "分析",
+    "讨论",
+    "综述",
+    "围绕",
+    "组织",
+    "安排",
+    "结构",
+    "展开",
+    "分为",
+)
+# 启下：路标式预告（无需与“本章”同现即成立）。
+CHAPTER_ROADMAP_KEYWORDS_ZH = (
+    "组织如下",
+    "安排如下",
+    "结构如下",
+    "本章组织",
+    "本章安排",
+    "本章结构",
+    "首先",
+    "其次",
+    "随后",
+    "接着",
+    "最后",
+    "余下",
+    "本章其余",
+)
+# 相对指代：规范建议改用章节号。
+RELATIVE_REF_PATTERNS_ZH = (
+    "上一章",
+    "下一章",
+    "前一章",
+    "后一章",
+    "上一节",
+    "下一节",
+    "上文",
+    "下文",
+)
+CHAPTER_NUM_REF_RE = re.compile(r"第\s*\d+\s*章")
+SECTION_NUM_PREVIEW_RE = re.compile(r"\d+\.\d+\s*节")
+# 章引言豁免标题（在 LEAD_EXEMPT_TITLES_ZH 之外，额外排除绪论与收尾章）。
+CHAPTER_INTRO_EXEMPT_TITLES_ZH = (
+    "绪论",
+    "引言",
+    "结论",
+    "总结",
+    "展望",
+)
+CHAPTER_INTRO_MIN_CHARS = 40
+CHAPTER_INTRO_MAX_CHARS = 900
+
 
 def _section_visible_lines(
     lines: list[str], bounds: tuple[int, int], parser
@@ -387,6 +452,176 @@ def _check_chapter_mainline(content: str, lines: list[str], parser) -> list[str]
                 "",
             ]
         )
+    return out
+
+
+def _is_chapter_intro_exempt(title: str) -> bool:
+    """章引言检查的豁免标题：在通用导语豁免之外，再排除绪论与收尾章。"""
+    if _is_exempt_heading(title):
+        return True
+    normalized = title.strip()
+    return any(token in normalized for token in CHAPTER_INTRO_EXEMPT_TITLES_ZH)
+
+
+def _chapter_intro_gap(line: int, title: str, observe: str, suggest: str) -> list[str]:
+    """承上/启下缺失的统一输出（Major/P1，[Script]）。"""
+    return [
+        f"% 章引言（第{line}行）[Severity: Major] [Priority: P1]: [Script] 第“{title}”章{observe}",
+        f"% 建议：{suggest}",
+        "% 理由：正文章引言应承上启下——承接前章、引出本章问题与各节安排，是论文主线的关节。",
+        "",
+    ]
+
+
+def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
+    """正文章引言（承上启下两段式）专项检查。
+
+    仅作用于正文章（level-1 标题，排除绪论/引言/结论/总结/展望及摘要等），
+    且该章须含至少一个下级小节——否则“预告各节安排”无从谈起，交给 S1 与
+    _check_chapter_mainline。与 S1 互补：S1 管“有没有导语”，本检查管承上、
+    启下、相对指代与篇幅是否符合章引言约定。绪论由 _check_introduction_funnel 负责。
+    """
+    out: list[str] = []
+    headings = parser.extract_headings(content)
+    chapters = [h for h in headings if h["level"] == 1]
+    if not chapters:
+        return out
+
+    body_chapters = [c for c in chapters if not _is_chapter_intro_exempt(c["title"])]
+    if not body_chapters:
+        return out
+
+    for order, chapter in enumerate(body_chapters):
+        title = chapter["title"]
+        is_first_body = order == 0
+
+        # 本章范围：章标题行 -> 下一个 level-1 标题（或文末）。
+        next_chapter_line = next(
+            (h["line"] for h in headings if h["level"] == 1 and h["line"] > chapter["line"]),
+            None,
+        )
+        chapter_end = (next_chapter_line - 1) if next_chapter_line else len(lines)
+
+        # 本章首个下级小节（level >= 2）。无小节则跳过本章。
+        first_section_line = next(
+            (
+                h["line"]
+                for h in headings
+                if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2
+            ),
+            None,
+        )
+        if first_section_line is None:
+            continue
+
+        # 章引言块 = 章标题行+1 .. 首个小节行-1 的可见正文。
+        intro_parts: list[str] = []
+        for line_no in range(chapter["line"] + 1, min(first_section_line - 1, len(lines)) + 1):
+            raw = lines[line_no - 1].strip()
+            if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
+                continue
+            visible = parser.extract_visible_text(raw)
+            if visible:
+                intro_parts.append(visible)
+        intro_text = " ".join(intro_parts)
+        intro_len = len(intro_text.replace(" ", ""))
+
+        bridge_suggest = (
+            "在章引言第一段用章节号回顾前一章解决了什么、得出什么结论，引出本章为何继续。"
+        )
+        preview_suggest = "在章引言第二段说明本章针对什么问题、核心思想，必要时预告本章各节安排。"
+
+        # 空章引言：承上（非首个正文章）+ 启下均缺失。
+        if not intro_text:
+            if not is_first_body:
+                out.extend(
+                    _chapter_intro_gap(
+                        chapter["line"],
+                        title,
+                        "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
+                        bridge_suggest,
+                    )
+                )
+            out.extend(
+                _chapter_intro_gap(
+                    chapter["line"],
+                    title,
+                    "章引言缺少启下：未说明本章要解决的问题、思路或各节安排",
+                    preview_suggest,
+                )
+            )
+            continue
+
+        # 承上：桥接词 / 第X章 / 相对指代 任一即视为有承上尝试（相对指代另行提示措辞）。
+        has_relative_ref = any(p in intro_text for p in RELATIVE_REF_PATTERNS_ZH)
+        has_bridge = (
+            any(k in intro_text for k in CHAPTER_BRIDGE_KEYWORDS_ZH)
+            or CHAPTER_NUM_REF_RE.search(intro_text) is not None
+            or has_relative_ref
+        )
+        if not has_bridge and not is_first_body:
+            out.extend(
+                _chapter_intro_gap(
+                    chapter["line"],
+                    title,
+                    "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
+                    bridge_suggest,
+                )
+            )
+
+        # 启下：路标预告，或“本章 + 任务动词”说明本章要做什么。
+        has_roadmap = (
+            any(k in intro_text for k in CHAPTER_ROADMAP_KEYWORDS_ZH)
+            or SECTION_NUM_PREVIEW_RE.search(intro_text) is not None
+        )
+        has_chapter_action = "本章" in intro_text and any(
+            k in intro_text for k in CHAPTER_PREVIEW_KEYWORDS_ZH
+        )
+        if not has_roadmap and not has_chapter_action:
+            out.extend(
+                _chapter_intro_gap(
+                    chapter["line"],
+                    title,
+                    "章引言缺少启下：未说明本章要解决的问题、思路或各节安排",
+                    preview_suggest,
+                )
+            )
+
+        # 相对指代（规范：用章节号）。
+        if has_relative_ref:
+            hit = next(p for p in RELATIVE_REF_PATTERNS_ZH if p in intro_text)
+            out.extend(
+                [
+                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"[Script] 第“{title}”章章引言使用相对指代“{hit}”",
+                    "% 建议：改用章节号（如“第2章”）指代，避免“上一章/上文”这类相对表述。",
+                    "% 理由：学位论文规范建议用章节编号指代，便于非线性阅读与精确定位。",
+                    "",
+                ]
+            )
+
+        # 篇幅：过简 / 过长（约定 1~2 段、约 300~500 字）。
+        if intro_len < CHAPTER_INTRO_MIN_CHARS:
+            out.extend(
+                [
+                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"[Script] 第“{title}”章章引言过简（约{intro_len}字）",
+                    "% 建议：扩展为承上启下两段——先承接前章，再交代本章问题、思路与各节安排。",
+                    "% 理由：章引言一般为 1~2 个自然段、约 300~500 字，过简难以承担承上启下。",
+                    "",
+                ]
+            )
+        elif intro_len > CHAPTER_INTRO_MAX_CHARS:
+            out.extend(
+                [
+                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"[Script] 第“{title}”章章引言过长（约{intro_len}字）",
+                    "% 建议：将具体方法/实验细节下沉到对应小节，章引言保留承上启下两段。",
+                    "% 理由：章引言应是简短导览，过长会与正文小节重复并稀释主线。",
+                    "",
+                ]
+            )
+
     return out
 
 
@@ -862,6 +1097,7 @@ def analyze(
     if not section:
         out.extend(_check_heading_leads(content, lines, parser))
         out.extend(_check_chapter_mainline(content, lines, parser))
+        out.extend(_check_chapter_intro(content, lines, parser))
 
     if sections:
         if not section and "introduction" in sections:

@@ -22,7 +22,7 @@ metadata:
       structure,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-04"
+  last_updated: "2026-06-12"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -74,7 +74,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `compile`      | Thesis build fails or toolchain is unclear                                                                                      | `uv run python $SKILL_DIR/scripts/compile.py main.tex`                                  | `references/modules/compile.md`                                                                            |
 | `format`       | User asks about thesis formatting or GB/T 7714 layout                                                                           | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                             | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
-| `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                            | `references/writing/structure-guide.md`                                                                            |
+| `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                            | `references/writing/structure-guide.md`                                                                    |
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`                | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                          | `references/modules/template.md`                                                                           |
 | `bibliography` | GB/T 7714 or BibTeX validation                                                                                                  | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`       | `references/modules/bibliography.md`                                                                       |
@@ -92,6 +92,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `tables` / `abstract`。
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。
+- 涉及“每章引言/章首怎么写”“承上启下”“第三章第四章引言”“章引言太短/没承接上一章/没预告本章安排”时，默认走 `logic`：它会对正文各章（绪论除外）做承上启下两段式章引言专项检查，并补读 `references/writing/thesis-writing-guide.md` 的“正文章引言”一节给出改写方案。
 - 涉及“改写绪论/方法章节/实验讨论/总结与展望”“章节主线怎么写”“摘要、创新点、结论如何闭合”时，仍优先走现有模块，并补读 `references/writing/thesis-writing-guide.md`；不要新增英文会议论文式 `section-writing` 模块。
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
@@ -145,7 +146,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/citations/gb-standard.md`: GB/T 7714 and bibliography-related checks.
 - `references/writing/structure-guide.md`: thesis structure expectations and chapter mapping.
 - `references/writing/logic-coherence.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
-- `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
+- `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/modules/experiment.md`: experiment-chapter review criteria.

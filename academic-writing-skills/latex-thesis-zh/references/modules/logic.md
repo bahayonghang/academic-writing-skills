@@ -21,6 +21,16 @@ For chapter-level rewrite planning, also read `../writing/thesis-writing-guide.m
 
 **Detection**: Script scans `\chapter`, `\section`, `\subsection`, `\subsubsection`, `\paragraph` — flags if first child is non-prose content.
 
+### Chapter Intro Specialization (承上启下)
+
+S1 只判断"有没有导语"。对正文各章（第 2 章至结论前、且含下级小节）的**章引言**，脚本另做承上启下专项检查（`% 章引言 ... [Script]`），与 S1 互补：
+
+- **承上缺失 / 启下缺失**（Major/P1）：章引言未承接前章（无章节号/桥接），或未交代本章问题与各节安排。
+- **相对指代**（Minor/P2）：出现"上一章/上文"，建议改用章节号"第 X 章"。
+- **篇幅过简 / 过长**（Minor/P2）：偏离"1~2 段、约 300~500 字"的约定。
+
+绪论（第 1 章）由 `_check_introduction_funnel` 负责，章引言检查按标题显式排除，零重叠。改写指导见 [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md) 的"正文章引言"一节。
+
 ## Literature Review Quality (A1-A4)
 
 | Check | Rule | Detection |

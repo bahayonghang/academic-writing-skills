@@ -610,6 +610,93 @@ class TestAnalyzeLogicZh:
         findings = analyze_logic_zh.analyze(tex)
         assert "动机主线" not in "\n".join(findings)
 
+    # ── 正文章引言（承上启下两段式）专项检查 ──
+
+    def test_chapter_intro_compliant_passes(self, tmp_path: Path):
+        """规范的两段承上启下章引言不应触发 P1，也不应有章引言告警。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本章介绍研究背景与待解决的问题。\n"
+            "\\section{研究背景}\n该领域近年来需求快速增长，应用场景广泛。\n"
+            "\\chapter{问题建模与分析}\n"
+            "本章对目标问题进行形式化建模，并分析其计算瓶颈所在。"
+            "本章组织如下：先给出问题定义，再分析复杂度来源与影响因素。\n"
+            "\\section{问题定义}\n给出问题的形式化定义。\n"
+            "\\chapter{稀疏注意力方法}\n"
+            "第2章的建模分析表明，稠密注意力在长序列上计算开销过大。"
+            "针对这一瓶颈，本章提出一种稀疏注意力机制，其核心思想是按重要性筛选键值对，"
+            "在保持精度的同时降低计算复杂度。本章组织如下：先给出总体框架，再描述稀疏化策略。\n"
+            "\\section{总体框架}\n描述方法的总体框架。\n"
+            "\\chapter{实验与分析}\n"
+            "第3章提出的稀疏注意力方法需要在真实任务上验证有效性。"
+            "本章在多个基准上将所提方法与强基线进行对比，并通过消融分析关键设计的贡献。"
+            "本章首先介绍实验设置，随后报告主结果。\n"
+            "\\section{实验设置}\n介绍数据集与评测指标。\n"
+            "\\chapter{总结与展望}\n全文总结与未来方向。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "% 章引言" not in joined
+        assert "[Priority: P1]" not in joined
+
+    def test_chapter_intro_empty_flags_cheng_and_qi(self, tmp_path: Path):
+        """正文章标题后直接进入小节（空章引言）应报承上 + 启下缺失。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本章介绍背景与问题。\n"
+            "\\section{背景}\n背景内容。\n"
+            "\\chapter{研究框架}\n"
+            "本章建立总体研究框架并说明各部分关系。本章组织如下：先给出框架，再分述各模块。\n"
+            "\\section{框架概览}\n框架内容。\n"
+            "\\chapter{方法设计}\n"
+            "\\section{总体流程}\n"
+            "\\begin{itemize}\n\\item 数据预处理\n\\end{itemize}\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "章引言缺少承上" in joined
+        assert "章引言缺少启下" in joined
+
+    def test_chapter_intro_flags_relative_ref_and_too_short(self, tmp_path: Path):
+        """相对指代“上一章”应建议改用章节号，单句章引言应报过简。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本章介绍背景与问题。\n"
+            "\\section{背景}\n背景内容。\n"
+            "\\chapter{研究框架}\n"
+            "本章建立总体研究框架并说明各部分关系。本章组织如下：先给出框架，再分述各模块。\n"
+            "\\section{框架概览}\n框架内容。\n"
+            "\\chapter{改进方法}\n上一章讨论了基线方法。\n"
+            "\\section{框架}\n框架内容。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "相对指代" in joined
+        assert "章引言过简" in joined
+
+    def test_chapter_intro_first_body_chapter_cheng_relaxed(self, tmp_path: Path):
+        """第一个正文章（前接绪论）对“承上”放宽，不应报承上缺失。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本章介绍背景与问题。\n"
+            "\\section{背景}\n背景内容。\n"
+            "\\chapter{方法设计}\n"
+            "本章设计总体方法框架并阐述其研究动机与依据。"
+            "本章组织如下：先给出整体框架，再分述各模块与处理流程。\n"
+            "\\section{框架}\n框架内容。\n"
+            "\\chapter{实验}\n"
+            "第2章提出的方法需要在真实任务上验证有效性。"
+            "本章在基准上对比所提方法与基线，并分析关键设计的作用。本章首先介绍设置，随后报告结果。\n"
+            "\\section{设置}\n设置内容。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        joined = "\n".join(findings)
+        assert "章引言缺少承上" not in joined
+
 
 # ── deai_check.py (WP6: AI Filler Connectors + Parallel) ──────
 
