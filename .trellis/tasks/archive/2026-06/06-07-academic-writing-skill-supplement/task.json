@@ -1,0 +1,29 @@
+{
+  "id": "academic-writing-skill-supplement",
+  "name": "academic-writing-skill-supplement",
+  "title": "补全学术写作技能",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": "claude-scholar",
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-06-07",
+  "completedAt": "2026-06-12",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "06-07-latex-paper-en-writing-supplement",
+    "06-07-latex-thesis-zh-writing-supplement"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
