@@ -327,7 +327,6 @@ def main():
     parser.add_argument("--generate", action="store_true", help="根据内容生成标题候选")
     parser.add_argument("--optimize", action="store_true", help="优化现有标题")
     parser.add_argument("--check", action="store_true", help="检查标题质量")
-    parser.add_argument("--interactive", action="store_true", help="交互式模式")
 
     args = parser.parse_args()
 

@@ -3,6 +3,10 @@
 # 与 `tone-terms-zh.md` 配对。`deai_check.py` 读取本文件，
 # 文件缺失时使用脚本内 DEFAULT_THRESHOLDS。
 #
+# 依赖说明：解析本文件需要 PyYAML；用户环境缺少 PyYAML 时
+# deai_check.py 不会崩溃，而是回落内置默认阈值并在 stderr 提示
+# （此时本文件的定制不生效）。
+#
 # 触发全部走 [Script] LOW provenance。
 # “每篇”指整份输入文件经 parser.extract_visible_text 抽取后的可见正文。
 

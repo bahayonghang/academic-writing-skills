@@ -235,9 +235,9 @@ class TestCheckConsistency:
 
     def test_custom_terms_loading(self, tmp_path: Path):
         terms_file = tmp_path / "terms.json"
-        terms_file.write_text('{"zh": [["自编码器", "AE"]], "en": []}', encoding="utf-8")
+        terms_file.write_text('{"zh": [["自编码器", "自动编码器"]], "en": []}', encoding="utf-8")
         tex = tmp_path / "main.tex"
-        tex.write_text("自编码器和AE都出现了。", encoding="utf-8")
+        tex.write_text("自编码器和自动编码器都出现了。", encoding="utf-8")
         checker = check_consistency.ConsistencyChecker(
             [str(tex)], custom_terms_file=str(terms_file)
         )

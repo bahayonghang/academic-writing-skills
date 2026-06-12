@@ -96,15 +96,24 @@ def _load_thresholds(script_dir: Path) -> dict:
     """读取 references/deai/tone-thresholds.yaml；缺失时使用脚本内默认值。
 
     yaml 文件是 DEFAULT_THRESHOLDS 之上的可选覆盖层。部分字段缺省时按 key 合并，
-    用户只想调一个阈值不必复述全部配置。
+    用户只想调一个阈值不必复述全部配置。PyYAML 是可选依赖：skill 安装到
+    ~/.claude/skills/ 后用户环境可能没有 yaml，此时回落内置默认值并提示，
+    脚本不得崩溃。
     """
-    import yaml  # PyYAML; required project dependency
-
     merged = {
         k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
     }
     yaml_path = script_dir.parent / "references" / "deai" / THRESHOLDS_FILENAME
     if not yaml_path.exists():
+        return merged
+
+    try:
+        import yaml  # PyYAML; optional — fall back to defaults when absent
+    except ImportError:
+        print(
+            "[info] PyYAML 不可用，使用内置默认阈值（tone-thresholds.yaml 定制未生效）",
+            file=sys.stderr,
+        )
         return merged
 
     with open(yaml_path, encoding="utf-8") as f:
@@ -247,6 +256,14 @@ class ChineseAITraceChecker:
         self.lines = self.doc.lines
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
+        # F6: 未命中已知关键词的正文章不得从全文档检查中消失 —— 用全章节枚举
+        # 补入 section_ranges，键回退为标题文本。
+        for ch in self.parser.chapter_ranges(self.content):
+            if ch["key"] is None:
+                key = ch["title"] or f"chapter_L{ch['start']}"
+                while key in self.section_ranges:
+                    key += "_2"
+                self.section_ranges[key] = (ch["start"], ch["end"])
         self.comment_prefix = self.parser.get_comment_prefix()
         self.tier = tier
         self.thresholds = _load_thresholds(Path(__file__).parent)
@@ -267,17 +284,26 @@ class ChineseAITraceChecker:
         # Look ahead context (next 20 chars)
         context_after = text[end : end + 20]
         # Look behind context (prev 20 chars)
-        text[max(0, start - 20) : start]
+        context_before = text[max(0, start - 20) : start]
 
-        # 1. "显著提升/增加/减少" followed by number/percent
+        # 1. "显著提升/增加/减少" with a number/percent nearby
         if "显著" in pattern:
             if re.search(r"[降低升高提升增加减少了].*?\d+(?:\.\d+)?%", context_after):
                 return True
             if re.search(r"p\s*[<>=]\s*0\.\d+", context_after):
                 return True
+            # 前文已量化的场景：如 "误差降低了 12.5%，显著提升…"
+            if re.search(r"\d+(?:\.\d+)?%", context_before):
+                return True
 
-        # 2. "大幅" followed by number
-        return bool("大幅" in pattern and re.search(r"\d+(?:\.\d+)?%", context_after))
+        # 2. "大幅" with a number before or after
+        return bool(
+            "大幅" in pattern
+            and (
+                re.search(r"\d+(?:\.\d+)?%", context_after)
+                or re.search(r"\d+(?:\.\d+)?%", context_before)
+            )
+        )
 
     def _find_pattern_in_section(
         self, pattern: str, suggestion_type: str, section_name: str, category: str
@@ -662,7 +688,9 @@ class ChineseAITraceChecker:
         first_em: tuple[int, str] | None = None
         excl_hits: list[tuple[int, str, str]] = []
         for line_no, section, text in visible_lines:
-            em_in_line = text.count("——") + text.count("—") + text.count("---")
+            # 破折号按"连续 run"计数："——"（两个 U+2014）算 1 处，
+            # 避免一处中文破折号被计成 2-3 次的虚增（F5）
+            em_in_line = len(re.findall(r"—+|-{3,}", text))
             if em_in_line:
                 em_total += em_in_line
                 if first_em is None:

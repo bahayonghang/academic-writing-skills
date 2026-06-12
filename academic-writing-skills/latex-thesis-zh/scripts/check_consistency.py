@@ -83,30 +83,71 @@ class ConsistencyChecker:
                 self.content_cache[tex_file] = ""
         return self.content_cache[tex_file]
 
-    def check_terms(self) -> dict:
-        """Check term consistency across files."""
-        term_occurrences: dict[str, list[tuple[str, int]]] = defaultdict(list)
+    # 注释与"伪命中"载体（\cite 键、标签、文件路径参数）在术语统计前抹除。
+    _SANITIZE_RES = [
+        re.compile(r"(?<!\\)%.*"),  # LaTeX 行内注释
+        re.compile(r"\\(?:cite\w*|ref|eqref|autoref|cref|Cref|pageref|label)\*?\{[^}]*\}"),
+        re.compile(
+            r"\\(?:input|include|subfile|includegraphics|bibliography)\s*(?:\[[^\]]*\])?\{[^}]*\}"
+        ),
+        re.compile(r"\\(?:url|href)\{[^}]*\}"),
+    ]
 
-        for tex_file in self.tex_files:
-            content = self._load_content(tex_file)
+    @classmethod
+    def _sanitize(cls, content: str) -> str:
+        """Blank out comments / citation keys / file paths, preserving offsets
+        so line numbers computed against the sanitized text stay valid."""
+        for pattern in cls._SANITIZE_RES:
+            content = pattern.sub(lambda m: " " * len(m.group()), content)
+        return content
+
+    @staticmethod
+    def _is_abbrev(term: str) -> bool:
+        """全大写 ASCII 词视为缩写（CNN/RNN/NLP...），其余为全称变体。"""
+        return bool(re.fullmatch(r"[A-Z][A-Z0-9-]+", term))
+
+    def _find_abbrev_definitions(self) -> dict[str, tuple[int, int]]:
+        """缩写定义位置：全称（缩写）模式 → {缩写: (文件序号, 行号)}（取最早）。"""
+        definition_pattern = r"[^（(\s]{2,}[（(]([A-Z]{2,})[）)]"
+        definitions: dict[str, tuple[int, int]] = {}
+        for idx, tex_file in enumerate(self.tex_files):
+            content = self._sanitize(self._load_content(tex_file))
+            for match in re.finditer(definition_pattern, content):
+                abbrev = match.group(1)
+                line_num = content[: match.start()].count("\n") + 1
+                pos = (idx, line_num)
+                if abbrev not in definitions or pos < definitions[abbrev]:
+                    definitions[abbrev] = pos
+        return definitions
+
+    def check_terms(self) -> dict:
+        """Check term consistency across files.
+
+        国标惯例"首次全称（缩写），后文用缩写"不是不一致——只报告真正的漂移：
+        (a) 同义全称变体混用（深度神经网络 vs 深层学习）；
+        (b) 缩写已定义后正文仍大量使用全称。
+        缩写未定义就使用由 check_abbreviations 的 undefined 检查负责（不重复报告）。
+        """
+        # term -> [(file_idx, file_name, line)]
+        term_occurrences: dict[str, list[tuple[int, str, int]]] = defaultdict(list)
+
+        for idx, tex_file in enumerate(self.tex_files):
+            content = self._sanitize(self._load_content(tex_file))
             if not content:
                 continue
 
-            # Check each term group
             all_groups = self.term_groups_zh + self.term_groups_en
 
             for group in all_groups:
                 for term in group:
-                    # Find all occurrences
                     pattern = re.escape(term)
-                    matches = list(re.finditer(pattern, content, re.IGNORECASE))
-                    if matches:
-                        for match in matches:
-                            # Find line number
-                            line_num = content[: match.start()].count("\n") + 1
-                            term_occurrences[term].append((str(tex_file.name), line_num))
+                    if self._is_abbrev(term):
+                        pattern = rf"\b{pattern}\b"
+                    for match in re.finditer(pattern, content, re.IGNORECASE):
+                        line_num = content[: match.start()].count("\n") + 1
+                        term_occurrences[term].append((idx, str(tex_file.name), line_num))
 
-        # Find inconsistencies
+        definitions = self._find_abbrev_definitions()
         inconsistencies = []
         checked_groups: set[frozenset] = set()
 
@@ -118,24 +159,51 @@ class ConsistencyChecker:
                 continue
             checked_groups.add(group_set)
 
-            found_terms = {}
-            for term in group:
-                if term in term_occurrences:
-                    found_terms[term] = len(term_occurrences[term])
+            full_variants = [t for t in group if not self._is_abbrev(t)]
+            abbrevs = [t for t in group if self._is_abbrev(t)]
 
-            if len(found_terms) > 1:
-                # Multiple variants used
-                most_common = max(found_terms.items(), key=lambda x: x[1])
+            found_full = {
+                term: len(term_occurrences[term])
+                for term in full_variants
+                if term_occurrences[term]
+            }
+
+            # (a) 同义全称变体混用
+            if len(found_full) > 1:
+                most_common = max(found_full.items(), key=lambda x: x[1])
                 inconsistencies.append(
                     {
-                        "group": list(found_terms.keys()),
-                        "counts": found_terms,
-                        "suggestion": f"统一使用 '{most_common[0]}'",
+                        "type": "variant_mix",
+                        "group": list(found_full.keys()),
+                        "counts": found_full,
+                        "suggestion": f"同义全称混用，建议统一使用 '{most_common[0]}'",
                     }
                 )
 
+            # (b) 缩写已定义后，正文仍大量使用全称
+            for abbrev in abbrevs:
+                if abbrev not in definitions or not found_full:
+                    continue
+                def_pos = definitions[abbrev]
+                late_uses = [
+                    occ
+                    for term in found_full
+                    for occ in term_occurrences[term]
+                    if (occ[0], occ[2]) > def_pos
+                ]
+                if len(late_uses) >= 3:
+                    inconsistencies.append(
+                        {
+                            "type": "full_after_abbrev",
+                            "group": [*found_full.keys(), abbrev],
+                            "counts": {**found_full, abbrev: len(term_occurrences[abbrev])},
+                            "suggestion": f"'{abbrev}' 已定义但其后全称仍出现 {len(late_uses)} 次："
+                            f"首次出现用全称（{abbrev}），后文统一用缩写",
+                        }
+                    )
+
         return {
-            "term_occurrences": {k: len(v) for k, v in term_occurrences.items()},
+            "term_occurrences": {k: len(v) for k, v in term_occurrences.items() if v},
             "inconsistencies": inconsistencies,
             "status": "PASS" if not inconsistencies else "WARNING",
         }
@@ -149,7 +217,7 @@ class ConsistencyChecker:
         usages: dict[str, list[tuple[str, int]]] = defaultdict(list)
 
         for tex_file in self.tex_files:
-            content = self._load_content(tex_file)
+            content = self._sanitize(self._load_content(tex_file))
             if not content:
                 continue
 

@@ -16,9 +16,11 @@ from pathlib import Path
 from typing import Optional
 
 try:
+    from parsers import get_parser
     from tex_loader import assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
+    from parsers import get_parser
     from tex_loader import assemble
 
 
@@ -26,23 +28,38 @@ class FormatChecker:
     """ChkTeX wrapper with Chinese thesis specific checks."""
 
     # Chinese-specific checks (in addition to chktex)
+    # ``visible_only`` checks run against parser.extract_visible_text() output
+    # (math, \cite keys, labels stripped) —— 口语词只在真正的正文中标记。
     CHINESE_CHECKS = {
         "mixed_punctuation": {
-            "pattern": r"[\u4e00-\u9fff][,.:;!?]|[,.:;!?][\u4e00-\u9fff]",
+            "pattern": r"[一-鿿][,.:;!?]|[,.:;!?][一-鿿]",
             "message": "Mixed Chinese/English punctuation detected",
             "severity": "warning",
+            "visible_only": False,
         },
         "missing_space_after_cite": {
-            "pattern": r"\\cite\{[^}]+\}[\u4e00-\u9fff]",
+            "pattern": r"\\cite\{[^}]+\}[一-鿿]",
             "message": "Missing space after \\cite before Chinese text",
             "severity": "info",
+            "visible_only": False,
         },
-        "oral_expression": {
-            "pattern": r"我们|你们|很多|一些|非常|特别",
+        # "我们"在 thuthesis 等模板许可的表述里常见，降为 info；
+        # 是否改"本文/笔者"取决于院校规范。
+        "oral_pronoun": {
+            "pattern": r"我们|你们",
+            "message": "人称代词（部分院校要求用'本文/笔者'，以本校规范为准）",
+            "severity": "info",
+            "visible_only": True,
+        },
+        "oral_vague": {
+            "pattern": r"很多|一些|非常|特别",
             "message": "Potential oral expression in academic writing",
             "severity": "warning",
+            "visible_only": True,
         },
     }
+
+    _VERBATIM_ENVS = ("verbatim", "lstlisting", "minted")
 
     def __init__(self, tex_file: str, config: Optional[str] = None):
         self.tex_file = Path(tex_file).resolve()
@@ -70,8 +87,10 @@ class FormatChecker:
         chinese_issues, warnings = self._run_chinese_checks()
         all_issues.extend(chinese_issues)
 
+        # info 级提示（如人称代词）不降级状态：仅 warning/error 触发 WARNING
+        has_actionable = any(i["severity"] in ("warning", "error") for i in all_issues)
         return {
-            "status": "PASS" if not all_issues else "WARNING",
+            "status": "WARNING" if has_actionable else "PASS",
             "chktex_available": ok,
             "issues": all_issues,
             "total": len(all_issues),
@@ -132,17 +151,37 @@ class FormatChecker:
             return issues, []
 
         lines = doc.lines
+        parser = get_parser(self.tex_file)
+
+        # 标记 verbatim/lstlisting/minted 环境内的行（口语检查跳过代码）
+        in_verbatim = [False] * len(lines)
+        depth = 0
+        begin_re = re.compile(r"\\begin\{(?:" + "|".join(self._VERBATIM_ENVS) + r")\*?\}")
+        end_re = re.compile(r"\\end\{(?:" + "|".join(self._VERBATIM_ENVS) + r")\*?\}")
+        for i, line in enumerate(lines):
+            if begin_re.search(line):
+                depth += 1
+            in_verbatim[i] = depth > 0
+            if end_re.search(line) and depth > 0:
+                depth -= 1
 
         for check_name, check_info in self.CHINESE_CHECKS.items():
             pattern = check_info["pattern"]
+            visible_only = check_info.get("visible_only", False)
 
             for i, line in enumerate(lines, 1):
                 # Skip comments
                 if line.strip().startswith("%"):
                     continue
+                if visible_only and in_verbatim[i - 1]:
+                    continue
+
+                target = parser.extract_visible_text(line) if visible_only else line
+                if not target:
+                    continue
 
                 src_file, src_line = doc.origin(i)
-                for match in re.finditer(pattern, line):
+                for match in re.finditer(pattern, target):
                     issues.append(
                         {
                             "source": "chinese_check",
