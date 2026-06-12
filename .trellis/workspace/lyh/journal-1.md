@@ -73,3 +73,37 @@ Integrated section-specific writing references into latex-paper-en, added a boun
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Bootstrap project guidelines
+
+**Date**: 2026-06-12
+**Task**: Bootstrap project guidelines
+**Package**: claude-scholar
+**Branch**: `dev`
+
+### Summary
+
+Populated .trellis/spec for claude-scholar, PaperSpine, and Research-Paper-Writing-Skills, updated the bootstrap task checklist, and archived 00-bootstrap-guidelines.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5594f3f` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

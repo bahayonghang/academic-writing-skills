@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 2
+- **Total Sessions**: 3
 - **Last Active**: 2026-06-12
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~75 | Active |
+| `journal-1.md` | ~109 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 3 | 2026-06-12 | Bootstrap project guidelines | `5594f3f` | `dev` |
 | 2 | 2026-06-12 | latex-thesis-zh 章引言承上启下能力补强 | `7cf89e8` | `dev` |
 | 1 | 2026-06-05 | Paper section reference integration | `8d9fa96` | `dev` |
 <!-- @@@/auto:session-history -->
