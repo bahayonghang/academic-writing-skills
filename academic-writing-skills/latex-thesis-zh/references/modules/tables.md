@@ -31,3 +31,4 @@ uv run python -B scripts/generate_table.py data.json --style booktabs
 Skill-layer response: convert script output into `% TABLES (Line N) [Severity] [Priority]: ...` findings.
 
 See also: [table-guide.md](../formatting/table-guide.md) for the full three-line table specification.
+For bilingual (icaption) figure/table caption wording, see [caption-guide.md](../formatting/caption-guide.md).
