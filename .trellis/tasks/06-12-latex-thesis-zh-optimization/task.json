@@ -1,0 +1,33 @@
+{
+  "id": "latex-thesis-zh-optimization",
+  "name": "latex-thesis-zh-optimization",
+  "title": "latex-thesis-zh skill 审计与优化（父任务）",
+  "description": "基于 2026-06-12 深度审计（代码+内容+网络调研）的 latex-thesis-zh 优化总任务：管理 6 个子任务的需求集、任务映射与最终集成验收",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": "claude-scholar",
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-06-12",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "06-12-zh-parsers-multifile",
+    "06-12-zh-gb7714-validation",
+    "06-12-zh-router-cli-alignment",
+    "06-12-zh-template-knowledge",
+    "06-12-zh-checker-precision",
+    "06-12-zh-fixtures-evals"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
