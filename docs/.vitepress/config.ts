@@ -172,10 +172,10 @@ function latexThesisZhItems(prefix: string) {
       text: prefix.startsWith("/zh") ? "高校模板" : "University Templates",
       collapsed: true,
       items: [
-        { text: "Generic", link: `${r}/university-templates/generic` },
-        { text: "PKU", link: `${r}/university-templates/pku` },
-        { text: "Tsinghua", link: `${r}/university-templates/tsinghua` },
-        { text: "Yanshan", link: `${r}/university-templates/yanshan` },
+        { text: "Generic", link: `${r}/templates/generic` },
+        { text: "thuthesis (清华)", link: `${r}/templates/thuthesis` },
+        { text: "pkuthss (北大)", link: `${r}/templates/pkuthss` },
+        { text: "Yanshan (燕山)", link: `${r}/templates/yanshan` },
       ],
     },
   ];

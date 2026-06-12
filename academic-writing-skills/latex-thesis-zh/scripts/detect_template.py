@@ -20,9 +20,12 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from map_structure import ThesisStructureMapper
 
+# 模板 id -> templates/ 下的权威快照文件（单一知识源）。
+# ustcthesis / fduthesis 暂无专属快照，落到 generic.md 的通用约定；
+# yanshan.md 是规范获取指引（无可检测的 documentclass），不在此映射中。
 TEMPLATE_REFERENCE_FILES = {
-    "thuthesis": "tsinghua.md",
-    "pkuthss": "pku.md",
+    "thuthesis": "thuthesis.md",
+    "pkuthss": "pkuthss.md",
     "ctexbook": "generic.md",
     "ustcthesis": "generic.md",
     "fduthesis": "generic.md",
@@ -30,7 +33,7 @@ TEMPLATE_REFERENCE_FILES = {
 
 
 def _reference_dir() -> Path:
-    return Path(__file__).resolve().parent.parent / "references" / "university-templates"
+    return Path(__file__).resolve().parent.parent / "templates"
 
 
 def _reference_file(template_id: Optional[str]) -> Optional[Path]:
@@ -107,7 +110,6 @@ def main() -> None:
     result = {
         "template": template_id or "unknown",
         "name": template_info.get("name"),
-        "figure_format": template_info.get("figure_format"),
         "reference_file": str(ref_path) if ref_path else None,
         "key_requirements": key_requirements,
     }
@@ -119,8 +121,6 @@ def main() -> None:
     print(f"Template: {result['template']}")
     if result["name"]:
         print(f"Name: {result['name']}")
-    if result["figure_format"]:
-        print(f"Figure format: {result['figure_format']}")
     if result["reference_file"]:
         print(f"Reference: {result['reference_file']}")
     if result["key_requirements"]:

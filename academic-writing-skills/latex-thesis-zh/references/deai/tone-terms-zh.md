@@ -82,5 +82,5 @@
 - 句法语法（由 `analyze_logic.py` / 编辑器自检覆盖）
 - 引用密度（由 `check_references.py` 覆盖）
 - 章节结构（由 `check_format.py` / `map_structure.py` 覆盖）
-- 学校命名规范（由 `references/university-templates/` 覆盖）
+- 学校命名规范（由 `templates/` 覆盖）
 - 保留术语（由 `forbidden-terms.md` 覆盖）

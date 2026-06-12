@@ -24,32 +24,28 @@ except ImportError:
 class ThesisStructureMapper:
     """Map LaTeX thesis file structure and detect template type."""
 
-    # Known university templates
+    # Known university templates — documentclass detection patterns only.
+    # 展示性事实（图表编号风格、参考文献样式等）单源于 templates/<id>.md。
     TEMPLATES = {
         "thuthesis": {
             "pattern": r"\\documentclass.*\{thuthesis\}",
             "name": "Tsinghua University (thuthesis)",
-            "figure_format": "图 3-1",
         },
         "pkuthss": {
             "pattern": r"\\documentclass.*\{pkuthss\}",
             "name": "Peking University (pkuthss)",
-            "figure_format": "图3.1",
         },
         "ustcthesis": {
             "pattern": r"\\documentclass.*\{ustcthesis\}",
             "name": "USTC (ustcthesis)",
-            "figure_format": "图 3.1",
         },
         "fduthesis": {
             "pattern": r"\\documentclass.*\{fduthesis\}",
             "name": "Fudan University (fduthesis)",
-            "figure_format": "图 3.1",
         },
         "ctexbook": {
             "pattern": r"\\documentclass.*\{ctexbook\}",
             "name": "Generic Chinese Book (ctexbook)",
-            "figure_format": "图 3.1",
         },
     }
 
@@ -268,7 +264,7 @@ def main():
             print(f"Template: {template}")
             if info:
                 print(f"Name: {info['name']}")
-                print(f"Figure format: {info['figure_format']}")
+            # 模板事实快照（图表编号风格等）见 templates/；精确映射用 detect_template.py
         else:
             print("Template: Unknown (generic)")
         sys.exit(0)

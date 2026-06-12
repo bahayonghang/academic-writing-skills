@@ -6,16 +6,16 @@ Purpose: Detect and validate the university thesis template/class in use.
 
 1. **Scan document class**: Look for `\documentclass{thuthesis}`, `\documentclass{pkuthss}`, `\documentclass[...]{ctexbook}`, etc.
 2. **Check package imports**: Identify `ctex`, `xeCJK`, `fontspec` and other template-specific packages.
-3. **Match template**: Compare against known templates in `references/university-templates/`.
+3. **Match template**: Compare against known templates in `templates/` (single authoritative source).
 4. **Report**: Output detected template name, version (if available), and any config warnings.
 
 ## Supported Templates
 
-| Template | University | Document Class |
-|----------|-----------|---------------|
-| thuthesis | 清华大学 | `\documentclass{thuthesis}` |
-| pkuthss | 北京大学 | `\documentclass{pkuthss}` |
-| ctexbook (generic) | Various | `\documentclass[...]{ctexbook}` |
+| Template           | University | Document Class                  |
+| ------------------ | ---------- | ------------------------------- |
+| thuthesis          | 清华大学   | `\documentclass{thuthesis}`     |
+| pkuthss            | 北京大学   | `\documentclass{pkuthss}`       |
+| ctexbook (generic) | Various    | `\documentclass[...]{ctexbook}` |
 
 ## Key Config Files
 
@@ -26,8 +26,10 @@ Purpose: Detect and validate the university thesis template/class in use.
 
 ## After Detection
 
-Once the template is identified, load the corresponding university-specific rules from:
-- `references/university-templates/{university}.md` for per-university constraints
-- `references/university-templates/generic.md` as fallback for unknown templates
+Once the template is identified, load the corresponding template snapshot from:
 
-> See [`../university-templates/generic`](../university-templates/generic) for the fallback rule file and other university-specific files in the same directory.
+- `templates/{template}.md`（thuthesis.md / pkuthss.md）for per-template constraints
+- `templates/generic.md` as fallback for unknown templates（ustcthesis / fduthesis 暂同）
+- `templates/yanshan.md` 为燕山大学规范获取指引（无可检测的 documentclass）
+
+> See [`../templates/`](../templates/) for the authoritative per-template snapshots.

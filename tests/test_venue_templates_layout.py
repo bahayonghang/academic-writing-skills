@@ -55,20 +55,22 @@ def test_skill_md_advertises_templates(skill: str) -> None:
     )
 
 
-def test_thesis_templates_match_universities_source_byte_for_byte() -> None:
-    """Stage-4 plan requires 1:1 content migration for the thesis suite."""
-    pairs = [
-        ("generic.md", "generic.md"),
-        ("thuthesis.md", "tsinghua.md"),
-        ("pkuthss.md", "pku.md"),
-    ]
-    for template_name, source_name in pairs:
-        template = (ROOT / "latex-thesis-zh" / "templates" / template_name).read_text(
-            encoding="utf-8"
-        )
-        source = (
-            ROOT / "latex-thesis-zh" / "references" / "university-templates" / source_name
-        ).read_text(encoding="utf-8")
-        assert template == source, (
-            f"templates/{template_name} drifted from university-templates/{source_name}"
-        )
+def test_thesis_templates_are_single_source() -> None:
+    """2026-06 audit F14: templates/ is the single authoritative source.
+
+    The byte-identical ``references/university-templates/`` mirror was removed;
+    template facts (bst names, numbering styles) must live in exactly one place.
+    """
+    legacy_dir = ROOT / "latex-thesis-zh" / "references" / "university-templates"
+    assert not legacy_dir.exists(), (
+        "references/university-templates/ re-appeared — templates/ is the single source (F14)"
+    )
+
+    thuthesis = (ROOT / "latex-thesis-zh" / "templates" / "thuthesis.md").read_text(
+        encoding="utf-8"
+    )
+    assert "thuthesis-numeric" in thuthesis, "thuthesis bst fact lost (v7.6.0 baseline)"
+    assert "thubib" not in thuthesis, "stale thubib.bst fact re-introduced"
+
+    pkuthss = (ROOT / "latex-thesis-zh" / "templates" / "pkuthss.md").read_text(encoding="utf-8")
+    assert "归档" in pkuthss, "pkuthss archive status note lost"

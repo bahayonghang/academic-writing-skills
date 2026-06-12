@@ -20,8 +20,8 @@
 
 > 本文件只覆盖**国标**著录规则（一–四节按 2015 版，第五节为 2025 版过渡指引）。
 > 图表编号、章节标题字体等属于**校级排版约定**（各校自定，非国标内容），
-> 已迁至 [`../university-templates/generic.md`](../university-templates/generic.md)；已知模板时
-> 改读 `university-templates/tsinghua.md` / `university-templates/pku.md`。
+> 已迁至 [`../templates/generic.md`](../templates/generic.md)；已知模板时
+> 改读 `templates/thuthesis.md` / `templates/pkuthss.md`。
 
 ---
 

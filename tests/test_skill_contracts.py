@@ -150,7 +150,6 @@ REFERENCE_LAYOUTS = {
         "formatting",
         "latex",
         "modules",
-        "university-templates",
         "writing",
     },
 }

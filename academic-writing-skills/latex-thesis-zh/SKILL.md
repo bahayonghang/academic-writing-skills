@@ -158,9 +158,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/modules/experiment.md`: experiment-chapter review criteria.
-- `references/university-templates/`: legacy school-by-school index, kept for backward compatibility.
-- `templates/`: per-template snapshots loaded on demand. Files: `generic.md`, `thuthesis.md`, `pkuthss.md`.
-
+- `templates/`: per-template snapshots, the single authoritative source for template facts. Files: `generic.md`（含常见校级排版约定）, `thuthesis.md`, `pkuthss.md`, `yanshan.md`（规范获取指引）.
 只读取当前模块所需的参考文件，避免一次加载整套指南。
 
 ## Example Requests
