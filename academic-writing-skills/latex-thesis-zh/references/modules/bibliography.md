@@ -1,6 +1,11 @@
 # Bibliography Module Reference
 
-Purpose: Validate references against GB/T 7714-2015 and check BibTeX/BibLaTeX configuration.
+Purpose: Validate references against GB/T 7714 and check BibTeX/BibLaTeX configuration.
+
+> 版本提示：GB/T 7714-2025 已于 2025-12-02 发布、**2026-07-01 实施**（代替 2015 版）。
+> `verify_bib.py --standard gb7714` 按 2015 版检查；`--standard gb7714-2025` 按新国标
+> 差异点检查（预印本/数据集类型、非网络文献不再要求访问日期）。过渡期建议见
+> [`../citations/gb-standard.md`](../citations/gb-standard.md) 第五节。
 
 ## Document Type Identifiers
 

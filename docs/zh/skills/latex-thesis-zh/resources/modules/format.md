@@ -2,26 +2,16 @@
 
 Purpose: Check thesis page layout, heading format, and figure/table numbering against GB/T 7713.1 and university template rules.
 
-## Chapter Heading Format
+## Chapter Heading & Figure/Table Numbering
 
-| Level | Font | Size | Alignment |
-|-------|------|------|-----------|
-| Chapter title | 黑体 | 三号 | Center |
-| Section title | 黑体 | 四号 | Left |
-| Subsection title | 黑体 | 小四 | Left |
-| Paragraph title | 黑体 | 五号 | Left |
-
-## Figure/Table Numbering
-
-- **Figure captions**: Below figure, format "图 3-1 内容", 宋体五号
-- **Table captions**: Above table, format "表 3-1 内容", 宋体五号
-- **Equation numbers**: Right-aligned, format (3.1) = chapter.sequence
+这些是**校级排版约定**（各校自定，非国标强制）：常见设定见
+[`../university-templates/generic.md`](../university-templates/generic.md) 的"常见校级排版约定"一节；
+已知模板时改读 `university-templates/tsinghua.md`（图 3-1 连字符风格）或
+`university-templates/pku.md`（图3.1 点号风格），模板会自动处理格式。
 
 ## Key Checks
 
 - Page margins and layout per university template
 - Heading numbering consistency (chapter-based or sequential)
 - Caption placement (figures below, tables above)
-- Font and size compliance per heading level
-
-> Full details: see [`../citations/gb-standard.md`](../citations/gb-standard.md) (sections 五、六)
+- Font and size compliance per heading level — 以本校最新格式规范为准
