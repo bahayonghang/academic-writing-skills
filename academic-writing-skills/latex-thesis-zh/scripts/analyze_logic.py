@@ -1137,7 +1137,8 @@ def analyze(
         out.extend(_check_chapter_intro(content, lines, parser))
 
     if sections:
-        if not section and "introduction" in sections:
+        # 漏斗检查：全文档模式或显式 --section introduction/绪论 时执行
+        if "introduction" in sections and (not section or "introduction" in matched_keys):
             out.extend(_check_introduction_funnel(lines, sections, parser))
 
         related_keys = [k for k in sections if k == "related" or k.startswith("related_")]
@@ -1147,9 +1148,9 @@ def analyze(
                 out.extend(_check_lit_review_enumeration(lines, r_start, r_end, parser))
                 out.extend(_check_gap_derivation(lines, r_start, r_end, parser))
 
-        if cross_section and not section:
-            out.extend(_check_cross_section_closure(lines, sections, parser))
+        # C3 闭合已并入默认全文档模式（--cross-section 保留为兼容开关）。
         if not section:
+            out.extend(_check_cross_section_closure(lines, sections, parser))
             out.extend(_check_tri_section_alignment(content, lines, sections, parser))
         if motivation_thread and not section:
             out.extend(_check_motivation_thread(lines, sections, parser))
@@ -1162,11 +1163,13 @@ def analyze(
 def main() -> int:
     cli = argparse.ArgumentParser(description="中文学位论文逻辑与方法论分析")
     cli.add_argument("file", type=Path, help="目标 .tex/.typ 文件")
-    cli.add_argument("--section", help="指定分析章节")
+    cli.add_argument(
+        "--section", help="指定分析章节（接受英文键或中文章节名，如 introduction/绪论）"
+    )
     cli.add_argument(
         "--cross-section",
         action="store_true",
-        help="启用跨章节逻辑链闭合检查",
+        help="（兼容开关）C3 跨章节闭合检查已并入默认全文档模式，此选项保留以兼容旧命令",
     )
     cli.add_argument(
         "--motivation-thread",

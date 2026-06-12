@@ -30,9 +30,10 @@ Chinese LaTeX degree-thesis assistant for existing `.tex` projects. It is optimi
 | `bibliography` | GB/T 7714 bibliography checks | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | Thesis or chapter title optimization | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
 | `deai` | Chinese AI-trace and low-information rhetoric checks | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `logic` | Chapter mainline, intro funnel, lit review quality, or closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `logic` | Chapter mainline, intro funnel, lit review quality, or closure | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex` |
 | `literature` | Literature review synthesis and gap derivation | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py thesis.tex --section related` |
-| `experiment` | Experiment chapter and conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `experiment` | Experiment chapter and conclusion completeness | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex` |
+| `references` | Cross-reference integrity (undefined refs, captions, numbering gaps) | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py thesis.tex` |
 | `abstract` | Chinese abstract structure diagnosis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py thesis.tex --lang zh` |
 | `tables` | Three-line table and GB/T table checks | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py thesis.tex` |
 

@@ -30,9 +30,10 @@
 | `bibliography` | GB/T 7714 文献检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 论文或章节标题优化 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py thesis.tex --check` |
 | `deai` | 中文 AI 痕迹和低信息套话检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py thesis.tex --section introduction` |
-| `logic` | 章节主线、绪论漏斗、文献综述质量或闭合 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex --section related` |
+| `logic` | 章节主线、绪论漏斗、文献综述质量或闭合 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py thesis.tex` |
 | `literature` | 文献综述综合和 gap 推导 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py thesis.tex --section related` |
-| `experiment` | 实验章节和结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex --section experiments` |
+| `experiment` | 实验章节和结论完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py thesis.tex` |
+| `references` | 交叉引用完整性（未定义引用、图题、编号断档） | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py thesis.tex` |
 | `abstract` | 中文摘要结构诊断 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py thesis.tex --lang zh` |
 | `tables` | 三线表与 GB/T 表格检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py thesis.tex` |
 

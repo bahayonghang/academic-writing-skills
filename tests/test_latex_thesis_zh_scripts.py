@@ -610,6 +610,33 @@ class TestAnalyzeLogicZh:
         findings = analyze_logic_zh.analyze(tex)
         assert "动机主线" not in "\n".join(findings)
 
+    def test_cross_section_closure_runs_by_default(self, tmp_path: Path):
+        """C3 闭合检查并入默认全文档模式（F9），无须 --cross-section。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n本文提出一种全新的稀疏注意力机制。\n"
+            "\\chapter{结论}\n未来将探索更多应用场景。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex)
+        assert "跨章节逻辑链可能不完整" in "\n".join(findings)
+
+    def test_section_introduction_still_runs_funnel(self, tmp_path: Path):
+        """--section introduction 模式仍执行绪论漏斗检查（F9）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n"
+            "该领域近年来应用广泛，需求增长。\n"
+            "本文提出一种新的稀疏注意力机制。\n"
+            "实验证明了方法的有效性。\n",
+            encoding="utf-8",
+        )
+        findings = analyze_logic_zh.analyze(tex, "introduction")
+        joined = "\n".join(findings)
+        assert "绪论结构" in joined
+        # 中文章节名等效
+        assert joined == "\n".join(analyze_logic_zh.analyze(tex, "绪论"))
+
     # ── 正文章引言（承上启下两段式）专项检查 ──
 
     def test_chapter_intro_compliant_passes(self, tmp_path: Path):

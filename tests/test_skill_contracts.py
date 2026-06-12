@@ -76,6 +76,7 @@ SKILLS = {
             "consistency",
             "template",
             "bibliography",
+            "references",
             "title",
             "deai",
             "logic",

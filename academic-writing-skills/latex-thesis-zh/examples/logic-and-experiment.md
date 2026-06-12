@@ -9,10 +9,12 @@
 
 命令：
 ```bash
-uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --section introduction
-uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --cross-section
-uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments
+uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex
+uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex
 ```
+
+说明：`analyze_logic.py` 全文档模式默认包含绪论漏斗、章节主线与 C3 绪论-结论闭合检查；
+只关注单章时可加 `--section 绪论`（中文章节名与英文键均可）。
 
 预期输出：
 - 先指出绪论、贡献来源、结论之间是否错位。
