@@ -14,6 +14,12 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+try:
+    from tex_loader import iter_files, read_text_robust
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import iter_files, read_text_robust
+
 
 class ConsistencyChecker:
     """Check terminology and abbreviation consistency across thesis files."""
@@ -69,7 +75,10 @@ class ConsistencyChecker:
         """Load and cache file content."""
         if tex_file not in self.content_cache:
             try:
-                self.content_cache[tex_file] = tex_file.read_text(encoding="utf-8", errors="ignore")
+                content, warning = read_text_robust(tex_file)
+                if warning:
+                    print(f"[WARNING] {warning}", file=sys.stderr)
+                self.content_cache[tex_file] = content
             except Exception:
                 self.content_cache[tex_file] = ""
         return self.content_cache[tex_file]
@@ -234,23 +243,23 @@ class ConsistencyChecker:
         return "\n".join(lines)
 
 
-def find_tex_files(main_file: str) -> list[str]:
-    """Find all .tex files in the project."""
+def find_tex_files(main_file: str, all_files: bool = False) -> list[str]:
+    """Collect the .tex file set to analyze.
+
+    Default: only files reachable from ``main_file`` via \\input/\\include
+    (drafts and backups outside the include graph no longer pollute the
+    statistics). ``all_files=True`` keeps the legacy rglob behavior.
+    """
     main_path = Path(main_file).resolve()
+
+    if not all_files:
+        reachable = [str(node.path) for node in iter_files(main_path) if node.exists]
+        if reachable:
+            return reachable
+        return [str(main_path)]
+
     root_dir = main_path.parent
-
-    # Find all .tex files
-    tex_files = list(root_dir.rglob("*.tex"))
-
-    # Also check common subdirectories
-    for subdir in ["data", "chapters", "sections", "content"]:
-        subdir_path = root_dir / subdir
-        if subdir_path.exists():
-            tex_files.extend(subdir_path.rglob("*.tex"))
-
-    # Remove duplicates and sort
-    tex_files = sorted(set(tex_files))
-
+    tex_files = sorted(set(root_dir.rglob("*.tex")))
     return [str(f) for f in tex_files]
 
 
@@ -263,6 +272,12 @@ def main():
     )
     parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
     parser.add_argument("--custom-terms", type=str, help="JSON file with custom term groups")
+    parser.add_argument(
+        "--all-files",
+        action="store_true",
+        help="Scan every .tex under the project root (legacy rglob), "
+        "instead of only files reachable from the main file's include graph",
+    )
 
     args = parser.parse_args()
 
@@ -273,7 +288,7 @@ def main():
         if not Path(args.tex_file).exists():
             print(f"[ERROR] File not found: {args.tex_file}", file=sys.stderr)
             sys.exit(1)
-        tex_files = find_tex_files(args.tex_file)
+        tex_files = find_tex_files(args.tex_file, all_files=args.all_files)
 
     if not tex_files:
         print("[ERROR] No .tex files found", file=sys.stderr)

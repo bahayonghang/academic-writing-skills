@@ -69,11 +69,14 @@ def _file_hash(path: Path) -> str:
 # (e.g. typst's check_tables.py is a Typst rewrite, so it stays out of the
 # check_tables group).
 TIER1_HASH_GROUPS: list[tuple[str, list[str]]] = [
-    ("analyze_abstract.py", ["en", "zh", "typst"]),
+    # 2026-06: ZH analyze_abstract.py / check_tables.py left these groups —
+    # they now assemble multi-file thesis projects via the ZH-only
+    # ``tex_loader`` module (Chinese degree theses are \include-skeletons;
+    # EN/Typst papers stay single-file). See latex-thesis-zh audit F3.
+    ("analyze_abstract.py", ["en", "typst"]),
     ("analyze_grammar.py", ["en", "typst"]),
     ("analyze_sentences.py", ["en", "typst"]),
     ("improve_expression.py", ["en", "typst"]),
-    ("check_tables.py", ["en", "zh"]),
     ("generate_table.py", ["en", "zh"]),
     ("online_bib_verify.py", ["zh", "typst"]),
 ]

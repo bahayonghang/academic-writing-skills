@@ -12,10 +12,33 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
+    from tex_loader import AssembledDocument, assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
+    from tex_loader import AssembledDocument, assemble
+
+
+# 当前装配文档（由 analyze() 设置），让深层 helper 的行号输出能定位到源文件。
+_DOC: AssembledDocument | None = None
+
+
+def _zh_loc(start: int, end: int | None = None) -> str:
+    """行号定位：单文件 ``第15行``/``第15-20行``，多文件 ``chapters/x.tex:15``。"""
+    if _DOC is not None:
+        return _DOC.lineref(start, end)
+    if end is not None and end != start:
+        return f"第{start}-{end}行"
+    return f"第{start}行"
+
+
+def _l_loc(line_no: int) -> str:
+    """L## 风格定位（动机主线诊断用）。"""
+    if _DOC is not None and _DOC.multi_file:
+        src, src_line = _DOC.origin(line_no)
+        return f"{src}:{src_line}"
+    return f"L{line_no}"
 
 
 TRANSITIONS_ZH = {
@@ -68,7 +91,7 @@ def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser
             if consecutive >= 3:
                 out.extend(
                     [
-                        f"% 文献综述（第{streak_start}-{line_no - 1}行）"
+                        f"% 文献综述（{_zh_loc(streak_start, line_no - 1)}）"
                         "[Severity: Major] [Priority: P1]: "
                         f"检测到作者/年份罗列模式（连续{consecutive}条）",
                         "% 建议：按研究主题分组，组内进行批判性对比分析。",
@@ -80,7 +103,7 @@ def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser
     if consecutive >= 3:
         out.extend(
             [
-                f"% 文献综述（第{streak_start}-{min(end, len(lines))}行）"
+                f"% 文献综述（{_zh_loc(streak_start, min(end, len(lines)))}）"
                 "[Severity: Major] [Priority: P1]: "
                 f"检测到作者/年份罗列模式（连续{consecutive}条）",
                 "% 建议：按研究主题分组，组内进行批判性对比分析。",
@@ -108,7 +131,7 @@ def _check_gap_derivation(lines: list[str], start: int, end: int, parser) -> lis
     if not found_gap:
         out.extend(
             [
-                f"% 文献综述（第{scan_start}-{end}行）"
+                f"% 文献综述（{_zh_loc(scan_start, end)}）"
                 "[Severity: Major] [Priority: P1]: "
                 "相关工作末尾未发现研究空白推导",
                 "% 建议：添加明确的研究空白陈述，连接文献综述与本文贡献。",
@@ -305,7 +328,7 @@ def _check_introduction_funnel(
     if first_problem is None or first_contribution < first_problem:
         out.extend(
             [
-                f"% 绪论结构（第{first_contribution}行）[Severity: Major] [Priority: P1]: "
+                f"% 绪论结构（{_zh_loc(first_contribution)}）[Severity: Major] [Priority: P1]: "
                 "绪论可能从背景直接跳到本文方案，缺少技术瓶颈铺垫",
                 "% 建议：先明确主流方法解决不了什么，再提出本文研究问题或方法。",
                 "% 理由：绪论应按背景→瓶颈→前人不足→本文工作的漏斗链展开。",
@@ -316,7 +339,7 @@ def _check_introduction_funnel(
     if first_problem is not None and first_prior is None:
         out.extend(
             [
-                f"% 绪论结构（第{first_problem}行）[Severity: Major] [Priority: P1]: "
+                f"% 绪论结构（{_zh_loc(first_problem)}）[Severity: Major] [Priority: P1]: "
                 "绪论提出了问题，但没有从前人工作不足推导该问题",
                 "% 建议：补充已有工作的尝试与局限，再落到本文研究动机。",
                 "% 理由：只有问题没有前人不足，会让研究动机显得突兀。",
@@ -331,7 +354,7 @@ def _check_introduction_funnel(
     ):
         out.extend(
             [
-                f"% 绪论结构（第{first_contribution}行）[Severity: Major] [Priority: P1]: "
+                f"% 绪论结构（{_zh_loc(first_contribution)}）[Severity: Major] [Priority: P1]: "
                 "本文工作出现在前人不足之前，绪论漏斗链顺序可能错误",
                 "% 建议：先交代已有方法的不足，再引出本文方法。",
                 "% 理由：研究问题和方法应建立在明确的文献缺口之上。",
@@ -440,7 +463,7 @@ def _check_chapter_mainline(content: str, lines: list[str], parser) -> list[str]
         has_bridge = any(keyword in lead_text for keyword in CHAPTER_BRIDGE_KEYWORDS_ZH)
         generic_chapter_open = lead_text.startswith("本章") or lead_text.startswith("本文")
         if not has_bridge and generic_chapter_open:
-            missing_bridges.append(f"{heading['title']}（第{heading['line']}行）")
+            missing_bridges.append(f"{heading['title']}（{_zh_loc(heading['line'])}）")
 
     if len(missing_bridges) >= 2:
         out.extend(
@@ -466,7 +489,7 @@ def _is_chapter_intro_exempt(title: str) -> bool:
 def _chapter_intro_gap(line: int, title: str, observe: str, suggest: str) -> list[str]:
     """承上/启下缺失的统一输出（Major/P1，[Script]）。"""
     return [
-        f"% 章引言（第{line}行）[Severity: Major] [Priority: P1]: [Script] 第“{title}”章{observe}",
+        f"% 章引言（{_zh_loc(line)}）[Severity: Major] [Priority: P1]: [Script] 第“{title}”章{observe}",
         f"% 建议：{suggest}",
         "% 理由：正文章引言应承上启下——承接前章、引出本章问题与各节安排，是论文主线的关节。",
         "",
@@ -592,7 +615,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
             hit = next(p for p in RELATIVE_REF_PATTERNS_ZH if p in intro_text)
             out.extend(
                 [
-                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言使用相对指代“{hit}”",
                     "% 建议：改用章节号（如“第2章”）指代，避免“上一章/上文”这类相对表述。",
                     "% 理由：学位论文规范建议用章节编号指代，便于非线性阅读与精确定位。",
@@ -604,7 +627,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         if intro_len < CHAPTER_INTRO_MIN_CHARS:
             out.extend(
                 [
-                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言过简（约{intro_len}字）",
                     "% 建议：扩展为承上启下两段——先承接前章，再交代本章问题、思路与各节安排。",
                     "% 理由：章引言一般为 1~2 个自然段、约 300~500 字，过简难以承担承上启下。",
@@ -614,7 +637,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         elif intro_len > CHAPTER_INTRO_MAX_CHARS:
             out.extend(
                 [
-                    f"% 章引言（第{chapter['line']}行）[Severity: Minor] [Priority: P2]: "
+                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言过长（约{intro_len}字）",
                     "% 建议：将具体方法/实验细节下沉到对应小节，章引言保留承上启下两段。",
                     "% 理由：章引言应是简短导览，过长会与正文小节重复并稀释主线。",
@@ -661,7 +684,7 @@ def _check_cross_section_closure(
     if concl_answers == 0:
         out.extend(
             [
-                f"% 逻辑衔接（第{concl_start}-{concl_end}行）"
+                f"% 逻辑衔接（{_zh_loc(concl_start, concl_end)}）"
                 "[Severity: Major] [Priority: P1]: "
                 "[Script] 跨章节逻辑链可能不完整",
                 f"% 观察：绪论中有{intro_claims}处贡献声明，但结论中未发现明确回应。",
@@ -706,7 +729,7 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
         if start_line > end_line:
             out.extend(
                 [
-                    f"% 结构衔接（第{heading['line']}行）[Severity: Major] [Priority: P1]: "
+                    f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
                     f"标题“{title}”后未发现导语段落",
                     "% 建议：在标题后先用一段导语交代本层级的研究对象、写作目的和行文安排。",
                     "% 理由：标题后直接结束或切到下一级标题，会导致结构展开过于突兀。",
@@ -735,13 +758,13 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
 
         if first_text_line is None:
             reason = (
-                f"标题后直接进入结构元素（第{first_structural_line}行）"
+                f"标题后直接进入结构元素（{_zh_loc(first_structural_line)}）"
                 if first_structural_line
                 else "标题后未发现可见正文"
             )
             out.extend(
                 [
-                    f"% 结构衔接（第{heading['line']}行）[Severity: Major] [Priority: P1]: "
+                    f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
                     f"标题“{title}”后缺少导语段落",
                     f"% 观察：{reason}。",
                     "% 建议：先补一段完整导语，再进入列表、图表、公式或下一级标题。",
@@ -756,7 +779,7 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
         if heading["level"] <= 4 and is_short and not has_guide_signal:
             out.extend(
                 [
-                    f"% 结构衔接（第{first_text_line}行）[Severity: Minor] [Priority: P2]: "
+                    f"% 结构衔接（{_zh_loc(first_text_line)}）[Severity: Minor] [Priority: P2]: "
                     f"标题“{title}”后的导语可能过短",
                     f"% 原文: {first_text}",
                     "% 建议：扩展为一段完整导语，交代本层级内容范围、与上文关系及展开顺序。",
@@ -973,18 +996,19 @@ def _check_motivation_thread(
         for idx, (ln, txt) in enumerate(promises[:10], 1):
             if not evidence_lines:
                 out.append(
-                    f"{p} - P{idx}（绪论 L{ln}）-> [未找到正文证据] [Severity: Major] [Priority: P1]："
-                    "绪论与结论之间没有正文"
+                    f"{p} - P{idx}（绪论 {_l_loc(ln)}）-> [未找到正文证据] "
+                    "[Severity: Major] [Priority: P1]：绪论与结论之间没有正文"
                 )
                 continue
             match = _thread_best_match(_thread_tokens(txt), evidence_lines)
             if match:
                 out.append(
-                    f"{p} - P{idx}（绪论 L{ln}）-> 证据 L{match[0]} [已匹配, overlap={match[1]}]"
+                    f"{p} - P{idx}（绪论 {_l_loc(ln)}）-> 证据 {_l_loc(match[0])} "
+                    f"[已匹配, overlap={match[1]}]"
                 )
             else:
                 out.append(
-                    f"{p} - P{idx}（绪论 L{ln}）-> [未找到证据] [Severity: Major] [Priority: P1]："
+                    f"{p} - P{idx}（绪论 {_l_loc(ln)}）-> [未找到证据] [Severity: Major] [Priority: P1]："
                     "承诺未在实验/结果中验证"
                 )
                 out.append(f"{p}   承诺: {txt[:100]}")
@@ -1001,11 +1025,12 @@ def _check_motivation_thread(
             match = _thread_best_match(_thread_tokens(txt), closure_lines)
             if match:
                 out.append(
-                    f"{p} - C{idx}（绪论 L{ln}）-> 收口 L{match[0]} [已闭合, overlap={match[1]}]"
+                    f"{p} - C{idx}（绪论 {_l_loc(ln)}）-> 收口 {_l_loc(match[0])} "
+                    f"[已闭合, overlap={match[1]}]"
                 )
             else:
                 out.append(
-                    f"{p} - C{idx}（绪论 L{ln}）-> [未闭合] [Severity: Major] [Priority: P1]："
+                    f"{p} - C{idx}（绪论 {_l_loc(ln)}）-> [未闭合] [Severity: Major] [Priority: P1]："
                     "主张未在讨论/结论中回应"
                 )
     out.append("")
@@ -1025,7 +1050,9 @@ def _check_motivation_thread(
         if orphans:
             out.append(f"{p} 动机主线：游离证据（结果无法追溯到任一绪论承诺）")
             for ln, txt in orphans[:5]:
-                out.append(f"{p} - 证据 L{ln} [Severity: Moderate] [Priority: P2]: {txt[:90]}")
+                out.append(
+                    f"{p} - 证据 {_l_loc(ln)} [Severity: Moderate] [Priority: P2]: {txt[:90]}"
+                )
             out.append("")
     return out
 
@@ -1036,22 +1063,32 @@ def analyze(
     cross_section: bool = False,
     motivation_thread: bool = False,
 ) -> list[str]:
+    global _DOC
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
+    doc = assemble(file_path)
+    _DOC = doc
+    content = doc.content
+    lines = doc.lines
     sections = parser.split_sections(content)
+    comment_prefix = parser.get_comment_prefix()
+    warn = doc.warning_lines(comment_prefix)
 
+    matched_keys: list[str] = []
     if section:
-        key = section.lower()
-        if key not in sections:
-            return [f"% ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {section}"]
-        ranges = [sections[key]]
+        matched_keys, available = resolve_section_keys(section, sections)
+        if not matched_keys:
+            avail = ", ".join(available) if available else "（本文档未识别出任何已知章节）"
+            return warn + [
+                f"% ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {section}",
+                f"% 可用章节: {avail}",
+                "% 提示：--section 同时接受英文键（introduction/related/...）与中文章节名（绪论/相关工作/...）。",
+            ]
+        ranges = [sections[k] for k in matched_keys]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 
-    out: list[str] = []
+    out: list[str] = list(warn)
     previous_visible = ""
-    comment_prefix = parser.get_comment_prefix()
     for start, end in ranges:
         for line_no in range(start, min(end, len(lines)) + 1):
             raw = lines[line_no - 1].strip()
@@ -1065,7 +1102,7 @@ def analyze(
             if _needs_method_justification_zh(visible):
                 out.extend(
                     [
-                        f"% 方法论深度（第{line_no}行）[Severity: Major] [Priority: P1]: "
+                        f"% 方法论深度（{_zh_loc(line_no)}）[Severity: Major] [Priority: P1]: "
                         "方法选择缺乏论证",
                         f"% 原文: {visible}",
                         "% 建议：添加选择理由（如效率/准确率/可复现性）。",
@@ -1082,7 +1119,7 @@ def analyze(
             ):
                 out.extend(
                     [
-                        f"% 逻辑衔接（第{line_no}行）[Severity: Major] [Priority: P1]: "
+                        f"% 逻辑衔接（{_zh_loc(line_no)}）[Severity: Major] [Priority: P1]: "
                         "问题与解决方案间可能存在逻辑跳跃",
                         f"% 原文: {visible}",
                         '% 建议：添加显式过渡（如"因此"、"为解决上述问题"）。',
@@ -1103,10 +1140,10 @@ def analyze(
         if not section and "introduction" in sections:
             out.extend(_check_introduction_funnel(lines, sections, parser))
 
-        related_key = "related"
-        if related_key in sections:
-            r_start, r_end = sections[related_key]
-            if not section or section.lower() == related_key:
+        related_keys = [k for k in sections if k == "related" or k.startswith("related_")]
+        for related_key in related_keys:
+            if not section or related_key in matched_keys:
+                r_start, r_end = sections[related_key]
                 out.extend(_check_lit_review_enumeration(lines, r_start, r_end, parser))
                 out.extend(_check_gap_derivation(lines, r_start, r_end, parser))
 
@@ -1117,7 +1154,7 @@ def analyze(
         if motivation_thread and not section:
             out.extend(_check_motivation_thread(lines, sections, parser))
 
-    if not out:
+    if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
 

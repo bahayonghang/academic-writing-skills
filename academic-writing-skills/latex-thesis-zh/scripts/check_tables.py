@@ -14,6 +14,12 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
+
 
 class TableChecker:
     """Validate LaTeX tables against the three-line (booktabs) standard."""
@@ -33,9 +39,10 @@ class TableChecker:
         self.content = ""
         self.lines: list[str] = []
         self.issues: list[dict] = []
+        self.doc = None
 
     def _load(self) -> bool:
-        """Load the .tex file content."""
+        """Load the .tex file content (assembling \\include'd chapters)."""
         if not self.tex_file.exists():
             self.issues.append(
                 {
@@ -47,8 +54,9 @@ class TableChecker:
                 }
             )
             return False
-        self.content = self.tex_file.read_text(encoding="utf-8", errors="replace")
-        self.lines = self.content.split("\n")
+        self.doc = assemble(self.tex_file)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         return True
 
     def check(self, fix_suggestions: bool = False) -> dict:
@@ -81,12 +89,21 @@ class TableChecker:
         else:
             status = "WARNING"
 
+        # Map assembled line numbers back to 源文件:行号 (idempotent via flag)
+        if self.doc is not None and self.doc.multi_file:
+            for issue in self.issues:
+                if issue.get("line") and not issue.get("file"):
+                    src, src_line = self.doc.origin(issue["line"])
+                    issue["file"] = src
+                    issue["line"] = src_line
+
         return {
             "status": status,
             "file": str(self.tex_file),
             "table_count": len(self._find_table_environments()),
             "issue_count": len(self.issues),
             "issues": self.issues,
+            "warnings": list(self.doc.warnings) if self.doc is not None else [],
         }
 
     def _check_booktabs_loaded(self) -> None:
@@ -384,6 +401,8 @@ class TableChecker:
         lines.append(f"Tables found: {result['table_count']}")
         lines.append(f"Status: {result['status']}")
         lines.append(f"Issues: {result['issue_count']}")
+        for warn in result.get("warnings", []):
+            lines.append(f"WARN: {warn}")
 
         if result["issues"]:
             lines.append("")
@@ -399,7 +418,12 @@ class TableChecker:
             for category, issues in sorted(by_category.items()):
                 lines.append(f"\n[{category.upper()}] ({len(issues)} issues)")
                 for issue in issues:
-                    prefix = f"  Line {issue['line']}" if issue["line"] else "  Global"
+                    if issue.get("file"):
+                        prefix = f"  {issue['file']}:{issue['line']}"
+                    elif issue["line"]:
+                        prefix = f"  Line {issue['line']}"
+                    else:
+                        prefix = "  Global"
                     lines.append(f"{prefix}: [{issue['level']}] {issue['message']}")
                     if issue.get("fix"):
                         lines.append(f"    Fix: {issue['fix']}")

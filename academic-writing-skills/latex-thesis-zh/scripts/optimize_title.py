@@ -15,11 +15,13 @@ from typing import Optional
 # Import parsers from the same directory
 try:
     from parsers import extract_abstract, extract_title
+    from tex_loader import assemble
 except ImportError:
     import os
 
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from parsers import extract_abstract, extract_title
+    from tex_loader import assemble
 
 
 # 无效词汇
@@ -334,9 +336,11 @@ def main():
         print(f"错误：文件不存在：{tex_path}", file=sys.stderr)
         return 1
 
-    # 提取当前标题
-    with open(tex_path, encoding="utf-8") as f:
-        content = f.read()
+    # 提取当前标题（多文件工程下标题/摘要可能位于 include 文件中）
+    doc = assemble(tex_path)
+    content = doc.content
+    for warn in doc.warning_lines("%"):
+        print(warn)
 
     current_title = extract_title(content)
 

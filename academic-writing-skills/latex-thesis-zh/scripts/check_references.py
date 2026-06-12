@@ -19,6 +19,12 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+try:
+    from tex_loader import iter_files
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import iter_files
+
 # ---------------------------------------------------------------------------
 # Regex patterns (LaTeX, multi-file)
 # ---------------------------------------------------------------------------
@@ -332,9 +338,15 @@ class ThesisReferenceChecker(ReferenceChecker):
     def __init__(self, main_file: str) -> None:
         self.main_file = Path(main_file).resolve()
         self.base_dir = self.main_file.parent
-        # Map from resolved file path -> file content
+        # Map from resolved file path -> file content (via the shared
+        # tex_loader resolver: encoding-robust, cycle-safe, comment-aware)
         self.all_files: dict[str, str] = {}
-        self._resolve_includes(self.main_file)
+        self.encoding_warnings: list[str] = []
+        for node in iter_files(self.main_file):
+            if node.exists and node.content is not None:
+                self.all_files[str(node.path)] = node.content
+                if node.warning:
+                    self.encoding_warnings.append(node.warning)
         # Build combined content (used by base class for caption/env detection)
         combined = "\n".join(self.all_files.values())
         super().__init__(combined, str(self.main_file))
@@ -342,31 +354,6 @@ class ThesisReferenceChecker(ReferenceChecker):
         self._all_labels: list[LabelInfo] = []
         self._all_refs: list[RefInfo] = []
         self._scan_all_files()
-
-    def _resolve_includes(self, file_path: Path, visited: set[str] | None = None) -> None:
-        """Recursively load file_path and all files it \\input/\\includes."""
-        if visited is None:
-            visited = set()
-        resolved = str(file_path.resolve())
-        if resolved in visited:
-            return  # Prevent infinite loops from circular includes
-        visited.add(resolved)
-
-        if not file_path.exists():
-            return  # Missing file — skip silently
-
-        content = file_path.read_text(encoding="utf-8", errors="replace")
-        self.all_files[resolved] = content
-
-        for match in self.INPUT_RE.finditer(content):
-            raw = match.group(1).strip()
-            included = Path(raw)
-            # Add .tex extension if missing
-            if not included.suffix:
-                included = included.with_suffix(".tex")
-            # Resolve relative to the parent file's directory
-            candidate = (file_path.parent / included).resolve()
-            self._resolve_includes(candidate, visited)
 
     def _scan_all_files(self) -> None:
         """Scan every loaded file to collect per-file labels and refs."""
@@ -442,6 +429,9 @@ def main() -> int:
 
     checker = ThesisReferenceChecker(str(path))
     issues = checker.run_all()
+
+    for warning in checker.encoding_warnings:
+        print(f"{COMMENT_PREFIX} REFERENCES [WARN]: {warning}", file=sys.stderr)
 
     if args.json:
         print(json.dumps(issues, indent=2, ensure_ascii=False))

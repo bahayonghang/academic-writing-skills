@@ -14,6 +14,12 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+try:
+    from tex_loader import iter_files
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import iter_files
+
 
 class ThesisStructureMapper:
     """Map LaTeX thesis file structure and detect template type."""
@@ -72,72 +78,29 @@ class ThesisStructureMapper:
         """Map the thesis structure starting from main file."""
         self.structure = []
         self.visited = set()
-        self._parse_file(self.main_file, level=0)
-        return self.structure
-
-    def _parse_file(self, tex_file: Path, level: int):
-        """Recursively parse a LaTeX file for includes."""
-        if tex_file in self.visited:
-            return
-        self.visited.add(tex_file)
-
-        if not tex_file.exists():
+        for node in iter_files(self.main_file):
+            if not node.exists:
+                self.structure.append(
+                    {
+                        "file": node.rel,
+                        "level": node.level,
+                        "type": "missing",
+                        "exists": False,
+                    }
+                )
+                continue
+            self.visited.add(node.path)
             self.structure.append(
                 {
-                    "file": str(tex_file.relative_to(self.root_dir))
-                    if tex_file.is_relative_to(self.root_dir)
-                    else str(tex_file),
-                    "level": level,
-                    "type": "missing",
-                    "exists": False,
+                    "file": node.rel,
+                    "level": node.level,
+                    "type": self._detect_file_type(node.path),
+                    "exists": True,
                 }
             )
-            return
-
-        # Add current file to structure
-        file_type = self._detect_file_type(tex_file)
-        self.structure.append(
-            {
-                "file": str(tex_file.relative_to(self.root_dir)),
-                "level": level,
-                "type": file_type,
-                "exists": True,
-            }
-        )
-
-        # Read file content
-        try:
-            content = tex_file.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
-            return
-
-        # Detect template from main file
-        if level == 0:
-            self.template = self._detect_template(content)
-
-        # Find included files
-        patterns = [
-            (r"\\input\{([^}]+)\}", "input"),
-            (r"\\include\{([^}]+)\}", "include"),
-            (r"\\subfile\{([^}]+)\}", "subfile"),
-        ]
-
-        for pattern, _include_type in patterns:
-            for match in re.finditer(pattern, content):
-                included = match.group(1)
-
-                # Handle relative paths
-                if not included.endswith(".tex"):
-                    included += ".tex"
-
-                # Resolve path relative to current file
-                included_path = (tex_file.parent / included).resolve()
-
-                # Also try relative to root
-                if not included_path.exists():
-                    included_path = (self.root_dir / included).resolve()
-
-                self._parse_file(included_path, level + 1)
+            if node.level == 0 and node.content is not None:
+                self.template = self._detect_template(node.content)
+        return self.structure
 
     def _detect_file_type(self, tex_file: Path) -> str:
         """Detect the type of a LaTeX file based on name and content."""

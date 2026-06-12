@@ -15,6 +15,12 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
+
 
 class FormatChecker:
     """ChkTeX wrapper with Chinese thesis specific checks."""
@@ -53,14 +59,15 @@ class FormatChecker:
         """Run format checks including Chinese-specific ones."""
         all_issues = []
 
-        # Run chktex if available
+        # Run chktex if available (note: chktex only sees the entry file;
+        # the Chinese-specific checks below cover the assembled project)
         ok, msg = self._check_chktex()
         if ok:
             chktex_issues = self._run_chktex(strict)
             all_issues.extend(chktex_issues)
 
         # Run Chinese-specific checks
-        chinese_issues = self._run_chinese_checks()
+        chinese_issues, warnings = self._run_chinese_checks()
         all_issues.extend(chinese_issues)
 
         return {
@@ -68,6 +75,7 @@ class FormatChecker:
             "chktex_available": ok,
             "issues": all_issues,
             "total": len(all_issues),
+            "warnings": warnings,
         }
 
     def _run_chktex(self, strict: bool) -> list[dict]:
@@ -114,16 +122,16 @@ class FormatChecker:
 
         return issues
 
-    def _run_chinese_checks(self) -> list[dict]:
-        """Run Chinese-specific checks."""
-        issues = []
+    def _run_chinese_checks(self) -> tuple[list[dict], list[str]]:
+        """Run Chinese-specific checks across the assembled project."""
+        issues: list[dict] = []
 
         try:
-            content = self.tex_file.read_text(encoding="utf-8", errors="ignore")
+            doc = assemble(self.tex_file)
         except Exception:
-            return issues
+            return issues, []
 
-        lines = content.split("\n")
+        lines = doc.lines
 
         for check_name, check_info in self.CHINESE_CHECKS.items():
             pattern = check_info["pattern"]
@@ -133,12 +141,13 @@ class FormatChecker:
                 if line.strip().startswith("%"):
                     continue
 
+                src_file, src_line = doc.origin(i)
                 for match in re.finditer(pattern, line):
                     issues.append(
                         {
                             "source": "chinese_check",
-                            "file": str(self.tex_file.name),
-                            "line": i,
+                            "file": src_file if doc.multi_file else str(self.tex_file.name),
+                            "line": src_line,
                             "column": match.start() + 1,
                             "severity": check_info["severity"],
                             "code": check_name,
@@ -147,7 +156,7 @@ class FormatChecker:
                         }
                     )
 
-        return issues
+        return issues, list(doc.warnings)
 
     def generate_report(self, result: dict) -> str:
         """Generate human-readable report."""
@@ -159,6 +168,8 @@ class FormatChecker:
         lines.append(f"Status: {result['status']}")
         lines.append(f"ChkTeX: {'Available' if result['chktex_available'] else 'Not Available'}")
         lines.append(f"Total Issues: {result['total']}")
+        for warn in result.get("warnings", []):
+            lines.append(f"WARN: {warn}")
 
         if result["issues"]:
             lines.append("")
@@ -178,7 +189,7 @@ class FormatChecker:
                 lines.append(f"\n[{source.upper()}] ({len(issues)} issues)")
                 for issue in issues[:10]:
                     sev = issue["severity"].upper()
-                    lines.append(f"  [{sev}] Line {issue['line']}: {issue['message']}")
+                    lines.append(f"  [{sev}] {issue['file']}:{issue['line']}: {issue['message']}")
                 if len(issues) > 10:
                     lines.append(f"  ... and {len(issues) - 10} more")
 

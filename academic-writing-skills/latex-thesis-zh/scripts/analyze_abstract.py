@@ -15,7 +15,13 @@ import re
 import sys
 from pathlib import Path
 
-from parsers import extract_abstract
+try:
+    from parsers import extract_abstract
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from parsers import extract_abstract
+    from tex_loader import assemble
 
 
 class AbstractAnalyzer:
@@ -205,14 +211,17 @@ class AbstractAnalyzer:
                 "elements": {},
             }
 
-        content = self.tex_file.read_text(encoding="utf-8", errors="replace")
-        abstract_text = extract_abstract(content)
+        # Assemble multi-file projects: the abstract often lives in an
+        # \include'd front-matter file rather than main.tex itself.
+        doc = assemble(self.tex_file)
+        abstract_text = extract_abstract(doc.content)
 
         if not abstract_text.strip():
             return {
                 "status": "ERROR",
                 "message": "No abstract found in document.",
                 "elements": {},
+                "warnings": doc.warnings,
             }
 
         # Detect language
@@ -255,6 +264,7 @@ class AbstractAnalyzer:
             "language": lang,
             "elements": elements,
             "count": count_info,
+            "warnings": doc.warnings,
         }
 
     def _detect_lang(self, text: str) -> str:
@@ -424,6 +434,8 @@ class AbstractAnalyzer:
         lines.append(f"File: {result.get('file', 'N/A')}")
         lines.append(f"Language: {result.get('language', 'N/A')}")
         lines.append(f"Status: {result['status']}")
+        for warn in result.get("warnings", []):
+            lines.append(f"WARN: {warn}")
 
         if result["status"] == "ERROR":
             lines.append(f"Error: {result.get('message', '')}")

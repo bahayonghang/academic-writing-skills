@@ -16,10 +16,12 @@ from pathlib import Path
 
 # Import local parsers
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import assemble, read_text_robust
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import assemble, read_text_robust
 
 
 class ChineseDeAIBatchProcessor:
@@ -27,8 +29,9 @@ class ChineseDeAIBatchProcessor:
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
-        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
-        self.lines = self.content.split("\n")
+        self.doc = assemble(file_path)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
@@ -172,7 +175,7 @@ class ChineseDeAIBatchProcessor:
             if trace_count > 0:
                 report.append("\n痕迹（前5条）:")
                 for i, trace in enumerate(analysis["traces"][:5], 1):
-                    report.append(f"\n  [{i}] 第{trace['line']}行")
+                    report.append(f"\n  [{i}] {self.doc.lineref(trace['line'])}")
                     report.append(f"      模式: {', '.join(trace['patterns'])}")
                     report.append(f"      可见文本: {trace['visible'][:100]}")
 
@@ -195,7 +198,9 @@ class ChineseDeAIBatchProcessor:
         chapter_parser = get_parser(chapter_file)
         comment_prefix = chapter_parser.get_comment_prefix()
 
-        content = chapter_file.read_text(encoding="utf-8")
+        content, encoding_warning = read_text_robust(chapter_file)
+        if encoding_warning:
+            print(f"[警告] {encoding_warning}")
         lines = content.split("\n")
 
         processed_lines = []
@@ -277,27 +282,32 @@ def main():
         sys.exit(0 if success else 1)
 
     elif args.section:
-        analysis = processor.analyze_section(args.section.lower())
-
-        if not analysis["found"]:
+        keys, available = resolve_section_keys(args.section, processor.section_ranges)
+        if not keys:
+            avail = ", ".join(available) if available else "（未识别出任何已知章节）"
             print(f"[警告] 章节未找到: {args.section}")
+            print(f"[提示] 可用章节: {avail}")
             sys.exit(1)
 
-        print(f"\n章节: {args.section}")
-        print(f"行数: {analysis['lines']}")
-        print(f"AI 痕迹: {len(analysis['traces'])}\n")
+        for key in keys:
+            analysis = processor.analyze_section(key)
+            print(f"\n章节: {key}")
+            print(f"行数: {analysis['lines']}")
+            print(f"AI 痕迹: {len(analysis['traces'])}\n")
 
-        for trace in analysis["traces"][:10]:
-            print(f"第{trace['line']}行:")
-            print(f"  模式: {', '.join(trace['patterns'])}")
-            print(f"  文本: {trace['visible'][:100]}")
-            print()
+            for trace in analysis["traces"][:10]:
+                print(f"{processor.doc.lineref(trace['line'])}:")
+                print(f"  模式: {', '.join(trace['patterns'])}")
+                print(f"  文本: {trace['visible'][:100]}")
+                print()
 
     else:
+        for warn in processor.doc.warning_lines("[警告]"):
+            print(warn)
         print(f"[信息] 在 {args.file.name} 中检测到的章节:")
         for section_name in processor.section_ranges:
             start, end = processor.section_ranges[section_name]
-            print(f"  - {section_name}: 第{start}-{end}行")
+            print(f"  - {section_name}: {processor.doc.lineref(start, end)}")
 
 
 if __name__ == "__main__":

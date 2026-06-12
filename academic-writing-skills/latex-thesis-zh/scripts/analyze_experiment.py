@@ -13,10 +13,16 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import SECTION_KEY_ALIASES, get_parser
+    from tex_loader import AssembledDocument, assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import SECTION_KEY_ALIASES, get_parser
+    from tex_loader import AssembledDocument, assemble
+
+
+# 当前装配文档（由 analyze() 设置），供 _format_issue 输出 源文件:行号。
+_DOC: AssembledDocument | None = None
 
 
 # ── Prompt generation (original) ───────────────────────────────
@@ -87,15 +93,19 @@ CONCLUSION_LIMITATIONS_ZH = re.compile(
 
 
 def _format_issue(line_no: int, severity: str, priority: str, message: str) -> list[str]:
-    return [
-        f"% EXPERIMENT (Line {line_no}) [Severity: {severity}] [Priority: {priority}]: {message}"
-    ]
+    loc = _DOC.lineref_en(line_no) if _DOC is not None else f"Line {line_no}"
+    return [f"% EXPERIMENT ({loc}) [Severity: {severity}] [Priority: {priority}]: {message}"]
 
 
 def _normalize_section(section: str | None) -> str | None:
     if not section:
         return None
-    return SECTION_ALIASES.get(section.strip().lower(), section.strip().lower())
+    raw = section.strip()
+    normalized = SECTION_ALIASES.get(raw.lower())
+    if normalized:
+        return normalized
+    # 中文章节名（实验/讨论/结论 等）同样可用
+    return SECTION_KEY_ALIASES.get(raw, SECTION_KEY_ALIASES.get(raw.lower(), raw.lower()))
 
 
 def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> list[str]:
@@ -238,13 +248,16 @@ def _check_conclusion_completeness(lines: list[str], start: int, end: int, parse
 
 def analyze(file_path: Path, section: str | None = None) -> list[str]:
     """Review-mode analysis for experiment/discussion/conclusion sections."""
+    global _DOC
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
-    sections = parser.split_sections(content)
+    doc = assemble(file_path)
+    _DOC = doc
+    lines = doc.lines
+    sections = parser.split_sections(doc.content)
 
     normalized = _normalize_section(section)
-    output: list[str] = []
+    output: list[str] = doc.warning_lines(parser.get_comment_prefix())
+    warn_count = len(output)
 
     if sections:
         if (not normalized or normalized == "discussion") and "discussion" in sections:
@@ -259,7 +272,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             c_start, c_end = sections["conclusion"]
             output.extend(_check_conclusion_completeness(lines, c_start, c_end, parser))
 
-    if not output:
+    if len(output) == warn_count:
         output.append("% EXPERIMENT: No discussion/conclusion issues detected.")
     return output
 

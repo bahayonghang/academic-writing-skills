@@ -17,10 +17,12 @@ from pathlib import Path
 
 # Import local parsers
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import assemble
 
 
 # --- AI tone thresholds (data-driven via references/deai/tone-thresholds.yaml) ---
@@ -240,8 +242,9 @@ class ChineseAITraceChecker:
 
     def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
-        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
-        self.lines = self.content.split("\n")
+        self.doc = assemble(file_path)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
@@ -252,6 +255,10 @@ class ChineseAITraceChecker:
         self._throat_clearing_re = [
             re.compile(p) for p in self.thresholds["throat_clearing"]["patterns"]
         ]
+
+    def _loc(self, line_no: int) -> str:
+        """行号定位：单文件 ``第15行``；多文件 ``chapters/x.tex:15``。"""
+        return self.doc.lineref(line_no)
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives (Chinese)."""
@@ -711,10 +718,11 @@ class ChineseAITraceChecker:
         suggestions = []
         for section_name, result in analysis["sections"].items():
             for trace in result["traces"]:
+                src_file, src_line = self.doc.origin(trace["line"])
                 suggestions.append(
                     {
-                        "file": str(self.file_path),
-                        "line": trace["line"],
+                        "file": src_file if self.doc.multi_file else str(self.file_path),
+                        "line": src_line,
                         "section": section_name,
                         "category": trace["category"],
                         "issue": trace["text"],
@@ -724,10 +732,11 @@ class ChineseAITraceChecker:
                     }
                 )
         for trace in analysis.get("document_traces", []):
+            src_file, src_line = self.doc.origin(trace["line"])
             suggestions.append(
                 {
-                    "file": str(self.file_path),
-                    "line": trace["line"],
+                    "file": src_file if self.doc.multi_file else str(self.file_path),
+                    "line": src_line,
                     "section": trace.get("section", "document"),
                     "category": trace["category"],
                     "issue": trace["text"],
@@ -795,6 +804,10 @@ class ChineseAITraceChecker:
         report.append("=" * 70)
         report.append(f"文件: {self.file_path}")
         report.append(f"总行数: {analysis['total_lines']}")
+        for warn in self.doc.warnings:
+            report.append(f"警告: {warn}")
+        for raw, src, line_no in self.doc.missing:
+            report.append(f"警告: 未找到 include 文件: {raw}（{src}:{line_no}）")
         if self.tier:
             report.append(f"强度: {self.tier}（已启用 D1-D5 维度标签）")
         report.append("")
@@ -822,7 +835,7 @@ class ChineseAITraceChecker:
                 report.append(f"\n{section_name.upper()}:")
                 for trace in result["traces"][:10]:
                     report.append(
-                        f"  第{trace['line']}行 [{trace['category']}]"
+                        f"  {self._loc(trace['line'])} [{trace['category']}]"
                         f"{self._dim_tag(trace['category'])}"
                     )
                     report.append(f"    {trace['text'][:80]}")
@@ -836,7 +849,7 @@ class ChineseAITraceChecker:
             report.append("-" * 70)
             for trace in doc_traces:
                 report.append(
-                    f"  第{trace['line']}行 [{trace['category']}]"
+                    f"  {self._loc(trace['line'])} [{trace['category']}]"
                     f"{self._dim_tag(trace['category'])} "
                     f"({trace.get('section', 'document')})"
                 )
@@ -906,13 +919,24 @@ def main():
 
     # ... (rest same as before) ...
     elif args.section:
-        result = checker.check_section(args.section.lower())
-        score = checker.calculate_density_score(result)
-        print(f"\n章节: {args.section}")
-        print(f"密度: {score:.1f}%")
-        for trace in result["traces"]:
-            print(f"第{trace['line']}行: {trace['text']}")
-            print(f"-> {checker._get_instruction(trace['suggestion_type'])}\n")
+        keys, available = resolve_section_keys(args.section, checker.section_ranges)
+        if not keys:
+            avail = ", ".join(available) if available else "（未识别出任何已知章节）"
+            print(f"[错误] 未找到章节: {args.section}", file=sys.stderr)
+            print(f"[提示] 可用章节: {avail}", file=sys.stderr)
+            print(
+                "[提示] --section 同时接受英文键（introduction/...）与中文章节名（绪论/...）。",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        for key in keys:
+            result = checker.check_section(key)
+            score = checker.calculate_density_score(result)
+            print(f"\n章节: {key}")
+            print(f"密度: {score:.1f}%")
+            for trace in result["traces"]:
+                print(f"{checker._loc(trace['line'])}: {trace['text']}")
+                print(f"-> {checker._get_instruction(trace['suggestion_type'])}\n")
 
     elif args.score:
         analysis = checker.analyze_document()

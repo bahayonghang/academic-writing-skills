@@ -30,6 +30,114 @@ class DocumentParser(ABC):
         """
         return []
 
+    def chapter_ranges(self, content: str) -> list[dict[str, Any]]:
+        """Enumerate ALL level-1 chapter ranges in document order.
+
+        Unlike ``split_sections`` (which only keys chapters matching the known
+        SECTION patterns), this never drops a body chapter whose title carries
+        no keyword — analyzers use it so such chapters still get checked.
+        Each item: ``{"title", "start", "end", "key" (matched key or None)}``.
+        """
+        lines_total = len(content.split("\n"))
+        headings = [h for h in self.extract_headings(content) if h["level"] == 1]
+        sections = self.split_sections(content)
+        ranges: list[dict[str, Any]] = []
+        for idx, heading in enumerate(headings):
+            start = heading["line"]
+            end = headings[idx + 1]["line"] - 1 if idx + 1 < len(headings) else lines_total
+            key = next(
+                (k for k, (s, _e) in sections.items() if s == start),
+                None,
+            )
+            ranges.append({"title": heading["title"], "start": start, "end": end, "key": key})
+        return ranges
+
+
+def _split_sections_from_headings(
+    headings: list[dict[str, Any]],
+    classify,
+    total_lines: int,
+) -> dict[str, tuple[int, int]]:
+    """Shared interval builder for ``split_sections`` implementations.
+
+    Rules fixing the historical silent-skip defects:
+    - a matched heading opens a new range;
+    - ANY heading at the same or higher level closes the open range, so an
+      unmatched body chapter is no longer swallowed by the previous section;
+    - duplicate keys get ``_2``/``_3`` suffixes instead of overwriting.
+    """
+    sections: dict[str, tuple[int, int]] = {}
+    key_counts: dict[str, int] = {}
+    open_key: str | None = None
+    open_start = 0
+    open_level = 0
+
+    def _close(end_line: int) -> None:
+        nonlocal open_key
+        if open_key is not None:
+            sections[open_key] = (open_start, max(end_line, open_start))
+            open_key = None
+
+    for heading in headings:
+        key = classify(heading)
+        if open_key is not None and (key is not None or heading["level"] <= open_level):
+            _close(heading["line"] - 1)
+        if key is not None:
+            key_counts[key] = key_counts.get(key, 0) + 1
+            open_key = key if key_counts[key] == 1 else f"{key}_{key_counts[key]}"
+            open_start = heading["line"]
+            open_level = heading["level"]
+    _close(total_lines)
+    return sections
+
+
+# ── --section 同义映射（中英文均可指定章节，R3/F11） ─────────────
+
+SECTION_KEY_ALIASES = {
+    "摘要": "abstract",
+    "绪论": "introduction",
+    "引言": "introduction",
+    "intro": "introduction",
+    "创新点": "contribution",
+    "主要贡献": "contribution",
+    "贡献": "contribution",
+    "相关工作": "related",
+    "文献综述": "related",
+    "literature": "related",
+    "方法": "method",
+    "原理": "method",
+    "设计": "method",
+    "实验": "experiment",
+    "实现": "experiment",
+    "测试": "experiment",
+    "experiments": "experiment",
+    "结果": "result",
+    "性能": "result",
+    "results": "result",
+    "讨论": "discussion",
+    "分析": "discussion",
+    "结论": "conclusion",
+    "总结": "conclusion",
+    "总结与展望": "conclusion",
+}
+
+
+def resolve_section_keys(
+    query: str, sections: dict[str, tuple[int, int]]
+) -> tuple[list[str], list[str]]:
+    """Resolve a user-supplied ``--section`` value to actual section keys.
+
+    Accepts English keys (``introduction``) and Chinese names (``绪论``)
+    interchangeably; a base key also matches its ``_2``/``_3`` duplicates.
+    Returns ``(matched_keys, available_keys)`` — when nothing matches, the
+    caller should list ``available_keys`` instead of a bare "not found".
+    """
+    available = list(sections.keys())
+    base = query.strip().lower()
+    base = SECTION_KEY_ALIASES.get(query.strip(), SECTION_KEY_ALIASES.get(base, base))
+    matched = [k for k in sections if k == base or k.startswith(f"{base}_")]
+    return matched, available
+
 
 class LatexParser(DocumentParser):
     """Parser for Chinese LaTeX Thesis."""
@@ -48,6 +156,9 @@ class LatexParser(DocumentParser):
     }
 
     # Chinese Section patterns
+    # Deprecated: kept for backward compatibility only. ``split_sections`` now
+    # classifies normalized heading titles via SECTION_TITLE_RULES below, which
+    # tolerates \chapter*{}, optional args and intra-title spacing (绪\quad 论).
     SECTION_PATTERNS = {
         "abstract": r"\\chapter{摘要}|\\section{摘要}",
         "introduction": r"\\chapter{绪论}|\\chapter{引言}|\\section{绪论}|\\section{引言}",
@@ -59,6 +170,22 @@ class LatexParser(DocumentParser):
         "discussion": r"\\chapter{.*?(?:讨论|分析)}|\\section{.*?(?:讨论|分析)}",
         "conclusion": r"\\chapter{结论}|\\chapter{总结与展望}|\\section{结论}",
     }
+
+    # (key, max heading level allowed, regex on the normalized title).
+    # Order matters: first match wins. Semantics mirror SECTION_PATTERNS
+    # (exact titles for abstract/intro/..., "contains" for method/experiment/...;
+    # method stays chapter-level only, as before).
+    SECTION_TITLE_RULES: list[tuple[str, int, str]] = [
+        ("abstract", 2, r"^摘要$"),
+        ("introduction", 2, r"^(?:绪论|引言)$"),
+        ("contribution", 2, r"^(?:创新点|主要贡献)$"),
+        ("related", 2, r"^(?:相关工作|文献综述)$"),
+        ("conclusion", 2, r"^(?:结论|总结与展望)$"),
+        ("method", 1, r"(?:方法|原理|设计)"),
+        ("experiment", 2, r"(?:实验|实现|测试)"),
+        ("result", 2, r"(?:结果|性能)"),
+        ("discussion", 2, r"(?:讨论|分析)"),
+    ]
 
     PRESERVE_PATTERNS = [
         r"\\cite{[^}]+}",  # Citations
@@ -78,25 +205,27 @@ class LatexParser(DocumentParser):
     def get_comment_prefix(self) -> str:
         return "%"
 
+    @staticmethod
+    def normalize_heading_title(title: str) -> str:
+        """Normalize a heading title for classification.
+
+        Drops spacing commands (``\\quad``/``\\hspace{..}``/``~``) and all
+        whitespace so ``绪\\quad 论`` and ``绪 论`` classify as ``绪论``.
+        """
+        title = re.sub(r"\\(?:quad|qquad|hspace\*?\{[^}]*\}|[,;! ])", "", title)
+        return re.sub(r"[~\s]+", "", title)
+
+    def _classify_heading(self, heading: dict[str, Any]) -> str | None:
+        title = self.normalize_heading_title(heading["title"])
+        for key, max_level, pattern in self.SECTION_TITLE_RULES:
+            if heading["level"] <= max_level and re.search(pattern, title):
+                return key
+        return None
+
     def split_sections(self, content: str) -> dict[str, tuple[int, int]]:
-        lines = content.split("\n")
-        sections = {}
-        current_section = "preamble"
-        start_line = 0
-
-        for i, line in enumerate(lines, 1):
-            for section_name, pattern in self.SECTION_PATTERNS.items():
-                if re.search(pattern, line, re.IGNORECASE):
-                    if current_section != "preamble":
-                        sections[current_section] = (start_line, i - 1)
-                    current_section = section_name
-                    start_line = i
-                    break
-
-        if current_section != "preamble":
-            sections[current_section] = (start_line, len(lines))
-
-        return sections
+        lines_total = len(content.split("\n"))
+        headings = self.extract_headings(content)
+        return _split_sections_from_headings(headings, self._classify_heading, lines_total)
 
     def extract_visible_text(self, line: str) -> str:
         temp_line = line
@@ -132,6 +261,9 @@ class LatexParser(DocumentParser):
             stripped = line.strip()
             if not stripped or stripped.startswith(self.get_comment_prefix()):
                 continue
+            # Strip inline comments (respecting \%) so a trailing
+            # "% \chapter{...}" remark is never parsed as a real heading.
+            stripped = re.sub(r"(?<!\\)%.*", "", stripped)
             match = self.HEADING_PATTERN.search(stripped)
             if not match:
                 continue
@@ -154,6 +286,8 @@ class TypstParser(DocumentParser):
 
     # Chinese Section patterns for Typst
     # e.g. = 摘要, = 绪论
+    # Deprecated: kept for backward compatibility; split_sections now goes
+    # through SECTION_TITLE_RULES (level-1 headings only, same semantics).
     SECTION_PATTERNS = {
         "abstract": r"^=\s+摘要",
         "introduction": r"^=\s+(?:绪论|引言)",
@@ -165,6 +299,18 @@ class TypstParser(DocumentParser):
         "discussion": r"^=\s+.*(?:讨论|分析)",
         "conclusion": r"^=\s+.*(?:结论|总结与展望)",
     }
+
+    SECTION_TITLE_RULES: list[tuple[str, int, str]] = [
+        ("abstract", 1, r"^摘要$"),
+        ("introduction", 1, r"^(?:绪论|引言)$"),
+        ("contribution", 1, r"^(?:创新点|主要贡献)$"),
+        ("related", 1, r"^(?:相关工作|文献综述)$"),
+        ("conclusion", 1, r"(?:结论|总结与展望)"),
+        ("method", 1, r"(?:方法|原理|设计)"),
+        ("experiment", 1, r"(?:实验|实现|测试)"),
+        ("result", 1, r"(?:结果|性能)"),
+        ("discussion", 1, r"(?:讨论|分析)"),
+    ]
 
     PRESERVE_PATTERNS = [
         r"@[a-zA-Z0-9_-]+",  # Citations
@@ -181,29 +327,17 @@ class TypstParser(DocumentParser):
     def get_comment_prefix(self) -> str:
         return "//"
 
+    def _classify_heading(self, heading: dict[str, Any]) -> str | None:
+        title = re.sub(r"\s+", "", heading["title"])
+        for key, max_level, pattern in self.SECTION_TITLE_RULES:
+            if heading["level"] <= max_level and re.search(pattern, title):
+                return key
+        return None
+
     def split_sections(self, content: str) -> dict[str, tuple[int, int]]:
-        lines = content.split("\n")
-        sections = {}
-        current_section = "preamble"
-        start_line = 0
-
-        for i, line in enumerate(lines, 1):
-            line = line.strip()
-            if line.startswith("//"):
-                continue
-
-            for section_name, pattern in self.SECTION_PATTERNS.items():
-                if re.search(pattern, line):
-                    if current_section != "preamble":
-                        sections[current_section] = (start_line, i - 1)
-                    current_section = section_name
-                    start_line = i
-                    break
-
-        if current_section != "preamble":
-            sections[current_section] = (start_line, len(lines))
-
-        return sections
+        lines_total = len(content.split("\n"))
+        headings = self.extract_headings(content)
+        return _split_sections_from_headings(headings, self._classify_heading, lines_total)
 
     def extract_visible_text(self, line: str) -> str:
         temp_line = line

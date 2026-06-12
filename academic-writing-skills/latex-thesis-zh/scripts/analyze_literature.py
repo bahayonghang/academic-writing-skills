@@ -16,10 +16,24 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import AssembledDocument, assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+    from tex_loader import AssembledDocument, assemble
+
+
+# 当前装配文档（由 analyze() 设置），供行号输出定位到源文件。
+_DOC: AssembledDocument | None = None
+
+
+def _zh_loc(start: int, end: int | None = None) -> str:
+    if _DOC is not None:
+        return _DOC.lineref(start, end)
+    if end is not None and end != start:
+        return f"第{start}-{end}行"
+    return f"第{start}行"
 
 
 AUTHOR_ENUM_ZH = re.compile(
@@ -60,7 +74,8 @@ def _find_section_bounds(
     sections: dict[str, tuple[int, int]], section: str | None
 ) -> tuple[int, int] | None:
     if section:
-        return sections.get(section.lower())
+        keys, _available = resolve_section_keys(section, sections)
+        return sections[keys[0]] if keys else None
     for key in ("related", "literature", "related work"):
         if key in sections:
             return sections[key]
@@ -136,20 +151,27 @@ def _paragraph_a2_status(raws: list[str], texts: list[str]) -> tuple[str, int]:
 
 
 def analyze(file_path: Path, section: str | None = None) -> list[str]:
+    global _DOC
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
-    sections = parser.split_sections(content)
+    doc = assemble(file_path)
+    _DOC = doc
+    lines = doc.lines
+    sections = parser.split_sections(doc.content)
     bounds = _find_section_bounds(sections, section)
     comment = parser.get_comment_prefix()
 
     if bounds is None:
         target = section or "related"
-        return [f"{comment} ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {target}"]
+        avail = ", ".join(sections.keys()) if sections else "（未识别出任何已知章节）"
+        return doc.warning_lines(comment) + [
+            f"{comment} ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {target}",
+            f"{comment} 可用章节: {avail}",
+            f"{comment} 提示：--section 同时接受英文键（related/...）与中文章节名（相关工作/文献综述/...）。",
+        ]
 
     start, end = bounds
     visible = _visible_lines(lines, start, end, parser)
-    out: list[str] = []
+    out: list[str] = doc.warning_lines(comment)
 
     consecutive = 0
     streak_start = 0
@@ -162,7 +184,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             if consecutive >= 3:
                 out.extend(
                     [
-                        f"{comment} 文献综述（第{streak_start}-{line_no - 1}行）[Severity: Major] [Priority: P1]: "
+                        f"{comment} 文献综述（{_zh_loc(streak_start, line_no - 1)}）[Severity: Major] [Priority: P1]: "
                         f"检测到作者/年份罗列模式（连续{consecutive}条）",
                         f"{comment} 建议：按研究主题重组文献，并在组内显式比较方法差异与共同局限。",
                         f"{comment} 理由：仅按作者和年份罗列，会削弱文献综述的综合深度。",
@@ -173,7 +195,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     if consecutive >= 3:
         out.extend(
             [
-                f"{comment} 文献综述（第{streak_start}-{visible[-1][0]}行）[Severity: Major] [Priority: P1]: "
+                f"{comment} 文献综述（{_zh_loc(streak_start, visible[-1][0])}）[Severity: Major] [Priority: P1]: "
                 f"检测到作者/年份罗列模式（连续{consecutive}条）",
                 f"{comment} 建议：按研究主题重组文献，并在组内显式比较方法差异与共同局限。",
                 f"{comment} 理由：仅按作者和年份罗列，会削弱文献综述的综合深度。",
@@ -200,7 +222,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     if len(fail_ranges) >= 2:
         out.extend(
             [
-                f"{comment} 文献综述（第{fail_ranges[0][0]}-{fail_ranges[-1][1]}行）[Severity: Major] [Priority: P1]: "
+                f"{comment} 文献综述（{_zh_loc(fail_ranges[0][0], fail_ranges[-1][1])}）[Severity: Major] [Priority: P1]: "
                 "多个引文密集段落仍偏向文献罗列，缺少充分的比较分析句。",
                 f"{comment} 建议：每个主题簇结尾补一两句，概括共同优势、关键差异或共享不足。",
                 f"{comment} 理由：综述的价值不在于列举做过什么，而在于说明这些工作之间如何对话。",
@@ -212,7 +234,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         review_end = fail_ranges[0][1] if fail_ranges else uncertain_ranges[-1][1]
         out.extend(
             [
-                f"{comment} 文献综述（第{review_start}-{review_end}行）[Severity: Needs Review] [Priority: P2]: "
+                f"{comment} 文献综述（{_zh_loc(review_start, review_end)}）[Severity: Needs Review] [Priority: P2]: "
                 "至少有一个引文密集段落的比较分析可能偏弱，建议复核。",
                 f"{comment} 建议：检查该段是否在段末明确总结共同局限、关键差异或 theme-level synthesis。",
                 f"{comment} 理由：边界样例更适合模型或人工复核，不宜直接作为硬规则失败处理。",
@@ -225,7 +247,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     if tail and not GAP_KEYWORDS_ZH.search(tail):
         out.extend(
             [
-                f"{comment} 文献综述（第{scan_start}-{end}行）[Severity: Major] [Priority: P1]: "
+                f"{comment} 文献综述（{_zh_loc(scan_start, end)}）[Severity: Major] [Priority: P1]: "
                 "相关工作末尾未发现明确的研究空白推导。",
                 f"{comment} 建议：在结尾指出尚未解决的限制、边界条件或被忽略的情形，再引出本文切入点。",
                 f"{comment} 理由：研究空白应从既有文献的共识与不足中自然推出，而不是直接跳到本文工作。",
