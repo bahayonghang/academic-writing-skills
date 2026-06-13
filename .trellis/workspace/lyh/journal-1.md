@@ -164,3 +164,37 @@ Populated .trellis/spec for claude-scholar, PaperSpine, and Research-Paper-Writi
 - 用户 review 后可逐个 `task.py archive` 六个子任务与父任务。
 - GB/T 7714-2025 于 2026-07-01 实施后，可考虑把 gb7714-2025 设为默认。
 
+
+
+## Session 4: cover-letter C1-C23 收尾(C21 中文触发)+ 投稿合规任务提交归档
+
+**Date**: 2026-06-13
+**Task**: cover-letter C1-C23 收尾(C21 中文触发)+ 投稿合规任务提交归档
+**Package**: claude-scholar
+**Branch**: `dev`
+
+### Summary
+
+完成 06-13-cover-letter-compliance 收尾:C21 中文触发(SKILL.md description/when_to_use 补中文 token+求职信负向边界,trigger_eval 补 5 条中文例至 21 条 11正/10负)。整任务 R1-R5/C1-C23 经 just ci 全绿验收(821 passed,lint/pyright 0 error),修复 \thanks 作者提取、align-check 段级数字共现、ICMJE 2026.1 ai_disclosure、检查器健壮性等。提交 6155dea(36 文件 962+/289-)。本轮一并归档 5 个完成任务:cover-letter-compliance + bib-robustness/en-family-parsers/en-paper-precision/typst-reality。父任务 06-12-five-skills-optimization 余 paper-audit-integrity 1 个待做。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6155dea` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
