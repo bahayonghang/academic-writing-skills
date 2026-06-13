@@ -9,17 +9,23 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+
+try:
+    from tex_loader import read_text_robust
+except ImportError:
+    read_text_robust = None
 
 
+# Note: use->employ and show->demonstrate were removed because the deai guide
+# lists "we use ..." as correct and "demonstrate the effectiveness" as an AI
+# tell — blindly applying them fought the de-AI module's own advice (E15).
 WEAK_VERBS = {
-    r"\buse\b": "employ",
     r"\bget\b": "obtain",
     r"\bmake\b": "develop",
-    r"\bshow\b": "demonstrate",
 }
 
 WEAK_PHRASES = {
@@ -46,15 +52,21 @@ def _enhance(text: str) -> tuple[str, list[str]]:
 
 def analyze(file_path: Path, section: str | None) -> list[str]:
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
+    if read_text_robust is not None:
+        content, _warning = read_text_robust(file_path)
+    else:
+        content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
     sections = parser.split_sections(content)
 
     if section:
-        key = section.lower()
-        if key not in sections:
-            return [f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"]
-        ranges = [sections[key]]
+        matched, available = resolve_section_keys(section, sections)
+        if not matched:
+            return [
+                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"available: {', '.join(available) if available else '(none detected)'}"
+            ]
+        ranges = [sections[key] for key in matched]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 

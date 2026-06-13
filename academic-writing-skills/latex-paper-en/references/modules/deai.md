@@ -24,6 +24,15 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments.
 - Never invent new claims, metrics, baselines, or references while smoothing the prose.
 
+## Disclosure obligation (read before de-AI editing)
+
+This module improves readability; it does **not** remove a disclosure obligation.
+If an LLM had a non-trivial role in producing the paper, the target venue may
+require you to disclose it (in a dedicated section, a checklist, the
+acknowledgements, or the cover letter). See
+[ai-disclosure.md](../venues/ai-disclosure.md) for the per-venue policy matrix.
+Do not treat "reducing AI traces" as a substitute for required disclosure.
+
 Reference: [guide.md](../deai/guide.md)
 
 ## Graded mode (`--tier`) and D1-D5 dimensions

@@ -14,20 +14,20 @@
 
 ## Format
 
-- 8-page main paper
-- Unlimited appendix
+- 8-page main paper (ICML 2026 submission; camera-ready 9); references and appendix do not count
 - Blind review requirements
 
 ## Special
 
-- Broader impact statement
+- "Impact Statement" (formal name; main-track mandatory, template sentence available)
+- Camera-ready adds an OpenReview lay summary + financial COI disclosure
 - Reproducibility checklist
 - Code submission encouraged
 
 ## ICML-Specific Quick Reference
 
-> Copied verbatim from `references/venues/catalog.md` quick-reference table.
+> `references/venues/catalog.md` is authoritative for these numbers.
 
-- **Page limit (ICML 2026)**: 8 pages (+1 camera-ready)
-- **Key requirement**: Broader Impact Statement
-- **Template**: `icml2026.sty`
+- **Page limit (ICML 2026)**: 8 pages (+1 camera-ready = 9)
+- **Key requirement**: "Impact Statement"
+- **Template**: `icml2026.sty` (camera-ready: `\usepackage[accepted]{icml2026}`)

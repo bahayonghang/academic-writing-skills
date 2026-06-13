@@ -13,8 +13,9 @@
 ## Format
 
 - Two-column layout
-- Abstract: 150-200 words
+- Abstract: single paragraph, up to 250 words (IEEE Author Center; no global "150-200" rule)
 - Keywords: 3-5 terms
+- IEEEtran is still v1.8b (2015); IEEE has not changed its template or font
 
 ## Citations
 

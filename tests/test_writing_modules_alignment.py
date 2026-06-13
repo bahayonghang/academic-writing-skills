@@ -77,7 +77,10 @@ TIER1_HASH_GROUPS: list[tuple[str, list[str]]] = [
     ("analyze_grammar.py", ["en", "typst"]),
     ("analyze_sentences.py", ["en", "typst"]),
     ("improve_expression.py", ["en", "typst"]),
-    ("generate_table.py", ["en", "zh"]),
+    # 2026-06: EN generate_table.py implements `--style plain` (audit E10); the
+    # ZH copy is intentionally left untouched (latex-thesis-zh is diff-frozen by
+    # its own audit), so this module is no longer en+zh aligned.
+    ("generate_table.py", ["en"]),
     ("online_bib_verify.py", ["zh", "typst"]),
 ]
 

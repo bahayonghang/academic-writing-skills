@@ -250,8 +250,10 @@ class ReferenceChecker:
         Detect numbering gaps for labels with numeric suffixes, e.g. fig:1, fig:3 missing fig:2.
         Severity: Minor, P2.
         """
-        # Group labels by (prefix, base) where name = prefix:base_NNN
-        numeric_suffix_re = re.compile(r"^(.*?)(\d+)$")
+        # Only labels of the form `prefix:<pure number>` form a numbered series
+        # (fig:1, tab:2). A name like fig:resnet18 / fig:resnet50 is a model name,
+        # not a sequence, so it must not trigger a phantom gap (E14).
+        numeric_suffix_re = re.compile(r"^(.*:)(\d+)$")
 
         # Collect labels by their "series key": prefix + non-numeric base
         series: dict[str, list[tuple[int, int]]] = {}  # series_key -> [(number, line)]

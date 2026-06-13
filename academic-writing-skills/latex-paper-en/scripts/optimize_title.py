@@ -275,6 +275,14 @@ def _rank_candidates(candidates: list[tuple[str, str]]) -> list[tuple[str, str, 
 
 
 def _interactive_title_flow(current_title: str | None) -> int:
+    # Guard against a non-interactive caller (e.g. an agent): input() would block
+    # forever on a closed/piped stdin, so refuse instead of hanging (E16).
+    if not sys.stdin.isatty():
+        print(
+            "Error: --interactive requires a terminal. Use --generate or --optimize instead.",
+            file=sys.stderr,
+        )
+        return 2
     print("Interactive title generation")
     print("Leave blank to use defaults.")
     method = input("Method keyword (e.g., Transformer): ").strip() or "Transformer"
@@ -368,7 +376,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Optimize LaTeX paper titles following IEEE/ACM/Springer best practices"
     )
-    parser.add_argument("tex_file", help="Main .tex file, file glob, or directory in --batch mode")
+    parser.add_argument(
+        "tex_file",
+        nargs="?",
+        help="Main .tex file, file glob, or directory in --batch mode (not needed for --compare)",
+    )
     parser.add_argument(
         "--generate", action="store_true", help="Generate title candidates from abstract content"
     )
@@ -392,6 +404,10 @@ def main() -> int:
 
     if args.compare:
         return _run_compare_mode(args.compare)
+
+    if not args.tex_file:
+        print("Error: tex_file is required unless using --compare", file=sys.stderr)
+        return 1
 
     if args.batch:
         return _run_batch_mode(args.tex_file, args.output)

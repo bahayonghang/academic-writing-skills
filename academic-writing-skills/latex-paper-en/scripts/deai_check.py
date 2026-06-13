@@ -17,10 +17,10 @@ from pathlib import Path
 
 # Import local parsers
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 
 
 # --- AI tone thresholds (data-driven via references/deai/tone-thresholds.yaml) ---
@@ -84,15 +84,24 @@ def _load_thresholds(script_dir: Path) -> dict:
     The YAML file is an optional user-overridable layer on top of
     DEFAULT_THRESHOLDS. When absent, the defaults are used as-is.
     Partial overrides are merged per-key so a user can tune one threshold
-    without restating the others.
+    without restating the others. PyYAML is optional: if it is not installed
+    the defaults are used and a one-line notice is printed to stderr (E3).
     """
-    import yaml  # PyYAML; required project dependency
-
     merged = {
         k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
     }
     yaml_path = script_dir.parent / "references" / "deai" / THRESHOLDS_FILENAME
     if not yaml_path.exists():
+        return merged
+
+    try:
+        import yaml  # PyYAML; optional override layer
+    except ImportError:
+        print(
+            f"[deai] PyYAML not installed; using built-in default thresholds "
+            f"(ignoring {THRESHOLDS_FILENAME})",
+            file=sys.stderr,
+        )
         return merged
 
     with open(yaml_path, encoding="utf-8") as f:
@@ -345,10 +354,12 @@ class AITraceChecker:
 
         start, end = self.section_ranges[section_name]
         visible_lines: list[tuple[int, str]] = []
+        raw_lines: list[str] = []
         for i in range(start - 1, min(end, len(self.lines))):
             stripped = self.lines[i].strip()
             if not stripped or stripped.startswith(self.comment_prefix):
                 continue
+            raw_lines.append(stripped)
             visible = self.parser.extract_visible_text(stripped)
             if visible:
                 visible_lines.append((i + 1, visible))
@@ -357,6 +368,10 @@ class AITraceChecker:
             return []
 
         text = " ".join(text for _, text in visible_lines)
+        # Evidence markers (\cite{}, @keys, numbers, [1,2]) must be matched on the
+        # RAW source: extract_visible_text strips \cite{} and bracket refs, so a
+        # citation-dense paragraph would otherwise read as evidence-free (E17).
+        raw_text = " ".join(raw_lines)
         boilerplate_hits = 0
         for patterns_dict in (
             self.EMPTY_PHRASES,
@@ -367,7 +382,7 @@ class AITraceChecker:
                 1 for pattern in patterns_dict if re.search(pattern, text, re.IGNORECASE)
             )
 
-        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(text):
+        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(raw_text):
             return []
 
         openings: list[str] = []
@@ -865,13 +880,24 @@ def main():
 
     # ... (other args handling same as before) ...
     elif args.section:
-        result = checker.check_section(args.section.lower())
-        score = checker.calculate_density_score(result)
-        print(f"\nSection: {args.section}")
-        print(f"Density: {score:.1f}%")
-        for trace in result["traces"]:
-            print(f"Line {trace['line']}: {trace['text']}")
-            print(f"-> {checker._get_instruction(trace['suggestion_type'])}\n")
+        # Resolve aliases (methods -> method) and fail loudly on an unknown
+        # section name instead of silently scanning the whole document (E4/E5).
+        matched, available = resolve_section_keys(args.section, checker.section_ranges)
+        if not matched:
+            print(
+                f"[ERROR] Section not found: {args.section}\n"
+                f"Available sections: {', '.join(available) if available else '(none detected)'}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        for section_key in matched:
+            result = checker.check_section(section_key)
+            score = checker.calculate_density_score(result)
+            print(f"\nSection: {section_key}")
+            print(f"Density: {score:.1f}%")
+            for trace in result["traces"]:
+                print(f"Line {trace['line']}: {trace['text']}")
+                print(f"-> {checker._get_instruction(trace['suggestion_type'])}\n")
 
     elif args.score:
         analysis = checker.analyze_document()

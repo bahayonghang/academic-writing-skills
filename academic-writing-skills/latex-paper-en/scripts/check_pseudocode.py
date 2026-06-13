@@ -260,8 +260,8 @@ def main() -> int:
     parser.add_argument(
         "--venue",
         default="",
-        choices=["", "ieee", "acm", "springer", "neurips", "icml"],
-        help="Venue context used for stricter checks",
+        choices=["", "ieee"],
+        help="Venue context for stricter checks (only 'ieee' adds venue-specific rules)",
     )
     parser.add_argument("--json", action="store_true", help="Output JSON format")
     args = parser.parse_args()

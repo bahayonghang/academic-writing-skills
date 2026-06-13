@@ -100,19 +100,21 @@ class LaTeXCompiler:
         except Exception:
             return "pdflatex"  # Default fallback
 
-        # Check for Chinese content
-        for pattern in self.CHINESE_PATTERNS:
-            if re.search(pattern, content):
-                print("[INFO] Detected Chinese content, using xelatex")
-                return "xelatex"
-
-        # Check for explicit engine specification
+        # An explicit `% !TEX program` directive is authoritative and must win
+        # over content sniffing — otherwise a single CJK character in a comment
+        # would override the author's stated engine (E18).
         if re.search(r"%\s*!TEX\s+program\s*=\s*xelatex", content, re.IGNORECASE):
             return "xelatex"
         if re.search(r"%\s*!TEX\s+program\s*=\s*lualatex", content, re.IGNORECASE):
             return "lualatex"
         if re.search(r"%\s*!TEX\s+program\s*=\s*pdflatex", content, re.IGNORECASE):
             return "pdflatex"
+
+        # Check for Chinese content
+        for pattern in self.CHINESE_PATTERNS:
+            if re.search(pattern, content):
+                print("[INFO] Detected Chinese content, using xelatex")
+                return "xelatex"
 
         # Check for fontspec (requires xelatex or lualatex)
         if re.search(r"\\usepackage.*{fontspec}", content):
@@ -483,6 +485,14 @@ Examples:
         args.recipe,
         shell_escape=args.shell_escape,
     )
+
+    # Watch mode is a latexmk feature; recipe-based compilation runs fixed steps
+    # and cannot watch, so warn instead of silently dropping --watch (E18).
+    if args.recipe and args.watch:
+        print(
+            "[WARNING] --watch is ignored when --recipe is set "
+            "(recipe runs a fixed step sequence, not latexmk watch mode)."
+        )
 
     # Execute requested action
     if args.clean or args.clean_all:

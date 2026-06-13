@@ -95,7 +95,13 @@ class TableGenerator:
         return "\n".join(lines)
 
     def _to_latex(self, headers: list[str], rows: list[list[str]], caption: str = "") -> str:
-        """Generate LaTeX booktabs table code."""
+        """Generate LaTeX table code in the configured style.
+
+        ``booktabs`` uses \\toprule/\\midrule/\\bottomrule with siunitx ``S``
+        columns; ``plain`` uses \\hline rules and no package dependency so the
+        ``--style`` flag is no longer a no-op (E10).
+        """
+        plain = self.style == "plain"
         n_cols = len(headers)
         if n_cols == 0:
             return ""
@@ -113,9 +119,17 @@ class TableGenerator:
                         if cell and cell not in ("-", "--", "N/A", "n/a"):
                             is_numeric = False
                             break
-            col_types.append("S" if is_numeric and i > 0 else "l")
+            if i == 0 or not is_numeric:
+                col_types.append("l")
+            else:
+                # plain tables avoid the siunitx S column (no package needed)
+                col_types.append("c" if plain else "S")
 
         col_spec = "".join(col_types)
+
+        top_rule = "\\hline" if plain else "\\toprule"
+        mid_rule = "\\hline" if plain else "\\midrule"
+        bottom_rule = "\\hline" if plain else "\\bottomrule"
 
         lines = []
         lines.append("\\begin{table}[t]")
@@ -128,7 +142,7 @@ class TableGenerator:
             lines.append(f"  \\label{{tab:{label}}}")
         lines.append("  \\centering")
         lines.append(f"  \\begin{{tabular}}{{{col_spec}}}")
-        lines.append("    \\toprule")
+        lines.append("    " + top_rule)
 
         # Headers (wrap in braces for S columns)
         header_cells = []
@@ -138,7 +152,7 @@ class TableGenerator:
             else:
                 header_cells.append(h)
         lines.append("    " + " & ".join(header_cells) + " \\\\")
-        lines.append("    \\midrule")
+        lines.append("    " + mid_rule)
 
         # Data rows
         for row in rows:
@@ -148,7 +162,7 @@ class TableGenerator:
                 padded.append(cell)
             lines.append("    " + " & ".join(padded) + " \\\\")
 
-        lines.append("    \\bottomrule")
+        lines.append("    " + bottom_rule)
         lines.append("  \\end{tabular}")
         lines.append("\\end{table}")
 

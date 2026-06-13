@@ -6,7 +6,6 @@
 > This file remains the cross-venue overview (quick-reference table,
 > pre-submission checklist, resubmission conversions, figure specs).
 
-
 ## Table of Contents
 
 - [IEEE Conferences/Journals](#ieee-conferencesjournals)
@@ -49,25 +48,30 @@
 ## IEEE Conferences/Journals
 
 ### Style
+
 - Active voice for contributions
 - Past tense for methods
 - Present tense for results discussion
 
 ### Format
+
 - Two-column layout
-- Abstract: 150-200 words
+- Abstract: single paragraph, up to 250 words (IEEE Author Center guidance; there is no global "150-200 words" rule — limits vary by publication)
 - Keywords: 3-5 terms
 
 ### Citations
+
 - IEEE style: [1], [2-4]
 - Full reference in bibliography
 
 ### Figures/Tables
+
 - Captions below figures
 - Captions above tables
 - Referenced in text before appearing
 
 ### Pseudocode
+
 - IEEEtran only recognizes `figure` and `table` as standard floats; do not assume a dedicated `algorithm` float is IEEE-safe.
 - Prefer `figure` + `algorithmicx` / `algpseudocodex` for LaTeX pseudocode in IEEE submissions.
 - Give the pseudocode block a normal figure caption and reference it in text before the figure appears.
@@ -77,66 +81,84 @@
 ## ACM Conferences
 
 ### Style
+
 - Structured abstract (some venues)
 - Author-date citations accepted
 
 ### Format
+
 - ACM reference format
 - CCS concepts required
 - Keywords required
 
 ### Special Requirements
+
 - Accessibility requirements
 - Supplementary material guidelines
 
 ## Springer (LNCS)
 
 ### Style
+
 - British or American English (consistent)
 - Third person preferred
 
 ### Format
+
 - Single column
 - Strict page limits
 - Camera-ready deadline strict
 
 ### Figures/Tables
+
 - Figure captions: below
 - Table captions: above
 - High resolution (300 dpi minimum)
 
 ### Citations
+
 - Numbered: [1]
 - Springer nature template
 
 ## NeurIPS / ICML
 
 ### Style
+
 - Concise writing essential
 - Mathematical notation consistent
 
 ### Format
-- 8-page main paper
-- Unlimited appendix
+
+- NeurIPS: 9-page main paper (camera-ready +1 = 10); ICML: 8-page submission (camera-ready 9)
+- Unlimited appendix; references do not count
 - Blind review requirements
 
 ### Special
-- Broader impact statement
+
+- ICML requires an "Impact Statement" (formal name); NeurIPS requires the paper
+  checklist. A lay summary is required by ICML camera-ready and the NeurIPS
+  Position track — not NeurIPS main-track papers.
 - Reproducibility checklist
 - Code submission encouraged
 
 ## CVPR / ICCV / ECCV
 
 ### Style
+
 - Visual results emphasized
 - Quantitative comparisons required
 
 ### Format
+
 - Double-blind review
 - Supplementary video allowed
-- 8 pages + references
+- 8 pages including figures and tables (references do not count)
+- LLM policy: authors are fully responsible for all content; fabricated
+  citations or obvious factual errors may be desk-rejected without review,
+  and "an LLM wrote it" is not a defense
 
 ### Figures
+
 - High-quality visualizations
 - Comparison figures expected
 - Video demonstrations encouraged
@@ -144,11 +166,13 @@
 ## ArXiv Preprints
 
 ### Format
+
 - No strict format
 - PDF preferred
-- Abstract: 1500 characters max
+- Abstract: 1920 characters max (metadata limit)
 
 ### Best Practices
+
 - Include author affiliations
 - Link to code/data
 - Version control with updates
@@ -157,26 +181,29 @@
 
 ## Conference Quick Reference Table
 
-| Conference | Page Limit | Extra (Camera-Ready) | Key Requirement | Template |
-|------------|------------|---------------------|-----------------|----------|
-| **NeurIPS 2025** | 9 pages | +0 | Mandatory checklist, lay summary | neurips.sty |
-| **ICML 2026** | 8 pages | +1 | Broader Impact Statement | icml2026.sty |
-| **ICLR 2026** | 9 pages | +1 | LLM disclosure, reciprocal review | iclr2026.sty |
-| **ACL 2025** | 8 pages (long) | varies | Limitations section mandatory | acl.sty |
-| **AAAI 2026** | 7 pages | +1 | Strict style file adherence | aaai2026.sty |
-| **COLM 2025** | 9 pages | +1 | Language model focus | colm2025.sty |
+| Conference            | Page Limit     | Extra (Camera-Ready)        | Key Requirement                                             | Template                             |
+| --------------------- | -------------- | --------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| **NeurIPS 2025/2026** | 9 pages        | +1 (=10)                    | Mandatory paper checklist                                   | neurips_2025.sty / neurips_2026.sty  |
+| **ICML 2026**         | 8 pages        | +1 (=9)                     | "Impact Statement" + lay summary (camera)                   | icml2026.sty                         |
+| **ICLR 2026**         | 9 pages        | +1 (=10)                    | LLM disclosure (desk-reject if undisclosed), reciprocal rev | iclr2026_conference.sty              |
+| **ACL 2026 / ARR**    | 8 pages (long) | +1 (=9)                     | Limitations + Responsible NLP Checklist mandatory           | acl.sty (Word template also offered) |
+| **AAAI 2026**         | 7 pages        | none free (buy $300/pg, ≤2) | Strict style file adherence                                 | aaai2026.sty                         |
+| **COLM 2026**         | 9 pages        | +1 (=10)                    | Language-model focus; ICLR-style LLM disclosure             | colm2026_conference.sty              |
 
 **Universal Requirements:**
+
 - Double-blind review (anonymize submissions)
 - References don't count toward page limit
 - Appendices unlimited but reviewers not required to read
-- LaTeX required for all venues
+- LaTeX is required at NeurIPS/ICML/ICLR/COLM; ACL and AAAI also accept official
+  Word templates — do not assume "LaTeX required for all venues"
 
 ---
 
 ## Pre-Submission Checklist
 
 ### Universal (All Venues)
+
 - [ ] Paper compiles without errors
 - [ ] All figures referenced in text
 - [ ] All tables referenced in text
@@ -194,15 +221,16 @@
 
 ### Common Conversion Paths
 
-| From → To | Page Change | Key Adjustments |
-|-----------|-------------|-----------------|
-| NeurIPS → ICML | 9 → 8 | Cut 1 page, add Broader Impact |
-| ICML → ICLR | 8 → 9 | Expand experiments, add LLM disclosure |
-| NeurIPS → ACL | 9 → 8 | Restructure for NLP, add Limitations |
-| ICLR → AAAI | 9 → 7 | Significant cuts, strict style |
-| Any → COLM | varies → 9 | Reframe for language model focus |
+| From → To      | Page Change | Key Adjustments                        |
+| -------------- | ----------- | -------------------------------------- |
+| NeurIPS → ICML | 9 → 8       | Cut 1 page, add Impact Statement       |
+| ICML → ICLR    | 8 → 9       | Expand experiments, add LLM disclosure |
+| NeurIPS → ACL  | 9 → 8       | Restructure for NLP, add Limitations   |
+| ICLR → AAAI    | 9 → 7       | Significant cuts, strict style         |
+| Any → COLM     | varies → 9  | Reframe for language model focus       |
 
 ### Content Migration Principles
+
 1. **Never copy LaTeX preambles** between templates — start fresh with target template
 2. **Copy ONLY content sections** (abstract, sections, figures, tables, bib entries)
 3. When cutting pages: move proofs to appendix, condense related work, combine tables
@@ -213,13 +241,16 @@
 ## Figure and Table Specifications
 
 ### Tables
+
 Use `booktabs` package for professional tables:
+
 - Bold best value per metric
 - Include direction symbols (↑ higher is better, ↓ lower is better)
 - Right-align numerical columns
 - Consistent decimal precision
 
 ### Figures
+
 - **Vector graphics** (PDF, EPS) for all plots and diagrams
 - **Raster** (PNG 600 DPI) only for photographs
 - **Colorblind-safe palettes**: Okabe-Ito or Paul Tol recommended

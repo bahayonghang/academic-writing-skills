@@ -11,14 +11,25 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+
+try:
+    from tex_loader import read_text_robust
+except ImportError:
+    read_text_robust = None
 
 
+# MVP rule set: 4 high-precision subject-verb / article rules. This is a
+# deliberately small, conservative set — not a general grammar engine.
 def _apply_rules(text: str) -> list[tuple[str, str, str]]:
-    """Return list of (issue, revised, rationale)."""
+    """Return list of (issue, revised, rationale).
+
+    Substitutions run case-insensitively on the original text so unrelated
+    casing (e.g. acronyms like BERT) is preserved (E12).
+    """
     findings: list[tuple[str, str, str]] = []
     rules = [
         (
@@ -43,26 +54,31 @@ def _apply_rules(text: str) -> list[tuple[str, str, str]]:
         ),
     ]
 
-    lowered = text.lower()
     for pattern, replacement, rationale in rules:
-        if re.search(pattern, lowered):
-            revised = re.sub(pattern, replacement, lowered)
+        if re.search(pattern, text, re.IGNORECASE):
+            revised = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
             findings.append((pattern, revised, rationale))
     return findings
 
 
 def analyze(file_path: Path, section: str | None = None) -> list[str]:
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
+    if read_text_robust is not None:
+        content, _warning = read_text_robust(file_path)
+    else:
+        content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
     sections = parser.split_sections(content)
 
     selected_ranges: list[tuple[int, int]] = []
     if section:
-        key = section.lower()
-        if key not in sections:
-            return [f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"]
-        selected_ranges.append(sections[key])
+        matched, available = resolve_section_keys(section, sections)
+        if not matched:
+            return [
+                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"available: {', '.join(available) if available else '(none detected)'}"
+            ]
+        selected_ranges.extend(sections[key] for key in matched)
     else:
         if sections:
             selected_ranges.extend(sections.values())

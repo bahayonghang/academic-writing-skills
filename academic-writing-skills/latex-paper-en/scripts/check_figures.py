@@ -47,14 +47,23 @@ class FigureChecker:
             return False
 
     def _parse_graphics_path(self):
-        r"""Parse \graphicspath{{path1}{path2}} from LaTeX."""
-        match = re.search(r"\\graphicspath\{(.*?)\}", self.content, re.DOTALL)
+        r"""Parse \graphicspath{{path1/}{path2/}} from LaTeX.
+
+        The argument is a brace group of brace groups, so the inner ``{...}``
+        entries must be captured as a whole — the previous lazy ``.*?\}`` stopped
+        at the first ``}`` and dropped every path (E7).
+        """
+        match = re.search(r"\\graphicspath\s*\{((?:\s*\{[^{}]*\}\s*)+)\}", self.content, re.DOTALL)
         if match:
-            paths = re.findall(r"\{([^}]+)\}", match.group(1))
-            for p in paths:
-                full_path = self.root_dir / p.strip()
-                if full_path.exists() and self._is_within_root(full_path):
-                    self.graphics_paths.append(full_path)
+            paths = re.findall(r"\{([^{}]*)\}", match.group(1))
+        else:
+            # Tolerate the non-standard single-brace form \graphicspath{figs/}.
+            single = re.search(r"\\graphicspath\s*\{([^{}]+)\}", self.content)
+            paths = [single.group(1)] if single else []
+        for p in paths:
+            full_path = self.root_dir / p.strip()
+            if full_path.exists() and self._is_within_root(full_path):
+                self.graphics_paths.append(full_path)
 
     def find_figures(self) -> list[dict]:
         """Find all figure inclusions."""
@@ -178,10 +187,10 @@ class FigureChecker:
 
         print("-" * 60)
         if issues_count == 0:
-            print("✅ All figures passed check.")
+            print("[PASS] All figures passed check.")
             sys.exit(0)
         else:
-            print(f"⚠️ Found {issues_count} potential issues.")
+            print(f"[WARN] Found {issues_count} potential issues.")
             sys.exit(1)
 
 

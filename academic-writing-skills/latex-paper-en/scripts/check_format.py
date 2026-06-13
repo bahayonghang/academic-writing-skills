@@ -25,14 +25,17 @@ class FormatChecker:
     LEVEL_WARNING = "WARNING"
     LEVEL_INFO = "INFO"
 
-    # Common warning patterns to categorize
-    CATEGORIES = {
-        "spacing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-        "punctuation": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-        "parentheses": [24, 25, 26, 27, 28, 29, 30],
-        "quotation": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
-        "ellipsis": [41, 42, 43, 44, 45, 46],
-    }
+    # chktex warnings grouped by the keyword that appears in their message.
+    # The previous integer-range buckets did not match chktex's numbering, so
+    # categorize from the message text instead (E26).
+    CATEGORY_KEYWORDS = [
+        ("spacing", ("space", "spacing", "indent", "tab")),
+        ("quotation", ("quote", "``", "''", "quotation")),
+        ("parentheses", ("parenthesis", "parentheses", "bracket", "brace")),
+        ("punctuation", ("dash", "comma", "period", "punctuation", "hyphen")),
+        ("ellipsis", ("ellipsis", "dots", "ldots")),
+        ("math", ("math", "equation", "$", "subscript", "superscript")),
+    ]
 
     def __init__(self, tex_file: str, config: Optional[str] = None):
         self.tex_file = Path(tex_file).resolve()
@@ -53,7 +56,7 @@ class FormatChecker:
         Run chktex on the document.
 
         Args:
-            strict: Enable strict checking mode
+            strict: Treat any reported issue as a failure.
 
         Returns:
             Dict with check results
@@ -62,14 +65,11 @@ class FormatChecker:
         if not ok:
             return {"status": "UNAVAILABLE", "message": msg, "issues": [], "fallback": True}
 
-        # Build command
-        cmd = ["chktex"]
-
-        # Verbosity level
-        if strict:
-            cmd.extend(["-v3"])  # More warnings
-        else:
-            cmd.extend(["-v0", "-q"])  # Quiet mode
+        # Always use the terse `-v0 -q` format so the output is machine-parseable
+        # (`file:line:col:code:message`). `-q` only suppresses the banner; chktex
+        # has no "more warnings" verbosity, so strictness is enforced below by
+        # failing on any reported issue rather than by changing the format (E1).
+        cmd = ["chktex", "-v0", "-q"]
 
         # Config file
         if self.config:
@@ -88,10 +88,26 @@ class FormatChecker:
                 errors="replace",
             )
 
-            issues = self._parse_output(result.stdout + result.stderr)
+            raw_output = result.stdout + result.stderr
+            issues = self._parse_output(raw_output)
 
+            # chktex produced output we could not parse: report an internal error
+            # instead of a misleading PASS (E1).
+            if raw_output.strip() and not issues:
+                return {
+                    "status": "ERROR",
+                    "message": (
+                        "chktex produced output that could not be parsed; "
+                        "the format checker may be out of date"
+                    ),
+                    "issues": [],
+                    "fallback": False,
+                    "raw_output": raw_output.strip(),
+                }
+
+            status = "PASS" if not issues else ("FAIL" if strict else "WARNING")
             return {
-                "status": "PASS" if not issues else "WARNING",
+                "status": status,
                 "message": f"Found {len(issues)} issues",
                 "issues": issues,
                 "fallback": False,
@@ -101,32 +117,38 @@ class FormatChecker:
             return {"status": "ERROR", "message": str(e), "issues": [], "fallback": False}
 
     def _parse_output(self, output: str) -> list[dict]:
-        """Parse chktex output into structured format."""
+        """Parse chktex ``-v0 -q`` output into structured format.
+
+        The terse format is ``file:line:col:code:message`` with no "Warning"
+        keyword. A leading drive letter (``C:/...``) is tolerated because the
+        four trailing colon-delimited numeric fields anchor the match (E1).
+        """
         issues = []
-        # Pattern: filename:line:col: Warning N: message
-        pattern = r"(.+?):(\d+):(\d+):\s*(Warning|Error)\s*(\d+):\s*(.+)"
+        pattern = r"^(.+?):(\d+):(\d+):(\d+):\s*(.+)$"
 
         for line in output.split("\n"):
             match = re.match(pattern, line.strip())
             if match:
+                code = int(match.group(4))
                 issues.append(
                     {
                         "file": match.group(1),
                         "line": int(match.group(2)),
                         "column": int(match.group(3)),
-                        "level": match.group(4).upper(),
-                        "code": int(match.group(5)),
-                        "message": match.group(6),
-                        "category": self._categorize(int(match.group(5))),
+                        "level": self.LEVEL_WARNING,
+                        "code": code,
+                        "message": match.group(5),
+                        "category": self._categorize(match.group(5)),
                     }
                 )
 
         return issues
 
-    def _categorize(self, code: int) -> str:
-        """Categorize warning by code."""
-        for category, codes in self.CATEGORIES.items():
-            if code in codes:
+    def _categorize(self, message: str) -> str:
+        """Categorize a warning from keywords in its message (E26)."""
+        lowered = message.lower()
+        for category, keywords in self.CATEGORY_KEYWORDS:
+            if any(keyword in lowered for keyword in keywords):
                 return category
         return "other"
 
@@ -199,7 +221,7 @@ def main():
         print(checker.generate_report(result))
 
     # Exit code
-    if result["status"] == "ERROR":
+    if result["status"] in ("ERROR", "FAIL"):
         sys.exit(1)
     sys.exit(0)
 

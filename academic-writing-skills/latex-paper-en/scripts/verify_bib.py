@@ -21,6 +21,11 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import extract_latex_citation_keys
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    assemble = None
+
 
 class BibTeXVerifier:
     """Verify BibTeX file integrity and citation consistency."""
@@ -176,17 +181,13 @@ class BibTeXVerifier:
                     polite_email=self.email,
                     timeout=self.online_timeout,
                 )
-                for entry_info in results["needs_online_check"]:
-                    entry_dict = {
-                        "key": entry_info["key"],
-                        "title": entry_info.get("title", ""),
-                        "author": entry_info.get("author", ""),
-                    }
-                    # Find full entry fields
-                    for entry in self.entries:
-                        if entry["key"] == entry_info["key"]:
-                            entry_dict.update(entry["fields"])
-                            break
+                # Verify every entry: those WITH a DOI are cross-checked against
+                # the resolved metadata (verify_doi / _cross_check), those without
+                # are looked up by title. Previously only identifier-less entries
+                # were sent, so DOI cross-checking was unreachable dead code (E8).
+                for entry in self.entries:
+                    entry_dict = {"key": entry["key"]}
+                    entry_dict.update(entry["fields"])
                     result = online_verifier.verify_entry(entry_dict)
                     if result.status == "mismatch":
                         for m in result.mismatches:
@@ -367,7 +368,12 @@ class BibTeXVerifier:
             return set(), set(), issues
 
         try:
-            tex_content = self.tex_file.read_text(encoding="utf-8", errors="ignore")
+            # Assemble \input/\include files so citations that live in a
+            # sub-file are seen; otherwise they read as unused entries (E6).
+            if assemble is not None:
+                tex_content = assemble(self.tex_file).content
+            else:
+                tex_content = self.tex_file.read_text(encoding="utf-8", errors="ignore")
         except Exception as exc:
             issues.append(
                 {

@@ -5,33 +5,75 @@
       "id": 1,
       "prompt": "Compile my IEEE paper in main.tex, then explain why two citations are unresolved after BibTeX.",
       "expected_output": "Select compile and bibliography modules, run the correct commands in sequence, and report the build plus citation findings in LaTeX-oriented review format with exact failing steps, exit codes, or unresolved keys.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "regex", "pattern": "(compile|bibliography)", "description": "correct modules routed"},
-        {"type": "regex", "pattern": "\\\\cite\\{", "description": "\\cite{} references preserved"},
-        {"type": "regex", "pattern": "(exit code|error|unresolved)", "description": "build diagnostics reported"}
+        {
+          "type": "regex",
+          "pattern": "(compile|bibliography)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\\\cite\\{",
+          "description": "\\cite{} references preserved"
+        },
+        {
+          "type": "regex",
+          "pattern": "(exit code|error|unresolved)",
+          "description": "build diagnostics reported"
+        }
       ]
     },
     {
       "id": 2,
       "prompt": "Review the introduction section for grammar, sentence length, and logic, but do not touch equations or citation keys.",
       "expected_output": "Route to grammar, sentences, and logic modules with source-preserving comments, keeping equations, citation keys, labels, and math untouched.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "regex", "pattern": "(grammar|sentences|logic)", "description": "correct modules routed"},
-        {"type": "not_contains", "text": "\\cite{", "description": "citation keys not rewritten"},
-        {"type": "regex", "pattern": "% .+\\[Severity:", "description": "LaTeX comment format used"}
+        {
+          "type": "regex",
+          "pattern": "(grammar|sentences|logic)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{",
+          "description": "citation keys not rewritten"
+        },
+        {
+          "type": "regex",
+          "pattern": "% .+\\[Severity:",
+          "description": "LaTeX comment format used"
+        }
       ]
     },
     {
       "id": 3,
       "prompt": "Before I submit to ACM, check whether my figures are publication-ready and whether the title sounds too generic.",
       "expected_output": "Route to figures and title modules and return concrete pre-submission findings about figure readiness, missing assets, resolution risks, caption problems, or weak title wording.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "regex", "pattern": "(figures|title)", "description": "correct modules routed"},
-        {"type": "regex", "pattern": "(DPI|resolution|caption|figure)", "description": "figure quality assessed"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {
+          "type": "regex",
+          "pattern": "(figures|title)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(DPI|resolution|caption|figure)",
+          "description": "figure quality assessed"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\[Severity: (Critical|Major|Minor)\\]",
+          "description": "severity format correct"
+        }
       ]
     },
     {
@@ -40,72 +82,156 @@
       "expected_output": "Route to the translation module, preserve LaTeX fragments verbatim, surface terminology choices, and avoid silently rewriting citations, labels, or math.",
       "files": [],
       "assertions": [
-        {"type": "contains", "text": "translation", "description": "translation module routed"},
-        {"type": "contains", "text": "\\cite{zhang2024}", "description": "citation key preserved verbatim"},
-        {"type": "contains", "text": "$L_{pred}$", "description": "math expression preserved"}
+        {
+          "type": "contains",
+          "text": "translation",
+          "description": "translation module routed"
+        },
+        {
+          "type": "contains",
+          "text": "\\cite{zhang2024}",
+          "description": "citation key preserved verbatim"
+        },
+        {
+          "type": "contains",
+          "text": "$L_{pred}$",
+          "description": "math expression preserved"
+        }
       ]
     },
     {
       "id": 5,
       "prompt": "Check the introduction section for AI-sounding phrases and tell me what to revise, but do not rewrite labels, citations, or equations.",
       "expected_output": "Route to the deai module and return source-preserving findings, risk notes, and revision targets without editing labels, citations, or math environments.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "deai", "description": "deai module routed"},
-        {"type": "regex", "pattern": "(AI.?writing|AI.?trace|AI.?pattern)", "description": "AI pattern detection present"},
-        {"type": "not_contains", "text": "\\label{", "description": "labels not rewritten"}
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(AI.?writing|AI.?trace|AI.?pattern)",
+          "description": "AI pattern detection present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\label{",
+          "description": "labels not rewritten"
+        }
       ]
     },
     {
       "id": 6,
       "prompt": "Review the experiments section for weak baselines, unsupported claims, missing ablations, and absent significance reporting, but do not draft a replacement paragraph.",
       "expected_output": "Route to the experiment module and return reviewer-style LaTeX comments about comparator specificity, metric evidence, ablation coverage, significance reporting, efficiency comparisons, results discussion, and overclaiming.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "experiment", "description": "experiment module routed"},
-        {"type": "regex", "pattern": "(ablation|baseline|significance)", "description": "experiment criteria covered"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {
+          "type": "contains",
+          "text": "experiment",
+          "description": "experiment module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(ablation|baseline|significance)",
+          "description": "experiment criteria covered"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\[Severity: (Critical|Major|Minor)\\]",
+          "description": "severity format correct"
+        }
       ]
     },
     {
       "id": 7,
       "prompt": "Check whether the introduction jumps from background directly to our method without establishing the technical bottleneck or prior-work limitations.",
       "expected_output": "Route to the logic module and flag introduction funnel breaks such as background-to-contribution jumps or missing prior-work insufficiency derivation.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "logic", "description": "logic module routed"},
-        {"type": "regex", "pattern": "(funnel|gap|bottleneck|jump)", "description": "funnel analysis present"}
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(funnel|gap|bottleneck|jump)",
+          "description": "funnel analysis present"
+        }
       ]
     },
     {
       "id": 8,
       "prompt": "Tell me whether the abstract, the contribution claims in the introduction, and the conclusion are saying the same core story or drifting apart.",
       "expected_output": "Route to the logic module and return a cross-section consistency finding about problem, method, key result, and contribution alignment.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "logic", "description": "logic module routed"},
-        {"type": "regex", "pattern": "(cross-section|alignment|consistency|drift)", "description": "cross-section analysis present"}
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(cross-section|alignment|consistency|drift)",
+          "description": "cross-section analysis present"
+        }
       ]
     },
     {
       "id": 9,
       "prompt": "Review the discussion section and tell me whether it is layered enough, or if it just repeats results without mechanism, comparison, limitations, or implications.",
       "expected_output": "Route to the experiment module and report shallow or unlayered discussion structure with concrete section-level comments.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "experiment", "description": "experiment module routed"},
-        {"type": "regex", "pattern": "(layer|mechanism|limitation|implication)", "description": "discussion depth assessed"}
+        {
+          "type": "contains",
+          "text": "experiment",
+          "description": "experiment module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(layer|mechanism|limitation|implication)",
+          "description": "discussion depth assessed"
+        }
       ]
     },
     {
       "id": 10,
       "prompt": "Check whether the pseudocode in my IEEE LaTeX paper still uses a floating algorithm environment or misses the caption and label conventions reviewers expect.",
       "expected_output": "Route to the pseudocode module, apply IEEE-aware checks, and separate hard float violations from caption, label, or reference hygiene issues.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
-        {"type": "regex", "pattern": "(IEEE|algorithm|caption|label)", "description": "IEEE-aware pseudocode review present"},
-        {"type": "regex", "pattern": "\\[Severity: (Critical|Major|Minor)\\]", "description": "severity format correct"}
+        {
+          "type": "contains",
+          "text": "pseudocode",
+          "description": "pseudocode module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(IEEE|algorithm|caption|label)",
+          "description": "IEEE-aware pseudocode review present"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\[Severity: (Critical|Major|Minor)\\]",
+          "description": "severity format correct"
+        }
       ]
     },
     {
@@ -114,98 +240,226 @@
       "expected_output": "Route to the pseudocode module, explain that floating algorithm environments are the hard issue, and clearly distinguish line numbers or Require/Ensure as IEEE-safe defaults rather than official mandates.",
       "files": [],
       "assertions": [
-        {"type": "contains", "text": "pseudocode", "description": "pseudocode module routed"},
-        {"type": "regex", "pattern": "(recommended|not required|IEEE-safe)", "description": "advisory distinction present"},
-        {"type": "regex", "pattern": "(algorithm2e|figure)", "description": "migration guidance present"}
+        {
+          "type": "contains",
+          "text": "pseudocode",
+          "description": "pseudocode module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(recommended|not required|IEEE-safe)",
+          "description": "advisory distinction present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(algorithm2e|figure)",
+          "description": "migration guidance present"
+        }
       ]
     },
     {
       "id": 12,
       "prompt": "My Related Work reads like a paper-by-paper list. Keep every citation anchor, but show me how to rewrite it into consensus, disagreement, limitations, and the research gap.",
       "expected_output": "Route to the literature module, diagnose enumeration or missing comparison, preserve citation anchors, and provide a rewrite blueprint that moves from consensus to research gap.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "literature", "description": "literature module routed"},
-        {"type": "regex", "pattern": "(consensus|disagreement|limitation|gap)", "description": "rewrite blueprint present"},
-        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+        {
+          "type": "contains",
+          "text": "literature",
+          "description": "literature module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(consensus|disagreement|limitation|gap)",
+          "description": "rewrite blueprint present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
       ]
     },
     {
       "id": 13,
       "prompt": "Give me a reviewer-facing rewrite plan for the Introduction of my LaTeX paper. I need paragraph roles, the technical bottleneck, and a claim-evidence map, but do not invent citations.",
       "expected_output": "Route to section-writing, load the Introduction guidance, and return an introduction outline with paragraph roles, technical bottleneck, proposed solution flow, and claim-evidence map while preserving LaTeX anchors.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
-        {"type": "regex", "pattern": "(Introduction|paragraph roles|technical bottleneck|claim-evidence)", "description": "introduction writing contract covered"},
-        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+        {
+          "type": "contains",
+          "text": "section-writing",
+          "description": "section-writing module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Introduction|paragraph roles|technical bottleneck|claim-evidence)",
+          "description": "introduction writing contract covered"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
       ]
     },
     {
       "id": 14,
       "prompt": "Rewrite the Method overview and one module subsection around motivation, design, and technical advantage. Preserve all equations, \\ref{} anchors, and macros.",
       "expected_output": "Route to section-writing, use the Method guide, and provide a method outline or prose proposal organized around module motivation, design, technical advantage, and evidence without changing LaTeX anchors.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
-        {"type": "regex", "pattern": "(motivation|design|technical advantage|module)", "description": "method module triad present"},
-        {"type": "regex", "pattern": "(preserve|unchanged|LaTeX|\\\\ref)", "description": "LaTeX preservation stated"}
+        {
+          "type": "contains",
+          "text": "section-writing",
+          "description": "section-writing module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(motivation|design|technical advantage|module)",
+          "description": "method module triad present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(preserve|unchanged|LaTeX|\\\\ref)",
+          "description": "LaTeX preservation stated"
+        }
       ]
     },
     {
       "id": 15,
       "prompt": "Help me revise the Conclusion so it answers the Introduction promises, summarizes evidence, and states limitations without overstating the experiments.",
       "expected_output": "Route to section-writing, use the Conclusion guide, and return a closure plan with solved problem, evidence recap, implication, limitation, future work, and claim-evidence boundaries.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
-        {"type": "regex", "pattern": "(Conclusion|closure|evidence|limitation|future work)", "description": "conclusion roles present"},
-        {"type": "regex", "pattern": "(overstat|bounded|needs evidence|unsupported)", "description": "evidence boundary present"}
+        {
+          "type": "contains",
+          "text": "section-writing",
+          "description": "section-writing module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Conclusion|closure|evidence|limitation|future work)",
+          "description": "conclusion roles present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(overstat|bounded|needs evidence|unsupported)",
+          "description": "evidence boundary present"
+        }
       ]
     },
     {
       "id": 16,
       "prompt": "Map every major claim in the Abstract, Introduction, and Experiments to visible evidence before suggesting wording changes.",
       "expected_output": "Route to section-writing with self-review guidance, return a claim-evidence map across sections, and mark unsupported or needs-evidence claims instead of inventing results.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
-        {"type": "regex", "pattern": "(Claim:|Evidence:|Status:|claim-evidence)", "description": "claim-evidence map emitted"},
-        {"type": "regex", "pattern": "(needs evidence|unsupported|missing)", "description": "missing evidence marked"}
+        {
+          "type": "contains",
+          "text": "section-writing",
+          "description": "section-writing module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Claim:|Evidence:|Status:|claim-evidence)",
+          "description": "claim-evidence map emitted"
+        },
+        {
+          "type": "regex",
+          "pattern": "(needs evidence|unsupported|missing)",
+          "description": "missing evidence marked"
+        }
       ]
     },
     {
       "id": 17,
       "prompt": "Give me a reviewer-facing rewrite plan for the Introduction of my LaTeX paper. I need the 6-move funnel: stakes, structural gap, key abstraction, design intuition, contributions, and results preview. Preserve all citations and labels, and tell me which claims still need evidence.",
       "expected_output": "Route to section-writing, load the Introduction guide, and return an outline with paragraph roles, a structural gap, a named abstraction, contributions, and a claim-evidence map while preserving LaTeX anchors.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "section-writing", "description": "section-writing module routed"},
-        {"type": "regex", "pattern": "(Introduction|paragraph roles|structural gap|key abstraction|results preview|claim-evidence)", "description": "intro funnel and closure present"},
-        {"type": "regex", "pattern": "(evidence|gap|contribution)", "description": "evidence-driven framing present"},
-        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+        {
+          "type": "contains",
+          "text": "section-writing",
+          "description": "section-writing module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Introduction|paragraph roles|structural gap|key abstraction|results preview|claim-evidence)",
+          "description": "intro funnel and closure present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(evidence|gap|contribution)",
+          "description": "evidence-driven framing present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
       ]
     },
     {
       "id": 18,
       "prompt": "My Related Work is just a paper-by-paper list. Reorganize it into 2-4 technical categories, state each category's structural limitation, and write one positioning sentence that shows how our approach differs. Keep citation anchors unchanged.",
       "expected_output": "Route to literature, return category clustering and structural limitations, and produce a positioning sentence that differentiates the paper without rewriting citation anchors.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "literature", "description": "literature module routed"},
-        {"type": "regex", "pattern": "(category|structural limitation|positioning sentence|comparison)", "description": "related-work synthesis present"},
-        {"type": "not_contains", "text": "\\cite{fabricated", "description": "no fabricated citations"}
+        {
+          "type": "contains",
+          "text": "literature",
+          "description": "literature module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(category|structural limitation|positioning sentence|comparison)",
+          "description": "related-work synthesis present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
       ]
     },
     {
       "id": 19,
       "prompt": "Rewrite the Experiments section as a conference-paper narrative: anchor the setup compactly, compare against named baselines, add takeaways after each result cluster, then cover ablation and robustness. Keep the dataset names and metrics.",
       "expected_output": "Route to experiment, return labeled setup anchoring, head-to-head comparison, takeaway paragraphs, ablation, and robustness notes instead of a flat results dump.",
-      "files": [],
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
       "assertions": [
-        {"type": "contains", "text": "experiment", "description": "experiment module routed"},
-        {"type": "regex", "pattern": "(Takeaway|ablation|robustness|head-to-head|setup)", "description": "evaluation narrative present"},
-        {"type": "regex", "pattern": "(baseline|comparison|evidence)", "description": "evidence-backed comparison present"}
+        {
+          "type": "contains",
+          "text": "experiment",
+          "description": "experiment module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Takeaway|ablation|robustness|head-to-head|setup)",
+          "description": "evaluation narrative present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(baseline|comparison|evidence)",
+          "description": "evidence-backed comparison present"
+        }
       ]
     }
   ]

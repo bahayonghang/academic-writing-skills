@@ -1,0 +1,38 @@
+% Multi-file IEEE-style fixture for latex-paper-en regression tests.
+% Embedded trigger points (see README.md):
+%   - \input multi-file assembly (E6)
+%   - \graphicspath{{figs/}} nested-brace parse (E7)
+%   - figure labels fig:resnet18 / fig:resnet50 (E14 false-gap guard)
+%   - a citation used only in sections/intro.tex (E6 unused-entry false positive)
+\documentclass[conference]{IEEEtran}
+\graphicspath{{figs/}}
+\begin{document}
+\title{A Study of Methods and Experiments}
+\maketitle
+
+\begin{abstract}
+We study forecasting methods and report results.
+\end{abstract}
+
+\input{sections/intro.tex}
+
+\section*{Background}
+This starred section must be recognized by split_sections.
+
+\section{Methods}
+Our approach( with deliberately bad spacing ) is described here.
+We use a three-layer model.
+
+\section{Experiments}
+We present a single very long sentence that is hard wrapped across multiple
+source lines so that a line by line analyzer would miss it, because the clause
+structure continues well beyond the configured threshold even though no single
+physical line is long, which is exactly the situation that breaks naive tools.
+See Figure~\ref{fig:resnet18} and Figure~\ref{fig:resnet50}.
+
+\begin{figure}\includegraphics{arch}\caption{ResNet18}\label{fig:resnet18}\end{figure}
+\begin{figure}\includegraphics{arch}\caption{ResNet50}\label{fig:resnet50}\end{figure}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}
