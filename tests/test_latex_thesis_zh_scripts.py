@@ -28,7 +28,15 @@ def _load_zh(name: str):
         inserted = True
 
     # Save and remove collision-prone modules so ZH versions get loaded fresh
-    _collision_names = ("parsers", "compile", "verify_bib", "optimize_title", "map_structure")
+    _collision_names = (
+        "parsers",
+        "tex_loader",
+        "typ_loader",
+        "compile",
+        "verify_bib",
+        "optimize_title",
+        "map_structure",
+    )
     _saved = {}
     for mod_name in list(sys.modules):
         if mod_name in _collision_names:

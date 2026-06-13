@@ -88,6 +88,28 @@ ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("extract_title", ["en", "audit", "cover_letter"]),
     ("extract_abstract", ["en", "audit", "cover_letter"]),
     ("extract_latex_citation_keys", ["en", "audit", "cover_letter"]),
+    # Section-splitting machinery ported from latex-thesis-zh. The ZH copy keeps
+    # Chinese rules and docstrings, so it is intentionally NOT locked here — only
+    # the four EN-family copies (the ones that historically drifted) must agree.
+    ("_split_sections_from_headings", ["en", "typst", "audit", "cover_letter"]),
+    ("resolve_section_keys", ["en", "typst", "audit", "cover_letter"]),
+    ("SECTION_KEY_ALIASES", ["en", "typst", "audit", "cover_letter"]),
+    ("_extract_template_arg", ["en", "typst", "audit", "cover_letter"]),
+    ("DocumentParser.extract_headings", ["en", "typst", "audit", "cover_letter"]),
+    ("DocumentParser.chapter_ranges", ["en", "typst", "audit", "cover_letter"]),
+    ("LatexParser.split_sections", ["en", "audit", "cover_letter"]),
+    ("LatexParser.extract_headings", ["en", "audit", "cover_letter"]),
+    ("LatexParser._classify_heading", ["en", "audit", "cover_letter"]),
+    ("LatexParser.normalize_heading_title", ["en", "audit", "cover_letter"]),
+    ("LatexParser.HEADING_PATTERN", ["en", "audit", "cover_letter"]),
+    ("LatexParser.HEADING_LEVELS", ["en", "audit", "cover_letter"]),
+    ("LatexParser.SECTION_TITLE_RULES", ["en", "audit", "cover_letter"]),
+    ("LatexParser.clean_text", ["en", "audit", "cover_letter"]),
+    ("TypstParser.split_sections", ["en", "typst", "audit", "cover_letter"]),
+    ("TypstParser.extract_headings", ["en", "typst", "audit", "cover_letter"]),
+    ("TypstParser._classify_heading", ["en", "typst", "audit", "cover_letter"]),
+    ("TypstParser.HEADING_PATTERN", ["en", "typst", "audit", "cover_letter"]),
+    ("TypstParser.SECTION_TITLE_RULES", ["en", "typst", "audit", "cover_letter"]),
 ]
 
 
