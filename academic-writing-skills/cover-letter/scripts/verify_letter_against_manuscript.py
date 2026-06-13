@@ -22,6 +22,14 @@ from parsers import LatexParser
 
 UNVERIFIED_CONFIDENCE = "unverified"
 
+# A claim number and its metric keyword must co-occur within this many characters
+# of manuscript prose (≈ a sentence / short paragraph). The previous check
+# accepted the number appearing anywhere and the keyword appearing anywhere in
+# the whole document, which silently "verified" fabricated combinations such as
+# "73% reduction in memory" when the manuscript only had an unrelated "73%" and
+# a separate "reduction".
+_NUMERIC_WINDOW = 160
+
 
 def _strip_manuscript(content: str) -> str:
     """Return manuscript text after stripping LaTeX markup for matching."""
@@ -47,8 +55,8 @@ def _has_4gram_match(claim: str, manuscript: str) -> bool:
 
 
 def _has_numeric_match(claim: str, manuscript: str) -> bool:
-    """Return True when a number in the claim appears in the manuscript and a
-    nearby metric keyword overlaps."""
+    """Return True when a number in the claim appears in the manuscript with a
+    matching metric keyword nearby (within ``_NUMERIC_WINDOW`` characters)."""
     number_patterns = (
         r"\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|s|MB|GB|FLOPs?)",
         r"(?:\$|USD\s*)\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?\b",
@@ -66,17 +74,29 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
     )
     if not numbers:
         return False
-    manuscript_lower = manuscript.lower().replace("\\", "")
-    normalized_manuscript = re.sub(r"\s+", "", manuscript_lower)
+    # Collapse whitespace (do NOT delete it) so character offsets stay meaningful
+    # for the proximity window while "12 sensor modalities" still matches.
+    manuscript_norm = re.sub(r"\s+", " ", manuscript.lower().replace("\\", ""))
+    keywords = [kw.lower() for kw in metric_keywords]
     for number in numbers:
-        normalized_number = re.sub(r"\s+", "", number.lower().replace("\\", ""))
-        if normalized_number not in normalized_manuscript:
+        needle = re.sub(r"\s+", " ", number.lower().replace("\\", "")).strip()
+        if not needle:
             continue
-        if not metric_keywords:
-            return True
-        for kw in metric_keywords:
-            if kw.lower() in manuscript_lower:
+        start = 0
+        while True:
+            idx = manuscript_norm.find(needle, start)
+            if idx == -1:
+                break
+            # A bare number with no metric keyword in the claim can only be
+            # checked for presence (e.g. "2.1x faster" has no listed keyword).
+            if not keywords:
                 return True
+            lo = max(0, idx - _NUMERIC_WINDOW)
+            hi = idx + len(needle) + _NUMERIC_WINDOW
+            window = manuscript_norm[lo:hi]
+            if any(kw in window for kw in keywords):
+                return True
+            start = idx + len(needle)
     return False
 
 

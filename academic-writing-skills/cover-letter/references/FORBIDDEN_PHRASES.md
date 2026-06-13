@@ -1,6 +1,16 @@
 # Forbidden Phrases
 
-Phrases that should not appear in an academic submission cover letter. Used by `presubmission_check.py` and `optimize` mode.
+Phrases that should not appear in an academic submission cover letter. The
+regex patterns in `presubmission_check.py` are the single source of truth; this
+file is the human-readable mirror. Each tier maps to a code group the script
+emits:
+
+| Tier                     | Script constant              | Codes        | Trigger                   |
+| ------------------------ | ---------------------------- | ------------ | ------------------------- |
+| 1 (openers)              | `LETTER_OPENER_CLICHES`      | `L2a`-`L2e`  | first content line only   |
+| 2 (marketing adjectives) | `BANNED_TONE_PATTERNS`       | `AI1`-`AI14` | 3+ occurrences            |
+| 3 (cover-letter clichés) | `LETTER_BANNED_PHRASES`      | `J1a`-`J1i`  | 1+ (`major` at 3+)        |
+| 4 (generic-fit)          | `LETTER_GENERIC_FIT_PHRASES` | `J4a`-`J4d`  | 1+, with replacement hint |
 
 ## Tier 1: Low-effort openers (always flag)
 

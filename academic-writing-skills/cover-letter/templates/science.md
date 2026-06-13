@@ -6,11 +6,11 @@ required_declarations:
   - originality
   - dual_submission
   - competing_interests
-  - data_availability
+  - ai_disclosure
 optional_declarations:
   - prior_presentation
-  - suggested_reviewers
   - excluded_reviewers
+  - data_availability
 opening_style: paradigm-shift-led
 banned_phrases:
   - "We are pleased to submit"
@@ -48,8 +48,13 @@ banned_phrases:
 
 - Originality and exclusivity statements.
 - Competing interests: explicit declaration even when "none."
-- Data and materials availability: required for all Science submissions.
-- IRB / IACUC approval for studies involving humans or animals.
+- AI disclosure: Science (AAAS) is the strictest tier here — generative-AI assistance must be disclosed in the **cover letter, the acknowledgments, and Methods** (Methods carries the full prompt, tool name, and version). State it in the letter even when the use was minor.
+
+## Conditional declarations (include only when relevant)
+
+- Data and materials availability: required for all Science submissions, but supplied through the submission system and a manuscript statement; cite it in the letter only if the editor requests it.
+- IRB / IACUC approval for studies involving humans or animals (usually a manuscript statement; mention here if it materially affects editorial routing).
+- Suggested / excluded reviewers: only if the submission form does not already collect them; not added by default (2025-26 venues have tightened author-suggested reviewers).
 
 ## Length
 

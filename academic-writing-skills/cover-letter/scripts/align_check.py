@@ -15,21 +15,18 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from build_letter_claim_map import build_claim_map
-from extract_manuscript_facts import extract_facts
+from build_letter_claim_map import STRONG_CLAIM_PATTERN, build_claim_map
+from extract_manuscript_facts import extract_facts, load_manuscript_text
 from verify_letter_against_manuscript import verify_claim_candidates
 
 MODULE = "ALIGNCHECK"
 
-STRONG_CLAIM_PATTERN = re.compile(
-    r"\b(state-of-the-art|outperform|superior|first|novel|best|always|never|all)\b",
-    flags=re.IGNORECASE,
-)
+# STRONG_CLAIM_PATTERN is owned by build_letter_claim_map (single source of
+# truth) so claim-strength wording and severity classification stay in sync.
 
 
 @dataclass
@@ -160,7 +157,10 @@ def run_align_check(
 ) -> tuple[list[AlignCheckIssue], dict]:
     """Run the full align-check pipeline. Returns ``(issues, claim_map)``."""
     letter_text = Path(letter_path).read_text(encoding="utf-8", errors="replace")
-    manuscript_text = Path(manuscript_path).read_text(encoding="utf-8", errors="replace")
+    # Expand \input/\include so a multi-file manuscript (main.tex skeleton) is
+    # anchored against its assembled body — otherwise facts come back empty and
+    # genuinely-supported letter claims are all mis-reported as unsupported.
+    manuscript_text = load_manuscript_text(manuscript_path)
 
     facts = extract_facts(manuscript_text)
     claim_map = build_claim_map(letter_text, manuscript_facts=facts)

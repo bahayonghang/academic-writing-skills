@@ -43,8 +43,12 @@ if str(SCRIPT_DIR_ZH) not in sys.path:
 if str(SCRIPT_DIR_AUDIT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR_AUDIT))
 
-# Cover-letter scripts: appended so they do NOT shadow the canonical EN/AUDIT
-# parsers. Cover-letter tests use importlib to load these scripts explicitly.
+# Cover-letter scripts: appended (not prepended) so they never shadow the
+# canonical EN/AUDIT `parsers` on the default sys.path. Cover-letter tests load
+# their scripts via importlib in a `_load` helper that temporarily evicts the
+# shared `parsers`/`tex_loader` modules and puts the cover-letter dir at
+# sys.path[0], then restores both — so each test sees the cover-letter copy
+# without leaking it to EN/AUDIT tests.
 if str(SCRIPT_DIR_COVER_LETTER) not in sys.path:
     sys.path.append(str(SCRIPT_DIR_COVER_LETTER))
 

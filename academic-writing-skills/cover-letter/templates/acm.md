@@ -10,7 +10,6 @@ optional_declarations:
   - prior_presentation
   - data_availability
   - artifact_evaluation
-  - suggested_reviewers
 opening_style: contribution-led
 banned_phrases:
   - "We are pleased to submit"
@@ -49,6 +48,11 @@ banned_phrases:
 - Conference extension disclosure (typical bar: ≥30% new content).
 - Competing interests.
 - Artifact evaluation: note if you intend to submit artifacts for evaluation.
+
+## Conditional declarations and venue practice
+
+- AI disclosure location: ACM requires prominent disclosure of generative-AI use **within the Work itself** (not the cover letter); basic word-processing assistance is exempt, and "when in doubt, disclose." Do not add an AI paragraph to the letter unless the venue asks.
+- Suggested / excluded reviewers: handled through the submission system, not added to the letter by default.
 
 ## Length
 

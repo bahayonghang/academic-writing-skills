@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import importlib.util
 import sys
-from pathlib import Path
 from types import ModuleType
 
 from conftest import SCRIPT_DIR_COVER_LETTER
@@ -12,18 +11,28 @@ from conftest import SCRIPT_DIR_COVER_LETTER
 SKILL_ROOT = SCRIPT_DIR_COVER_LETTER.parent
 FIXTURES = SKILL_ROOT / "evals" / "fixtures"
 
+_SHARED_MODULE_NAMES = ("parsers", "tex_loader")
+
 
 def _load(module_name: str) -> ModuleType:
     path = SCRIPT_DIR_COVER_LETTER / f"{module_name}.py"
-    if str(SCRIPT_DIR_COVER_LETTER) in sys.path:
-        sys.path.remove(str(SCRIPT_DIR_COVER_LETTER))
-    sys.path.insert(0, str(SCRIPT_DIR_COVER_LETTER))
-    spec = importlib.util.spec_from_file_location(f"_cl_ac_{module_name}", path)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    saved_path = list(sys.path)
+    saved_modules = {name: sys.modules.pop(name, None) for name in _SHARED_MODULE_NAMES}
+    try:
+        sys.path.insert(0, str(SCRIPT_DIR_COVER_LETTER))
+        spec = importlib.util.spec_from_file_location(f"_cl_ac_{module_name}", path)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path[:] = saved_path
+        for name, mod in saved_modules.items():
+            if mod is not None:
+                sys.modules[name] = mod
+            else:
+                sys.modules.pop(name, None)
 
 
 def test_align_check_run_pipeline_emits_unsupported_claim() -> None:
@@ -74,7 +83,7 @@ def test_align_check_severity_classification_caps_at_major() -> None:
     assert severities <= {"major", "moderate", "minor"}
 
 
-def test_align_check_works_with_aligned_letter() -> None:
+def test_align_check_works_with_aligned_letter(tmp_path) -> None:
     """A letter that does not overclaim should produce few or no issues."""
     align = _load("align_check")
     # Synthesize an aligned letter inline: only claims that trace to manuscript.
@@ -85,18 +94,15 @@ def test_align_check_works_with_aligned_letter() -> None:
         "inference latency by 47% with no F1 degradation.\n\n"
         "Sincerely,\nJia Wei\n"
     )
-    tmp = Path(SKILL_ROOT / "evals" / "fixtures" / "_tmp_aligned.md")
+    tmp = tmp_path / "_tmp_aligned.md"
     tmp.write_text(aligned, encoding="utf-8")
-    try:
-        issues, _ = align.run_align_check(tmp, FIXTURES / "generate_fixture.tex")
-        # At most minor-severity issues; no major overclaim.
-        severities = {issue.severity for issue in issues}
-        assert "major" not in severities
-    finally:
-        tmp.unlink()
+    issues, _ = align.run_align_check(tmp, FIXTURES / "generate_fixture.tex")
+    # At most minor-severity issues; no major overclaim.
+    severities = {issue.severity for issue in issues}
+    assert "major" not in severities
 
 
-def test_align_check_does_not_report_manuscript_supported_observed_metrics() -> None:
+def test_align_check_does_not_report_manuscript_supported_observed_metrics(tmp_path) -> None:
     align = _load("align_check")
     aligned = (
         "Dear Editor,\n\n"
@@ -105,18 +111,13 @@ def test_align_check_does_not_report_manuscript_supported_observed_metrics() -> 
         "while running 2.1x faster.\n\n"
         "Sincerely,\nJia Wei\n"
     )
-    tmp = Path(SKILL_ROOT / "evals" / "fixtures" / "_tmp_metrics_aligned.md")
+    tmp = tmp_path / "_tmp_metrics_aligned.md"
     tmp.write_text(aligned, encoding="utf-8")
-    try:
-        issues, claim_map = align.run_align_check(tmp, FIXTURES / "generate_fixture.tex")
-        claims_by_text = {
-            candidate["claim"]: candidate for candidate in claim_map["claim_candidates"]
-        }
-        assert any("47%" in claim for claim in claims_by_text)
-        assert any("2.1x" in claim for claim in claims_by_text)
-        assert not issues
-    finally:
-        tmp.unlink()
+    issues, claim_map = align.run_align_check(tmp, FIXTURES / "generate_fixture.tex")
+    claims_by_text = {candidate["claim"]: candidate for candidate in claim_map["claim_candidates"]}
+    assert any("47%" in claim for claim in claims_by_text)
+    assert any("2.1x" in claim for claim in claims_by_text)
+    assert not issues
 
 
 def test_align_check_reports_memory_modality_and_deployment_overclaims() -> None:
@@ -135,3 +136,50 @@ def test_align_check_reports_memory_modality_and_deployment_overclaims() -> None
     assert any("deployed in three industrial pilot studies" in quote for quote in issue_quotes)
     assert all(issue.priority in {"P1", "P2", "P3"} for issue in issues)
     assert all(issue.source_kind == "script" for issue in issues)
+
+
+def test_align_check_assembles_multifile_manuscript(tmp_path) -> None:
+    """A main.tex \\input skeleton must be assembled before anchoring claims, so
+    genuinely-supported 47% / 2.1x claims are not all mis-reported (C3)."""
+    align = _load("align_check")
+    extract = _load("extract_manuscript_facts")
+    main_tex = FIXTURES / "multifile" / "main.tex"
+
+    # Facts come from the assembled body, not the near-empty skeleton.
+    facts = extract.extract_facts(extract.load_manuscript_text(main_tex))
+    assert facts["abstract"].startswith("We address anomaly detection")
+    assert any("47%" in n for n in facts["headline_numbers"])
+
+    letter = tmp_path / "aligned_letter.md"
+    letter.write_text(
+        "Dear Editor,\n\n"
+        "On SWaT-Stream, our framework reduces inference latency by 47% with no F1 "
+        "degradation, and on WADI-Stream it runs 2.1x faster than the strongest "
+        "baseline.\n\n"
+        "Sincerely,\nJia Wei\n",
+        encoding="utf-8",
+    )
+    issues, _ = align.run_align_check(letter, main_tex)
+    # Both claims trace to the assembled manuscript → no overclaim findings.
+    assert "major" not in {issue.severity for issue in issues}
+    assert not issues
+
+
+def test_align_check_numeric_match_requires_local_cooccurrence(tmp_path) -> None:
+    """A number and its metric keyword that live far apart in the manuscript must
+    not 'verify' a fabricated combination (C4)."""
+    verifier = _load("verify_letter_against_manuscript")
+    # "73%" appears, and "reduction" appears, but separated by >window chars and
+    # never describing memory.
+    manuscript = (
+        r"\begin{abstract}"
+        "Industrial monitoring is hard. "
+        * 8
+        + "About 73% of sites lack monitoring. "
+        + "Unrelated filler sentence here. " * 8
+        + "We also observe a latency reduction on one benchmark."
+        r"\end{abstract}"
+    )
+    assert verifier._has_numeric_match("73% reduction in memory footprint", manuscript) is False
+    # Sanity: a genuinely co-located number+keyword still verifies.
+    assert verifier._has_numeric_match("47% reduction", "we report a 47% reduction in latency")

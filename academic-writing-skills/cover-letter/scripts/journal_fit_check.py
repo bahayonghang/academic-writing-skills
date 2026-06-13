@@ -22,8 +22,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
 from parsers import LatexParser
+from template_meta import split_frontmatter
 
 MODULE = "JOURNALFIT"
 
@@ -85,20 +85,7 @@ def _read_template(skill_dir: Path, venue: str) -> tuple[dict[str, Any], str]:
     path = skill_dir / "templates" / f"{venue}.md"
     if not path.exists():
         path = skill_dir / "templates" / "generic.md"
-    text = path.read_text(encoding="utf-8")
-    meta: dict[str, Any] = {}
-    body = text
-    if text.startswith("---"):
-        end = text.find("\n---", 3)
-        if end != -1:
-            try:
-                loaded = yaml.safe_load(text[3:end])
-                if isinstance(loaded, dict):
-                    meta = loaded
-            except yaml.YAMLError:
-                pass
-            body = text[end + 4 :]
-    return meta, body
+    return split_frontmatter(path.read_text(encoding="utf-8", errors="replace"))
 
 
 def _read_letter_visible(path: Path) -> str:

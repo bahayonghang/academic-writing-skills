@@ -18,7 +18,7 @@ banned_phrases:
 
 # ICML Cover Letter
 
-> ICML mirrors NeurIPS for most cover-letter expectations. Use this snapshot for the main track; workshop tracks may have lighter or stricter requirements depending on the workshop call.
+> ICML does not use a cover letter for the main track — submission is through OpenReview structured forms (author list, abstract, checklists), not a free-form letter. Use this snapshot only when a cover letter is explicitly required (some workshops, special calls) or when the authors choose to provide one. ICML mirrors NeurIPS for those expectations.
 
 ## Tone
 

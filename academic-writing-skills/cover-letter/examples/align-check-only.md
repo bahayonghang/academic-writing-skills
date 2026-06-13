@@ -10,7 +10,7 @@ Recommended module sequence:
 Commands:
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/align_check.py --letter cover_letter.md --manuscript main.tex --json
+uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode align-check --letter cover_letter.md --manuscript main.tex --json
 ```
 
 Expected output:

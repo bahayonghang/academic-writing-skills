@@ -6,11 +6,11 @@ required_declarations:
   - originality
   - dual_submission
   - competing_interests
-  - data_availability
+  - ai_disclosure
 optional_declarations:
   - prior_presentation
-  - suggested_reviewers
   - excluded_reviewers
+  - data_availability
 opening_style: paradigm-shift-led
 banned_phrases:
   - "We are pleased to submit"
@@ -53,7 +53,13 @@ banned_phrases:
 - Originality: "This manuscript has not been published elsewhere and is not under concurrent consideration."
 - Dual-submission: "All authors have approved the submission."
 - Competing interests: state explicitly, even when "none."
-- Data availability: state where data and code will be accessible upon acceptance.
+- AI disclosure: if generative AI assisted the preparation of the manuscript or this letter, state which tool and how it was used. ICMJE (Jan 2026, Section V) requires AI use to be described in the cover letter and the manuscript; the Nature family additionally records LLM use in Methods. Pure grammar/spell-check is exempt.
+
+## Conditional declarations (include only when relevant)
+
+- Data availability: Nature routes data/code availability through the submission system and a manuscript statement, not the cover letter — include it here only if the editor specifically asks. State where data and code will be accessible upon acceptance.
+- Suggested / excluded reviewers: include only if the journal's submission form does not already collect them, or to flag a genuine conflict. Several venues have curtailed author-suggested reviewers (2025-26); never add them by default.
+- Confidential channel: the Nature cover letter is **not shown to reviewers**. Use it for confidential context — competing interests, related work under consideration, or a request for specific editorial handling — rather than restating the abstract.
 
 ## Length
 

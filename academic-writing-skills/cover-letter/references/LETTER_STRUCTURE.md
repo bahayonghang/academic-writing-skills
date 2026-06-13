@@ -49,10 +49,11 @@ Order:
 1. Originality / dual-submission ("This manuscript has not been published elsewhere and is not under concurrent consideration.")
 2. Authorship ("All authors have approved the submission.")
 3. Competing interests (explicit, even when "none").
-4. Data availability (if applicable to venue).
-5. Ethics / IRB / IACUC (if applicable).
-6. Conference extension disclosure (if applicable — IEEE / ACM journals).
-7. Funding sources (if applicable).
+4. AI-use disclosure (required by Nature / Science / Cell and ICMJE Jan 2026 Section V when generative AI assisted the manuscript or letter; IEEE / ACM disclose this inside the manuscript instead). Name the tool and how it was used; pure grammar/spell-check is exempt.
+5. Data availability (if applicable to venue; top journals route this through the submission system rather than the letter).
+6. Ethics / IRB / IACUC (if applicable).
+7. Conference extension disclosure (if applicable — IEEE / ACM journals).
+8. Funding sources (if applicable).
 
 ## 6. Closing
 

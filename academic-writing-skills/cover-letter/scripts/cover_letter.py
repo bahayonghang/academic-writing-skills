@@ -17,15 +17,12 @@ from pathlib import Path
 from typing import Any
 
 from align_check import run_align_check
-from extract_manuscript_facts import extract_facts
+from extract_manuscript_facts import extract_facts, load_manuscript_text
 from journal_fit_check import VENUES, findings_from_result, run_journal_fit
 from presubmission_check import run_checks
+from template_meta import load_template_meta
 
 MODES = ("generate", "optimize", "align-check", "journal-fit", "presubmission")
-
-
-def _read(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="replace")
 
 
 def _jsonable(value: Any) -> Any:
@@ -101,8 +98,12 @@ def _run_generate(args: argparse.Namespace, journal: str) -> tuple[dict[str, Any
     manuscript = _require_path(args.manuscript, "--manuscript")
     if manuscript.suffix.lower() != ".tex":
         raise ValueError(f"Unsupported manuscript format: {manuscript.suffix}; expected .tex")
-    facts = extract_facts(_read(manuscript))
-    draft = _draft_cover_letter(facts, journal)
+    facts = extract_facts(load_manuscript_text(manuscript))
+    # Address the venue by its display name ("IEEE Transactions"), not the slug.
+    skill_dir = Path(__file__).resolve().parent.parent
+    meta = load_template_meta(skill_dir, journal) or {}
+    venue_name = str(meta.get("venue") or journal)
+    draft = _draft_cover_letter(facts, venue_name)
     missing = [key for key in ("title", "abstract") if not facts.get(key)]
     findings = [
         {

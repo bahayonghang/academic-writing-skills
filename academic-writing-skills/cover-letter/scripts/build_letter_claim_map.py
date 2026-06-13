@@ -66,13 +66,17 @@ def split_sentences(text: str) -> list[str]:
     return [part.strip() for part in parts if part.strip()]
 
 
-def extract_claims(text: str, max_items: int = 12) -> list[str]:
-    """Return likely claim-bearing sentences from the cover letter."""
+def extract_claims(text: str, max_items: int | None = None) -> list[str]:
+    """Return likely claim-bearing sentences from the cover letter.
+
+    ``max_items=None`` (default) returns every claim sentence so callers can
+    report the true total; pass an int to cap the scan.
+    """
     claims: list[str] = []
     for sentence in split_sentences(text):
         if any(re.search(p, sentence, re.IGNORECASE) for p in LETTER_CLAIM_PATTERNS):
             claims.append(sentence)
-        if len(claims) >= max_items:
+        if max_items is not None and len(claims) >= max_items:
             break
     return claims
 
@@ -113,28 +117,21 @@ def _manuscript_supports(
         return False, []
     anchors: list[dict[str, str]] = []
     lowered = sentence.lower()
+    sent_str = " ".join(re.findall(r"\b[\w'-]+\b", lowered))
     # Check headline numbers
     for number in manuscript_facts.get("headline_numbers", []):
         if number.lower() in lowered:
             anchors.append({"type": "metric", "text": number})
-    # Check contribution overlap
+    # Check contribution overlap: any shared 4-gram counts as support.
     for contribution in manuscript_facts.get("contributions", []):
-        # Simple token overlap: at least 4 consecutive words
         contrib_tokens = re.findall(r"\b[\w'-]+\b", contribution.lower())
-        sent_tokens = re.findall(r"\b[\w'-]+\b", lowered)
         if len(contrib_tokens) < 4:
             continue
-        # Find any 4-gram match
-        contrib_str = " ".join(contrib_tokens)
-        sent_str = " ".join(sent_tokens)
         for i in range(len(contrib_tokens) - 3):
             fragment = " ".join(contrib_tokens[i : i + 4])
             if fragment in sent_str:
                 anchors.append({"type": "section", "text": contribution[:80]})
                 break
-        if anchors and anchors[-1]["type"] == "section":
-            continue
-        del contrib_str  # placate linters
     return bool(anchors), anchors
 
 
@@ -259,9 +256,17 @@ def build_claim_candidate(
     }
 
 
-def build_claim_map(letter_text: str, manuscript_facts: dict | None) -> dict:
-    """Build the cover letter claim map."""
-    claims = extract_claims(letter_text)
+def build_claim_map(letter_text: str, manuscript_facts: dict | None, max_items: int = 12) -> dict:
+    """Build the cover letter claim map.
+
+    Detailed candidates are capped at ``max_items`` to bound work, but the full
+    claim-sentence count is reported via ``total_claim_sentences`` and
+    ``truncated`` so nothing is silently dropped (claims beyond the cap still
+    surface as a count for the caller to act on).
+    """
+    all_claims = extract_claims(letter_text)
+    total = len(all_claims)
+    claims = all_claims[:max_items]
     candidates = [
         build_claim_candidate(claim, index=i, manuscript_facts=manuscript_facts)
         for i, claim in enumerate(claims)
@@ -269,6 +274,8 @@ def build_claim_map(letter_text: str, manuscript_facts: dict | None) -> dict:
     return {
         "letter_claims": claims,
         "claim_candidates": candidates,
+        "total_claim_sentences": total,
+        "truncated": total > max_items,
         "manuscript_supported_count": sum(1 for c in candidates if c.get("manuscript_supported")),
         "unsupported_count": sum(1 for c in candidates if c.get("claim_strength") == "unsupported"),
     }
@@ -284,7 +291,6 @@ def main(argv: list[str] | None = None) -> int:
         help="Path to facts.json emitted by extract_manuscript_facts.py",
     )
     parser.add_argument("--output", "-o", help="Optional output path")
-    parser.add_argument("--json", action="store_true", help="Emit JSON (default)")
     args = parser.parse_args(argv)
 
     letter_path = Path(args.letter).resolve()

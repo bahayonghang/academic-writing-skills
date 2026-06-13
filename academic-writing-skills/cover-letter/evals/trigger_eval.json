@@ -80,6 +80,31 @@
       "query": "Reply to reviewers point-by-point for my rebuttal letter.",
       "should_trigger": false,
       "category": "negative-response-letter-deferred"
+    },
+    {
+      "query": "帮我核对一下投稿信里的主张有没有超出 main.tex 稿件能支持的范围。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "我这封致编辑的信投 IEEE TPAMI 合适吗，还是应该改投会议？",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "投稿前帮我预检这封 Nature 投稿信，看缺哪些必需声明。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "帮我写一封投递互联网大厂算法岗的求职信。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "帮我审一下这篇论文本体能不能投，给出大修小修的审稿意见。",
+      "should_trigger": false,
+      "category": "negative-overlap-paper-audit"
     }
   ]
 }

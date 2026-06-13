@@ -17,7 +17,7 @@ banned_phrases:
 
 # CVPR Cover Letter
 
-> CVPR and sister vision venues (ICCV, ECCV, WACV) share most cover-letter expectations.
+> CVPR and sister vision venues (ICCV, ECCV, WACV) do not use a cover letter for the main track — submission is through the structured CMT / OpenReview forms, not a free-form letter. Use this snapshot only when a venue or workshop explicitly requires one. The declarations below describe what such a letter would contain.
 
 ## Tone
 

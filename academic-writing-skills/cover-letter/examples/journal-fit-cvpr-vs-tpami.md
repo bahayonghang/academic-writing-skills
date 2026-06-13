@@ -10,8 +10,8 @@ Recommended module sequence:
 Commands:
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/journal_fit_check.py cover_letter.md --venue cvpr --json
-uv run python -B $SKILL_DIR/scripts/journal_fit_check.py cover_letter.md --venue ieee-trans --json
+uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode journal-fit --letter cover_letter.md --venue cvpr --json
+uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode journal-fit --letter cover_letter.md --venue ieee-trans --json
 ```
 
 Expected output:

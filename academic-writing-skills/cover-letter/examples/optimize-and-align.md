@@ -10,8 +10,7 @@ Recommended module sequence:
 Commands:
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/presubmission_check.py cover_letter.md --journal ieee-trans --json
-uv run python -B $SKILL_DIR/scripts/align_check.py --letter cover_letter.md --manuscript main.tex --json
+uv run python -B $SKILL_DIR/scripts/cover_letter.py --mode optimize --letter cover_letter.md --manuscript main.tex --journal ieee-trans --json
 ```
 
 Expected output:
@@ -19,4 +18,4 @@ Expected output:
 - `% PRESUBMISSION` findings: missing declarations, length violations, banned phrase hits.
 - `% ALIGNCHECK` findings: claim-accuracy issues with `claim_strength`, `allowed_wording` suggestions, and `manuscript_section_anchor` pointers.
 - Section-level diff suggestions in LaTeX-comment format: `% OPTIMIZE (Line N) [Severity: Major] [Priority: P1]: ...`
-- A re-run of `align_check.py` on the proposed rewrites to verify no new unsupported claim was introduced.
+- A re-run of `--mode align-check` on the proposed rewrites to verify no new unsupported claim was introduced.

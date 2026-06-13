@@ -24,8 +24,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
 from parsers import LatexParser
+from template_meta import load_template_meta
 
 EM_DASH = "—"
 MODULE = "PRESUBMISSION"
@@ -76,7 +76,7 @@ BANNED_TONE_PATTERNS: tuple[tuple[str, str], ...] = (
 )
 
 LETTER_OPENER_CLICHES: tuple[tuple[str, str], ...] = (
-    ("L2a", r"^\s*we are (?:pleased|excited|delighted|honored) to submit\b"),
+    ("L2a", r"^\s*we are (?:pleased|excited|delighted|honored) to (?:submit|share)\b"),
     ("L2b", r"^\s*we hereby submit\b"),
     ("L2c", r"^\s*please find (?:enclosed|attached)\b"),
     ("L2d", r"^\s*enclosed please find\b"),
@@ -92,6 +92,25 @@ LETTER_BANNED_PHRASES: tuple[tuple[str, str], ...] = (
     ("J1f", r"\bcutting[- ]edge\b"),
     ("J1g", r"\bof great interest\b"),
     ("J1h", r"\bwill be of broad interest\b"),
+    ("J1i", r"\bthe field is in need of\b"),
+)
+
+# Tier 4 (FORBIDDEN_PHRASES.md): generic-fit phrasings that signal the author
+# did not read the venue. Flagged at 1+ occurrence with a "name the specific X"
+# suggestion. Each carries the replacement hint inline.
+LETTER_GENERIC_FIT_PHRASES: tuple[tuple[str, str, str], ...] = (
+    (
+        "J4a",
+        r"\byour (?:esteemed |prestigious |distinguished |reputable )?journal\b",
+        "name the journal explicitly",
+    ),
+    (
+        "J4b",
+        r"\bfits? (?:well )?(?:with(?:in)?|into) the scope\b",
+        "name the specific scope dimension",
+    ),
+    ("J4c", r"\bbroad readership\b", "name the specific reader profile"),
+    ("J4d", r"\bimportant contribution to the field\b", "name the contribution category"),
 )
 
 DECLARATION_PATTERNS: dict[str, tuple[str, ...]] = {
@@ -132,6 +151,22 @@ DECLARATION_PATTERNS: dict[str, tuple[str, ...]] = {
         r"all authors (?:have )?read and approved",
         r"authorship agreement",
     ),
+    "ai_disclosure": (
+        r"generative ai",
+        r"\bgen[- ]?ai\b",
+        r"(?:used|use of|using|employed|with|disclos\w+|assisted by)\s+(?:a |an |the )?"
+        r"(?:large language model|llms?|generative ai|ai (?:tool|assistant|writing))",
+        r"no (?:generative )?ai (?:tool|assistance|was|were|used)",
+        r"ai[- ](?:assisted|generated)\s+(?:writing|text|content|editing)",
+        r"\b(?:chatgpt|gpt-\d|copilot|gemini)\b",
+    ),
+    "prior_presentation": (
+        r"(?:previously |earlier )?(?:presented|published|appeared)\s+"
+        r"(?:as |in )?(?:a |an )?(?:poster|abstract|preprint|workshop|preliminary|short version)",
+        r"\ba (?:preliminary|prior|earlier|conference) version\b",
+        r"\bpresented at\b",
+        r"\bextends? (?:our|a) (?:prior|earlier|previous) (?:conference |workshop )?(?:paper|version)",
+    ),
 }
 
 WEAK_TOPIC_STARTERS = (
@@ -155,7 +190,7 @@ def _strip_latex_comment(line: str) -> str:
 def _read_letter(path: Path) -> tuple[str, str]:
     """Return ``(content, fmt)``. fmt is ``.tex`` or ``.md``."""
     fmt = path.suffix.lower()
-    return path.read_text(encoding="utf-8"), fmt
+    return path.read_text(encoding="utf-8", errors="replace"), fmt
 
 
 def _line_views(content: str, fmt: str) -> list[LineView]:
@@ -210,7 +245,7 @@ def _issue(
 def _comment_type_for_code(code: str) -> str:
     if code.startswith("D-"):
         return "declaration_missing"
-    if code.startswith(("AI", "J1", "L2")):
+    if code.startswith(("AI", "J1", "J4", "L2")):
         return "tone"
     return "presentation"
 
@@ -222,6 +257,8 @@ def _title_for_code(code: str) -> str:
         return "Repeated promotional or AI-tone wording"
     if code.startswith("J1"):
         return "Cover-letter cliché phrase"
+    if code.startswith("J4"):
+        return "Generic-fit phrasing (name the specific venue detail)"
     if code.startswith("L2"):
         return "Low-specificity opener"
     if code == "L1":
@@ -243,8 +280,8 @@ def _scan_em_dashes(views: list[LineView], issues: list[PreSubmissionIssue]) -> 
             issues,
             code="G1",
             line=view.number,
-            severity="Major",
-            priority="P1",
+            severity="Minor",
+            priority="P2",
             message=(
                 "Em dash found; replace it with a comma, colon, parenthesis, or sentence boundary."
             ),
@@ -299,6 +336,31 @@ def _scan_letter_banned_phrases(
         )
 
 
+def _scan_letter_generic_fit_phrases(
+    views: list[LineView],
+    issues: list[PreSubmissionIssue],
+) -> None:
+    """Tier 4: generic-fit phrasings that signal the author did not read the venue."""
+    text = _visible_text(views)
+    for code, pattern, suggestion in LETTER_GENERIC_FIT_PHRASES:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if match is None:
+            continue
+        first_line = text.count("\n", 0, match.start()) + 1
+        _issue(
+            issues,
+            code=code,
+            line=first_line,
+            severity="Minor",
+            priority="P3",
+            message=(
+                f"Generic-fit phrasing `{match.group(0)}`; {suggestion} so the letter "
+                "reads as venue-specific rather than mass-mailed."
+            ),
+            quote=match.group(0),
+        )
+
+
 def _scan_letter_opener_cliches(
     views: list[LineView],
     issues: list[PreSubmissionIssue],
@@ -335,6 +397,14 @@ def _scan_letter_opener_cliches(
             return
 
 
+DECLARATION_NOTES: dict[str, str] = {
+    "ai_disclosure": (
+        " ICMJE (Jan 2026, Section V) requires generative-AI use to be disclosed in the "
+        "cover letter and the manuscript; Science/AAAS also requires it in the cover letter."
+    ),
+}
+
+
 def _scan_required_declarations(
     text: str,
     template_meta: dict[str, Any] | None,
@@ -345,7 +415,21 @@ def _scan_required_declarations(
     required = template_meta.get("required_declarations") or []
     optional = template_meta.get("optional_declarations") or []
     for kind in required:
-        patterns = DECLARATION_PATTERNS.get(kind, ())
+        if kind not in DECLARATION_PATTERNS:
+            # No detector for this kind — do not fabricate an "absent" major.
+            _issue(
+                issues,
+                code=f"D-{kind}-unknown",
+                line=None,
+                severity="Minor",
+                priority="P3",
+                message=(
+                    f"Declaration `{kind}` is listed as required but has no automatic "
+                    "detector; verify its presence manually."
+                ),
+            )
+            continue
+        patterns = DECLARATION_PATTERNS[kind]
         if any(re.search(p, text, flags=re.IGNORECASE) for p in patterns):
             continue
         _issue(
@@ -357,10 +441,15 @@ def _scan_required_declarations(
             message=(
                 f"Required declaration `{kind}` is missing; the active template lists it "
                 "as required and editors at this venue check for it."
+                + DECLARATION_NOTES.get(kind, "")
             ),
         )
     for kind in optional:
-        patterns = DECLARATION_PATTERNS.get(kind, ())
+        # Skip optional kinds with no detector instead of always reporting them
+        # absent (the old behavior produced an unconditional minor false-positive).
+        if kind not in DECLARATION_PATTERNS:
+            continue
+        patterns = DECLARATION_PATTERNS[kind]
         if any(re.search(p, text, flags=re.IGNORECASE) for p in patterns):
             continue
         _issue(
@@ -475,30 +564,6 @@ def _scan_paragraph_shape(views: list[LineView], issues: list[PreSubmissionIssue
                 )
 
 
-def _load_template_meta(skill_dir: Path, journal: str | None) -> dict[str, Any] | None:
-    if not journal:
-        return None
-    candidate = skill_dir / "templates" / f"{journal}.md"
-    if not candidate.exists():
-        candidate = skill_dir / "templates" / "generic.md"
-    if not candidate.exists():
-        return None
-    text = candidate.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    end = text.find("\n---", 3)
-    if end == -1:
-        return None
-    frontmatter = text[3:end]
-    try:
-        meta = yaml.safe_load(frontmatter)
-        if isinstance(meta, dict):
-            return meta
-    except yaml.YAMLError:
-        return None
-    return None
-
-
 def run_checks(
     path: str | Path,
     *,
@@ -513,12 +578,13 @@ def run_checks(
 
     template_meta: dict[str, Any] | None = None
     if journal and skill_dir is not None:
-        template_meta = _load_template_meta(skill_dir, journal)
+        template_meta = load_template_meta(skill_dir, journal)
 
     _scan_em_dashes(views, issues)
     _scan_ai_tone(views, issues)
     _scan_letter_opener_cliches(views, issues)
     _scan_letter_banned_phrases(views, issues)
+    _scan_letter_generic_fit_phrases(views, issues)
     _scan_required_declarations(_visible_text(views), template_meta, issues)
     _scan_length(views, template_meta, issues)
     _scan_paragraph_shape(views, issues)

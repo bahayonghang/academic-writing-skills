@@ -9,7 +9,6 @@ required_declarations:
 optional_declarations:
   - prior_presentation
   - data_availability
-  - suggested_reviewers
 opening_style: methodological-advance-led
 banned_phrases:
   - "We are pleased to submit"
@@ -48,6 +47,13 @@ banned_phrases:
 - Originality: "The manuscript has not been published elsewhere and is not under concurrent consideration."
 - Conference extension disclosure: if extending a prior conference paper, state the conference and the percentage of new material (IEEE typically expects ≥30% new content).
 - Competing interests.
+
+## Conditional declarations and venue practice
+
+- AI disclosure location: IEEE places generative-AI disclosure **in the manuscript Acknowledgments**, not the cover letter. Do not add an AI paragraph to an IEEE letter unless a specific title's author guide asks for it.
+- Cover-letter expectation is bimodal across IEEE titles: _Proceedings of the IEEE_ mandates a detailed cover letter (a missing one can be returned), while _IEEE TIM_ explicitly says not to submit one unless there is something specific to raise. Check the target title's author center before composing.
+- Rejected-and-resubmitted manuscripts: some IEEE/ACM venues (e.g. IEEE/ACM ToN) require a point-by-point note of what changed since the prior decision.
+- Suggested / excluded reviewers: supplied through the submission system, not added to the letter by default (2025-26 venues tightened reviewer-suggestion handling).
 
 ## Length
 

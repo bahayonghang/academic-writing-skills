@@ -18,26 +18,33 @@ from pathlib import Path
 
 from parsers import (
     LatexParser,
+    _extract_balanced_block,
+    _strip_latex_markup,
     extract_abstract,
     extract_latex_citation_keys,
-    extract_title,
 )
+from tex_loader import assemble
 
-# Author commands across common LaTeX templates.
+# Author command prefixes across common LaTeX templates. We locate the command,
+# then balanced-brace-capture its argument so that nested ``\thanks{...}`` (with
+# its own braces) does not truncate the author block (the old ``[^}]+`` regex
+# stopped at the first ``}`` inside ``\thanks``, dropping every author).
 # IEEE: \IEEEauthorblockN{Name} / \IEEEauthorblockA{Affil}
 # ACM acmart: \author{Name} ... \affiliation{...} ...
 # NeurIPS: \author{Name1\thanks{...} \\ Affil}
 # Article: \author{Name1 \and Name2}
-AUTHOR_COMMAND_PATTERNS: tuple[str, ...] = (
-    r"\\IEEEauthorblockN\s*\{([^}]+)\}",
-    r"\\author(?:\[[^\]]*\])?\s*\{([^}]+)\}",
-    r"\\authorinfo\s*\{([^}]+)\}",
+AUTHOR_COMMAND_PREFIXES: tuple[str, ...] = (
+    r"\\IEEEauthorblockN",
+    r"\\author(?:\[[^\]]*\])?",
+    r"\\authorinfo",
 )
 
-CORRESPONDING_AUTHOR_PATTERNS: tuple[str, ...] = (
-    r"\\corresponding(?:author)?\s*\{([^}]+)\}",
-    r"corresponding author[:\s]*([A-Z][A-Za-z'\.\- ]+)",
-)
+# Only an explicit corresponding-author command is trusted. The previous
+# free-text fallback (``corresponding author: <name>``) reached into
+# ``\thanks{Corresponding author: a@u.edu}`` and reported the email local part
+# as a fabricated author, so it is intentionally removed; we fall back to the
+# first extracted author instead.
+CORRESPONDING_AUTHOR_PATTERNS: tuple[str, ...] = (r"\\corresponding(?:author)?\s*\{([^}]+)\}",)
 
 CONTRIBUTIONS_HEADER_PATTERNS: tuple[str, ...] = (
     r"\\(?:sub)?section\*?\{(?:Our )?Contributions?\}",
@@ -52,8 +59,15 @@ INLINE_CONTRIBUTIONS_PATTERNS: tuple[str, ...] = (
 )
 
 
-def _read_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="replace")
+def load_manuscript_text(path: str | Path) -> str:
+    """Read a manuscript, expanding ``\\input`` / ``\\include`` via tex_loader.
+
+    Real papers often keep ``main.tex`` as an include skeleton; without assembly
+    the facts blob comes back empty and align-check mis-reports every supported
+    claim. ``assemble`` also applies the robust encoding fallback, so this works
+    for single-file manuscripts too.
+    """
+    return assemble(Path(path)).content
 
 
 def _clean(text: str) -> str:
@@ -65,33 +79,84 @@ def _clean(text: str) -> str:
     cleaned = re.sub(r"\\and\b", ",", cleaned)
     cleaned = re.sub(r"\\thanks\{[^}]*\}", "", cleaned)
     cleaned = re.sub(r"\\footnote\{[^}]*\}", "", cleaned)
+    cleaned = cleaned.replace("~", " ")
     cleaned = re.sub(r"\s+", " ", cleaned)
     return cleaned.strip()
 
 
+def _strip_balanced_commands(text: str, commands: tuple[str, ...]) -> str:
+    """Remove ``\\<command>{...}`` spans with balanced-brace bodies.
+
+    Unlike a ``\\thanks\\{[^}]*\\}`` regex, this also removes footnote/thanks
+    blocks whose body contains nested braces (e.g. ``\\thanks{\\emph{x}}``),
+    which would otherwise leak affiliation or funding text into the author /
+    title fields.
+    """
+    for command in commands:
+        opener = re.compile(r"\\" + command + r"\s*\{")
+        while True:
+            match = opener.search(text)
+            if not match:
+                break
+            brace_idx = match.end() - 1
+            body = _extract_balanced_block(text, brace_idx, "{", "}")
+            end = brace_idx + len(body) + 2  # skip the opening '{' and closing '}'
+            text = text[: match.start()] + " " + text[end:]
+    return text
+
+
+def _balanced_author_blocks(content: str) -> list[str]:
+    """Return the balanced-brace argument of each author command in the source."""
+    blocks: list[str] = []
+    for prefix in AUTHOR_COMMAND_PREFIXES:
+        for match in re.finditer(prefix + r"\s*\{", content):
+            brace_idx = match.end() - 1
+            block = _extract_balanced_block(content, brace_idx, "{", "}")
+            if block:
+                blocks.append(block)
+    return blocks
+
+
 def extract_authors(content: str) -> list[str]:
-    """Extract author names from a LaTeX manuscript."""
+    """Extract author names from a LaTeX manuscript.
+
+    Author blocks are captured with balanced braces, ``\\thanks`` / ``\\footnote``
+    are stripped first, then each ``\\and``-separated group contributes the text
+    before its first ``\\\\`` line break (the name line; affiliations follow on
+    later lines). ``\\IEEEauthorblockN`` lists several comma-separated names on
+    one line.
+    """
     candidates: list[str] = []
-    for pattern in AUTHOR_COMMAND_PATTERNS:
-        for match in re.finditer(pattern, content):
-            raw = _clean(match.group(1))
-            parts = re.split(r",|\band\b", raw, flags=re.IGNORECASE)
-            for part in parts:
-                name = part.strip()
+    for block in _balanced_author_blocks(content):
+        # IEEE wraps the names in \IEEEauthorblockN sub-blocks (captured by their
+        # own prefix); skip the outer \author{...} wrapper so its \IEEEauthorblockA
+        # affiliation does not leak in as a fake author.
+        if r"\IEEEauthorblockN" in block:
+            continue
+        block = re.sub(r"(?<!\\)%.*", "", block)  # drop line comments (e.g. \author{%)
+        stripped = _strip_balanced_commands(block, ("thanks", "footnote"))
+        for group in re.split(r"\\[aA]nd\b", stripped):
+            name_line = re.split(r"\\\\", group)[0]
+            for raw in re.split(r",", name_line):
+                name = _clean(raw)
                 if not name or "\\" in name or "{" in name or "}" in name:
                     continue
-                if name and len(name.split()) >= 2 and name not in candidates:
+                if len(name.split()) >= 2 and name not in candidates:
                     candidates.append(name)
     return candidates
 
 
 def extract_corresponding_author(content: str, authors: list[str]) -> str:
-    """Best-effort corresponding-author detection. Falls back to first author."""
+    """Corresponding author from an explicit command; falls back to first author.
+
+    No free-text fallback: scraping ``corresponding author: ...`` reached into
+    ``\\thanks`` blocks and reported email local parts as fabricated authors.
+    """
     for pattern in CORRESPONDING_AUTHOR_PATTERNS:
         match = re.search(pattern, content, flags=re.IGNORECASE)
         if match:
             name = _clean(match.group(1))
-            if name:
+            if name and "@" not in name:
                 return name
     return authors[0] if authors else ""
 
@@ -156,9 +221,28 @@ def extract_section_anchors(content: str) -> dict[str, tuple[int, int]]:
     return parser.split_sections(content)
 
 
+def _extract_title_local(content: str) -> str:
+    """Extract the LaTeX title with balanced braces, stripping ``\\thanks``.
+
+    ``parsers.extract_title`` still uses a non-greedy ``\\{(.+?)\\}`` that
+    truncates nested-brace titles and leaks ``\\thanks`` funding statements into
+    the letter opening. The cover-letter facts blob needs an accurate, clean
+    title, so it is captured locally (parsers.py is owned by the en-family
+    foundation task and is out of scope here).
+    """
+    match = re.search(r"\\title(?:\[[^\]]*\])?\s*\{", content)
+    if not match:
+        return ""
+    body = _extract_balanced_block(content, match.end() - 1, "{", "}")
+    if not body:
+        return ""
+    body = _strip_balanced_commands(body, ("thanks", "footnote"))
+    return _strip_latex_markup(body)
+
+
 def extract_facts(content: str) -> dict:
     """Build the manuscript facts blob."""
-    title = extract_title(content)
+    title = _extract_title_local(content)
     abstract = extract_abstract(content)
     authors = extract_authors(content)
     corresponding = extract_corresponding_author(content, authors)
@@ -199,7 +283,6 @@ def main(argv: list[str] | None = None) -> int:
         description="Extract manuscript facts (title, abstract, authors, contributions) from .tex"
     )
     parser.add_argument("tex_file", help=".tex manuscript file")
-    parser.add_argument("--json", action="store_true", help="Emit JSON (default behavior)")
     parser.add_argument("--output", "-o", help="Optional output JSON path")
     args = parser.parse_args(argv)
 
@@ -211,7 +294,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Unsupported format: {path.suffix}; expected .tex", file=sys.stderr)
         return 2
 
-    content = _read_text(path)
+    content = load_manuscript_text(path)
     facts = extract_facts(content)
     payload = json.dumps(facts, indent=2, ensure_ascii=False)
 

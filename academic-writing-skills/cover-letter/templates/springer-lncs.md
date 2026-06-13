@@ -9,7 +9,6 @@ required_declarations:
 optional_declarations:
   - prior_presentation
   - data_availability
-  - suggested_reviewers
 opening_style: contribution-led
 banned_phrases:
   - "We are pleased to submit"

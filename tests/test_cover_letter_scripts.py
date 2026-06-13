@@ -1,14 +1,18 @@
 """Unit tests for cover-letter scripts.
 
-Cover-letter scripts vendor parsers.py from latex-paper-en. The tests load each
-script via importlib so they do not collide with the canonical parsers already
-on sys.path.
+Cover-letter scripts vendor parsers.py (and tex_loader.py) from latex-paper-en.
+The other skills' tests may have already cached a ``parsers`` / ``tex_loader``
+module from a different copy, so ``_load`` evicts those shared names before
+executing a cover-letter script — forcing its ``from parsers import ...`` to
+re-resolve against the cover-letter directory it puts at ``sys.path[0]`` — and
+restores both ``sys.path`` and the evicted modules afterward.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 from types import ModuleType
 
@@ -18,21 +22,32 @@ from conftest import SCRIPT_DIR_COVER_LETTER
 SKILL_ROOT = SCRIPT_DIR_COVER_LETTER.parent
 FIXTURES = SKILL_ROOT / "evals" / "fixtures"
 
+# Shared module names other skills also vendor; evicted around each load so the
+# cover-letter copy wins, then restored so later EN/AUDIT tests are unaffected.
+_SHARED_MODULE_NAMES = ("parsers", "tex_loader")
+
 
 def _load(module_name: str) -> ModuleType:
-    """Load a cover-letter script by basename (no .py)."""
+    """Load a cover-letter script by basename (no .py), isolated from other
+    skills' cached ``parsers`` / ``tex_loader`` modules."""
     path = SCRIPT_DIR_COVER_LETTER / f"{module_name}.py"
-    # Ensure cover-letter scripts dir is the first parsers source for the
-    # imports inside the loaded module (its `from parsers import ...`).
-    if str(SCRIPT_DIR_COVER_LETTER) in sys.path:
-        sys.path.remove(str(SCRIPT_DIR_COVER_LETTER))
-    sys.path.insert(0, str(SCRIPT_DIR_COVER_LETTER))
-    spec = importlib.util.spec_from_file_location(f"_cl_{module_name}", path)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    saved_path = list(sys.path)
+    saved_modules = {name: sys.modules.pop(name, None) for name in _SHARED_MODULE_NAMES}
+    try:
+        sys.path.insert(0, str(SCRIPT_DIR_COVER_LETTER))
+        spec = importlib.util.spec_from_file_location(f"_cl_{module_name}", path)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path[:] = saved_path
+        for name, mod in saved_modules.items():
+            if mod is not None:
+                sys.modules[name] = mod
+            else:
+                sys.modules.pop(name, None)
 
 
 def test_parsers_latex_extract_visible_text_preserves_citations() -> None:
@@ -63,6 +78,44 @@ def test_extract_manuscript_facts_drops_latex_command_authors() -> None:
     for author in facts["authors"]:
         assert "\\" not in author
         assert "{" not in author
+
+
+def test_extract_manuscript_facts_handles_thanks_author_block() -> None:
+    """NeurIPS-style \\author{Name\\thanks{...} \\\\ Affil \\And Name2} extracts
+    real authors only (no affiliation leak) and no fabricated corresponding."""
+    extract = _load("extract_manuscript_facts")
+    text = (FIXTURES / "thanks_author_fixture.tex").read_text(encoding="utf-8")
+    facts = extract.extract_facts(text)
+    assert facts["authors"] == ["David S. Hippocampus", "Elias D. Striatum"]
+    # No \corresponding command in the source → falls back to the first author,
+    # never an email local part scraped out of \thanks.
+    assert facts["corresponding_author"] == "David S. Hippocampus"
+    assert "@" not in facts["corresponding_author"]
+
+
+def test_extract_title_strips_thanks_and_keeps_nested_braces() -> None:
+    """A \\title with a nested-brace command and a \\thanks funding statement
+    yields the full clean title with no funding text."""
+    extract = _load("extract_manuscript_facts")
+    text = (FIXTURES / "thanks_author_fixture.tex").read_text(encoding="utf-8")
+    facts = extract.extract_facts(text)
+    assert facts["title"] == "Adaptive Latency-Aware Inference for Streaming Detection"
+    assert "NSF" not in facts["title"]
+    assert "supported" not in facts["title"]
+
+
+def test_extract_corresponding_author_never_scrapes_thanks_email() -> None:
+    """\\author{A\\thanks{Corresponding author: a@u.edu} \\and B} must not report
+    the email local part as the corresponding author (regression for C1)."""
+    extract = _load("extract_manuscript_facts")
+    text = (
+        r"\title{Streaming Detection}"
+        r"\author{Alice Smith\thanks{Corresponding author: alice.smith@uni.edu} \and Bob Jones}"
+        r"\begin{abstract}We study streaming detection.\end{abstract}"
+    )
+    facts = extract.extract_facts(text)
+    assert facts["authors"] == ["Alice Smith", "Bob Jones"]
+    assert facts["corresponding_author"] == "Alice Smith"
 
 
 def test_presubmission_detects_opener_cliche_and_banned_phrases() -> None:
@@ -112,6 +165,25 @@ def test_build_letter_claim_map_extracts_claim_sentences() -> None:
         "deployed" in c["claim"].lower() or "$1.2m" in c["claim"].lower()
         for c in claim_map["claim_candidates"]
     )
+
+
+def test_build_letter_claim_map_reports_truncation_above_cap() -> None:
+    """More than 12 claim sentences must surface a truncation marker + total
+    instead of silently dropping the overflow (C12)."""
+    builder = _load("build_letter_claim_map")
+    text = " ".join(f"We report finding number {i} on the benchmark." for i in range(20))
+    claim_map = builder.build_claim_map(text, manuscript_facts=None)
+    assert claim_map["total_claim_sentences"] >= 20
+    assert claim_map["truncated"] is True
+    assert len(claim_map["claim_candidates"]) == 12
+
+
+def test_build_letter_claim_map_no_truncation_marker_when_under_cap() -> None:
+    builder = _load("build_letter_claim_map")
+    text = "We report a strong result. Our method improves the baseline by 5%."
+    claim_map = builder.build_claim_map(text, manuscript_facts=None)
+    assert claim_map["truncated"] is False
+    assert claim_map["total_claim_sentences"] == len(claim_map["claim_candidates"])
 
 
 def test_build_letter_claim_map_extracts_numeric_unit_claims() -> None:
@@ -283,3 +355,31 @@ def test_unified_cover_letter_cli_help_lists_mode() -> None:
     with pytest.raises(SystemExit) as exc:
         cli.main(["--help"])
     assert exc.value.code == 0
+
+
+def test_mode_guide_flags_all_exist_in_cli(capsys: pytest.CaptureFixture[str]) -> None:
+    """Every --flag named in MODE_GUIDE must be a real cover_letter.py option, and
+    the previously-documented ghost flags must be gone (C9)."""
+    guide = (SKILL_ROOT / "references" / "MODE_GUIDE.md").read_text(encoding="utf-8")
+    for ghost in ("--out-format", "--strict", "--section", "--output"):
+        assert ghost not in guide, f"MODE_GUIDE still references ghost flag {ghost}"
+
+    cli = _load("cover_letter")
+    parser = cli.build_parser()
+    real_flags: set[str] = set()
+    for action in parser._actions:
+        real_flags.update(action.option_strings)
+
+    guide_flags = set(re.findall(r"(--[a-z][a-z-]*)", guide))
+    unknown = guide_flags - real_flags
+    assert not unknown, f"MODE_GUIDE flags absent from cover_letter.py: {sorted(unknown)}"
+
+
+def test_ml_conference_templates_disclaim_cover_letter() -> None:
+    """icml / cvpr / neurips templates must state the main track has no cover letter (C6)."""
+    templates = SKILL_ROOT / "templates"
+    for venue in ("icml", "cvpr", "neurips"):
+        text = (templates / f"{venue}.md").read_text(encoding="utf-8").lower()
+        assert "cover letter" in text and (
+            "does not" in text or "not use" in text or "not strictly" in text
+        ), f"{venue}.md should disclaim the main-track cover letter"

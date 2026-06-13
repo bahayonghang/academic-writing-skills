@@ -8,7 +8,6 @@ required_declarations:
   - competing_interests
 optional_declarations:
   - data_availability
-  - suggested_reviewers
 opening_style: contribution-led
 banned_phrases:
   - "We are pleased to submit"

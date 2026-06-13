@@ -6,12 +6,12 @@ required_declarations:
   - originality
   - dual_submission
   - competing_interests
-  - data_availability
   - ethics_irb
+  - ai_disclosure
 optional_declarations:
   - prior_presentation
-  - suggested_reviewers
   - excluded_reviewers
+  - data_availability
 opening_style: mechanism-led
 banned_phrases:
   - "We are pleased to submit"
@@ -49,7 +49,12 @@ banned_phrases:
 - Originality and exclusivity statements.
 - Competing interests: explicit declaration.
 - Ethics: IRB / IACUC numbers when applicable. Cell is strict on this.
-- Data deposition: GEO / SRA / PRIDE accession numbers if applicable.
+- AI disclosure: state any generative-AI assistance to the manuscript or letter (ICMJE Jan 2026, Section V); Cell Press records LLM use in Methods as well. Grammar/spell-check is exempt.
+
+## Conditional declarations (include only when relevant)
+
+- Data deposition: GEO / SRA / PRIDE accession numbers go in the manuscript / submission system; mention in the letter only if the editor asks.
+- Suggested / excluded reviewers: only when not collected by the submission form; not added by default (2025-26 tightening).
 
 ## Length
 

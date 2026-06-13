@@ -1,10 +1,11 @@
 ---
 name: cover-letter
-description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence, novelty claims, reviewer-facing framing, and target venue expectations. Do not use for editing main.tex, full manuscript audit, or bibliography search.
+description: Submission cover-letter assistant for existing LaTeX manuscripts. Use to generate, optimize, align-check, preflight, and journal-fit-check cover letters against paper evidence, novelty claims, and target venue expectations. Also handles Chinese requests (写投稿信 / 致编辑信). Do not use for editing main.tex, full manuscript audit, bibliography search, or a job-application 求职信.
 when_to_use: >-
   Trigger on "write a cover letter", "journal submission letter", "align the cover letter with my manuscript",
   "check novelty claims", "preflight before submission", "fit for Nature/IEEE/Elsevier",
   or requests to summarize contributions for an editor without rewriting the paper.
+  中文触发词："写投稿信"、"投稿信 / 致编辑信 / 给编辑的信"、"把投稿信和稿件对齐核对"、"检查新颖性主张"、"投稿前预检"、"看适不适合投 Nature/IEEE";不含求职信、论文本体审稿、文献检索。
 metadata:
   category: academic-writing
   tags:
@@ -20,7 +21,7 @@ metadata:
       journal-fit,
     ]
   version: "5.2.0"
-  last_updated: "2026-05-26"
+  last_updated: "2026-06-13"
 argument-hint: "--mode generate|optimize|align-check|journal-fit|presubmission --manuscript main.tex --letter cover_letter.md --journal nature|science|cell|ieee-trans|acm|springer-lncs|neurips|icml|cvpr|generic [--json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -80,7 +81,7 @@ If a required argument is missing, identify the missing piece and ask only for i
 
 - All findings are returned in LaTeX-comment format: `% MODULE [Severity: major|moderate|minor] [Priority: P1|P2|P3]: message`.
 - Add `--json` to the unified CLI or any legacy script for structured output matching the simplified `references/ISSUE_SCHEMA.md`.
-- Findings use lowercase `severity` and always include `priority`, `source_kind`, and `comment_type`. `journal-fit` keeps its HIGH / MEDIUM / LOW verdict scale, then maps LOW → `major`/`P1` and MEDIUM → `moderate`/`P2` findings.
+- Findings use lowercase `severity` and always include `priority`, `source_kind`, and `comment_type`. `journal-fit` keeps its HIGH / MEDIUM / LOW verdict scale, then maps LOW → `major`/`P1` and MEDIUM → `moderate`/`P2` findings. `journal-fit` is a `[Script]` heuristic (fixed per-venue scope keywords; counts only first-person claim sentences) — present it as a framing prompt, not editorial judgment (see `references/MODE_GUIDE.md`).
 - For `generate`: synthesize the letter prose with placeholders for fields the script could not extract (e.g. `[Editor name to be confirmed]`); when a concrete draft path is available, run `presubmission` and `align-check` and append unresolved findings.
 - For `optimize`: return diff-style suggestions anchored to the original letter's lines; never overwrite the user's file.
 - Tag every finding with `[Script]` (from a deterministic script) or `[LLM]` (from agent judgment) so the user can rerun the script and verify.
@@ -109,6 +110,7 @@ If a required argument is missing, identify the missing piece and ask only for i
 - Never fabricate authors, institutions, ORCID IDs, IRB numbers, journal editor names, or quantitative results. If a script cannot extract a field, output a `[Field to be confirmed]` placeholder.
 - Never modify the manuscript source from this skill — produce suggestions for the user to apply with `latex-paper-en`.
 - Never disable `--align-check` for `generate` or `optimize` modes; overclaim is what this skill exists to prevent.
+- This skill produces AI-assisted text. Before submitting, verify the target venue's AI-disclosure policy: ICMJE (Jan 2026) and several publishers (Science/AAAS, NEJM, APS) require generative-AI use to be disclosed **in the cover letter**, while IEEE / ACM / Elsevier / Springer place that disclosure in the manuscript. The `presubmission` declaration check flags a missing `ai_disclosure` for venues that require it, but the author remains responsible for confirming the current policy.
 - Do not enable online queries (e.g. to fetch a journal's current guidelines) unless the user explicitly authorizes it; v1 of this skill works only against the bundled templates.
 
 ## Reference Map
