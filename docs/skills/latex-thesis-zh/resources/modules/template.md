@@ -32,4 +32,6 @@ Once the template is identified, load the corresponding template snapshot from:
 - `templates/generic.md` as fallback for unknown templates（ustcthesis / fduthesis 暂同）
 - `templates/yanshan.md` 为燕山大学规范获取指引（无可检测的 documentclass）
 
-> See [`../templates/`](../templates/) for the authoritative per-template snapshots.
+> See [`generic.md`](../templates/generic.md), [`thuthesis.md`](../templates/thuthesis.md),
+> [`pkuthss.md`](../templates/pkuthss.md), and [`yanshan.md`](../templates/yanshan.md)
+> for the authoritative per-template snapshots.
