@@ -6,8 +6,8 @@
 |------|------|------|
 | `typst compile main.typ` | 单次编译 | 生成 PDF 文件 |
 | `typst watch main.typ` | 监视模式 | 文件变化时自动重新编译 |
-| `typst compile main.typ output.pdf` | 指定输出 | 自定义输出文件名 |
-| `typst compile --format png main.typ` | 其他格式 | 支持 PNG、SVG 等格式 |
+| `typst compile main.typ output.pdf` | 指定输出 | 输出为位置参数（无 `--output` flag） |
+| `typst compile --format png main.typ "page-{p}.png"` | 其他格式 | PNG/SVG 多页须含 `{p}` 页码模板 |
 | `typst fonts` | 字体列表 | 查看系统可用字体 |
 
 **使用示例**:
@@ -18,11 +18,11 @@ typst compile main.typ
 # 监视模式（实时预览）
 typst watch main.typ
 
-# 指定输出目录
-typst compile main.typ --output build/paper.pdf
+# 指定输出文件（输出是位置参数，没有 --output 选项）
+typst compile main.typ build/paper.pdf
 
-# 导出为 PNG（用于预览）
-typst compile --format png main.typ
+# 导出为 PNG（多页须用 {p} 页码模板，否则多页文档会报错）
+typst compile --format png main.typ "preview-{p}.png"
 
 # 查看可用字体
 typst fonts

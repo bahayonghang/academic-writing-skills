@@ -26,7 +26,7 @@ metadata:
       lovelace,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-04"
+  last_updated: "2026-06-13"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -72,6 +72,10 @@ Do not use this skill for:
 
 ## Module Router
 
+> `$SKILL_DIR` is this skill's install directory (e.g. `~/.claude/skills/typst-paper`);
+> substitute it (and the input file name) when running a command. All commands
+> are run with `uv run python` from the user's project directory.
+
 | Module         | Use when                                                                                                         | Primary command                                                                              | Read next                                                                                                                     |
 | -------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `compile`      | Typst build, export, font, or watch issues                                                                       | `uv run python $SKILL_DIR/scripts/compile.py main.typ`                                       | `references/modules/COMPILE.md`                                                                                               |
@@ -88,6 +92,7 @@ Do not use this skill for:
 | `deai`         | Reduce English or Chinese AI-writing traces while preserving Typst syntax                                        | `uv run python $SKILL_DIR/scripts/deai_check.py main.typ --section introduction`             | `references/modules/DEAI.md`                                                                                                  |
 | `experiment`   | Inspect experiment-section clarity, discussion layering, and reporting quality                                   | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.typ --section experiment`       | `references/modules/EXPERIMENT.md`                                                                                            |
 | `tables`       | Table structure validation, three-line table generation                                                          | `uv run python $SKILL_DIR/scripts/check_tables.py main.typ`                                  | `references/modules/TABLES.md`                                                                                                |
+| `references`   | Figure/table/equation cross-reference, caption, and numbering integrity                                          | `uv run python $SKILL_DIR/scripts/check_references.py main.typ`                              | `references/modules/REFERENCES.md`                                                                                            |
 | `abstract`     | Abstract five-element structure diagnosis and word count validation                                              | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.typ`                              | `references/modules/ABSTRACT.md`                                                                                              |
 | `adapt`        | Journal adaptation: reformat paper for a different venue                                                         | (LLM-driven workflow)                                                                        | references/modules/ADAPT.md                                                                                                   |
 
@@ -151,6 +156,8 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 - `templates/`: per-venue snapshots loaded on demand. Files: `ieee.md`, `acm.md`, `neurips.md`.
 - `references/modules/`: module-specific Typst commands and choices.
 - `references/modules/PSEUDOCODE.md`: IEEE-like defaults for Typst pseudocode.
+- `references/modules/REFERENCES.md`: figure/table/equation cross-reference integrity (`check_references.py`).
+- Auxiliary scripts: `scripts/deai_batch.py` (batch the `deai` module over many sections/files) and `scripts/online_bib_verify.py` (the online backend behind `verify_bib.py --online`).
 
 Read only the file that matches the active module.
 

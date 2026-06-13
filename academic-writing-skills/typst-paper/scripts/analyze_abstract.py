@@ -2,11 +2,14 @@
 """
 Abstract Structure Analyzer - Diagnose five-element abstract completeness.
 
+Accepts the paper source for the host skill (``.tex`` for LaTeX skills,
+``.typ`` for typst-paper).
+
 Usage:
-    uv run python -B analyze_abstract.py main.tex
-    uv run python -B analyze_abstract.py main.tex --lang en --max-words 250
-    uv run python -B analyze_abstract.py main.tex --lang zh --max-chars 300
-    uv run python -B analyze_abstract.py main.tex --json
+    uv run python -B analyze_abstract.py <paper>
+    uv run python -B analyze_abstract.py <paper> --lang en --max-words 250
+    uv run python -B analyze_abstract.py <paper> --lang zh --max-chars 300
+    uv run python -B analyze_abstract.py <paper> --json
 """
 
 import argparse

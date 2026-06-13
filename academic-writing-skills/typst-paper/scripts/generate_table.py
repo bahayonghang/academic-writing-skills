@@ -78,6 +78,13 @@ class TableGenerator:
         return "\n".join(lines)
 
     def _to_typst(self, headers: list[str], rows: list[list[str]], caption: str = "") -> str:
+        """Generate Typst table code in the configured style.
+
+        ``booktabs`` (default) renders a three-line table (``stroke: none`` plus
+        explicit top/mid/bottom ``table.hline``); ``plain`` renders a full grid
+        (``stroke: 0.5pt``, no manual rules) so ``--style`` is no longer a no-op.
+        """
+        plain = self.style == "plain"
         n_cols = len(headers)
         if n_cols == 0:
             return ""
@@ -86,13 +93,17 @@ class TableGenerator:
         lines.append("#figure(")
         lines.append("  table(")
         lines.append(f"    columns: {n_cols},")
-        lines.append("    stroke: none,")
-        lines.append("    table.hline(stroke: 0.8pt),")
+        if plain:
+            lines.append("    stroke: 0.5pt,")
+        else:
+            lines.append("    stroke: none,")
+            lines.append("    table.hline(stroke: 0.8pt),")
 
         # Headers (bold)
         header_cells = [f"[*{h}*]" for h in headers]
         lines.append("    " + ", ".join(header_cells) + ",")
-        lines.append("    table.hline(stroke: 0.5pt),")
+        if not plain:
+            lines.append("    table.hline(stroke: 0.5pt),")
 
         # Data rows
         for row in rows:
@@ -102,7 +113,8 @@ class TableGenerator:
                 cells.append(f"[{cell}]")
             lines.append("    " + ", ".join(cells) + ",")
 
-        lines.append("    table.hline(stroke: 0.8pt),")
+        if not plain:
+            lines.append("    table.hline(stroke: 0.8pt),")
         lines.append("  ),")
 
         if caption:

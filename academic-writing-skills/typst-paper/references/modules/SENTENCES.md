@@ -3,22 +3,24 @@
 
 **脚本用法**:
 ```bash
-uv run python ../scripts/analyze_sentences.py main.typ
-uv run python ../scripts/analyze_sentences.py main.typ --threshold 50
+uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ
+uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --max-words 50 --max-clauses 3
+uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction
 ```
 
+> 可用 flag：`--section`、`--max-words`（默认 50）、`--max-clauses`（默认 3）。
+> 没有 `--threshold`。
+
 **触发条件**:
-- 英文：句子 >50 词 或 >3 个从句
-- 中文：句子 >60 字 或 >3 个分句
+- 句子词数 > `--max-words`（默认 50） 或 从句数 > `--max-clauses`（默认 3）
+- 句切分与计数以英文为准（按 `.!?` 切句、按词计长）
 
 **输出格式**:
 ```typst
-// 长难句检测（第45行，共67词）[Severity: Minor] [Priority: P2]
-// 主干：[主语 + 谓语 + 宾语]
-// 修饰成分：
-//   - [关系从句] which...
-//   - [目的状语] to...
-// 建议改写：[简化版本]
+// LONG SENTENCE (Line 45, 67 words, 5 clauses) [Severity: Minor] [Priority: P2]
+// Original: ...
+// Suggested: ...
+// Rationale: Sentence exceeds complexity threshold, split for readability.
 ```
 
 **拆分策略**:

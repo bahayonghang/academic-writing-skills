@@ -21,8 +21,8 @@
   paper: "us-letter",
   margin: (top: 0.75in, bottom: 0.75in, left: 0.625in, right: 0.625in),
   columns: 2,
-  column-gutter: 0.33in
 )
+// column-gutter is not a #set page parameter; use #columns(2, gutter: 0.33in)[..]
 
 #set text(
   font: "Times New Roman",
@@ -48,7 +48,7 @@
 ## Template
 
 ```typst
-#import "@preview/charged-ieee:0.1.0": ieee
+#import "@preview/charged-ieee:0.1.4": ieee
 
 #show: ieee.with(
   title: [Your Paper Title],

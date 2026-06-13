@@ -38,6 +38,20 @@ class BibChecker:
         "misc": ["title"],
     }
 
+    # Required fields for Hayagriva (.yml) entries. Hayagriva models the
+    # publication container as a nested ``parent`` entry and uses ``date``
+    # rather than ``year``/``journal``; applying the BibTeX table here would
+    # flag every well-formed entry, so it gets its own minimal contract.
+    HAYAGRIVA_REQUIRED_FIELDS = {
+        "article": ["title", "author"],
+        "book": ["title", "author"],
+        "proceedings": ["title"],
+        "thesis": ["title", "author"],
+        "report": ["title"],
+        "web": ["title"],
+        "misc": ["title"],
+    }
+
     # Style-specific author thresholds for et al.
     STYLE_ET_AL_THRESHOLD = {
         "ieee": 6,
@@ -66,6 +80,7 @@ class BibChecker:
         self.online = online
         self.email = email
         self.online_timeout = online_timeout
+        self.is_hayagriva = False
 
     @staticmethod
     def _extract_balanced_brace(content: str, start_idx: int) -> str:
@@ -138,8 +153,9 @@ class BibChecker:
             return False
 
         # Convert Hayagriva format to internal format
+        self.is_hayagriva = True
         for key, entry in data.items():
-            entry_type = entry.get("type", "misc")
+            entry_type = str(entry.get("type", "misc")).lower()
             self.entries[key] = {"type": entry_type, "fields": entry}
 
         return True
@@ -148,20 +164,27 @@ class BibChecker:
         """Check if all required fields are present."""
         print("\n[CHECK] Required Fields")
 
+        required_table = (
+            self.HAYAGRIVA_REQUIRED_FIELDS if self.is_hayagriva else self.REQUIRED_FIELDS
+        )
+        had_issue = False
         for key, entry in self.entries.items():
             entry_type = entry["type"]
             fields = entry["fields"]
 
-            if entry_type in self.REQUIRED_FIELDS:
-                required = self.REQUIRED_FIELDS[entry_type]
+            required = required_table.get(entry_type)
+            if required is None and self.is_hayagriva:
+                required = ["title"]  # any other Hayagriva type still needs a title
+            if required:
                 missing = [f for f in required if f not in fields]
-
                 if missing:
+                    had_issue = True
                     self.issues.append(
-                        f"Entry '{key}' ({entry_type}) missing required fields: {', '.join(missing)}"
+                        f"Entry '{key}' ({entry_type}) missing required fields: "
+                        f"{', '.join(missing)}"
                     )
 
-        if not self.issues:
+        if not had_issue:
             print(f"  ✓ All {len(self.entries)} entries have required fields")
 
     def check_duplicates(self):
@@ -195,24 +218,34 @@ class BibChecker:
             print(f"[ERROR] Failed to read Typst file: {e}")
             return
 
-        # Find all @key citations in Typst file
-        citations = set(re.findall(r"@(\w+)", content))
+        # Find all @key references in the Typst file. Hyphens/colons/dots are
+        # valid in keys, so the class must include them (a bare \w would split
+        # "harry-potter" into "harry"). A trailing "." is a sentence period, not
+        # part of the key.
+        all_refs = {r.rstrip(".") for r in re.findall(r"@([A-Za-z][\w:.-]*)", content)}
+        # Label definitions <name> are cross-reference targets, not citations.
+        label_defs = set(re.findall(r"<([A-Za-z][\w:.-]*)>", content))
+        bib_keys = set(self.entries.keys())
 
-        # Filter out non-citation @ matches (packages, imports, label prefixes)
-        non_citation_prefixes = ("fig", "tab", "eq", "sec", "preview", "import")
-        citations = {c for c in citations if not c.startswith(non_citation_prefixes)}
+        # A reference is a citation when its key exists in the bibliography;
+        # this intersection replaces the old, brittle prefix blacklist that
+        # silently dropped real keys like @figueroa2021.
+        cited = all_refs & bib_keys
+        print(f"  ✓ Found {len(cited)} unique citations in Typst file")
 
-        print(f"  ✓ Found {len(citations)} unique citations in Typst file")
-
-        # Check for missing entries
-        missing = citations - set(self.entries.keys())
+        # "Not found" = looks like a citation (no colon, not a defined label)
+        # yet absent from the bibliography. Colon-style tokens (@fig:arch) and
+        # tokens with a matching <label> are cross-references, not citations.
+        missing = {
+            r for r in all_refs if r not in bib_keys and r not in label_defs and ":" not in r
+        }
         if missing:
             self.issues.append(f"Citations not found in bibliography: {', '.join(sorted(missing))}")
         else:
             print("  ✓ All citations found in bibliography")
 
         # Check for unused entries
-        unused = set(self.entries.keys()) - citations
+        unused = bib_keys - cited
         if unused:
             self.warnings.append(
                 f"{len(unused)} unused entries in bibliography: {', '.join(sorted(list(unused)[:5]))}"
@@ -251,9 +284,10 @@ class BibChecker:
         for key, entry in self.entries.items():
             fields = entry["fields"]
 
-            # Page format: en dash check
+            # Page format: en dash check (BibTeX convention only; Hayagriva
+            # uses structured page-ranges and a different separator policy).
             pages = fields.get("pages", "")
-            if pages and "-" in pages and "--" not in pages:
+            if not self.is_hayagriva and pages and "-" in pages and "--" not in pages:
                 self.warnings.append(
                     f"Entry '{key}': page range uses hyphen '{pages}'. "
                     "Use en dash (--) for page ranges."
@@ -384,14 +418,14 @@ Supported Styles:
   apa         APA author-year citations
   mla         MLA citations
   chicago     Chicago author-date
-  gb-7714-2015  Chinese national standard
+  gb-7714-2015-numeric  Chinese national standard (GB/T 7714-2015)
         """,
     )
     parser.add_argument("bib_file", help="Bibliography file to check (.bib or .yml)")
     parser.add_argument("--typ", help="Typst file to check citations against")
     parser.add_argument(
         "--style",
-        choices=["ieee", "apa", "mla", "chicago", "gb-7714-2015"],
+        choices=["ieee", "apa", "mla", "chicago", "gb-7714-2015-numeric"],
         help="Citation style to check",
     )
     parser.add_argument(

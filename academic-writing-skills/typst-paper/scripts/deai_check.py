@@ -17,10 +17,10 @@ from pathlib import Path
 
 # Import local parsers
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 
 
 # --- AI tone thresholds (data-driven via references/AI_TONE_THRESHOLDS.yaml) ---
@@ -99,15 +99,20 @@ def _load_thresholds(script_dir: Path) -> dict:
     """Read references/AI_TONE_THRESHOLDS.yaml; fall through to defaults when missing.
 
     The yaml file is an optional override layer on top of DEFAULT_THRESHOLDS,
-    merged per-key so partial overrides leave the other checkers intact.
+    merged per-key so partial overrides leave the other checkers intact. PyYAML
+    is imported lazily inside the file-exists branch so the de-AI module still
+    runs (on defaults) in an environment without PyYAML installed.
     """
-    import yaml  # PyYAML; required project dependency
-
     merged = {
         k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
     }
     yaml_path = script_dir.parent / "references" / THRESHOLDS_FILENAME
     if not yaml_path.exists():
+        return merged
+
+    try:
+        import yaml  # PyYAML; optional override-layer dependency
+    except ImportError:
         return merged
 
     with open(yaml_path, encoding="utf-8") as f:
@@ -683,7 +688,9 @@ class AITraceChecker:
         first_em: tuple[int, str] | None = None
         excl_hits: list[tuple[int, str, str]] = []
         for line_no, section, text in visible_lines:
-            em_in_line = text.count("---") + text.count("—") + text.count("——")
+            # Mutual-exclusive match: a Chinese "——" is ONE dash, not three
+            # (count("—") + count("——") + count("---") triple-counted it).
+            em_in_line = len(re.findall(r"---|——|—", text))
             if em_in_line:
                 em_total += em_in_line
                 if first_em is None:
@@ -948,9 +955,18 @@ def main():
             sys.exit(0)
 
     elif args.section:
-        result = checker.check_section(args.section.lower())
+        matched, available = resolve_section_keys(args.section, checker.section_ranges)
+        if not matched:
+            avail = ", ".join(available) if available else "(none detected)"
+            print(
+                f"[ERROR] Section not found: {args.section}; available sections: {avail}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        target = matched[0]
+        result = checker.check_section(target)
         score = checker.calculate_density_score(result)
-        print(f"\nSection: {args.section}")
+        print(f"\nSection: {target}")
         print(f"Density: {score:.1f}%")
         for trace in result["traces"]:
             print(f"Line {trace['line']}: {trace['text']}")

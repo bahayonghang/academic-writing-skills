@@ -1,6 +1,5 @@
 # Typst Syntax Reference for Academic Writing
 
-
 ## Table of Contents
 
 - [Basic Syntax](#basic-syntax)
@@ -133,7 +132,9 @@ Variables $a$, $b$, and $c$ are defined as...
 // Centered display math
 $ x = (a + b) / 2 $
 
-// Numbered equation with label
+// Equation numbering must be enabled first; the label only makes it
+// referenceable, it does NOT auto-number on its own.
+#set math.equation(numbering: "(1)")
 $ y = m x + c $ <eq:line>
 
 // Multi-line equations
@@ -249,8 +250,9 @@ Recent studies @smith2020 @jones2021 @wang2022 show...
 // Citation in parentheses
 The method has been studied extensively (@smith2020, @jones2021).
 
-// Suppress author name (numeric style)
-The method [1] shows...
+// Suppress author name (Typst uses #cite with a form, NOT a bare "[1]")
+The method #cite(<smith2020>, form: "normal") shows...
+// (Bare "[1]" is just literal text, not a Typst citation.)
 ```
 
 ### Bibliography
@@ -281,8 +283,9 @@ The method [1] shows...
 // MLA
 #bibliography("refs.bib", style: "mla")
 
-// GB/T 7714-2015 (Chinese)
-#bibliography("refs.bib", style: "gb-7714-2015")
+// GB/T 7714-2015 (Chinese). Built-in ids: gb-7714-2015-numeric /
+// -author-date / -note (GB/T 7714-2025 has no built-in hayagriva style yet).
+#bibliography("refs.bib", style: "gb-7714-2015-numeric")
 ```
 
 ---
@@ -305,12 +308,18 @@ The method [1] shows...
 ### Two-Column Layout
 
 ```typst
+// `#set page(columns: 2)` sets the column count. `column-gutter` is NOT a
+// page parameter; control the inter-column gap with the columns() function.
 #set page(
   paper: "us-letter",
   margin: 1in,
   columns: 2,
-  column-gutter: 0.33in
 )
+
+// To customize the gutter, wrap the body:
+#columns(2, gutter: 0.33in)[
+  // body content
+]
 ```
 
 ### Headers and Footers
@@ -536,7 +545,7 @@ word...
 
 ## Code Blocks
 
-```typst
+````typst
 // Inline code
 The function `main()` is the entry point.
 
@@ -545,7 +554,7 @@ The function `main()` is the entry point.
 def hello():
     print("Hello, world!")
 ```
-```
+````
 
 ---
 
@@ -558,13 +567,13 @@ def hello():
   #text(size: 16pt, weight: "bold")[
     Your Paper Title
   ]
-  
+
   #v(0.5em)
-  
+
   Author Name#super[1], Co-author Name#super[2]
-  
+
   #v(0.3em)
-  
+
   #text(size: 10pt)[
     #super[1]University Name, #super[2]Institution Name \
     #link("mailto:author@email.com")
@@ -611,4 +620,3 @@ This work was supported by...
 - [Typst Universe](https://typst.app/universe/) - Templates and packages
 - [Typst Tutorial](https://typst.app/docs/tutorial/)
 - [Typst Reference](https://typst.app/docs/reference/)
-

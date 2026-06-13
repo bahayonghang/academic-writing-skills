@@ -1,0 +1,9 @@
+rowling2003:
+  type: book
+  title: Anomaly Detection in Industrial Systems
+  author: Rowling, J. K.
+  date: 2003-06-21
+  publisher: Academic Press
+  parent:
+    type: anthology
+    title: Industrial Monitoring Handbook

@@ -91,16 +91,18 @@ class TypstCompiler:
         # Add input file
         cmd.append(str(self.typ_file))
 
-        # Add output file if specified
+        # Determine output path. PNG/SVG are single-page formats: a multi-page
+        # document must use a page-number template ({p}) or typst errors out, so
+        # inject it into the default name.
+        page_template = "{p}" if format in ("png", "svg") else ""
         if output:
             cmd.append(output)
-        elif not watch:
-            # Default output name
-            default_output = self.typ_file.with_suffix(f".{format}")
-            cmd.append(str(default_output))
+        else:
+            default_output = self.typ_file.with_suffix("")
+            cmd.append(f"{default_output}{page_template}.{format}")
 
-        # Add format option (only for compile, not watch)
-        if not watch and format != "pdf":
+        # Add format option for both compile and watch when non-default.
+        if format != "pdf":
             cmd.insert(2, "--format")
             cmd.insert(3, format)
 

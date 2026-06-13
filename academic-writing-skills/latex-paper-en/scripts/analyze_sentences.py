@@ -17,7 +17,10 @@ except ImportError:
 try:
     from tex_loader import read_text_robust
 except ImportError:
-    read_text_robust = None
+    try:
+        from typ_loader import read_text_robust
+    except ImportError:
+        read_text_robust = None
 
 
 CLAUSE_MARKERS = {"which", "that", "because", "although", "while", "whereas", "if", "when"}
@@ -83,12 +86,13 @@ def analyze(file_path: Path, section: str | None, max_words: int, max_clauses: i
         content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
     sections = parser.split_sections(content)
+    cp = parser.get_comment_prefix()
 
     if section:
         matched, available = resolve_section_keys(section, sections)
         if not matched:
             return [
-                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"{cp} ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
                 f"available: {', '.join(available) if available else '(none detected)'}"
             ]
         ranges = [sections[key] for key in matched]
@@ -110,16 +114,17 @@ def analyze(file_path: Path, section: str | None, max_words: int, max_clauses: i
                 simplified = _simplify_sentence(sent)
                 output.extend(
                     [
-                        f"% LONG SENTENCE (Line {line_no}, {words} words, {clauses} clauses) "
+                        f"{cp} LONG SENTENCE (Line {line_no}, {words} words, {clauses} clauses) "
                         "[Severity: Minor] [Priority: P2]",
-                        f"% Original: {sent}",
-                        f"% Suggested: {simplified}",
-                        "% Rationale: Sentence exceeds complexity threshold, split for readability.",
+                        f"{cp} Original: {sent}",
+                        f"{cp} Suggested: {simplified}",
+                        f"{cp} Rationale: Sentence exceeds complexity threshold, "
+                        "split for readability.",
                         "",
                     ]
                 )
     if not output:
-        output.append("% LONG SENTENCE: No sentences exceeded configured thresholds.")
+        output.append(f"{cp} LONG SENTENCE: No sentences exceeded configured thresholds.")
     return output
 
 

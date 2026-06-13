@@ -23,12 +23,19 @@ from pathlib import Path
 # Regex patterns (Typst)
 # ---------------------------------------------------------------------------
 
-# Label definitions: <label-name>
-LABEL_RE = re.compile(r"<([a-zA-Z][\w-]*)>")
-# References: @label-name (citation/cross-reference) and #ref(<label-name>)
-REF_RE = re.compile(r"@([a-zA-Z][\w-]*)|#ref\(\s*<([a-zA-Z][\w-]*)>\s*\)")
-# Caption: caption: [ inside a figure call
-CAPTION_RE = re.compile(r"caption\s*:\s*\[")
+# Label definitions: <label-name>. The character class includes ":" so that
+# Typst's recommended colon-style labels (e.g. <fig:arch>) parse as one token
+# rather than being truncated at the colon.
+LABEL_RE = re.compile(r"<([a-zA-Z][\w:-]*)>")
+# References: @label-name (citation/cross-reference) and #ref(<label-name>).
+# In Typst, "@key" is BOTH a citation and a cross-reference, so the matched name
+# is later reconciled against the bibliography key set before being flagged.
+REF_RE = re.compile(r"@([a-zA-Z][\w:.-]*)|#ref\(\s*<([a-zA-Z][\w:-]*)>\s*\)")
+# Caption inside a figure call: both content form (caption: [..]) and string
+# form (caption: "..") are valid.
+CAPTION_RE = re.compile(r'caption\s*:\s*(?:\[|")')
+# Bibliography directive: #bibliography("refs.bib") / ("refs.yml", ...)
+BIBLIOGRAPHY_RE = re.compile(r'#bibliography\(\s*"([^"]+)"')
 # Figure environment start: #figure(
 FIGURE_ENV_RE = re.compile(r"#figure\s*\(")
 COMMENT_PREFIX = "//"
@@ -70,11 +77,17 @@ class RefInfo:
 class ReferenceChecker:
     """Single-file Typst reference integrity checker."""
 
-    def __init__(self, content: str, file_path: str = "") -> None:
+    def __init__(self, content: str, file_path: str = "", bib_keys: set[str] | None = None) -> None:
         self.content = content
         self.file_path = file_path
         self.lines = content.splitlines()
         self.issues: list[dict] = []
+        # ``None`` means "no bibliography was located", in which case generic
+        # ``@key`` tokens are assumed to be citations and are not flagged as
+        # undefined references (avoids a Critical on every cited paper). When a
+        # key set IS known, an unknown generic ``@key`` is a real undefined
+        # citation.
+        self.bib_keys = bib_keys
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -145,8 +158,10 @@ class ReferenceChecker:
                 continue
             line = self._strip_comment(raw_line)
             for match in REF_RE.finditer(line):
-                # Group 1: @name, group 2: #ref(<name>)
-                name = (match.group(1) or match.group(2) or "").strip()
+                # Group 1: @name, group 2: #ref(<name>). Strip a trailing "."
+                # so a sentence-ending period (e.g. "see @fig:arch.") is not
+                # captured as part of the key.
+                name = (match.group(1) or match.group(2) or "").strip().rstrip(".")
                 if not name:
                     continue
                 command = "ref" if match.group(1) else "hash-ref"
@@ -158,17 +173,48 @@ class ReferenceChecker:
     # ------------------------------------------------------------------
 
     def check_undefined_refs(self, labels: list[LabelInfo], refs: list[RefInfo]) -> None:
-        """Check for @x / #ref(<x>) where no <x> label exists. Severity: Critical, P0."""
+        """Flag a reference only when it cannot be a label OR a citation.
+
+        Typst overloads ``@key`` as both a citation and a cross-reference, so a
+        bare ``@key`` is reported as undefined only when we are confident it is
+        neither: it has no matching ``<key>`` label, it is not a known
+        bibliography key, and it is either an explicit ``#ref(<..>)`` /
+        label-style token (colon or fig/tab/eq prefix) or — when a bibliography
+        is present — an unknown citation key. Severity: Critical, P0.
+        """
         defined = {lbl.name for lbl in labels}
         for ref in refs:
-            if ref.name not in defined:
+            if ref.name in defined:
+                continue
+            if self.bib_keys is not None and ref.name in self.bib_keys:
+                continue
+
+            looks_like_label = (
+                ref.command == "hash-ref"
+                or ":" in ref.name
+                or self._extract_prefix(ref.name) in TRACKED_PREFIXES
+            )
+            if looks_like_label:
                 ref_repr = f"@{ref.name}" if ref.command == "ref" else f"#ref(<{ref.name}>)"
                 self._add_issue(
                     line=ref.line,
                     severity="Critical",
                     priority="P0",
-                    message=f"Undefined reference: {ref_repr} — no matching <{ref.name}> label found",
+                    message=(
+                        f"Undefined reference: {ref_repr} — no matching <{ref.name}> label found"
+                    ),
                 )
+            elif self.bib_keys is not None:
+                self._add_issue(
+                    line=ref.line,
+                    severity="Critical",
+                    priority="P0",
+                    message=(
+                        f"Undefined citation: @{ref.name} — not found in bibliography "
+                        "and no matching label"
+                    ),
+                )
+            # else: no bibliography known; assume @key is a citation, do not flag.
 
     def check_unreferenced_labels(self, labels: list[LabelInfo], refs: list[RefInfo]) -> None:
         """Check <label> never referenced (fig/tab/eq prefixes). Severity: Minor, P2."""
@@ -219,7 +265,9 @@ class ReferenceChecker:
                 continue
             enclosing = None
             for start, end in figure_spans:
-                if start <= lbl.line <= end:
+                # Typst attaches the label just after the closing paren, often on
+                # the next line (``) <fig:arch>``), so accept end + 1 too.
+                if start <= lbl.line <= end + 1:
                     enclosing = (start, end)
                     break
             if enclosing is None:
@@ -330,6 +378,50 @@ class ReferenceChecker:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Bibliography key loading
+# ---------------------------------------------------------------------------
+
+
+def _parse_bib_keys(bib_path: Path) -> set[str]:
+    """Extract citation keys from a .bib (BibTeX) or .yml/.yaml (Hayagriva) file."""
+    try:
+        text = bib_path.read_text(encoding="utf-8")
+    except OSError:
+        return set()
+    suffix = bib_path.suffix.lower()
+    if suffix == ".bib":
+        keys = set()
+        for m in re.finditer(r"@(\w+)\s*\{\s*([^,\s]+)\s*,", text):
+            if m.group(1).lower() not in ("comment", "string", "preamble"):
+                keys.add(m.group(2).strip())
+        return keys
+    if suffix in (".yml", ".yaml"):
+        # Hayagriva: top-level mapping keys (a line starting at column 0 ending
+        # in ":"). Avoids a hard PyYAML dependency for a simple key scan.
+        return {m.group(1) for m in re.finditer(r"(?m)^([A-Za-z][\w:.-]*)\s*:\s*$", text)}
+    return set()
+
+
+def _resolve_bib_keys(content: str, typ_path: Path, explicit_bib: str | None) -> set[str] | None:
+    """Locate bibliography keys via --bib or an in-document #bibliography(..)."""
+    paths: list[Path] = []
+    if explicit_bib:
+        paths.append(Path(explicit_bib))
+    else:
+        for m in BIBLIOGRAPHY_RE.finditer(content):
+            paths.append((typ_path.parent / m.group(1)).resolve())
+    if not paths:
+        return None
+    keys: set[str] = set()
+    found_any = False
+    for p in paths:
+        if p.exists():
+            found_any = True
+            keys |= _parse_bib_keys(p)
+    return keys if found_any else None
+
+
 def _format_issues(issues: list[dict], comment_prefix: str = "//") -> str:
     """Format issues into the project's output protocol."""
     if not issues:
@@ -355,6 +447,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Reference Integrity Checker for Typst papers")
     parser.add_argument("file", help="Source .typ file to check")
     parser.add_argument("--json", action="store_true", help="Output JSON format")
+    parser.add_argument(
+        "--bib",
+        help="Bibliography file (.bib/.yml) for citation-key resolution; "
+        "auto-detected from #bibliography(..) when omitted",
+    )
     args = parser.parse_args()
 
     path = Path(args.file)
@@ -368,7 +465,8 @@ def main() -> int:
         print(f"[ERROR] Cannot read file: {exc}", file=sys.stderr)
         return 1
 
-    checker = ReferenceChecker(content, str(path))
+    bib_keys = _resolve_bib_keys(content, path, args.bib)
+    checker = ReferenceChecker(content, str(path), bib_keys=bib_keys)
     issues = checker.run_all()
 
     if args.json:

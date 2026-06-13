@@ -12,10 +12,10 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
 
 
 TRANSITIONS = {
@@ -678,10 +678,13 @@ def analyze(
     sections = parser.split_sections(content)
 
     if section:
-        key = section.lower()
-        if key not in sections:
-            return [f"// ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"]
-        ranges = [sections[key]]
+        matched, available = resolve_section_keys(section, sections)
+        if not matched:
+            return [
+                f"// ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"available: {', '.join(available) if available else '(none detected)'}"
+            ]
+        ranges = [sections[key] for key in matched]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 

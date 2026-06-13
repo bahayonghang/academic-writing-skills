@@ -1,6 +1,7 @@
 # Typst 学术模板示例
 
 ## 目录
+
 - [IEEE 模板](#ieee-模板)
 - [ACM 模板](#acm-模板)
 - [通用英文模板](#通用英文模板)
@@ -8,8 +9,9 @@
 - [使用提示](#使用提示)
 
 ## IEEE 模板
+
 ```typst
-#import "@preview/charged-ieee:0.1.0": ieee
+#import "@preview/charged-ieee:0.1.4": ieee
 
 #show: ieee.with(
   title: [Your Paper Title],
@@ -33,20 +35,22 @@
 ```
 
 ## ACM 模板
+
 ```typst
 // 使用 ACM 两栏格式
 #set page(
   paper: "us-letter",
   margin: (x: 0.75in, y: 1in),
   columns: 2,
-  column-gutter: 0.33in
 )
+// column-gutter is not a #set page parameter; use #columns(2, gutter: 0.33in)[..]
 
 #set text(font: "Linux Libertine", size: 9pt)
 #set par(justify: true)
 ```
 
 ## 通用英文模板
+
 ```typst
 #set page(
   paper: "a4",
@@ -92,6 +96,7 @@ Your content here...
 ```
 
 ## 中文论文模板
+
 ```typst
 #set page(
   paper: "a4",
@@ -140,6 +145,7 @@ Your content here...
 ```
 
 ## 使用提示
+
 - 若使用 Typst Universe 包，请确认网络可用并固定版本号。
 - 中文模板建议同时配置西文字体，以保证英文与数字的显示一致。
 - 若目标期刊提供官方模板，优先使用官方模板并按其指南微调。

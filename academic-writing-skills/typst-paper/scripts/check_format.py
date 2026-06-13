@@ -21,6 +21,37 @@ import re
 import sys
 from pathlib import Path
 
+# Universe template imports (e.g. @preview/charged-ieee) and template
+# invocations (#show: ieee.with(..)) configure page/columns/font internally, so
+# venue layout assertions on the user's own file would be false positives.
+TEMPLATE_IMPORT_RE = re.compile(r'#import\s+"@preview/([\w-]+)')
+TEMPLATE_SHOW_RE = re.compile(r"#show\s*:\s*[\w.-]+\.with\s*\(")
+
+
+def _balanced_call_body(content: str, head_re: re.Pattern) -> str:
+    """Return the argument body of the first ``call(..)`` whose head matches.
+
+    Used to scope field lookups to the actual ``#set page(..)`` / ``#set
+    text(..)`` block instead of a lazy ``[\\s\\S]*?`` that can wander across the
+    whole document (T24).
+    """
+    m = head_re.search(content)
+    if not m:
+        return ""
+    open_idx = content.find("(", m.start())
+    if open_idx == -1:
+        return ""
+    depth = 0
+    for i in range(open_idx, len(content)):
+        ch = content[i]
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0:
+                return content[open_idx + 1 : i]
+    return content[open_idx + 1 :]
+
 
 class FormatChecker:
     """Check Typst document formatting for academic papers."""
@@ -32,11 +63,15 @@ class FormatChecker:
         self.issues = []
         self.warnings = []
         self.content = ""
+        self.uses_template = False
 
     def load_file(self) -> bool:
         """Load the Typst file."""
         try:
             self.content = self.typ_file.read_text(encoding="utf-8")
+            self.uses_template = bool(
+                TEMPLATE_IMPORT_RE.search(self.content) or TEMPLATE_SHOW_RE.search(self.content)
+            )
             return True
         except Exception as e:
             print(f"[ERROR] Failed to read file: {e}")
@@ -46,8 +81,14 @@ class FormatChecker:
         """Check page configuration."""
         print("\n[CHECK] Page Settings")
 
+        if self.uses_template:
+            print("  ℹ Layout (page size / margins / columns) is managed by the template")
+            return
+
+        page_body = _balanced_call_body(self.content, re.compile(r"#set\s+page\("))
+
         # Check paper size
-        paper_match = re.search(r'#set\s+page\([\s\S]*?paper:\s*"([^"]+)"', self.content)
+        paper_match = re.search(r'paper:\s*"([^"]+)"', page_body)
         if paper_match:
             paper = paper_match.group(1)
             print(f"  ✓ Paper size: {paper}")
@@ -57,7 +98,7 @@ class FormatChecker:
             self.warnings.append("Paper size not explicitly set")
 
         # Check margins
-        margin_match = re.search(r"#set\s+page\([\s\S]*?margin:\s*([^,)]+)", self.content)
+        margin_match = re.search(r"margin:\s*([^,)]+)", page_body)
         if margin_match:
             margin = margin_match.group(1)
             print(f"  ✓ Margins: {margin}")
@@ -65,7 +106,7 @@ class FormatChecker:
             self.warnings.append("Margins not explicitly set")
 
         # Check columns
-        columns_match = re.search(r"#set\s+page\([\s\S]*?columns:\s*(\d+)", self.content)
+        columns_match = re.search(r"columns:\s*(\d+)", page_body)
         if columns_match:
             columns = columns_match.group(1)
             print(f"  ✓ Columns: {columns}")
@@ -79,8 +120,14 @@ class FormatChecker:
         """Check text configuration."""
         print("\n[CHECK] Text Settings")
 
+        if self.uses_template:
+            print("  ℹ Text settings (font / size / language) are managed by the template")
+            return
+
+        text_body = _balanced_call_body(self.content, re.compile(r"#set\s+text\("))
+
         # Check font
-        font_match = re.search(r'#set\s+text\([\s\S]*?font:\s*"([^"]+)"', self.content)
+        font_match = re.search(r'font:\s*"([^"]+)"', text_body)
         if font_match:
             font = font_match.group(1)
             print(f"  ✓ Font: {font}")
@@ -90,7 +137,7 @@ class FormatChecker:
             self.warnings.append("Font not explicitly set")
 
         # Check font size
-        size_match = re.search(r"#set\s+text\([\s\S]*?size:\s*(\d+(?:\.\d+)?pt)", self.content)
+        size_match = re.search(r"size:\s*(\d+(?:\.\d+)?pt)", text_body)
         if size_match:
             size = size_match.group(1)
             print(f"  ✓ Font size: {size}")
@@ -98,7 +145,7 @@ class FormatChecker:
             self.warnings.append("Font size not explicitly set")
 
         # Check language
-        lang_match = re.search(r'#set\s+text\([\s\S]*?lang:\s*"([^"]+)"', self.content)
+        lang_match = re.search(r'lang:\s*"([^"]+)"', text_body)
         if lang_match:
             lang = lang_match.group(1)
             print(f"  ✓ Language: {lang}")
@@ -127,30 +174,53 @@ class FormatChecker:
         else:
             self.warnings.append("No headings found")
 
+    def _figure_blocks(self) -> list[tuple[str, str]]:
+        """Return (body, tail) for each ``#figure(..)`` block.
+
+        ``body`` is the balanced argument text (so nested ``image(..)`` parens
+        no longer truncate detection); ``tail`` is the text right after the
+        closing paren, where Typst attaches the ``<label>`` (T24).
+        """
+        blocks: list[tuple[str, str]] = []
+        for m in re.finditer(r"#figure\(", self.content):
+            open_idx = m.end() - 1
+            depth = 0
+            end_idx = open_idx
+            for i in range(open_idx, len(self.content)):
+                ch = self.content[i]
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                    if depth == 0:
+                        end_idx = i
+                        break
+            body = self.content[open_idx + 1 : end_idx]
+            tail = self.content[end_idx + 1 : end_idx + 40]
+            blocks.append((body, tail))
+        return blocks
+
     def check_figures_tables(self):
         """Check figure and table formatting."""
         print("\n[CHECK] Figures and Tables")
 
-        # Count figures
-        figures = re.findall(r"#figure\(", self.content)
-        if figures:
-            print(f"  ✓ Found {len(figures)} figures/tables")
+        blocks = self._figure_blocks()
+        if blocks:
+            print(f"  ✓ Found {len(blocks)} figures/tables")
 
-            # Check for labels
-            labeled_figures = re.findall(r"#figure\([^)]+\)\s*<([^>]+)>", self.content)
-            print(f"  ✓ Labeled figures/tables: {len(labeled_figures)}")
-            if len(labeled_figures) < len(figures):
-                self.warnings.append(
-                    f"{len(figures) - len(labeled_figures)} figures/tables without labels"
-                )
+            # Check for labels (attached after the closing paren).
+            labeled = sum(1 for _body, tail in blocks if re.match(r"\s*<[^>]+>", tail))
+            print(f"  ✓ Labeled figures/tables: {labeled}")
+            if labeled < len(blocks):
+                self.warnings.append(f"{len(blocks) - labeled} figures/tables without labels")
 
-            # Check for captions
-            captioned_figures = re.findall(r"caption:\s*\[", self.content)
-            print(f"  ✓ Figures/tables with captions: {len(captioned_figures)}")
-            if len(captioned_figures) < len(figures):
-                self.warnings.append(
-                    f"{len(figures) - len(captioned_figures)} figures/tables without captions"
-                )
+            # Check for captions: both content [..] and string ".." forms.
+            captioned = sum(
+                1 for body, _tail in blocks if re.search(r'caption\s*:\s*(?:\[|")', body)
+            )
+            print(f"  ✓ Figures/tables with captions: {captioned}")
+            if captioned < len(blocks):
+                self.warnings.append(f"{len(blocks) - captioned} figures/tables without captions")
         else:
             print("  ℹ No figures or tables found")
 
@@ -209,6 +279,13 @@ class FormatChecker:
             return
 
         print(f"\n[CHECK] Venue-Specific Requirements ({self.venue.upper()})")
+
+        if self.uses_template:
+            print(
+                "  ℹ Two-column / paper / numbering requirements are enforced by the "
+                f"{self.venue.upper()} template; skipping layout assertions"
+            )
+            return
 
         if self.venue == "ieee":
             # IEEE specific checks

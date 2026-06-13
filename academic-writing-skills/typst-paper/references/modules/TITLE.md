@@ -5,21 +5,22 @@
 
 **脚本用法**：
 ```bash
-# 根据内容生成标题
-uv run python ../scripts/optimize_title.py main.typ --generate
+# 根据内容生成标题候选
+uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --generate
 
-# 优化现有标题
-uv run python ../scripts/optimize_title.py main.typ --optimize
+# 优化现有标题（按词边界删除无效词）
+uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --optimize
 
-# 检查标题质量
-uv run python ../scripts/optimize_title.py main.typ --check
+# 检查标题质量（评分 + 问题清单）
+uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check
 
-# 交互式模式（推荐）
-uv run python ../scripts/optimize_title.py main.typ --interactive
-
-# 标题对比测试
-uv run python ../scripts/optimize_title.py main.typ --compare "Title A" "Title B" "Title C"
+# 强制语言（默认自动检测）
+uv run python $SKILL_DIR/scripts/optimize_title.py main.typ --check --lang en
 ```
+
+> 可用 flag：`--generate` / `--optimize` / `--check` / `--lang {en,zh}`。
+> 脚本不提供交互模式或 `--compare`（agent 不可交互）；如需对比多个标题，
+> 分别对每个候选运行 `--check` 并比较评分。
 
 **标题质量标准**（基于 IEEE Author Center 及顶级会议/期刊）：
 

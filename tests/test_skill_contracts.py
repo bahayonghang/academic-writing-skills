@@ -123,6 +123,7 @@ SKILLS = {
             "deai",
             "experiment",
             "tables",
+            "references",
             "abstract",
             "adapt",
         ],
@@ -511,6 +512,98 @@ def test_latex_thesis_zh_module_router_commands_match_script_help() -> None:
 
 def test_typst_paper_module_router_commands_match_script_help() -> None:
     _assert_module_router_commands_match_script_help("typst-paper")
+
+
+def test_typst_paper_evals_bind_to_real_fixtures() -> None:
+    """typst-paper evals must bind to real fixture files (mirrors paper-audit)."""
+    skill_root = SKILLS_ROOT / "typst-paper"
+    payload = json.loads((skill_root / "evals" / "evals.json").read_text(encoding="utf-8"))
+    bound = [item for item in payload["evals"] if item["files"]]
+    assert len(bound) >= 8, f"expected >= 8 fixture-bound typst evals, got {len(bound)}"
+    for item in bound:
+        for rel_path in item["files"]:
+            fixture_path = skill_root / rel_path
+            assert fixture_path.exists(), (
+                f"typst eval {item['id']} references missing fixture: {rel_path}"
+            )
+    # The two mini-projects (template + bare) and both bibliography formats exist.
+    for required in (
+        "evals/fixtures/charged_ieee_fixture.typ",
+        "evals/fixtures/refs.bib",
+        "evals/fixtures/bare_fixture.typ",
+        "evals/fixtures/refs.yml",
+    ):
+        assert (skill_root / required).exists(), f"missing fixture asset: {required}"
+
+
+def test_typst_paper_router_section_values_resolve() -> None:
+    """Every ``--section <value>`` in the typst router must be a recognized
+    section identifier — a canonical key or a known alias (guards the T3 blind
+    spot: a router command naming a section the parser can never produce, e.g.
+    ``methods`` when the key is ``method``)."""
+    skill_root = SKILLS_ROOT / "typst-paper"
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_typst_parsers_section", skill_root / "scripts" / "parsers.py"
+    )
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    canonical = {key for key, _level, _pat in mod.TypstParser.SECTION_TITLE_RULES}
+    valid = canonical | set(mod.SECTION_KEY_ALIASES)
+
+    skill_md = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    section_values = re.findall(r"--section\s+([A-Za-z]+)", skill_md)
+    # Skip generic placeholders like "--section <name>" / "--section SECTION".
+    section_values = [v for v in section_values if not v.isupper()]
+    assert section_values, "no --section values found in typst router"
+    for value in section_values:
+        assert value.lower() in valid, (
+            f"router --section {value} is not a canonical key or alias; "
+            f"known identifiers: {sorted(valid)}"
+        )
+
+
+def test_typst_paper_module_doc_flags_match_script_help() -> None:
+    """Every ``--flag`` advertised in a typst module doc must exist in that
+    script's --help (guards T12-T15: docs that described the LaTeX-sibling CLI)."""
+    skill_root = SKILLS_ROOT / "typst-paper"
+    modules_dir = skill_root / "references" / "modules"
+    env = dict(os.environ)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+
+    help_cache: dict[str, str] = {}
+
+    def _help(script_name: str) -> str:
+        if script_name not in help_cache:
+            result = subprocess.run(
+                [sys.executable, "-B", str(skill_root / "scripts" / script_name), "--help"],
+                capture_output=True,
+                text=True,
+                check=False,
+                env=env,
+            )
+            assert result.returncode == 0, f"{script_name} --help failed: {result.stderr}"
+            help_cache[script_name] = result.stdout + result.stderr
+        return help_cache[script_name]
+
+    cmd_re = re.compile(r"scripts/(\w+\.py)([^\n`]*)")
+    flag_re = re.compile(r"\s(--[a-z][\w-]*)")
+    checked = 0
+    for doc in modules_dir.glob("*.md"):
+        for script_name, rest in cmd_re.findall(doc.read_text(encoding="utf-8")):
+            script_path = skill_root / "scripts" / script_name
+            if not script_path.exists():
+                continue
+            help_text = _help(script_name)
+            for flag in flag_re.findall(rest):
+                checked += 1
+                assert flag in help_text, (
+                    f"{doc.name}: {script_name} doc advertises unsupported flag {flag}"
+                )
+    assert checked > 0, "no module-doc CLI flags were validated"
 
 
 def test_cover_letter_module_router_commands_match_script_help() -> None:

@@ -19,7 +19,10 @@ except ImportError:
 try:
     from tex_loader import read_text_robust
 except ImportError:
-    read_text_robust = None
+    try:
+        from typ_loader import read_text_robust
+    except ImportError:
+        read_text_robust = None
 
 
 # MVP rule set: 4 high-precision subject-verb / article rules. This is a
@@ -69,13 +72,14 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
         content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
     sections = parser.split_sections(content)
+    cp = parser.get_comment_prefix()
 
     selected_ranges: list[tuple[int, int]] = []
     if section:
         matched, available = resolve_section_keys(section, sections)
         if not matched:
             return [
-                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"{cp} ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
                 f"available: {', '.join(available) if available else '(none detected)'}"
             ]
         selected_ranges.extend(sections[key] for key in matched)
@@ -99,15 +103,16 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             for pattern, revised, rationale in findings:
                 output.extend(
                     [
-                        f"% GRAMMAR (Line {line_no}) [Severity: Major] [Priority: P1]: Rule hit: {pattern}",
-                        f"% Original: {visible}",
-                        f"% Revised:  {revised}",
-                        f"% Rationale: {rationale}",
+                        f"{cp} GRAMMAR (Line {line_no}) [Severity: Major] [Priority: P1]: "
+                        f"Rule hit: {pattern}",
+                        f"{cp} Original: {visible}",
+                        f"{cp} Revised:  {revised}",
+                        f"{cp} Rationale: {rationale}",
                         "",
                     ]
                 )
     if not output:
-        output.append("% GRAMMAR: No rule-based issues detected in selected scope.")
+        output.append(f"{cp} GRAMMAR: No rule-based issues detected in selected scope.")
     return output
 
 

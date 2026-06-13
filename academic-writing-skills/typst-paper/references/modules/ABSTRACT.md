@@ -5,10 +5,10 @@
 ## Commands
 
 ```bash
-uv run python -B scripts/analyze_abstract.py main.tex
-uv run python -B scripts/analyze_abstract.py main.tex --lang en --max-words 250
-uv run python -B scripts/analyze_abstract.py main.tex --lang zh --max-chars 300
-uv run python -B scripts/analyze_abstract.py main.tex --json
+uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.typ
+uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.typ --lang en --max-words 250
+uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.typ --lang zh --max-chars 300
+uv run python -B $SKILL_DIR/scripts/analyze_abstract.py main.typ --json
 ```
 
 ## Details
@@ -17,9 +17,10 @@ Diagnoses five structural elements in the abstract: Background, Objective, Metho
 
 Per-element output: `PRESENT` / `VAGUE` / `MISSING` with evidence quote and suggestion.
 
-Also validates word count (EN) or character count (ZH) against configurable limits.
+Also validates word count (EN, `--max-words`) or character count (ZH, `--max-chars`) against the configured limits. Language is auto-detected unless `--lang {en,zh,auto}` is given. Abstract extraction supports `#abstract[..]`, `#show: ieee.with(abstract: [..])`, and an `= Abstract` / `= 摘要` heading.
 
 Skill-layer response:
+
 1. Format the diagnosis as a structured report with ✅ / ⚠️ / ❌ markers
 2. Provide specific revision suggestions for VAGUE or MISSING elements
 3. If the user requests polishing, generate a revised abstract with [REVISED: ...] annotations

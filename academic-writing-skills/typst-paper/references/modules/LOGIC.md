@@ -3,9 +3,11 @@
 
 **脚本用法**:
 ```bash
-uv run python ../scripts/analyze_logic.py main.typ
-uv run python ../scripts/analyze_logic.py main.typ --section methods
+uv run python $SKILL_DIR/scripts/analyze_logic.py main.typ
+uv run python $SKILL_DIR/scripts/analyze_logic.py main.typ --section method
 ```
+
+> `--section` 接受规范键与同义词（`methods`/`methodology`/`approach` → `method`）。
 
 **目标**：确保段落间逻辑流畅，强化方法论的严谨性。
 

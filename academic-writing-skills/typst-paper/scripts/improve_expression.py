@@ -17,7 +17,10 @@ except ImportError:
 try:
     from tex_loader import read_text_robust
 except ImportError:
-    read_text_robust = None
+    try:
+        from typ_loader import read_text_robust
+    except ImportError:
+        read_text_robust = None
 
 
 # Note: use->employ and show->demonstrate were removed because the deai guide
@@ -58,12 +61,13 @@ def analyze(file_path: Path, section: str | None) -> list[str]:
         content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.split("\n")
     sections = parser.split_sections(content)
+    cp = parser.get_comment_prefix()
 
     if section:
         matched, available = resolve_section_keys(section, sections)
         if not matched:
             return [
-                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
+                f"{cp} ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}; "
                 f"available: {', '.join(available) if available else '(none detected)'}"
             ]
         ranges = [sections[key] for key in matched]
@@ -84,15 +88,16 @@ def analyze(file_path: Path, section: str | None) -> list[str]:
                 continue
             out.extend(
                 [
-                    f"% EXPRESSION (Line {line_no}) [Severity: Minor] [Priority: P2]: Improve academic tone",
-                    f"% Original: {visible}",
-                    f"% Revised:  {revised}",
-                    f"% Rationale: {'; '.join(changes)}",
+                    f"{cp} EXPRESSION (Line {line_no}) [Severity: Minor] [Priority: P2]: "
+                    f"Improve academic tone",
+                    f"{cp} Original: {visible}",
+                    f"{cp} Revised:  {revised}",
+                    f"{cp} Rationale: {'; '.join(changes)}",
                     "",
                 ]
             )
     if not out:
-        out.append("% EXPRESSION: No weak-expression patterns detected.")
+        out.append(f"{cp} EXPRESSION: No weak-expression patterns detected.")
     return out
 
 

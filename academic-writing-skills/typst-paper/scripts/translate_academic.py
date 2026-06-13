@@ -45,8 +45,6 @@ AMBIGUOUS_TERMS = {
 COMMON_PATTERNS = {
     "本文提出": "We propose",
     "实验结果表明": "Experimental results demonstrate that",
-    "与...相比": "Compared with ...",
-    "在...中": "in ...",
 }
 
 

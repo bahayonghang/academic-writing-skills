@@ -35,8 +35,8 @@ def generate_request(input_data: str) -> str:
         "Ensure you follow the constraints in `references/modules/EXPERIMENT.md`.",
         "",
         "#### Requirements Reminder:",
-        "- Use strong emphasis `**Title Case Heading.**` as the paragraph starter.",
-        "- NO `*...*` or `_..._` in the body text.",
+        "- Use strong emphasis `*Title Case Heading.*` (Typst bold) as the paragraph starter.",
+        "- NO Markdown-style `**...**` (not bold in Typst) and no `_..._` italics in body text.",
         "- NO list formats (`- item`). Use a cohesive narrative.",
         "- Include SOTA comparison, ablation insights, and statistical significance if applicable.",
         "- Objective tone, no exaggerated claims.",
@@ -232,6 +232,45 @@ def _check_results_literature_echo(
     return out
 
 
+def _check_experiment_grounding(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """T2: the experiment section must contextualize its numbers.
+
+    A section that reports several numeric results with no attribution or
+    baseline comparison reads as a raw data dump. This is the concrete check
+    that replaces the previous behavior where ``--section experiment`` always
+    printed "No issues detected".
+    """
+    out: list[str] = []
+    numeric_lines = 0
+    grounded_lines = 0
+    comparison = DISCUSSION_CATEGORY_MARKERS["comparison"]
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        if re.search(r"\d", visible):
+            numeric_lines += 1
+        if ATTRIBUTION_MARKERS_EN.search(visible) or comparison.search(visible):
+            grounded_lines += 1
+
+    if numeric_lines >= 3 and grounded_lines == 0:
+        out.extend(
+            _format_issue(
+                start,
+                "Major",
+                "P1",
+                "Experiment section reports numeric results without attribution or "
+                "comparison: add a why-it-works explanation or baseline comparison "
+                f"({numeric_lines} numeric lines, 0 explanatory).",
+            )
+        )
+        out.append("")
+    return out
+
+
 def _check_conclusion_completeness(lines: list[str], start: int, end: int, parser) -> list[str]:
     """B5: Conclusion must contain findings + implications + limitations."""
     out: list[str] = []
@@ -274,6 +313,10 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     output: list[str] = []
 
     if sections:
+        if (not normalized or normalized == "experiment") and "experiment" in sections:
+            e_start, e_end = sections["experiment"]
+            output.extend(_check_experiment_grounding(lines, e_start, e_end, parser))
+
         if (not normalized or normalized == "discussion") and "discussion" in sections:
             d_start, d_end = sections["discussion"]
             output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
@@ -298,14 +341,28 @@ def main() -> int:
     cli.add_argument(
         "--generate",
         action="store_true",
-        help="Generate analysis prompt instead of reviewing",
+        help="Generate an analysis prompt from raw data/file instead of reviewing",
     )
     args = cli.parse_args()
 
-    path = Path(args.input)
-    if args.generate or not path.exists() or path.suffix != ".typ":
+    if args.generate:
         print(generate_request(args.input))
         return 0
+
+    path = Path(args.input)
+    if not path.exists():
+        print(
+            f"[ERROR] File not found: {args.input} "
+            "(use --generate to build a prompt from raw data)",
+            file=sys.stderr,
+        )
+        return 1
+    if path.suffix != ".typ":
+        print(
+            f"[ERROR] Not a .typ file: {args.input} (use --generate for raw-data prompt mode)",
+            file=sys.stderr,
+        )
+        return 1
 
     print("\n".join(analyze(path, args.section)))
     return 0

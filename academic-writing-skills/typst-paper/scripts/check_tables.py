@@ -27,6 +27,7 @@ class TableChecker:
         self.content = ""
         self.lines: list[str] = []
         self.issues: list[dict] = []
+        self._table_blocks: list[dict] | None = None
 
     def _load(self) -> bool:
         """Load the .typ file content."""
@@ -80,7 +81,10 @@ class TableChecker:
         }
 
     def _find_table_blocks(self) -> list[dict]:
-        """Find table() calls in the Typst source."""
+        """Find table() calls in the Typst source (memoized to avoid rescanning
+        the whole document a second time from ``_result``)."""
+        if self._table_blocks is not None:
+            return self._table_blocks
         tables = []
         # Simple heuristic: find lines containing table( and track the block
         for i, line in enumerate(self.lines, 1):
@@ -117,6 +121,7 @@ class TableChecker:
                     }
                 )
 
+        self._table_blocks = tables
         return tables
 
     def _check_vertical_lines(self, table: dict) -> None:
@@ -192,7 +197,7 @@ class TableChecker:
                 {
                     "line": table["start"],
                     "level": self.LEVEL_WARNING,
-                    "priority": "P3",
+                    "priority": "P2",
                     "message": f"Inconsistent decimal precision: found {sorted(decimals_seen)} decimal places. Use consistent precision.",
                     "category": "precision",
                 }

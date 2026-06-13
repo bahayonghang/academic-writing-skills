@@ -167,7 +167,14 @@ def score_title(title: str, lang: str = None) -> dict[str, any]:
 
     # 1. Conciseness (25%)
     title_lower = title.lower() if lang == "en" else title
-    ineffective_found = [word for word in ineffective_words if word in title_lower]
+    if lang == "en":
+        # Word-boundary match so "new" does not fire inside "Renewable" and
+        # "using" not inside "Housing" (T22).
+        ineffective_found = [
+            word for word in ineffective_words if re.search(rf"\b{re.escape(word)}\b", title_lower)
+        ]
+    else:
+        ineffective_found = [word for word in ineffective_words if word in title_lower]
     if ineffective_found:
         conciseness_score = max(0, 25 - len(ineffective_found) * 10)
         issues.append(
@@ -349,7 +356,8 @@ def optimize_title(title: str, lang: str = None) -> str:
 
     for word in ineffective_words:
         if lang == "en":
-            pattern = re.compile(re.escape(word), re.IGNORECASE)
+            # Word-boundary removal so substrings inside real words survive (T22).
+            pattern = re.compile(rf"\b{re.escape(word)}\b", re.IGNORECASE)
             optimized = pattern.sub("", optimized)
         else:
             optimized = optimized.replace(word, "")

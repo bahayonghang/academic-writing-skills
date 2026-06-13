@@ -19,8 +19,8 @@
   paper: "us-letter",
   margin: (x: 0.75in, y: 1in),
   columns: 2,
-  column-gutter: 0.33in
 )
+// column-gutter is not a #set page parameter; use #columns(2, gutter: 0.33in)[..]
 
 #set text(
   font: "Linux Libertine",

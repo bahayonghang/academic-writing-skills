@@ -9,7 +9,7 @@
 
 ## Format Requirements
 
-- **Page Limit**: 8 pages (excluding references)
+- **Page Limit**: 9 pages (excluding references)
 - **Paper Size**: US Letter
 - **Columns**: Single column
 - **Font**: Times New Roman 10pt

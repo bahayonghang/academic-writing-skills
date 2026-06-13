@@ -16,10 +16,10 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 
 
 AUTHOR_ENUM_RE = re.compile(
@@ -67,11 +67,11 @@ def _find_section_bounds(
     sections: dict[str, tuple[int, int]], section: str | None
 ) -> tuple[int, int] | None:
     if section:
-        return sections.get(section.lower())
-    for key in ("related", "literature", "related work"):
-        if key in sections:
-            return sections[key]
-    return None
+        matched, _available = resolve_section_keys(section, sections)
+        return sections[matched[0]] if matched else None
+    # split_sections only ever emits the canonical "related" key; the former
+    # "literature"/"related work" fallbacks never matched (dead code).
+    return sections.get("related")
 
 
 def _paragraphs(
