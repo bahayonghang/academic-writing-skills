@@ -3,7 +3,7 @@
   "name": "five-skills-optimization",
   "title": "五技能审计与优化（父任务）：EN/Typst/bib/audit/cover-letter",
   "description": "基于 2026-06-12 深度审计（代码+内容+网络调研）的五个 skill（latex-paper-en、typst-paper、bib-search-citation、paper-audit、cover-letter）优化父任务：管理子任务需求集、任务映射与最终集成验收。方法论沿用 06-12-latex-thesis-zh-optimization。",
-  "status": "planning",
+  "status": "completed",
   "dev_type": null,
   "scope": null,
   "package": "claude-scholar",
@@ -11,7 +11,7 @@
   "creator": "lyh",
   "assignee": "lyh",
   "createdAt": "2026-06-12",
-  "completedAt": null,
+  "completedAt": "2026-06-13",
   "branch": null,
   "base_branch": "dev",
   "worktree_path": null,
@@ -28,6 +28,6 @@
   ],
   "parent": null,
   "relatedFiles": [],
-  "notes": "",
+  "notes": "集成验收通过 (2026-06-13)。6/6 子任务全部实施+归档: en-family-parsers e84f5af, bib-robustness 6217ef7, en-paper-precision 57482af, typst-reality c6d73bb, cover-letter-compliance, paper-audit-integrity ad7ad71。§4 七条验收: 1路由表可执行/2多文件生效/3模板生效/4事实单源/5裸环境降级/6四拷贝哈希锁+ZH零改动(git确认latex-thesis-zh零提交)/7 just ci 全绿(824 passed, version不bump) — 全部满足。",
   "meta": {}
 }
