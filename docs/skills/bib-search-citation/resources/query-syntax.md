@@ -76,6 +76,8 @@ Use the JSON form when the workflow needs explicit structured filters.
 - `fields:key,title,year,doi` limits returned fields
 - `cite:latex`, `cite:typst`, or `cite:both` controls citation output
 - `raw:true` includes raw BibTeX
+- `recent:3` sets the recency window (years) for the additive `meta.recency` report; also available as `--recent-window`
+- `claim:"..."` attaches a per-result `claim_support` block (lexical overlap only); prefer the `--claim` flag for claims containing spaces
 
 ### Notes
 
@@ -85,7 +87,24 @@ Use the JSON form when the workflow needs explicit structured filters.
 - Generic field filters work for fields such as `title`, `shorttitle`, `annotation`,
   `keywords`, `abstract`, `file`, `copyright`, `doi`, and `eprint`.
 - Negated field filters use the same form, for example `-annotation:survey`.
+- Any `word:word` token becomes a generic field filter, so a misspelled field name
+  matches nothing; `meta.parse_warnings` flags a filter field absent from every entry.
 - `preview_bib_search.py` is a renderer, not a second search engine.
+
+## Recency Report and Claim Binding (Additive)
+
+Both features are additive — they never filter or reorder results.
+
+- **Recency** is always reported under `meta.recency`: `window_years`,
+  `recent_threshold` (computed from the current calendar year), `with_year`,
+  `recent_count`, `recent_share`, and a `note` that warns when fewer than 80% of
+  returned results fall inside the window. Tune it with `recent:N` or
+  `--recent-window N` (default 3).
+- **Claim binding** runs only when a claim is supplied via `--claim "..."`
+  (preferred) or `claim:"..."`. Each result then gains a `claim_support` block with
+  `relevance`, `matched_fields`, `shared_terms`, and a `provenance` note. This is
+  lexical overlap, **not** proof of support — treat it as a verification hand-off,
+  never as evidence the paper backs the claim.
 
 ## Natural-Language Mapping Examples
 
@@ -243,4 +262,17 @@ If nothing matches, broaden filters in this order:
 1. remove `has:` constraints
 2. widen or remove the year range
 3. shorten the topic query or try synonyms
-4. check author spelling and try partial-name matches
+4. check author spelling. The author filter is a case-insensitive, accent-folded
+   substring match, so `author:Muller` matches `M{\"u}ller` and `author:chen`
+   matches both `Chen` and `Cheng`. That breadth helps recovery but is also a
+   false-positive risk — confirm the author before citing.
+
+## Known Limitations
+
+- Author matching does not normalise name order, so `author:"Jane Doe"` will not
+  match a `{Doe, Jane}` field; search by surname instead.
+- `matched_entries` counts structured-filter matches only, not free-text drops.
+- CJK queries match best as a contiguous substring (`时间序列`).
+- Multi-file libraries are not merged — run the script once per `.bib` file.
+- A truncated entry (e.g. a missing closing brace) is skipped and reported in
+  `meta.parse_warnings` rather than silently swallowing the rest of the file.

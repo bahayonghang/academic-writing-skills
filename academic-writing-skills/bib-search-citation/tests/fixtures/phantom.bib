@@ -1,0 +1,21 @@
+@comment{This is a JabRef comment, and it mentions mamba so it must not be searchable}
+
+@string{ieee = {IEEE Transactions on Geoscience and Remote Sensing}}
+
+@string{parta = {Journal A}, partb = {Part B}}
+
+@preamble{"\newcommand{\noop}[1]{}"}
+
+@article{Real2024Entry,
+  title = {A Real Entry Using a String Macro},
+  author = {Jane Doe},
+  year = {2024},
+  journal = ieee
+}
+
+@article{Concat2023Entry,
+  title = {Concatenated Venue Entry},
+  author = {Robin Roe},
+  year = {2023},
+  journal = parta # " " # partb
+}

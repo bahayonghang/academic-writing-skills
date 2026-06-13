@@ -190,17 +190,26 @@ def render_preview(payload: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _write(text: str, stream: Any) -> None:
+    """Emit text as UTF-8 bytes so a legacy console locale cannot crash it (B5)."""
+    buffer = getattr(stream, "buffer", None)
+    if buffer is not None:
+        buffer.write(text.encode("utf-8"))
+        buffer.flush()
+    else:
+        stream.write(text)
+
+
 def main() -> None:
     args = parse_args()
     try:
         payload = load_payload(args)
         preview = render_preview(payload)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
-        print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=2), file=sys.stderr)
+        _write(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=2) + "\n", sys.stderr)
         raise SystemExit(2) from exc
 
-    sys.stdout.write(preview)
-    sys.stdout.write("\n")
+    _write(preview + "\n", sys.stdout)
 
 
 if __name__ == "__main__":

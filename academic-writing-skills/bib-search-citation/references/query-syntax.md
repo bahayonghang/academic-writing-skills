@@ -85,7 +85,7 @@ Use the JSON form when the workflow already has a structured spec or when many f
 - The parser also accepts compact syntax inside `spec.query` when a JSON spec is used.
 - Generic field filters work for many fields, including `title`, `shorttitle`, `annotation`, `keywords`, `abstract`, `file`, `copyright`, `doi`, and `eprint`.
 - Negated generic field filters are written like `-annotation:survey`.
-- RTK can help discover `.bib` files and inspect field coverage, but it should not replace the raw JSON output of `scripts/search_bib.py`.
+- Any `word:word` token is treated as a generic field filter, so a misspelled field name (`tilte:...`) matches nothing; `meta.parse_warnings` flags a filter field that is absent from every entry.
 - If you want a compact human-readable summary after the search, pipe the JSON into `scripts/preview_bib_search.py` instead of changing the query syntax.
 
 ## Recency report and claim binding (additive)
@@ -270,4 +270,20 @@ If no entries match the query, try broadening filters step by step:
 1. Remove `has:` constraints — `has:code` and `has:pdf` are the most restrictive
 2. Widen or drop the year range
 3. Use fewer topic keywords or try synonyms
-4. Check author name spelling — the filter is a case-insensitive substring match, so partial names (e.g. `author:chen` matches `Cheng`) work well
+4. Check author name spelling. The author filter is a case-insensitive,
+   accent-folded substring match, so `author:Muller` matches `M{\"u}ller` and a
+   partial name like `author:chen` matches both `Chen` and `Cheng`. That breadth
+   is convenient for recovery but also a false-positive risk: confirm the author
+   identity before citing rather than trusting a substring hit.
+
+## Known limitations
+
+- Author matching does not normalise name order or `von`/particle handling, so
+  `author:"Jane Doe"` will not match a `{Doe, Jane}` field; search by surname.
+- `matched_entries` counts structured-filter matches only; it does not report how
+  many entries the free-text relevance threshold dropped.
+- CJK queries match best as a contiguous substring (`时间序列`); space-separated
+  CJK terms may not all match.
+- Multi-file libraries are not merged — run the script once per `.bib` file.
+- Years are detected in the 1500–2099 range; entries without a parseable year are
+  excluded by any year filter.

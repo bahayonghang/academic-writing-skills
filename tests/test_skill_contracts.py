@@ -33,6 +33,7 @@ SKILLS = {
         "min_evals": 5,
         "expects_uv_commands": True,
         "enforce_command_hygiene": True,
+        "router_help": True,
     },
     "cover-letter": {
         "modules": ["generate", "optimize", "align-check", "journal-fit", "presubmission"],
@@ -514,3 +515,7 @@ def test_typst_paper_module_router_commands_match_script_help() -> None:
 
 def test_cover_letter_module_router_commands_match_script_help() -> None:
     _assert_module_router_commands_match_script_help("cover-letter")
+
+
+def test_bib_search_citation_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("bib-search-citation")

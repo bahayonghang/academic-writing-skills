@@ -77,6 +77,8 @@ time series forecasting mamba author:Cheng year>=2024 has:code type:article,misc
 - `fields:key,title,year,doi` 限制返回字段
 - `cite:latex`、`cite:typst`、`cite:both` 控制引用输出
 - `raw:true` 返回原始 BibTeX
+- `recent:3` 设定附加 `meta.recency` 报告的"近期"窗口（年）；也可用 `--recent-window`
+- `claim:"..."` 为每条结果附加 `claim_support` 块（仅词面重叠）；含空格的主张优先用 `--claim`
 
 ### 说明
 
@@ -86,7 +88,21 @@ time series forecasting mamba author:Cheng year>=2024 has:code type:article,misc
 - 通用字段过滤支持 `title`、`shorttitle`、`annotation`、`keywords`、
   `abstract`、`file`、`copyright`、`doi`、`eprint` 等字段。
 - 带否定的字段过滤写法相同，例如 `-annotation:survey`。
+- 任意 `word:word` token 都会被当作通用字段过滤，因此字段名拼错会匹配不到任何条目；
+  `meta.parse_warnings` 会标记不存在于任何条目的过滤字段。
 - `preview_bib_search.py` 只是渲染器，不是第二套搜索引擎。
+
+## 近期报告与主张绑定（附加）
+
+两者都是附加功能，不会过滤或重排结果。
+
+- **近期统计**始终在 `meta.recency` 下报告：`window_years`、`recent_threshold`
+  （按当前自然年计算）、`with_year`、`recent_count`、`recent_share`，以及当返回结果
+  中近期占比不足 80% 时给出的 `note`。用 `recent:N` 或 `--recent-window N`（默认 3）调节。
+- **主张绑定**仅在通过 `--claim "..."`（推荐）或 `claim:"..."` 提供主张时运行。
+  每条结果会获得 `claim_support` 块，含 `relevance`、`matched_fields`、`shared_terms`
+  和 `provenance` 提示。这是词面重叠，**并非**支持证据——只作为核验交接，
+  绝不能当成论文支持该主张的依据。
 
 ## 自然语言映射示例
 
@@ -243,4 +259,16 @@ author:Cheng year>=2024 type:article sort:year_desc
 1. 先去掉 `has:` 约束
 2. 放宽或删除年份范围
 3. 减少主题词，或改用同义词
-4. 检查作者拼写，并尝试部分姓名匹配
+4. 检查作者拼写。作者过滤是大小写不敏感、去重音的子串匹配，因此 `author:Muller`
+   能命中 `M{\"u}ller`，`author:chen` 同时命中 `Chen` 和 `Cheng`。这种宽度便于
+   召回，但也是误报风险——引用前请先确认作者身份，不要只凭子串命中。
+
+## 已知限制
+
+- 作者匹配不归一姓名顺序，因此 `author:"Jane Doe"` 不会命中 `{Doe, Jane}` 字段；
+  请按姓氏检索。
+- `matched_entries` 只统计结构化过滤命中数，不反映自由文本相关度淘汰的数量。
+- 中文查询以连续子串（`时间序列`）命中效果最好。
+- 多文件文献库不会自动合并——请对每个 `.bib` 文件分别运行。
+- 截断条目（如缺少闭合花括号）会被跳过并记入 `meta.parse_warnings`，
+  而不是静默吞掉文件其余部分。

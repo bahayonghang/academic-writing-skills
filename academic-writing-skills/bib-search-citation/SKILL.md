@@ -20,8 +20,8 @@ metadata:
       bib,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-04"
-argument-hint: "[library.bib] [--query QUERY]"
+  last_updated: "2026-06-13"
+argument-hint: "--bib library.bib --query QUERY"
 allowed-tools: Read, Bash(uv *)
 ---
 
@@ -138,21 +138,29 @@ field filters, or mixed citation/export options could otherwise be ambiguous.
 
 1. Identify the `.bib` file path. If multiple candidates exist, use the one the
    user named or ask one concise clarification only if choosing would be risky.
-2. If `rtk` is available, use it only for model-facing exploration such as locating
-   `.bib` files or inspecting representative fields.
-3. Translate the request into a compact query or JSON search spec.
-4. Run `search_bib.py` with `uv run python -B` and preserve the JSON output.
-5. Optionally run `preview_bib_search.py` after JSON output exists.
-6. Inspect the result payload before answering.
-7. Report matches, citation snippets, raw entries, or empty-result recovery advice
+2. Translate the request into a compact query or JSON search spec.
+3. Run `search_bib.py` with `uv run python -B` and preserve the JSON output.
+4. Optionally run `preview_bib_search.py` after JSON output exists.
+5. Inspect the result payload before answering.
+6. Report matches, citation snippets, raw entries, or empty-result recovery advice
    according to the output contract.
 
-RTK fast path guidance:
+## Known Limitations
 
-- locate bibliography files with `rtk find . -name "*.bib"`
-- inspect a representative slice with `rtk read /path/to/library.bib -l aggressive -m 80`
-- confirm fields with `rtk grep "doi|keywords|annotation|eprint" /path/to/library.bib`
-- do not wrap machine-readable `search_bib.py` JSON output with RTK compression
+These are documented so results are reported honestly, not silently:
+
+- **Author matching** is a case-insensitive, accent-folded substring test on the
+  raw author string. It does not normalise name order, so `author:"Jane Doe"`
+  will not match a `{Doe, Jane}` field; search by surname (`author:Doe`) instead.
+  Substring matching also means `author:chen` matches both `Chen` and `Cheng` —
+  convenient, but verify the author before citing.
+- **`matched_entries`** counts entries that pass the structured filters; it does
+  not reflect how many were dropped by the free-text relevance threshold.
+- **CJK multi-keyword** queries match best as a contiguous substring
+  (`时间序列`); space-separated CJK terms may not all match.
+- **Multi-file libraries** are not merged automatically — run the script once per
+  `.bib` file. The `meta.parse_warnings` list reports any entries that were
+  skipped because of a structural problem such as a missing closing brace.
 
 ## Search Planning
 

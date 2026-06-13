@@ -15,16 +15,88 @@ import json
 import re
 import shlex
 import sys
+import unicodedata
 from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-TOKEN_RE = re.compile(r"[a-z0-9]+|[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+", re.IGNORECASE)
+TOKEN_RE = re.compile(r"[a-z0-9]+|[㐀-䶿一-鿿豈-﫿]+", re.IGNORECASE)
 LATEX_ESCAPE_RE = re.compile(r"\\([%&_#$])")
 WHITESPACE_RE = re.compile(r"\s+")
 FIELD_OP_RE = re.compile(
     r"^(?P<neg>-)?(?P<field>[A-Za-z_][A-Za-z0-9_-]*)(?P<op>:|=|>=|<=|>|<)(?P<value>.+)$"
+)
+# Year detection now spans 1500-2099 so historical references are not dropped (B26).
+YEAR_RE = re.compile(r"\b(1[5-9]\d{2}|20\d{2})\b")
+
+# ── LaTeX accent handling (B6) ────────────────────────────────────────────────
+# Combining diacritics keyed by the LaTeX accent command. After substitution the
+# text is NFC-composed so "G{\"u}nther" becomes "Günther", which both displays
+# correctly and folds cleanly to ASCII for accent-insensitive matching.
+_ACCENT_COMBINING = {
+    '"': "̈",  # diaeresis
+    "'": "́",  # acute
+    "`": "̀",  # grave
+    "^": "̂",  # circumflex
+    "~": "̃",  # tilde
+    "=": "̄",  # macron
+    ".": "̇",  # dot above
+    "c": "̧",  # cedilla
+    "u": "̆",  # breve
+    "v": "̌",  # caron
+    "H": "̋",  # double acute
+    "r": "̊",  # ring above
+    "k": "̨",  # ogonek
+}
+# Accent command followed by a single letter, with optional braces around either
+# the whole group or just the letter: {\"u}, \"u, \"{u}, {\"{u}}.
+_ACCENT_RE = re.compile(r"\{?\\([\"'`^~=.cuvHrk])\s*\{?([A-Za-z])\}?\}?")
+# Standalone special letters (order matters: longer escapes first).
+_SPECIAL_LETTERS = {
+    r"{\ss}": "ß",
+    r"\ss": "ß",
+    r"{\ae}": "æ",
+    r"\ae": "æ",
+    r"{\AE}": "Æ",
+    r"\AE": "Æ",
+    r"{\oe}": "œ",
+    r"\oe": "œ",
+    r"{\OE}": "Œ",
+    r"\OE": "Œ",
+    r"{\aa}": "å",
+    r"\aa": "å",
+    r"{\AA}": "Å",
+    r"\AA": "Å",
+    r"{\o}": "ø",
+    r"\o": "ø",
+    r"{\O}": "Ø",
+    r"\O": "Ø",
+    r"{\l}": "ł",
+    r"\l": "ł",
+    r"{\L}": "Ł",
+    r"\L": "Ł",
+    r"{\i}": "ı",
+    r"\i": "ı",
+    r"{\j}": "ȷ",
+    r"\j": "ȷ",
+}
+_ASCII_FOLD_SPECIAL = str.maketrans(
+    {
+        "ß": "ss",
+        "æ": "ae",
+        "Æ": "AE",
+        "œ": "oe",
+        "Œ": "OE",
+        "ø": "o",
+        "Ø": "O",
+        "ł": "l",
+        "Ł": "L",
+        "ı": "i",
+        "ȷ": "j",
+        "đ": "d",
+        "Đ": "D",
+    }
 )
 
 DEFAULT_FIELDS = [
@@ -67,9 +139,6 @@ CODE_HINT_TERMS = [
 PDF_FIELDS = ["file", "pdf", "url"]
 FIELD_ALIASES = {
     "authors": "author",
-    "venue": "venue",
-    "journal": "journal",
-    "booktitle": "booktitle",
     "tag": "annotation",
     "tags": "annotation",
     "kw": "keywords",
@@ -79,6 +148,50 @@ FIELD_ALIASES = {
     "bib": "raw",
     "citation": "cite",
     "citations": "cite",
+}
+
+# Filter keys accepted in a JSON spec's `filters` object. Unknown keys are
+# rejected so an LLM-invented key (e.g. `venue_contains`) fails loudly instead
+# of silently returning the unfiltered set (B12).
+KNOWN_FILTER_KEYS = {
+    "year_min",
+    "year_max",
+    "years_in",
+    "exclude_years",
+    "author_contains",
+    "author_excludes",
+    "type_in",
+    "exclude_type_in",
+    "has",
+    "exclude_has",
+    "field_contains",
+    "field_excludes",
+}
+# Bibliographic fields surfaced as top-level entry attributes; used to tell a
+# plausible field filter from a likely typo (B12).
+KNOWN_ENTRY_FIELDS = {
+    "title",
+    "shorttitle",
+    "author",
+    "year",
+    "venue",
+    "journal",
+    "journaltitle",
+    "booktitle",
+    "doi",
+    "eprint",
+    "keywords",
+    "annotation",
+    "abstract",
+    "url",
+    "file",
+    "note",
+    "publisher",
+    "series",
+    "school",
+    "institution",
+    "copyright",
+    "archiveprefix",
 }
 
 
@@ -99,7 +212,7 @@ def parse_args() -> argparse.Namespace:
         "--query", help="Compact query expression with optional inline filters"
     )
 
-    parser.add_argument("--limit", type=int, help="Override result limit when using --query")
+    parser.add_argument("--limit", type=int, help="Override result limit (any input mode)")
     parser.add_argument(
         "--sort", choices=["relevance", "year_desc", "year_asc", "title"], help="Override sort mode"
     )
@@ -111,7 +224,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--return-fields",
-        help="Comma-separated result fields when using --query, for example key,title,year,abstract",
+        help="Comma-separated result fields, for example key,title,year,abstract",
     )
     parser.add_argument(
         "--recent-window",
@@ -130,36 +243,13 @@ def parse_args() -> argparse.Namespace:
 # -----------------------------
 
 
-def load_spec(args: argparse.Namespace) -> dict[str, Any]:
-    if args.spec_json:
-        spec = json.loads(args.spec_json)
-    elif args.spec_file:
-        with open(args.spec_file, encoding="utf-8") as handle:
-            spec = json.load(handle)
-    else:
-        spec = spec_from_compact_args(args)
+def apply_cli_overrides(spec: dict[str, Any], args: argparse.Namespace) -> None:
+    """Apply --limit/--sort/... on top of any input mode (B11).
 
-    if not isinstance(spec, dict):
-        raise SpecError("search spec must be a JSON object")
-
-    # v2 enhancement: allow compact query syntax inside spec[query] as well.
-    query_text = spec.get("query")
-    if isinstance(query_text, str) and maybe_contains_query_syntax(query_text):
-        parsed = spec_from_compact_query(query_text)
-        spec_without_query = dict(spec)
-        spec_without_query["query"] = parsed.get("query", "")
-        spec = merge_specs(parsed, spec_without_query)
-
-    spec.setdefault("sort", "relevance")
-    spec.setdefault("limit", 5)
-    spec.setdefault("citation_mode", "none")
-    spec.setdefault("return_fields", DEFAULT_FIELDS)
-    spec.setdefault("filters", {})
-    return spec
-
-
-def spec_from_compact_args(args: argparse.Namespace) -> dict[str, Any]:
-    spec = spec_from_compact_query(args.query or "")
+    Previously these overrides only reached the --query path, so combinations
+    like `--spec-json '{...}' --claim '...'` silently dropped the claim. Now
+    every override is honoured regardless of how the base spec was supplied.
+    """
     if args.limit is not None:
         spec["limit"] = args.limit
     if args.sort:
@@ -176,6 +266,62 @@ def spec_from_compact_args(args: argparse.Namespace) -> dict[str, Any]:
         spec["recent_window"] = args.recent_window
     if args.claim:
         spec["claim"] = args.claim
+
+
+def validate_spec(spec: dict[str, Any]) -> None:
+    """Reject unknown filter keys and invalid limits before searching."""
+    filters = spec.get("filters") or {}
+    if not isinstance(filters, dict):
+        raise SpecError("filters must be a JSON object")
+    unknown = sorted(set(filters) - KNOWN_FILTER_KEYS)
+    if unknown:
+        raise SpecError(
+            "unknown filter key(s): "
+            + ", ".join(unknown)
+            + "; valid keys: "
+            + ", ".join(sorted(KNOWN_FILTER_KEYS))
+        )
+    limit = spec.get("limit")
+    if limit is not None:
+        try:
+            limit_int = int(limit)
+        except (TypeError, ValueError) as exc:
+            raise SpecError(f"limit must be an integer, got {limit!r}") from exc
+        if limit_int <= 0:
+            raise SpecError("limit must be a positive integer")
+        spec["limit"] = limit_int
+
+
+def load_spec(args: argparse.Namespace) -> dict[str, Any]:
+    if args.spec_json:
+        spec = json.loads(args.spec_json)
+    elif args.spec_file:
+        with open(args.spec_file, encoding="utf-8") as handle:
+            spec = json.load(handle)
+    else:
+        spec = spec_from_compact_query(args.query or "")
+
+    if not isinstance(spec, dict):
+        raise SpecError("search spec must be a JSON object")
+
+    # v2 enhancement: allow compact query syntax inside spec[query] as well.
+    query_text = spec.get("query")
+    if isinstance(query_text, str) and maybe_contains_query_syntax(query_text):
+        parsed = spec_from_compact_query(query_text)
+        spec_without_query = dict(spec)
+        spec_without_query["query"] = parsed.get("query", "")
+        spec = merge_specs(parsed, spec_without_query)
+
+    # CLI overrides apply to every input mode (B11).
+    apply_cli_overrides(spec, args)
+
+    spec.setdefault("sort", "relevance")
+    spec.setdefault("limit", 5)
+    spec.setdefault("citation_mode", "none")
+    spec.setdefault("return_fields", DEFAULT_FIELDS)
+    spec.setdefault("filters", {})
+
+    validate_spec(spec)
     return spec
 
 
@@ -269,10 +415,14 @@ def is_balanced(text: str, open_char: str, close_char: str) -> bool:
         if char == "\\":
             escaped = True
             continue
-        if char == '"':
-            in_quotes = not in_quotes
-            continue
         if in_quotes:
+            # Inside a quoted value only the closing quote matters; braces are
+            # literal characters (B1).
+            if char == '"':
+                in_quotes = False
+            continue
+        if char == '"' and depth == 0:
+            in_quotes = True
             continue
         if char == open_char:
             depth += 1
@@ -298,11 +448,30 @@ def is_balanced_quotes(text: str) -> bool:
     return not in_quotes
 
 
+def expand_latex_accents(text: str) -> str:
+    """Turn LaTeX accent escapes into composed Unicode characters (B6)."""
+    if "\\" not in text:
+        return text
+    for escape, replacement in _SPECIAL_LETTERS.items():
+        if escape in text:
+            text = text.replace(escape, replacement)
+    text = _ACCENT_RE.sub(lambda m: m.group(2) + _ACCENT_COMBINING[m.group(1)], text)
+    return unicodedata.normalize("NFC", text)
+
+
+def ascii_fold(text: str) -> str:
+    """Drop diacritics so 'Müller' and 'Muller' compare equal (B6)."""
+    text = text.translate(_ASCII_FOLD_SPECIAL)
+    decomposed = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+
+
 def normalize_text(value: Any) -> str:
     if value is None:
         return ""
     text = str(value)
     text = strip_outer_wrappers(text)
+    text = expand_latex_accents(text)
     text = LATEX_ESCAPE_RE.sub(r"\1", text)
     text = text.replace("~", " ")
     text = re.sub(r"\\[a-zA-Z]+", " ", text)
@@ -311,8 +480,13 @@ def normalize_text(value: Any) -> str:
     return text.strip()
 
 
+def match_key(text: str) -> str:
+    """Lowercased, accent-folded form used for substring matching."""
+    return ascii_fold(text).lower()
+
+
 def tokenize(text: str) -> list[str]:
-    lowered = normalize_text(text).lower()
+    lowered = match_key(normalize_text(text))
     return TOKEN_RE.findall(lowered)
 
 
@@ -339,9 +513,7 @@ def spec_from_compact_query(query_text: str) -> dict[str, Any]:
             free_terms.append(token)
             continue
         kind, payload = parsed
-        if kind == "free":
-            free_terms.append(payload)
-        elif kind == "sort":
+        if kind == "sort":
             spec["sort"] = payload
         elif kind == "limit":
             spec["limit"] = payload
@@ -494,23 +666,28 @@ def split_top_level(text: str, delimiter: str = ",") -> list[str]:
             current.append(char)
             escaped = True
             continue
-        if char == '"':
+        if in_quotes:
+            # Braces inside a quoted value are literal (B1).
+            if char == '"':
+                in_quotes = False
             current.append(char)
-            in_quotes = not in_quotes
             continue
-        if not in_quotes:
-            if char == "{":
-                brace_depth += 1
-            elif char == "}":
-                brace_depth = max(0, brace_depth - 1)
-            elif char == "(":
-                paren_depth += 1
-            elif char == ")":
-                paren_depth = max(0, paren_depth - 1)
-            elif char == delimiter and brace_depth == 0 and paren_depth == 0:
-                parts.append("".join(current).strip())
-                current = []
-                continue
+        if char == '"' and brace_depth == 0:
+            in_quotes = True
+            current.append(char)
+            continue
+        if char == "{":
+            brace_depth += 1
+        elif char == "}":
+            brace_depth = max(0, brace_depth - 1)
+        elif char == "(":
+            paren_depth += 1
+        elif char == ")":
+            paren_depth = max(0, paren_depth - 1)
+        elif char == delimiter and brace_depth == 0 and paren_depth == 0 and not in_quotes:
+            parts.append("".join(current).strip())
+            current = []
+            continue
         current.append(char)
 
     tail = "".join(current).strip()
@@ -519,18 +696,97 @@ def split_top_level(text: str, delimiter: str = ",") -> list[str]:
     return parts
 
 
-def parse_fields(body: str) -> dict[str, str]:
+def resolve_field_value(value: str, macros: dict[str, str]) -> str:
+    """Expand @string macros and `#` concatenation in a raw field value (B7)."""
+    value = value.strip().rstrip(",").strip()
+    if "#" not in value:
+        return _resolve_value_atom(value, macros)
+    parts = split_top_level(value, "#")
+    return "".join(_resolve_value_atom(part, macros) for part in parts)
+
+
+def _resolve_value_atom(atom: str, macros: dict[str, str]) -> str:
+    atom = atom.strip()
+    if not atom:
+        return ""
+    if len(atom) >= 2 and (
+        (atom[0] == '"' and atom[-1] == '"') or (atom[0] == "{" and atom[-1] == "}")
+    ):
+        # A quoted or braced literal: drop one wrapper layer but keep inner
+        # spacing so a concatenated `" "` stays a real separator (B7).
+        return atom[1:-1]
+    if atom.isdigit():
+        return atom
+    # A bareword: expand it if it is a known @string macro, else keep as-is.
+    return macros.get(atom.lower(), atom)
+
+
+def parse_fields(body: str, macros: dict[str, str]) -> dict[str, str]:
     fields: dict[str, str] = {}
     for chunk in split_top_level(body):
         if not chunk or "=" not in chunk:
             continue
         name, value = chunk.split("=", 1)
-        fields[name.strip().lower()] = value.strip().rstrip(",")
+        fields[name.strip().lower()] = resolve_field_value(value, macros)
     return fields
 
 
-def parse_bib_entries(content: str) -> list[dict[str, Any]]:
+def _scan_entry_span(content: str, start: int, opener: str, closer: str) -> tuple[int, bool]:
+    """Return (end_pos, closed) for the entry body starting at `start`.
+
+    `closed` is False when the delimiters never balance (truncated entry),
+    which signals the caller to record a warning and resync (B2).
+    """
+    length = len(content)
+    pos = start
+    depth = 1
+    in_quotes = False
+    escaped = False
+    while pos < length and depth > 0:
+        char = content[pos]
+        if escaped:
+            escaped = False
+            pos += 1
+            continue
+        if char == "\\":
+            escaped = True
+            pos += 1
+            continue
+        if in_quotes:
+            # Inside a quoted value braces are literal (B1).
+            if char == '"':
+                in_quotes = False
+            pos += 1
+            continue
+        if char == '"' and depth == 1:
+            in_quotes = True
+            pos += 1
+            continue
+        if char == opener:
+            depth += 1
+        elif char == closer:
+            depth -= 1
+        pos += 1
+    return pos, depth == 0
+
+
+def _line_of(content: str, index: int) -> int:
+    return content.count("\n", 0, index) + 1
+
+
+def parse_bib_entries(
+    content: str,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, str]]:
+    """Parse a .bib file into entries, warnings, and @string macros.
+
+    Returns ``(entries, warnings, macros)``. ``@string`` definitions feed macro
+    expansion (B7); ``@comment``/``@preamble`` blocks are skipped instead of
+    becoming phantom entries (B10); a truncated entry is reported in warnings and
+    the scan resyncs to the next line-leading ``@`` (B2).
+    """
     entries: list[dict[str, Any]] = []
+    warnings: list[dict[str, Any]] = []
+    macros: dict[str, str] = {}
     idx = 0
     length = len(content)
 
@@ -546,67 +802,47 @@ def parse_bib_entries(content: str) -> list[dict[str, Any]]:
         opener = type_match.group(2)
         closer = "}" if opener == "{" else ")"
         start = at
-        pos = at + type_match.end()
-        depth = 1
-        in_quotes = False
-        escaped = False
-        while pos < length and depth > 0:
-            char = content[pos]
-            if escaped:
-                escaped = False
-                pos += 1
-                continue
-            if char == "\\":
-                escaped = True
-                pos += 1
-                continue
-            if char == '"':
-                in_quotes = not in_quotes
-                pos += 1
-                continue
-            if not in_quotes:
-                if char == opener:
-                    depth += 1
-                elif char == closer:
-                    depth -= 1
-            pos += 1
+        body_start = at + type_match.end()
+        pos, closed = _scan_entry_span(content, body_start, opener, closer)
+
+        if not closed:
+            # Truncated entry: warn and resync to the next line-leading '@'.
+            warnings.append(
+                {
+                    "type": "unbalanced_entry",
+                    "start_line": _line_of(content, start),
+                    "message": (
+                        f"entry starting at line {_line_of(content, start)} is missing a "
+                        f"closing '{closer}'; skipped to the next entry"
+                    ),
+                }
+            )
+            resync = content.find("\n@", at + 1)
+            idx = resync + 1 if resync != -1 else length
+            continue
 
         raw_entry = content[start:pos].strip()
         inner = raw_entry[raw_entry.find(opener) + 1 : -1].strip()
-        comma = None
-        brace_depth = 0
-        paren_depth = 0
-        in_quotes = False
-        escaped = False
-        for offset, char in enumerate(inner):
-            if escaped:
-                escaped = False
-                continue
-            if char == "\\":
-                escaped = True
-                continue
-            if char == '"':
-                in_quotes = not in_quotes
-                continue
-            if in_quotes:
-                continue
-            if char == "{":
-                brace_depth += 1
-            elif char == "}":
-                brace_depth = max(0, brace_depth - 1)
-            elif char == "(":
-                paren_depth += 1
-            elif char == ")":
-                paren_depth = max(0, paren_depth - 1)
-            elif char == "," and brace_depth == 0 and paren_depth == 0:
-                comma = offset
-                break
+
+        # @comment / @preamble are not bibliography entries (B10).
+        if entry_type in {"comment", "preamble"}:
+            idx = pos
+            continue
+
+        # @string defines reusable macros (B7/B10): body is `name = value` pairs.
+        if entry_type == "string":
+            for name, value in parse_fields(inner, macros).items():
+                macros[name.lower()] = value
+            idx = pos
+            continue
+
+        comma = _find_key_separator(inner)
         if comma is None:
             idx = pos
             continue
         key = inner[:comma].strip()
         body = inner[comma + 1 :].strip().rstrip(",")
-        fields = parse_fields(body)
+        fields = parse_fields(body, macros)
         entries.append(
             {
                 "entry_type": entry_type,
@@ -616,23 +852,81 @@ def parse_bib_entries(content: str) -> list[dict[str, Any]]:
             }
         )
         idx = pos
-    return entries
+
+    inherit_crossref_fields(entries)
+    return entries, warnings, macros
+
+
+def _find_key_separator(inner: str) -> int | None:
+    brace_depth = 0
+    paren_depth = 0
+    in_quotes = False
+    escaped = False
+    for offset, char in enumerate(inner):
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\":
+            escaped = True
+            continue
+        if in_quotes:
+            if char == '"':
+                in_quotes = False
+            continue
+        if char == '"' and brace_depth == 0:
+            in_quotes = True
+            continue
+        if char == "{":
+            brace_depth += 1
+        elif char == "}":
+            brace_depth = max(0, brace_depth - 1)
+        elif char == "(":
+            paren_depth += 1
+        elif char == ")":
+            paren_depth = max(0, paren_depth - 1)
+        elif char == "," and brace_depth == 0 and paren_depth == 0:
+            return offset
+    return None
+
+
+def inherit_crossref_fields(entries: list[dict[str, Any]]) -> None:
+    """Let a child entry inherit missing fields from its crossref parent (B8)."""
+    by_key = {entry["key"].lower(): entry for entry in entries if entry.get("key")}
+    for entry in entries:
+        parent_key = entry["fields"].get("crossref")
+        if not parent_key:
+            continue
+        parent = by_key.get(strip_outer_wrappers(parent_key).lower())
+        if not parent:
+            continue
+        for name, value in parent["fields"].items():
+            if name == "crossref":
+                continue
+            entry["fields"].setdefault(name, value)
+        # booktitle of a proceedings parent stands in for a missing one.
+        if "booktitle" not in entry["fields"] and "title" in parent["fields"]:
+            entry["fields"].setdefault("booktitle", parent["fields"]["title"])
 
 
 def entry_year(fields: dict[str, str]) -> int | None:
-    year_text = normalize_text(fields.get("year", ""))
-    match = re.search(r"\b(19|20)\d{2}\b", year_text)
-    if match:
-        return int(match.group(0))
-    date_text = normalize_text(fields.get("date", ""))
-    match = re.search(r"\b(19|20)\d{2}\b", date_text)
-    if match:
-        return int(match.group(0))
+    for source in ("year", "date"):
+        match = YEAR_RE.search(normalize_text(fields.get(source, "")))
+        if match:
+            return int(match.group(0))
     return None
 
 
 def derive_venue(fields: dict[str, str]) -> str:
-    for candidate in ["journal", "booktitle", "publisher", "series", "school", "institution"]:
+    # journaltitle is the biblatex / Better BibLaTeX native field (B9).
+    for candidate in [
+        "journal",
+        "journaltitle",
+        "booktitle",
+        "publisher",
+        "series",
+        "school",
+        "institution",
+    ]:
         if candidate in fields:
             return normalize_text(fields[candidate])
     return ""
@@ -752,11 +1046,12 @@ def match_filters(entry: dict[str, Any], filters: dict[str, Any]) -> bool:
     if exclude_years and year in exclude_years:
         return False
 
+    author = match_key(entry.get("author", ""))
     for needle in filters.get("author_contains", []) or []:
-        if str(needle).lower() not in entry.get("author", "").lower():
+        if match_key(str(needle)) not in author:
             return False
     for needle in filters.get("author_excludes", []) or []:
-        if str(needle).lower() in entry.get("author", "").lower():
+        if match_key(str(needle)) in author:
             return False
 
     type_in = [str(item).lower() for item in (filters.get("type_in", []) or [])]
@@ -775,18 +1070,22 @@ def match_filters(entry: dict[str, Any], filters: dict[str, Any]) -> bool:
 
     field_contains = filters.get("field_contains", {}) or {}
     for field_name, needles in field_contains.items():
-        haystack = entry["fields"].get(field_name.lower(), entry.get(field_name.lower(), ""))
+        haystack = match_key(
+            entry["fields"].get(field_name.lower(), entry.get(field_name.lower(), "") or "")
+        )
         if not haystack:
             return False
         for needle in needles:
-            if str(needle).lower() not in haystack.lower():
+            if match_key(str(needle)) not in haystack:
                 return False
 
     field_excludes = filters.get("field_excludes", {}) or {}
     for field_name, needles in field_excludes.items():
-        haystack = entry["fields"].get(field_name.lower(), entry.get(field_name.lower(), ""))
+        haystack = match_key(
+            entry["fields"].get(field_name.lower(), entry.get(field_name.lower(), "") or "")
+        )
         for needle in needles:
-            if haystack and str(needle).lower() in haystack.lower():
+            if haystack and match_key(str(needle)) in haystack:
                 return False
 
     return True
@@ -796,7 +1095,7 @@ def score_entry(entry: dict[str, Any], query: str) -> float:
     query = normalize_text(query)
     if not query:
         return 0.0
-    query_lower = query.lower()
+    query_lower = match_key(query)
     tokens = tokenize(query)
     if not tokens:
         return 0.0
@@ -806,7 +1105,7 @@ def score_entry(entry: dict[str, Any], query: str) -> float:
 
     for field, weight in WEIGHTED_FIELDS:
         field_text = entry.get(field, "") if field != "raw_bib" else entry.get("raw_bib", "")
-        normalized = normalize_text(field_text).lower()
+        normalized = match_key(normalize_text(field_text))
         if not normalized:
             continue
         if query_lower in normalized:
@@ -819,13 +1118,14 @@ def score_entry(entry: dict[str, Any], query: str) -> float:
             elif len(token) >= 4 and token in normalized:
                 score += weight * 0.6
 
-    title = entry.get("title", "").lower()
-    shorttitle = entry.get("shorttitle", "").lower()
+    title = match_key(entry.get("title", ""))
+    shorttitle = match_key(entry.get("shorttitle", ""))
     if title.startswith(query_lower) or shorttitle.startswith(query_lower):
         # Strong bonus when the query matches the beginning of the title
         score += 8.0
-    if entry.get("year"):
-        # Mild recency bias: newer papers score slightly higher (e.g. 2024 -> +0.72)
+    if score > 0 and entry.get("year"):
+        # Mild recency tie-break, applied only to entries that already match the
+        # query text so an unrelated query cannot surface every dated entry (B3).
         score += max(0.0, (entry["year"] - 2000) * 0.03)
     return round(score, 4)
 
@@ -970,7 +1270,35 @@ def sort_results(
     )
 
 
-def run_search(entries: Sequence[dict[str, Any]], spec: dict[str, Any]) -> dict[str, Any]:
+def _field_filter_warnings(
+    entries: Sequence[dict[str, Any]], filters: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Warn when a field filter names a field absent from every entry (B12)."""
+    present: set[str] = set(KNOWN_ENTRY_FIELDS)
+    for entry in entries:
+        present.update(entry["fields"].keys())
+    warnings: list[dict[str, Any]] = []
+    for group in ("field_contains", "field_excludes"):
+        for field_name in filters.get(group) or {}:
+            if field_name.lower() not in present:
+                warnings.append(
+                    {
+                        "type": "unknown_field_filter",
+                        "field": field_name,
+                        "message": (
+                            f"filter field '{field_name}' is not present in any entry; "
+                            "check for a typo"
+                        ),
+                    }
+                )
+    return warnings
+
+
+def run_search(
+    entries: Sequence[dict[str, Any]],
+    spec: dict[str, Any],
+    extra_meta: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     query = spec.get("query", "") or ""
     filters = spec.get("filters", {}) or {}
     sort_mode = (spec.get("sort") or "relevance").lower()
@@ -985,19 +1313,52 @@ def run_search(entries: Sequence[dict[str, Any]], spec: dict[str, Any]) -> dict[
     ordered = sort_results(scored, sort_mode)
     selected = ordered[:limit]
 
+    warnings = list((extra_meta or {}).get("parse_warnings", []))
+    warnings.extend(_field_filter_warnings(entries, filters))
+
+    meta: dict[str, Any] = {
+        "query": query,
+        "sort": sort_mode,
+        "limit": limit,
+        "total_entries": len(entries),
+        "matched_entries": len(filtered),
+        "returned_entries": len(selected),
+        "applied_filters": filters,
+        "parse_warnings": warnings,
+        "recency": _recency_block(selected, spec.get("recent_window", 3)),
+    }
+    if extra_meta and extra_meta.get("encoding_fallback"):
+        meta["encoding_fallback"] = extra_meta["encoding_fallback"]
+
     return {
-        "meta": {
-            "query": query,
-            "sort": sort_mode,
-            "limit": limit,
-            "total_entries": len(entries),
-            "matched_entries": len(filtered),
-            "returned_entries": len(selected),
-            "applied_filters": filters,
-            "recency": _recency_block(selected, spec.get("recent_window", 3)),
-        },
+        "meta": meta,
         "results": [format_result(entry, spec, score) for score, entry in selected],
     }
+
+
+def read_bib_text(path: Path) -> tuple[str, str | None]:
+    """Read a .bib file, falling back to latin-1 for legacy encodings (B4)."""
+    raw = path.read_bytes()
+    try:
+        return raw.decode("utf-8"), None
+    except UnicodeDecodeError:
+        return raw.decode("latin-1"), "latin-1"
+
+
+def write_json(payload: dict[str, Any], stream: Any) -> None:
+    """Emit JSON as UTF-8 bytes so output is valid regardless of console locale.
+
+    Writing through ``stream.buffer`` bypasses a legacy code page (e.g. cp936)
+    that would otherwise corrupt or crash on non-ASCII characters (B5). Falls
+    back to a plain text write for in-memory streams used by tests.
+    """
+    data = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    buffer = getattr(stream, "buffer", None)
+    if buffer is not None:
+        buffer.write(data.encode("utf-8"))
+        buffer.flush()
+    else:
+        stream.write(data)
 
 
 def main() -> None:
@@ -1005,16 +1366,21 @@ def main() -> None:
     try:
         spec = load_spec(args)
     except (json.JSONDecodeError, SpecError, ValueError) as exc:
-        print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=2), file=sys.stderr)
+        write_json({"error": str(exc)}, sys.stderr)
         raise SystemExit(2) from exc
 
     bib_path = Path(args.bib)
-    content = bib_path.read_text(encoding="utf-8")
-    raw_entries = parse_bib_entries(content)
+    try:
+        content, encoding_fallback = read_bib_text(bib_path)
+    except (FileNotFoundError, OSError) as exc:
+        write_json({"error": f"could not read .bib file: {exc}"}, sys.stderr)
+        raise SystemExit(2) from exc
+
+    raw_entries, parse_warnings, _macros = parse_bib_entries(content)
     entries = [build_entry(item) for item in raw_entries]
-    output = run_search(entries, spec)
-    json.dump(output, sys.stdout, ensure_ascii=False, indent=2)
-    sys.stdout.write("\n")
+    extra_meta = {"parse_warnings": parse_warnings, "encoding_fallback": encoding_fallback}
+    output = run_search(entries, spec, extra_meta)
+    write_json(output, sys.stdout)
 
 
 if __name__ == "__main__":
