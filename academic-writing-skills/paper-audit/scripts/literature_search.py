@@ -211,7 +211,6 @@ class TavilyClient:
 
         payload = json.dumps(
             {
-                "api_key": self.api_key,
                 "query": f"academic paper: {query}",
                 "search_depth": "advanced",
                 "include_answer": False,
@@ -220,14 +219,29 @@ class TavilyClient:
         ).encode("utf-8")
 
         try:
+            # Tavily authenticates via an Authorization: Bearer header; the
+            # legacy payload `api_key` field is deprecated.
             req = urllib.request.Request(
                 self.BASE_URL,
                 data=payload,
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}",
+                },
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=20) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            # Distinguish an auth/key problem from a genuine empty result so the
+            # user knows whether to fix their key vs. accept "no matches".
+            if exc.code in (401, 403):
+                print(
+                    "[literature] Tavily authentication failed "
+                    "(check TAVILY_API_KEY); skipping Tavily results.",
+                    file=sys.stderr,
+                )
+            return []
         except Exception:
             return []
 

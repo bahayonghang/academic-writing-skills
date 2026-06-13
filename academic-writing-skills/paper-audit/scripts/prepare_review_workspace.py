@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -14,6 +15,16 @@ from checkpoint import init_checkpoint
 from detect_language import detect_language
 from parsers import extract_title, get_parser
 from paths import WorkspaceLayout
+
+# Defensive source reader (utf-8 -> latin-1 -> replace); identical helper lives
+# in tex_loader / typ_loader and is format-independent.
+try:
+    from tex_loader import read_text_robust
+except ImportError:  # pragma: no cover - loader always vendored alongside
+    try:
+        from typ_loader import read_text_robust
+    except ImportError:
+        read_text_robust = None  # type: ignore[assignment]
 
 
 def slugify(value: str) -> str:
@@ -213,6 +224,10 @@ def prepare_workspace(
     parser = get_parser(str(source))
     if fmt == ".pdf":
         content = parser.extract_text_from_file(str(source))
+    elif read_text_robust is not None:
+        content, _warning = read_text_robust(source)
+        if _warning:
+            print(f"[prepare-workspace] {_warning}", file=sys.stderr)
     else:
         content = source.read_text(encoding="utf-8")
 

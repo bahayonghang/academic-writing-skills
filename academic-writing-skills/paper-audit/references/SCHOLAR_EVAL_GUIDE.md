@@ -1,16 +1,25 @@
-# ScholarEval 8-Dimension Scoring Guide
+# ScholarEval 9-Dimension Scoring Guide
 
-Based on ScholarEval (arXiv:2510.16234), adapted for the Paper Audit skill.
+`ScholarEval` is this skill's internal name for a reviewer-style scoring rubric.
+The dimensions below follow the criteria used in OpenReview / NeurIPS / ICLR
+reviewer forms — they are **not** derived from arXiv:2510.16234, whose
+"ScholarEval" framework scores _research ideas_ on two dimensions only
+(soundness + contribution). Only **Literature Grounding** is inspired by that
+paper's literature-grounding idea. Do not cite arXiv:2510.16234 as the source
+of the full rubric.
 
 ## Overview
 
-ScholarEval evaluates academic papers across 8 dimensions using a hybrid
-script + LLM approach. Script-based dimensions use automated issue detection;
-LLM-based dimensions require reading the full paper.
+The rubric scores academic papers across 8 dimensions plus a computed overall
+(9 total) using a hybrid script + LLM approach. Script-based dimensions use
+automated issue detection; LLM-based dimensions require reading the full paper.
+
+Dimension weights are defined once in `scripts/scholar_eval.py`
+(`SCHOLAR_EVAL_DIMENSIONS`); the percentages below mirror that source.
 
 ## Dimensions
 
-### 1. Soundness (20%, Script)
+### 1. Soundness (18%, Script)
 
 **What it measures**: Technical correctness, logical validity, well-supported claims.
 
@@ -25,7 +34,7 @@ LLM-based dimensions require reading the full paper.
 
 **Script source**: Deductions from LOGIC module issues.
 
-### 2. Clarity (15%, Script)
+### 2. Clarity (13%, Script)
 
 **What it measures**: Writing quality, readability, organization.
 
@@ -40,7 +49,7 @@ LLM-based dimensions require reading the full paper.
 
 **Script source**: Deductions from GRAMMAR, SENTENCES, FORMAT, DEAI modules.
 
-### 3. Presentation (10%, Script)
+### 3. Presentation (8%, Script)
 
 **What it measures**: Visual quality, figure/table clarity, reference integrity.
 
@@ -55,12 +64,14 @@ LLM-based dimensions require reading the full paper.
 
 **Script source**: Deductions from FIGURES, VISUAL, REFERENCES modules.
 
-### 4. Novelty (15%, LLM)
+### 4. Novelty (13%, LLM)
 
 **What it measures**: Originality of contributions, distinction from prior work.
 
 **LLM evaluation prompt** (used in SKILL.md):
+
 > Evaluate the novelty of this paper. Consider:
+>
 > - How different is the approach from existing methods?
 > - Are the contributions genuinely new or incremental?
 > - Does the paper clearly articulate what is novel?
@@ -74,7 +85,7 @@ LLM-based dimensions require reading the full paper.
 | 3-4 | Mostly incremental, limited differentiation |
 | 1-2 | No novelty, rehashes known approaches |
 
-### 5. Significance (15%, LLM)
+### 5. Significance (13%, LLM)
 
 **What it measures**: Potential impact on the field, community benefit.
 
@@ -87,7 +98,7 @@ LLM-based dimensions require reading the full paper.
 | 3-4 | Limited impact, niche application |
 | 1-2 | Negligible impact |
 
-### 6. Reproducibility (10%, Mixed)
+### 6. Reproducibility (8%, Mixed)
 
 **What it measures**: Can others reproduce the results?
 
@@ -142,24 +153,24 @@ Weighted average of all available dimension scores, normalized for missing value
 
 ## Publication Readiness Scale
 
-| Score | Label | Meaning |
-|-------|-------|---------|
-| 9.0+ | Strong Accept | Ready for top venue submission |
-| 8.0-8.9 | Accept | Publication ready with confidence |
-| 7.0-7.9 | Minor Revisions | Ready after addressing minor issues |
-| 6.0-6.9 | Major Revisions | Significant improvements needed |
-| 5.0-5.9 | Significant Rework | Substantial revision required |
-| <5.0 | Not Ready | Not suitable for submission |
+| Score   | Label              | Meaning                             |
+| ------- | ------------------ | ----------------------------------- |
+| 9.0+    | Strong Accept      | Ready for top venue submission      |
+| 8.0-8.9 | Accept             | Publication ready with confidence   |
+| 7.0-7.9 | Minor Revisions    | Ready after addressing minor issues |
+| 6.0-6.9 | Major Revisions    | Significant improvements needed     |
+| 5.0-5.9 | Significant Rework | Substantial revision required       |
+| <5.0    | Not Ready          | Not suitable for submission         |
 
 ## Deduction Rules (Script Dimensions)
 
 Issues detected by automated checks reduce scores from a base of 10:
 
 | Severity | Deduction |
-|----------|-----------|
-| Critical | -2.5 |
-| Major | -1.25 |
-| Minor | -0.5 |
+| -------- | --------- |
+| Critical | -2.5      |
+| Major    | -1.25     |
+| Minor    | -0.5      |
 
 Minimum score is 1.0 (floor).
 
@@ -191,8 +202,9 @@ When using `--llm-json`, provide a file with this structure:
 ## Relationship to NeurIPS 4-Dimension Scoring
 
 ScholarEval is **complementary** to the existing 4-dimension NeurIPS scoring:
+
 - NeurIPS: Quality, Clarity, Significance, Originality (1-6 scale)
-- ScholarEval: 8 dimensions (1-10 scale)
+- ScholarEval: 8 scoring dimensions + computed overall (1-10 scale)
 
 Both systems run independently and appear in the report side by side.
 Enable ScholarEval with the `--scholar-eval` flag.

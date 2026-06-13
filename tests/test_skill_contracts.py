@@ -437,7 +437,15 @@ def test_paper_audit_skill_argument_hint_matches_cli_contract() -> None:
     skill_root = SKILLS_ROOT / "paper-audit"
     skill_md = (skill_root / "SKILL.md").read_text(encoding="utf-8")
 
-    assert "# Paper Audit Skill v5.1" in skill_md
+    # The H1 version must track the frontmatter version (major.minor) rather
+    # than a hardcoded literal, so the contract never silently locks a stale
+    # version against the frontmatter single source.
+    version_match = re.search(r'^\s*version:\s*"?(\d+)\.(\d+)\.\d+"?', skill_md, re.MULTILINE)
+    assert version_match, "paper-audit SKILL.md frontmatter must declare a version"
+    major, minor = version_match.group(1), version_match.group(2)
+    assert f"# Paper Audit Skill v{major}.{minor}" in skill_md, (
+        f"SKILL.md H1 must read 'Paper Audit Skill v{major}.{minor}' to match frontmatter"
+    )
     assert "--report-style deep-review|peer-review" in skill_md
     assert "--focus full|editor|theory|literature|methodology|logic" in skill_md
     assert "--format md|json" in skill_md

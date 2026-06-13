@@ -498,7 +498,7 @@ class TestScoringModel:
         assert prediction.confidence_interval[0] <= prediction.predicted_score
         assert prediction.confidence_interval[1] >= prediction.predicted_score
 
-    def test_regression_mode_with_coefficients(self) -> None:
+    def test_weighted_plus_mode_with_coefficients(self) -> None:
         from scoring_model import RegressionScorer
 
         scorer = RegressionScorer(
@@ -532,7 +532,7 @@ class TestScoringModel:
             "overall": 7.8,
         }
         prediction = scorer.predict(scores)
-        assert prediction.model_type == "regression"
+        assert prediction.model_type == "weighted_plus"
         assert 1.0 <= prediction.predicted_score <= 10.0
 
     def test_load_model_from_json(self, tmp_path: Path) -> None:

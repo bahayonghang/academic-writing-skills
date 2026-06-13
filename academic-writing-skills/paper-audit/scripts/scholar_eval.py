@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """
-ScholarEval 8-Dimension Assessment Framework.
+ScholarEval 9-Dimension Assessment Rubric (8 scoring dimensions + 1 computed overall).
 
-Based on ScholarEval (arXiv:2510.16234), provides an 8-dimension evaluation
-for academic papers using a script + LLM two-stage approach.
+`ScholarEval` is this skill's internal name for a reviewer-style scoring rubric.
+Its dimensions (soundness, clarity, presentation, novelty, significance,
+reproducibility, ethics, overall) follow the criteria used in OpenReview /
+NeurIPS / ICLR reviewer forms. They are NOT taken from arXiv:2510.16234, whose
+"ScholarEval" framework evaluates *research ideas* on two dimensions only
+(soundness + contribution). Only the `literature_grounding` dimension is
+inspired by that paper's literature-grounding idea; do not attribute the full
+rubric to it.
+
+Uses a script + LLM two-stage approach:
 
 Stage 1 (Script): Computes scores for Soundness, Clarity, Presentation,
     and partial Reproducibility from audit issue data.
@@ -244,7 +252,7 @@ def build_result(
     overall = merged.get("overall")
     label = get_readiness_label(overall)
 
-    # Optionally use regression model for overall score
+    # Optionally use the weighted-plus scoring model for the overall score
     if use_regression:
         try:
             from scoring_model import RegressionScorer
@@ -329,7 +337,7 @@ def render_scholar_eval_report(result: ScholarEvalResult) -> str:
 def main() -> int:
     """CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="ScholarEval 8-Dimension Assessment Framework",
+        description="ScholarEval 9-Dimension Assessment Rubric (OpenReview/NeurIPS-style)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

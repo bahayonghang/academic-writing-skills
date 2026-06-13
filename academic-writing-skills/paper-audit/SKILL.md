@@ -14,7 +14,7 @@ argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
-# Paper Audit Skill v5.1
+# Paper Audit Skill v5.2
 
 `paper-audit` is **deep-review-first**. Its core job is to behave like a
 serious reviewer: find technical, methodological, claim-level, and
@@ -77,6 +77,14 @@ form.
 - paragraph-level related-work rewriting
 - cosmetic grammar cleanup without an audit goal
 - cover letter generation / optimization / claim alignment — route to `cover-letter`
+
+## Requirements
+
+- Auditing `.tex` / `.typ` sources runs on the Python standard library — no
+  extra packages required.
+- **PDF mode needs `pip install pymupdf`**; the `enhanced` PDF extraction path
+  additionally needs `pymupdf4llm`. Both are optional and imported lazily, so a
+  `.pdf` input without them fails with a clear install hint instead of a crash.
 
 ## Critical Rules
 

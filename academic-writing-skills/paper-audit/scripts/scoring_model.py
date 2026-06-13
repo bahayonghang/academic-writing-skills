@@ -1,9 +1,12 @@
 """
-Linear Regression Scoring Model for ScholarEval.
+Weighted scoring model for ScholarEval (weighted average + interaction/penalty terms).
 
-Provides a trained/trainable regression model for predicting overall paper
-quality from 9 dimension scores + interaction features.
-Falls back to weighted average when untrained.
+Combines the 9 dimension scores with a few hand-set interaction and penalty
+terms to produce an overall paper-quality estimate. The coefficients in
+``models/scoring_model.json`` are hand-tuned (they mirror the dimension weights
+plus small interaction/penalty adjustments) — this is NOT a statistically
+trained regression model, and it does not require numpy or scikit-learn.
+Falls back to a plain weighted average when no coefficients are supplied.
 """
 
 from __future__ import annotations
@@ -18,14 +21,19 @@ class ScoringPrediction:
     """Prediction result from the scoring model."""
 
     predicted_score: float
-    confidence_interval: tuple[float, float]  # 95% CI
+    confidence_interval: tuple[float, float]  # heuristic spread, not a statistical CI
     feature_contributions: dict[str, float] = field(default_factory=dict)
     decision: str = ""  # readiness label
-    model_type: str = ""  # "regression" or "weighted_average"
+    model_type: str = ""  # "weighted_plus" or "weighted_average"
 
 
 class RegressionScorer:
-    """Ridge regression scorer for paper quality prediction."""
+    """Weighted scorer for paper quality (weighted average + interaction/penalty terms).
+
+    The class name is retained for backward compatibility. Despite the name it
+    runs no statistical regression: the coefficients are hand-set, not learned
+    from data.
+    """
 
     FEATURE_NAMES: list[str] = [
         # 9 base dimensions
@@ -54,7 +62,7 @@ class RegressionScorer:
     ):
         self.coefficients: dict[str, float] = coefficients or {}
         self.intercept = intercept
-        self._is_trained = bool(coefficients)
+        self._has_coefficients = bool(coefficients)
 
     def predict(
         self,
@@ -63,9 +71,9 @@ class RegressionScorer:
     ) -> ScoringPrediction:
         """Predict overall score from dimension scores.
 
-        Falls back to weighted average if untrained.
+        Falls back to a plain weighted average when no coefficients are supplied.
         """
-        if not self._is_trained:
+        if not self._has_coefficients:
             return self._fallback_predict(dimension_scores)
 
         features = self._extract_features(dimension_scores, critical_count)
@@ -74,7 +82,8 @@ class RegressionScorer:
         )
         score = max(1.0, min(10.0, score))
 
-        # Simple CI estimate based on model uncertainty
+        # Heuristic spread around the point estimate (fixed width — not a
+        # statistical confidence interval).
         ci_width = 0.5
         ci = (max(1.0, score - ci_width), min(10.0, score + ci_width))
 
@@ -90,7 +99,7 @@ class RegressionScorer:
             confidence_interval=(round(ci[0], 1), round(ci[1], 1)),
             feature_contributions=contributions,
             decision=self._score_to_decision(score),
-            model_type="regression",
+            model_type="weighted_plus",
         )
 
     def _fallback_predict(self, dimension_scores: dict[str, float | None]) -> ScoringPrediction:
@@ -177,11 +186,13 @@ class RegressionScorer:
 
     @classmethod
     def train(cls, data_path: str | Path) -> RegressionScorer:
-        """Train from labeled data (CSV with dimension scores + overall label).
+        """Not implemented — this model uses hand-set coefficients, not training.
 
-        Requires numpy and scikit-learn.
+        A real fit would need labeled data (e.g. OpenReview/PeerRead) and a
+        statistics library; that is out of scope here. Provide coefficients
+        directly or use the default model instead.
         """
         raise NotImplementedError(
-            "Training requires labeled data (OpenReview/PeerRead). "
-            "Use default model or provide pre-trained coefficients."
+            "This scorer uses hand-set coefficients and has no training routine. "
+            "Provide coefficients directly or use the default model."
         )

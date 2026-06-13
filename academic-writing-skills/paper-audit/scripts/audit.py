@@ -32,6 +32,33 @@ from report_generator import (
 )
 from verify_quotes import verify_quotes
 
+# Defensive source reader (utf-8 -> latin-1 -> replace). tex_loader and
+# typ_loader expose an identical, format-independent ``read_text_robust``; one
+# import covers both .tex and .typ ingestion.
+try:
+    from tex_loader import read_text_robust
+except ImportError:  # pragma: no cover - loader always vendored alongside
+    try:
+        from typ_loader import read_text_robust
+    except ImportError:
+        read_text_robust = None  # type: ignore[assignment]
+
+
+def _read_source(path: Path) -> str:
+    """Read a user-supplied .tex/.typ source defensively.
+
+    Non-UTF-8 manuscripts get decoded via the loader's fallback chain with a
+    loud stderr warning instead of crashing the audit. Workspace JSON/artifact
+    reads stay on strict utf-8 (they are skill-authored and utf-8 safe).
+    """
+    if read_text_robust is not None:
+        text, warning = read_text_robust(path)
+        if warning:
+            print(f"[audit] {warning}", file=sys.stderr)
+        return text
+    return path.read_text(encoding="utf-8")
+
+
 TOP_LEVEL_DEEP_REVIEW_ARTIFACTS: tuple[str, ...] = (
     "artifacts/meta/metadata.json",
     "artifacts/meta/phase0_context.md",
@@ -2174,7 +2201,7 @@ def run_polish_precheck(
     if fmt == ".pdf":
         raise ValueError("Polish mode requires .tex or .typ source (not PDF).")
 
-    content = path.read_text(encoding="utf-8")
+    content = _read_source(path)
     parser = get_parser(file_path)
 
     if lang is None:
@@ -2309,7 +2336,8 @@ def run_audit(
         literature_search: Enable external literature search and comparison.
         tavily_key: API key for Tavily search (or env TAVILY_API_KEY).
         s2_key: API key for Semantic Scholar (or env S2_API_KEY).
-        regression: Use regression scoring model instead of weighted average.
+        regression: Use the weighted-plus scoring model (weighted average +
+            interaction/penalty adjustments) instead of a plain weighted average.
         overwrite_workspace: Replace an existing auto-created deep-review workspace.
 
     Returns:
@@ -2357,10 +2385,7 @@ def run_audit(
     # Step 1: Extract text
     parser = get_parser(str(path), pdf_mode=pdf_mode)
 
-    if fmt == ".pdf":
-        content = parser.extract_text_from_file(str(path))
-    else:
-        content = path.read_text(encoding="utf-8")
+    content = parser.extract_text_from_file(str(path)) if fmt == ".pdf" else _read_source(path)
 
     # Step 2: Detect language
     if lang is None:
@@ -3031,7 +3056,7 @@ Examples:
     parser.add_argument(
         "--scholar-eval",
         action="store_true",
-        help="Enable ScholarEval 8-dimension assessment",
+        help="Enable ScholarEval 9-dimension assessment (8 scoring + computed overall)",
     )
     parser.add_argument(
         "--literature-search",
@@ -3051,7 +3076,7 @@ Examples:
     parser.add_argument(
         "--regression",
         action="store_true",
-        help="Use regression scoring model instead of weighted average for ScholarEval",
+        help="Use the weighted-plus scoring model (weighted average + interaction/penalty adjustments) for ScholarEval",
     )
     parser.add_argument(
         "--previous-report",
