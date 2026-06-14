@@ -1,6 +1,6 @@
 # Title Module Reference
 
-Purpose: Optimize Chinese thesis titles and chapter titles per GB/T 7713.1-2006 standards.
+Purpose: Optimize Chinese thesis titles and chapter/section title architecture per GB/T 7713.1-2006 standards and thesis-structure conventions.
 
 ## Quality Standards
 
@@ -20,6 +20,24 @@ Purpose: Optimize Chinese thesis titles and chapter titles per GB/T 7713.1-2006 
 | Domain-oriented | 工业系统故障检测的图神经网络方法 | Application-driven |
 | Theory + Application | 时间序列预测的注意力机制及其在工业控制中的应用 | Dual focus |
 
+## Chapter/Section Title Architecture
+
+Use `--headings` when the user asks about 大标题、小标题、章标题、小节标题、目录标题、每章小节太多，or whether titles "扣题".
+
+The heading architecture check reports:
+
+- body chapter titles that do not expose object + problem/task + method/path;
+- body chapters with more than 5 direct `\section` headings;
+- direct section titles that are too generic or do not anchor to the parent chapter.
+
+Conventional chapters such as 绪论、相关工作、文献综述、总结与展望、参考文献、致谢 and 附录 are exempt from the object-problem-method title rule.
+
+Example command:
+
+```bash
+uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings
+```
+
 ## Words to Remove
 
 "关于...的研究", "...的探索", "新型", "新颖的", "改进的", "优化的", "基于...的" (can be simplified)
@@ -36,4 +54,4 @@ Purpose: Optimize Chinese thesis titles and chapter titles per GB/T 7713.1-2006 
 - English titles use Title Case
 - Avoid word-for-word translation
 
-> Full details: see [`../writing/title-optimization.md`](../writing/title-optimization.md)
+> Full details: see [`../writing/title-optimization.md`](../writing/title-optimization.md) and [`../writing/structure-guide.md`](../writing/structure-guide.md)

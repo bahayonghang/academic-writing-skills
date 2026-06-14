@@ -1,9 +1,6 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；英文论文用 latex-paper-en，审稿总评用 paper-audit。
-when_to_use: >-
-  触发于“帮我编译论文”“检查国标格式”“毕业论文/学位论文/硕士论文/博士论文”“看看绪论逻辑”
-  “文献综述太像罗列”“研究空白没推出来”“方法章节动机设计优势”“摘要结构”“三线表”等中文 LaTeX 学位论文请求。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、章标题/小节标题架构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“大标题/小标题不对”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
 metadata:
   category: academic-writing
   tags:
@@ -23,7 +20,7 @@ metadata:
     ]
   version: "5.2.0"
   last_updated: "2026-06-12"
-argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
+  argument_hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
 
@@ -35,7 +32,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - 编译并诊断 XeLaTeX / LuaLaTeX / latexmk 构建问题。
 - 检查论文格式、GB/T 7714 相关要求、章节结构、模板类型和术语一致性。
-- 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、实验章节写法、标题表达与 AI 痕迹。
+- 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、章标题/小节标题架构、实验章节写法、标题表达与 AI 痕迹。
 - 针对文献综述提供“共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点”的重写蓝图。
 - 针对绪论、方法章节、实验讨论、摘要/创新点/结论对齐提供学位论文主线式改写建议。
 - 在不破坏引用、标签和数学环境的前提下给出可落地的中文论文修改建议。
@@ -48,7 +45,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 学位论文格式、国标或学校模板检查
 - 章节结构梳理或模板识别
 - 术语、缩略语、命名一致性检查
-- 逻辑连贯性、文献综述质量、标题后导语完整性、跨章节闭合检查
+- 逻辑连贯性、文献综述质量、标题后导语完整性、章标题/小节标题架构、跨章节闭合检查
 - 绪论漏斗、章节主线、方法章节动机/设计/优势、实验讨论分层、总结与展望闭合
 - 文献综述重写、比较分析不足、研究空白推导薄弱
 - 标题优化、学术表达或去 AI 化检查
@@ -82,7 +79,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`            | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                      | `references/modules/template.md`                                                                           |
 | `bibliography` | GB/T 7714 or BibTeX validation                                                                                                  | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`   | `references/modules/bibliography.md`                                                                       |
-| `title`        | Optimize Chinese thesis titles and chapter titles                                                                               | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check`               | `references/modules/title.md`                                                                              |
+| `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                           | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`    | `references/modules/title.md`                                                                              |
 | `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                               | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`    | `references/modules/deai.md`                                                                               |
 | `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                        | `references/modules/logic.md`                                                                              |
 | `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出                                                                          | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related` | `references/modules/literature.md`                                                                         |
@@ -100,6 +97,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `logic` 默认全文档运行（含导语、主线、章引言、漏斗、三方对齐与 C3 绪论-结论闭合）；`--section` 只聚焦单章（接受英文键或中文名，如 `--section 绪论`），此时仅运行与该章相关的检查（如 related 的 A1/A3、introduction 的漏斗）。`--cross-section` 已并入默认行为，仅作兼容保留。
 - `deai` 全文档分析用 `--analyze`（覆盖所有章节，含未命中关键词的正文章）；`--section` 针对单章快速检查，二者互补，不要只跑 `--section` 就下全文结论。
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。
+- 涉及“大标题/小标题/章标题/小节标题/目录标题不对”“小节数太多”“每章最多 5 节”“标题没有体现对象、问题、方法”“小标题没有扣住上级标题”时，默认串行执行 `structure` -> `title`。`title` 使用 `--headings` 输出章标题对象-问题-方法、直属小节数量和小节扣合诊断；只有用户同时问导语、衔接或主线时才追加 `logic`。
 - 涉及“每章引言/章首怎么写”“承上启下”“第三章第四章引言”“章引言太短/没承接上一章/没预告本章安排”时，默认走 `logic`：它会对正文各章（绪论除外）做承上启下两段式章引言专项检查，并补读 `references/writing/thesis-writing-guide.md` 的“正文章引言”一节给出改写方案。
 - 涉及“改写绪论/方法章节/实验讨论/总结与展望”“章节主线怎么写”“摘要、创新点、结论如何闭合”时，仍优先走现有模块，并补读 `references/writing/thesis-writing-guide.md`；不要新增英文会议论文式 `section-writing` 模块。
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
@@ -152,7 +150,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - `references/latex/compilation.md`: compilation strategy and toolchain diagnosis（顶层概述；模块执行时读 `references/modules/compile.md`）.
 - `references/citations/gb-standard.md`: GB/T 7714 and bibliography-related checks.
-- `references/writing/structure-guide.md`: thesis structure expectations and chapter mapping.
+- `references/writing/structure-guide.md`: thesis structure expectations, direct-section budget, chapter mapping, and heading lead-ins.
 - `references/writing/logic-coherence.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
 - `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
@@ -169,5 +167,6 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - “检查 related work 的逻辑链条和研究空白推导，但不要动任何引用和公式。”
 - “把文献综述从作者年份罗列改成按主题对话式写法，但不要新增任何引用。”
 - “帮我检查每一章、每一节、四级标题后有没有先写导语，不要只看格式。”
+- “当前论文的大章节小标题数目太多，请限制到最多 5 节；同时检查大标题是否体现对象、问题、方法，小标题是否和上面的大标题扣上。”
 - “帮我把绪论改成背景、瓶颈、科学问题、本文贡献逐步收束的写作方案。”
 - “检查方法章节是不是每个模块都有动机、设计和技术优势，并和实验验证闭合。”

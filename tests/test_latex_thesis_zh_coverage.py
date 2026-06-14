@@ -92,7 +92,7 @@ SMOKE_COMMANDS = [
     ("check_consistency.py", ["main.tex", "--terms"], {0}, "Term consistency"),
     ("detect_template.py", ["main.tex"], {0}, "thuthesis"),
     ("verify_bib.py", ["references.bib", "--standard", "gb7714"], {1}, "Missing required field"),
-    ("optimize_title.py", ["main.tex", "--check"], {0}, "标题优化报告"),
+    ("optimize_title.py", ["main.tex", "--check", "--headings"], {0}, "TITLE-ARCH"),
     ("deai_check.py", ["main.tex", "--section", "introduction"], {0}, "章节: introduction"),
     ("analyze_logic.py", ["main.tex"], {0}, "缺少导语段落"),
     ("analyze_literature.py", ["main.tex", "--section", "related"], {0}, "文献综述"),

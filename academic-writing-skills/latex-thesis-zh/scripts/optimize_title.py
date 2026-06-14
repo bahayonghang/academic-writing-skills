@@ -10,17 +10,17 @@ import argparse
 import re
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 # Import parsers from the same directory
 try:
-    from parsers import extract_abstract, extract_title
+    from parsers import extract_abstract, extract_title, get_parser
     from tex_loader import assemble
 except ImportError:
     import os
 
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from parsers import extract_abstract, extract_title
+    from parsers import extract_abstract, extract_title, get_parser
     from tex_loader import assemble
 
 
@@ -70,6 +70,32 @@ TITLE_TEMPLATES = {
     "domain_oriented": "面向{domain}的{method}{problem}方法",
 }
 
+CONVENTIONAL_CHAPTER_RE = re.compile(
+    r"^(?:摘要|绪论|引言|相关工作|文献综述|创新点|主要贡献|结论|总结与展望|"
+    r"参考文献|致谢|附录|攻读学位期间.*)$"
+)
+
+OBJECT_RE = re.compile(
+    r"(?:过程|系统|场景|数据|序列|指标|变量|工况|设备|对象|工业|制造|"
+    r"水泥|粉磨|煅烧|比表面积|单位电耗|故障|异常路径|图像|文本)"
+)
+PROBLEM_RE = re.compile(
+    r"(?:预测|检测|诊断|监测|评估|优化|控制|调控|识别|辨识|分类|分割|"
+    r"软测量|决策|故障|异常|根因|质量|电耗)"
+)
+METHOD_RE = re.compile(
+    r"(?:基于|方法|模型|算法|框架|系统|策略|机制|网络|学习|融合|自适应|"
+    r"多步|单步|双通道|因果|图神经|Transformer|LSTM|CVAE|SFA|CIE|MOCS)"
+)
+
+SECTION_ROLE_RE = re.compile(
+    r"^(?:引言|本章小结|小结)$|"
+    r"(?:基础理论|理论基础|问题描述|问题定义|模型|算法|方法|框架|实验|案例|"
+    r"应用|结果|分析|讨论|验证|评价指标|流程|建模|设计|优化|预测|监测|"
+    r"诊断|调控|决策)"
+)
+GENERIC_ANCHOR_TERMS = {"研究", "方法", "模型", "算法", "系统", "章节", "本章"}
+
 
 def extract_keywords_from_abstract(abstract: str) -> dict[str, list[str]]:
     """从摘要中提取关键词"""
@@ -116,7 +142,7 @@ def count_chinese_chars(text: str) -> int:
     return len(re.findall(r"[\u4e00-\u9fff]", text))
 
 
-def score_title(title: str) -> dict[str, any]:
+def score_title(title: str) -> dict[str, Any]:
     """根据最佳实践评分标题"""
     scores = {}
     issues = []
@@ -188,6 +214,133 @@ def score_title(title: str) -> dict[str, any]:
     total_score = sum(scores.values())
 
     return {"total": total_score, "breakdown": scores, "issues": issues}
+
+
+def _normalize_heading_title(parser, title: str) -> str:
+    normalizer = getattr(parser, "normalize_heading_title", None)
+    normalized: object = normalizer(title) if callable(normalizer) else re.sub(r"\s+", "", title)
+    title = normalized if isinstance(normalized, str) else str(normalized)
+    title = re.sub(r"^第?[一二三四五六七八九十百零\d]+章", "", title)
+    return title.strip()
+
+
+def _is_conventional_chapter(title: str) -> bool:
+    return bool(CONVENTIONAL_CHAPTER_RE.search(title))
+
+
+def _heading_facets(title: str) -> dict[str, bool]:
+    return {
+        "对象": bool(OBJECT_RE.search(title)),
+        "问题": bool(PROBLEM_RE.search(title)),
+        "方法": bool(METHOD_RE.search(title)),
+    }
+
+
+def _salient_terms(title: str) -> set[str]:
+    text = re.sub(r"\\[a-zA-Z]+\*?(?:\[[^\]]*\])*\{([^}]*)\}", r"\1", title)
+    text = re.sub(r"[^\u4e00-\u9fffA-Za-z0-9]+", "", text)
+    terms: set[str] = set()
+    for size in range(2, min(6, len(text) + 1)):
+        for index in range(0, len(text) - size + 1):
+            term = text[index : index + size]
+            if term not in GENERIC_ANCHOR_TERMS:
+                terms.add(term)
+    return terms
+
+
+def _section_anchors_parent(section_title: str, chapter_title: str) -> bool:
+    if SECTION_ROLE_RE.search(section_title):
+        return True
+    chapter_terms = _salient_terms(chapter_title)
+    section_terms = _salient_terms(section_title)
+    return bool(chapter_terms & section_terms)
+
+
+def _direct_sections_for_chapter(
+    headings: list[dict[str, Any]], index: int
+) -> list[dict[str, Any]]:
+    chapter = headings[index]
+    next_chapter_line = next(
+        (h["line"] for h in headings[index + 1 :] if h["level"] == 1),
+        None,
+    )
+    return [
+        h
+        for h in headings[index + 1 :]
+        if h["level"] == 2
+        and h["line"] > chapter["line"]
+        and (next_chapter_line is None or h["line"] < next_chapter_line)
+    ]
+
+
+def _suggest_anchor_terms(chapter_title: str) -> str:
+    preferred = []
+    for pattern in (OBJECT_RE, PROBLEM_RE, METHOD_RE):
+        match = pattern.search(chapter_title)
+        if match and match.group(0) not in preferred:
+            preferred.append(match.group(0))
+    return " / ".join(preferred[:3]) or chapter_title
+
+
+def analyze_heading_architecture(tex_path: Path) -> str:
+    """Check body chapter and direct-section title architecture.
+
+    This is intentionally heuristic: it surfaces "needs review" style
+    diagnostics for thesis heading design without modifying the source.
+    """
+    doc = assemble(tex_path)
+    parser = get_parser(tex_path)
+    headings = parser.extract_headings(doc.content)
+    chapters = [h for h in headings if h["level"] == 1]
+    findings: list[str] = []
+
+    for chapter in chapters:
+        chapter_index = headings.index(chapter)
+        raw_title = chapter["title"]
+        title = _normalize_heading_title(parser, raw_title)
+        if _is_conventional_chapter(title):
+            continue
+
+        direct_sections = _direct_sections_for_chapter(headings, chapter_index)
+        loc = doc.lineref(chapter["line"])
+        facets = _heading_facets(title)
+        missing = [label for label, present in facets.items() if not present]
+        if missing:
+            missing_text = "；".join(f"缺少{label}" for label in missing)
+            findings.append(
+                f"% TITLE-ARCH（{loc}）[Severity: Major] [Priority: P1]: "
+                f"章标题缺少对象-问题-方法要素（{missing_text}）\n"
+                f"% 当前章标题：「{raw_title}」\n"
+                "% 建议：将章标题改成“研究对象 + 问题/任务 + 方法/路径”的结构，"
+                "使答辩委员能从目录看出本章解决什么对象上的什么问题。"
+            )
+
+        if len(direct_sections) > 5:
+            findings.append(
+                f"% TITLE-ARCH（{loc}）[Severity: Major] [Priority: P1]: "
+                "直属小节过多\n"
+                f"% 当前：{len(direct_sections)} 个 \\section，建议压缩到最多 5 个。\n"
+                "% 合并建议：将背景/数据/问题类小节合并为“问题描述与建模基础”，"
+                "将细分模块下沉到 \\subsection，并保留“引言-方法-实验/应用-本章小结”闭环。"
+            )
+
+        for section in direct_sections:
+            section_title = _normalize_heading_title(parser, section["title"])
+            if _section_anchors_parent(section_title, title):
+                continue
+            section_loc = doc.lineref(section["line"])
+            anchor_terms = _suggest_anchor_terms(title)
+            findings.append(
+                f"% TITLE-ARCH（{section_loc}）[Severity: Minor] [Priority: P2]: "
+                "小节标题未扣合章标题\n"
+                f"% 当前小节：「{section['title']}」；所属章：「{raw_title}」\n"
+                f"% 建议：在小节标题或导语中补入与本章相关的关键词（如 {anchor_terms}），"
+                "避免小节看起来像可移动到任意章节的通用标题。"
+            )
+
+    if not findings:
+        return "% TITLE-ARCH: 未发现明显的章节标题架构问题。"
+    return "\n".join(findings)
 
 
 def generate_title_candidates(
@@ -327,6 +480,7 @@ def main():
     parser.add_argument("--generate", action="store_true", help="根据内容生成标题候选")
     parser.add_argument("--optimize", action="store_true", help="优化现有标题")
     parser.add_argument("--check", action="store_true", help="检查标题质量")
+    parser.add_argument("--headings", action="store_true", help="检查章标题/小节标题架构")
 
     args = parser.parse_args()
 
@@ -343,7 +497,9 @@ def main():
 
     current_title = extract_title(content)
 
-    if args.check or not (args.generate or args.optimize):
+    handled_title = False
+
+    if args.check or not (args.generate or args.optimize or args.headings):
         # 检查模式（默认）
         if not current_title:
             print("错误：文档中未找到标题", file=sys.stderr)
@@ -351,6 +507,7 @@ def main():
 
         score_data = score_title(current_title)
         print(format_report(current_title, score_data))
+        handled_title = True
 
     elif args.generate:
         # 生成模式
@@ -376,6 +533,7 @@ def main():
             for i, (candidate, _template) in enumerate(top_candidates, 1):
                 cand_score = score_title(candidate)
                 print(f"% {i}. 「{candidate}」 [评分: {cand_score['total']}/100]")
+        handled_title = True
 
     elif args.optimize:
         # 优化模式
@@ -390,6 +548,12 @@ def main():
         print(f"% 原标题：「{current_title}」 [评分: {score_before['total']}/100]")
         print(f"% 优化后：「{optimized}」 [评分: {score_after['total']}/100]")
         print(f"% 提升：+{score_after['total'] - score_before['total']} 分")
+        handled_title = True
+
+    if args.headings:
+        if handled_title:
+            print("%")
+        print(analyze_heading_architecture(tex_path))
 
     return 0
 

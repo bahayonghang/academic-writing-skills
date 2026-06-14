@@ -1,6 +1,7 @@
 """Regression tests for latex-thesis-zh script behaviors."""
 
 import importlib.util
+import os
 import re
 import subprocess
 import sys
@@ -282,6 +283,70 @@ class TestOptimizeTitle:
         candidates = optimize_title_zh.generate_title_candidates(keywords)
         assert len(candidates) >= 1
         assert any("Transformer" in c[0] for c in candidates)
+
+    def test_heading_architecture_cli_flags_section_count_and_facets(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\documentclass{ctexbook}\n\\begin{document}\n"
+            "\\chapter{方法设计}\n"
+            "\\section{数据采集}\n内容。\n"
+            "\\section{数据预处理}\n内容。\n"
+            "\\section{模型框架}\n内容。\n"
+            "\\section{参数设置}\n内容。\n"
+            "\\section{实验结果}\n内容。\n"
+            "\\section{结果讨论}\n内容。\n"
+            "\\chapter{总结与展望}\n总结。\n"
+            "\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        result = subprocess.run(
+            [sys.executable, "-B", str(_ZH_DIR / "optimize_title.py"), str(tex), "--headings"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+            check=False,
+        )
+
+        assert result.returncode == 0, result.stderr
+        assert "TITLE-ARCH" in result.stdout
+        assert "直属小节过多" in result.stdout
+        assert "最多 5 个" in result.stdout
+        assert "缺少对象" in result.stdout
+        assert "缺少问题" in result.stdout
+
+    def test_heading_architecture_cli_flags_child_anchor(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\documentclass{ctexbook}\n\\begin{document}\n"
+            "\\chapter{水泥粉磨过程单位电耗时间序列预测模型}\n"
+            "\\section{引言}\n内容。\n"
+            "\\section{数据采集}\n内容。\n"
+            "\\section{模型建模}\n内容。\n"
+            "\\section{实验验证}\n内容。\n"
+            "\\section{本章小结}\n内容。\n"
+            "\\chapter{结论}\n总结。\n"
+            "\\end{document}\n",
+            encoding="utf-8",
+        )
+
+        result = subprocess.run(
+            [sys.executable, "-B", str(_ZH_DIR / "optimize_title.py"), str(tex), "--headings"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+            check=False,
+        )
+
+        assert result.returncode == 0, result.stderr
+        assert "小节标题未扣合章标题" in result.stdout
+        assert "数据采集" in result.stdout
+        assert "水泥粉磨过程" in result.stdout
+        assert "结论" not in result.stdout
 
 
 # ── parsers.py (zh) ───────────────────────────────────────────

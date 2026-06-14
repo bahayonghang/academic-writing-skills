@@ -117,6 +117,11 @@
       "category": "writing-closure"
     },
     {
+      "query": "我的中文博士论文目录里大标题和小标题都不对：每章小节太多，想限制到最多5节，并检查章标题有没有体现对象、问题、方法，小节标题有没有扣住上面的章标题。",
+      "should_trigger": true,
+      "category": "heading-architecture"
+    },
+    {
       "query": "Please rewrite the introduction of my IEEE paper in English and keep the LaTeX commands intact.",
       "should_trigger": false,
       "category": "negative-overlap-en"
@@ -135,6 +140,11 @@
       "query": "我只是想搜一下 GB/T 7714 的参考文献来源，不需要改写任何章节。",
       "should_trigger": false,
       "category": "negative-overlap-bib"
+    },
+    {
+      "query": "Please make the H2/H3 headings in my English NeurIPS paper more concise; it is not a Chinese thesis project.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
     }
   ]
 }

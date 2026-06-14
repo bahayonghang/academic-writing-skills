@@ -427,6 +427,41 @@
           "description": "layered explanation present"
         }
       ]
+    },
+    {
+      "id": 20,
+      "prompt": "当前论文的大章节小标题数目太多，请限制到最多 5 节；同时检查大标题是否体现对象、问题、方法，小标题是否和上面的大标题扣上。",
+      "expected_output": "路由到 title/structure 相关检查，报告直属小节超过 5 个、章标题缺少对象-问题-方法要素，以及小节标题未扣合章标题的问题，并给出合并和改名建议。",
+      "files": [
+        "evals/fixtures/heading-architecture/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "TITLE-ARCH",
+          "description": "heading architecture diagnostics present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(直属小节过多|最多 5 个)",
+          "description": "max-five direct sections rule checked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(缺少对象|缺少问题|对象-问题-方法)",
+          "description": "object-problem-method chapter title rule checked"
+        },
+        {
+          "type": "contains",
+          "text": "小节标题未扣合章标题",
+          "description": "child title anchoring checked"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
     }
   ]
 }
