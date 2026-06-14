@@ -1,12 +1,9 @@
 name: Deploy VitePress site to GitHub Pages
 
 on:
-  # Deploy from main because the github-pages environment only allows branch deployments.
-  push:
-    branches: [main]
-
-  # Allows you to run this workflow manually from the Actions tab.
-  workflow_dispatch:
+  # Deploy only when a release is published.
+  release:
+    types: [published]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -53,7 +50,6 @@ jobs:
 
   # Deployment job
   deploy:
-    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
