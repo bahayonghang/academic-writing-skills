@@ -198,3 +198,37 @@ Populated .trellis/spec for claude-scholar, PaperSpine, and Research-Paper-Writi
 ### Next Steps
 
 - None - task complete
+
+
+## Session 5: 优化 latex-thesis-zh 章节标题架构
+
+**Date**: 2026-06-14
+**Task**: 优化 latex-thesis-zh 章节标题架构
+**Package**: claude-scholar
+**Branch**: `dev`
+
+### Summary
+
+为 latex-thesis-zh 增加 --headings 章节标题架构诊断，覆盖对象-问题-方法、每章最多 5 个直属小节、小节扣合章标题，并完成 skill-creator 评测与本地验证。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `95ee0bc` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
