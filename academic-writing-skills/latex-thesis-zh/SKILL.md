@@ -1,6 +1,6 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、章标题/小节标题架构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“大标题/小标题不对”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“大标题/小标题不对”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
 metadata:
   category: academic-writing
   tags:
@@ -31,7 +31,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 ## Capability Summary
 
 - 编译并诊断 XeLaTeX / LuaLaTeX / latexmk 构建问题。
-- 检查论文格式、GB/T 7714 相关要求、章节结构、模板类型和术语一致性。
+- 检查论文格式、GB/T 7714 相关要求、公式编号与断行、章节结构、模板类型和术语一致性。
 - 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、章标题/小节标题架构、实验章节写法、标题表达与 AI 痕迹。
 - 针对文献综述提供“共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点”的重写蓝图。
 - 针对绪论、方法章节、实验讨论、摘要/创新点/结论对齐提供学位论文主线式改写建议。
@@ -43,6 +43,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - 编译失败或工具链不确定
 - 学位论文格式、国标或学校模板检查
+- 公式编号被挤到下一行、长公式是否应该拆行、相邻公式是否需要同步拆分
 - 章节结构梳理或模板识别
 - 术语、缩略语、命名一致性检查
 - 逻辑连贯性、文献综述质量、标题后导语完整性、章标题/小节标题架构、跨章节闭合检查
@@ -74,7 +75,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | Module         | Use when                                                                                                                        | Primary command                                                                     | Read next                                                                                                  |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `compile`      | Thesis build fails or toolchain is unclear                                                                                      | `uv run python $SKILL_DIR/scripts/compile.py main.tex`                              | `references/modules/compile.md`                                                                            |
-| `format`       | User asks about thesis formatting or GB/T 7714 layout                                                                           | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                         | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
+| `format`       | User asks about thesis formatting, formula layout/line breaks, or GB/T 7714 layout                                               | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                         | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
 | `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                        | `references/writing/structure-guide.md`                                                                    |
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`            | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                      | `references/modules/template.md`                                                                           |
@@ -93,6 +94,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 先根据用户问题自动推断模块，不把“你想用哪个模块”当成默认追问。
 - 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `tables` / `abstract`。
 - 涉及“引用了不存在的图表”“图表没被引用”“编号断档”“缺图题表题”时走 `references`（交叉引用完整性，盲审高频扣分点）；参考文献条目本身的问题仍走 `bibliography`。
+- 涉及“公式编号挤到下一行”“长公式是否应拆成两行”“公式超出版心/页边距”“相邻公式要不要同步拆行”时走 `format`，并补读 `references/formatting/formula-guide.md`；若问题是 `\label` / `\eqref` / 未定义引用，则走 `references`；若问题是标题后直接进入公式，则走 `logic`。
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
 - `logic` 默认全文档运行（含导语、主线、章引言、漏斗、三方对齐与 C3 绪论-结论闭合）；`--section` 只聚焦单章（接受英文键或中文名，如 `--section 绪论`），此时仅运行与该章相关的检查（如 related 的 A1/A3、introduction 的漏斗）。`--cross-section` 已并入默认行为，仅作兼容保留。
 - `deai` 全文档分析用 `--analyze`（覆盖所有章节，含未命中关键词的正文章）；`--section` 针对单章快速检查，二者互补，不要只跑 `--section` 就下全文结论。
@@ -150,6 +152,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - `references/latex/compilation.md`: compilation strategy and toolchain diagnosis（顶层概述；模块执行时读 `references/modules/compile.md`）.
 - `references/citations/gb-standard.md`: GB/T 7714 and bibliography-related checks.
+- `references/formatting/formula-guide.md`: displayed formula line breaking, equation-number displacement, and when not to split formulas.
 - `references/writing/structure-guide.md`: thesis structure expectations, direct-section budget, chapter mapping, and heading lead-ins.
 - `references/writing/logic-coherence.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
 - `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
@@ -170,3 +173,4 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - “当前论文的大章节小标题数目太多，请限制到最多 5 节；同时检查大标题是否体现对象、问题、方法，小标题是否和上面的大标题扣上。”
 - “帮我把绪论改成背景、瓶颈、科学问题、本文贡献逐步收束的写作方案。”
 - “检查方法章节是不是每个模块都有动机、设计和技术优势，并和实验验证闭合。”
+- “第一个公式编号已经被挤到第二行，请判断是否应该拆成两行；第二个公式能正常放下，不要为了统一强行拆。”

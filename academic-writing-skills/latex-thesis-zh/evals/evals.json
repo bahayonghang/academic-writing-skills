@@ -462,6 +462,34 @@
           "description": "no fabricated citations"
         }
       ]
+    },
+    {
+      "id": 21,
+      "prompt": "图中第一个公式因为太长，公式编号已经被挤到第二行；第二个公式能正常放下。请判断中文学位论文里第一个公式是否可以拆成两行，以及第二个公式要不要动。",
+      "expected_output": "路由到 format/公式排版相关检查，指出第一个公式因编号被挤到下一行属于宽度失败，可以受控拆行；第二个公式能正常放下且没有推导或方程组语义，不应为了视觉统一强行拆分。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(format|公式排版|公式编号|断行)",
+          "description": "formula layout handled through formatting route"
+        },
+        {
+          "type": "regex",
+          "pattern": "(编号.*(挤到|下一行|第二行)|宽度|版心|页边距)",
+          "description": "equation number displacement or width failure identified"
+        },
+        {
+          "type": "regex",
+          "pattern": "(第二个公式|相邻公式).*(不(用|应|需要).*动|保持|不.*拆)",
+          "description": "second fitting formula left unchanged"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
     }
   ]
 }
