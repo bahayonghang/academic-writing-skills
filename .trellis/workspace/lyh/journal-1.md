@@ -232,3 +232,37 @@ Populated .trellis/spec for claude-scholar, PaperSpine, and Research-Paper-Writi
 ### Next Steps
 
 - None - task complete
+
+
+## Session 6: Optimize latex-thesis-zh formula guidance
+
+**Date**: 2026-06-15
+**Task**: Optimize latex-thesis-zh formula guidance
+**Package**: claude-scholar
+**Branch**: `dev`
+
+### Summary
+
+Added formula line-break guidance for latex-thesis-zh, including format routing, a formula layout reference, template wording, and eval coverage for equation-number displacement.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a99eb32` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

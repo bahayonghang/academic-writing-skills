@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 5
-- **Last Active**: 2026-06-14
+- **Total Sessions**: 6
+- **Last Active**: 2026-06-15
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~234 | Active |
+| `journal-1.md` | ~268 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 6 | 2026-06-15 | Optimize latex-thesis-zh formula guidance | `a99eb32` | `dev` |
 | 5 | 2026-06-14 | 优化 latex-thesis-zh 章节标题架构 | `95ee0bc` | `dev` |
 | 4 | 2026-06-13 | cover-letter C1-C23 收尾(C21 中文触发)+ 投稿合规任务提交归档 | `6155dea` | `dev` |
 | 3 | 2026-06-12 | Bootstrap project guidelines | `5594f3f` | `dev` |
