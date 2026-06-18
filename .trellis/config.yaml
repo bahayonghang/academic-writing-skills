@@ -108,16 +108,3 @@ channel:
 #
 # codex:
 #   dispatch_mode: inline  # or "sub-agent" to dispatch trellis-* sub-agents
-
-# Auto-detected monorepo packages
-packages:
-  claude-scholar:
-    path: ref/claude-scholar
-    git: true
-  PaperSpine:
-    path: ref/PaperSpine
-    git: true
-  Research-Paper-Writing-Skills:
-    path: ref/Research-Paper-Writing-Skills
-    git: true
-default_package: claude-scholar
