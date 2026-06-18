@@ -266,3 +266,37 @@ Added formula line-break guidance for latex-thesis-zh, including format routing,
 ### Next Steps
 
 - None - task complete
+
+
+## Session 7: Optimize latex-thesis-zh chapter summary guidance
+
+**Date**: 2026-06-18
+**Task**: Optimize latex-thesis-zh chapter summary guidance
+**Branch**: `dev`
+
+### Summary
+
+Added single-paragraph 本章小结 routing and writing guidance to latex-thesis-zh, synced docs mirrors and VitePress output, added eval/trigger coverage, and validated with doc-build plus full CI.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `04c7009` | (see git log) |
+| `eb0fdd0` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
