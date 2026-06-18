@@ -490,6 +490,39 @@
           "description": "no fabricated citations"
         }
       ]
+    },
+    {
+      "id": 22,
+      "prompt": "第四章本章小结现在被写成了三段，像把各节标题重新列了一遍。请按燕山大学工学博士论文那种写法，改成一个自然段，概括本章问题、方法、关键验证和对全文主线的支撑，不要新增数据和引用。",
+      "expected_output": "路由到 logic 模块并补读学位论文写作主线指南，明确本章小结默认单段收束，按问题/目标、工作/方法、过程/证据、结果价值和全文主线支撑组织，不新增数据、结论或引用。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "chapter summary uses logic route"
+        },
+        {
+          "type": "contains",
+          "text": "本章小结",
+          "description": "chapter summary target named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(单段|一个自然段|一段)",
+          "description": "single-paragraph default stated"
+        },
+        {
+          "type": "regex",
+          "pattern": "(问题|目标).*(方法|工作).*(证据|验证).*(支撑|主线)",
+          "description": "summary components covered in order"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
     }
   ]
 }

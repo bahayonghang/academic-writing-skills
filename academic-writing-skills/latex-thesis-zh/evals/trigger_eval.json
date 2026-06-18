@@ -62,6 +62,16 @@
       "category": "writing-mainline"
     },
     {
+      "query": "第四章本章小结写成了好几段，帮我按中文工学博士论文写法压成一个自然段，概括本章问题、方法、验证和对全文主线的支撑。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
+      "query": "我的硕士论文每章末尾的章节小结太像目录复述了，请检查是不是应该改成单段收束式写法。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
       "query": "Proofread my IEEE conference paper written in English LaTeX.",
       "should_trigger": false,
       "category": "negative-overlap-en"
@@ -145,6 +155,11 @@
       "query": "Please make the H2/H3 headings in my English NeurIPS paper more concise; it is not a Chinese thesis project.",
       "should_trigger": false,
       "category": "negative-overlap-en"
+    },
+    {
+      "query": "Please shorten the chapter summary of my English dissertation draft in Word; there is no LaTeX project.",
+      "should_trigger": false,
+      "category": "negative-overlap-docx"
     }
   ]
 }

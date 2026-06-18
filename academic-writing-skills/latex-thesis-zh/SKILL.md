@@ -1,6 +1,6 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“大标题/小标题不对”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、章引言/本章小结、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
 metadata:
   category: academic-writing
   tags:
@@ -32,7 +32,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - 编译并诊断 XeLaTeX / LuaLaTeX / latexmk 构建问题。
 - 检查论文格式、GB/T 7714 相关要求、公式编号与断行、章节结构、模板类型和术语一致性。
-- 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、章标题/小节标题架构、实验章节写法、标题表达与 AI 痕迹。
+- 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、章标题/小节标题架构、本章小结单段收束、实验章节写法、标题表达与 AI 痕迹。
 - 针对文献综述提供“共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点”的重写蓝图。
 - 针对绪论、方法章节、实验讨论、摘要/创新点/结论对齐提供学位论文主线式改写建议。
 - 在不破坏引用、标签和数学环境的前提下给出可落地的中文论文修改建议。
@@ -47,7 +47,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 章节结构梳理或模板识别
 - 术语、缩略语、命名一致性检查
 - 逻辑连贯性、文献综述质量、标题后导语完整性、章标题/小节标题架构、跨章节闭合检查
-- 绪论漏斗、章节主线、方法章节动机/设计/优势、实验讨论分层、总结与展望闭合
+- 绪论漏斗、章节主线、章引言、本章小结、方法章节动机/设计/优势、实验讨论分层、总结与展望闭合
 - 文献综述重写、比较分析不足、研究空白推导薄弱
 - 标题优化、学术表达或去 AI 化检查
 - 实验章节语言与结构审阅
@@ -101,6 +101,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。
 - 涉及“大标题/小标题/章标题/小节标题/目录标题不对”“小节数太多”“每章最多 5 节”“标题没有体现对象、问题、方法”“小标题没有扣住上级标题”时，默认串行执行 `structure` -> `title`。`title` 使用 `--headings` 输出章标题对象-问题-方法、直属小节数量和小节扣合诊断；只有用户同时问导语、衔接或主线时才追加 `logic`。
 - 涉及“每章引言/章首怎么写”“承上启下”“第三章第四章引言”“章引言太短/没承接上一章/没预告本章安排”时，默认走 `logic`：它会对正文各章（绪论除外）做承上启下两段式章引言专项检查，并补读 `references/writing/thesis-writing-guide.md` 的“正文章引言”一节给出改写方案。
+- 涉及“本章小结”“章节小结”“章末小结”“小结写法”“小结写成好几段”时，默认走 `logic` 并补读 `references/writing/thesis-writing-guide.md` 的“正文章末小结”一节：章末小结默认写成一个自然段，按“问题/目标 -> 本章工作/方法 -> 关键过程/证据 -> 结果价值 -> 对全篇主线的支撑”收束；除非学校模板或用户明确要求，不拆成多段或列表。
 - 涉及“改写绪论/方法章节/实验讨论/总结与展望”“章节主线怎么写”“摘要、创新点、结论如何闭合”时，仍优先走现有模块，并补读 `references/writing/thesis-writing-guide.md`；不要新增英文会议论文式 `section-writing` 模块。
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
@@ -155,7 +156,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/formatting/formula-guide.md`: displayed formula line breaking, equation-number displacement, and when not to split formulas.
 - `references/writing/structure-guide.md`: thesis structure expectations, direct-section budget, chapter mapping, and heading lead-ins.
 - `references/writing/logic-coherence.md`: logic, coherence, heading lead-ins, consistency, and literature-review expectations.
-- `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
+- `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), per-chapter summary (本章小结单段收束), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/modules/experiment.md`: experiment-chapter review criteria.
@@ -173,4 +174,5 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - “当前论文的大章节小标题数目太多，请限制到最多 5 节；同时检查大标题是否体现对象、问题、方法，小标题是否和上面的大标题扣上。”
 - “帮我把绪论改成背景、瓶颈、科学问题、本文贡献逐步收束的写作方案。”
 - “检查方法章节是不是每个模块都有动机、设计和技术优势，并和实验验证闭合。”
+- “第四章本章小结经常被写成好几段，请按学位论文写法改成一个自然段收束。”
 - “第一个公式编号已经被挤到第二行，请判断是否应该拆成两行；第二个公式能正常放下，不要为了统一强行拆。”
