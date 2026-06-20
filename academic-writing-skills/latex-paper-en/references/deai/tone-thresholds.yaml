@@ -56,3 +56,21 @@ punctuation:
   max_em_dashes_per_doc: 5
   # Body-level "!" is non-academic; abstract / intro / methods / results / discussion / conclusion.
   ban_exclamation_in_body: true
+
+overclaim:
+  # Focused, unambiguous over-claim phrases -> suggestion key (rendered to a
+  # conservative-wording instruction). Phrase-level only; the graded judgment
+  # tables live in references/evidence/over-claim-guard.md.
+  # Set enabled: false to turn this checker off without deleting the patterns.
+  # Each emits a [Script] LOW trace. Regex is matched case-insensitively.
+  enabled: true
+  patterns:
+    "\\bcaused by\\b": soften_causal
+    "\\bdetermines\\b": soften_causal
+    "\\bproves that\\b": soften_causal
+    "\\bfor the first time\\b": qualify_novelty
+    "\\bunprecedented\\b": qualify_novelty
+    "\\buniversally\\b": bound_universal
+    "\\bin all cases\\b": bound_universal
+    "\\bin every case\\b": bound_universal
+    "\\bwill revolutionize\\b": hedge_application

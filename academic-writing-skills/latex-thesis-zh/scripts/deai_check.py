@@ -84,6 +84,24 @@ DEFAULT_THRESHOLDS = {
         "max_em_dashes_per_doc": 5,
         "ban_exclamation_in_body": True,
     },
+    # Over-claim phrases: a focused set of unambiguous causal / firstness /
+    # universality / application tells (English; they appear in English abstracts
+    # and technical phrasing). Chinese over-claim judgment lives in
+    # references/writing/over-claim-guard.md, not here.
+    "overclaim": {
+        "enabled": True,
+        "patterns": {
+            r"\bcaused by\b": "soften_causal",
+            r"\bdetermines\b": "soften_causal",
+            r"\bproves that\b": "soften_causal",
+            r"\bfor the first time\b": "qualify_novelty",
+            r"\bunprecedented\b": "qualify_novelty",
+            r"\buniversally\b": "bound_universal",
+            r"\bin all cases\b": "bound_universal",
+            r"\bin every case\b": "bound_universal",
+            r"\bwill revolutionize\b": "hedge_application",
+        },
+    },
     # D1（句长单调）：句长变异系数过低 = 机械均匀。仅在传入 --tier 时启用。
     "sentence_length": {
         "min_sentences": 5,
@@ -146,6 +164,7 @@ DIMENSION_MAP = {
     "vague_quantifier": "D5",
     "template_expr": "D5",
     "over_confident": "D5",
+    "overclaim": "D5",
 }
 
 TEACHING_NOTES = {
@@ -272,6 +291,9 @@ class ChineseAITraceChecker:
         self._throat_clearing_re = [
             re.compile(p) for p in self.thresholds["throat_clearing"]["patterns"]
         ]
+        overclaim_cfg = self.thresholds.get("overclaim", {})
+        self._overclaim_enabled = bool(overclaim_cfg.get("enabled", True))
+        self._overclaim_patterns = list(overclaim_cfg.get("patterns", {}).items())
 
     def _loc(self, line_no: int) -> str:
         """行号定位：单文件 ``第15行``；多文件 ``chapters/x.tex:15``。"""
@@ -379,6 +401,7 @@ class ChineseAITraceChecker:
         results["traces"].extend(self._check_low_information_density(section_name))
         results["traces"].extend(self._check_burstiness(section_name))
         results["traces"].extend(self._check_throat_clearing(section_name))
+        results["traces"].extend(self._check_overclaim(section_name))
         if self.tier:
             results["traces"].extend(self._check_sentence_length_variance(section_name))
         results["trace_count"] = len(results["traces"])
@@ -622,6 +645,22 @@ class ChineseAITraceChecker:
                     break
         return traces
 
+    # --- Checker: over-claim phrases (YAML-driven, [Script] LOW) -------------
+
+    def _check_overclaim(self, section_name: str) -> list[dict]:
+        """Flag unambiguous over-claim phrases (causal / firstness / universality /
+        application). Phrase-level only; reuses the section pattern finder so the
+        existing comment/visible-text handling applies. Disabled when
+        ``overclaim.enabled`` is false in the thresholds."""
+        if not self._overclaim_enabled:
+            return []
+        traces: list[dict] = []
+        for pattern, suggestion_type in self._overclaim_patterns:
+            traces.extend(
+                self._find_pattern_in_section(pattern, suggestion_type, section_name, "overclaim")
+            )
+        return traces
+
     # --- Document-level visible-text helper --------------------------------
 
     def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
@@ -815,6 +854,10 @@ class ChineseAITraceChecker:
             "throat_clearing": "删除段首套话，直接陈述论点.",
             "punctuation_pattern": "减少破折号堆叠，正文勿用感叹号.",
             "vary_sentence_length": "长短句交替，打破机械均匀的句长节奏.",
+            "soften_causal": "因果措辞：除非有干预实验，改用“与……相关/关联”（见 over-claim-guard）.",
+            "qualify_novelty": "首创声称：加“据我们所知”，或具体说明首创点.",
+            "bound_universal": "把论断限定到实际研究的情形/数据集范围.",
+            "hedge_application": "未演示的应用前景用“可能/或许”弱化.",
         }
         return instructions.get(key, "请改写得更具体、客观。")
 

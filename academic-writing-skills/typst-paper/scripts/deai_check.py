@@ -86,6 +86,24 @@ DEFAULT_THRESHOLDS = {
         "max_em_dashes_per_doc": 5,
         "ban_exclamation_in_body": True,
     },
+    # Over-claim phrases: a focused set of unambiguous causal / firstness /
+    # universality / application tells. Phrase-level only (term-count words like
+    # novel/robust/comprehensive are handled by term_thresholds, not here).
+    # See references/OVER_CLAIM_GUARD.md for the full judgment tables.
+    "overclaim": {
+        "enabled": True,
+        "patterns": {
+            r"\bcaused by\b": "soften_causal",
+            r"\bdetermines\b": "soften_causal",
+            r"\bproves that\b": "soften_causal",
+            r"\bfor the first time\b": "qualify_novelty",
+            r"\bunprecedented\b": "qualify_novelty",
+            r"\buniversally\b": "bound_universal",
+            r"\bin all cases\b": "bound_universal",
+            r"\bin every case\b": "bound_universal",
+            r"\bwill revolutionize\b": "hedge_application",
+        },
+    },
     # D1 (sentence-length uniformity): low coefficient of variation across
     # sentence lengths reads as machine-even. Only consulted when --tier is set.
     "sentence_length": {
@@ -147,6 +165,7 @@ DIMENSION_MAP = {
     "vague_quantifier": "D5",
     "template_expr": "D5",
     "over_confident": "D5",
+    "overclaim": "D5",
 }
 
 TEACHING_NOTES = {
@@ -274,6 +293,9 @@ class AITraceChecker:
         self._throat_clearing_re = [
             re.compile(p, re.IGNORECASE) for p in self.thresholds["throat_clearing"]["patterns"]
         ]
+        overclaim_cfg = self.thresholds.get("overclaim", {})
+        self._overclaim_enabled = bool(overclaim_cfg.get("enabled", True))
+        self._overclaim_patterns = list(overclaim_cfg.get("patterns", {}).items())
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives."""
@@ -379,6 +401,7 @@ class AITraceChecker:
         results["traces"].extend(self._check_low_information_density(section_name))
         results["traces"].extend(self._check_burstiness(section_name))
         results["traces"].extend(self._check_throat_clearing(section_name))
+        results["traces"].extend(self._check_overclaim(section_name))
         if self.tier:
             results["traces"].extend(self._check_sentence_length_variance(section_name))
         results["trace_count"] = len(results["traces"])
@@ -605,6 +628,22 @@ class AITraceChecker:
                     break
         return traces
 
+    # --- Checker: over-claim phrases (YAML-driven, [Script] LOW) -------------
+
+    def _check_overclaim(self, section_name: str) -> list[dict]:
+        """Flag unambiguous over-claim phrases (causal / firstness / universality /
+        application). Phrase-level only; reuses the section pattern finder so the
+        existing comment/visible-text handling applies. Disabled when
+        ``overclaim.enabled`` is false in the thresholds."""
+        if not self._overclaim_enabled:
+            return []
+        traces: list[dict] = []
+        for pattern, suggestion_type in self._overclaim_patterns:
+            traces.extend(
+                self._find_pattern_in_section(pattern, suggestion_type, section_name, "overclaim")
+            )
+        return traces
+
     # --- Document-level visible-text helper -------------------------------
 
     def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
@@ -818,6 +857,13 @@ class AITraceChecker:
             "vary_sentence_length": (
                 "Mix short and long sentences to break the even, machine-like cadence."
             ),
+            "soften_causal": (
+                "Causal wording: use 'associated with / linked to' unless an intervention "
+                "supports causation (see over-claim-guard)."
+            ),
+            "qualify_novelty": "Novelty claim: add 'to our knowledge' or name the specific first.",
+            "bound_universal": "Bound the claim to the cases / datasets actually studied.",
+            "hedge_application": "Hedge undemonstrated applications with 'may / could'.",
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
 

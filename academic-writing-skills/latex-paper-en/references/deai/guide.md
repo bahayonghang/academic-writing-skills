@@ -15,6 +15,7 @@
   - [Category 3: Mechanical Structures (机械排比)](#category-3-mechanical-structures-机械排比)
   - [Category 4: Vague Quantification (模糊量化)](#category-4-vague-quantification-模糊量化)
   - [Category 5: Template Introductions (模板引言)](#category-5-template-introductions-模板引言)
+- [Structural-Level Traces (LLM-judgment)](#structural-level-traces-llm-judgment)
 - [Section-Specific Guidelines](#section-specific-guidelines)
   - [Abstract (摘要)](#abstract-摘要)
   - [Introduction (引言)](#introduction-引言)
@@ -98,6 +99,8 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 
 **Detection Pattern**: Absolute claims without qualification or evidence.
 
+> For graded conservative-wording tables (causal / firstness / universality / effect-size / application), see [`../evidence/over-claim-guard.md`](../evidence/over-claim-guard.md).
+
 ### Category 3: Mechanical Structures (机械排比)
 
 **Three-part parallelisms without substance**:
@@ -135,6 +138,21 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 ✅ "Machine learning has improved prediction accuracy in healthcare [1], manufacturing [2], and finance [3]."
 
 **Detection Pattern**: Broad generalizations that could be in any textbook.
+
+---
+
+## Structural-Level Traces (LLM-judgment)
+
+These are not word- or sentence-level tells — they live in document structure, so a
+script cannot catch them. Judge them by reading the whole draft, and tag any finding
+`[LLM]`.
+
+1. **Over-symmetric IMRAD** — every section padded to the same shape (introduction always 4 paragraphs; discussion always "recap + compare + implication + limitation"). Real papers are uneven: some sections short, some long. Signal: paragraph counts symmetric across sections.
+2. **Declarative scaffolding transitions** — "Having established X, we next turn to Y." / "With this in hand, we proceed to…". Real writing transitions implicitly: the next sentence enters the new topic without announcing it.
+3. **Stance-less discussion** — pros and cons each listed but none committed to. Real authors take a position ("we consider X more plausible than Y because…").
+4. **Uniform paragraph length** — 80% of paragraphs are 5–7 sentences. Real cadence varies: a 3-sentence emphasis paragraph next to a 10-sentence argument.
+
+**How to fix**: break the symmetry — merge thin paragraphs, split overloaded ones, delete announced transitions, and make the discussion commit to a view.
 
 ---
 

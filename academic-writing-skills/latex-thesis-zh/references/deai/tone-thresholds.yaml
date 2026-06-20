@@ -67,3 +67,19 @@ punctuation:
   max_em_dashes_per_doc: 5
   # 中文感叹号 “！” 与英文 “!” 都视为正文不当。
   ban_exclamation_in_body: true
+
+overclaim:
+  # 一小批无歧义的过度声称短语（英文；出现在英文摘要/技术表述中）-> 建议键。
+  # 中文过度声称的判断表在 references/writing/over-claim-guard.md。
+  # enabled: false 可关闭本检查而不删除模式。每条发 [Script] LOW 痕迹。
+  enabled: true
+  patterns:
+    "\\bcaused by\\b": soften_causal
+    "\\bdetermines\\b": soften_causal
+    "\\bproves that\\b": soften_causal
+    "\\bfor the first time\\b": qualify_novelty
+    "\\bunprecedented\\b": qualify_novelty
+    "\\buniversally\\b": bound_universal
+    "\\bin all cases\\b": bound_universal
+    "\\bin every case\\b": bound_universal
+    "\\bwill revolutionize\\b": hedge_application
