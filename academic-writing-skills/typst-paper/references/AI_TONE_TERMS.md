@@ -12,6 +12,17 @@ Typst 模板被中英双语论文共用，本文件同时记录两套高频词�
 - 每个超阈值的词触发一次 `[Script] LOW` 痕迹。
 - 阈值仅在 yaml 中改；此 MD 仅为说明。
 
+## 维护节律 / Maintenance cadence (snapshot, not a final state)
+
+These term lists capture *current* AI-tone tells, not a permanent truth. As words
+such as `delve` / `pivotal`（及中文"赋能""彰显"）get widely named, careful authors
+filter them and their frequency drops, while new AI-preferred words keep emerging.
+Re-check roughly every 6 months against excess-vocabulary research; prune or add
+accordingly rather than treating the list as frozen.
+
+- Last reviewed / 上次复审：2026-06
+- Sources / 来源：Kobak et al., *Sci. Adv.* 2025; Geng & Trotta 2025
+
 ## English
 
 | Word          | Threshold | Why it matters                                                  |

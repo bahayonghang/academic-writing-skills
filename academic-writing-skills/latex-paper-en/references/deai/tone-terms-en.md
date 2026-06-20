@@ -14,14 +14,25 @@ source consumed by `deai_check.py`.
   (citations, refs, math, comments are stripped first).
 - Override by editing the YAML; this MD file is documentation only.
 
+## Maintenance cadence (this list is a snapshot, not a final state)
+
+This word list captures _current_ AI-tone tells, not a permanent truth. As words
+such as `delve` and `pivotal` get widely named, careful authors filter them and
+their frequency drops, while new AI-preferred words keep emerging. Re-check this
+list roughly every 6 months against excess-vocabulary research and prune or add
+accordingly — do not treat it as frozen.
+
+- Last reviewed: 2026-06
+- Sources: Kobak et al., _Sci. Adv._ 2025; Geng & Trotta 2025
+
 ## High-frequency AI vocabulary
 
 These words are not banned. They are useful when used sparingly. The
 threshold is the point at which a reviewer is likely to flag the writing
 as templated.
 
-| Word          | Threshold | Why it matters                                                  |
-|---------------|-----------|------------------------------------------------------------------|
+| Word          | Threshold | Why it matters                                                   |
+| ------------- | --------- | ---------------------------------------------------------------- |
 | significant   | 5         | Often hides missing effect size or p-value                       |
 | comprehensive | 3         | Marketing language; rarely earned by a single study              |
 | effective     | 5         | Cheap claim without baseline comparison                          |
@@ -76,6 +87,7 @@ Each trigger is a single `[Script] LOW` trace pointing at the offending line.
 ## Out of scope
 
 The following are intentionally NOT enforced here:
+
 - Sentence-level grammar (handled by `analyze_grammar.py`).
 - Citation density (handled by `verify_bib.py`).
 - Section structure (handled by `check_format.py`).
