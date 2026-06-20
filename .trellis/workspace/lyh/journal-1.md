@@ -300,3 +300,37 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 8: 借鉴 follow-up：⑤时态信号词检测 / ⑥reviewer怀疑点排序 / ①over-claim进paper-audit
+
+**Date**: 2026-06-20
+**Task**: 借鉴 follow-up：⑤时态信号词检测 / ⑥reviewer怀疑点排序 / ①over-claim进paper-audit
+**Branch**: `dev`
+
+### Summary
+
+承接 borrow-writing-judgment 的 3 项 follow-up。⑤ deai_check×3 加 _check_tense（同构 _check_overclaim）：en/typst 门控 method/experiment/result 段，zh 用 \begin{abstract} 英文摘要区域门控（排除 cabstract，无则 no-op）+English-line 门控挂 document_traces；只收无歧义现在时报告动词，is/are 刻意不进正则，图表/软件假阳性过滤；+tense YAML 段+3 时态文档+tests/test_deai_tense.py(7例)。⑥ 新增 paper-audit REVIEWER_PSYCHOLOGY.md（8层怀疑点降序）接 critical_reviewer/synthesis agent（severity 层内 tie-break）。① 新增 OVER_CLAIM_GUARD.md 接 claims_vs_evidence lane(SUBAGENT_TEMPLATES)+claims_evidence_reviewer_agent+CHECKLIST，不改 scholar_eval 权重。关键发现：paper-audit 跑 deai 不传 --analyze，deai trace 不流入 audit（既有行为），故 paper-audit 时态/over-claim 觉察走 ⑥①（文档+LLM lane）非脚本。just ci 837 passed 全绿，未动 parsers.py/scholar_eval 权重/bib/cover-letter。已 fast-forward 合并 dev。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3a8e3c2` | (see git log) |
+| `8cf4622` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 7
-- **Last Active**: 2026-06-18
+- **Total Sessions**: 8
+- **Last Active**: 2026-06-20
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~302 | Active |
+| `journal-1.md` | ~336 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 8 | 2026-06-20 | 借鉴 follow-up：⑤时态信号词检测 / ⑥reviewer怀疑点排序 / ①over-claim进paper-audit | `3a8e3c2`, `8cf4622` | `dev` |
 | 7 | 2026-06-18 | Optimize latex-thesis-zh chapter summary guidance | `04c7009`, `eb0fdd0` | `dev` |
 | 6 | 2026-06-15 | Optimize latex-thesis-zh formula guidance | `a99eb32` | `dev` |
 | 5 | 2026-06-14 | 优化 latex-thesis-zh 章节标题架构 | `95ee0bc` | `dev` |
