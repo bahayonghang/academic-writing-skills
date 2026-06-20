@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-13"
+  last_updated: "2026-06-20"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -104,6 +104,7 @@ Do not use this skill for:
 - Infer the module from the user request before asking follow-up questions. Ask for the module only when two or more modules are equally plausible after keyword routing.
 - If the user asks for 2-3 compatible checks in one turn, run them sequentially instead of forcing a single-module reply.
 - Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
+- When applying multiple polish passes to the same prose, work coarse-to-fine — argument/logic -> sentence structure -> lexical/formatting — and do not reverse it; see `references/modules/workflow.md`.
 - Prefer `logic` for cross-section alignment requests (abstract vs introduction vs conclusion), introduction funnel issues, or contribution drift; prefer `literature` only when the problem is specifically about Related Work organization, comparison, or gap derivation.
 - Prefer `section-writing` when the user asks to draft, rewrite, restructure, or reviewer-polish a specific section, or asks for paragraph roles, mini-outlines, reverse outlines, or claim-evidence maps. Prefer the diagnostic modules first when the user asks to check whether something is wrong.
 - For `section-writing`, load `references/modules/section-writing.md`, then exactly one active section guide from `references/writing/section-writing/` unless the user also asks for flow or self-review.

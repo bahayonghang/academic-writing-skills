@@ -26,7 +26,7 @@ metadata:
       lovelace,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-13"
+  last_updated: "2026-06-20"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -101,6 +101,7 @@ Do not use this skill for:
 - Infer the module from the user request first. Ask for the module only if the request still maps equally well to multiple incompatible modules.
 - If the user requests 2-3 compatible checks, run them in sequence rather than collapsing everything into one generic review.
 - Use this execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `pseudocode` / `tables` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` -> `title` / `expression` / `translation` / `adapt`.
+- When applying multiple polish passes to the same prose, work coarse-to-fine — argument/logic -> sentence structure -> lexical/formatting — and do not reverse it; see `references/modules/WORKFLOW.md`.
 - For bibliography requests, decide BibTeX vs Hayagriva before running the script; do not guess the format after the fact.
 - Prefer `logic` for abstract-introduction-conclusion alignment, introduction funnel breaks, or contribution drift; prefer `literature` only when the user is specifically asking for Related Work synthesis, comparison, or gap derivation.
 - For whole-paper motivation/red-thread questions ("does every introduction promise get tested and resolved?"), run `logic` with `--motivation-thread`; it appends a read-only Promise Map + Closure Map heuristic and leaves default `logic` output unchanged.

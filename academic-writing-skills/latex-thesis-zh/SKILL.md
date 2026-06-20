@@ -99,6 +99,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - 先根据用户问题自动推断模块，不把“你想用哪个模块”当成默认追问。
 - 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `tables` / `abstract`。
+- 对同一段文字做多轮润色时，按“论证/逻辑 -> 句子结构 -> 词汇/排版”由粗到细处理，顺序不可颠倒；详见 `references/writing/writing-philosophy-zh.md`。
 - 涉及“引用了不存在的图表”“图表没被引用”“编号断档”“缺图题表题”时走 `references`（交叉引用完整性，盲审高频扣分点）；参考文献条目本身的问题仍走 `bibliography`。
 - 涉及“公式编号挤到下一行”“长公式是否应拆成两行”“公式超出版心/页边距”“相邻公式要不要同步拆行”时走 `format`，并补读 `references/formatting/formula-guide.md`；若问题是 `\label` / `\eqref` / 未定义引用，则走 `references`；若问题是标题后直接进入公式，则走 `logic`。
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
