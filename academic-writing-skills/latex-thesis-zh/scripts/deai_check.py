@@ -102,6 +102,22 @@ DEFAULT_THRESHOLDS = {
             r"\bwill revolutionize\b": "hedge_application",
         },
     },
+    # 时态信号词：英文摘要里用现在时报告动词通常是时态错误（方法/结果应为过去时）。
+    # 中文正文无时态，故脚本仅在英文摘要区域检查；"is"/"are" 不入正则（合法用法太多），
+    # 判断级清单见 references/writing/tense-guide-zh.md。
+    "tense": {
+        "enabled": True,
+        "present_signals": {
+            r"\bshows?\b": "past_in_methods_results",
+            r"\breveals?\b": "past_in_methods_results",
+            r"\bdemonstrates?\b": "past_in_methods_results",
+            r"\bindicates?\b": "past_in_methods_results",
+            r"\bpresents?\b": "past_in_methods_results",
+            r"\bconfirms?\b": "past_in_methods_results",
+            r"\bachieves?\b": "past_in_methods_results",
+            r"\boutperforms?\b": "past_in_methods_results",
+        },
+    },
     # D1（句长单调）：句长变异系数过低 = 机械均匀。仅在传入 --tier 时启用。
     "sentence_length": {
         "min_sentences": 5,
@@ -294,6 +310,17 @@ class ChineseAITraceChecker:
         overclaim_cfg = self.thresholds.get("overclaim", {})
         self._overclaim_enabled = bool(overclaim_cfg.get("enabled", True))
         self._overclaim_patterns = list(overclaim_cfg.get("patterns", {}).items())
+        tense_cfg = self.thresholds.get("tense", {})
+        self._tense_enabled = bool(tense_cfg.get("enabled", True))
+        self._tense_signals = list(tense_cfg.get("present_signals", {}).items())
+        # 现在时在图/表/公式作主语时合法（"Figure 2 shows ..."），命中前若紧邻此类引用则跳过。
+        self._tense_fp_re = re.compile(
+            r"\b(?:figures?|fig|tables?|tab|equations?|eq|algorithms?|schemes?|listings?)\b"
+            r"\.?\s*~?\s*\d*",
+            re.IGNORECASE,
+        )
+        # 英文摘要区域（\begin{abstract}，排除中文 \begin{cabstract}）；中文正文无时态。
+        self._en_abstract_range = self._english_abstract_range()
 
     def _loc(self, line_no: int) -> str:
         """行号定位：单文件 ``第15行``；多文件 ``chapters/x.tex:15``。"""
@@ -661,6 +688,70 @@ class ChineseAITraceChecker:
             )
         return traces
 
+    # --- Checker: tense signal words in the English abstract ([Script] LOW) ---
+
+    def _english_abstract_range(self) -> tuple[int, int] | None:
+        """英文摘要的行区间（1-based，含端点）。优先 ``\\begin{abstract}...\\end{abstract}``
+        （thuthesis 中文摘要是 ``\\begin{cabstract}``，已排除）；其次英文 ``Abstract`` 标题章节。
+        定位不到返回 None。"""
+        m = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", self.content, re.DOTALL)
+        if m:
+            start = self.content[: m.start()].count("\n") + 1
+            end = self.content[: m.end()].count("\n") + 1
+            return (start, end)
+        m = re.search(r"\\(?:chapter|section)\*?\{\s*Abstract\s*\}", self.content)
+        if m:
+            start = self.content[: m.start()].count("\n") + 1
+            rest = self.content[m.end() :]
+            nxt = re.search(r"\\(?:chapter|section)\*?\{", rest)
+            offset = m.end() + (nxt.start() if nxt else len(rest))
+            end = self.content[:offset].count("\n") + 1
+            return (start, end)
+        return None
+
+    @staticmethod
+    def _is_english_line(text: str) -> bool:
+        """该行是否以英文为主（滤掉中文正文 / 中英混排里的中文句）。"""
+        letters = sum(1 for c in text if c.isascii() and c.isalpha())
+        cjk = sum(1 for c in text if "一" <= c <= "鿿")
+        return letters >= 3 and cjk <= 1
+
+    def _check_tense(self) -> list[dict]:
+        """英文摘要时态：中文正文无时态，只在英文摘要区域检查现在时报告动词
+        （方法/结果应为过去时）。定位不到英文摘要或 ``tense.enabled`` 为假时返回空。"""
+        if not self._tense_enabled or self._en_abstract_range is None:
+            return []
+        start, end = self._en_abstract_range
+        traces: list[dict] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            stripped = self.lines[i].strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible_text = self.parser.extract_visible_text(stripped)
+            if not self._is_english_line(visible_text):
+                continue
+            for pattern, suggestion_type in self._tense_signals:
+                for match in re.finditer(pattern, visible_text, re.IGNORECASE):
+                    if self._tense_false_positive(visible_text, match.start()):
+                        continue
+                    traces.append(
+                        {
+                            "line": i + 1,
+                            "text": visible_text,
+                            "original": stripped,
+                            "pattern": pattern,
+                            "category": "tense",
+                            "section": "abstract",
+                            "suggestion_type": suggestion_type,
+                        }
+                    )
+        return traces
+
+    def _tense_false_positive(self, text: str, match_start: int) -> bool:
+        """现在时在图/表/公式作主语时合法（``Figure 2 shows ...``）；紧邻此类引用视为误报。"""
+        before = text[:match_start]
+        return bool(self._tense_fp_re.search(before[-48:]))
+
     # --- Document-level visible-text helper --------------------------------
 
     def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
@@ -774,6 +865,7 @@ class ChineseAITraceChecker:
             analysis["sections"][section_name] = self.check_section(section_name)
         analysis["document_traces"].extend(self._check_term_threshold())
         analysis["document_traces"].extend(self._check_punctuation())
+        analysis["document_traces"].extend(self._check_tense())
         return analysis
 
     def calculate_density_score(self, result: dict) -> float:
@@ -858,6 +950,10 @@ class ChineseAITraceChecker:
             "qualify_novelty": "首创声称：加“据我们所知”，或具体说明首创点.",
             "bound_universal": "把论断限定到实际研究的情形/数据集范围.",
             "hedge_application": "未演示的应用前景用“可能/或许”弱化.",
+            "past_in_methods_results": (
+                "英文摘要的方法/结果用过去时叙述；把现在时报告动词"
+                "（如 'shows' → 'showed'）改为过去时，除非主语是图表。"
+            ),
         }
         return instructions.get(key, "请改写得更具体、客观。")
 

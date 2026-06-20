@@ -27,6 +27,9 @@ except ImportError:
 
 THRESHOLDS_FILENAME = "AI_TONE_THRESHOLDS.yaml"
 
+# Sections whose narration defaults to past tense; the tense checker only fires here.
+TENSE_SECTIONS = frozenset({"method", "experiment", "result"})
+
 DEFAULT_THRESHOLDS = {
     "term_thresholds": {
         "significant": 5,
@@ -102,6 +105,23 @@ DEFAULT_THRESHOLDS = {
             r"\bin all cases\b": "bound_universal",
             r"\bin every case\b": "bound_universal",
             r"\bwill revolutionize\b": "hedge_application",
+        },
+    },
+    # Tense signal words: present-tense reporting verbs that usually signal a
+    # past-tense violation when they narrate Methods / Experiments / Results.
+    # "is" / "are" are intentionally excluded (too many valid uses); see the
+    # judgment-level checklist in references/TENSE_GUIDE.md.
+    "tense": {
+        "enabled": True,
+        "present_signals": {
+            r"\bshows?\b": "past_in_methods_results",
+            r"\breveals?\b": "past_in_methods_results",
+            r"\bdemonstrates?\b": "past_in_methods_results",
+            r"\bindicates?\b": "past_in_methods_results",
+            r"\bpresents?\b": "past_in_methods_results",
+            r"\bconfirms?\b": "past_in_methods_results",
+            r"\bachieves?\b": "past_in_methods_results",
+            r"\boutperforms?\b": "past_in_methods_results",
         },
     },
     # D1 (sentence-length uniformity): low coefficient of variation across
@@ -296,6 +316,16 @@ class AITraceChecker:
         overclaim_cfg = self.thresholds.get("overclaim", {})
         self._overclaim_enabled = bool(overclaim_cfg.get("enabled", True))
         self._overclaim_patterns = list(overclaim_cfg.get("patterns", {}).items())
+        tense_cfg = self.thresholds.get("tense", {})
+        self._tense_enabled = bool(tense_cfg.get("enabled", True))
+        self._tense_signals = list(tense_cfg.get("present_signals", {}).items())
+        # Present tense is fine when the subject is a figure/table/equation;
+        # skip a match when such a reference sits just before the verb.
+        self._tense_fp_re = re.compile(
+            r"\b(?:figures?|fig|tables?|tab|equations?|eq|algorithms?|schemes?|listings?)\b"
+            r"\.?\s*~?\s*\d*",
+            re.IGNORECASE,
+        )
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives."""
@@ -402,6 +432,7 @@ class AITraceChecker:
         results["traces"].extend(self._check_burstiness(section_name))
         results["traces"].extend(self._check_throat_clearing(section_name))
         results["traces"].extend(self._check_overclaim(section_name))
+        results["traces"].extend(self._check_tense(section_name))
         if self.tier:
             results["traces"].extend(self._check_sentence_length_variance(section_name))
         results["trace_count"] = len(results["traces"])
@@ -644,6 +675,49 @@ class AITraceChecker:
             )
         return traces
 
+    # --- Checker: tense signal words (YAML-driven, [Script] LOW) -------------
+
+    def _check_tense(self, section_name: str) -> list[dict]:
+        """Flag present-tense reporting verbs in Methods / Experiments / Results,
+        where past tense is the convention. Gated to those sections; ``is`` /
+        ``are`` are intentionally not checked (see references/TENSE_GUIDE.md).
+        Disabled when ``tense.enabled`` is false in the thresholds."""
+        if not self._tense_enabled:
+            return []
+        if section_name.split("_", 1)[0] not in TENSE_SECTIONS:
+            return []
+        if section_name not in self.section_ranges:
+            return []
+        start, end = self.section_ranges[section_name]
+        traces: list[dict] = []
+        for i in range(start - 1, min(end, len(self.lines))):
+            stripped = self.lines[i].strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible_text = self.parser.extract_visible_text(stripped)
+            for pattern, suggestion_type in self._tense_signals:
+                for match in re.finditer(pattern, visible_text, re.IGNORECASE):
+                    if self._tense_false_positive(visible_text, match.start()):
+                        continue
+                    traces.append(
+                        {
+                            "line": i + 1,
+                            "text": visible_text,
+                            "original": stripped,
+                            "pattern": pattern,
+                            "category": "tense",
+                            "section": section_name,
+                            "suggestion_type": suggestion_type,
+                        }
+                    )
+        return traces
+
+    def _tense_false_positive(self, text: str, match_start: int) -> bool:
+        """Present tense is correct when the subject is a figure/table/equation
+        (``Figure 2 shows ...``). Treat a nearby such reference as a false positive."""
+        before = text[:match_start]
+        return bool(self._tense_fp_re.search(before[-48:]))
+
     # --- Document-level visible-text helper -------------------------------
 
     def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
@@ -864,6 +938,10 @@ class AITraceChecker:
             "qualify_novelty": "Novelty claim: add 'to our knowledge' or name the specific first.",
             "bound_universal": "Bound the claim to the cases / datasets actually studied.",
             "hedge_application": "Hedge undemonstrated applications with 'may / could'.",
+            "past_in_methods_results": (
+                "Methods/Results narrate the study in past tense; change present-tense "
+                "reporting verbs (e.g. 'shows' -> 'showed') unless the subject is a figure/table."
+            ),
         }
         return instructions.get(key, "Rewrite to be more specific and objective.")
 
