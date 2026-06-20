@@ -9,7 +9,7 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "5.2.0"
-  last_updated: "2026-05-20"
+  last_updated: "2026-06-20"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--scholar-eval] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
@@ -320,6 +320,10 @@ Always prefer:
 | `scripts/render_deep_review_report.py` | render final Markdown report |
 | `scripts/render_html_report.py` | render HTML twins of review_report and revision_suggestions |
 | `scripts/diff_review_issues.py` | compare old vs new issue bundles |
+| `scripts/scholar_eval.py` | nine-dimension ScholarEval scoring (`--scholar-eval`) |
+| `scripts/scoring_model.py` | regression-based overall score with weighted-average fallback |
+| `scripts/literature_search.py` | optional external literature search backend (`--literature-search`; Tavily / Semantic Scholar) |
+| `scripts/literature_compare.py` | compare manuscript citations against external literature evidence |
 
 ## Reviewer Lanes
 

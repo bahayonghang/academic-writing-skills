@@ -1,6 +1,12 @@
 ---
 name: latex-thesis-zh
 description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、章引言/本章小结、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
+when_to_use: >-
+  触发于“毕业论文/学位论文/硕士论文/博士论文”“判断是不是 thuthesis/pkuthss”
+  “XeLaTeX 编译失败”“按 GB/T 7714 检查参考文献”“公式编号挤到下一行/长公式拆行”
+  “每章最多 5 节”“大标题体现对象、问题、方法”“章引言/本章小结怎么写”
+  “绪论漏斗/章节主线/绪论-结论闭合”“术语缩略语前后不一致”“去 AI 味”
+  等针对中文 .tex 学位论文工程的请求；英文论文用 latex-paper-en，审稿总评用 paper-audit。
 metadata:
   category: academic-writing
   tags:
@@ -19,8 +25,8 @@ metadata:
       structure,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-12"
-  argument_hint: "[main.tex] [--section SECTION] [--module MODULE]"
+  last_updated: "2026-06-20"
+argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
 
@@ -75,7 +81,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | Module         | Use when                                                                                                                        | Primary command                                                                     | Read next                                                                                                  |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `compile`      | Thesis build fails or toolchain is unclear                                                                                      | `uv run python $SKILL_DIR/scripts/compile.py main.tex`                              | `references/modules/compile.md`                                                                            |
-| `format`       | User asks about thesis formatting, formula layout/line breaks, or GB/T 7714 layout                                               | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                         | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
+| `format`       | User asks about thesis formatting, formula layout/line breaks, or GB/T 7714 layout                                              | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                         | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
 | `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                        | `references/writing/structure-guide.md`                                                                    |
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`            | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                      | `references/modules/template.md`                                                                           |
@@ -161,7 +167,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/modules/experiment.md`: experiment-chapter review criteria.
 - `templates/`: per-template snapshots, the single authoritative source for template facts. Files: `generic.md`（含常见校级排版约定）, `thuthesis.md`, `pkuthss.md`, `yanshan.md`（规范获取指引）.
-只读取当前模块所需的参考文件，避免一次加载整套指南。
+  只读取当前模块所需的参考文件，避免一次加载整套指南。
 
 ## Example Requests
 
