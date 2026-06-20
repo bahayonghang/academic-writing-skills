@@ -68,6 +68,11 @@ Use `references/quality_rubrics.md` weighted scoring to assign final severity:
 - `moderate` is Priority 2 in the roadmap, should-fix
 - `minor` is Priority 3 in the roadmap, optional
 
+Within a priority tier, order items by the **reviewer-suspicion ranking** in
+`references/REVIEWER_PSYCHOLOGY.md` (numbers↔claim mismatch first, "too clean" results last),
+so the roadmap surfaces what a real reviewer hits first. This is a tie-break on ordering
+only; it does not change severity.
+
 Emit `revision_suggestions.md` grouped by priority. Cite the consensus label per item.
 
 ## Forbidden Operations
@@ -90,6 +95,7 @@ Emit `revision_suggestions.md` grouped by priority. Cite the consensus label per
 - `references/ISSUE_SCHEMA.md`
 - `references/editorial_decision_standards.md`
 - `references/quality_rubrics.md`
+- `references/REVIEWER_PSYCHOLOGY.md`
 
 ## Output discipline
 

@@ -68,15 +68,22 @@ claims are fully supported by the results, appendices, and evaluation evidence
 actually present in the paper.
 
 **DO**:
+
 - quote the claim verbatim and the supporting evidence verbatim
 - flag overclaim, unsupported extrapolation, claim wording that outruns the
-  data, and missing caveats
+  data, and missing caveats; classify the over-claim type (causal / firstness /
+  universality / effect-size / temporal / application / comparison) and take the
+  conservative rewrite from `OVER_CLAIM_GUARD.md`
+- emit over-claim findings as `comment_type: claim_accuracy` with `allowed_wording`
+  (the bounded rewrite) and `forbidden_wording` (the overreaching phrasing)
 - when a claim cites a specific table or figure, verify the cited artifact
   exists and contains the cited number
 
 **DON'T**:
+
 - do not flag stylistic emphasis as overclaim when the underlying evidence is
-  present
+  present (see the reverse-calibration list in `OVER_CLAIM_GUARD.md` — strong
+  wording that the evidence earns is not a finding)
 - do not propose evidence the paper does not contain
 - do not duplicate findings already raised by the methodology or notation lane
 
@@ -90,12 +97,14 @@ locations.
 descriptions for contradictions or unstable terminology.
 
 **DO**:
+
 - record symbol drift across sections (same concept, different symbol)
 - record prose vs formula mismatch
 - record aggregate totals that do not reconcile with subtotals
 - record appendix values that contradict headline values
 
 **DON'T**:
+
 - do not flag intentional notation redefinitions that the paper explicitly
   announces
 - do not flag OCR artifacts as authorial inconsistency unless the issue
@@ -110,12 +119,14 @@ with all occurrences listed.
 methodologically symmetric across methods, baselines, and ablations.
 
 **DO**:
+
 - flag unequal comparison conditions (different data, compute, retries)
 - flag asymmetric access to tuning or pretraining
 - flag missing baseline justification or omitted prior art
 - flag headline results without enough evaluation detail to reproduce
 
 **DON'T**:
+
 - do not flag missing comparisons that the paper explicitly scopes out
 - do not duplicate findings already raised by `prior_art_and_novelty_grounding`
 
@@ -128,12 +139,14 @@ hyperparameters, retries).
 expects from prior work or competing methods.
 
 **DO**:
+
 - flag statistical rigor demanded from others but absent in the paper itself
 - flag fairness criteria applied asymmetrically
 - flag limitations or risks acknowledged for prior work but ignored for the
   proposed method
 
 **DON'T**:
+
 - do not flag context-appropriate scope differences as inconsistency
 - do not redo the `evaluation_fairness_and_reproducibility` audit
 
@@ -146,12 +159,14 @@ cited prior art and whether the most relevant competing work is adequately
 discussed.
 
 **DO**:
+
 - flag missing or out-of-date prior art on the central method or claim
 - flag overstated novelty when a cited prior work already covers the
   contribution
 - flag selective citation patterns that bias the framing
 
 **DON'T**:
+
 - do not invent prior art not actually known
 - do not duplicate findings already raised by the literature reviewer agent
 
@@ -164,6 +179,7 @@ possible.
 paper's readiness for submission (full/editor focus only).
 
 **DO**:
+
 - promote Critical or Major mechanical issues such as em dash overuse,
   repeated AI-tone vocabulary, abstract result gaps, or source hygiene
   problems
@@ -171,6 +187,7 @@ paper's readiness for submission (full/editor focus only).
   presubmission script
 
 **DON'T**:
+
 - do not absorb methodology, theory, literature, or claim-validity reviewer
   work
 - do not run when `--focus methodology|theory|literature|logic` is selected;

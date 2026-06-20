@@ -296,8 +296,10 @@ Always prefer:
 | `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
 | `references/ISSUE_SCHEMA.md` | canonical JSON schema |
 | `references/CLAIM_EVIDENCE_CONTRACT.md` | optional claim candidate / evidence anchor contract |
+| `references/OVER_CLAIM_GUARD.md` | conservative-wording ladder + substitution tables for the claims-vs-evidence lane |
 | `references/DATA_AVAILABILITY_ADVISORY.md` | source-data and FAIR metadata advisory boundary |
 | `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
+| `references/REVIEWER_PSYCHOLOGY.md` | reviewer reading path + suspicion-likelihood ranking for finding prioritization |
 | `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules and term list |
 | `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
 | `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |

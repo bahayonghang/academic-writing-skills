@@ -5,6 +5,7 @@ Consolidated checklists for paper audit across venues.
 ## Universal Checklist (All Venues)
 
 ### Compilation & Formatting
+
 - [ ] Paper compiles without errors
 - [ ] No overfull/underfull hbox warnings (LaTeX)
 - [ ] Page limit respected (excluding references)
@@ -12,6 +13,7 @@ Consolidated checklists for paper audit across venues.
 - [ ] Consistent font sizes and margins
 
 ### Content Integrity
+
 - [ ] No placeholder text (TODO, FIXME, XXX)
 - [ ] All figures referenced in text
 - [ ] All tables referenced in text
@@ -21,6 +23,7 @@ Consolidated checklists for paper audit across venues.
 - [ ] Consistent notation throughout
 
 ### Writing Quality
+
 - [ ] All acronyms defined on first use
 - [ ] No overly long sentences (> 60 words)
 - [ ] Abstract is self-contained
@@ -42,14 +45,17 @@ Consolidated checklists for paper audit across venues.
 - [ ] Related Work citations reappear in Discussion for results contextualization (B4)
 - [ ] Conclusion contains all three elements: findings summary + implications + limitations/future work (B5)
 - [ ] Introduction contribution claims are answered in Conclusion (C3)
+- [ ] Claim wording matches evidence strength — no causal language on correlational results, no "first / novel / universal" without support, no vague magnitude word without a number (see `OVER_CLAIM_GUARD.md`)
 
 ### Theory & Conceptual Framework
+
 - [ ] Core theoretical concepts defined clearly and unambiguously (A5)
 - [ ] Theoretical framework engages with existing theories, not just cites them (A6)
 - [ ] Paper's theoretical contribution is identifiable and stated explicitly (A7)
 - [ ] Research gap is genuine and supported by literature evidence, not fabricated by selective citation
 
 ### Qualitative Methodology (apply when paper uses qualitative or mixed methods)
+
 - [ ] Sampling strategy described with theoretical/methodological rationale (B6)
 - [ ] Data saturation discussed or sample size justified (B7)
 - [ ] Coding/analysis process described with sufficient detail: stages, coders, examples (B8)
@@ -57,12 +63,14 @@ Consolidated checklists for paper audit across venues.
 - [ ] Researcher reflexivity addressed for studies involving human participants or sensitive topics (B10)
 
 ### Experiment Analysis
+
 - [ ] Experiment section uses cohesive paragraph narratives, not itemized lists
 - [ ] Appropriate, up-to-date SOTA baseline methods are included and justified
 - [ ] Ablation studies effectively validate the contribution of core components
 - [ ] Statistical significance/confidence intervals are reported where applicable
 
 ### Submission Compliance
+
 - [ ] Anonymous submission (no author names in blind review)
 - [ ] Supplementary material within size limits
 - [ ] Code submission prepared (if applicable)
