@@ -178,12 +178,18 @@ DIMENSION_MAP = {
     "throat_clearing": "D2",
     "parallel_structure": "D2",
     "punctuation": "D2",
+    "binary_contrast_shell": "D2",
+    "lecture_colon": "D2",
+    "command_template_opening": "D2",
     "low_information_density": "D3",
     "term_threshold": "D4",
     "filler_connector": "D4",
     "empty_phrase": "D5",
     "vague_quantifier": "D5",
+    "vague_referent": "D5",
+    "vague_comparative": "D5",
     "template_expr": "D5",
+    "fake_insight_marker": "D5",
     "over_confident": "D5",
     "overclaim": "D5",
 }
@@ -297,7 +303,67 @@ class AITraceChecker:
         r"值得注意的是": "filler_remove",
         r"需要指出的是": "filler_remove",
     }
+
+    BINARY_CONTRAST_SHELLS = {
+        r"(?:不是|并非).{1,24}[，,]?\s*而是": "clarify_contrast_axis",
+        r"不在于.{1,24}[，,]?\s*而在于": "clarify_contrast_axis",
+        r"不只是.{1,24}[，,]?\s*(?:更|还)是?": "clarify_contrast_axis",
+        r"不仅.{1,24}[，,]?\s*(?:还|更)是?": "clarify_contrast_axis",
+        r"\bnot\s+(?:merely|only)\b.{1,80}?\bbut\b(?:\s+also\b)?": ("clarify_contrast_axis"),
+        r"\brather\s+than\b.{1,80}?,": "clarify_contrast_axis",
+    }
+
+    FAKE_INSIGHT_MARKERS = {
+        r"真正(?:的)?": "state_evidence_claim",
+        r"其实": "state_evidence_claim",
+        r"本质上": "state_evidence_claim",
+        r"核心在于": "state_evidence_claim",
+        r"关键在于": "state_evidence_claim",
+        r"更重要的是": "state_evidence_claim",
+        r"\bessentially\b": "state_evidence_claim",
+        r"\bin fact\b": "state_evidence_claim",
+        r"\bthe key is\b": "state_evidence_claim",
+        r"\bit is important to note\b": "state_evidence_claim",
+        r"\bmore importantly\b": "state_evidence_claim",
+    }
+
+    LECTURE_COLON = {
+        r"(?:我的结论是|原因很简单|重点是|分成三类|更重要的是)[:：]": ("rewrite_lecture_setup"),
+        r"\b(?:The conclusion is|The reason is simple|The key point is):": (
+            "rewrite_lecture_setup"
+        ),
+    }
+
+    VAGUE_REFERENTS = {
+        r"这些东西": "name_academic_referent",
+        r"这件事": "name_academic_referent",
+        r"东西": "name_academic_referent",
+        r"这些(?!方法|结果|问题|因素|指标|数据|样本|模型|文献|实验|策略|机制|变量|特征|结论)": (
+            "name_academic_referent"
+        ),
+        r"\bthings\b": "name_academic_referent",
+        r"\baspects\b": "name_academic_referent",
+        r"\bfactors\b": "name_academic_referent",
+        r"\bThis\s+(?:shows|means|suggests|indicates|demonstrates)\b": ("name_academic_referent"),
+    }
+
+    VAGUE_COMPARATIVES = {
+        r"更(?:适合|像|自然|高级)": "name_comparison_criterion",
+    }
+
+    COMMAND_TEMPLATE_OPENINGS = {
+        r"^(?:别急着|先别|顺序别反了|记住这句话)": "academicize_command_opening",
+    }
+
     EVIDENCE_MARKERS = re.compile(r"(#cite\(|@\w+|\b\d+(?:\.\d+)?%?\b|\\cite\{)")
+    ACADEMIC_CONTRAST_MARKERS = re.compile(
+        r"(baseline|dataset|metric|experiment|table|figure|compared|comparison|"
+        r"相比|相较|基线|对照|实验|数据集|图|表|指标|准确率|MAE|RMSE|F1|p\s*[<>=])",
+        re.IGNORECASE,
+    )
+    TECHNICAL_NOUN_MARKERS = re.compile(
+        r"(核心(?:模块|算法|参数|变量|层|机制)|关键(?:技术|参数|变量|帧|点|路径|步骤))"
+    )
 
     def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
@@ -353,9 +419,32 @@ class AITraceChecker:
                 return True
 
         # 3. "comprehensive" followed by range
-        return bool(
-            "comprehensive" in pattern and "from" in context_after and "to" in context_after
-        )
+        if "comprehensive" in pattern and "from" in context_after and "to" in context_after:
+            return True
+
+        matched_text = text[start:end]
+        window = context_before + matched_text + context_after
+
+        if (
+            re.search(
+                r"不是|并非|不在于|不只是|不仅|\bnot\s+(?:merely|only)\b|\brather\s+than\b",
+                matched_text,
+                re.IGNORECASE,
+            )
+            and self.EVIDENCE_MARKERS.search(window)
+            and self.ACADEMIC_CONTRAST_MARKERS.search(window)
+        ):
+            return True
+
+        if re.search(r"更(?:适合|像|自然|高级)", matched_text):
+            return bool(
+                re.search(r"(相比|相较|相对于|用于|适用于|在|作为|基线|指标|场景|任务)", window)
+            )
+
+        if pattern in {r"真正(?:的)?", r"核心在于", r"关键在于"}:
+            return bool(self.TECHNICAL_NOUN_MARKERS.search(window))
+
+        return False
 
     def _find_pattern_in_section(
         self, pattern: str, suggestion_type: str, section_name: str, category: str
@@ -418,6 +507,12 @@ class AITraceChecker:
             ("vague_quantifier", self.VAGUE_QUANTIFIERS),
             ("template_expr", self.TEMPLATE_EXPRESSIONS),
             ("filler_connector", self.AI_FILLER_CONNECTORS),
+            ("binary_contrast_shell", self.BINARY_CONTRAST_SHELLS),
+            ("fake_insight_marker", self.FAKE_INSIGHT_MARKERS),
+            ("lecture_colon", self.LECTURE_COLON),
+            ("vague_referent", self.VAGUE_REFERENTS),
+            ("vague_comparative", self.VAGUE_COMPARATIVES),
+            ("command_template_opening", self.COMMAND_TEMPLATE_OPENINGS),
         ]
 
         for category, patterns_dict in all_patterns:
@@ -928,6 +1023,15 @@ class AITraceChecker:
             "parallel_opening": "Vary the opening syntax across consecutive paragraphs.",
             "throat_clearing": "Cut the leading boilerplate; start with the claim.",
             "punctuation_pattern": "Avoid em-dash overuse and exclamation marks in body sections.",
+            "clarify_contrast_axis": (
+                "Keep the contrast only if it names a real baseline, criterion, and evidence; "
+                "otherwise remove the scaffold and state the claim directly."
+            ),
+            "state_evidence_claim": "Remove the insight marker and state the evidence-backed claim directly.",
+            "rewrite_lecture_setup": "Replace the colon-led lecture setup with a normal academic sentence or a concrete inventory noun.",
+            "name_academic_referent": "Replace the vague referent with the exact research object, method, result, factor, or limitation.",
+            "name_comparison_criterion": "Name the comparison baseline and evaluation criterion.",
+            "academicize_command_opening": "Rewrite the imperative tutorial opening as an academic risk, procedure, or observation.",
             "vary_sentence_length": (
                 "Mix short and long sentences to break the even, machine-like cadence."
             ),

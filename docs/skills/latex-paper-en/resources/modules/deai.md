@@ -1,94 +1,61 @@
-# Module: De-AI Editing (去AI化编辑)
+# Module: De-AI Editing
 
-**Trigger**: deai, 去AI化, humanize, reduce AI traces, natural writing
+**Trigger**: deai, humanize, reduce AI traces, natural writing, tone cleanup
 
-**Purpose**: Reduce AI writing traces while preserving LaTeX syntax and technical accuracy.
+**Purpose**: Detect likely AI-writing traces in visible prose while preserving LaTeX structure and technical claims.
 
-**Input Requirements**:
-1. **Source code type** (required): LaTeX
-2. **Section** (required): Abstract / Introduction / Related Work / Methods / Experiments / Results / Discussion / Conclusion / Other
-3. **Source code snippet** (required): Direct paste (preserve indentation and line breaks)
+## Commands
 
-**Usage Examples**:
-
-**Interactive editing** (recommended for sections):
-```python
-python scripts/deai_check.py main.tex --section introduction
-# Output: AI trace analysis + rule-based revision suggestions
-```
-
-**Batch processing** (for entire chapters):
 ```bash
-python scripts/deai_batch.py main.tex --chapter chapter3/introduction.tex
-python scripts/deai_batch.py main.tex --all-sections  # Process entire document
+uv run python -B scripts/deai_check.py main.tex --section introduction
+uv run python -B scripts/deai_check.py main.tex --analyze
+uv run python -B scripts/deai_batch.py main.tex --all-sections
 ```
 
-**Workflow**:
-1. **Syntax Structure Identification**: Detect LaTeX commands, preserve all:
-   - Commands: `\command{...}`, `\command[...]{}`
-   - References: `\cite{}`, `\ref{}`, `\label{}`, `\eqref{}`, `\autoref{}`
-   - Environments: `\begin{...}...\end{...}`
-   - Math: `$...$`, `\[...\]`, equation/align environments
-   - Custom macros (unchanged by default)
+## Raw Script Output
 
-2. **AI Pattern Detection**:
-   - Empty phrases: "significant", "comprehensive", "effective", "important"
-   - Over-confident: "obviously", "necessarily", "completely", "clearly"
-   - Mechanical structures: Three-part parallelisms without substance
-   - Template expressions: "in recent years", "more and more"
+- `deai_check.py` emits section-level analysis, trace scores, and optional fix suggestions.
+- `deai_batch.py` supports broader batch inspection across sections.
 
-3. **Text Rewriting** (visible text ONLY):
-   - Split long sentences (>50 words)
-   - Adjust word order for natural flow
-   - Replace vague expressions with specific claims
-   - Delete redundant phrases
-   - Add necessary subjects (without introducing new facts)
+## Skill-Layer Response
 
-4. **Output Generation**:
-   - **A. Rewritten source code**: Complete source with minimal invasive edits
-   - **B. Change summary**: 3-10 bullet points explaining modifications
-   - **C. Pending verification marks**: For claims needing evidence
+- Treat the script output as analysis, not as permission to rewrite the paper by default.
+- Return `% DE-AI ...` style findings or a short risk summary unless the user explicitly asks for source edits.
+- Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments.
+- Never invent new claims, metrics, baselines, or references while smoothing the prose.
 
-**Hard Constraints**:
-- **NEVER modify**: `\cite{}`, `\ref{}`, `\label{}`, math environments
-- **NEVER add**: New data, metrics, comparisons, contributions, experimental settings, citation numbers, or bib keys
-- **ONLY modify**: Visible paragraph text, section titles, caption text
+## Claim-Evidence-First Humanization
 
-**Output Format**:
-```latex
-% ============================================================
-% DE-AI EDITING (Line 23 - Introduction)
-% ============================================================
-% Original: This method achieves significant performance improvement.
-% Revised: The proposed method improves performance in the experiments.
-%
-% Changes:
-% 1. Removed vague phrase: "significant" → deleted
-% 2. Kept the claim but avoided adding new metrics or baselines
-%
-% ⚠️ [PENDING VERIFICATION]: Add exact metrics/baselines only if supported by data
-% ============================================================
+Before reducing AI tone, preserve the academic payload:
 
-\section{Introduction}
-The proposed method improves performance in the experiments...
-```
+- **Facts/evidence**: numbers, datasets, experiments, figures, tables, citations, equations, and metrics.
+- **Claims/stance**: the paper's real contribution, uncertainty, design choice, and limitation.
+- **Logic**: paragraph role, section role, and claim-evidence map.
+- **Boundaries**: assumptions, scope, missing evidence, and unsupported claims.
 
-**Section-Specific Guidelines**:
+Only then remove rhetorical scaffolds such as `not merely A, but B`, `essentially`, `the key is`, `The conclusion is:`, or vague `this/things/factors`. Keep a contrast when it names a real baseline, criterion, and evidence; otherwise state the claim directly. The module should not promise lower detector scores or replace venue AI-use disclosure.
 
-| Section | Focus | Constraints |
-|---------|-------|-------------|
-| Abstract | Purpose/Method/Key Results (with numbers)/Conclusion | No generic claims |
-| Introduction | Importance → Gap → Contribution (verifiable) | Restrain claims |
-| Related Work | Group by line, specific differences | Concrete comparisons |
-| Methods | Reproducibility (process, parameters, metrics) | Implementation details |
-| Results | Report facts and numbers only | No interpretation |
-| Discussion | Mechanisms, boundaries, failures, limitations | Critical analysis |
-| Conclusion | Answer research questions, no new experiments | Actionable future work |
+## Disclosure obligation (read before de-AI editing)
 
-**AI Trace Density Check**:
-```bash
-python scripts/deai_check.py main.tex --analyze
-# Output: AI trace density score per section + Target sections for improvement
-```
+This module improves readability; it does **not** remove a disclosure obligation.
+If an LLM had a non-trivial role in producing the paper, the target venue may
+require you to disclose it (in a dedicated section, a checklist, the
+acknowledgements, or the cover letter). See
+[ai-disclosure.md](../references/venues/ai-disclosure.md) for the per-venue policy matrix.
+Do not treat "reducing AI traces" as a substitute for required disclosure.
 
 Reference: [guide.md](../references/deai/guide.md)
+
+## Graded mode (`--tier`) and D1-D5 dimensions
+
+`--tier {light|medium|heavy}` is **opt-in**. Without it, the default output is exactly as before. When present, it:
+
+- **scales thresholds** — `light` flags fewer items (looser caps), `heavy` flags more (stricter caps); `medium` keeps the current thresholds;
+- **enables the D1 sentence-length check** — flags sections whose sentence-length coefficient of variation is suspiciously low (machine-even cadence);
+- **labels every finding with its AIGC dimension** D1-D5 and attaches a one-line teaching note (why detectors flag the pattern).
+
+```bash
+uv run python -B scripts/deai_check.py main.tex --analyze --tier heavy
+```
+
+The five dimensions are readability-oriented, **not** tuned to evade any specific detector: D1 sentence-length variety, D2 paragraph structure, D3 information density, D4 connector frequency, D5 term-context matching. Thresholds (including `sentence_length.cv_threshold`) remain overridable via `references/deai/tone-thresholds.yaml`.

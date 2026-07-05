@@ -827,6 +827,47 @@ Experiments on three datasets show consistent gains in both MAE and RMSE.
     assert "low_information_density" not in categories
 
 
+def test_deai_detects_rhetorical_scaffold_shells(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+The conclusion is: essentially, this shows that several things changed.
+The method is not merely useful, but also important for many factors.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    categories = {trace["category"] for trace in result["traces"]}
+    assert {
+        "binary_contrast_shell",
+        "fake_insight_marker",
+        "lecture_colon",
+        "vague_referent",
+    } <= categories
+
+
+def test_deai_preserves_evidence_bearing_technical_contrast(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        r"""\documentclass{article}
+\begin{document}
+\section{Introduction}
+The method is not only faster but also reduces MAE by 12.5\% on ETTm1 \cite{liu2024}.
+Rather than increasing parameter count, Table 2 reports a 9.1\% RMSE reduction compared with the baseline.
+\end{document}
+""",
+        encoding="utf-8",
+    )
+    checker = deai_module.AITraceChecker(tex)
+    result = checker.check_section("introduction")
+    contrast = [t for t in result["traces"] if t["category"] == "binary_contrast_shell"]
+    assert contrast == []
+
+
 # ── deai_check.py (Stage 1 — data-driven AI tone checkers) ────────────────────
 
 

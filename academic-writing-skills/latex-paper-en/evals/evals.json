@@ -461,6 +461,36 @@
           "description": "evidence-backed comparison present"
         }
       ]
+    },
+    {
+      "id": 20,
+      "prompt": "The introduction sounds AI-written: not merely A but B, essentially, the key is, and this shows. Reduce the AI tone, but first preserve the claim-evidence map, citations, labels, equations, and macros.",
+      "expected_output": "Route to deai, diagnose English rhetorical scaffolds, protect the claim-evidence chain and LaTeX anchors, and provide revision targets or a blueprint rather than silently rewriting source.",
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(rhetorical scaffold|structure shell|fake insight|vague referent)",
+          "description": "English scaffold categories diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(claim-evidence|citations|labels|equations|macros|preserve)",
+          "description": "academic source-preserving contract stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "guarantee detector",
+          "description": "no detector-evasion promise"
+        }
+      ]
     }
   ]
 }

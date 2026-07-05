@@ -8,6 +8,18 @@ Purpose: Detect and reduce AI-generated writing traces while preserving LaTeX sy
 2. **Zero fabrication**: Never add data, metrics, comparisons, or claims
 3. **Information density**: Every sentence must convey verifiable information
 4. **Restrained wording**: Avoid unsupported certainty; use appropriate hedging
+5. **Academic payload first**: Preserve the problem-method-evidence-conclusion-boundary chain before changing tone
+
+## Academic Humanization Contract
+
+Before removing "AI flavor", extract four protected buckets:
+
+- **Facts/evidence**: data, formulas, experiments, figures, tables, citations, and metrics.
+- **Claims/stance**: the author's actual conclusion, method choice, uncertainty, and limitation.
+- **Logic**: chapter role, paragraph role, claim-evidence mapping, and cross-chapter closure.
+- **Boundaries**: scope, assumptions, unverified points, and `待补证` items.
+
+Only after these are clear should the module remove structure shells. The default output remains diagnostic findings, a risk summary, or a rewrite blueprint. Provide prose rewrites only when the user explicitly asks for them.
 
 ## High-Priority AI Patterns (Must Fix)
 
@@ -19,6 +31,8 @@ Purpose: Detect and reduce AI-generated writing traces while preserving LaTeX sy
 | Template openings | "近年来", "随着科技的飞速发展" | Start from specific problem context |
 | Stacked citations | "[1]-[5]" without discussion | Discuss each cited work individually |
 | Filler connectors | "总之", "不可否认的是", "值得注意的是" | Delete; state conclusion directly |
+| Structure shells | "不是 A，而是 B", "真正的问题", "我的结论是：" | Keep only evidence-bearing contrasts; otherwise state the academic claim directly |
+| Vague referents/comparatives | "这些东西", "更自然", "更适合" | Name the research object, baseline, and evaluation criterion |
 
 ## AI Density Scoring
 

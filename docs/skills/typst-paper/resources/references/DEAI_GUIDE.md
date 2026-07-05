@@ -9,12 +9,14 @@
   - [2. Zero Fabrication (零捏造)](#2-zero-fabrication-零捏造)
   - [3. Information Density (提高信息密度)](#3-information-density-提高信息密度)
   - [4. Academic Restraint (克制措辞)](#4-academic-restraint-克制措辞)
+- [Academic Humanization Contract](#academic-humanization-contract)
 - [Common AI Writing Patterns to Remove](#common-ai-writing-patterns-to-remove)
   - [Category 1: Empty Phrases (空话口号)](#category-1-empty-phrases-空话口号)
   - [Category 2: Over-Confident Language (过度确定)](#category-2-over-confident-language-过度确定)
   - [Category 3: Mechanical Structures (机械排比)](#category-3-mechanical-structures-机械排比)
   - [Category 4: Vague Quantification (模糊量化)](#category-4-vague-quantification-模糊量化)
   - [Category 5: Template Introductions (模板引言)](#category-5-template-introductions-模板引言)
+- [Structural-Level Traces (LLM-judgment)](#structural-level-traces-llm-judgment)
 - [Section-Specific Guidelines](#section-specific-guidelines)
   - [Abstract (摘要)](#abstract-摘要)
   - [Introduction (引言)](#introduction-引言)
@@ -66,6 +68,28 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 
 ---
 
+## Academic Humanization Contract
+
+Reducing AI tone is not detector evasion. Preserve the Typst paper before smoothing prose:
+
+1. Protect syntax anchors: `@cite`, `<label>`, `#set`, `#show`, `#let`, math, code, macros, and source layout.
+2. Extract the academic payload: facts/evidence, author stance, section logic, claim-evidence links, and boundaries.
+3. Remove Chinese or English structure shells only after the payload is clear.
+
+Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` / `待补证`; do not invent citations, baselines, metrics, experiments, or conclusions.
+
+### Bilingual Structure-Shell Checks
+
+| Category | Common trigger | Academic fix |
+|----------|----------------|--------------|
+| Empty contrast shell | 不是 A 而是 B; not merely A but B | Keep only when it names a baseline, criterion, and evidence |
+| Fake insight marker | 真正的问题; 本质上; essentially; the key is | Remove the marker and state the evidence-backed claim directly |
+| Lecture colon | 我的结论是：; The conclusion is: | Use a normal academic sentence or a concrete inventory noun |
+| Vague referent | 这些东西; this shows; things; factors | Name the object, method, mechanism, result, or limitation |
+| Vague comparative | 更适合; 更自然 | Name the comparison baseline and evaluation criterion |
+
+---
+
 ## Common AI Writing Patterns to Remove
 
 ### Category 1: Empty Phrases (空话口号)
@@ -94,6 +118,8 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 | never | rarely observed |
 
 **Detection Pattern**: Absolute claims without qualification or evidence.
+
+> For graded conservative-wording tables (causal / firstness / universality / effect-size / application), see [`OVER_CLAIM_GUARD.md`](OVER_CLAIM_GUARD.md).
 
 ### Category 3: Mechanical Structures (机械排比)
 
@@ -132,6 +158,21 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 ✅ "Machine learning has improved prediction accuracy in healthcare @ref1, manufacturing @ref2, and finance @ref3."
 
 **Detection Pattern**: Broad generalizations that could be in any textbook.
+
+---
+
+## Structural-Level Traces (LLM-judgment)
+
+These are not word- or sentence-level tells — they live in document structure, so a
+script cannot catch them. Judge them by reading the whole draft, and tag any finding
+`[LLM]`.
+
+1. **Over-symmetric IMRAD** — every section padded to the same shape (introduction always 4 paragraphs; discussion always "recap + compare + implication + limitation"). Real papers are uneven: some sections short, some long. Signal: paragraph counts symmetric across sections.
+2. **Declarative scaffolding transitions** — "Having established X, we next turn to Y." / "With this in hand, we proceed to…". Real writing transitions implicitly: the next sentence enters the new topic without announcing it.
+3. **Stance-less discussion** — pros and cons each listed but none committed to. Real authors take a position ("we consider X more plausible than Y because…").
+4. **Uniform paragraph length** — 80% of paragraphs are 5–7 sentences. Real cadence varies: a 3-sentence emphasis paragraph next to a 10-sentence argument.
+
+**How to fix**: break the symmetry — merge thin paragraphs, split overloaded ones, delete announced transitions, and make the discussion commit to a view.
 
 ---
 

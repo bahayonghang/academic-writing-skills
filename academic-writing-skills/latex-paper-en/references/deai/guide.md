@@ -9,6 +9,7 @@
   - [2. Zero Fabrication (零捏造)](#2-zero-fabrication-零捏造)
   - [3. Information Density (提高信息密度)](#3-information-density-提高信息密度)
   - [4. Academic Restraint (克制措辞)](#4-academic-restraint-克制措辞)
+- [Academic Humanization Contract](#academic-humanization-contract)
 - [Common AI Writing Patterns to Remove](#common-ai-writing-patterns-to-remove)
   - [Category 1: Empty Phrases (空话口号)](#category-1-empty-phrases-空话口号)
   - [Category 2: Over-Confident Language (过度确定)](#category-2-over-confident-language-过度确定)
@@ -67,6 +68,27 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 - Avoid over-confident language without evidence
 - Use appropriate hedging for speculative claims
 - Present contributions objectively, not hyperbolically
+
+---
+
+## Academic Humanization Contract
+
+Reducing AI tone is not detector evasion. Preserve the paper before smoothing the prose:
+
+1. Protect syntax anchors: `\cite{}`, `\ref{}`, `\label{}`, equations, environments, macros, and source layout.
+2. Extract the academic payload: facts/evidence, author stance, section logic, claim-evidence links, and boundaries.
+3. Remove rhetorical scaffolds only after the payload is clear.
+
+Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` or `needs evidence`; do not invent citations, baselines, metrics, experiments, or conclusions.
+
+### Rhetorical Scaffold Checks
+
+| Category | Common trigger | Academic fix |
+|----------|----------------|--------------|
+| Empty contrast shell | not merely A, but B; not only A but also B | Keep only when it names a baseline, criterion, and evidence |
+| Fake insight marker | essentially; in fact; the key is; more importantly | Remove the marker and state the evidence-backed claim directly |
+| Lecture colon | The conclusion is:; The reason is simple: | Use a normal academic sentence or a concrete inventory noun |
+| Vague referent | this shows; things; aspects; factors | Name the object, mechanism, result, factor, or limitation |
 
 ---
 

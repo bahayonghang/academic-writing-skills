@@ -523,6 +523,36 @@
           "description": "no fabricated citations"
         }
       ]
+    },
+    {
+      "id": 23,
+      "prompt": "这段绪论 AI 味很重：很多句子都是“不是 A，而是 B”“真正的问题在于”“我的结论是：”。请降低 AI 味，但不要打乱学术逻辑、引用、公式和证据边界。",
+      "expected_output": "路由到 deai 模块，先提取问题-方法-证据-结论-边界，再诊断二元对比壳、伪洞察标记和讲义式冒号；默认给重写蓝图，不新增引用、数据或结论。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(二元对比|结构壳|伪洞察|讲义式冒号)",
+          "description": "renhua-inspired shell categories diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(证据|引用|公式|边界|不新增)",
+          "description": "academic preservation contract stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "保证通过检测",
+          "description": "no detector-evasion promise"
+        }
+      ]
     }
   ]
 }

@@ -133,6 +133,40 @@ class TestDeaiCheck:
         result = checker.check_section("introduction")
         assert result["trace_count"] >= 2  # 近年来 + 越来越多的 + 随着...发展
 
+    def test_structure_shell_categories_match(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n"
+            "我的结论是：真正的问题不是模型规模，而是论证证据不足。"
+            "这些东西更自然。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("introduction")
+        categories = {trace["category"] for trace in result["traces"]}
+        assert {
+            "binary_contrast_shell",
+            "fake_insight_marker",
+            "lecture_colon",
+            "vague_referent",
+            "vague_comparative",
+        } <= categories
+
+    def test_evidence_bearing_contrast_is_not_hard_banned(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\chapter{绪论}\n"
+            "本文不是提高参数量，而是将 MAE 降低 12.5%，相比基线模型更适合"
+            "短期负荷预测任务。\n",
+            encoding="utf-8",
+        )
+        checker = deai_check.ChineseAITraceChecker(tex)
+        result = checker.check_section("introduction")
+        contrast = [t for t in result["traces"] if t["category"] == "binary_contrast_shell"]
+        vague_comparative = [t for t in result["traces"] if t["category"] == "vague_comparative"]
+        assert contrast == []
+        assert vague_comparative == []
+
 
 # ── detect_template.py ─────────────────────────────────────────
 

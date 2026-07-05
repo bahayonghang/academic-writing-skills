@@ -413,6 +413,42 @@ def test_typst_deai_detects_low_information_density_in_chinese(tmp_path: Path) -
     assert "low_information_density" in categories
 
 
+def test_typst_deai_detects_bilingual_structure_shells(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= 绪论
+我的结论是：真正的问题不是模型规模，而是论证证据不足。这些东西更自然。
+The conclusion is: essentially, this shows that several things changed.
+""",
+        encoding="utf-8",
+    )
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("introduction")
+    categories = {trace["category"] for trace in result["traces"]}
+    assert {
+        "binary_contrast_shell",
+        "fake_insight_marker",
+        "lecture_colon",
+        "vague_referent",
+        "vague_comparative",
+    } <= categories
+
+
+def test_typst_deai_preserves_evidence_bearing_contrast_with_cite(tmp_path: Path) -> None:
+    typ = tmp_path / "main.typ"
+    typ.write_text(
+        """= Introduction
+The method is not only faster but also reduces MAE by 12.5% on ETTm1 @liu2024.
+Rather than increasing parameters, Table @tbl-main reports a 9.1% RMSE reduction compared with the baseline.
+""",
+        encoding="utf-8",
+    )
+    checker = deai_typst.AITraceChecker(typ)
+    result = checker.check_section("introduction")
+    contrast = [t for t in result["traces"] if t["category"] == "binary_contrast_shell"]
+    assert contrast == []
+
+
 # ── deai_check.py (Stage 1 — data-driven AI tone checkers, Typst) ────────────
 
 

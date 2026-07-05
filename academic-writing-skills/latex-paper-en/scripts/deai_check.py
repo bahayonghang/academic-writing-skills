@@ -166,11 +166,15 @@ DIMENSION_MAP = {
     "burstiness": "D2",
     "throat_clearing": "D2",
     "punctuation": "D2",
+    "binary_contrast_shell": "D2",
+    "lecture_colon": "D2",
     "low_information_density": "D3",
     "term_threshold": "D4",
     "empty_phrase": "D5",
     "vague_quantifier": "D5",
+    "vague_referent": "D5",
     "template_expr": "D5",
+    "fake_insight_marker": "D5",
     "over_confident": "D5",
     "overclaim": "D5",
 }
@@ -261,7 +265,40 @@ class AITraceChecker:
         r"\bhas\s+(?:been\s+)?widely\s+used\b": "cite_examples",
         r"\bhas\s+attracted\s+(?:much\s+)?attention\b": "cite_examples",
     }
+
+    BINARY_CONTRAST_SHELLS = {
+        r"\bnot\s+(?:merely|only)\b.{1,80}?\bbut\b(?:\s+also\b)?": ("clarify_contrast_axis"),
+        r"\brather\s+than\b.{1,80}?,": "clarify_contrast_axis",
+        r"\binstead\s+of\b.{1,80}?,": "clarify_contrast_axis",
+    }
+
+    FAKE_INSIGHT_MARKERS = {
+        r"\bessentially\b": "state_evidence_claim",
+        r"\bin fact\b": "state_evidence_claim",
+        r"\bthe key is\b": "state_evidence_claim",
+        r"\bit is important to note\b": "state_evidence_claim",
+        r"\bmore importantly\b": "state_evidence_claim",
+    }
+
+    LECTURE_COLON = {
+        r"\b(?:The conclusion is|The reason is simple|The key point is):": (
+            "rewrite_lecture_setup"
+        ),
+    }
+
+    VAGUE_REFERENTS = {
+        r"\bthings\b": "name_academic_referent",
+        r"\baspects\b": "name_academic_referent",
+        r"\bfactors\b": "name_academic_referent",
+        r"\bThis\s+(?:shows|means|suggests|indicates|demonstrates)\b": ("name_academic_referent"),
+    }
+
     EVIDENCE_MARKERS = re.compile(r"(\\cite\{|@\w+|\b\d+(?:\.\d+)?%?\b|\[[0-9,\s]+\])")
+    ACADEMIC_CONTRAST_MARKERS = re.compile(
+        r"(baseline|dataset|metric|experiment|table|figure|compared|comparison|"
+        r"accuracy|MAE|RMSE|F1|p\s*[<>=])",
+        re.IGNORECASE,
+    )
     REPEATED_OPENING_RE = re.compile(r"^[A-Za-z]+(?:\s+[A-Za-z]+)?")
 
     def __init__(self, file_path: Path, tier: str | None = None):
@@ -318,8 +355,19 @@ class AITraceChecker:
                 return True
 
         # 3. "comprehensive" followed by range
+        if "comprehensive" in pattern and "from" in context_after and "to" in context_after:
+            return True
+
+        matched_text = text[start:end]
+        window = context_before + matched_text + context_after
         return bool(
-            "comprehensive" in pattern and "from" in context_after and "to" in context_after
+            re.search(
+                r"\b(?:not\s+(?:merely|only)|rather\s+than|instead\s+of)\b",
+                matched_text,
+                re.IGNORECASE,
+            )
+            and self.EVIDENCE_MARKERS.search(window)
+            and self.ACADEMIC_CONTRAST_MARKERS.search(window)
         )
 
     def _find_pattern_in_section(
@@ -382,6 +430,10 @@ class AITraceChecker:
             ("over_confident", self.OVER_CONFIDENT),
             ("vague_quantifier", self.VAGUE_QUANTIFIERS),
             ("template_expr", self.TEMPLATE_EXPRESSIONS),
+            ("binary_contrast_shell", self.BINARY_CONTRAST_SHELLS),
+            ("fake_insight_marker", self.FAKE_INSIGHT_MARKERS),
+            ("lecture_colon", self.LECTURE_COLON),
+            ("vague_referent", self.VAGUE_REFERENTS),
         ]
 
         for category, patterns_dict in all_patterns:
@@ -853,6 +905,13 @@ class AITraceChecker:
             "parallel_opening": "Vary the opening syntax across consecutive paragraphs.",
             "throat_clearing": "Cut the leading boilerplate; start with the claim.",
             "punctuation_pattern": "Avoid em-dash overuse and exclamation marks in body sections.",
+            "clarify_contrast_axis": (
+                "Keep the contrast only if it names a real baseline, criterion, and evidence; "
+                "otherwise remove the scaffold and state the claim directly."
+            ),
+            "state_evidence_claim": "Remove the insight marker and state the evidence-backed claim directly.",
+            "rewrite_lecture_setup": "Replace the colon-led lecture setup with a normal academic sentence or a concrete inventory noun.",
+            "name_academic_referent": "Replace the vague referent with the exact research object, method, result, factor, or limitation.",
             "vary_sentence_length": (
                 "Mix short and long sentences to break the even, machine-like cadence."
             ),

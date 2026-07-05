@@ -280,6 +280,36 @@
           "description": "@cite references preserved"
         }
       ]
+    },
+    {
+      "id": 13,
+      "prompt": "My Typst paper has Chinese and English paragraphs that sound AI-written: 不是 A 而是 B, 真正的问题, The conclusion is:, essentially. Reduce the AI tone but keep @cite anchors, <labels>, math, and macros unchanged.",
+      "expected_output": "Route to deai, diagnose Chinese and English structure shells, extract the academic payload first, and provide source-preserving revision targets without rewriting Typst syntax.",
+      "files": [
+        "evals/fixtures/charged_ieee_fixture.typ"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(structure shell|二元对比|fake insight|伪洞察|lecture)",
+          "description": "bilingual shell categories diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(@cite|<labels?>|math|macros|Typst)",
+          "description": "Typst syntax preservation stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "guarantee detector",
+          "description": "no detector-evasion promise"
+        }
+      ]
     }
   ]
 }
