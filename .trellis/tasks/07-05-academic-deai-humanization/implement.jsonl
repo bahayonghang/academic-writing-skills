@@ -1,0 +1,7 @@
+{"file": "ref/rnskill/skills/renhua/SKILL.md", "reason": "Source pattern reference for AI-flavored Chinese writing shells and preservation priorities."}
+{"file": ".trellis/spec/Research-Paper-Writing-Skills/frontend/quality-guidelines.md", "reason": "Academic writing quality constraints: evidence alignment, paragraph purpose, and claim discipline."}
+{"file": ".trellis/spec/Research-Paper-Writing-Skills/frontend/state-management.md", "reason": "Revision workflow state: mini-outline, paragraph role, claim-evidence map, and terminology stability."}
+{"file": ".trellis/spec/Research-Paper-Writing-Skills/backend/quality-guidelines.md", "reason": "Skill package guidance for keeping entrypoints concise and references portable."}
+{"file": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md", "reason": "Primary existing Chinese thesis de-AI behavior to adapt."}
+{"file": "academic-writing-skills/latex-paper-en/references/deai/guide.md", "reason": "English paper de-AI behavior for claim-evidence-first parity without Chinese phrase rules."}
+{"file": "academic-writing-skills/typst-paper/references/DEAI_GUIDE.md", "reason": "Typst de-AI behavior and syntax-preservation constraints."}

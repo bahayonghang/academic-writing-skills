@@ -10,6 +10,17 @@ Local patterns:
 - The paper-review guide's checklist should be used as a revision gate, not a
   postscript.
 - Claims in Abstract and Introduction must be supportable by evidence.
+- De-AI or humanization guidance must preserve the academic payload before
+  changing tone: facts/evidence, author stance, paragraph/section logic, and
+  boundaries. It should default to findings, risk notes, or rewrite blueprints;
+  prose rewrites require an explicit user request.
+
+Academic de-AI examples:
+
+- Good: "Remove the `not merely A but B` scaffold only after naming the real
+  baseline, criterion, and evidence."
+- Bad: "Rewrite the paragraph to sound less AI-generated" with no
+  claim-evidence map or source-anchor preservation.
 
 Reference files:
 
