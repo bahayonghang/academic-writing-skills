@@ -334,3 +334,37 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: 学术去 AI 味三技能优化
+
+**Date**: 2026-07-05
+**Task**: 学术去 AI 味三技能优化
+**Branch**: `dev`
+
+### Summary
+
+优化 latex-thesis-zh、typst-paper、latex-paper-en 的 de-AI 工作流：先保留学术证据链和语法锚点，再检测结构壳/修辞脚手架，并补齐测试、eval、docs 镜像与 Trellis 规范。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7311420` | (see git log) |
+| `5443df8` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
