@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 10
+- **Total Sessions**: 11
 - **Last Active**: 2026-07-06
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~405 | Active |
+| `journal-1.md` | ~441 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 11 | 2026-07-06 | 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性 | `2a0d9be`, `762bf80`, `2a31fd9`, `02dd30d` | `dev` |
 | 10 | 2026-07-06 | P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步 | `75a763a`, `a6eb919`, `fa714a9` | `dev` |
 | 9 | 2026-07-05 | 学术去 AI 味三技能优化 | `7311420`, `5443df8` | `dev` |
 | 8 | 2026-06-20 | 借鉴 follow-up：⑤时态信号词检测 / ⑥reviewer怀疑点排序 / ①over-claim进paper-audit | `3a8e3c2`, `8cf4622` | `dev` |

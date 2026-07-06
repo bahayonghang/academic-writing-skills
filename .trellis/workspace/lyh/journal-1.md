@@ -403,3 +403,39 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 11: 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性
+
+**Date**: 2026-07-06
+**Task**: 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性
+**Branch**: `dev`
+
+### Summary
+
+六技能深审剩余四个必做子任务全部实施、质检、提交、归档：① tests/test_deai_alignment.py 为 en/zh/typst 三份 deai_check.py 上锁（strict 字节锁 + AST 去 docstring 逻辑锁把中文注释的 zh 也锁进来 + 关系锁；burstiness 2/4/8 判定为语言驱动有意分歧并 pin 值；漂移红测验证）；② paper-audit 评分链贯通 critical_count 惩罚、空文献检索置 None 按剩余权重归一化并显式标注、dims_below_5 排除 overall，补 REVIEWER_PSYCHOLOGY/OVER_CLAIM_GUARD 契约测试与 evals 21/22；③ cover-letter 指标张冠李戴双路泄漏封堵（数字贴身指标词须全数复现 + unverified 清弱数字锚，质检补修聚合计数）与 bib 重复键/百分号注释条目警告；④ 九项文档元数据清理（pyright basic、dist 解除跟踪、docs 双语补 tense-guide 与 paper-audit 镜像、PA-4/5/6、category/last_updated、孤儿报告删除）。每任务独立 trellis-check 质检；just ci 861→906 绿；docs build 零死链。剩余：cover-letter-deai-enhancement（可选，待拍板）。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2a0d9be` | (see git log) |
+| `762bf80` | (see git log) |
+| `2a31fd9` | (see git log) |
+| `02dd30d` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
