@@ -10,5 +10,5 @@
 
 ## 背景速览
 
-- 各 skill 的 `scripts/parsers.py`、`scripts/deai_check.py` 是**按技能副本**（非共享 import）；共享面由对齐测试锁定（parsers：`tests/test_parsers_alignment.py`；deai：见 07-05-deai-alignment-lock 任务）。
+- 各 skill 的 `scripts/parsers.py`、`scripts/deai_check.py` 是**按技能副本**（非共享 import）；共享面由对齐测试锁定（parsers：`tests/test_parsers_alignment.py`；deai：`tests/test_deai_alignment.py`，含 strict/logic 双层哈希锁与关系锁）。改共享逻辑先改 latex-paper-en，typst 逐字节镜像，zh 保留中文 docstring（logic 锁容忍、strict 锁不含 zh）。
 - `tests/conftest.py` 只把 EN 与 AUDIT 的 scripts 目录放进 `sys.path` 前排——**bare import 拿到的永远是 EN 副本**。
