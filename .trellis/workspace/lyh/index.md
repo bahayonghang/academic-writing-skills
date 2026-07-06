@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 11
+- **Total Sessions**: 12
 - **Last Active**: 2026-07-06
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~441 | Active |
+| `journal-1.md` | ~475 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 12 | 2026-07-06 | cover-letter CL-3/CL-4 增强收口，六技能深审父任务 7/7 归档 | `93a67f4`, `9bc15d8` | `dev` |
 | 11 | 2026-07-06 | 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性 | `2a0d9be`, `762bf80`, `2a31fd9`, `02dd30d` | `dev` |
 | 10 | 2026-07-06 | P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步 | `75a763a`, `a6eb919`, `fa714a9` | `dev` |
 | 9 | 2026-07-05 | 学术去 AI 味三技能优化 | `7311420`, `5443df8` | `dev` |

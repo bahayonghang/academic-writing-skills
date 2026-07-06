@@ -439,3 +439,37 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: cover-letter CL-3/CL-4 增强收口，六技能深审父任务 7/7 归档
+
+**Date**: 2026-07-06
+**Task**: cover-letter CL-3/CL-4 增强收口，六技能深审父任务 7/7 归档
+**Branch**: `dev`
+
+### Summary
+
+实施可选任务 07-05-cover-letter-deai-enhancement：align_check 新增 AI 披露一致性 lane（三情形 moderate finding，comment_type=disclosure_consistency，% 注释披露不触发）；presubmission 同词 AI-tone 阈值 2+/3+ 阶梯、AI-DIV 聚合多样性（3 词 Minor/4 词 Major）、S1 平行段首、S2 句长均匀性（≥8 句 CV<0.25）——按 en 结构壳裁剪移植，不新建 deai_check 副本，对齐锁范围不变。独立质检零缺陷，对抗探针全过；just ci 906→918 绿。取舍：阈值固定 2 不做长度自适应（信件长度方差小、无模板时无基准）；不移植 throat-clearing/低信息密度（信件已有 L2/G3 等价物、声明段易误报）。另单独收纳 Trellis 框架升级 9 文件（agents/config.yaml 仅 EOL 差异未入）。父任务 07-05-skills-deep-analysis-optimization 7/7 全部完成归档。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `93a67f4` | (see git log) |
+| `9bc15d8` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
