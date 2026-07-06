@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 9
-- **Last Active**: 2026-07-05
+- **Total Sessions**: 10
+- **Last Active**: 2026-07-06
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~370 | Active |
+| `journal-1.md` | ~405 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 10 | 2026-07-06 | P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步 | `75a763a`, `a6eb919`, `fa714a9` | `dev` |
 | 9 | 2026-07-05 | 学术去 AI 味三技能优化 | `7311420`, `5443df8` | `dev` |
 | 8 | 2026-06-20 | 借鉴 follow-up：⑤时态信号词检测 / ⑥reviewer怀疑点排序 / ①over-claim进paper-audit | `3a8e3c2`, `8cf4622` | `dev` |
 | 7 | 2026-06-18 | Optimize latex-thesis-zh chapter summary guidance | `04c7009`, `eb0fdd0` | `dev` |

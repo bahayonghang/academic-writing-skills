@@ -368,3 +368,38 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 10: P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步
+
+**Date**: 2026-07-06
+**Task**: P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步
+**Branch**: `dev`
+
+### Summary
+
+六技能深审后的两个 P0 修复落地：① latex-thesis-zh 英文摘要时态门控重写（识别 thuthesis abstract*/pkuthss eabstract、多摘要按语种择优），修正模板映射，10 条 zh 专项测试；② typst deai 与 EN 副本同步（E17 证据检查、@fig 护栏、term 表、presents 三副本统一），8 条 typst 测试 + evals/文档补登。guard_text 偏移疑点核实为非 bug 并加回归锁。just ci 861 绿。新增 spec：副本测试 importlib 加载、阈值双层配置、evals.json hook 陷阱。alignment-lock 上锁前提已满足。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `75a763a` | (see git log) |
+| `a6eb919` | (see git log) |
+| `fa714a9` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
