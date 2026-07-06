@@ -61,6 +61,26 @@ def test_tense_skips_figure_and_table_subjects(tmp_path: Path) -> None:
     assert _tense(deai_module.AITraceChecker(tex)) == []
 
 
+def test_tense_present_adjective_exempt_but_verb_flagged(tmp_path: Path) -> None:
+    # "the present study" is the adjective, not a reporting verb (SH-1); only the
+    # verb form "presents" should flag, so the pattern is `presents`, not `presents?`.
+    adj = _doc(
+        tmp_path,
+        "The present study achieves lower error than the strong baseline here.",
+        section="Results",
+    )
+    adj_patterns = {s["pattern"] for s in _tense(deai_module.AITraceChecker(adj))}
+    assert not any("present" in p for p in adj_patterns), "'present' adjective must not flag"
+
+    verb = _doc(
+        tmp_path,
+        "This paper presents the final results across the benchmark suites here.",
+        section="Results",
+    )
+    verb_patterns = {s["pattern"] for s in _tense(deai_module.AITraceChecker(verb))}
+    assert any("present" in p for p in verb_patterns), "verb 'presents' must still flag"
+
+
 def test_tense_gated_to_methods_experiments_results(tmp_path: Path) -> None:
     # Same verb in Introduction must NOT be flagged (section gating).
     tex = _doc(tmp_path, "The model shows promise.", section="Introduction")

@@ -44,6 +44,9 @@ DEFAULT_THRESHOLDS = {
         "furthermore": 3,
         "moreover": 3,
         "notably": 3,
+        "remarkable": 3,
+        "remarkably": 3,
+        "obvious": 3,
         "obviously": 3,
         "clearly": 4,
         "首先": 4,
@@ -109,7 +112,8 @@ DEFAULT_THRESHOLDS = {
     },
     # Tense signal words: present-tense reporting verbs that usually signal a
     # past-tense violation when they narrate Methods / Experiments / Results.
-    # "is" / "are" are intentionally excluded (too many valid uses); see the
+    # "is" / "are" are intentionally excluded (too many valid uses); "presents"
+    # matches the verb only, not the adjective in "the present study". See the
     # judgment-level checklist in references/TENSE_GUIDE.md.
     "tense": {
         "enabled": True,
@@ -118,7 +122,7 @@ DEFAULT_THRESHOLDS = {
             r"\breveals?\b": "past_in_methods_results",
             r"\bdemonstrates?\b": "past_in_methods_results",
             r"\bindicates?\b": "past_in_methods_results",
-            r"\bpresents?\b": "past_in_methods_results",
+            r"\bpresents\b": "past_in_methods_results",
             r"\bconfirms?\b": "past_in_methods_results",
             r"\bachieves?\b": "past_in_methods_results",
             r"\boutperforms?\b": "past_in_methods_results",
@@ -392,6 +396,14 @@ class AITraceChecker:
             r"\.?\s*~?\s*\d*",
             re.IGNORECASE,
         )
+        # Typst cross-references (@fig-x, @tbl-x, @eq-x) are stripped by
+        # extract_visible_text, which hides the figure/table subject from the
+        # guard above. Rewrite them to the literal keyword first so a
+        # figure-subject verb ("@fig-x shows ...") is correctly exempted.
+        self._typst_ref_kw_re = re.compile(
+            r"@(?:fig|tbl|tab|eq|eqn|alg|lst|thm)[\w:-]*",
+            re.IGNORECASE,
+        )
 
     def _is_false_positive(self, match_obj, text: str, pattern: str) -> bool:
         """Check context to rule out false positives."""
@@ -576,10 +588,12 @@ class AITraceChecker:
             return []
         start, end = self.section_ranges[section_name]
         visible_lines: list[tuple[int, str]] = []
+        raw_lines: list[str] = []
         for i in range(start - 1, min(end, len(self.lines))):
             line = self.lines[i].strip()
             if not line or line.startswith(self.comment_prefix):
                 continue
+            raw_lines.append(line)
             visible = self.parser.extract_visible_text(line)
             if visible:
                 visible_lines.append((i + 1, visible))
@@ -588,6 +602,10 @@ class AITraceChecker:
             return []
 
         text = " ".join(text for _, text in visible_lines)
+        # Evidence markers (@keys, #cite(), numbers) must be matched on the RAW
+        # source: extract_visible_text strips @cite/#cite(), so a citation-dense
+        # paragraph would otherwise read as evidence-free (mirrors EN E17 fix).
+        raw_text = " ".join(raw_lines)
         boilerplate_hits = 0
         for patterns_dict in (
             self.EMPTY_PHRASES,
@@ -599,7 +617,7 @@ class AITraceChecker:
                 1 for pattern in patterns_dict if re.search(pattern, text, re.IGNORECASE)
             )
 
-        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(text):
+        if boilerplate_hits < 2 or self.EVIDENCE_MARKERS.search(raw_text):
             return []
 
         repeated_openings = any(
@@ -790,9 +808,16 @@ class AITraceChecker:
             if not stripped or stripped.startswith(self.comment_prefix):
                 continue
             visible_text = self.parser.extract_visible_text(stripped)
+            # Rewrite Typst figure/table refs to a literal keyword so the
+            # false-positive guard can see a "@fig-x shows ..." subject that
+            # extract_visible_text would otherwise strip (positions align with
+            # guard_text; the plain visible_text is kept for the trace).
+            guard_text = self.parser.extract_visible_text(
+                self._typst_ref_kw_re.sub("figure", stripped)
+            )
             for pattern, suggestion_type in self._tense_signals:
-                for match in re.finditer(pattern, visible_text, re.IGNORECASE):
-                    if self._tense_false_positive(visible_text, match.start()):
+                for match in re.finditer(pattern, guard_text, re.IGNORECASE):
+                    if self._tense_false_positive(guard_text, match.start()):
                         continue
                     traces.append(
                         {

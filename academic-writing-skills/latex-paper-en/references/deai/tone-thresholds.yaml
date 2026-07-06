@@ -80,7 +80,8 @@ tense:
   # they narrate Methods / Experiments / Results (those sections default to past
   # tense). Gated to method/experiment/result sections; matches near a
   # figure/table/equation subject are skipped. "is"/"are" are intentionally NOT
-  # listed (too many valid uses) — see references/modules/tense-guide.md.
+  # listed (too many valid uses); "presents" matches the verb only, not the
+  # adjective in "the present study" — see references/modules/tense-guide.md.
   # Set enabled: false to turn this checker off. Each emits a [Script] LOW trace.
   enabled: true
   present_signals:
@@ -88,7 +89,7 @@ tense:
     "\\breveals?\\b": past_in_methods_results
     "\\bdemonstrates?\\b": past_in_methods_results
     "\\bindicates?\\b": past_in_methods_results
-    "\\bpresents?\\b": past_in_methods_results
+    "\\bpresents\\b": past_in_methods_results
     "\\bconfirms?\\b": past_in_methods_results
     "\\bachieves?\\b": past_in_methods_results
     "\\boutperforms?\\b": past_in_methods_results

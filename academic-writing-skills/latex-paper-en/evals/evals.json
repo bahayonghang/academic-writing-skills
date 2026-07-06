@@ -491,6 +491,41 @@
           "description": "no detector-evasion promise"
         }
       ]
+    },
+    {
+      "id": 21,
+      "prompt": "My Results section reads as AI-written: present-tense reporting verbs (the method shows, outperforms) and over-claims (caused by, for the first time, universally). Flag the tense and over-claim problems, but preserve citations, labels, equations, and macros.",
+      "expected_output": "Route to deai, flag present-tense reporting verbs in Results (should narrate in past tense) and the causal / firstness / universality over-claims, protect the LaTeX anchors, and provide revision targets rather than silently rewriting source.",
+      "files": [
+        "evals/fixtures/paper-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(tense|past tense|present-tense)",
+          "description": "tense issue diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(over[- ]?claim|causal|first time|universal)",
+          "description": "over-claim issue diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(citations|labels|equations|macros|preserve)",
+          "description": "source-preserving contract stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "guarantee detector",
+          "description": "no detector-evasion promise"
+        }
+      ]
     }
   ]
 }

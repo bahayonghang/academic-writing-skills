@@ -27,6 +27,10 @@
 | 模板表达 | in recent years, more and more | 陈词滥调 |
 | 结构壳 | 不是 A 而是 B, not merely A but B | 没有说明比较轴、基线和证据 |
 | 伪洞察/讲义腔 | 真正的问题, essentially, The conclusion is: | 用提示词替代证据支撑的判断 |
+| 时态信号 | shows / presents（方法/实验/结果章） | 应改用过去时叙述 |
+| 过度声明 | caused by, for the first time, universally | 因果/首创/普适性越界 |
+
+时态与过度声明的判定表见 [TENSE_GUIDE.md](../TENSE_GUIDE.md) 与 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。
 
 **学术人味契约**：
 先保护四类内容，再降低 AI 味：

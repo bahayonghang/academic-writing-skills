@@ -16,6 +16,8 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 
 - `deai_check.py` emits section-level analysis, trace scores, and optional fix suggestions.
 - `deai_batch.py` supports broader batch inspection across sections.
+- The `tense` category (`[Script]` LOW) flags present-tense reporting verbs in Methods / Experiments / Results, gated to those sections; see [tense-guide.md](tense-guide.md).
+- The `overclaim` category (`[Script]` LOW) flags unambiguous causal / firstness / universality phrasing; see [over-claim-guard.md](../evidence/over-claim-guard.md).
 
 ## Skill-Layer Response
 

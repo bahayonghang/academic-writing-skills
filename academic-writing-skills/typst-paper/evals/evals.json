@@ -310,6 +310,41 @@
           "description": "no detector-evasion promise"
         }
       ]
+    },
+    {
+      "id": 14,
+      "prompt": "In my Typst Results section the sentences are present tense (@fig-loss shows, the method outperforms) and over-claim (caused by, for the first time, universally). Flag the tense and over-claim issues but keep @cite anchors, <labels>, math, and macros unchanged.",
+      "expected_output": "Route to deai, flag present-tense reporting verbs in Results (figure/table subjects exempt) and the causal / firstness / universality over-claims, and provide source-preserving targets without rewriting Typst syntax.",
+      "files": [
+        "evals/fixtures/charged_ieee_fixture.typ"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(tense|past tense|present-tense)",
+          "description": "tense issue diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(over[- ]?claim|causal|first time|universal)",
+          "description": "over-claim issue diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(@cite|<labels?>|math|macros|Typst)",
+          "description": "Typst syntax preservation stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "guarantee detector",
+          "description": "no detector-evasion promise"
+        }
+      ]
     }
   ]
 }

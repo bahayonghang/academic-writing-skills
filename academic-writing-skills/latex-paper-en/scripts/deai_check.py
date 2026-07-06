@@ -92,7 +92,8 @@ DEFAULT_THRESHOLDS = {
     },
     # Tense signal words: present-tense reporting verbs that usually signal a
     # past-tense violation when they narrate Methods / Experiments / Results.
-    # "is" / "are" are intentionally excluded (too many valid uses); see the
+    # "is" / "are" are intentionally excluded (too many valid uses); "presents"
+    # matches the verb only, not the adjective in "the present study". See the
     # judgment-level checklist in references/modules/tense-guide.md.
     "tense": {
         "enabled": True,
@@ -101,7 +102,7 @@ DEFAULT_THRESHOLDS = {
             r"\breveals?\b": "past_in_methods_results",
             r"\bdemonstrates?\b": "past_in_methods_results",
             r"\bindicates?\b": "past_in_methods_results",
-            r"\bpresents?\b": "past_in_methods_results",
+            r"\bpresents\b": "past_in_methods_results",
             r"\bconfirms?\b": "past_in_methods_results",
             r"\bachieves?\b": "past_in_methods_results",
             r"\boutperforms?\b": "past_in_methods_results",
