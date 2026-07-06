@@ -34,9 +34,9 @@ Generate, optimize, align-check, journal-fit-check, and pre-submission-check a s
 
 - Generate a cover letter draft from a manuscript .tex source, filling the five-segment scaffold with title, abstract, contributions, authors extracted deterministically.
 - Optimize an existing draft against tier strategy and the active journal template; return LaTeX-comment diff suggestions instead of editing the file.
-- Align-check claims in the cover letter against the manuscript, flagging overclaim, missing evidence, and unsupported numeric tokens. This runs as a default capability across `generate` and `optimize`.
+- Align-check claims in the cover letter against the manuscript, flagging overclaim, missing evidence, and unsupported numeric tokens, and flagging AI-disclosure inconsistencies between the letter and the manuscript. This runs as a default capability across `generate` and `optimize`.
 - Journal-fit score the letter on four sub-axes (scope_fit, novelty_framing, evidence_density, format_compliance) → HIGH / MEDIUM / LOW.
-- Pre-submission mechanical checks: required declarations, length, opener clichés, banned phrases, AI-tone term frequency, paragraph shape.
+- Pre-submission mechanical checks: required declarations, length, opener clichés, banned phrases, AI-tone term frequency, structural AI-trace signals (parallel paragraph openings, uniform sentence length, diverse promotional vocabulary), and paragraph shape.
 - Unified deterministic CLI (`scripts/cover_letter.py`) with `--mode generate|optimize|align-check|journal-fit|presubmission`; legacy single-purpose scripts remain supported.
 
 ## Triggering

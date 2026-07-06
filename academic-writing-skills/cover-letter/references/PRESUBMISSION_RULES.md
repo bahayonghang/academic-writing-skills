@@ -4,7 +4,10 @@ Deterministic rules for `presubmission_check.py`. Adapted from `paper-audit/refe
 
 ## Banned AI-tone patterns (G4-AI\*)
 
-Triggers at 3+ occurrences in the letter. Inherits from paper-audit canonical list.
+Per-term ladder: the **same** term appearing 2 times is `minor`, 3+ times is
+`major`. (Before, a term was silent below 3 occurrences, so a vocabulary-diverse
+draft with each promo word used once slipped through entirely — see `AI-DIV`
+below.) Inherits from paper-audit canonical list.
 
 ```python
 BANNED_TONE_PATTERNS = (
@@ -75,11 +78,51 @@ specific X" replacement hint:
 | G1  | `minor`           | Em dash in reader-visible prose (an AI-tone surface signal, aligned with the ISSUE_SCHEMA minor tier).             |
 | G2  | `minor`           | Paragraph longer than 120 words or 6 sentences (cover letters are shorter than papers — paragraph cap is tighter). |
 | G3  | `minor`           | Paragraph starts with weak transition (however, moreover, in addition, furthermore, also).                         |
-| G4  | `major`           | Any banned AI-tone term group appears ≥3 times across the letter.                                                  |
+| G4  | `minor` / `major` | Same banned AI-tone term appears 2 times (`minor`) or 3+ times (`major`).                                          |
 | L1  | `major` / `minor` | Letter exceeds template's `word_limit` by ≥20% (`major`) or up to 20% (`minor`).                                   |
 | L2  | `minor`           | First content line matches a known opener cliché.                                                                  |
 | J1  | `minor` / `major` | Cover-letter-specific banned phrase appears (`minor`) or appears 3+ times (`major`).                               |
 | J4  | `minor`           | Generic-fit phrasing (Tier 4) appears; emits a "name the specific X" replacement hint.                             |
+| AI-DIV | `minor` / `major` | `minor` when 3 **distinct** banned AI-tone terms appear (each perhaps once), `major` at 4+. Catches diverse AI slop the per-term G4 ladder misses. |
+| S1  | `minor`           | 3 consecutive body paragraphs open with the same first two word tokens (parallel/templated cadence).               |
+| S2  | `minor`           | Sentence-length coefficient of variation < 0.25 over ≥8 sentences (suspiciously uniform cadence / low burstiness). |
+
+## Structural AI-trace checks (AI-DIV, S1, S2)
+
+These three checks port the structural AI-trace idea used by `latex-paper-en` /
+`typst-paper` (deai) into the cover-letter genre. They are all `minor`/`P2`
+except AI-DIV, which escalates to `major` at 4+ distinct terms, and they report
+only — no rewriting.
+
+Thresholds are fixed module constants in `presubmission_check.py`
+(`AI_TONE_DIVERSITY_*`, `PARALLEL_OPENING_*`, `SENTENCE_UNIFORMITY_*`), not a
+per-tier YAML: a cover letter is a single short genre, and the scans must run
+even without a `--journal` (so no `word_limit` baseline exists). Length-adaptive
+thresholds would add a "what baseline when no template?" dimension for no real
+gain, so we chose deterministic constants that the zero-false-positive fixture
+(`evals/fixtures/human_letter.md`) guards.
+
+Parameters (letter-domain tuning vs. the paper-side defaults):
+
+- **AI-DIV** — counts how many distinct `BANNED_TONE_PATTERNS` fire at least
+  once. Distinct from G4 (repetition vs. diversity); both may fire on one letter.
+- **S1 (parallel openings)** — window of 3 consecutive paragraphs, opening key =
+  first 2 word tokens (same pins as the paper-side `_check_burstiness`). The
+  `Dear …` salutation paragraph is skipped; declaration paragraphs ("We confirm
+  …", "We declare …") differ under a 2-token key, so they do not false-positive.
+- **S2 (sentence-length uniformity)** — whole-letter (cover letters have no
+  sections), gated at ≥8 sentences with CV < 0.25. The paper-side default is
+  min 5 / CV < 0.30 and tier-gated; the letter sample is short and CV-noisy, so
+  the gate is raised and the threshold tightened to suppress false positives.
+
+Not ported from the paper-side deai structural shell:
+
+- **throat-clearing paragraph leads** — the letter genre already has equivalents
+  (`L2` opener clichés + `G3` weak-transition paragraph starts); adding it would
+  double-report.
+- **low-information-density** — a cover letter's declaration paragraph is
+  legitimately templated and evidence-marker-free, so this check would
+  false-positive on well-formed letters at ≤400 words.
 
 ## Required declaration rules (D-\<kind\>)
 

@@ -66,8 +66,9 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 3. Extract claim candidates from the letter (`build_letter_claim_map`); the claim map reports `total_claim_sentences` and `truncated` when there are more candidates than the detail cap.
 4. Verify each claim's quote against the manuscript (`verify_letter_against_manuscript`): exact match, paragraph-local number+metric co-occurrence, or 4-gram.
 5. Classify each claim with `claim_strength` and emit findings using the simplified ISSUE_SCHEMA.
+6. Cross-check AI-disclosure consistency between the letter and the manuscript: if one document discloses generative-AI use (or non-use) and the other is silent, or the two contradict on polarity, emit a `moderate` `disclosure_consistency` finding. Both documents are read with `%`-comments stripped so a commented-out declaration does not count.
 
-**Output**: claim-accuracy findings, each with the letter quote, the manuscript anchor (or `none`), and the recommended `allowed_wording`.
+**Output**: claim-accuracy findings, each with the letter quote, the manuscript anchor (or `none`), and the recommended `allowed_wording`; plus at most one `disclosure_consistency` finding when the two documents disagree on AI disclosure.
 
 ## Mode 4: `journal-fit`
 
@@ -109,7 +110,7 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 
 1. Read the letter (`errors="replace"`, so non-UTF-8 letters do not crash).
 2. Load the active template's frontmatter (no PyYAML dependency).
-3. Scan: em dash (`G1`), AI-tone frequency (`AI*`), opener clichés (`L2*`), banned phrases (`J1*`), generic-fit phrasings (`J4*`), required/optional declarations (`D-*`), length (`L1`), paragraph shape (`G2`/`G3`).
+3. Scan: em dash (`G1`), AI-tone frequency (`AI*`, 2 = minor / 3+ = major), diverse AI-tone vocabulary (`AI-DIV`), parallel paragraph openings (`S1`), uniform sentence length (`S2`), opener clichés (`L2*`), banned phrases (`J1*`), generic-fit phrasings (`J4*`), required/optional declarations (`D-*`), length (`L1`), paragraph shape (`G2`/`G3`).
 4. Declarations without a detector emit an informational `D-<kind>-unknown` (required) or are skipped (optional) rather than a false "absent".
 
 **Output**: a list of presentation / declaration / tone findings.

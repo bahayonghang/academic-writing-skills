@@ -15,18 +15,34 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from build_letter_claim_map import STRONG_CLAIM_PATTERN, build_claim_map
 from extract_manuscript_facts import extract_facts, load_manuscript_text
+from presubmission_check import DECLARATION_PATTERNS
 from verify_letter_against_manuscript import verify_claim_candidates
 
 MODULE = "ALIGNCHECK"
 
 # STRONG_CLAIM_PATTERN is owned by build_letter_claim_map (single source of
 # truth) so claim-strength wording and severity classification stay in sync.
+
+# Negative AI-disclosure statements ("we did not use AI"). Checked before the
+# positive ai_disclosure family (which includes "no AI tools were used") so a
+# denial is classified as ``negative`` rather than a bare disclosure presence.
+# All variants stay AI-scoped so ordinary "did not use X" / "without Y" prose
+# in a manuscript never reads as an AI-disclosure signal.
+NO_AI_PATTERNS: tuple[str, ...] = (
+    r"\bno (?:generative )?ai\b",
+    r"\bno (?:use of )?(?:large language models?|llms?|generative ai)\b",
+    r"\b(?:did not|didn't|do not|don't) (?:use|employ|rely on)\s+"
+    r"(?:any )?(?:generative )?(?:ai|large language models?|llms?)\b",
+    r"\bwithout (?:the use of )?(?:any )?(?:generative )?"
+    r"(?:ai|large language models?|llms?)\b",
+)
 
 
 @dataclass
@@ -151,6 +167,135 @@ def candidate_to_issue(candidate: dict, facts: dict) -> AlignCheckIssue | None:
     )
 
 
+def _strip_tex_comments(text: str) -> str:
+    """Drop unescaped LaTeX ``%`` comments line by line.
+
+    Applied to the manuscript (and to ``.tex`` letters) before disclosure
+    matching so a commented-out declaration such as ``% We used ChatGPT`` does
+    not read as an active AI-disclosure statement.
+    """
+    out: list[str] = []
+    for line in text.splitlines():
+        match = re.search(r"(?<!\\)%", line)
+        out.append(line[: match.start()] if match else line)
+    return "\n".join(out)
+
+
+def _ai_disclosure_polarity(text: str) -> str:
+    """Classify AI-disclosure polarity as ``positive`` / ``negative`` / ``absent``.
+
+    ``negative`` (an explicit denial) is checked first because the shared
+    ``ai_disclosure`` family also matches denials like "no AI tools were used".
+    Known limitation: a mixed statement ("used ChatGPT for editing; analysis
+    used no AI") is classified ``negative``; the finding quotes the sentence so
+    the user can adjudicate.
+    """
+    if any(re.search(p, text, re.IGNORECASE) for p in NO_AI_PATTERNS):
+        return "negative"
+    if any(re.search(p, text, re.IGNORECASE) for p in DECLARATION_PATTERNS["ai_disclosure"]):
+        return "positive"
+    return "absent"
+
+
+def _sentence_around(text: str, pos: int, limit: int = 280) -> str:
+    """Return the sentence containing offset ``pos``, whitespace-collapsed."""
+    start = 0
+    for i in range(pos - 1, -1, -1):
+        if text[i] in ".!?\n":
+            start = i + 1
+            break
+    end = len(text)
+    for i in range(pos, len(text)):
+        if text[i] in ".!?\n":
+            end = i + 1
+            break
+    return re.sub(r"\s+", " ", text[start:end]).strip()[:limit]
+
+
+def _disclosure_sentence(text: str) -> str:
+    """Return the sentence carrying the first AI-disclosure signal, else ``""``."""
+    best_start: int | None = None
+    for pattern in NO_AI_PATTERNS + DECLARATION_PATTERNS["ai_disclosure"]:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match and (best_start is None or match.start() < best_start):
+            best_start = match.start()
+    if best_start is None:
+        return ""
+    return _sentence_around(text, best_start)
+
+
+def _check_ai_disclosure_consistency(
+    letter_text: str,
+    manuscript_text: str,
+    *,
+    letter_is_tex: bool,
+) -> AlignCheckIssue | None:
+    """Flag an AI-disclosure mismatch between the letter and the manuscript.
+
+    Three inconsistencies are reported (all ``moderate`` / ``P2``): the
+    manuscript discloses but the letter is silent, the letter discloses but the
+    manuscript is silent, or the two disagree on polarity. When both sides agree
+    (or both are silent) nothing is reported — whether a silent venue *requires*
+    disclosure is the presubmission ``D-ai_disclosure`` check's job, not this
+    lane's.
+    """
+    manuscript_clean = _strip_tex_comments(manuscript_text)
+    letter_clean = _strip_tex_comments(letter_text) if letter_is_tex else letter_text
+    letter_polarity = _ai_disclosure_polarity(letter_clean)
+    manuscript_polarity = _ai_disclosure_polarity(manuscript_clean)
+    if letter_polarity == manuscript_polarity:
+        return None
+
+    manuscript_sentence = _disclosure_sentence(manuscript_clean)
+    letter_sentence = _disclosure_sentence(letter_clean)
+
+    if letter_polarity == "absent":
+        quote = ""
+        evidence_anchor = [{"type": "section", "text": manuscript_sentence}]
+        explanation = (
+            "The manuscript contains an AI-use disclosure but the cover letter is silent."
+            " Several venues (ICMJE Jan 2026 Section V; Science/AAAS) require the disclosure"
+            " to appear in the cover letter as well; mirror the manuscript statement here."
+        )
+    elif manuscript_polarity == "absent":
+        quote = letter_sentence
+        evidence_anchor = [
+            {"type": "missing", "text": "no AI-disclosure statement found in the manuscript"}
+        ]
+        explanation = (
+            "The cover letter discloses AI use but the manuscript has no matching statement."
+            " Add or reconcile the disclosure in the manuscript so the two submission"
+            " documents agree."
+        )
+    else:
+        quote = letter_sentence
+        evidence_anchor = [{"type": "section", "text": manuscript_sentence}]
+        explanation = (
+            "The cover letter and the manuscript disagree on whether generative AI was used"
+            " (one affirms it, the other denies it). Reconcile the two statements before"
+            " submission."
+        )
+
+    return AlignCheckIssue(
+        title="Cover letter and manuscript disagree on AI-use disclosure",
+        quote=quote[:280],
+        explanation=explanation,
+        comment_type="disclosure_consistency",
+        severity="moderate",
+        priority="P2",
+        source_kind="script",
+        confidence="high",
+        source_section="declarations",
+        manuscript_section_anchor="none",
+        evidence_anchor=evidence_anchor,
+        claim_strength="observed",
+        missing_evidence=[],
+        allowed_wording="",
+        forbidden_wording=[],
+        quote_verified=bool(quote),
+    )
+
+
 def run_align_check(
     letter_path: str | Path,
     manuscript_path: str | Path,
@@ -180,6 +325,14 @@ def run_align_check(
         issue = candidate_to_issue(candidate, facts)
         if issue is not None:
             issues.append(issue)
+
+    disclosure_issue = _check_ai_disclosure_consistency(
+        letter_text,
+        manuscript_text,
+        letter_is_tex=Path(letter_path).suffix.lower() == ".tex",
+    )
+    if disclosure_issue is not None:
+        issues.append(disclosure_issue)
     return issues, claim_map
 
 

@@ -267,3 +267,123 @@ def test_split_sentences_strips_salutation() -> None:
     assert claim_map["claim_candidates"], "claim sentence must still be detected"
     for candidate in claim_map["claim_candidates"]:
         assert not candidate["claim"].startswith("Dear")
+
+
+# --- CL-4: AI-disclosure consistency lane -----------------------------------
+
+_MS_DISCLOSES = r"""\documentclass{article}
+\title{Widget Study}
+\begin{document}
+\begin{abstract}
+We study widgets and report a 5\% gain over the baseline.
+\end{abstract}
+\section{Acknowledgments}
+The authors used a large language model (ChatGPT) to polish the grammar.
+\end{document}
+"""
+
+_MS_DENIES = r"""\documentclass{article}
+\title{Widget Study}
+\begin{document}
+\begin{abstract}
+We study widgets. The authors did not use any generative AI in this work.
+\end{abstract}
+\end{document}
+"""
+
+_MS_SILENT = r"""\documentclass{article}
+\title{Widget Study}
+\begin{document}
+\begin{abstract}
+We study widgets and report a 5\% gain over the baseline.
+\end{abstract}
+\end{document}
+"""
+
+_LETTER_SILENT = (
+    "Dear Editor,\n\nWe submit our widget study. It reports a 5% gain.\n\nSincerely,\nA. Author\n"
+)
+_LETTER_DISCLOSES = (
+    "Dear Editor,\n\nWe submit our widget study. We used a large language model (GPT-4) "
+    "to polish the grammar.\n\nSincerely,\nA. Author\n"
+)
+
+
+def _disclosure_findings(align, letter_text: str, manuscript_text: str, tmp_path):
+    letter = tmp_path / "letter.md"
+    letter.write_text(letter_text, encoding="utf-8")
+    manuscript = tmp_path / "paper.tex"
+    manuscript.write_text(manuscript_text, encoding="utf-8")
+    issues, _ = align.run_align_check(letter, manuscript)
+    return [i for i in issues if i.comment_type == "disclosure_consistency"]
+
+
+def test_align_check_flags_manuscript_discloses_letter_silent(tmp_path) -> None:
+    """CL-4 case 1: manuscript discloses AI use, cover letter is silent."""
+    align = _load("align_check")
+    disc = _disclosure_findings(align, _LETTER_SILENT, _MS_DISCLOSES, tmp_path)
+    assert len(disc) == 1
+    issue = disc[0]
+    assert issue.severity == "moderate"
+    assert issue.priority == "P2"
+    assert issue.source_kind == "script"
+    assert issue.quote == ""  # nothing to quote from the silent letter — that is the gap
+    assert issue.quote_verified is False
+    assert issue.evidence_anchor and "ChatGPT" in issue.evidence_anchor[0]["text"]
+    # ISSUE_SCHEMA required seven fields must all be present and populated.
+    for field in ("title", "quote", "explanation", "comment_type", "severity", "source_kind"):
+        assert hasattr(issue, field)
+    assert issue.explanation
+
+
+def test_align_check_flags_letter_discloses_manuscript_silent(tmp_path) -> None:
+    """CL-4 case 2: cover letter discloses AI use, manuscript is silent."""
+    align = _load("align_check")
+    disc = _disclosure_findings(align, _LETTER_DISCLOSES, _MS_SILENT, tmp_path)
+    assert len(disc) == 1
+    issue = disc[0]
+    assert issue.severity == "moderate"
+    assert "large language model" in issue.quote.lower()
+    assert issue.quote_verified is True
+    assert issue.evidence_anchor and issue.evidence_anchor[0]["type"] == "missing"
+
+
+def test_align_check_flags_disclosure_polarity_contradiction(tmp_path) -> None:
+    """CL-4 case 3: letter affirms AI use while the manuscript denies it."""
+    align = _load("align_check")
+    disc = _disclosure_findings(align, _LETTER_DISCLOSES, _MS_DENIES, tmp_path)
+    assert len(disc) == 1
+    issue = disc[0]
+    assert issue.severity == "moderate"
+    assert "large language model" in issue.quote.lower()
+    assert issue.evidence_anchor and "did not use" in issue.evidence_anchor[0]["text"].lower()
+
+
+def test_align_check_consistent_disclosure_no_finding(tmp_path) -> None:
+    """Both sides disclose AI use with the same polarity → no disclosure finding."""
+    align = _load("align_check")
+    disc = _disclosure_findings(align, _LETTER_DISCLOSES, _MS_DISCLOSES, tmp_path)
+    assert disc == []
+
+
+def test_align_check_both_silent_no_disclosure_finding(tmp_path) -> None:
+    """Neither side mentions AI → nothing to reconcile in this lane."""
+    align = _load("align_check")
+    disc = _disclosure_findings(align, _LETTER_SILENT, _MS_SILENT, tmp_path)
+    assert disc == []
+
+
+def test_align_check_commented_manuscript_disclosure_not_flagged(tmp_path) -> None:
+    """A commented-out manuscript disclosure (% ...) must not count as present."""
+    align = _load("align_check")
+    commented = (
+        "\\documentclass{article}\n"
+        "\\begin{document}\n"
+        "\\begin{abstract}\n"
+        "We study widgets.\n"
+        "\\end{abstract}\n"
+        "% The authors used a large language model (ChatGPT) to polish the grammar.\n"
+        "\\end{document}\n"
+    )
+    disc = _disclosure_findings(align, _LETTER_SILENT, commented, tmp_path)
+    assert disc == []
