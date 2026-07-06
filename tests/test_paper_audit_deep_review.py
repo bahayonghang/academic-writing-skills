@@ -1025,3 +1025,70 @@ def test_critical_reviewer_agent_documents_surrender_protocol() -> None:
     assert "surrenders" in text
     assert "surrender_rate" in text
     assert "frame_lock_alert" in text
+
+
+# ============================================================
+# Judgment-layer contracts: reviewer psychology + over-claim guard
+# ============================================================
+
+
+class TestReviewerPsychologyContract:
+    """Regression anchors for the reviewer-suspicion ordering (R4).
+
+    The ordering itself is LLM judgment; what we can lock is that the three
+    documents keep telling the same story: ranked list in the reference,
+    prioritization rule in the critical reviewer, tie-break in synthesis.
+    """
+
+    def test_reference_ranks_suspicion_order(self) -> None:
+        content = (_REFS_DIR / "REVIEWER_PSYCHOLOGY.md").read_text(encoding="utf-8")
+        first = content.index("Numbers that do not match the claim")
+        last = content.index('Results "too clean."')
+        assert first < last, "suspicion ranking lost its highest-first order"
+
+    def test_reference_lane_names_exist_in_lane_guide(self) -> None:
+        psychology = (_REFS_DIR / "REVIEWER_PSYCHOLOGY.md").read_text(encoding="utf-8")
+        lane_guide = (_REFS_DIR / "REVIEW_LANE_GUIDE.md").read_text(encoding="utf-8")
+        for lane in (
+            "notation_and_numeric_consistency",
+            "claims_vs_evidence",
+            "evaluation_fairness_and_reproducibility",
+            "prior_art_and_novelty_grounding",
+        ):
+            assert lane in psychology, f"REVIEWER_PSYCHOLOGY.md lost lane {lane}"
+            assert lane in lane_guide, f"REVIEW_LANE_GUIDE.md lost lane {lane}"
+
+    def test_critical_reviewer_orders_by_suspicion(self) -> None:
+        content = (_AGENTS_DIR / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+        assert "Finding Prioritization (Reviewer Suspicion Order)" in content
+        assert "references/REVIEWER_PSYCHOLOGY.md" in content
+        assert "numbers↔claim mismatch" in content
+
+    def test_synthesis_tie_breaks_by_suspicion(self) -> None:
+        content = (_AGENTS_DIR / "synthesis_agent.md").read_text(encoding="utf-8")
+        assert "reviewer-suspicion ranking" in content
+        assert "REVIEWER_PSYCHOLOGY.md" in content
+        assert 'numbers↔claim mismatch first, "too clean" results last' in content
+
+
+class TestOverClaimGuardContract:
+    """Regression anchors for the over-claim guard lane wiring (R4)."""
+
+    def test_guard_reference_defines_output_fields(self) -> None:
+        content = (_REFS_DIR / "OVER_CLAIM_GUARD.md").read_text(encoding="utf-8")
+        for anchor in (
+            "claim_strength",
+            "allowed_wording",
+            "forbidden_wording",
+            "claim_accuracy",
+            "claims_vs_evidence",
+        ):
+            assert anchor in content, f"OVER_CLAIM_GUARD.md lost {anchor}"
+
+    def test_claims_agent_and_skill_schema_align(self) -> None:
+        agent = (_AGENTS_DIR / "claims_evidence_reviewer_agent.md").read_text(encoding="utf-8")
+        skill = (_REFS_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
+        for anchor in ("claim_accuracy", "allowed_wording", "forbidden_wording"):
+            assert anchor in agent, f"claims_evidence_reviewer_agent.md lost {anchor}"
+            assert anchor in skill, f"SKILL.md schema lost {anchor}"
+        assert "claim_strength" in skill

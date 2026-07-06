@@ -679,3 +679,151 @@ class TestPdfParserMetadata:
         refs = parser.extract_references_list("fake.pdf")
         assert isinstance(refs, list)
         assert len(refs) >= 2
+
+
+# ============================================================
+# Integration: scoring chain wiring (PA-1 / PA-2 / PA-3)
+# ============================================================
+
+_SCORING_FIXTURE = r"""
+\title{Scoring Chain Test}
+\begin{document}
+\begin{abstract}
+We show significant gains over the baseline.
+\end{abstract}
+\section{Introduction}
+This paper compares against a baseline (see Figure~\ref{fig:missing}).
+\section{Method}
+Details in Table~\ref{tab:also-missing}.
+\section{Results}
+The model improves accuracy by 5.2.
+\end{document}
+""".strip()
+
+
+class TestScoringChainIntegration:
+    """End-to-end wiring that unit tests previously masked (PA-1/PA-2/PA-3)."""
+
+    def test_build_result_threads_critical_count_into_regression(self) -> None:
+        """PA-1: the -0.5/critical penalty must act through build_result."""
+        from scholar_eval import build_result, evaluate_from_audit
+
+        issues = [
+            {"module": "LOGIC", "severity": "Major", "message": "gap"},
+            {"module": "REFERENCES", "severity": "Critical", "message": "dangling ref"},
+        ]
+        script_scores = evaluate_from_audit(issues)
+        base = build_result(script_scores, use_regression=True)
+        penalized = build_result(script_scores, use_regression=True, critical_count=3)
+        assert penalized.merged_scores["overall"] < base.merged_scores["overall"]
+
+    def test_run_audit_wires_critical_count_to_scholar_eval(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        """PA-1: run_audit must pass its Critical-issue count to build_result."""
+        import scholar_eval
+        from audit import run_audit
+
+        real_build_result = scholar_eval.build_result
+        captured: dict = {}
+
+        def recorder(script_scores, llm_scores=None, use_regression=False, critical_count=0):
+            captured["use_regression"] = use_regression
+            captured["critical_count"] = critical_count
+            return real_build_result(
+                script_scores,
+                llm_scores=llm_scores,
+                use_regression=use_regression,
+                critical_count=critical_count,
+            )
+
+        monkeypatch.setattr(scholar_eval, "build_result", recorder)
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(_SCORING_FIXTURE, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        result = run_audit(
+            str(tex), mode="quick-audit", lang="en", scholar_eval=True, regression=True
+        )
+
+        n_critical = sum(1 for i in result.issues if i.severity == "Critical")
+        assert n_critical >= 1, "fixture must produce at least one Critical issue"
+        assert captured["critical_count"] == n_critical
+        assert captured["use_regression"] is True
+
+    def test_run_audit_empty_literature_results_leave_grounding_unscored(
+        self, tmp_path: Path, monkeypatch, capsys
+    ) -> None:
+        """PA-2: 0 search results is an infra signal, not poor grounding."""
+        import literature_search
+        from audit import run_audit
+        from report_generator import render_report
+
+        def fake_context(**kwargs):
+            return literature_search.LiteratureContext(
+                paper_title="Scoring Chain Test",
+                paper_abstract="We show gains.",
+                search_queries=["q"],
+                results=[],
+                filtered_results=[],
+            )
+
+        monkeypatch.setattr(literature_search, "build_literature_context", fake_context)
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(_SCORING_FIXTURE, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        result = run_audit(
+            str(tex), mode="quick-audit", lang="en", scholar_eval=True, literature_search=True
+        )
+
+        merged = result.scholar_eval_result.merged_scores
+        assert merged["literature_grounding"] is None, "empty search must not score grounding"
+        assert merged["overall"] is not None
+
+        out = capsys.readouterr().out
+        assert "literature_grounding left unscored" in out
+
+        report = render_report(result)
+        assert "left unscored" in report
+        assert "renormalized" in report
+
+    def test_weighted_average_renormalizes_without_literature_grounding(self) -> None:
+        """Missing literature_grounding renormalizes weights to 1.00."""
+        from scholar_eval import SCHOLAR_EVAL_DIMENSIONS, _weighted_average
+
+        scores: dict[str, float | None] = {
+            dim: 8.0 for dim in SCHOLAR_EVAL_DIMENSIONS if dim != "overall"
+        }
+        scores["literature_grounding"] = None
+        # Uniform 8.0 stays 8.0 only if the denominator is the available
+        # weight (0.88 renormalized to 1.00), not the full 1.00.
+        assert _weighted_average(scores) == 8.0
+
+        scores["soundness"] = 4.0
+        available = sum(
+            cfg["weight"]
+            for dim, cfg in SCHOLAR_EVAL_DIMENSIONS.items()
+            if dim not in ("overall", "literature_grounding")
+        )
+        expected = round(
+            sum(
+                scores[dim] * cfg["weight"]
+                for dim, cfg in SCHOLAR_EVAL_DIMENSIONS.items()
+                if dim not in ("overall", "literature_grounding")
+            )
+            / available,
+            1,
+        )
+        assert _weighted_average(scores) == expected
+
+    def test_dims_below_5_ignores_overall_and_partial_keys(self) -> None:
+        """PA-3: `overall` / `*_partial` are aggregates, not dimensions."""
+        from scoring_model import RegressionScorer
+
+        scorer = RegressionScorer(coefficients={"dims_below_5": -0.3}, intercept=5.0)
+        base = scorer.predict({"soundness": 4.0})
+        with_aggregates = scorer.predict(
+            {"soundness": 4.0, "overall": 4.0, "reproducibility_partial": 4.0}
+        )
+        assert with_aggregates.predicted_score == base.predicted_score

@@ -156,7 +156,16 @@ class RegressionScorer:
             "literature_grounding_x_novelty": (_g("literature_grounding") * _g("novelty") / 10.0),
             # Meta features
             "critical_count": float(critical_count),
-            "dims_below_5": float(sum(1 for v in scores.values() if v is not None and v < 5.0)),
+            # Count base dimensions only: `overall` is a computed aggregate (it
+            # arrives in `merged` scores) and `*_partial` keys are pre-merge
+            # inputs — counting either would double-penalize (PA-3).
+            "dims_below_5": float(
+                sum(
+                    1
+                    for k, v in scores.items()
+                    if k != "overall" and not k.endswith("_partial") and v is not None and v < 5.0
+                )
+            ),
         }
 
     @staticmethod

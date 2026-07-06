@@ -63,11 +63,10 @@ assert hasattr(module, "ChineseAITraceChecker")   # 守卫：不是 EN 的 AITra
 
 > **Warning**：PostToolUse 的 JSON 格式化 hook 会在 Edit/Write 后把 `academic-writing-skills/*/evals/evals.json` 的多行 `files: [...]` 数组压成单行，造成与改动无关的大面积重排。
 
-**Fix**：改 evals.json 一律用 Bash 跑 python 写入（不触发 Edit/Write hook）。仓库 canonical 格式已 round-trip 验证：
+**Fix**：改 evals.json 一律用 Bash 跑 python 写入（不触发 Edit/Write hook）。**写入前先看目标文件的既有风格**——各技能的 evals.json 风格不统一：
 
-```python
-json.dumps(data, indent=2, ensure_ascii=False) + "\n"
-```
+- typst-paper 等：canonical `json.dumps(data, indent=2, ensure_ascii=False) + "\n"` 可 round-trip；
+- paper-audit：仓库已接受**压平数组**的紧凑格式（`files`/单条 assertion 各占一行），对它整文件 `json.dumps(indent=2)` 会重排数百行（实测 +479/-91）。此类文件走**文本级拼接**：在关闭 `]` 前 splice 新条目、逐 assertion 用 `json.dumps(obj, ensure_ascii=False)` 内联、保留原换行符（CRLF），写完 `json.loads` 校验 + `git diff --stat` 应为纯增量（参考 07-05-paper-audit-scoring-fixes 收敛到 +24/-0 的做法）。
 
 若已被 hook 重排：`git checkout` 还原后用上式重写，diff 应只剩语义新增（参考 typst-deai-sync 收敛到 +35/-0 的做法）。
 

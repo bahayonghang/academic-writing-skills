@@ -246,8 +246,14 @@ def build_result(
     script_scores: dict[str, float | None],
     llm_scores: dict | None = None,
     use_regression: bool = False,
+    critical_count: int = 0,
 ) -> ScholarEvalResult:
-    """Build a complete ScholarEvalResult."""
+    """Build a complete ScholarEvalResult.
+
+    ``critical_count`` (number of Critical-severity audit issues) only affects
+    the weighted-plus model under ``use_regression`` — its -0.5/critical
+    penalty term is dead unless the caller threads the count through here.
+    """
     merged = merge_scores(script_scores, llm_scores)
     overall = merged.get("overall")
     label = get_readiness_label(overall)
@@ -262,7 +268,7 @@ def build_result(
                 scorer = RegressionScorer.load_model(model_path)
             else:
                 scorer = RegressionScorer()  # fallback mode
-            prediction = scorer.predict(merged)
+            prediction = scorer.predict(merged, critical_count=critical_count)
             merged["overall"] = prediction.predicted_score
             label = prediction.decision
         except Exception:
