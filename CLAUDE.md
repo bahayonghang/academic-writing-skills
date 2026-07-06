@@ -101,7 +101,7 @@ VitePress bilingual docs (EN root + `zh/` locale) in `docs/`. Deployed to GitHub
 - Python 3.10+ target. Ruff enforces 100-char line length with rules: E, W, F, I, N, UP, B, C4, SIM.
 - `snake_case` for Python modules/functions/tests. Skill directories are `kebab-case`.
 - Run `just fix` before submitting changes.
-- Pyright with `typeCheckingMode = "off"` (lenient — focus is on runtime correctness).
+- Pyright with `typeCheckingMode = "basic"` — errors (e.g. `reportOptionalOperand`) fail `just ci`; watch the error count, not warnings.
 
 ## Commit Convention
 

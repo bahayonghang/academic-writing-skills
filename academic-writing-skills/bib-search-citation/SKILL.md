@@ -6,7 +6,7 @@ when_to_use: >-
   "Mamba papers after 2024", "generate \cite{} snippets", "export selected BibTeX",
   "filter Zotero export", "check DOI/arXiv IDs", or "find citations supporting this claim".
 metadata:
-  category: docs-writing-publishing
+  category: academic-writing
   tags:
     [
       bibtex,
@@ -20,7 +20,7 @@ metadata:
       bib,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-13"
+  last_updated: "2026-07-06"
 argument-hint: "--bib library.bib --query QUERY"
 allowed-tools: Read, Bash(uv *)
 ---

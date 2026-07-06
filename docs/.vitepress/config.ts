@@ -47,6 +47,7 @@ function latexPaperEnItems(prefix: string) {
         { text: "Section Writing", link: `${m}/section-writing` },
         { text: "Sentences", link: `${m}/sentences` },
         { text: "Tables", link: `${m}/tables` },
+        { text: "Tense Guide", link: `${m}/tense-guide` },
         { text: "Title", link: `${m}/title` },
         { text: "Translation", link: `${m}/translation` },
       ],
@@ -158,6 +159,10 @@ function latexThesisZhItems(prefix: string) {
         { text: "Structure Guide", link: `${r}/writing/structure-guide` },
         { text: "Table Guide", link: `${r}/formatting/table-guide` },
         {
+          text: "Tense Guide (EN Abstract)",
+          link: `${r}/writing/tense-guide-zh`,
+        },
+        {
           text: "Thesis Writing Guide",
           link: `${r}/writing/thesis-writing-guide`,
         },
@@ -223,6 +228,7 @@ function typstPaperItems(prefix: string) {
         { text: "Style Guide", link: `${r}/STYLE_GUIDE` },
         { text: "Table Guide", link: `${r}/TABLE_GUIDE` },
         { text: "Templates", link: `${r}/TEMPLATES` },
+        { text: "Tense Guide", link: `${r}/TENSE_GUIDE` },
         { text: "Terminology", link: `${r}/TERMINOLOGY` },
         { text: "Translation Guide", link: `${r}/TRANSLATION_GUIDE` },
         { text: "Typst Syntax", link: `${r}/TYPST_SYNTAX` },
@@ -259,6 +265,14 @@ function paperAuditItems(prefix: string) {
     {
       text: isZh ? "深度审查标准" : "Deep Review Criteria",
       link: `${r}/DEEP_REVIEW_CRITERIA`,
+    },
+    {
+      text: isZh ? "过度声明防护" : "Over-Claim Guard",
+      link: `${r}/OVER_CLAIM_GUARD`,
+    },
+    {
+      text: isZh ? "审稿人心理" : "Reviewer Psychology",
+      link: `${r}/REVIEWER_PSYCHOLOGY`,
     },
     {
       text: isZh ? "投稿前机械规则" : "Pre-Submission Rules",
