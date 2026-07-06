@@ -169,6 +169,11 @@ def run_align_check(
         manuscript_text,
     )
     claim_map["claim_candidates"] = verified_candidates
+    # verify_claim_candidates may clear manuscript_supported (CL-1), so the
+    # aggregate computed at claim-map build time must be refreshed to match.
+    claim_map["manuscript_supported_count"] = sum(
+        1 for c in verified_candidates if c.get("manuscript_supported")
+    )
 
     issues: list[AlignCheckIssue] = []
     for candidate in verified_candidates:

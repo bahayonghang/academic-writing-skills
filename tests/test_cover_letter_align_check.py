@@ -183,3 +183,87 @@ def test_align_check_numeric_match_requires_local_cooccurrence(tmp_path) -> None
     assert verifier._has_numeric_match("73% reduction in memory footprint", manuscript) is False
     # Sanity: a genuinely co-located number+keyword still verifies.
     assert verifier._has_numeric_match("47% reduction", "we report a 47% reduction in latency")
+
+
+def test_numeric_match_rejects_metric_swap() -> None:
+    """The letter cannot re-attach a manuscript number to a different metric
+    (CL-1): the specific metric word next to the number must match too."""
+    verifier = _load("verify_letter_against_manuscript")
+    manuscript = r"We evaluate the system and measure a 3\% accuracy improvement over the baseline."
+    # Same number, different metric identity -> no verification.
+    assert verifier._has_numeric_match("3% throughput improvement", manuscript) is False
+    # Matching metric identity still verifies.
+    assert verifier._has_numeric_match("3% accuracy improvement", manuscript) is True
+    # Direction-only claims keep the original any-co-occurrence gate (C4 sanity).
+    assert verifier._has_numeric_match("47% reduction", "we report a 47% reduction in latency")
+
+
+def test_align_check_metric_swap_yields_unverified_and_finding(tmp_path) -> None:
+    """End-to-end CL-1: '3% throughput improvement' against a manuscript that
+    only supports '3% accuracy improvement' must be unverified and flagged."""
+    align = _load("align_check")
+    manuscript = tmp_path / "paper.tex"
+    manuscript.write_text(
+        "\\documentclass{article}\n"
+        "\\title{Widget Forecasting}\n"
+        "\\begin{document}\n"
+        "\\begin{abstract}\n"
+        "We evaluate the proposed system and measure a 3\\% accuracy improvement\n"
+        "over the strongest baseline.\n"
+        "\\end{abstract}\n"
+        "\\section{Results}\n"
+        "The 3\\% accuracy improvement holds across all seeds.\n"
+        "\\end{document}\n",
+        encoding="utf-8",
+    )
+
+    swapped = tmp_path / "swapped_letter.md"
+    swapped.write_text(
+        "Dear Editor,\n\n"
+        "Our framework delivers a 3% throughput improvement in production settings.\n\n"
+        "Sincerely,\nJia Wei\n",
+        encoding="utf-8",
+    )
+    issues, claim_map = align.run_align_check(swapped, manuscript)
+    swap_candidates = [c for c in claim_map["claim_candidates"] if "throughput" in c["claim"]]
+    assert swap_candidates, "the swapped-metric sentence must be a claim candidate"
+    assert all(not c["quote_verified"] for c in swap_candidates)
+    assert all(not c.get("manuscript_supported") for c in swap_candidates)
+    # The aggregate must track the cleared flags, not the pre-verify values.
+    assert claim_map["manuscript_supported_count"] == sum(
+        1 for c in claim_map["claim_candidates"] if c.get("manuscript_supported")
+    )
+    assert any("throughput" in issue.quote for issue in issues), (
+        "metric-swapped claim must produce an align-check finding"
+    )
+
+    # Positive control: the same sentence with the *matching* metric verifies
+    # and produces no finding — the fix must not over-tighten.
+    aligned = tmp_path / "aligned_letter.md"
+    aligned.write_text(
+        "Dear Editor,\n\n"
+        "Our framework delivers a 3% accuracy improvement in production settings.\n\n"
+        "Sincerely,\nJia Wei\n",
+        encoding="utf-8",
+    )
+    issues_ok, claim_map_ok = align.run_align_check(aligned, manuscript)
+    ok_candidates = [c for c in claim_map_ok["claim_candidates"] if "accuracy" in c["claim"]]
+    assert ok_candidates and all(c["quote_verified"] for c in ok_candidates)
+    assert not any("accuracy improvement" in issue.quote for issue in issues_ok)
+
+
+def test_split_sentences_strips_salutation() -> None:
+    """CL-2: 'Dear Editor,' must not glue itself onto the first claim quote."""
+    builder = _load("build_letter_claim_map")
+    sentences = builder.split_sentences(
+        "Dear Editor,\n\nWe propose FrameX for anomaly detection. It reduces cost."
+    )
+    assert sentences[0] == "We propose FrameX for anomaly detection."
+
+    claim_map = builder.build_claim_map(
+        "Dear Prof. Smith,\n\nOur method improves accuracy by 4% on Bench-1.\n",
+        manuscript_facts=None,
+    )
+    assert claim_map["claim_candidates"], "claim sentence must still be detected"
+    for candidate in claim_map["claim_candidates"]:
+        assert not candidate["claim"].startswith("Dear")

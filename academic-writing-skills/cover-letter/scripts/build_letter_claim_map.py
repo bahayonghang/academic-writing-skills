@@ -61,7 +61,13 @@ STRONG_CLAIM_PATTERN = re.compile(
 )
 
 
+# "Dear Editor," / "Dear Prof. Smith," ends in a comma, so sentence splitting
+# would glue it onto the first claim sentence and bloat every quote (CL-2).
+_SALUTATION_RE = re.compile(r"^\s*Dear\b[^,\n]{0,80},\s*", re.IGNORECASE)
+
+
 def split_sentences(text: str) -> list[str]:
+    text = _SALUTATION_RE.sub("", text, count=1)
     parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"'])", text.replace("\n", " "))
     return [part.strip() for part in parts if part.strip()]
 

@@ -345,3 +345,68 @@ def test_non_gbk_author_does_not_crash(tmp_path):
     assert completed.returncode == 0
     payload = json.loads(completed.stdout.decode("utf-8"))
     assert "Łukasz" in payload["results"][0]["author"]
+
+
+def test_duplicate_keys_warn_and_annotate_results(tmp_path: Path):
+    """BIB-1: duplicated citation keys must be flagged, not silently returned."""
+    bib = tmp_path / "dup.bib"
+    bib.write_text(
+        "@article{Smith2020,\n"
+        "  title = {Widget Study One},\n"
+        "  author = {Smith, Alice},\n"
+        "  year = {2020},\n"
+        "}\n\n"
+        "@article{Smith2020,\n"
+        "  title = {Widget Study Two},\n"
+        "  author = {Smith, Bob},\n"
+        "  year = {2021},\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    payload = run_search_on(bib, "--query", "widget cite:latex")
+
+    dup_warnings = [
+        w for w in payload["meta"]["parse_warnings"] if w.get("type") == "duplicate_key"
+    ]
+    assert len(dup_warnings) == 1
+    assert dup_warnings[0]["key"] == "Smith2020"
+    assert dup_warnings[0]["count"] == 2
+
+    # Both hits are returned (no silent dedup — the user decides) and each one
+    # carries the duplicate_key warning next to its identical \cite{} export.
+    assert payload["meta"]["returned_entries"] == 2
+    for result in payload["results"]:
+        assert result["key"] == "Smith2020"
+        assert any("duplicate_key" in w for w in result.get("warnings", []))
+
+
+def test_unique_keys_have_no_duplicate_warning():
+    """Sanity: the fixture library has unique keys — no duplicate_key noise."""
+    payload = run_search("--query", "mamba forecasting limit:3")
+    assert not [w for w in payload["meta"]["parse_warnings"] if w.get("type") == "duplicate_key"]
+    assert all("warnings" not in result for result in payload["results"])
+
+
+def test_percent_commented_entry_parses_with_warning(tmp_path: Path):
+    """BIB-2: '%' does not disable a .bib entry; keep parsing but tell the user."""
+    bib = tmp_path / "commented.bib"
+    bib.write_text(
+        "@article{Active2021,\n"
+        "  title = {Active Widget Entry},\n"
+        "  year = {2021},\n"
+        "}\n\n"
+        "% @article{Commented2019, title = {Disabled Widget Entry}, year = {2019}}\n",
+        encoding="utf-8",
+    )
+    payload = run_search_on(bib, "--query", "widget")
+
+    # Parse semantics unchanged: the "disabled" entry is still searchable.
+    keys = {result["key"] for result in payload["results"]}
+    assert keys == {"Active2021", "Commented2019"}
+
+    commented = [
+        w for w in payload["meta"]["parse_warnings"] if w.get("type") == "commented_entry_included"
+    ]
+    assert len(commented) == 1
+    assert commented[0]["key"] == "Commented2019"
+    assert "@comment" in commented[0]["message"]

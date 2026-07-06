@@ -159,8 +159,10 @@ These are documented so results are reported honestly, not silently:
 - **CJK multi-keyword** queries match best as a contiguous substring
   (`时间序列`); space-separated CJK terms may not all match.
 - **Multi-file libraries** are not merged automatically — run the script once per
-  `.bib` file. The `meta.parse_warnings` list reports any entries that were
-  skipped because of a structural problem such as a missing closing brace.
+  `.bib` file. The `meta.parse_warnings` list reports parsing problems: entries
+  skipped over a structural defect such as a missing closing brace, duplicate
+  citation keys (each affected result also carries a `warnings` field), and
+  entries sitting behind a `%` marker, which real BibTeX still parses.
 
 ## Search Planning
 

@@ -30,6 +30,21 @@ UNVERIFIED_CONFIDENCE = "unverified"
 # a separate "reduction".
 _NUMERIC_WINDOW = 160
 
+# Metric words that carry the *identity* of what a number measures. When one of
+# these sits next to a number in the letter claim, the manuscript window around
+# that same number must contain it too — "3% throughput improvement" must not
+# verify against a manuscript that only reports "3% accuracy improvement"
+# (CL-1). Direction-only words (reduction / improvement) stay on the looser
+# any-co-occurrence gate below because they name no metric.
+_SPECIFIC_METRIC_RE = re.compile(
+    r"\b(?:accuracy|f1|auc|precision|recall|rmse|mae|latency|throughput|"
+    r"speedup|error|memory|footprint|cost|savings|modalit(?:y|ies))\b",
+    re.IGNORECASE,
+)
+# How far (in characters) from the number, inside the letter claim, a specific
+# metric word may sit and still count as naming that number.
+_CLAIM_METRIC_WINDOW = 40
+
 
 def _strip_manuscript(content: str) -> str:
     """Return manuscript text after stripping LaTeX markup for matching."""
@@ -56,7 +71,13 @@ def _has_4gram_match(claim: str, manuscript: str) -> bool:
 
 def _has_numeric_match(claim: str, manuscript: str) -> bool:
     """Return True when a number in the claim appears in the manuscript with a
-    matching metric keyword nearby (within ``_NUMERIC_WINDOW`` characters)."""
+    matching metric keyword nearby (within ``_NUMERIC_WINDOW`` characters).
+
+    Every specific metric word adjacent to the number in the claim (within
+    ``_CLAIM_METRIC_WINDOW`` characters) must also appear in the manuscript
+    window — the letter cannot re-attach a manuscript number to a different
+    metric (CL-1). Claims whose keywords are direction-only keep the original
+    any-keyword co-occurrence gate."""
     number_patterns = (
         r"\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|s|MB|GB|FLOPs?)",
         r"(?:\$|USD\s*)\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?\b",
@@ -77,24 +98,40 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
     # Collapse whitespace (do NOT delete it) so character offsets stay meaningful
     # for the proximity window while "12 sensor modalities" still matches.
     manuscript_norm = re.sub(r"\s+", " ", manuscript.lower().replace("\\", ""))
+    claim_norm = re.sub(r"\s+", " ", claim.lower().replace("\\", ""))
     keywords = [kw.lower() for kw in metric_keywords]
     for number in numbers:
         needle = re.sub(r"\s+", " ", number.lower().replace("\\", "")).strip()
         if not needle:
             continue
+        # Specific metric words that sit next to this number in the claim name
+        # what the number measures; verification must find all of them again.
+        local_specific: set[str] = set()
+        claim_idx = claim_norm.find(needle)
+        if claim_idx != -1:
+            local_lo = max(0, claim_idx - _CLAIM_METRIC_WINDOW)
+            local_hi = claim_idx + len(needle) + _CLAIM_METRIC_WINDOW
+            local_specific = {
+                match.group(0).lower()
+                for match in _SPECIFIC_METRIC_RE.finditer(claim_norm[local_lo:local_hi])
+            }
         start = 0
         while True:
             idx = manuscript_norm.find(needle, start)
             if idx == -1:
                 break
-            # A bare number with no metric keyword in the claim can only be
-            # checked for presence (e.g. "2.1x faster" has no listed keyword).
-            if not keywords:
-                return True
             lo = max(0, idx - _NUMERIC_WINDOW)
             hi = idx + len(needle) + _NUMERIC_WINDOW
             window = manuscript_norm[lo:hi]
-            if any(kw in window for kw in keywords):
+            if local_specific:
+                if all(kw in window for kw in local_specific):
+                    return True
+            elif keywords:
+                if any(kw in window for kw in keywords):
+                    return True
+            else:
+                # A bare number with no metric keyword in the claim can only be
+                # checked for presence (e.g. "2.1x faster" has no listed keyword).
                 return True
             start = idx + len(needle)
     return False
@@ -140,6 +177,14 @@ def verify_claim_candidates(
         # cannot anchor the claim.
         if not verified and patched.get("claim_strength") in {"supported", "strong"}:
             patched["claim_strength"] = "observed"
+        # A bare headline-number anchor (context-free "3%" match) is strictly
+        # weaker evidence than the targeted verification that just failed above
+        # — metric identity was checked against the full manuscript. Do not let
+        # it veto the align-check finding (CL-1). Contribution-overlap support
+        # implies a shared 4-gram, which would have verified the quote, so only
+        # the weak numeric anchor can reach this state.
+        if not verified and patched.get("manuscript_supported"):
+            patched["manuscript_supported"] = False
         updated.append(patched)
     return updated
 
@@ -181,6 +226,11 @@ def main(argv: list[str] | None = None) -> int:
     claim_map["claim_candidates"] = verified
     claim_map["verified_count"] = sum(1 for c in verified if c.get("quote_verified"))
     claim_map["unverified_count"] = sum(1 for c in verified if not c.get("quote_verified"))
+    # verify_claim_candidates may clear manuscript_supported (CL-1); refresh the
+    # aggregate emitted by build_letter_claim_map so the map stays consistent.
+    claim_map["manuscript_supported_count"] = sum(
+        1 for c in verified if c.get("manuscript_supported")
+    )
 
     payload = json.dumps(claim_map, indent=2, ensure_ascii=False)
 
