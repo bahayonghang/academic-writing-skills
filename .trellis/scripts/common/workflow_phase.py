@@ -148,7 +148,7 @@ def resolve_effective_platform(platform: str, config: dict) -> str:
     or ``"codex-sub-agent"`` based on ``.trellis/config.yaml`` ``codex.dispatch_mode``.
     ``filter_platform`` then surfaces blocks whose marker lists include the
     namespaced name (e.g. ``[codex-sub-agent, ...]`` or ``[codex-inline, Kilo,
-    Antigravity, Windsurf]``).
+    Antigravity, Devin]``).
 
     Default is ``inline`` because Codex sub-agents run with ``fork_turns="none"``
     isolation and can't inherit the parent session's task context — inline
