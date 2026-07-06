@@ -4,8 +4,10 @@
 英文摘要须遵循英文论文的时态惯例：目的不是一律用过去时，而是每个部分有各自约定，
 最常见的错误是把"方法/结果"的叙述写成现在时。
 
-脚本（`deai_check.py`）**仅在英文摘要区域**（`\begin{abstract}`，不含中文摘要 `\begin{cabstract}`）
-内运行，对其中的现在时**报告动词**发 `[Script]` LOW 痕迹；定位不到英文摘要则不检查。
+脚本（`deai_check.py`）**仅在英文摘要区域**运行——generic `\begin{abstract}`、thuthesis
+`\begin{abstract*}`、pkuthss `\begin{eabstract}`，跳过中文摘要环境（thuthesis 明文
+`\begin{abstract}`、pkuthss `\begin{cabstract}`）——对其中的现在时**报告动词**发 `[Script]`
+LOW 痕迹；定位不到英文摘要则不检查。
 
 ## 英文摘要的时态
 

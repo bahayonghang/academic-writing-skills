@@ -104,6 +104,7 @@ DEFAULT_THRESHOLDS = {
     },
     # 时态信号词：英文摘要里用现在时报告动词通常是时态错误（方法/结果应为过去时）。
     # 中文正文无时态，故脚本仅在英文摘要区域检查；"is"/"are" 不入正则（合法用法太多），
+    # "presents" 只匹配动词，不匹配 "the present study" 里的形容词（勿把 ? 加回）；
     # 判断级清单见 references/writing/tense-guide-zh.md。
     "tense": {
         "enabled": True,
@@ -112,7 +113,7 @@ DEFAULT_THRESHOLDS = {
             r"\breveals?\b": "past_in_methods_results",
             r"\bdemonstrates?\b": "past_in_methods_results",
             r"\bindicates?\b": "past_in_methods_results",
-            r"\bpresents?\b": "past_in_methods_results",
+            r"\bpresents\b": "past_in_methods_results",
             r"\bconfirms?\b": "past_in_methods_results",
             r"\bachieves?\b": "past_in_methods_results",
             r"\boutperforms?\b": "past_in_methods_results",
@@ -375,7 +376,9 @@ class ChineseAITraceChecker:
             r"\.?\s*~?\s*\d*",
             re.IGNORECASE,
         )
-        # 英文摘要区域（\begin{abstract}，排除中文 \begin{cabstract}）；中文正文无时态。
+        # 英文摘要区域：generic \begin{abstract}、thuthesis \begin{abstract*}、pkuthss
+        # \begin{eabstract}；跳过中文摘要环境（thuthesis 明文 abstract、pkuthss cabstract）。
+        # 中文正文无时态。
         self._en_abstract_range = self._english_abstract_range()
 
     def _loc(self, line_no: int) -> str:
@@ -772,14 +775,22 @@ class ChineseAITraceChecker:
     # --- Checker: tense signal words in the English abstract ([Script] LOW) ---
 
     def _english_abstract_range(self) -> tuple[int, int] | None:
-        """英文摘要的行区间（1-based，含端点）。优先 ``\\begin{abstract}...\\end{abstract}``
-        （thuthesis 中文摘要是 ``\\begin{cabstract}``，已排除）；其次英文 ``Abstract`` 标题章节。
-        定位不到返回 None。"""
-        m = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", self.content, re.DOTALL)
-        if m:
-            start = self.content[: m.start()].count("\n") + 1
-            end = self.content[: m.end()].count("\n") + 1
-            return (start, end)
+        """英文摘要的行区间（1-based，含端点）。识别 generic ``\\begin{abstract}``、
+        thuthesis ``\\begin{abstract*}``、pkuthss ``\\begin{eabstract}``；显式跳过中文摘要
+        环境（thuthesis 明文 ``abstract``、pkuthss ``cabstract``）。多摘要并存时按内容语种
+        择优选英文那一个，而非首个匹配。环境定位不到时回退到英文 ``Abstract`` 标题章节；
+        再定位不到返回 None。"""
+        # 带星（thuthesis）/带 e 前缀（pkuthss）的环境按模板约定即英文摘要，最高优先。
+        for env in (r"abstract\*", "eabstract"):
+            m = re.search(rf"\\begin\{{{env}\}}(.*?)\\end\{{{env}\}}", self.content, re.DOTALL)
+            if m:
+                return self._span_to_lines(m.start(), m.end())
+        # 明文 abstract 可能是 thuthesis 中文摘要，也可能是 generic / 双摘要里的英文摘要：
+        # 枚举全部候选，选内容以英文为主的那一个（cabstract 带前缀，此处不会误匹配）。
+        for m in re.finditer(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", self.content, re.DOTALL):
+            if self._region_is_english(m.group(1)):
+                return self._span_to_lines(m.start(), m.end())
+        # 回退：英文 ``Abstract`` 标题章节。
         m = re.search(r"\\(?:chapter|section)\*?\{\s*Abstract\s*\}", self.content)
         if m:
             start = self.content[: m.start()].count("\n") + 1
@@ -789,6 +800,27 @@ class ChineseAITraceChecker:
             end = self.content[:offset].count("\n") + 1
             return (start, end)
         return None
+
+    def _span_to_lines(self, start_off: int, end_off: int) -> tuple[int, int]:
+        """字符偏移区间 → 1-based 行区间（含端点）。"""
+        start = self.content[:start_off].count("\n") + 1
+        end = self.content[:end_off].count("\n") + 1
+        return (start, end)
+
+    def _region_is_english(self, body: str) -> bool:
+        """摘要环境体是否以英文为主。逐行取可见文本（剥除 cite/ref/math）后按语种计数，
+        英文行至少一行且不少于中文行即判为英文摘要。"""
+        english = cjk = 0
+        for raw in body.splitlines():
+            stripped = raw.strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(stripped)
+            if self._is_english_line(visible):
+                english += 1
+            elif any("一" <= c <= "鿿" for c in visible):
+                cjk += 1
+        return english >= 1 and english >= cjk
 
     @staticmethod
     def _is_english_line(text: str) -> bool:

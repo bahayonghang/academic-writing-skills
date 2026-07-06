@@ -47,4 +47,10 @@ Only after these are clear should the module remove structure shells. The defaul
 
 1. Delete empty phrases  2. Add specifics  3. Split long sentences  4. Restructure  5. Downgrade certainty  6. Remove redundancy  7. Add missing subjects  8. Replace templates
 
+## English-Abstract Tense Check (`[Script]` LOW)
+
+`deai_check.py` also flags present-tense reporting verbs (`shows`, `presents`, `demonstrates`, `outperforms`, …) — but **only inside the English abstract**. Chinese prose has no tense, so the check is gated to the English-abstract region and stays silent everywhere else. It locates that region across the flagship templates: generic `\begin{abstract}`, thuthesis `\begin{abstract*}`, and pkuthss `\begin{eabstract}`; the Chinese `abstract` / `cabstract` environments are skipped, and when several abstracts coexist the English one is chosen by content language. A verb whose subject is a figure/table/equation (`Figure 2 shows ...`) is exempt. Each hit is a `[Script]` LOW trace suggesting past tense for methods/results.
+
+See [`../writing/tense-guide-zh.md`](../writing/tense-guide-zh.md) for the judgment-level checklist (which verbs are borderline, why `is`/`are` are excluded).
+
 > Full details: see [`../deai/guide.md`](../deai/guide.md)

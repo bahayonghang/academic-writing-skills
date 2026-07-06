@@ -25,7 +25,7 @@ metadata:
       structure,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-20"
+  last_updated: "2026-07-06"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -105,6 +105,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
 - `logic` 默认全文档运行（含导语、主线、章引言、漏斗、三方对齐与 C3 绪论-结论闭合）；`--section` 只聚焦单章（接受英文键或中文名，如 `--section 绪论`），此时仅运行与该章相关的检查（如 related 的 A1/A3、introduction 的漏斗）。`--cross-section` 已并入默认行为，仅作兼容保留。
 - `deai` 全文档分析用 `--analyze`（覆盖所有章节，含未命中关键词的正文章）；`--section` 针对单章快速检查，二者互补，不要只跑 `--section` 就下全文结论。
+- `deai` 在英文摘要区域会额外做时态检查：方法/结果句用现在时报告动词（如 `shows`/`presents`）发 `[Script]` LOW 痕迹，中文正文不检查；能识别 generic `\begin{abstract}`、thuthesis `\begin{abstract*}`、pkuthss `\begin{eabstract}`（跳过中文摘要环境）。判断级清单见 `references/writing/tense-guide-zh.md`。
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。
 - 涉及“大标题/小标题/章标题/小节标题/目录标题不对”“小节数太多”“每章最多 5 节”“标题没有体现对象、问题、方法”“小标题没有扣住上级标题”时，默认串行执行 `structure` -> `title`。`title` 使用 `--headings` 输出章标题对象-问题-方法、直属小节数量和小节扣合诊断；只有用户同时问导语、衔接或主线时才追加 `logic`。
 - 涉及“每章引言/章首怎么写”“承上启下”“第三章第四章引言”“章引言太短/没承接上一章/没预告本章安排”时，默认走 `logic`：它会对正文各章（绪论除外）做承上启下两段式章引言专项检查，并补读 `references/writing/thesis-writing-guide.md` 的“正文章引言”一节给出改写方案。
@@ -166,6 +167,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/writing/thesis-writing-guide.md`: thesis-specific writing mainline for introduction, per-chapter intro (承上启下两段式), per-chapter summary (本章小结单段收束), literature review, method chapters, experiments, conclusion, and abstract/innovation/conclusion closure.
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
+- `references/writing/tense-guide-zh.md`: 英文摘要时态判断级清单（`deai` 在英文摘要区域自动运行的时态检查的配套说明）。
 - `references/modules/experiment.md`: experiment-chapter review criteria.
 - `templates/`: per-template snapshots, the single authoritative source for template facts. Files: `generic.md`（含常见校级排版约定）, `thuthesis.md`, `pkuthss.md`, `yanshan.md`（规范获取指引）.
   只读取当前模块所需的参考文件，避免一次加载整套指南。
