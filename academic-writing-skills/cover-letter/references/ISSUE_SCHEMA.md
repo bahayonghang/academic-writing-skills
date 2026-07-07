@@ -9,7 +9,7 @@ Simplified, field-compatible variant of `paper-audit/references/ISSUE_SCHEMA.md`
   "title": "short issue title",
   "quote": "exact quote from the cover letter",
   "explanation": "why this matters and what remains problematic",
-  "comment_type": "claim_accuracy|journal_fit|declaration_missing|presentation|tone",
+  "comment_type": "claim_accuracy|journal_fit|declaration_missing|presentation|tone|disclosure_consistency",
   "severity": "major|moderate|minor",
   "source_kind": "script|llm",
   "confidence": "high|medium|low|unverified",
@@ -65,10 +65,11 @@ These fields are intentionally absent in v1; add them with default values when i
 - `journal_fit` — pitch is mismatched with the target venue's scope or tier.
 - `declaration_missing` — required declaration absent (see template's `required_declarations`).
 - `presentation` — length, paragraph shape, citation tilde, or other surface form.
-- `tone` — AI-tone words, forbidden phrases, marketing language.
+- `tone` — AI-tone words, forbidden phrases, marketing language, or structural AI-trace signals (parallel openings, uniform sentence length, diverse promotional vocabulary).
+- `disclosure_consistency` — the cover letter and the manuscript disagree on generative-AI disclosure (one discloses and the other is silent, or the two contradict on polarity). Emitted by `align_check.py`, which reads both documents.
 
 ## Severity guidance
 
 - `major` — declaration_missing for a template's `required` items; overt overclaim where claim_strength is `unsupported`; length exceeding the template's hard ceiling by ≥20%; journal_fit verdict of LOW.
-- `moderate` — overclaim that is `observed` but pushed beyond observed scope; missing optional but recommended declaration when manuscript needs it; journal_fit verdict of MEDIUM on the most-loaded sub-axis.
+- `moderate` — overclaim that is `observed` but pushed beyond observed scope; missing optional but recommended declaration when manuscript needs it; journal_fit verdict of MEDIUM on the most-loaded sub-axis; an AI-disclosure inconsistency between the letter and the manuscript (`disclosure_consistency`).
 - `minor` — paragraph length warnings; AI-tone term frequency; weak topic starters; non-required journal-specific phrasings.

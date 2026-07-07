@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/Research-Paper-Writing-Skills/frontend/type-safety.md", "reason": "Check module names, eval labels, and status vocabulary remain consistent."}
+{"file": ".trellis/spec/Research-Paper-Writing-Skills/backend/quality-guidelines.md", "reason": "Check packaging and docs remain concise, portable, and aligned."}
+{"file": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md", "reason": "Check the adapted Chinese thesis de-AI contract preserves academic norms and disclosure boundary."}
+{"file": "academic-writing-skills/typst-paper/references/DEAI_GUIDE.md", "reason": "Check Typst syntax-preservation and bilingual de-AI parity if touched."}
+{"file": "academic-writing-skills/latex-paper-en/references/deai/guide.md", "reason": "Check English de-AI guidance remains workflow-level, not Chinese phrase-list driven."}

@@ -229,6 +229,30 @@
         {"type": "regex", "pattern": "(citation support|supports this manuscript sentence|metadata)", "description": "citation support is not collapsed into metadata existence"},
         {"type": "regex", "pattern": "(Table|metric|12\\.4|evidence anchor)", "description": "table-backed metric claim stays anchored"}
       ]
+    },
+    {
+      "id": 21,
+      "prompt": "Deep-review this paper. Several findings will land in the same severity tier - order them the way a real reviewer would hit them, and explain the ordering rule you applied.",
+      "expected_output": "Route to deep-review and order same-severity findings by the reviewer-suspicion ranking from REVIEWER_PSYCHOLOGY.md (numbers-claim mismatch first, 'too clean' results last), stating that the ordering is a tie-break that does not change severity.",
+      "files": ["evals/fixtures/deep_review_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "deep-review", "description": "canonical deep-review mode surfaced"},
+        {"type": "regex", "pattern": "(suspicion|REVIEWER_PSYCHOLOGY|reviewer.{0,20}(hits?|doubts?|stops?))", "description": "reviewer-suspicion ordering rule named"},
+        {"type": "regex", "pattern": "(numbers?.{0,40}(claim|mismatch)|claim.{0,40}numbers?)", "description": "numbers-claim mismatch ranked as the top suspicion trigger"},
+        {"type": "regex", "pattern": "(severity|tier)", "description": "clarifies ordering is within-severity, severity itself unchanged"}
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "Audit the claims in this manuscript against its evidence. Where a claim outruns the results, give me the bounded wording I am allowed to keep and the wording I must drop.",
+      "expected_output": "Run the claims_vs_evidence lane with OVER_CLAIM_GUARD: emit claim_accuracy findings that carry claim_strength plus allowed_wording (bounded rewrite) and forbidden_wording (the overreach), letting the claim-evidence contract win over phrasing.",
+      "files": ["evals/fixtures/claim_evidence_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "claim_accuracy", "description": "over-claim findings typed as claim_accuracy"},
+        {"type": "regex", "pattern": "allowed_wording|forbidden_wording", "description": "bounded vs overreaching wording fields present"},
+        {"type": "regex", "pattern": "(claim_strength|unsupported|observed|supported|strong)", "description": "claim strength ladder applied"},
+        {"type": "regex", "pattern": "(OVER_CLAIM_GUARD|over.?claim)", "description": "over-claim guard framing visible"}
+      ]
     }
   ]
 }

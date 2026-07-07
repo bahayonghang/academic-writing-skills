@@ -178,6 +178,21 @@ WEAK_TOPIC_STARTERS = (
     "also",
 )
 
+# Structural AI-trace thresholds (letter domain). Fixed module constants rather
+# than a per-section / per-tier YAML config: cover letters are a single short
+# genre, and the AI-tone scans must run even without a --journal (so no
+# word_limit baseline is available), so length-adaptive thresholds would add a
+# "what baseline when no template?" dimension for no real gain. See
+# references/PRESUBMISSION_RULES.md for the tradeoff record.
+AI_TONE_REPEAT_MINOR = 2  # same term this many times -> Minor (was: silent below 3)
+AI_TONE_REPEAT_MAJOR = 3  # same term this many times -> Major (unchanged behavior)
+AI_TONE_DIVERSITY_MINOR = 3  # this many distinct promo/AI-tone terms -> Minor
+AI_TONE_DIVERSITY_MAJOR = 4  # this many distinct promo/AI-tone terms -> Major
+PARALLEL_OPENING_WINDOW = 3  # consecutive body paragraphs sharing an opening key
+PARALLEL_OPENING_TOKENS = 2  # first-N word tokens form each paragraph's opening key
+SENTENCE_UNIFORMITY_MIN = 8  # need this many sentences before judging cadence
+SENTENCE_UNIFORMITY_CV = 0.25  # sentence-length CV below this reads as too uniform
+
 
 def _strip_latex_comment(line: str) -> str:
     """Remove unescaped LaTeX comments from one source line."""
@@ -245,7 +260,7 @@ def _issue(
 def _comment_type_for_code(code: str) -> str:
     if code.startswith("D-"):
         return "declaration_missing"
-    if code.startswith(("AI", "J1", "J4", "L2")):
+    if code.startswith(("AI", "J1", "J4", "L2", "S1", "S2")):
         return "tone"
     return "presentation"
 
@@ -253,8 +268,14 @@ def _comment_type_for_code(code: str) -> str:
 def _title_for_code(code: str) -> str:
     if code.startswith("D-"):
         return "Required declaration is missing"
+    if code == "AI-DIV":
+        return "Diverse promotional / AI-tone vocabulary"
     if code.startswith("AI"):
         return "Repeated promotional or AI-tone wording"
+    if code == "S1":
+        return "Parallel paragraph openings (templated cadence)"
+    if code == "S2":
+        return "Uniform sentence length (low burstiness)"
     if code.startswith("J1"):
         return "Cover-letter cliché phrase"
     if code.startswith("J4"):
@@ -293,21 +314,146 @@ def _scan_ai_tone(views: list[LineView], issues: list[PreSubmissionIssue]) -> No
     text = _visible_text(views)
     for code, pattern in BANNED_TONE_PATTERNS:
         matches = list(re.finditer(pattern, text, flags=re.IGNORECASE))
-        if len(matches) < 3:
+        if len(matches) < AI_TONE_REPEAT_MINOR:
             continue
         first_line = text.count("\n", 0, matches[0].start()) + 1
+        if len(matches) >= AI_TONE_REPEAT_MAJOR:
+            severity, priority = "Major", "P1"
+        else:
+            severity, priority = "Minor", "P2"
         _issue(
             issues,
             code=code,
             line=first_line,
-            severity="Major",
-            priority="P1",
+            severity=severity,
+            priority=priority,
             message=(
                 f"AI-tone term pattern `{pattern}` appears {len(matches)} times; reduce "
                 "promotional or template-like wording."
             ),
             quote=text[matches[0].start() : matches[0].end()],
         )
+
+
+def _scan_ai_tone_diversity(views: list[LineView], issues: list[PreSubmissionIssue]) -> None:
+    """Flag a letter that spreads many *different* promotional / AI-tone terms.
+
+    The per-term ``_scan_ai_tone`` scan misses vocabulary-diverse AI slop where
+    each promotional word appears only once. This aggregate counts how many
+    distinct ``BANNED_TONE_PATTERNS`` fire at least once. Semantically distinct
+    from repetition, so both scans may fire on the same letter.
+    """
+    text = _visible_text(views)
+    hits: list[tuple[str, int]] = []
+    first_pos: int | None = None
+    for _code, pattern in BANNED_TONE_PATTERNS:
+        matches = list(re.finditer(pattern, text, flags=re.IGNORECASE))
+        if not matches:
+            continue
+        hits.append((matches[0].group(0), len(matches)))
+        if first_pos is None or matches[0].start() < first_pos:
+            first_pos = matches[0].start()
+    distinct = len(hits)
+    if distinct < AI_TONE_DIVERSITY_MINOR or first_pos is None:
+        return
+    if distinct >= AI_TONE_DIVERSITY_MAJOR:
+        severity, priority = "Major", "P1"
+    else:
+        severity, priority = "Minor", "P2"
+    first_line = text.count("\n", 0, first_pos) + 1
+    term_summary = ", ".join(f"{term} x{count}" for term, count in hits)
+    _issue(
+        issues,
+        code="AI-DIV",
+        line=first_line,
+        severity=severity,
+        priority=priority,
+        message=(
+            f"{distinct} different promotional / AI-tone terms appear ({term_summary}); "
+            "a cluster of distinct marketing words reads as template-generated even when "
+            "each word occurs only once."
+        ),
+        quote=hits[0][0],
+    )
+
+
+def _scan_parallel_openings(views: list[LineView], issues: list[PreSubmissionIssue]) -> None:
+    """Flag consecutive body paragraphs that open with the same first two word
+    tokens — a parallel cadence typical of template / AI drafting.
+
+    Ports ``latex-paper-en`` deai_check ``_check_burstiness`` to the letter
+    domain: the salutation paragraph is skipped, and the window / token-count
+    match the paper-side pins so the signal reads consistently across skills.
+    """
+    salutation_re = re.compile(r"^\s*dear\b", flags=re.IGNORECASE)
+    paragraphs = [
+        (line, para) for line, para in _paragraphs(views) if not salutation_re.match(para)
+    ]
+    window = PARALLEL_OPENING_WINDOW
+    if len(paragraphs) < window:
+        return
+
+    def opening_key(paragraph: str) -> str:
+        tokens = re.findall(r"[A-Za-z][A-Za-z'-]*", paragraph)
+        return " ".join(token.lower() for token in tokens[:PARALLEL_OPENING_TOKENS])
+
+    reported_starts: set[int] = set()
+    for i in range(len(paragraphs) - window + 1):
+        chunk = paragraphs[i : i + window]
+        keys = [opening_key(para) for _, para in chunk]
+        if not keys[0]:
+            continue
+        if len(set(keys)) == 1 and chunk[0][0] not in reported_starts:
+            reported_starts.add(chunk[0][0])
+            _issue(
+                issues,
+                code="S1",
+                line=chunk[0][0],
+                severity="Minor",
+                priority="P2",
+                message=(
+                    f"{window} consecutive paragraphs open with '{keys[0]}'; vary the "
+                    "paragraph openings so the letter does not read as templated."
+                ),
+                quote=chunk[0][1][:120],
+            )
+
+
+def _scan_sentence_length_uniformity(
+    views: list[LineView], issues: list[PreSubmissionIssue]
+) -> None:
+    """Flag a letter whose sentence lengths are suspiciously uniform.
+
+    Human prose is bursty (a mix of short and long sentences); AI prose tends to
+    an even cadence. Measured as the coefficient of variation (stddev / mean) of
+    sentence word counts across the whole letter. Ported from ``latex-paper-en``
+    deai_check ``_check_sentence_length_variance`` but run whole-letter (cover
+    letters have no sections) with a higher minimum-sentence gate and tighter CV
+    threshold to keep short letters quiet.
+    """
+    text = _visible_text(views)
+    sentences = [s for s in re.split(r"[.!?]+", text) if s.strip()]
+    lengths = [len(s.split()) for s in sentences if s.split()]
+    if len(lengths) < SENTENCE_UNIFORMITY_MIN:
+        return
+    mean = sum(lengths) / len(lengths)
+    if mean <= 0:
+        return
+    variance = sum((value - mean) ** 2 for value in lengths) / len(lengths)
+    cv = (variance**0.5) / mean
+    if cv >= SENTENCE_UNIFORMITY_CV:
+        return
+    _issue(
+        issues,
+        code="S2",
+        line=None,
+        severity="Minor",
+        priority="P2",
+        message=(
+            f"Sentence-length CV={cv:.2f} over {len(lengths)} sentences (threshold "
+            f"{SENTENCE_UNIFORMITY_CV}); vary sentence length for a more natural cadence."
+        ),
+    )
 
 
 def _scan_letter_banned_phrases(
@@ -582,6 +728,9 @@ def run_checks(
 
     _scan_em_dashes(views, issues)
     _scan_ai_tone(views, issues)
+    _scan_ai_tone_diversity(views, issues)
+    _scan_parallel_openings(views, issues)
+    _scan_sentence_length_uniformity(views, issues)
     _scan_letter_opener_cliches(views, issues)
     _scan_letter_banned_phrases(views, issues)
     _scan_letter_generic_fit_phrases(views, issues)

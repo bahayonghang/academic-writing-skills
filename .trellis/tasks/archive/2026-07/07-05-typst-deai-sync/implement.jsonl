@@ -1,0 +1,2 @@
+{"file": ".trellis/tasks/07-05-skills-deep-analysis-optimization/research/en-typst-findings.md", "reason": "XA-1/2/3、SH-1、TST-1 完整证据、实测复现与修复方向"}
+{"file": ".trellis/tasks/07-05-skills-deep-analysis-optimization/research/crosscut-findings.md", "reason": "XC-3b：测试必须 importlib 按路径加载副本，禁止 bare import deai_check"}

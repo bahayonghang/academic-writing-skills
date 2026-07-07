@@ -5,7 +5,9 @@
       "id": 1,
       "prompt": "Generate a Nature cover letter from this LaTeX manuscript: evals/fixtures/generate_fixture.tex.",
       "expected_output": "Route to generate mode, run extract_manuscript_facts.py, synthesize the letter using templates/nature.md plus references/LETTER_STRUCTURE.md, and append an align-check + presubmission block.",
-      "files": ["evals/fixtures/generate_fixture.tex"],
+      "files": [
+        "evals/fixtures/generate_fixture.tex"
+      ],
       "assertions": [
         {
           "type": "regex",
@@ -75,7 +77,9 @@
       "id": 4,
       "prompt": "Is this Nature cover letter at evals/fixtures/journal_fit_fixture_letter.md actually framed for Nature, or should I retarget to IEEE TPAMI?",
       "expected_output": "Route to journal-fit mode, run journal_fit_check.py twice (nature, ieee-trans), report per-axis HIGH/MEDIUM/LOW and recommend the better-fit venue.",
-      "files": ["evals/fixtures/journal_fit_fixture_letter.md"],
+      "files": [
+        "evals/fixtures/journal_fit_fixture_letter.md"
+      ],
       "assertions": [
         {
           "type": "regex",
@@ -98,7 +102,9 @@
       "id": 5,
       "prompt": "Run a pre-submission check on evals/fixtures/optimize_fixture_letter.md against the NeurIPS template.",
       "expected_output": "Route to presubmission_check.py with --journal neurips, surface AI-tone, opener-cliché, banned-phrase findings; absence of LaTeX label / equation rules.",
-      "files": ["evals/fixtures/optimize_fixture_letter.md"],
+      "files": [
+        "evals/fixtures/optimize_fixture_letter.md"
+      ],
       "assertions": [
         {
           "type": "regex",
@@ -121,7 +127,9 @@
       "id": 6,
       "prompt": "Generate a CVPR cover letter from evals/fixtures/generate_fixture.tex, then verify the result against the manuscript before printing.",
       "expected_output": "Two-step run: generate (with CVPR template) → align-check; ensure quantitative anchors trace to manuscript headline_numbers (47% and 2.1x).",
-      "files": ["evals/fixtures/generate_fixture.tex"],
+      "files": [
+        "evals/fixtures/generate_fixture.tex"
+      ],
       "assertions": [
         {
           "type": "regex",
@@ -137,6 +145,77 @@
           "type": "regex",
           "pattern": "(align-check|ALIGNCHECK)",
           "description": "default verification ran"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Run a pre-submission check on evals/fixtures/ai_slop_letter.md and report any structural AI-trace signals.",
+      "expected_output": "Route to presubmission_check.py; surface structural AI-trace findings (parallel paragraph openings S1 and/or diverse promotional vocabulary AI-DIV) on this templated draft.",
+      "files": [
+        "evals/fixtures/ai_slop_letter.md"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(presubmission|PRESUBMISSION)",
+          "description": "presubmission scope"
+        },
+        {
+          "type": "regex",
+          "pattern": "(S1|S2|AI-DIV)",
+          "description": "structural AI-trace signal detected"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Run a pre-submission check on evals/fixtures/human_letter.md, a natural human-written cover letter.",
+      "expected_output": "Route to presubmission_check.py; report a clean letter with no structural AI-trace or promotional-tone findings (zero false positives).",
+      "files": [
+        "evals/fixtures/human_letter.md"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(presubmission|PRESUBMISSION)",
+          "description": "presubmission scope"
+        },
+        {
+          "type": "not_contains",
+          "text": "[S1]",
+          "description": "no parallel-opening false positive"
+        },
+        {
+          "type": "not_contains",
+          "text": "[S2]",
+          "description": "no uniform-sentence false positive"
+        },
+        {
+          "type": "not_contains",
+          "text": "[AI-DIV]",
+          "description": "no diversity false positive"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Align-check evals/fixtures/align_check_fixture_letter.md against evals/fixtures/disclosure_fixture.tex, whose acknowledgments disclose generative-AI use.",
+      "expected_output": "Route to align-check mode, run align_check.py; surface a disclosure_consistency finding because the manuscript discloses AI use while the cover letter is silent.",
+      "files": [
+        "evals/fixtures/align_check_fixture_letter.md",
+        "evals/fixtures/disclosure_fixture.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(align-check|align_check|disclosure_consistency)",
+          "description": "align-check mode"
+        },
+        {
+          "type": "regex",
+          "pattern": "(disclosure|AI[- ]disclosure|disagree)",
+          "description": "AI-disclosure consistency finding"
         }
       ]
     }

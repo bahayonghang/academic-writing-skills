@@ -9,6 +9,7 @@
   - [2. Zero Fabrication (零捏造)](#2-zero-fabrication-零捏造)
   - [3. Information Density (提高信息密度)](#3-information-density-提高信息密度)
   - [4. Academic Restraint (克制措辞)](#4-academic-restraint-克制措辞)
+- [Academic Humanization Contract](#academic-humanization-contract)
 - [Common AI Writing Patterns to Remove](#common-ai-writing-patterns-to-remove)
   - [Category 1: Empty Phrases (空话口号)](#category-1-empty-phrases-空话口号)
   - [Category 2: Over-Confident Language (过度确定)](#category-2-over-confident-language-过度确定)
@@ -64,6 +65,28 @@ This guide helps reduce AI-generated writing traces while maintaining technical 
 - Avoid over-confident language without evidence
 - Use appropriate hedging for speculative claims
 - Present contributions objectively, not hyperbolically
+
+---
+
+## Academic Humanization Contract
+
+Reducing AI tone is not detector evasion. Preserve the Typst paper before smoothing prose:
+
+1. Protect syntax anchors: `@cite`, `<label>`, `#set`, `#show`, `#let`, math, code, macros, and source layout.
+2. Extract the academic payload: facts/evidence, author stance, section logic, claim-evidence links, and boundaries.
+3. Remove Chinese or English structure shells only after the payload is clear.
+
+Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` / `待补证`; do not invent citations, baselines, metrics, experiments, or conclusions.
+
+### Bilingual Structure-Shell Checks
+
+| Category | Common trigger | Academic fix |
+|----------|----------------|--------------|
+| Empty contrast shell | 不是 A 而是 B; not merely A but B | Keep only when it names a baseline, criterion, and evidence |
+| Fake insight marker | 真正的问题; 本质上; essentially; the key is | Remove the marker and state the evidence-backed claim directly |
+| Lecture colon | 我的结论是：; The conclusion is: | Use a normal academic sentence or a concrete inventory noun |
+| Vague referent | 这些东西; this shows; things; factors | Name the object, method, mechanism, result, or limitation |
+| Vague comparative | 更适合; 更自然 | Name the comparison baseline and evaluation criterion |
 
 ---
 

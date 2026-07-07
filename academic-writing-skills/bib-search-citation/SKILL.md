@@ -6,7 +6,7 @@ when_to_use: >-
   "Mamba papers after 2024", "generate \cite{} snippets", "export selected BibTeX",
   "filter Zotero export", "check DOI/arXiv IDs", or "find citations supporting this claim".
 metadata:
-  category: docs-writing-publishing
+  category: academic-writing
   tags:
     [
       bibtex,
@@ -20,7 +20,7 @@ metadata:
       bib,
     ]
   version: "5.2.0"
-  last_updated: "2026-06-13"
+  last_updated: "2026-07-06"
 argument-hint: "--bib library.bib --query QUERY"
 allowed-tools: Read, Bash(uv *)
 ---
@@ -159,8 +159,10 @@ These are documented so results are reported honestly, not silently:
 - **CJK multi-keyword** queries match best as a contiguous substring
   (`时间序列`); space-separated CJK terms may not all match.
 - **Multi-file libraries** are not merged automatically — run the script once per
-  `.bib` file. The `meta.parse_warnings` list reports any entries that were
-  skipped because of a structural problem such as a missing closing brace.
+  `.bib` file. The `meta.parse_warnings` list reports parsing problems: entries
+  skipped over a structural defect such as a missing closing brace, duplicate
+  citation keys (each affected result also carries a `warnings` field), and
+  entries sitting behind a `%` marker, which real BibTeX still parses.
 
 ## Search Planning
 

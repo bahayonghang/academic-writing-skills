@@ -86,8 +86,10 @@ overclaim:
 
 tense:
   # 英文摘要的现在时报告动词通常是时态错误（方法/结果应为过去时）。中文正文无时态，
-  # 脚本仅在英文摘要区域（\begin{abstract}，排除中文 \begin{cabstract}）检查；
+  # 脚本仅在英文摘要区域检查（generic \begin{abstract}、thuthesis \begin{abstract*}、
+  # pkuthss \begin{eabstract}；跳过中文摘要环境 thuthesis 明文 abstract、pkuthss cabstract）；
   # 命中若紧邻图/表/公式主语则跳过。"is"/"are" 不入正则（合法用法太多），
+  # "presents" 只匹配动词，不匹配 "the present study" 里的形容词（勿把 ? 加回）；
   # 判断级清单见 references/writing/tense-guide-zh.md。
   # enabled: false 可关闭本检查。每条发 [Script] LOW 痕迹。
   enabled: true
@@ -96,7 +98,7 @@ tense:
     "\\breveals?\\b": past_in_methods_results
     "\\bdemonstrates?\\b": past_in_methods_results
     "\\bindicates?\\b": past_in_methods_results
-    "\\bpresents?\\b": past_in_methods_results
+    "\\bpresents\\b": past_in_methods_results
     "\\bconfirms?\\b": past_in_methods_results
     "\\bachieves?\\b": past_in_methods_results
     "\\boutperforms?\\b": past_in_methods_results

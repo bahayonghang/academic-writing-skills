@@ -843,6 +843,24 @@ def parse_bib_entries(
         key = inner[:comma].strip()
         body = inner[comma + 1 :].strip().rstrip(",")
         fields = parse_fields(body, macros)
+        # A '%' line prefix does NOT comment out an entry in real BibTeX ('%'
+        # is not a comment character in .bib), but JabRef-style workflows use
+        # it hoping to disable one. Keep parsing it (semantics unchanged) and
+        # warn so a "disabled" entry cannot resurface silently (BIB-2).
+        line_start = content.rfind("\n", 0, start) + 1
+        if content[line_start:start].lstrip().startswith("%"):
+            warnings.append(
+                {
+                    "type": "commented_entry_included",
+                    "key": key,
+                    "start_line": _line_of(content, start),
+                    "message": (
+                        f"entry '{key}' at line {_line_of(content, start)} sits behind a "
+                        "'%' marker; real BibTeX still parses it — delete the entry or "
+                        "wrap it in @comment{...} to disable it"
+                    ),
+                }
+            )
         entries.append(
             {
                 "entry_type": entry_type,
@@ -852,6 +870,28 @@ def parse_bib_entries(
             }
         )
         idx = pos
+
+    # Duplicate keys are an error for real tools (bibtex warns, biber errors),
+    # and crossref resolution below silently keeps the last definition. Flag
+    # every affected entry instead of silently returning look-alike results;
+    # deduplication stays the user's decision (BIB-1).
+    key_counts = Counter(entry["key"] for entry in entries if entry.get("key"))
+    duplicated = {key for key, count in key_counts.items() if count > 1}
+    for entry in entries:
+        if entry["key"] in duplicated:
+            entry["duplicate_key"] = True
+    for key in sorted(duplicated):
+        warnings.append(
+            {
+                "type": "duplicate_key",
+                "key": key,
+                "count": key_counts[key],
+                "message": (
+                    f"citation key '{key}' is defined {key_counts[key]} times; duplicate "
+                    "keys are a bibtex warning / biber error — keep exactly one definition"
+                ),
+            }
+        )
 
     inherit_crossref_fields(entries)
     return entries, warnings, macros
@@ -995,6 +1035,8 @@ def build_entry(raw_entry: dict[str, Any]) -> dict[str, Any]:
         "abstract": normalize_text(fields.get("abstract", "")),
         "fields": {name: normalize_text(value) for name, value in fields.items()},
     }
+    if raw_entry.get("duplicate_key"):
+        entry["duplicate_key"] = True
     entry["flags"] = {
         "doi": get_flag(entry, "doi"),
         "abstract": get_flag(entry, "abstract"),
@@ -1223,6 +1265,14 @@ def format_result(entry: dict[str, Any], spec: dict[str, Any], score: float) -> 
     result["entry_type"] = entry.get("entry_type")
     result["score"] = score
     result["flags"] = entry.get("flags", {})
+    if entry.get("duplicate_key"):
+        # Every hit on a duplicated key carries the warning: the exported
+        # \cite{} strings would look identical while pointing at an ambiguous
+        # library entry (BIB-1).
+        result["warnings"] = [
+            f"duplicate_key: '{entry['key']}' is defined more than once in this .bib "
+            "(bibtex warns, biber errors); verify which definition you intend to cite"
+        ]
     citation_mode = (spec.get("citation_mode") or "none").lower()
     citations: dict[str, Any] = {}
     if citation_mode in {"latex", "both"}:

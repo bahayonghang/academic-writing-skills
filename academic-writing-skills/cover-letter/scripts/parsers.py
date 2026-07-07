@@ -8,7 +8,7 @@ intentionally absent because cover-letter only ingests LaTeX manuscripts and
 markdown/LaTeX letter drafts.
 
 Alignment with the canonical (latex-paper-en) copy is enforced by
-``tests/test_parsers_alignment.py``. When changing shared behavior, update the
+``tests/contracts/test_parsers_alignment.py``. When changing shared behavior, update the
 canonical copy first and let the alignment test guide the rest.
 """
 

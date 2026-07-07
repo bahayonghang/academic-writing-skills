@@ -1,6 +1,6 @@
 # paper-project fixture
 
-A multi-file IEEE-style LaTeX project used by `tests/test_latex_paper_en_scripts.py`
+A multi-file IEEE-style LaTeX project used by `tests/skills/latex_paper_en/test_latex_paper_en_scripts.py`
 to pin the latex-paper-en audit fixes. Each embedded trigger maps to a finding:
 
 | Trigger point (file)                              | Finding | Expected behavior                               |

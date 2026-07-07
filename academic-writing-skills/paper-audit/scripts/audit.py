@@ -2493,23 +2493,34 @@ def run_audit(
                 f"relevant results found"
             )
 
-            # Compute grounding score via comparison
-            # Extract citation keys from content for comparison
-            citation_keys: list[str] = []
-            if fmt == ".tex":
-                citation_keys = re.findall(r"\\cite\{([^}]+)\}", content)
-                citation_keys = [k.strip() for keys in citation_keys for k in keys.split(",")]
-            elif fmt == ".typ":
-                citation_keys = re.findall(r"@([a-zA-Z][\w-]*)", content)
+            # Compute grounding score via comparison — but only when the search
+            # actually returned results. An empty result set is an infrastructure
+            # signal (no API key / network / all APIs failed), not evidence of
+            # poor grounding: scoring it would feed ~2.0 into a 12%-weight
+            # dimension (PA-2). Leave the dimension unscored instead; the
+            # weighted average renormalizes over the remaining dimensions.
+            if literature_context.filtered_results:
+                # Extract citation keys from content for comparison
+                citation_keys: list[str] = []
+                if fmt == ".tex":
+                    citation_keys = re.findall(r"\\cite\{([^}]+)\}", content)
+                    citation_keys = [k.strip() for keys in citation_keys for k in keys.split(",")]
+                elif fmt == ".typ":
+                    citation_keys = re.findall(r"@([a-zA-Z][\w-]*)", content)
 
-            comparison_result = compare_with_literature(
-                paper_content=content,
-                paper_citations=citation_keys,
-                literature_results=literature_context.filtered_results,
-            )
-            literature_context.comparison_result = comparison_result
-            literature_grounding_score = comparison_result.grounding_score
-            print(f"[audit] Literature grounding score: {literature_grounding_score:.1f}/10")
+                comparison_result = compare_with_literature(
+                    paper_content=content,
+                    paper_citations=citation_keys,
+                    literature_results=literature_context.filtered_results,
+                )
+                literature_context.comparison_result = comparison_result
+                literature_grounding_score = comparison_result.grounding_score
+                print(f"[audit] Literature grounding score: {literature_grounding_score:.1f}/10")
+            else:
+                print(
+                    "[audit] Literature search unavailable (no usable results) — "
+                    "literature_grounding left unscored; weights renormalize"
+                )
         except ImportError as exc:
             print(f"[audit] Literature search: module not available — {exc}")
         except Exception as exc:
@@ -2542,9 +2553,11 @@ def run_audit(
                 issue_dicts,
                 literature_grounding_score=literature_grounding_score,
             )
+            critical_count = sum(1 for i in all_issues if i.severity == "Critical")
             result.scholar_eval_result = build_scholar_result(
                 script_scores,
                 use_regression=regression,
+                critical_count=critical_count,
             )
             print("[audit] ScholarEval: script-based scores computed")
         except Exception as exc:

@@ -16,6 +16,8 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 
 - `deai_check.py` emits section-level analysis, trace scores, and optional fix suggestions.
 - `deai_batch.py` supports broader batch inspection across sections.
+- The `tense` category (`[Script]` LOW) flags present-tense reporting verbs in Methods / Experiments / Results, gated to those sections; see [tense-guide.md](tense-guide.md).
+- The `overclaim` category (`[Script]` LOW) flags unambiguous causal / firstness / universality phrasing; see [over-claim-guard.md](../evidence/over-claim-guard.md).
 
 ## Skill-Layer Response
 
@@ -23,6 +25,17 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - Return `% DE-AI ...` style findings or a short risk summary unless the user explicitly asks for source edits.
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments.
 - Never invent new claims, metrics, baselines, or references while smoothing the prose.
+
+## Claim-Evidence-First Humanization
+
+Before reducing AI tone, preserve the academic payload:
+
+- **Facts/evidence**: numbers, datasets, experiments, figures, tables, citations, equations, and metrics.
+- **Claims/stance**: the paper's real contribution, uncertainty, design choice, and limitation.
+- **Logic**: paragraph role, section role, and claim-evidence map.
+- **Boundaries**: assumptions, scope, missing evidence, and unsupported claims.
+
+Only then remove rhetorical scaffolds such as `not merely A, but B`, `essentially`, `the key is`, `The conclusion is:`, or vague `this/things/factors`. Keep a contrast when it names a real baseline, criterion, and evidence; otherwise state the claim directly. The module should not promise lower detector scores or replace venue AI-use disclosure.
 
 ## Disclosure obligation (read before de-AI editing)
 

@@ -1,0 +1,302 @@
+== logic-hash (docstring-stripped AST) for checker methods ==
+DIFF  _check_burstiness                        {'en': '8195306e', 'zh': '6f29be52', 'typst': '4ccb0a4e'}
+DIFF  _check_low_information_density           {'en': '38ca233a', 'zh': '31659b40', 'typst': 'b8dfff93'}
+MATCH _check_overclaim                         {'en': 'c51b9d98', 'zh': 'c51b9d98', 'typst': 'c51b9d98'}
+SOLO  _check_parallel_openings                 {'en': '-', 'zh': '-', 'typst': '1777aced'}
+SOLO  _check_parallel_sentences                {'en': '-', 'zh': '685ade99', 'typst': '-'}
+DIFF  _check_punctuation                       {'en': '8a73d0f7', 'zh': 'ceeab363', 'typst': '35f3bc54'}
+DIFF  _check_sentence_length_variance          {'en': 'e7fdbb07', 'zh': 'b22a420c', 'typst': 'e56654a7'}
+DIFF  _check_tense                             {'en': '2ff7aceb', 'zh': '3e80c5fc', 'typst': '5a49a4e6'}
+DIFF  _check_term_threshold                    {'en': '4f8e91fc', 'zh': '530d706f', 'typst': '2471eb48'}
+MATCH _check_throat_clearing                   {'en': 'a6b007a5', 'zh': 'a6b007a5', 'typst': 'a6b007a5'}
+MATCH _dim_tag                                 {'en': 'e59323d8', 'zh': 'e59323d8', 'typst': 'e59323d8'}
+SOLO  _english_abstract_range                  {'en': '-', 'zh': 'd1e37632', 'typst': '-'}
+DIFF  _find_pattern_in_section                 {'en': 'a869ae35', 'zh': '7f0b5c87', 'typst': 'a869ae35'}
+DIFF  _get_instruction                         {'en': 'c65f52bd', 'zh': '8e2546e9', 'typst': '80546a92'}
+DIFF  _is_false_positive                       {'en': '8eaf76ac', 'zh': '38662221', 'typst': '958affc6'}
+MATCH _iter_section_paragraphs                 {'en': '566f5634', 'zh': '566f5634', 'typst': '566f5634'}
+MATCH _iter_visible_lines                      {'en': 'f70298a1', 'zh': 'f70298a1', 'typst': 'f70298a1'}
+SOLO  _loc                                     {'en': '-', 'zh': '6ab7ed68', 'typst': '-'}
+SOLO  _region_is_english                       {'en': '-', 'zh': '63cd30ca', 'typst': '-'}
+SOLO  _span_to_lines                           {'en': '-', 'zh': 'e4f4b2ec', 'typst': '-'}
+MATCH _tense_false_positive                    {'en': 'ffa297eb', 'zh': 'ffa297eb', 'typst': 'ffa297eb'}
+DIFF  analyze_document                         {'en': 'b6d11d16', 'zh': '99b61d7a', 'typst': 'b6d11d16'}
+MATCH calculate_density_score                  {'en': 'c5a9edc0', 'zh': 'c5a9edc0', 'typst': 'c5a9edc0'}
+DIFF  check_section                            {'en': '3de4f171', 'zh': '1ea8b5a9', 'typst': '876b2332'}
+DIFF  generate_report                          {'en': 'cfbb8683', 'zh': '49b3343f', 'typst': '1379d40e'}
+DIFF  generate_suggestions_json                {'en': '716d27ce', 'zh': '0a1111de', 'typst': '716d27ce'}
+
+== logic-hash for top-level funcs ==
+_apply_tier          {'en': '96e4101d', 'zh': '96e4101d', 'typst': '96e4101d'}
+_load_thresholds     {'en': '9da5e3d4', 'zh': 'fc0ed007', 'typst': '41a47b89'}
+main                 {'en': 'db1fa5a1', 'zh': 'd014f67f', 'typst': '7624ab88'}
+
+================ _check_low_information_density: en vs typst ================
+--- en
++++ typst
+@@ -1,6 +1,4 @@
+     def _check_low_information_density(self, section_name: str) -> list[dict]:
+-        """Detect long, content-light sections that rely on boilerplate without evidence."""
+         if section_name not in self.section_ranges:
+             return []
+-
+         start, end = self.section_ranges[section_name]
+@@ -9,7 +7,7 @@
+         for i in range(start - 1, min(end, len(self.lines))):
+-            stripped = self.lines[i].strip()
+-            if not stripped or stripped.startswith(self.comment_prefix):
++            line = self.lines[i].strip()
++            if not line or line.startswith(self.comment_prefix):
+                 continue
+-            raw_lines.append(stripped)
+-            visible = self.parser.extract_visible_text(stripped)
++            raw_lines.append(line)
++            visible = self.parser.extract_visible_text(line)
+             if visible:
+@@ -21,5 +19,5 @@
+         text = " ".join(text for _, text in visible_lines)
+-        # Evidence markers (\cite{}, @keys, numbers, [1,2]) must be matched on the
+-        # RAW source: extract_visible_text strips \cite{} and bracket refs, so a
+-        # citation-dense paragraph would otherwise read as evidence-free (E17).
++        # Evidence markers (@keys, #cite(), numbers) must be matched on the RAW
++        # source: extract_visible_text strips @cite/#cite(), so a citation-dense
++        # paragraph would otherwise read as evidence-free (mirrors EN E17 fix).
+         raw_text = " ".join(raw_lines)
+@@ -30,2 +28,3 @@
+             self.TEMPLATE_EXPRESSIONS,
++            self.AI_FILLER_CONNECTORS,
+         ):
+@@ -38,10 +37,7 @@
+ 
+-        openings: list[str] = []
+-        for _, visible in visible_lines:
+-            match = self.REPEATED_OPENING_RE.search(visible)
+-            if match:
+-                openings.append(match.group(0).lower())
+-        repeated_opening = any(openings.count(opening) >= 2 for opening in set(openings))
+-
+-        if not repeated_opening and len(text.split()) < 60:
++        repeated_openings = any(
++            trace["category"] == "parallel_structure"
++            for trace in self._check_parallel_openings(section_name)
++        )
++        if not repeated_openings and len(text.split()) < 20 and len(text) < 60:
+             return []
+
+================ _check_punctuation: en vs typst ================
+--- en
++++ typst
+@@ -9,3 +9,5 @@
+         for line_no, section, text in visible_lines:
+-            em_in_line = text.count("---") + text.count("—")
++            # Mutual-exclusive match: a Chinese "——" is ONE dash, not three
++            # (count("—") + count("——") + count("---") triple-counted it).
++            em_in_line = len(re.findall(r"---|——|—", text))
+             if em_in_line:
+@@ -14,3 +16,3 @@
+                     first_em = (line_no, section)
+-            if ban_excl and "!" in text:
++            if ban_excl and ("!" in text or "！" in text):
+                 excl_hits.append((line_no, section, text))
+
+================ _check_sentence_length_variance: en vs typst ================
+--- en
++++ typst
+@@ -4,5 +4,6 @@
+         Human prose is bursty (a mix of short and long sentences); AI prose
+-        tends toward an even cadence. We measure the coefficient of variation
+-        (stddev / mean) of sentence word counts and flag when it falls below the
+-        configured threshold. Tier-gated so the default output is unchanged.
++        tends toward an even cadence. Length is counted in language-neutral
++        units (each English word and each CJK character counts as one), so the
++        check works on English and Chinese Typst papers. Tier-gated, so the
++        default output is unchanged.
+         """
+@@ -16,4 +17,5 @@
+         text = " ".join(visible for para in paragraphs for _, visible in para)
+-        sentences = [s for s in re.split(r"[.!?]+", text) if s.strip()]
+-        lengths = [len(s.split()) for s in sentences if s.split()]
++        sentences = [s for s in re.split(r"[.!?。！？]+", text) if s.strip()]
++        lengths = [len(re.findall(r"[A-Za-z]+|[一-鿿]", s)) for s in sentences]
++        lengths = [length for length in lengths if length > 0]
+         if len(lengths) < min_sentences:
+
+================ _check_term_threshold: en vs typst ================
+--- en
++++ typst
+@@ -2,3 +2,3 @@
+         term_caps: dict[str, int] = {
+-            w.lower(): int(n) for w, n in self.thresholds["term_thresholds"].items()
++            w: int(n) for w, n in self.thresholds["term_thresholds"].items()
+         }
+@@ -6,10 +6,25 @@
+             return []
++        ascii_terms: dict[str, int] = {}
++        substr_terms: dict[str, int] = {}
++        for word, cap in term_caps.items():
++            if word.isascii() and word.replace("-", "").replace("'", "").isalpha():
++                ascii_terms[word.lower()] = cap
++            else:
++                substr_terms[word] = cap
++        ascii_word_re = re.compile(r"\b[A-Za-z][A-Za-z'-]*\b")
+         visible_lines = self._iter_visible_lines()
+-        word_re = re.compile(r"\b[A-Za-z][A-Za-z'-]*\b")
+-        # word -> (count, first_line_no, first_section)
++        # word -> [count, first_line, first_section]
+         counts: dict[str, list] = {}
+         for line_no, section, text in visible_lines:
+-            for m in word_re.finditer(text):
+-                w = m.group(0).lower()
+-                if w not in term_caps:
++            if ascii_terms:
++                for m in ascii_word_re.finditer(text):
++                    w = m.group(0).lower()
++                    if w not in ascii_terms:
++                        continue
++                    if w not in counts:
++                        counts[w] = [0, line_no, section]
++                    counts[w][0] += 1
++            for w in substr_terms:
++                hits = text.count(w)
++                if not hits:
+                     continue
+@@ -17,6 +32,6 @@
+                     counts[w] = [0, line_no, section]
+-                counts[w][0] += 1
++                counts[w][0] += hits
+         traces: list[dict] = []
+         for word, (count, first_line, section) in counts.items():
+-            cap = term_caps[word]
++            cap = ascii_terms.get(word, substr_terms.get(word, 0))
+             if count <= cap:
+
+================ _get_instruction: en vs typst ================
+--- en
++++ typst
+@@ -24,3 +24,5 @@
+             "cite_examples": "Provide citation examples.",
+-            "increase_information_density": "Replace boilerplate with concrete methods, comparators, evidence, and results.",
++            "filler_remove": "Delete filler connectors and state the point directly.",
++            "vary_opening": "Vary sentence openings to avoid mechanical repetition.",
++            "increase_information_density": "Add concrete methods, comparators, evidence, and results instead of rhetorical filler.",
+             "term_overuse": "Reduce repeated use of this word; vary vocabulary or quantify the claim.",
+@@ -36,2 +38,4 @@
+             "name_academic_referent": "Replace the vague referent with the exact research object, method, result, factor, or limitation.",
++            "name_comparison_criterion": "Name the comparison baseline and evaluation criterion.",
++            "academicize_command_opening": "Rewrite the imperative tutorial opening as an academic risk, procedure, or observation.",
+             "vary_sentence_length": (
+
+================ _is_false_positive: en vs typst ================
+--- en
++++ typst
+@@ -31,5 +31,6 @@
+         window = context_before + matched_text + context_after
+-        return bool(
++
++        if (
+             re.search(
+-                r"\b(?:not\s+(?:merely|only)|rather\s+than|instead\s+of)\b",
++                r"不是|并非|不在于|不只是|不仅|\bnot\s+(?:merely|only)\b|\brather\s+than\b",
+                 matched_text,
+@@ -39,2 +40,13 @@
+             and self.ACADEMIC_CONTRAST_MARKERS.search(window)
+-        )
++        ):
++            return True
++
++        if re.search(r"更(?:适合|像|自然|高级)", matched_text):
++            return bool(
++                re.search(r"(相比|相较|相对于|用于|适用于|在|作为|基线|指标|场景|任务)", window)
++            )
++
++        if pattern in {r"真正(?:的)?", r"核心在于", r"关键在于"}:
++            return bool(self.TECHNICAL_NOUN_MARKERS.search(window))
++
++        return False
+
+================ _iter_section_paragraphs: en vs typst ================
+--- en
++++ typst
+@@ -1,8 +1,2 @@
+     def _iter_section_paragraphs(self, section_name: str) -> list[list[tuple[int, str]]]:
+-        """Group a section's visible lines into paragraphs.
+-
+-        A paragraph is a run of non-blank, non-comment lines whose
+-        extract_visible_text() is non-empty. Blank or comment-only lines
+-        separate paragraphs.
+-        """
+         if section_name not in self.section_ranges:
+
+================ check_section: en vs typst ================
+--- en
++++ typst
+@@ -21,2 +21,3 @@
+             ("template_expr", self.TEMPLATE_EXPRESSIONS),
++            ("filler_connector", self.AI_FILLER_CONNECTORS),
+             ("binary_contrast_shell", self.BINARY_CONTRAST_SHELLS),
+@@ -25,2 +26,4 @@
+             ("vague_referent", self.VAGUE_REFERENTS),
++            ("vague_comparative", self.VAGUE_COMPARATIVES),
++            ("command_template_opening", self.COMMAND_TEMPLATE_OPENINGS),
+         ]
+@@ -34,2 +37,3 @@
+ 
++        results["traces"].extend(self._check_parallel_openings(section_name))
+         results["traces"].extend(self._check_low_information_density(section_name))
+
+================ generate_report: en vs typst ================
+--- en
++++ typst
+@@ -1,6 +1,6 @@
+     def generate_report(self, analysis: dict) -> str:
+-        # ... (Same as before, abbreviated for brevity) ...
++        """Generate human-readable analysis report."""
+         report = []
+         report.append("=" * 70)
+-        report.append("DE-AI WRITING TRACE ANALYSIS REPORT (Enhanced)")
++        report.append("DE-AI WRITING TRACE ANALYSIS REPORT (Typst)")
+         report.append("=" * 70)
+
+================ _check_burstiness: zh vs typst ================
+--- zh
++++ typst
+@@ -3,3 +3,3 @@
+         window = max(2, int(cfg.get("consecutive_paragraphs", 3)))
+-        k = max(1, int(cfg.get("opening_token_count", 4)))
++        k = max(1, int(cfg.get("opening_token_count", 8)))
+ 
+@@ -10,3 +10,3 @@
+         def opening_key(para: list[tuple[int, str]]) -> str:
+-            return para[0][1][:k]
++            return para[0][1].strip()[:k].lower()
+ 
+@@ -24,3 +24,3 @@
+                         "line": window_paras[0][0][0],
+-                        "text": f"连续 {window} 段以「{keys[0]}」开头",
++                        "text": (f"{window} consecutive paragraphs open with '{keys[0]}'"),
+                         "original": window_paras[0][0][1],
+
+== TEACHING_NOTES keys ==
+en: ['D1', 'D2', 'D3', 'D4', 'D5']
+zh: ['D1', 'D2', 'D3', 'D4', 'D5']
+typst: ['D1', 'D2', 'D3', 'D4', 'D5']
+
+== term_thresholds keys ==
+en: ['clearly', 'comprehensive', 'effective', 'furthermore', 'important', 'moreover', 'notably', 'novel', 'numerous', 'obvious', 'obviously', 'remarkable', 'remarkably', 'robust', 'several', 'significant', 'various']
+zh: ['一般', '主要', '众多', '全面', '关键', '其次', '另外', '因此', '基本', '大量', '尤为', '尤其', '显然', '显著', '最为', '极为', '核心', '此外', '深入', '然而', '而且', '进而', '通常', '重要', '首先']
+typst: ['clearly', 'comprehensive', 'effective', 'furthermore', 'important', 'moreover', 'notably', 'novel', 'numerous', 'obvious', 'obviously', 'remarkable', 'remarkably', 'robust', 'several', 'significant', 'various', '全面', '关键', '其次', '因此', '显然', '显著', '核心', '深入', '然而', '重要', '首先']
+
+== throat_clearing cfg ==
+en: {'patterns': ['^In order to better\\b', '^In this (?:section|chapter|paper|work),\\s+we\\b', '^It is worth (?:noting|mentioning) that\\b', '^It should be noted that\\b', '^As (?:mentioned|stated|discussed) (?:earlier|before|above|previously)\\b', '^Notably,', '^Furthermore,', '^Moreover,', '^In summary,', '^To summarize,']}
+zh: {'patterns': ['^综上所述', '^总而言之', '^总的来说', '^由此可见', '^值得(?:指出|注意)的是', '^需要(?:指出|说明)的是', '^不难(?:发现|看出)', '^众所周知', '^毋庸讳言', '^首先[,，]', '^其次[,，]', '^然而[,，]', '^此外[,，]', '^一方面', '^另一方面']}
+typst: {'patterns': ['^In order to better\\b', '^In this (?:section|chapter|paper|work),\\s+we\\b', '^It is worth (?:noting|mentioning) that\\b', '^It should be noted that\\b', '^As (?:mentioned|stated|discussed) (?:earlier|before|above|previously)\\b', '^Notably,', '^Furthermore,', '^Moreover,', '^In summary,', '^To summarize,', '^综上所述', '^总而言之', '^由此可见', '^值得(?:指出|注意)的是', '^需要(?:指出|说明)的是', '^不难(?:发现|看出)', '^众所周知', '^首先[,，]', '^其次[,，]']}
+
+== tense patterns contain presents? ==
+Traceback (most recent call last):
+  File "D:\Documents\Code\Agents\academic-writing-skills\.trellis\tasks\07-05-deai-alignment-lock\research\probe_classify.py", line 119, in <module>
+    main()
+    ~~~~^^
+  File "D:\Documents\Code\Agents\academic-writing-skills\.trellis\tasks\07-05-deai-alignment-lock\research\probe_classify.py", line 114, in main
+    pats = m.DEFAULT_THRESHOLDS["tense"]["patterns"]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'patterns'

@@ -1598,11 +1598,19 @@ def render_report(
         try:
             from literature_compare import render_comparison_report
 
-            if hasattr(result.literature_context, "comparison_result"):
-                report += "\n\n" + render_comparison_report(
-                    result.literature_context.comparison_result
+            comparison = getattr(result.literature_context, "comparison_result", None)
+            if comparison is not None:
+                report += "\n\n" + render_comparison_report(comparison)
+            elif not getattr(result.literature_context, "filtered_results", []):
+                # Search ran but returned nothing usable (no key / API failure):
+                # the dimension is deliberately unscored, not scored low (PA-2).
+                report += (
+                    "\n\n## Literature Comparison\n\n"
+                    "Literature search returned no usable results — the "
+                    "literature_grounding dimension was left unscored and the "
+                    "remaining dimension weights were renormalized."
                 )
-            elif hasattr(result.literature_context, "filtered_results"):
+            else:
                 from literature_search import render_literature_summary
 
                 report += "\n\n" + render_literature_summary(result.literature_context)

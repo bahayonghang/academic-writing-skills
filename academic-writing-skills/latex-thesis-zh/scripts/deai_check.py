@@ -104,6 +104,7 @@ DEFAULT_THRESHOLDS = {
     },
     # 时态信号词：英文摘要里用现在时报告动词通常是时态错误（方法/结果应为过去时）。
     # 中文正文无时态，故脚本仅在英文摘要区域检查；"is"/"are" 不入正则（合法用法太多），
+    # "presents" 只匹配动词，不匹配 "the present study" 里的形容词（勿把 ? 加回）；
     # 判断级清单见 references/writing/tense-guide-zh.md。
     "tense": {
         "enabled": True,
@@ -112,7 +113,7 @@ DEFAULT_THRESHOLDS = {
             r"\breveals?\b": "past_in_methods_results",
             r"\bdemonstrates?\b": "past_in_methods_results",
             r"\bindicates?\b": "past_in_methods_results",
-            r"\bpresents?\b": "past_in_methods_results",
+            r"\bpresents\b": "past_in_methods_results",
             r"\bconfirms?\b": "past_in_methods_results",
             r"\bachieves?\b": "past_in_methods_results",
             r"\boutperforms?\b": "past_in_methods_results",
@@ -173,12 +174,18 @@ DIMENSION_MAP = {
     "throat_clearing": "D2",
     "parallel_structure": "D2",
     "punctuation": "D2",
+    "binary_contrast_shell": "D2",
+    "lecture_colon": "D2",
+    "command_template_opening": "D2",
     "low_information_density": "D3",
     "term_threshold": "D4",
     "filler_connector": "D4",
     "empty_phrase": "D5",
     "vague_quantifier": "D5",
+    "vague_referent": "D5",
+    "vague_comparative": "D5",
     "template_expr": "D5",
+    "fake_insight_marker": "D5",
     "over_confident": "D5",
     "overclaim": "D5",
 }
@@ -282,7 +289,57 @@ class ChineseAITraceChecker:
         r"众所周知": "filler_remove",
         r"毋庸讳言": "filler_remove",
     }
+
+    BINARY_CONTRAST_SHELLS = {
+        r"(?:不是|并非).{1,24}[，,]?\s*而是": "clarify_contrast_axis",
+        r"不在于.{1,24}[，,]?\s*而在于": "clarify_contrast_axis",
+        r"不只是.{1,24}[，,]?\s*(?:更|还)是?": "clarify_contrast_axis",
+        r"不仅.{1,24}[，,]?\s*(?:还|更)是?": "clarify_contrast_axis",
+        r"与其.{1,24}[，,]?\s*不如": "clarify_contrast_axis",
+    }
+
+    FAKE_INSIGHT_MARKERS = {
+        r"真正(?:的)?": "state_evidence_claim",
+        r"其实": "state_evidence_claim",
+        r"本质上": "state_evidence_claim",
+        r"核心在于": "state_evidence_claim",
+        r"关键在于": "state_evidence_claim",
+        r"更重要的是": "state_evidence_claim",
+        r"这说明": "state_evidence_claim",
+        r"这背后": "state_evidence_claim",
+    }
+
+    LECTURE_COLON = {
+        r"(?:我的结论是|原因很简单|重点是|分成三类|更重要的是)[:：]": ("rewrite_lecture_setup"),
+    }
+
+    VAGUE_REFERENTS = {
+        r"这些东西": "name_academic_referent",
+        r"这件事": "name_academic_referent",
+        r"东西": "name_academic_referent",
+        r"这些(?!方法|结果|问题|因素|指标|数据|样本|模型|文献|实验|策略|机制|变量|特征|结论)": (
+            "name_academic_referent"
+        ),
+        r"一类(?!方法|问题|模型|指标|策略|机制|变量|特征|现象)": "name_academic_referent",
+        r"几个方向": "name_academic_referent",
+    }
+
+    VAGUE_COMPARATIVES = {
+        r"更(?:适合|像|自然|高级)": "name_comparison_criterion",
+    }
+
+    COMMAND_TEMPLATE_OPENINGS = {
+        r"^(?:别急着|先别|顺序别反了|记住这句话)": "academicize_command_opening",
+    }
+
     EVIDENCE_MARKERS = re.compile(r"(\\cite\{|@\w+|\d+(?:\.\d+)?%?)")
+    ACADEMIC_CONTRAST_MARKERS = re.compile(
+        r"(相比|相较|基线|对照|实验|数据集|图|表|指标|准确率|精度|召回率|MAE|RMSE|F1|p\s*[<>=])",
+        re.IGNORECASE,
+    )
+    TECHNICAL_NOUN_MARKERS = re.compile(
+        r"(核心(?:模块|算法|参数|变量|层|机制)|关键(?:技术|参数|变量|帧|点|路径|步骤))"
+    )
 
     def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
@@ -319,7 +376,9 @@ class ChineseAITraceChecker:
             r"\.?\s*~?\s*\d*",
             re.IGNORECASE,
         )
-        # 英文摘要区域（\begin{abstract}，排除中文 \begin{cabstract}）；中文正文无时态。
+        # 英文摘要区域：generic \begin{abstract}、thuthesis \begin{abstract*}、pkuthss
+        # \begin{eabstract}；跳过中文摘要环境（thuthesis 明文 abstract、pkuthss cabstract）。
+        # 中文正文无时态。
         self._en_abstract_range = self._english_abstract_range()
 
     def _loc(self, line_no: int) -> str:
@@ -346,13 +405,32 @@ class ChineseAITraceChecker:
                 return True
 
         # 2. "大幅" with a number before or after
-        return bool(
-            "大幅" in pattern
-            and (
-                re.search(r"\d+(?:\.\d+)?%", context_after)
-                or re.search(r"\d+(?:\.\d+)?%", context_before)
+        if "大幅" in pattern and (
+            re.search(r"\d+(?:\.\d+)?%", context_after)
+            or re.search(r"\d+(?:\.\d+)?%", context_before)
+        ):
+            return True
+
+        matched_text = text[start:end]
+        window = context_before + matched_text + context_after
+
+        # Evidence-bearing academic contrasts are legitimate when they name
+        # a baseline/criterion; the de-AI pass should not turn them into bans.
+        if re.search(r"不是|并非|不在于|不只是|不仅|与其", matched_text):
+            return bool(
+                self.EVIDENCE_MARKERS.search(window)
+                and self.ACADEMIC_CONTRAST_MARKERS.search(window)
             )
-        )
+
+        if re.search(r"更(?:适合|像|自然|高级)", matched_text):
+            return bool(
+                re.search(r"(相比|相较|相对于|用于|适用于|在|作为|基线|指标|场景|任务)", window)
+            )
+
+        if pattern in {r"真正(?:的)?", r"核心在于", r"关键在于"}:
+            return bool(self.TECHNICAL_NOUN_MARKERS.search(window))
+
+        return False
 
     def _find_pattern_in_section(
         self, pattern: str, suggestion_type: str, section_name: str, category: str
@@ -411,6 +489,12 @@ class ChineseAITraceChecker:
             ("vague_quantifier", self.VAGUE_QUANTIFIERS),
             ("template_expr", self.TEMPLATE_EXPRESSIONS),
             ("filler_connector", self.AI_FILLER_CONNECTORS),
+            ("binary_contrast_shell", self.BINARY_CONTRAST_SHELLS),
+            ("fake_insight_marker", self.FAKE_INSIGHT_MARKERS),
+            ("lecture_colon", self.LECTURE_COLON),
+            ("vague_referent", self.VAGUE_REFERENTS),
+            ("vague_comparative", self.VAGUE_COMPARATIVES),
+            ("command_template_opening", self.COMMAND_TEMPLATE_OPENINGS),
         ]
 
         for category, patterns_dict in all_patterns:
@@ -691,14 +775,22 @@ class ChineseAITraceChecker:
     # --- Checker: tense signal words in the English abstract ([Script] LOW) ---
 
     def _english_abstract_range(self) -> tuple[int, int] | None:
-        """英文摘要的行区间（1-based，含端点）。优先 ``\\begin{abstract}...\\end{abstract}``
-        （thuthesis 中文摘要是 ``\\begin{cabstract}``，已排除）；其次英文 ``Abstract`` 标题章节。
-        定位不到返回 None。"""
-        m = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", self.content, re.DOTALL)
-        if m:
-            start = self.content[: m.start()].count("\n") + 1
-            end = self.content[: m.end()].count("\n") + 1
-            return (start, end)
+        """英文摘要的行区间（1-based，含端点）。识别 generic ``\\begin{abstract}``、
+        thuthesis ``\\begin{abstract*}``、pkuthss ``\\begin{eabstract}``；显式跳过中文摘要
+        环境（thuthesis 明文 ``abstract``、pkuthss ``cabstract``）。多摘要并存时按内容语种
+        择优选英文那一个，而非首个匹配。环境定位不到时回退到英文 ``Abstract`` 标题章节；
+        再定位不到返回 None。"""
+        # 带星（thuthesis）/带 e 前缀（pkuthss）的环境按模板约定即英文摘要，最高优先。
+        for env in (r"abstract\*", "eabstract"):
+            m = re.search(rf"\\begin\{{{env}\}}(.*?)\\end\{{{env}\}}", self.content, re.DOTALL)
+            if m:
+                return self._span_to_lines(m.start(), m.end())
+        # 明文 abstract 可能是 thuthesis 中文摘要，也可能是 generic / 双摘要里的英文摘要：
+        # 枚举全部候选，选内容以英文为主的那一个（cabstract 带前缀，此处不会误匹配）。
+        for m in re.finditer(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", self.content, re.DOTALL):
+            if self._region_is_english(m.group(1)):
+                return self._span_to_lines(m.start(), m.end())
+        # 回退：英文 ``Abstract`` 标题章节。
         m = re.search(r"\\(?:chapter|section)\*?\{\s*Abstract\s*\}", self.content)
         if m:
             start = self.content[: m.start()].count("\n") + 1
@@ -708,6 +800,27 @@ class ChineseAITraceChecker:
             end = self.content[:offset].count("\n") + 1
             return (start, end)
         return None
+
+    def _span_to_lines(self, start_off: int, end_off: int) -> tuple[int, int]:
+        """字符偏移区间 → 1-based 行区间（含端点）。"""
+        start = self.content[:start_off].count("\n") + 1
+        end = self.content[:end_off].count("\n") + 1
+        return (start, end)
+
+    def _region_is_english(self, body: str) -> bool:
+        """摘要环境体是否以英文为主。逐行取可见文本（剥除 cite/ref/math）后按语种计数，
+        英文行至少一行且不少于中文行即判为英文摘要。"""
+        english = cjk = 0
+        for raw in body.splitlines():
+            stripped = raw.strip()
+            if not stripped or stripped.startswith(self.comment_prefix):
+                continue
+            visible = self.parser.extract_visible_text(stripped)
+            if self._is_english_line(visible):
+                english += 1
+            elif any("一" <= c <= "鿿" for c in visible):
+                cjk += 1
+        return english >= 1 and english >= cjk
 
     @staticmethod
     def _is_english_line(text: str) -> bool:
@@ -945,6 +1058,15 @@ class ChineseAITraceChecker:
             "parallel_opening": "连续段落首字雷同，至少改写一段为不同句法.",
             "throat_clearing": "删除段首套话，直接陈述论点.",
             "punctuation_pattern": "减少破折号堆叠，正文勿用感叹号.",
+            "clarify_contrast_axis": (
+                "若这是实质对比，补明比较轴、基线和证据；否则删掉“不是/而是”壳，"
+                "直接陈述可验证的学术判断。"
+            ),
+            "state_evidence_claim": "删除伪洞察提示词，直接写证据支持的结论或待补证处.",
+            "rewrite_lecture_setup": "去掉讲义式冒号开头，改为普通学术句或具体清单名词.",
+            "name_academic_referent": "把空泛指代替换为研究对象、方法、结果、因素或局限的准确名词.",
+            "name_comparison_criterion": "补明比较对象和评价准则，不只写“更适合/更自然”.",
+            "academicize_command_opening": "将命令式教程开头改写为学术风险、研究步骤或观察结论.",
             "vary_sentence_length": "长短句交替，打破机械均匀的句长节奏.",
             "soften_causal": "因果措辞：除非有干预实验，改用“与……相关/关联”（见 over-claim-guard）.",
             "qualify_novelty": "首创声称：加“据我们所知”，或具体说明首创点.",

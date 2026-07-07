@@ -64,7 +64,7 @@ ci:
 # 校验所有 SKILL.md 版本与 pyproject.toml 一致
 check-versions:
     @echo "  → 校验 skills 版本与 pyproject.toml 对齐..."
-    @uv run --extra dev python -m pytest tests/test_skill_versions.py -q
+    @uv run --extra dev python -m pytest tests/contracts/test_skill_versions.py -q
     @echo "  ✓ 版本一致性检查通过"
 
 # 代码格式化和 lint 检查

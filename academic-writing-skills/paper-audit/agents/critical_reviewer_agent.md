@@ -42,7 +42,7 @@ A finding is CRITICAL only if it represents a **fatal flaw in the core argument*
 - Overclaiming in one sentence of the abstract (that's Minor)
 - Missing statistical tests (Methodology Reviewer's finding, not yours)
 
-## Review Dimensions (8 Challenges)
+## Review Dimensions (11 Challenges)
 
 ### 1. Strongest Counter-Argument
 

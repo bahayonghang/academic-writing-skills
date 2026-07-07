@@ -334,3 +334,175 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: 学术去 AI 味三技能优化
+
+**Date**: 2026-07-05
+**Task**: 学术去 AI 味三技能优化
+**Branch**: `dev`
+
+### Summary
+
+优化 latex-thesis-zh、typst-paper、latex-paper-en 的 de-AI 工作流：先保留学术证据链和语法锚点，再检测结构壳/修辞脚手架，并补齐测试、eval、docs 镜像与 Trellis 规范。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7311420` | (see git log) |
+| `5443df8` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 10: P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步
+
+**Date**: 2026-07-06
+**Task**: P0 双任务：zh 摘要时态门控修复 + typst deai 副本同步
+**Branch**: `dev`
+
+### Summary
+
+六技能深审后的两个 P0 修复落地：① latex-thesis-zh 英文摘要时态门控重写（识别 thuthesis abstract*/pkuthss eabstract、多摘要按语种择优），修正模板映射，10 条 zh 专项测试；② typst deai 与 EN 副本同步（E17 证据检查、@fig 护栏、term 表、presents 三副本统一），8 条 typst 测试 + evals/文档补登。guard_text 偏移疑点核实为非 bug 并加回归锁。just ci 861 绿。新增 spec：副本测试 importlib 加载、阈值双层配置、evals.json hook 陷阱。alignment-lock 上锁前提已满足。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `75a763a` | (see git log) |
+| `a6eb919` | (see git log) |
+| `fa714a9` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 11: 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性
+
+**Date**: 2026-07-06
+**Task**: 四子任务闭环：deai 对齐锁 + 评分链修复 + CL/bib 修复 + 文档一致性
+**Branch**: `dev`
+
+### Summary
+
+六技能深审剩余四个必做子任务全部实施、质检、提交、归档：① tests/test_deai_alignment.py 为 en/zh/typst 三份 deai_check.py 上锁（strict 字节锁 + AST 去 docstring 逻辑锁把中文注释的 zh 也锁进来 + 关系锁；burstiness 2/4/8 判定为语言驱动有意分歧并 pin 值；漂移红测验证）；② paper-audit 评分链贯通 critical_count 惩罚、空文献检索置 None 按剩余权重归一化并显式标注、dims_below_5 排除 overall，补 REVIEWER_PSYCHOLOGY/OVER_CLAIM_GUARD 契约测试与 evals 21/22；③ cover-letter 指标张冠李戴双路泄漏封堵（数字贴身指标词须全数复现 + unverified 清弱数字锚，质检补修聚合计数）与 bib 重复键/百分号注释条目警告；④ 九项文档元数据清理（pyright basic、dist 解除跟踪、docs 双语补 tense-guide 与 paper-audit 镜像、PA-4/5/6、category/last_updated、孤儿报告删除）。每任务独立 trellis-check 质检；just ci 861→906 绿；docs build 零死链。剩余：cover-letter-deai-enhancement（可选，待拍板）。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2a0d9be` | (see git log) |
+| `762bf80` | (see git log) |
+| `2a31fd9` | (see git log) |
+| `02dd30d` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 12: cover-letter CL-3/CL-4 增强收口，六技能深审父任务 7/7 归档
+
+**Date**: 2026-07-06
+**Task**: cover-letter CL-3/CL-4 增强收口，六技能深审父任务 7/7 归档
+**Branch**: `dev`
+
+### Summary
+
+实施可选任务 07-05-cover-letter-deai-enhancement：align_check 新增 AI 披露一致性 lane（三情形 moderate finding，comment_type=disclosure_consistency，% 注释披露不触发）；presubmission 同词 AI-tone 阈值 2+/3+ 阶梯、AI-DIV 聚合多样性（3 词 Minor/4 词 Major）、S1 平行段首、S2 句长均匀性（≥8 句 CV<0.25）——按 en 结构壳裁剪移植，不新建 deai_check 副本，对齐锁范围不变。独立质检零缺陷，对抗探针全过；just ci 906→918 绿。取舍：阈值固定 2 不做长度自适应（信件长度方差小、无模板时无基准）；不移植 throat-clearing/低信息密度（信件已有 L2/G3 等价物、声明段易误报）。另单独收纳 Trellis 框架升级 9 文件（agents/config.yaml 仅 EOL 差异未入）。父任务 07-05-skills-deep-analysis-optimization 7/7 全部完成归档。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `93a67f4` | (see git log) |
+| `9bc15d8` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 13: 整理 tests 测试目录结构
+
+**Date**: 2026-07-07
+**Task**: 整理 tests 测试目录结构
+**Branch**: `dev`
+
+### Summary
+
+将根 tests 目录的平铺测试按 contracts/shared/skills 分组，新增 tests.support.paths 统一路径常量，更新 conftest、justfile、CLAUDE、Trellis spec 与相关文档引用；验证 pytest 918 passed、ruff、pyright 与 diff check。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `d516f97c3e8c94cfff2f2e32a898e47a53382567` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
