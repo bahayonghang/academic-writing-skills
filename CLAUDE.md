@@ -22,8 +22,8 @@ Task runner: `just` (requires `uv` for Python). All commands run through `uv run
 | `just doc-build` | Build static docs site                                     |
 | `just clean`     | Remove `__pycache__`, `.pytest_cache`, `.ruff_cache`       |
 
-Run a single test file: `uv run --extra dev python -m pytest tests/test_parsers.py`
-Run a single test function: `uv run --extra dev python -m pytest tests/test_parsers.py::test_latex_split_sections`
+Run a single test file: `uv run --extra dev python -m pytest tests/shared/test_parsers.py`
+Run a single test function: `uv run --extra dev python -m pytest tests/shared/test_parsers.py::test_latex_split_sections`
 
 ## Architecture
 
@@ -60,7 +60,7 @@ All script-based skills share a common `DocumentParser` ABC in their `scripts/pa
 - `DocumentParser` (ABC) → `LatexParser`, `TypstParser`
 - Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`
 - Each skill has its own copy of `parsers.py` (not a shared import) — keep them aligned when changing shared behavior.
-- The shared-vs-specialized contract is enforced by `tests/test_parsers_alignment.py` (hash-locked `ALIGNMENTS` map; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
+- The shared-vs-specialized contract is enforced by `tests/contracts/test_parsers_alignment.py` (hash-locked `ALIGNMENTS` map; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
 
 ### Test Structure
 

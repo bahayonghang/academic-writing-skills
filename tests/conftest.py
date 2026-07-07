@@ -3,30 +3,19 @@
 import os
 import shutil
 import sys
-from pathlib import Path
 
 import pytest
 
+from tests.support.paths import (
+    SCRIPT_DIR_AUDIT,
+    SCRIPT_DIR_COVER_LETTER,
+    SCRIPT_DIR_EN,
+    SCRIPT_DIR_ZH,
+    SKILLS_ROOT,
+)
+
 sys.dont_write_bytecode = True
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
-
-SKILLS_ROOT = Path(__file__).parent.parent / "academic-writing-skills"
-
-SCRIPT_DIR_EN = (
-    Path(__file__).parent.parent / "academic-writing-skills" / "latex-paper-en" / "scripts"
-)
-SCRIPT_DIR_ZH = (
-    Path(__file__).parent.parent / "academic-writing-skills" / "latex-thesis-zh" / "scripts"
-)
-SCRIPT_DIR_TYPST = (
-    Path(__file__).parent.parent / "academic-writing-skills" / "typst-paper" / "scripts"
-)
-SCRIPT_DIR_AUDIT = (
-    Path(__file__).parent.parent / "academic-writing-skills" / "paper-audit" / "scripts"
-)
-SCRIPT_DIR_COVER_LETTER = (
-    Path(__file__).parent.parent / "academic-writing-skills" / "cover-letter" / "scripts"
-)
 
 # bib-search-citation ships its own tests/ inside the skill folder and is discovered
 # via the `just test` glob `academic-writing-skills/*/tests/`.

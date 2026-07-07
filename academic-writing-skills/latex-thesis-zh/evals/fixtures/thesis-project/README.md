@@ -48,6 +48,6 @@ references.bib            # 含缺字段条目的虚构文献库
 
 ## 使用
 
-- pytest 冒烟测试：`tests/test_latex_thesis_zh_coverage.py`（SKILL.md 全部路由主命令）。
+- pytest 冒烟测试：`tests/skills/latex_thesis_zh/test_latex_thesis_zh_coverage.py`（SKILL.md 全部路由主命令）。
 - evals：`evals/evals.json` 中 files 指向本工程的用例。
 - 修改本工程任何埋点时，须同步更新本清单与相关断言。
