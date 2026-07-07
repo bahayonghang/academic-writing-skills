@@ -473,3 +473,36 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+
+## Session 13: 整理 tests 测试目录结构
+
+**Date**: 2026-07-07
+**Task**: 整理 tests 测试目录结构
+**Branch**: `dev`
+
+### Summary
+
+将根 tests 目录的平铺测试按 contracts/shared/skills 分组，新增 tests.support.paths 统一路径常量，更新 conftest、justfile、CLAUDE、Trellis spec 与相关文档引用；验证 pytest 918 passed、ruff、pyright 与 diff check。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `d516f97c3e8c94cfff2f2e32a898e47a53382567` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
