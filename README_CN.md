@@ -39,21 +39,6 @@ npx skills add bahayonghang/academic-writing-skills
 需要改写或润色源码时，使用对应格式的写作类 skill。需要审稿式诊断但不改源码时，
 使用 `paper-audit`。目标是文献库本身时，使用 `bib-search-citation`。
 
-## 一个真实命令
-
-多数工作流通过自然语言触发，也可以直接运行辅助脚本。下面的命令会检索本地 `.bib`
-文件，并返回 LaTeX 与 Typst 引用片段：
-
-```bash
-uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py \
-  --bib references.bib \
-  --query "mamba forecasting author:Cheng year>=2024 has:code" \
-  --citation-mode both \
-  --limit 5
-```
-
-具体参数请先阅读对应 `SKILL.md`；脚本的 `--help` 输出是最终命令参考。
-
 ## 常用 Prompt
 
 ```text

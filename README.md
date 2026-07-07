@@ -47,23 +47,6 @@ Use the format-specific writing skills when you want source edits or polish. Use
 source. Use `bib-search-citation` when the target is the bibliography library
 itself.
 
-## One Real Command
-
-Most workflows are natural-language driven, but helper scripts can be run
-directly. For example, search a local `.bib` file and return both LaTeX and Typst
-citations:
-
-```bash
-uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py \
-  --bib references.bib \
-  --query "mamba forecasting author:Cheng year>=2024 has:code" \
-  --citation-mode both \
-  --limit 5
-```
-
-For script-specific flags, read the relevant `SKILL.md` first and treat the
-script `--help` output as the final command reference.
-
 ## Typical Prompts
 
 ```text
