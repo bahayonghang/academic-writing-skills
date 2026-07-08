@@ -1,11 +1,12 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、章引言/本章小结、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表和去 AI 味；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文项目与高校模板。用于编译诊断、GB/T 7714、模板/章节结构、公式编号与断行、章标题/小节标题架构、章引言/本章小结、术语一致性、绪论/方法/实验/结论主线、文献综述、研究空白、摘要标题、三线表、去 AI 味和对照学校规范逐项终检；触发于“毕业论文/学位论文/硕士论文/博士论文”“公式编号挤到下一行”“每章最多 5 节”“对象、问题、方法”等中文 LaTeX 学位论文请求。英文论文用 latex-paper-en，审稿总评用 paper-audit。
 when_to_use: >-
   触发于“毕业论文/学位论文/硕士论文/博士论文”“判断是不是 thuthesis/pkuthss”
   “XeLaTeX 编译失败”“按 GB/T 7714 检查参考文献”“公式编号挤到下一行/长公式拆行”
   “每章最多 5 节”“大标题体现对象、问题、方法”“章引言/本章小结怎么写”
   “绪论漏斗/章节主线/绪论-结论闭合”“术语缩略语前后不一致”“去 AI 味”
+  “对照学校规范逐项检查/终检”“毕业前定稿格式自查”
   等针对中文 .tex 学位论文工程的请求；英文论文用 latex-paper-en，审稿总评用 paper-audit。
 metadata:
   category: academic-writing
@@ -25,7 +26,7 @@ metadata:
       structure,
     ]
   version: "5.2.0"
-  last_updated: "2026-07-06"
+  last_updated: "2026-07-08"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -41,6 +42,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 审阅逻辑连贯性、文献综述质量、章节/小节/四级标题导语完整性、章标题/小节标题架构、本章小结单段收束、实验章节写法、标题表达与 AI 痕迹。
 - 针对文献综述提供“共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点”的重写蓝图。
 - 针对绪论、方法章节、实验讨论、摘要/创新点/结论对齐提供学位论文主线式改写建议。
+- 定稿阶段对照学校规范清单（如燕山大学 2024 版）逐项终检，输出符合性报告与打印前自查单。
 - 在不破坏引用、标签和数学环境的前提下给出可落地的中文论文修改建议。
 
 ## Triggering
@@ -57,6 +59,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 文献综述重写、比较分析不足、研究空白推导薄弱
 - 标题优化、学术表达或去 AI 化检查
 - 实验章节语言与结构审阅
+- 定稿前对照学校规范清单逐项终检（如“燕山大学 2024 版撰写规范”），输出逐项符合性结论
 
 即使用户只提到单一问题，例如“帮我判断是不是 thuthesis”“检查绪论逻辑”或“按 GB/T 7714 看参考文献”，也应触发本 skill。
 
@@ -78,22 +81,23 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 > `~/.claude/skills/latex-thesis-zh`）。它**不是**预定义环境变量——执行命令前请替换为
 > 实际路径，或先 `SKILL_DIR=<安装路径>` 再原样执行。入口文件 `main.tex` 同样按实际路径替换。
 
-| Module         | Use when                                                                                                                        | Primary command                                                                     | Read next                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `compile`      | Thesis build fails or toolchain is unclear                                                                                      | `uv run python $SKILL_DIR/scripts/compile.py main.tex`                              | `references/modules/compile.md`                                                                            |
-| `format`       | User asks about thesis formatting, formula layout/line breaks, or GB/T 7714 layout                                              | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                         | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
-| `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                        | `references/writing/structure-guide.md`                                                                    |
-| `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`            | `references/modules/consistency.md`                                                                        |
-| `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                      | `references/modules/template.md`                                                                           |
-| `bibliography` | GB/T 7714 or BibTeX validation                                                                                                  | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`   | `references/modules/bibliography.md`                                                                       |
-| `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                           | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`    | `references/modules/title.md`                                                                              |
-| `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                               | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`    | `references/modules/deai.md`                                                                               |
-| `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                        | `references/modules/logic.md`                                                                              |
-| `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出                                                                          | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related` | `references/modules/literature.md`                                                                         |
-| `experiment`   | Review experiment chapter language, discussion layering, and conclusion completeness                                            | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex`                   | `references/modules/experiment.md`                                                                         |
-| `references`   | Cross-reference integrity: undefined `\ref`, unreferenced labels, missing captions, numbering gaps                              | `uv run python $SKILL_DIR/scripts/check_references.py main.tex`                     | `references/modules/references.md`                                                                         |
-| `tables`       | 表格结构校验、三线表生成、booktabs 检查                                                                                         | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex`                         | `references/modules/tables.md`                                                                             |
-| `abstract`     | 摘要五要素结构诊断与字数校验                                                                                                    | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.tex --lang zh`           | `references/modules/abstract.md`                                                                           |
+| Module         | Use when                                                                                                                        | Primary command                                                                              | Read next                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `compile`      | Thesis build fails or toolchain is unclear                                                                                      | `uv run python $SKILL_DIR/scripts/compile.py main.tex`                                       | `references/modules/compile.md`                                                                            |
+| `format`       | User asks about thesis formatting, formula layout/line breaks, or GB/T 7714 layout                                              | `uv run python $SKILL_DIR/scripts/check_format.py main.tex`                                  | `references/modules/format.md`（已知模板时改读 `templates/<template>.md`，如 thuthesis、pkuthss、generic） |
+| `structure`    | Need chapter/section map or thesis skeleton overview                                                                            | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                                 | `references/writing/structure-guide.md`                                                                    |
+| `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                           | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`                     | `references/modules/consistency.md`                                                                        |
+| `template`     | Need to identify or validate thesis class/template                                                                              | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                               | `references/modules/template.md`                                                                           |
+| `bibliography` | GB/T 7714 or BibTeX validation                                                                                                  | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
+| `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                           | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`             | `references/modules/title.md`                                                                              |
+| `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                               | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`             | `references/modules/deai.md`                                                                               |
+| `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                                 | `references/modules/logic.md`                                                                              |
+| `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出                                                                          | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`          | `references/modules/literature.md`                                                                         |
+| `experiment`   | Review experiment chapter language, discussion layering, and conclusion completeness                                            | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex`                            | `references/modules/experiment.md`                                                                         |
+| `references`   | Cross-reference integrity: undefined `\ref`, unreferenced labels, missing captions, numbering gaps                              | `uv run python $SKILL_DIR/scripts/check_references.py main.tex`                              | `references/modules/references.md`                                                                         |
+| `tables`       | 表格结构校验、三线表生成、booktabs 检查                                                                                         | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex`                                  | `references/modules/tables.md`                                                                             |
+| `abstract`     | 摘要五要素结构诊断与字数校验                                                                                                    | `uv run python $SKILL_DIR/scripts/analyze_abstract.py main.tex --lang zh`                    | `references/modules/abstract.md`                                                                           |
+| `spec-check`   | 定稿对照学校规范清单逐项终检（毕业前格式自查）                                                                                  | `uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --degree doctor` | `references/modules/spec-check.md`                                                                         |
 
 ## 路由规则
 
@@ -114,6 +118,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
 - 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。
+- 涉及“对照学校规范逐项检查”“终检/定稿检查/毕业前格式自查”“规范符合性”时走 `spec-check`：先确认学校与学位（燕山大学用 `--template yanshan`）；模板未识别且无清单时，请用户提供学校名或规范文件（整理成 `--spec-file` 清单）。脚本报告中 NEEDS-LLM 项按 `references/modules/spec-check.md` 第 4 步逐项判读，MODULE 项执行对应模块命令，MANUAL 项以“打印前自查单”原样交付，不要替用户宣称版式已符合。
 - 某个脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不要静默切换到别的模块掩盖失败。
 
 ## Required Inputs
@@ -169,7 +174,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/writing/tense-guide-zh.md`: 英文摘要时态判断级清单（`deai` 在英文摘要区域自动运行的时态检查的配套说明）。
 - `references/modules/experiment.md`: experiment-chapter review criteria.
-- `templates/`: per-template snapshots, the single authoritative source for template facts. Files: `generic.md`（含常见校级排版约定）, `thuthesis.md`, `pkuthss.md`, `yanshan.md`（规范获取指引）.
+- `templates/`: per-template snapshots, the single authoritative source for template facts. Files: `generic.md`（含常见校级排版约定）, `thuthesis.md`, `pkuthss.md`, `yanshan.md`（2024 版规范快照 + 逐项检查清单，配合 `spec-check` 模块使用）.
   只读取当前模块所需的参考文件，避免一次加载整套指南。
 
 ## Example Requests
@@ -185,3 +190,4 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - “检查方法章节是不是每个模块都有动机、设计和技术优势，并和实验验证闭合。”
 - “第四章本章小结经常被写成好几段，请按学位论文写法改成一个自然段收束。”
 - “第一个公式编号已经被挤到第二行，请判断是否应该拆成两行；第二个公式能正常放下，不要为了统一强行拆。”
+- “我是燕山大学的博士生，论文已定稿，请对照 2024 版撰写规范逐项终检一遍，给我逐项符合性结论和打印前自查单。”

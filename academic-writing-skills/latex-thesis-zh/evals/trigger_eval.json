@@ -160,6 +160,16 @@
       "query": "Please shorten the chapter summary of my English dissertation draft in Word; there is no LaTeX project.",
       "should_trigger": false,
       "category": "negative-overlap-docx"
+    },
+    {
+      "query": "我是燕山大学的博士生，论文定稿了，帮我对照2024版撰写规范逐项终检一遍",
+      "should_trigger": true,
+      "category": "spec-check"
+    },
+    {
+      "query": "毕业论文提交前想按学校撰写规范做一次逐项格式自查，检查字数、关键词个数和参考文献数量够不够",
+      "should_trigger": true,
+      "category": "spec-check"
     }
   ]
 }

@@ -45,6 +45,7 @@ references.bib            # 含缺字段条目的虚构文献库
 | 21 | conclusion.tex | 缺局限与未来工作/缺核心发现 | `experiment` → `Conclusion lacks ...` |
 | 22 | appendix-gbk.tex | GB18030 编码 | 各脚本 → `WARN ... GB18030` 且内容被正确解析 |
 | 23 | references.bib | @phdthesis 缺 school / @online 缺 urldate / @techreport 缺 institution / @article 缺 volume+pages | `bibliography --standard gb7714` → 对应 Missing field |
+| 24 | 全工程（未新增文件） | 天然规模性违规：文献仅 5 篇、无 2025+ 文献、摘要约 90 字、正文约 918 字、无关键词宏、method/experiment 三章无“本章小结”、附录章无 `\appendix` | `spec-check --template yanshan --degree doctor --year 2026` → YS-11/18/19/24/25/26/47 FAIL，YS-01/13/14/17/29/30/31/33 PASS（断言见 `tests/skills/latex_thesis_zh/test_check_spec.py`） |
 
 ## 使用
 

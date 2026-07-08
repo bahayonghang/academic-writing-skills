@@ -85,6 +85,7 @@ SKILLS = {
             "experiment",
             "tables",
             "abstract",
+            "spec-check",
         ],
         "min_examples": 3,
         "min_evals": 5,
