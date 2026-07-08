@@ -108,6 +108,7 @@ SMOKE_COMMANDS = [
         {1},
         "规范逐项终检报告",
     ),
+    ("blind_review.py", ["main.tex", "--check"], {1}, "盲审匿名化检查报告"),
 ]
 
 

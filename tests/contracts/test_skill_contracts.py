@@ -86,6 +86,7 @@ SKILLS = {
             "tables",
             "abstract",
             "spec-check",
+            "blind-review",
         ],
         "min_examples": 3,
         "min_evals": 5,

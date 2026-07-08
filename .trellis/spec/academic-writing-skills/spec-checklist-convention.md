@@ -33,9 +33,9 @@ CHECKERS，且 CHECKERS 每个 checker 必须被至少一个清单引用（防�
 
 **联动清单**（改一处查其余）：
 
-| 改动                            | 必须同步                                                                                                                         |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| 新增/删除 CHECKERS 键           | 至少一个 templates/*.md 清单引用它；`references/modules/spec-check.md` 内建检查器列表                                            |
-| SKILL.md 路由表增删模块         | 清单 `module:` 引用、`MODULE_COMMANDS` 提示命令、coverage 测试 `SMOKE_COMMANDS`（`test_smoke_commands_cover_router_table` 强制） |
-| templates/*.md 新增清单段       | `test_spec_checklists.py` 自动纳入（按 `## 逐项检查清单` 枚举，无需改测试）                                                      |
-| fixture thesis-project 内容变化 | `test_check_spec.py` 的天然违规断言（YS-18/24/26 FAIL 等）与 fixture README 埋点 #24                                             |
+| 改动                            | 必须同步                                                                                                                                                                                                                                         |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 新增/删除 CHECKERS 键           | 至少一个 templates/*.md 清单引用它；`references/modules/spec-check.md` 内建检查器列表                                                                                                                                                            |
+| SKILL.md 路由表增删模块         | coverage 测试 `SMOKE_COMMANDS` 必须同步（`test_smoke_commands_cover_router_table` 强制）；`MODULE_COMMANDS` 键**仅当**有清单条目引用 `module:<模块>` 时才加——无引用时加键即死配置（先例：blind-review 只进 SMOKE_COMMANDS 未加 MODULE_COMMANDS） |
+| templates/*.md 新增清单段       | `test_spec_checklists.py` 自动纳入（按 `## 逐项检查清单` 枚举，无需改测试）                                                                                                                                                                      |
+| fixture thesis-project 内容变化 | `test_check_spec.py` 的天然违规断言（YS-18/24/26 FAIL 等）与 fixture README 埋点 #24                                                                                                                                                             |
