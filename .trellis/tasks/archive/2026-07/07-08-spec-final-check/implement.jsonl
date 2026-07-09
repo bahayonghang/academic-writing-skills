@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 副本测试必须 importlib 按路径加载+守卫；路径常量从 tests.support.paths 导入；evals.json 只能 Bash python 写入；SKILL.md 表格被 hook 重排会触发 ROUTER_ROW_RE 契约测试"}
+{"file": ".trellis/tasks/07-08-spec-check-blind-review/research/yanshan-2024-spec-extracted.txt", "reason": "燕山大学2024版撰写规范全文提取（pypdf，35页）。yanshan.md 清单条目与 § 依据的唯一事实来源，禁止写入此文件之外的规范条目"}
