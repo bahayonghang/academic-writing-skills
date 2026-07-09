@@ -10,8 +10,8 @@ NEEDS-LLM / MODULE / MANUAL 分流，最终汇总为一份逐项符合性报告�
 uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --degree doctor
 ```
 
-- `--template <id>`：使用 `templates/<id>.md` 的清单（当前带清单的模板：yanshan；
-  未指定时按 documentclass 自动推断，推断到无清单的模板会报错并列出可用清单）。
+- `--template <id>`：使用 `templates/<id>.md` 的清单（当前带清单的模板：yanshan、thuthesis、
+  pkuthss、generic；未指定时按 documentclass 自动推断，推断到无清单的模板会报错并列出可用清单）。
 - `--spec-file <path>`：使用任意符合清单表格格式的自定义规范文件（通用入口：任何学校的
   规范都可整理成清单后接入；引用了不存在检查器的条目自动降级为 NEEDS-LLM，不会中断）。
 - `--degree master|doctor`：学位类型（影响字数/文献数量阈值与条目适用范围；缺省时从正文
@@ -83,6 +83,9 @@ uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --deg
 
 判定为区间/下限的检查器带 ±10% 缓冲带：落在缓冲带内报 NEEDS-LLM（规范多用“一般”措辞），
 超出才报 FAIL。字数口径为“可见文本去空白字符数”（近似，含图表文字），报告中已注明。
+上列括号内为缺省值；字数/个数/分隔符阈值可被 `TEMPLATE_THRESHOLDS[<模板>]` 按校覆盖
+（如清华题名 25 无副题名扩展、北大题名 20 且关键词 3~5 逗号分隔、generic 关键词不查分隔符），
+键缺省时保持缺省行为，不套用别校数值。
 
 ## Output Contract
 

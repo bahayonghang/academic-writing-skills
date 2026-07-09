@@ -203,6 +203,22 @@ class TestDetectTemplate:
         mapper.map()
         assert mapper.template == "ctexbook"
 
+    def test_checklist_section_not_in_key_requirements(self):
+        """`## 逐项检查清单` 段（表格+引导注释）不得泄入 key_requirements。
+
+        _extract_key_requirements 只读「特殊格式要求/注意事项」两节的 bullet；
+        清单落地任务（07-08-template-checklists）加此回归锁。
+        """
+        templates_dir = _ZH_DIR.parent / "templates"
+        for name in ("thuthesis.md", "pkuthss.md", "generic.md"):
+            md = templates_dir / name
+            assert "## 逐项检查清单" in md.read_text(encoding="utf-8"), f"{name} 缺清单段"
+            reqs = detect_template._extract_key_requirements(md)
+            assert reqs, f"{name}: key_requirements 不应为空"
+            joined = " ".join(reqs)
+            for marker in ("THU-", "PKU-", "GEN-", "script:", "逐项检查清单", "事实核查日期"):
+                assert marker not in joined, f"{name}: 清单内容泄入 key_requirements: {marker}"
+
 
 # ── map_structure.py ───────────────────────────────────────────
 

@@ -215,6 +215,100 @@ class TestKeywords:
         assert _check("kw_zh_en_match", _ctx(tmp_path, content))[0] == "FAIL"
 
 
+class TestTemplateThresholdOverrides:
+    """新模板阈值键（title_max/title_sub_max/kw_range/kw_sep/abstract）与缺省回退语义。
+
+    负面证据红线：清华/北大官方指南无副题名合计条款与燕山字数规则，
+    对应键缺省时不得回落到燕山数值（见任务 07-08-template-checklists research/）。
+    """
+
+    def test_title_thuthesis_25_pass_and_fail(self, tmp_path: Path):
+        assert (
+            _check(
+                "title_len", _ctx(tmp_path, "\\ctitle{" + "题" * 24 + "}\n", template="thuthesis")
+            )[0]
+            == "PASS"
+        )
+        status, ev = _check(
+            "title_len", _ctx(tmp_path, "\\ctitle{" + "题" * 26 + "}\n", template="thuthesis")
+        )
+        assert status == "FAIL"
+        assert "25" in ev
+
+    def test_title_pku_20_limit(self, tmp_path: Path):
+        status, ev = _check(
+            "title_len", _ctx(tmp_path, "\\ctitle{" + "题" * 21 + "}\n", template="pkuthss")
+        )
+        assert status == "FAIL"
+        assert "20" in ev
+
+    def test_title_pku_no_yanshan_subtitle_spillover(self, tmp_path: Path):
+        # 25 chars with a subtitle dash: PASS under yanshan (≤35) but must FAIL
+        # under pkuthss (no combined-subtitle allowance beyond 20).
+        title = "主" * 15 + "——" + "副" * 8
+        assert _check("title_len", _ctx(tmp_path, f"\\ctitle{{{title}}}\n"))[0] == "PASS"
+        status, ev = _check(
+            "title_len", _ctx(tmp_path, f"\\ctitle{{{title}}}\n", template="pkuthss")
+        )
+        assert status == "FAIL"
+        assert "20" in ev
+
+    def test_kw_pku_comma_rule(self, tmp_path: Path):
+        ok = _ctx(tmp_path, "\\ckeywords{甲，乙，丙}\n", template="pkuthss")
+        assert _check("kw_count", ok)[0] == "PASS"
+
+    def test_kw_pku_semicolon_fails(self, tmp_path: Path):
+        ctx = _ctx(tmp_path, "\\ckeywords{甲；乙；丙}\n", template="pkuthss")
+        status, ev = _check("kw_count", ctx)
+        assert status == "FAIL"
+        assert "逗号" in ev
+
+    def test_kw_pku_range_3_to_5(self, tmp_path: Path):
+        ctx = _ctx(tmp_path, "\\ckeywords{甲，乙，丙，丁，戊，己}\n", template="pkuthss")
+        status, ev = _check("kw_count", ctx)
+        assert status == "FAIL"
+        assert "3~5" in ev
+
+    def test_kw_generic_no_separator_rule(self, tmp_path: Path):
+        # GB/T 7713.1-2006 §5.1.6 has no separator rule: comma-separated must pass.
+        ctx = _ctx(tmp_path, "\\ckeywords{甲，乙，丙}\n", template="generic")
+        assert _check("kw_count", ctx)[0] == "PASS"
+
+    def test_abstract_thuthesis_800_1000(self, tmp_path: Path):
+        good = "\\begin{cabstract}\n" + "字" * 900 + "\n\\end{cabstract}\n"
+        assert _check("abstract_len", _ctx(tmp_path, good, template="thuthesis"))[0] == "PASS"
+        short = "\\begin{cabstract}\n" + "字" * 90 + "\n\\end{cabstract}\n"
+        assert _check("abstract_len", _ctx(tmp_path, short, template="thuthesis"))[0] == "FAIL"
+
+    def test_abstract_pku_doctor_800_1000(self, tmp_path: Path):
+        good = "\\begin{cabstract}\n" + "字" * 900 + "\n\\end{cabstract}\n"
+        ctx = _ctx(tmp_path, good, degree="doctor", template="pkuthss")
+        assert _check("abstract_len", ctx)[0] == "PASS"
+
+    def test_abstract_pku_master_no_threshold(self, tmp_path: Path):
+        # "一般 600 汉字左右" has no official range: must degrade, not invent bounds.
+        content = "\\begin{cabstract}\n" + "字" * 600 + "\n\\end{cabstract}\n"
+        status, ev = _check("abstract_len", _ctx(tmp_path, content, template="pkuthss"))
+        assert status == "NEEDS-LLM"
+        assert "无字数阈值依据" in ev
+
+    def test_no_yanshan_wordcount_bib_spillover(self, tmp_path: Path):
+        # Guides of THU/PKU/GB-generic define no body/intro/bib_min thresholds;
+        # those checkers must degrade to NEEDS-LLM instead of using yanshan values.
+        (tmp_path / "refs.bib").write_text(
+            "@article{k0, author={A}, title={T}, journal={J}, year={2018}}",
+            encoding="utf-8",
+        )
+        content = "\\chapter{绪论}\n" + "字" * 200 + "\n\\bibliography{refs}\n"
+        for template in ("thuthesis", "pkuthss", "generic"):
+            ctx = _ctx(tmp_path, content, template=template)
+            assert _check("wordcount", ctx)[0] == "NEEDS-LLM"
+            assert _check("intro_len", ctx)[0] == "NEEDS-LLM"
+            status, ev = _check("bib_count", ctx)  # 1 篇也不得套燕山下限判 FAIL
+            assert status == "NEEDS-LLM"
+            assert "无数量阈值依据" in ev
+
+
 class TestBodyChecks:
     def test_intro_len_pass_master(self, tmp_path: Path):
         content = "\\chapter{绪论}\n" + "字" * 3500 + "\n\\chapter{总结与展望}\n结束。\n"
@@ -457,6 +551,62 @@ class TestCliIntegration:
         assert "no_such_checker" in out  # 未知检查器降级说明
 
     def test_unknown_template_exits_2_with_hint(self):
-        result = _run_cli("main.tex", "--template", "thuthesis", "--degree", "doctor")
+        result = _run_cli("main.tex", "--template", "no-such-school", "--degree", "doctor")
         assert result.returncode == 2
-        assert "yanshan" in result.stderr
+        # stderr 必须列出全部可用清单（thuthesis/pkuthss/generic 清单落地后一并展示）
+        for name in ("yanshan", "thuthesis", "pkuthss", "generic"):
+            assert name in result.stderr
+
+    # ── thuthesis / pkuthss / generic 清单（07-08-template-checklists） ──
+    # fixture 天然违规（埋点 #24）：摘要约 90 字、附录章无 \appendix、无关键词宏。
+    # 负面证据红线：THU-/PKU- 清单不得出现燕山字数/文献量类 script 条目。
+
+    BANNED_NON_YS_METHODS = {
+        "script:wordcount",
+        "script:intro_len",
+        "script:conclusion_len",
+        "script:bib_count",
+        "script:bib_recency",
+        "script:conclusion_no_cite",
+        "script:chapter_summary",
+    }
+
+    def test_fixture_thuthesis_checklist(self):
+        result = _run_cli(
+            "main.tex", "--template", "thuthesis", "--degree", "doctor", "--year", "2026", "--json"
+        )
+        assert result.returncode == 1
+        payload = json.loads(result.stdout)
+        assert payload["template"] == "thuthesis"
+        by_id = {item["id"]: item for item in payload["items"]}
+        assert by_id["THU-01"]["status"] == "PASS"  # 题名 13 字 ≤ 25
+        assert by_id["THU-02"]["status"] == "FAIL"  # 摘要约 90 字，区间 800~1000
+        assert by_id["THU-24"]["status"] == "FAIL"  # 附录章无 \appendix
+        assert not self.BANNED_NON_YS_METHODS & {i["method"] for i in payload["items"]}
+
+    def test_fixture_pkuthss_checklist_degree_split(self):
+        result = _run_cli(
+            "main.tex", "--template", "pkuthss", "--degree", "master", "--year", "2026", "--json"
+        )
+        assert result.returncode == 1
+        payload = json.loads(result.stdout)
+        by_id = {item["id"]: item for item in payload["items"]}
+        assert by_id["PKU-01"]["status"] == "PASS"  # 题名 13 字 ≤ 20
+        assert by_id["PKU-02"]["status"] == "SKIP"  # 博士摘要阈值项，master 跳过
+        assert by_id["PKU-03"]["status"] == "NEEDS-LLM"  # 硕士"600左右"落 llm
+        assert by_id["PKU-22"]["status"] == "FAIL"  # 附录章无 \appendix
+        assert not self.BANNED_NON_YS_METHODS & {i["method"] for i in payload["items"]}
+
+    def test_fixture_generic_checklist(self):
+        result = _run_cli(
+            "main.tex", "--template", "generic", "--degree", "master", "--year", "2026", "--json"
+        )
+        assert result.returncode == 1
+        payload = json.loads(result.stdout)
+        by_id = {item["id"]: item for item in payload["items"]}
+        assert by_id["GEN-01"]["status"] == "PASS"  # 题名 13 字 ≤ 20（国标值）
+        # 国标摘要字数不作阈值：只报实测数并降级 NEEDS-LLM
+        assert by_id["GEN-05"]["status"] == "NEEDS-LLM"
+        assert "实测" in by_id["GEN-05"]["evidence"]
+        assert by_id["GEN-06"]["status"] == "PASS"  # 摘要无引用/图表/公式
+        assert by_id["GEN-21"]["status"] == "FAIL"  # 附录章无 \appendix

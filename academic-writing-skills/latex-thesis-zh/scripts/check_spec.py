@@ -103,6 +103,12 @@ def parse_checklist(md_path: Path) -> list[ChecklistItem]:
 
 
 # ── 阈值（依据各校规范原文；无依据的模板不设阈值） ───────────
+# Recognized keys (all optional; a missing key keeps the checker's built-in
+# default behaviour, i.e. the pre-parameterization hardcoded values):
+#   body / intro / abstract: (lo, hi) char ranges; bib_min: int floor;
+#   title_max (default 25) / title_sub_max (default 35): title length caps;
+#   kw_range (default (3, 8)): keyword count range;
+#   kw_sep (default ";"): required keyword separator, ";" / "," / None (no rule).
 
 TEMPLATE_THRESHOLDS: dict[str, dict[str, dict]] = {
     # 燕山大学 2024 版：正文/绪论字数 §2.1，摘要字数 §2.2，文献数量 §1.6。
@@ -120,6 +126,42 @@ TEMPLATE_THRESHOLDS: dict[str, dict[str, dict]] = {
             "abstract": (500, 650),
             "bib_min": 40,
         },
+    },
+    # Tsinghua grad-school guide (2025-03 public copy): title strictly <= 25
+    # chars (§2.3.1, no combined-subtitle clause -> subtitle counts into the
+    # same cap), abstract 800~1000 for both degrees (§2.3.5). Keyword rule
+    # "<= 5, no lower bound" (§2.3.5) has no decidable range -> checklist item
+    # stays llm, so no kw_range here. No wordcount/intro/conclusion/bib rules
+    # exist in the guide -> those keys must stay absent.
+    "thuthesis": {
+        "doctor": {"title_max": 25, "title_sub_max": 25, "abstract": (800, 1000)},
+        "master": {"title_max": 25, "title_sub_max": 25, "abstract": (800, 1000)},
+    },
+    # PKU grad-school guide V2.0 (2014-05): title "generally" <= 20 chars
+    # (§1.1; subtitle joined by a dash, no extra length allowance), keywords
+    # 3~5 comma-separated (§1.3), doctoral abstract 800~1000 (§1.3). Master
+    # abstract "about 600" has no official range -> checklist item stays llm,
+    # so the master dict has no "abstract" key. No wordcount/intro/conclusion/
+    # bib rules exist in the guide -> those keys must stay absent.
+    "pkuthss": {
+        "doctor": {
+            "title_max": 20,
+            "title_sub_max": 20,
+            "kw_range": (3, 5),
+            "kw_sep": ",",
+            "abstract": (800, 1000),
+        },
+        "master": {"title_max": 20, "title_sub_max": 20, "kw_range": (3, 5), "kw_sep": ","},
+    },
+    # GB/T 7713.1-2006 (superseded by the 2025 edition since 2026-02-01;
+    # school rules take precedence): title <= 20 chars (§5.1.1.2), keywords
+    # 3~8 (§5.1.6, national default; no separator rule -> kw_sep None skips
+    # the separator check). The national abstract length (200~300) conflicts
+    # with common school-level rules -> no "abstract" key, the checker only
+    # reports the measured count.
+    "generic": {
+        "doctor": {"title_max": 20, "title_sub_max": 20, "kw_sep": None},
+        "master": {"title_max": 20, "title_sub_max": 20, "kw_sep": None},
     },
 }
 
@@ -343,13 +385,16 @@ def check_title_len(ctx: SpecContext) -> CheckOutcome:
         return "NEEDS-LLM", "未找到 \\title/\\ctitle，题名可能在封面模板中，请人工核对"
     n = _char_count(title)
     has_sub = bool(SUBTITLE_SEP_RE.search(title))
-    if n <= 25:
+    th = ctx.thresholds or {}
+    t_max = th.get("title_max", 25)
+    sub_max = th.get("title_sub_max", 35)
+    if n <= t_max:
         return "PASS", f"题名 {n} 字: {title}"
-    if has_sub and n <= 35:
-        return "PASS", f"含副题名合计 {n} 字（≤35）: {title}"
+    if has_sub and n <= sub_max:
+        return "PASS", f"含副题名合计 {n} 字（≤{sub_max}）: {title}"
     if has_sub:
-        return "FAIL", f"含副题名合计 {n} 字 > 35: {title}"
-    return "FAIL", f"题名 {n} 字 > 25 且未见副题名结构: {title}"
+        return "FAIL", f"含副题名合计 {n} 字 > {sub_max}: {title}"
+    return "FAIL", f"题名 {n} 字 > {t_max} 且未见副题名结构: {title}"
 
 
 def check_abstract_no_cite(ctx: SpecContext) -> CheckOutcome:
@@ -372,16 +417,29 @@ def check_abstract_no_cite(ctx: SpecContext) -> CheckOutcome:
 
 
 def check_kw_count(ctx: SpecContext) -> CheckOutcome:
+    th = ctx.thresholds or {}
+    lo, hi = th.get("kw_range", (3, 8))
+    sep = th.get("kw_sep", ";")  # ";" / "," / None = no separator rule
+    if sep == ",":
+        sep_re, sep_name = r"[,，]", "逗号"
+    elif sep is None:
+        sep_re, sep_name = None, ""
+    else:
+        sep_re, sep_name = r"[;；]", "分号"
+    hint = f"且{sep_name}分隔" if sep_re else ""
     kws = ctx.keywords("zh")
     if kws is None:
-        return "NEEDS-LLM", "未找到中文关键词（可能使用封面自定义宏），请人工核对 3~8 个且分号分隔"
+        return (
+            "NEEDS-LLM",
+            f"未找到中文关键词（可能使用封面自定义宏），请人工核对 {lo}~{hi} 个{hint}",
+        )
     n = len(kws)
     raw = getattr(ctx, "_kw_raw", "")
-    if n > 1 and not re.search(r"[;；]", raw):
-        return "FAIL", f"关键词 {n} 个，但未用分号分隔: {raw.strip()}"
-    if 3 <= n <= 8:
+    if sep_re and n > 1 and not re.search(sep_re, raw):
+        return "FAIL", f"关键词 {n} 个，但未用{sep_name}分隔: {raw.strip()}"
+    if lo <= n <= hi:
         return "PASS", f"关键词 {n} 个: {'；'.join(kws)}"
-    return "FAIL", f"关键词 {n} 个（规范要求 3~8 个）: {'；'.join(kws)}"
+    return "FAIL", f"关键词 {n} 个（规范要求 {lo}~{hi} 个）: {'；'.join(kws)}"
 
 
 def check_kw_zh_en_match(ctx: SpecContext) -> CheckOutcome:
@@ -399,9 +457,10 @@ def check_abstract_len(ctx: SpecContext) -> CheckOutcome:
     if not spans:
         return "NEEDS-LLM", "未找到中文摘要环境，请人工核对字数"
     n = _char_count(re.sub(r"\\[a-zA-Z]+\*?(?:\[[^\]]*\])?|[{}]", "", spans[0]["text"]))
-    if ctx.thresholds is None:
+    bounds = (ctx.thresholds or {}).get("abstract")
+    if bounds is None:
         return "NEEDS-LLM", f"摘要实测约 {n} 字；当前模板无字数阈值依据，请对照本校规范判断"
-    lo, hi = ctx.thresholds["abstract"]
+    lo, hi = bounds
     return _range_verdict(n, lo, hi, "中文摘要")
 
 
@@ -425,9 +484,10 @@ def check_wordcount(ctx: SpecContext) -> CheckOutcome:
     if not body:
         return "NEEDS-LLM", "未识别到正文章（\\chapter），请人工核对字数"
     n = sum(_char_count(ctx.range_visible(ch["start"], ch["end"])) for ch in body)
-    if ctx.thresholds is None:
+    bounds = (ctx.thresholds or {}).get("body")
+    if bounds is None:
         return "NEEDS-LLM", f"正文实测约 {n} 字；当前模板无字数阈值依据"
-    lo, hi = ctx.thresholds["body"]
+    lo, hi = bounds
     return _range_verdict(n, lo, hi, "正文（含图表文字）")
 
 
@@ -436,9 +496,10 @@ def check_intro_len(ctx: SpecContext) -> CheckOutcome:
     if rng is None:
         return "NEEDS-LLM", "未识别到绪论/引言章，请人工核对绪论字数"
     n = _char_count(ctx.range_visible(rng[0], rng[1]))
-    if ctx.thresholds is None:
+    bounds = (ctx.thresholds or {}).get("intro")
+    if bounds is None:
         return "NEEDS-LLM", f"绪论实测约 {n} 字；当前模板无字数阈值依据"
-    lo, hi = ctx.thresholds["intro"]
+    lo, hi = bounds
     return _range_verdict(n, lo, hi, "绪论")
 
 
@@ -522,9 +583,9 @@ def check_bib_count(ctx: SpecContext) -> CheckOutcome:
     if ctx.bib_entries is None:
         return "NEEDS-LLM", ctx.bib_note + "，请人工核对文献数量"
     n = ctx.bib_entries
-    if ctx.thresholds is None:
+    need = (ctx.thresholds or {}).get("bib_min")
+    if need is None:
         return "NEEDS-LLM", f"参考文献 {n} 篇（{ctx.bib_note}）；当前模板无数量阈值依据"
-    need = ctx.thresholds["bib_min"]
     ev = f"参考文献 {n} 篇，{ctx.degree} 下限 {need}（{ctx.bib_note}；外文数量请一并人工确认）"
     if n >= need:
         return "PASS", ev
@@ -699,7 +760,9 @@ def generate_report(
     spec_label: str,
     degree_note: str,
 ) -> str:
-    counts = dict.fromkeys(("PASS", "FAIL", "NEEDS-LLM", "MODULE", "MANUAL", "SKIP"), 0)
+    counts: dict[str, int] = dict.fromkeys(
+        ("PASS", "FAIL", "NEEDS-LLM", "MODULE", "MANUAL", "SKIP"), 0
+    )
     for r in results:
         counts[r.status] += 1
     lines = []
