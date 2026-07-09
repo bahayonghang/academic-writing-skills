@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "验证清单联动约定未被破坏（test_spec_checklists 契约）"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验证测试加载方式与 hook 陷阱规避是否符合规范"}

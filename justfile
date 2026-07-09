@@ -1,5 +1,8 @@
 # Academic Writing Skills - Just Commands
 
+# Use PowerShell on Windows so recipes do not require a POSIX `sh`.
+set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
+
 # 默认显示所有可用命令
 default:
     @just --choose
@@ -99,25 +102,22 @@ typecheck:
 # 运行测试
 test:
     @echo "  → 运行单元测试..."
-    @uv run --extra dev python -m pytest tests/ academic-writing-skills/*/tests/
+    @uv run --extra dev python -c "import pathlib, subprocess, sys; paths = ['tests', *(str(p) for p in pathlib.Path('academic-writing-skills').glob('*/tests') if p.is_dir())]; raise SystemExit(subprocess.call([sys.executable, '-m', 'pytest', *paths]))"
     @echo "  ✓ 测试通过"
 
 # 清理缓存文件
 clean:
     @echo "🧹 清理缓存文件..."
-    @find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-    @find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-    @find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
-    @find . -type f -name "*.pyc" -delete 2>/dev/null || true
+    @uv run --extra dev python -c "import pathlib, shutil; roots = pathlib.Path('.'); [shutil.rmtree(p, ignore_errors=True) for name in ('__pycache__', '.pytest_cache', '.ruff_cache') for p in roots.rglob(name) if p.is_dir()]; [p.unlink(missing_ok=True) for p in roots.rglob('*.pyc')]"
     @echo "✅ 清理完成！"
 
 # 本地预览文档
 docs:
     @echo "📚 启动文档开发服务器..."
-    @cd docs && npm run docs:dev
+    @cd docs; npm run docs:dev
 
 # 构建文档
 doc-build:
     @echo "🏗️ 构建文档..."
-    @cd docs && npm run docs:build
+    @cd docs; npm run docs:build
 

@@ -7,7 +7,7 @@
 ## 结构
 
 ```
-main.tex                  # thuthesis 骨架，仅 \include 各章
+main.tex                  # thuthesis 骨架，仅 \include 各章（另含盲审字段埋点）
 chapters/intro.tex        # 绪论
 chapters/related.tex      # 相关工作
 chapters/method-a.tex     # 占位对齐方法（与 method-b 同含"方法"）
@@ -15,6 +15,8 @@ chapters/method-b.tex     # 占位融合方法
 chapters/experiment.tex   # 实验与分析
 chapters/conclusion.tex   # 总结与展望
 chapters/appendix-gbk.tex # GB18030 编码边角文件
+chapters/achievements.tex # 攻读学位期间成果（盲审 R2 埋点）
+chapters/acknowledgement.tex # 致谢（盲审 R1 埋点）
 references.bib            # 含缺字段条目的虚构文献库
 ```
 
@@ -45,6 +47,13 @@ references.bib            # 含缺字段条目的虚构文献库
 | 21 | conclusion.tex | 缺局限与未来工作/缺核心发现 | `experiment` → `Conclusion lacks ...` |
 | 22 | appendix-gbk.tex | GB18030 编码 | 各脚本 → `WARN ... GB18030` 且内容被正确解析 |
 | 23 | references.bib | @phdthesis 缺 school / @online 缺 urldate / @techreport 缺 institution / @article 缺 volume+pages | `bibliography --standard gb7714` → 对应 Missing field |
+| 24 | 全工程（未新增文件） | 天然规模性违规：文献仅 5 篇、无 2025+ 文献、摘要约 90 字、正文约 918 字、无关键词宏、method/experiment 三章无“本章小结”、附录章无 `\appendix` | `spec-check --template yanshan --degree doctor --year 2026` → YS-11/18/19/24/25/26/47 FAIL，YS-01/13/14/17/29/30/31/33 PASS（断言见 `tests/skills/latex_thesis_zh/test_check_spec.py`）；同批违规在新清单下：`--template thuthesis\|pkuthss` → THU-02/PKU-02（摘要 800–1000）FAIL，THU-24/PKU-22/GEN-21（附录无 `\appendix`）FAIL，THU-01/PKU-01/GEN-01（题名 13 字）PASS，generic 摘要字数只报数（GEN-05 NEEDS-LLM）（断言同文件） |
+| 25 | main.tex preamble | `\author{测试作者}` 与 `\thusetup{supervisor = {测试导师}}` 字段（带 `% seed:`） | `blind-review --check` → R1 作者/导师字段 HIGH；`--generate` → 副本中字段值→`□□□` |
+| 26 | achievements.tex 条目一 | 成果条目含作者列表 + 成果名称 + 期刊页码（条目二已合规，预期不检出） | `blind-review --check` → R2 HIGH；`--generate` → 副本条目上方插 `% TODO-BLIND(R2)`，条目零改写 |
+| 27 | acknowledgement.tex | 非空致谢，正文含“测试导师/测试作者”姓名 | `blind-review --check` → R1 致谢 HIGH；`--author/--supervisor` 全文姓名扫描命中；`--generate` → 正文→“（盲审版本，致谢内容略）” |
+
+注：致谢/成果两章标题命中 `check_spec.py` 的 `FRONT_BACK_TITLE_RE`，不计入正文字数与
+“本章小结”检查，埋点 #24 的 spec-check 断言不受影响。
 
 ## 使用
 
