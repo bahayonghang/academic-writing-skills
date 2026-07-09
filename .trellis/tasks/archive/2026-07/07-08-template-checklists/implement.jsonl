@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "清单五列格式、CHECKERS 双向锁、TEMPLATE_THRESHOLDS 阈值来源规则——写任何清单/改 check_spec.py 前必读"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "副本脚本测试加载约定、SKILL.md 表格 hook 陷阱、evals.json 写入方式"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/thuthesis-manual-facts.md", "reason": "thuthesis v7.7.1 手册事实（编号分隔符默认点号等）——THU 清单与快照修正的唯一模板层依据"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/tsinghua-grad-spec.md", "reason": "清华研究生院写作指南逐字摘录——THU 量化阈值（题名25/摘要800-1000/关键词≤5）唯一校方依据"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/pku-grad-spec.md", "reason": "北大写作指南 V2.0 + pkuthss v1.9.4 文档事实——PKU 清单唯一依据（题名20/摘要分学位/关键词3~5逗号）"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/gbt7713-generic-items.md", "reason": "GB/T 7713.1 版本关系与逐条摘录、国标原文vs校级惯例判别表——GEN 清单与 generic.md 版本注记依据"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/missing-evidence.md", "reason": "10 项缺证清单——出现在缺证列表的条目禁止写入 THU-/PKU- 清单（负面证据红线）"}

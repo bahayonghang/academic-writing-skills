@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "验证清单联动约定：五列格式、script:引用存在于 CHECKERS、module:是路由表真实模块、阈值来源规则"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验证测试加载方式与 hook 陷阱规避是否符合规范"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/tsinghua-grad-spec.md", "reason": "逐条核对 THU- 清单与阈值的可追溯性（零编造审查）"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/pku-grad-spec.md", "reason": "逐条核对 PKU- 清单与阈值的可追溯性（零编造审查）"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/thuthesis-manual-facts.md", "reason": "核对 thuthesis.md 快照修正（点号默认）与 THU 模板层条目出处"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/gbt7713-generic-items.md", "reason": "核对 GEN- 清单国标条目出处与'校级惯例须标注'规则执行情况"}
+{"file": ".trellis/tasks/07-08-template-checklists/research/missing-evidence.md", "reason": "反向审查：缺证条目不得出现在 THU-/PKU- 清单；燕山值不得外溢"}
