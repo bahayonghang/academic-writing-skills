@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "改 yanshan.md 清单节/SKILL.md 路由前必读：清单-检查器-契约测试联动约定"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "importlib 测试加载、evals.json 须 Bash python 写入、SKILL.md 表格 hook 陷阱"}
+{"file": ".trellis/tasks/07-08-spec-check-blind-review/research/yanshan-2024-spec-extracted.txt", "reason": "燕山2024撰写规范全文提取（唯一事实来源，勿再直接读 PDF）"}
