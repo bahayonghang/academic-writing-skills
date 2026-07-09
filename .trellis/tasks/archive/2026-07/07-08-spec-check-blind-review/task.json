@@ -1,0 +1,30 @@
+{
+  "id": "spec-check-blind-review",
+  "name": "spec-check-blind-review",
+  "title": "latex-thesis-zh 规范逐项终检与盲审支持",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-08",
+  "completedAt": "2026-07-09",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-08-spec-final-check",
+    "07-08-blind-review",
+    "07-08-template-checklists"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
