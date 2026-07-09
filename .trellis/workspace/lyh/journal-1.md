@@ -506,3 +506,43 @@ Added single-paragraph 本章小结 routing and writing guidance to latex-thesis
 ### Next Steps
 
 - None - task complete
+
+---
+
+## 2026-07-09 — thu/pku/generic 模板检查清单扩充（任务树收尾）
+
+**Date**: 2026-07-09
+**Task**: 07-08-template-checklists（父任务 07-08-spec-check-blind-review 第 3/3 子任务）
+**Branch**: `dev`
+
+### Summary
+
+trellis-research 网络核实三校规范来源（清华/北大写作指南逐字摘录、thuthesis v7.7.1 手册、GB/T 7713.1 版本关系，10 项缺证如实记录）；三模板各落地逐项检查清单（THU 37 / PKU 35 / GEN 27 条，全部可溯源）；check_spec.py 阈值窄幅参数化（键缺省=燕山原行为，基线逐字节零回归）；负面证据以 BANNED_NON_YS_METHODS 测试固化防阈值外溢；三处有据事实修正（thuthesis 点号默认、pkuthss 符号说明条件式、GB/T 7713.1-2025 版本注记）。质检 9/9 PASS 含零编造逐字抽查 35 条。父任务六条跨子任务验收全过，任务树四目录统一归档。
+
+### Main Changes
+
+- templates/{thuthesis,pkuthss,generic}.md：新增清单节 + 事实修正 + 来源头
+- scripts/check_spec.py：TEMPLATE_THRESHOLDS 三模板键 + title_len/kw_count 参数化 + .get() 降级
+- 测试净增 15 用例（阈值覆盖/CLI 集成/key_requirements 回归锁）；unknown-template 测试改名
+- 文档同步：spec-check.md、SKILL.md 路由行、spec-checklist-convention.md（参数化边界+负面证据规则）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b6679c6` | feat(latex-thesis-zh): [AI] ✨ thu/pku/generic 逐项检查清单与模板阈值参数化 |
+| (archive×4) | chore(task): archive 07-08-*（spec-final-check / blind-review / template-checklists / 父任务） |
+
+### Testing
+
+- [OK] just ci 全绿：1015 passed（基线 1000）；pyright 0 errors 0 warnings
+- [OK] yanshan fixture check_spec 输出与改动前逐字节一致（PYTHONIOENCODING=utf-8 采集）
+- [OK] detect_template key_requirements diff 仅限三处有据修正
+
+### Status
+
+[OK] **Completed** — 任务树 3/3 子任务完成并归档
+
+### Next Steps
+
+- 遗留（超范围，未排期）：ustcthesis/fduthesis 等 documentclass 自动推断仍 exit 2，需显式 --template generic
