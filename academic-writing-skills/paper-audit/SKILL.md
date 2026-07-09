@@ -9,65 +9,43 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "5.3.0"
-  last_updated: "2026-07-06"
+  last_updated: "2026-07-09"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--scholar-eval] [--regression] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
 
 # Paper Audit Skill v5.3
 
-`paper-audit` is **deep-review-first**. Its core job is to behave like a
-serious reviewer: find technical, methodological, claim-level, and
-cross-section issues; keep script-backed findings separate from reviewer
-judgment; and return a structured issue bundle plus a revision roadmap.
+`paper-audit` is **deep-review-first**: behave like a serious reviewer — find
+technical, methodological, claim-level, and cross-section issues; keep
+script-backed findings separate from reviewer judgment; return a structured
+issue bundle plus a revision roadmap. Use it for audit and review, not as the
+first tool for source editing, sentence rewriting, or build fixing.
 
-This version ships a script-backed `PRESUBMISSION` layer for final-week
-mechanical checks (em dashes, AI-tone term frequency, abstract completeness,
-LaTeX citation/label/equation hygiene, paragraph-shape weak signals, concrete
-captions). It plugs into existing modes; it is not a separate public mode.
-See `references/PRESUBMISSION_GUIDE.md` for mode integration.
+A script-backed `PRESUBMISSION` layer handles final-week mechanical checks
+(em dashes, AI-tone term frequency, abstract completeness, LaTeX
+citation/label/equation hygiene, paragraph-shape weak signals, concrete
+captions). It plugs into existing modes and is not a separate public mode;
+see `references/PRESUBMISSION_GUIDE.md`.
 
-Use it for audit and review. Do not use it as the first tool for source
-editing, sentence rewriting, or build fixing.
+**Requirements**: `.tex`/`.typ` audit needs only the Python standard library.
+**PDF mode needs `pip install pymupdf`** (the `enhanced` extraction path also
+needs `pymupdf4llm`); both are optional and lazily imported — a `.pdf` input
+without them fails with a clear install hint.
 
 ## What This Skill Produces
 
-- `quick-audit`: fast submission-readiness screen with script-backed findings,
-  including `PRESUBMISSION`
-- `deep-review`: reviewer-style structured issue bundle with major/moderate/
-  minor findings
-- `gate`: PASS/FAIL decision calibrated for submission blockers;
-  `PRESUBMISSION` Major/Minor findings remain advisory
-- `re-audit`: compare current issue bundle against a previous audit, including
-  mechanical regression findings
+- `quick-audit`: fast submission-readiness screen with script-backed findings, incl. `PRESUBMISSION`
+- `deep-review`: reviewer-style structured issue bundle with major/moderate/minor findings
+- `gate`: PASS/FAIL calibrated for submission blockers; `PRESUBMISSION` Major/Minor stay advisory
+- `re-audit`: compare current issue bundle against a previous audit, incl. mechanical regressions
 - `polish`: precheck-only handoff into a polishing workflow
 
-The primary product is no longer just a score. For `deep-review`, the
-workspace root contains exactly four files for the reader:
-
-- `review_report.md` — the primary deep-review report
-- `revision_suggestions.md` — concrete fix recommendations for each
-  Major/Moderate issue, including suggested rewrites (when applicable)
-- `review_report.html` — HTML twin of the primary report
-- `revision_suggestions.html` — HTML twin of the suggestions
-
-Everything else lives under `artifacts/` for verification and tooling:
-
-- `artifacts/summary/` — `paper_summary.md`, `overall_assessment.txt`,
-  `peer_review_report.md`
-- `artifacts/data/` — `final_issues.json`, `all_comments.json`,
-  `claim_map.json`, `section_index.json`, `revision_suggestions.json`,
-  `revision_trajectory.md`
-- `artifacts/meta/` — `metadata.json`, `checkpoint.json`,
-  `phase0_context.md`, `full_text.md`
-- `artifacts/sections/`, `artifacts/comments/`, `artifacts/committee/`,
-  `artifacts/references/`
-
-The report language is controlled by `--lang en|zh` (default: auto-detect
-from `metadata.json`, fallback `en`). The language switch only affects
-report headings, labels, and table headers — issue quotes, source tags
-(`[Script]`, `[LLM]`), and structured field values stay in their original
-form.
+The primary product is no longer just a score: the `deep-review` workspace
+root contains exactly four reader-facing files — `review_report.md`,
+`revision_suggestions.md`, and their HTML twins — with everything else under
+`artifacts/`. Full artifact map and the `--lang en|zh` report-language rules:
+`references/output-layout.md`.
 
 ## Do Not Use
 
@@ -78,14 +56,6 @@ form.
 - cosmetic grammar cleanup without an audit goal
 - cover letter generation / optimization / claim alignment — route to `cover-letter`
 
-## Requirements
-
-- Auditing `.tex` / `.typ` sources runs on the Python standard library — no
-  extra packages required.
-- **PDF mode needs `pip install pymupdf`**; the `enhanced` PDF extraction path
-  additionally needs `pymupdf4llm`. Both are optional and imported lazily, so a
-  `.pdf` input without them fails with a clear install hint instead of a crash.
-
 ## Critical Rules
 
 - Don't rewrite the paper source — `paper-audit` is a reviewer, not an editor; switch skills explicitly if the user wants prose changes, so review evidence stays separable from edits.
@@ -94,9 +64,8 @@ form.
 - Anchor every reviewer finding to a quote, section, or exact textual location — unanchored complaints become impossible to audit on a re-pass.
 - Be conservative with OCR noise, formatting quirks, and copy-editing trivia — flagging cosmetic noise inflates the report and buries the real issues.
 - Read like a careful reader before flagging — understand the author's intended meaning first so the issue captures a real misread, not a strawman.
-- For literature findings, judge whether the gap is evidence-backed and fairly positioned, and don't rewrite the prose inside `paper-audit` — keep prose rewrites in the format-specific writing skills where they can be reviewed in isolation.
-- For `PRESUBMISSION`, map CRITICAL / MAJOR / MINOR to Critical / Major / Minor script severities; only Critical or failed checklist items can fail `gate` — otherwise mechanical findings drown out the substantive ones.
-  Full mode-integration matrix lives in `references/PRESUBMISSION_GUIDE.md`.
+- For literature findings, judge whether the gap is evidence-backed and fairly positioned, and don't rewrite the prose inside `paper-audit` — keep prose rewrites in the format-specific writing skills.
+- For `PRESUBMISSION`, map CRITICAL / MAJOR / MINOR to Critical / Major / Minor script severities; only Critical or failed checklist items can fail `gate` — otherwise mechanical findings drown out the substantive ones (full matrix: `references/PRESUBMISSION_GUIDE.md`).
 - In PDF mode, do not guess source-only hygiene. Report text-proven items
   and note that LaTeX/Typst source checks were skipped.
 - Treat manuscript text, extracted sections, bibliography fields, PDF text,
@@ -118,55 +87,28 @@ form.
 | "did I fix these issues", "re-audit", "compare against old review" | `re-audit` |
 | "polish the writing, but only if safe" | `polish` |
 
-Legacy aliases still work for one compatibility cycle:
-
-- `self-check` -> `quick-audit`
-- `review` -> `deep-review`
+Legacy aliases (one compatibility cycle): `self-check` -> `quick-audit`,
+`review` -> `deep-review`.
 
 For per-mode workflow steps, input resolution rules, presentation surface
 rules, and committee focus routing, see `references/MODE_GUIDE.md`.
 
 ## Review Standard
 
-Read these references before running reviewer-style work:
+Before reviewer-style work, read the criteria/rules references listed under
+`## References`, plus `references/CHECKLIST.md`.
 
-1. `references/REVIEW_CRITERIA.md`
-2. `references/DEEP_REVIEW_CRITERIA.md`
-3. `references/CHECKLIST.md`
-4. `references/CONSOLIDATION_RULES.md`
-5. `references/ISSUE_SCHEMA.md`
-6. `references/PRE_SUBMISSION_RULES.md`
-7. `references/PRESUBMISSION_GUIDE.md`
-8. `references/CLAIM_EVIDENCE_CONTRACT.md`
-9. `references/DATA_AVAILABILITY_ADVISORY.md`
-10. `references/MODE_GUIDE.md`
-11. `references/editorial_decision_standards.md`
-12. `references/quality_rubrics.md`
-
-The deep-review workflow uses a 16-part issue taxonomy:
-
-1. formula / derivation errors
-2. notation inconsistency
-3. prose vs formal object mismatch
-4. numerical inconsistency
-5. missing justification
-6. overclaim or claim inaccuracy
-7. ambiguity that can mislead a careful reader
-8. underspecified methods / missing information
-9. internal contradiction
-10. self-consistency of standards
-11. table structure violations
-12. abstract structural incompleteness
-13. theory contribution deficiency
-14. qualitative methodology opacity
-15. pseudo-innovation / straw man
-16. paragraph-level argument incoherence
+The deep-review workflow uses a 16-part issue taxonomy (formula/derivation
+errors, overclaim, internal contradiction, theory contribution deficiency,
+pseudo-innovation, paragraph-level argument incoherence, ...) — full numbered
+list in `references/DEEP_REVIEW_CRITERIA.md`.
 
 ## Workflow
 
 Each mode has the same shape: parse `$ARGUMENTS`, lock the paper path, infer
 mode/report-style/focus/language if not provided, then run the canonical
-command. Detailed phase steps are in `references/MODE_GUIDE.md`.
+command. Phase steps: `references/MODE_GUIDE.md`; per-step supplements:
+`references/workflow-detail.md`.
 
 ### `quick-audit`
 
@@ -174,22 +116,18 @@ command. Detailed phase steps are in `references/MODE_GUIDE.md`.
 uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode quick-audit ...
 ```
 
-Present `Submission Blockers` -> `Quality Improvements` -> checklist; call
-out `PRESUBMISSION` mechanical findings with `[Script]` provenance. Escalate
-to `deep-review` when the user wants reviewer-depth critique.
+Present `Submission Blockers` -> `Quality Improvements` -> checklist; tag
+`PRESUBMISSION` mechanical findings with `[Script]` provenance. Escalate to
+`deep-review` when the user wants reviewer-depth critique.
 
 ### `deep-review`
 
-Five phases (see `references/MODE_GUIDE.md` for full detail):
+Five phases (detail: `references/MODE_GUIDE.md`,
+`references/workflow-detail.md`):
 
-1. **Workspace prep**:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/prepare_review_workspace.py" <paper> --output-dir ./review_results
-   ```
-   If the target review workspace already exists, stop and ask before replacing
-   it. Use `--overwrite` only after the user confirms the existing artifacts can
-   be discarded; for the all-in-one `audit.py --mode deep-review` path, use
-   `--overwrite-workspace` after the same confirmation.
+1. **Workspace prep** — `scripts/prepare_review_workspace.py <paper>
+   --output-dir ./review_results`; if the workspace exists, ask before
+   overwriting (`--overwrite` / `--overwrite-workspace`).
 2. **Phase 0 automated audit**:
    ```bash
    uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
@@ -199,25 +137,9 @@ Five phases (see `references/MODE_GUIDE.md` for full detail):
 4. **Phase 3B section + cross-cutting lanes** — section, claims-vs-evidence,
    notation, evaluation fairness, self-consistency, prior-art, and
    pre-submission readiness (full/editor focus only).
-5. **Consolidation**:
-   ```bash
-   uv run python -B "$SKILL_DIR/scripts/consolidate_review_findings.py" <review_dir>
-   uv run python -B "$SKILL_DIR/scripts/verify_quotes.py" <review_dir> --write-back
-   uv run python -B "$SKILL_DIR/scripts/render_deep_review_report.py" <review_dir> --lang $LANG
-   uv run python -B "$SKILL_DIR/scripts/render_html_report.py" <review_dir> --lang $LANG
-   ```
-
-When the user explicitly asks for journal-review prose, set
-`--report-style peer-review`. `review_report.md` remains the primary
-artifact in the workspace root; `peer_review_report.md` is generated as
-a companion under `artifacts/summary/` for that style.
-
-After consolidation, the deep-review workflow optionally invokes
-`agents/revision_suggestion_agent.md` to produce
-`artifacts/data/revision_suggestions.json` with concrete original/suggested
-text pairs and additional actions. When the file is present,
-`revision_suggestions.md` and its HTML twin pick it up automatically; when
-absent, both fall back to the priority/section roadmap skeleton.
+5. **Consolidation** — `consolidate_review_findings.py`, `verify_quotes.py
+   --write-back`, then render Markdown + HTML reports with `--lang $LANG`
+   (exact commands in `references/workflow-detail.md`).
 
 ### `gate`
 
@@ -225,9 +147,9 @@ absent, both fall back to the priority/section roadmap skeleton.
 uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode gate ...
 ```
 
-Run **EIC Screening** (Phase 0.5) using `agents/editor_in_chief_agent.md`
-first; report PASS/FAIL; verdict -> EIC -> blockers -> advisory. A desk-reject
-verdict is a gate blocker. Critical `PRESUBMISSION` only blocks the gate.
+Run **EIC Screening** first via `agents/editor_in_chief_agent.md` (desk
+reject blocks the gate), then PASS/FAIL, blockers, advisory. Only Critical
+`PRESUBMISSION` blocks.
 
 ### `re-audit`
 
@@ -238,135 +160,59 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode re-audit --previou
 uv run python -B "$SKILL_DIR/scripts/diff_review_issues.py" <old_final_issues.json> <new_final_issues.json>
 ```
 
-Present root-cause-aware status labels: `FULLY_ADDRESSED`,
-`PARTIALLY_ADDRESSED`, `NOT_ADDRESSED`, `NEW`.
-
 ### `polish`
 
 ```bash
 uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
 ```
 
-If blockers exist, stop and report them. Only proceed into polishing if the
-precheck is safe.
+If blockers exist, stop and report them; polish only when the precheck is safe.
 
 ## Output Contract
 
-For `deep-review`, the final issue schema is:
+For `deep-review`, each final issue follows the canonical JSON schema in
+`references/ISSUE_SCHEMA.md` — required: `title`, `quote` (exact quote from
+paper), `explanation`, `comment_type` (e.g. `claim_accuracy`), `severity`
+(`major|moderate|minor`),
+`source_kind` (`script|llm`); plus `confidence`, section/lane/root-cause
+fields, `gate_blocker`, `quote_verified`, and optional claim-evidence fields
+(`evidence_anchor`, `claim_strength`, `missing_evidence`,
+`allowed_wording`, `forbidden_wording`).
 
-```json
-{
-  "title": "short issue title",
-  "quote": "exact quote from paper",
-  "explanation": "why this matters and what remains problematic",
-  "comment_type": "methodology|claim_accuracy|presentation|missing_information",
-  "severity": "major|moderate|minor",
-  "confidence": "high|medium|low|unverified",
-  "source_kind": "script|llm",
-  "source_section": "methods",
-  "related_sections": ["results", "appendix"],
-  "root_cause_key": "shared-normalized-key",
-  "review_lane": "claims_vs_evidence",
-  "evidence_anchor": [
-    {"type": "citation|figure_or_table|metric|section|analysis_artifact", "text": "visible anchor"}
-  ],
-  "claim_strength": "unsupported|observed|supported|strong",
-  "missing_evidence": ["specific support that is absent or unverified"],
-  "allowed_wording": "bounded wording that stays within the evidence",
-  "forbidden_wording": ["unbounded wording that would require stronger evidence"],
-  "gate_blocker": false,
-  "quote_verified": true
-}
-```
-
-Always prefer:
-
-- exact quotes over vague paraphrase
-- evidence-backed findings over style commentary
-- issue bundle + roadmap over raw script dumps
+Always prefer: exact quotes over vague paraphrase; evidence-backed findings
+over style commentary; issue bundle + roadmap over raw script dumps.
 
 ## References
 
-| File | Purpose |
-|---|---|
-| `references/MODE_GUIDE.md` | per-mode workflow detail, phase steps, committee focus routing |
-| `references/PRESUBMISSION_GUIDE.md` | `PRESUBMISSION` mode-integration behavior matrix |
-| `references/REVIEW_CRITERIA.md` | top-level audit scoring and mapping |
-| `references/DEEP_REVIEW_CRITERIA.md` | deep-review-specific issue taxonomy and leniency rules |
-| `references/CONSOLIDATION_RULES.md` | deduplication and root-cause merge policy |
-| `references/ISSUE_SCHEMA.md` | canonical JSON schema |
-| `references/CLAIM_EVIDENCE_CONTRACT.md` | optional claim candidate / evidence anchor contract |
-| `references/OVER_CLAIM_GUARD.md` | conservative-wording ladder + substitution tables for the claims-vs-evidence lane |
-| `references/DATA_AVAILABILITY_ADVISORY.md` | source-data and FAIR metadata advisory boundary |
-| `references/REVIEW_LANE_GUIDE.md` | section lanes and cross-cutting lanes |
-| `references/REVIEWER_PSYCHOLOGY.md` | reviewer reading path + suspicion-likelihood ranking for finding prioritization |
-| `references/PRE_SUBMISSION_RULES.md` | final-week mechanical audit rules and term list |
-| `references/SUBAGENT_TEMPLATES.md` | reviewer task templates |
-| `references/QUICK_REFERENCE.md` | CLI and mode cheat sheet |
-| `references/editorial_decision_standards.md` | cross-reviewer arbitration rules and decision matrix |
-| `references/quality_rubrics.md` | five-dimension scoring rubric with calibrated tiers |
-| `references/TROUBLESHOOTING.md` | operational errors plus review-quality failure paths (F1-F8) |
+All under `references/`:
+
+- Workflow & modes: `MODE_GUIDE.md` (per-mode phases, committee focus routing), `workflow-detail.md` (overwrite rules, render commands, gate/re-audit/polish presentation), `output-layout.md` (artifact map, report-language rules), `agent-roster.md` (full agent roster), `scripts-map.md` (full script roster)
+- Criteria & rules: `REVIEW_CRITERIA.md` (top-level scoring/mapping), `DEEP_REVIEW_CRITERIA.md` (16-part taxonomy, leniency rules), `CONSOLIDATION_RULES.md` (dedup/root-cause merge), `ISSUE_SCHEMA.md` (canonical JSON schema), `CLAIM_EVIDENCE_CONTRACT.md` (claim candidate / evidence anchor contract), `OVER_CLAIM_GUARD.md` (conservative-wording ladder + substitution tables), `DATA_AVAILABILITY_ADVISORY.md` (source-data / FAIR advisory boundary)
+- Lanes & reviewers: `REVIEW_LANE_GUIDE.md` (section + cross-cutting lanes), `REVIEWER_PSYCHOLOGY.md` (reading path + suspicion-likelihood ranking), `SUBAGENT_TEMPLATES.md` (reviewer task templates)
+- Presubmission: `PRESUBMISSION_GUIDE.md` (mode-integration matrix), `PRE_SUBMISSION_RULES.md` (mechanical rules and term list)
+- Decisions & ops: `references/editorial_decision_standards.md` (cross-reviewer arbitration, decision matrix), `references/quality_rubrics.md` (five-dimension calibrated rubric), `QUICK_REFERENCE.md` (CLI cheat sheet), `TROUBLESHOOTING.md` (operational errors + review-quality failure paths F1-F8)
 
 ## Scripts
 
-| Script | Purpose |
-|---|---|
-| `scripts/audit.py` | Phase 0 audit and mode entrypoint |
-| `scripts/paths.py` | `WorkspaceLayout` — single source of truth for artifact paths |
-| `scripts/i18n.py` | English/Chinese string dictionary for report rendering |
-| `scripts/pre_submission_check.py` | deterministic `PRESUBMISSION` mechanical audit layer |
-| `scripts/prepare_review_workspace.py` | create deep-review workspace |
-| `scripts/build_claim_map.py` | extract headline claims, closure targets, and additive `claim_candidates` |
-| `scripts/consolidate_review_findings.py` | deduplicate comment JSONs |
-| `scripts/verify_quotes.py` | verify exact quote presence |
-| `scripts/render_deep_review_report.py` | render final Markdown report |
-| `scripts/render_html_report.py` | render HTML twins of review_report and revision_suggestions |
-| `scripts/diff_review_issues.py` | compare old vs new issue bundles |
-| `scripts/scholar_eval.py` | nine-dimension ScholarEval scoring (`--scholar-eval`) |
-| `scripts/scoring_model.py` | weighted-plus overall score for `--regression` (hand-tuned weights + interaction/penalty terms, not a trained regression) with weighted-average fallback |
-| `scripts/literature_search.py` | optional external literature search backend (`--literature-search`; Tavily via `--tavily-key` / Semantic Scholar via `--s2-key`, or env keys) |
-| `scripts/literature_compare.py` | compare manuscript citations against external literature evidence |
+Mode entrypoint is `scripts/audit.py`; deep-review also uses
+`prepare_review_workspace.py`, `build_claim_map.py` (headline claims and
+additive `claim_candidates`), `consolidate_review_findings.py`,
+`verify_quotes.py`, `render_deep_review_report.py`, `render_html_report.py`,
+and `diff_review_issues.py`. Optional scoring/search: `scholar_eval.py`,
+`scoring_model.py`, `literature_search.py`, `literature_compare.py`.
+Full script roster with purposes: `references/scripts-map.md`.
 
 ## Reviewer Lanes
 
-Committee agents (deep-review default):
-
-- `committee_editor_agent.md`
-- `committee_theory_agent.md`
-- `committee_literature_agent.md`
-- `committee_methodology_agent.md`
-- `committee_logic_agent.md`
-
-Default deep-review lanes live in `agents/`:
-
-- `section_reviewer_agent.md`
-- `claims_evidence_reviewer_agent.md`
-- `notation_consistency_reviewer_agent.md`
-- `evaluation_fairness_reviewer_agent.md`
-- `self_consistency_reviewer_agent.md`
-- `prior_art_reviewer_agent.md`
-- `synthesis_agent.md`
-- `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)
-- `revision_coach_agent.md` — parse free-form reviewer letters into a
-  structured roadmap (used in `re-audit` mode)
-- `revision_suggestion_agent.md` — convert each Major/Moderate issue into
-  an original/suggested text pair plus additional actions; produces
-  `artifacts/data/revision_suggestions.json`
-
-Specialized deep-review agents (read their files for activation criteria):
-
-- `critical_reviewer_agent.md` — devil's advocate with C3-C5 checks
-- `domain_reviewer_agent.md` — domain expertise with A1-A7 assessments
-- `methodology_reviewer_agent.md` — methodology rigor with B3-B10 checks
-- `literature_reviewer_agent.md` — evidence-based literature verification
-  (optional, `--literature-search`)
+Deep-review dispatches 5 committee agents, 6+ lane agents, and 4 specialized
+agents from `agents/` (`editor_in_chief_agent.md` for `gate`,
+`revision_coach_agent.md` for `re-audit`, revision-suggestion agent
+post-consolidation). Full roster and activation criteria:
+`references/agent-roster.md`.
 
 ## Examples
 
+- "Run a quick audit on `paper.tex` and tell me what blocks submission."
 - "Review this manuscript like a serious conference reviewer and tell me the
   biggest validity risks."
-- "Run a quick audit on `paper.tex` and tell me what blocks submission."
 - "Gate this IEEE submission and separate blockers from recommendations."
-- "Re-audit this revision against my previous report."
-- "Audit only the literature positioning and tell me whether the claimed gap
-  is real or fabricated by selective citation."
