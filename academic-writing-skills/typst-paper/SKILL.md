@@ -25,7 +25,7 @@ metadata:
       algorithmic,
       lovelace,
     ]
-  version: "5.2.0"
+  version: "5.3.0"
   last_updated: "2026-07-06"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
