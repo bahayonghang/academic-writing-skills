@@ -546,3 +546,20 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - 遗留（超范围，未排期）：ustcthesis/fduthesis 等 documentclass 自动推断仍 exit 2，需显式 --template generic
+
+## 2026-07-11: latex-thesis-zh 绪论优化（07-10-thesis-zh-intro-optimization）
+
+### 关键决策
+
+- 五项新能力全部挂现有 literature/logic 模块新 flag（--intro-citations / --intro-mainline），不加 Module Router 行，默认行为零变化
+- 检查编号用 B1~B5：logic.md 已占用 A4（funnel citation density），沿 A 续排会撞名
+- 甘特图判定不入绪论（属开题进度安排），以研究演进时间线图+文献对比矩阵承接用户诉求
+
+### 教训
+
+- [WARN] pytest 命令别加 PYTHONIOENCODING=utf-8：contract 测试 subprocess 跑 --help 时 reader 线程按 cp936 解码 UTF-8 失败，stdout 变 None（已写入 spec/testing-and-tooling.md）
+- [WARN] bash 管道统计 \cite 键数（sort -u | wc -l）在 CRLF 文件上会虚高（128 vs Python 精确 121），量化结论以 Python 为准
+
+### Status
+
+[OK] **Completed** — just ci 1040 绿（+25 测试）；真实 chapter1.tex 回归：121 唯一键、15 处堆引、近三年 21% 被 B4 命中、表 1-2 五行科学问题全中 L-SCI；4 个功能 commit + 1 个归档 commit
