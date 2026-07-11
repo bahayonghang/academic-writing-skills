@@ -1,0 +1,2 @@
+{"file": "tests/contracts/test_skill_contracts.py", "reason": "ROUTER_ROW_RE and SKILL.md string locks must pass after SKILL.md edits"}
+{"file": ".trellis/tasks/07-10-thesis-zh-intro-optimization/implement.md", "reason": "ordered checklist with per-step validation commands and rollback points"}

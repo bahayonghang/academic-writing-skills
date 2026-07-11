@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh copy scripts must be importlib-loaded in tests; evals.json write convention; SKILL.md table hook gotcha"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md router table lock conventions before editing router rows"}
+{"file": ".trellis/tasks/07-10-thesis-zh-intro-optimization/prd.md", "reason": "requirements R1-R6, thresholds with sources, acceptance criteria"}
+{"file": ".trellis/tasks/07-10-thesis-zh-intro-optimization/design.md", "reason": "A4-A8 / L-SCI+L-MAP+L-FUN+L-DOM check design, file change list, tradeoffs"}
