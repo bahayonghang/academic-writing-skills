@@ -4,8 +4,8 @@
 ``import analyze_logic`` 会解析到 latex-paper-en 副本（见 conftest），后者没有
 ``INTRO_SECTION_TITLES_ZH`` 等 zh 专有常量。
 
-R2 只改 ``_check_chapter_intro``。这里直接调用该函数以隔离验证承上/启下/篇幅判定，
-不受 S1（``_check_heading_leads``）等其它默认检查干扰。
+R2 改 ``_check_chapter_intro`` 与 ``_check_heading_leads``（S1 对编号引言形态的豁免）。
+这里直接调用这两个函数以隔离验证承上/启下/篇幅判定与 S1 导语豁免，互不干扰。
 """
 
 import importlib.util
@@ -47,6 +47,13 @@ def _intro_findings(tex: str) -> str:
     logic._DOC = None
     parser = logic.get_parser("main.tex")
     return "\n".join(logic._check_chapter_intro(tex, tex.split("\n"), parser))
+
+
+def _lead_findings(tex: str) -> str:
+    """直接调用 _check_heading_leads（S1），返回拼接后的诊断文本。"""
+    logic._DOC = None
+    parser = logic.get_parser("main.tex")
+    return "\n".join(logic._check_heading_leads(tex, tex.split("\n"), parser))
 
 
 _PREAMBLE = (
@@ -176,3 +183,27 @@ def test_chapter_titled_introduction_stays_exempt() -> None:
     )
     report = _intro_findings(tex)
     assert "第“引言”章" not in report
+
+
+# ── S1 导语检查对编号引言形态的豁免（_check_heading_leads）─────
+
+
+def test_s1_skips_chapter_lead_flag_for_numbered_intro() -> None:
+    """编号引言形态：S1 不对章标题报“未发现/缺少导语段落”（引言小节即本章导语）。"""
+    tex = (
+        _PREAMBLE
+        + "\\chapter{某污水处理工艺流程分析}\n"
+        + "\\section{引言}\n"
+        + "本章围绕污水处理过程展开。首先介绍工艺流程，然后分析难点，最后给出框架。\n"
+        + "\\section{工艺流程分析}\n工艺流程见图。\n"
+    )
+    report = _lead_findings(tex)
+    assert "某污水处理工艺流程分析”后未发现导语段落" not in report
+    assert "某污水处理工艺流程分析”后缺少导语段落" not in report
+
+
+def test_s1_still_flags_normal_chapter_without_intro_section() -> None:
+    """普通章（章标题后直接跳到非引言小节）S1 仍报“未发现导语段落”，防豁免过宽。"""
+    tex = _PREAMBLE + "\\chapter{某方法设计}\n\\section{总体框架}\n本节给出总体框架。\n"
+    report = _lead_findings(tex)
+    assert "标题“某方法设计”后未发现导语段落" in report

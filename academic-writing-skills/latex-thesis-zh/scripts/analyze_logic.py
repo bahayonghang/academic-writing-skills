@@ -765,6 +765,17 @@ def _classify_lead_gap(line: str) -> str:
     return "text"
 
 
+def _has_numbered_intro_section(heading: dict, next_heading: dict | None) -> bool:
+    """编号引言节形态判定：level-1 章标题的首个下级标题即 level-2 引言/概述小节。
+
+    此形态下引言小节本身就是本章导语，故 S1 不应对**章标题**报“未发现导语段落”
+    （与 _check_chapter_intro 的编号引言适配同属 R2 误报修复）。只豁免章标题这一层。
+    """
+    if heading["level"] != 1 or next_heading is None or next_heading["level"] != 2:
+        return False
+    return any(t in next_heading["title"] for t in INTRO_SECTION_TITLES_ZH)
+
+
 def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
     """检查标题后是否先给出导语段落，而不是直接跳入结构元素。"""
     out: list[str] = []
@@ -777,18 +788,24 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
         if _is_exempt_heading(title):
             continue
 
+        next_heading = headings[index + 1] if index + 1 < len(headings) else None
+        # 编号引言节形态：章标题后即引言/概述小节时，该小节就是本章导语，S1 不对章标题
+        # 报“未发现/缺少导语段落”。只豁免章标题这一层，引言小节与其它标题照常判定。
+        numbered_intro = _has_numbered_intro_section(heading, next_heading)
+
         start_line = heading["line"] + 1
-        end_line = headings[index + 1]["line"] - 1 if index + 1 < len(headings) else len(lines)
+        end_line = next_heading["line"] - 1 if next_heading else len(lines)
         if start_line > end_line:
-            out.extend(
-                [
-                    f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
-                    f"标题“{title}”后未发现导语段落",
-                    "% 建议：在标题后先用一段导语交代本层级的研究对象、写作目的和行文安排。",
-                    "% 理由：标题后直接结束或切到下一级标题，会导致结构展开过于突兀。",
-                    "",
-                ]
-            )
+            if not numbered_intro:
+                out.extend(
+                    [
+                        f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
+                        f"标题“{title}”后未发现导语段落",
+                        "% 建议：在标题后先用一段导语交代本层级的研究对象、写作目的和行文安排。",
+                        "% 理由：标题后直接结束或切到下一级标题，会导致结构展开过于突兀。",
+                        "",
+                    ]
+                )
             continue
 
         first_text_line = None
@@ -810,21 +827,22 @@ def _check_heading_leads(content: str, lines: list[str], parser) -> list[str]:
                 break
 
         if first_text_line is None:
-            reason = (
-                f"标题后直接进入结构元素（{_zh_loc(first_structural_line)}）"
-                if first_structural_line
-                else "标题后未发现可见正文"
-            )
-            out.extend(
-                [
-                    f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
-                    f"标题“{title}”后缺少导语段落",
-                    f"% 观察：{reason}。",
-                    "% 建议：先补一段完整导语，再进入列表、图表、公式或下一级标题。",
-                    "% 理由：章节、小节和四级标题展开时应先说明本段写什么、为何写、如何组织。",
-                    "",
-                ]
-            )
+            if not numbered_intro:
+                reason = (
+                    f"标题后直接进入结构元素（{_zh_loc(first_structural_line)}）"
+                    if first_structural_line
+                    else "标题后未发现可见正文"
+                )
+                out.extend(
+                    [
+                        f"% 结构衔接（{_zh_loc(heading['line'])}）[Severity: Major] [Priority: P1]: "
+                        f"标题“{title}”后缺少导语段落",
+                        f"% 观察：{reason}。",
+                        "% 建议：先补一段完整导语，再进入列表、图表、公式或下一级标题。",
+                        "% 理由：章节、小节和四级标题展开时应先说明本段写什么、为何写、如何组织。",
+                        "",
+                    ]
+                )
             continue
 
         is_short = len(first_text) < 18
@@ -1416,8 +1434,8 @@ def _check_intro_mainline(
 #
 # 面向工业/过程背景学位论文第 2 章“工艺流程分析 + 总体方法架构”章式的主线闭合检查，
 # 全部为 [Script] 启发式。默认定位第 2 章（绪论后首个正文章），--section 可指定目标章。
-# 判据依据见 research/chapter2-content-analysis.md §7：“第 X 章”映射非 5/5 通例（3/5 只用
-# 方法模块名组织框架），故 P-FRAME 的章号缺失只出 Info、不作 Major。
+# 判据依据见 research/chapter2-content-analysis.md §7：5/5 范文框架节均不写“第 X 章”章号
+# （章号映射惯例放绪论组织结构节），故 P-FRAME 的章号缺失只出 Info、不作 Major。
 
 # 章式预判特征词：章内（含小节标题）出现任一即视为过程分析章，才跑 P-*。
 PROCESS_CHAPTER_FEATURE_RE_ZH = re.compile(r"工艺|流程|过程分析|问题描述|总体框架|方案|影响因素")
@@ -1577,7 +1595,7 @@ def _process_frame(lines: list[str], frame_secs: list[tuple[int, str, int]], par
                 "P-FRAME 框架节未显式标注“第 X 章”章号映射（推荐加强项）。",
                 "% 建议：建议显式标注“第 X 章”章号映射以增强可读性/可答辩性；"
                 "用方法模块名 + 后续章引言反向承接亦属合规写法。",
-                "% 理由：3/5 范文用方法模块名组织框架、不写章号亦合规，故为推荐项而非必需；"
+                "% 理由：5/5 范文框架节均不写章号（章号映射惯例放在绪论组织结构节），故为推荐加强项而非必需；"
                 "显式章号便于盲审与答辩定位。",
                 "",
             ]
