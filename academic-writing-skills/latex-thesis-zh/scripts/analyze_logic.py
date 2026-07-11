@@ -264,6 +264,10 @@ RELATIVE_REF_PATTERNS_ZH = (
 CHAPTER_NUM_REF_RE = re.compile(r"第\s*\d+\s*章")
 SECTION_NUM_PREVIEW_RE = re.compile(r"\d+\.\d+\s*节")
 # 章引言豁免标题（在 LEAD_EXEMPT_TITLES_ZH 之外，额外排除绪论与收尾章）。
+# 注意：此处“引言”指**章标题**为“引言”的整章（某些论文把第 1 章命名为“引言”），
+# 该整章由 _check_introduction_funnel 负责，故在正文章引言检查中整体豁免。这与下方
+# INTRO_SECTION_TITLES_ZH（正文章内**首个小节**标题为“引言/概述”的编号引言节形态）
+# 是两个不同角色，切勿混淆。
 CHAPTER_INTRO_EXEMPT_TITLES_ZH = (
     "绪论",
     "引言",
@@ -271,8 +275,15 @@ CHAPTER_INTRO_EXEMPT_TITLES_ZH = (
     "总结",
     "展望",
 )
+# 编号引言节形态：正文章标题后直接进入“引言/概述”小节（编号 2.1 引言），章标题与该
+# 小节之间无正文。此时把该小节正文作为章引言检查对象（来源标记 numbered），修正
+# “章标题与 2.1 间为空 -> 误报缺启下”的偏差（参考论文 4/5 采用此形态）。
+INTRO_SECTION_TITLES_ZH = ("引言", "概述", "引 言")
 CHAPTER_INTRO_MIN_CHARS = 40
 CHAPTER_INTRO_MAX_CHARS = 900
+# 编号引言节篇幅上限（依 5 篇工业博士论文引言节实测 600~1500 字定，可配置），与“章后
+# 导语”形态（CHAPTER_INTRO_MAX_CHARS=900）分开取值；下限沿用 CHAPTER_INTRO_MIN_CHARS。
+CHAPTER_INTRO_NUMBERED_MAX_CHARS = 1600
 
 
 def _section_visible_lines(
@@ -503,6 +514,15 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
     且该章须含至少一个下级小节——否则“预告各节安排”无从谈起，交给 S1 与
     _check_chapter_mainline。与 S1 互补：S1 管“有没有导语”，本检查管承上、
     启下、相对指代与篇幅是否符合章引言约定。绪论由 _check_introduction_funnel 负责。
+
+    两种引言形态均视为合规：
+    - “章后导语”：章标题后直接给一段不编号导语（篇幅上限 CHAPTER_INTRO_MAX_CHARS）。
+    - “编号引言节”：章标题后首个小节即“引言/概述”（编号 2.1 引言），取该小节正文为
+      检查对象（篇幅上限 CHAPTER_INTRO_NUMBERED_MAX_CHARS）。
+
+    第 2 章特判（research §1/§7）：第 2 章引言是“本章概述式”，承接绪论已建立的背景而非
+    前一章结论，故对第 1 个正文章（order==0，即第 2 章）只查“启下 + 篇幅”，跳过“缺承上
+    衔接”；承上启下两段式（含承接前章结论）自第 3 章起适用。
     """
     out: list[str] = []
     headings = parser.extract_headings(content)
@@ -526,16 +546,13 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         chapter_end = (next_chapter_line - 1) if next_chapter_line else len(lines)
 
         # 本章首个下级小节（level >= 2）。无小节则跳过本章。
-        first_section_line = next(
-            (
-                h["line"]
-                for h in headings
-                if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2
-            ),
+        first_section = next(
+            (h for h in headings if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2),
             None,
         )
-        if first_section_line is None:
+        if first_section is None:
             continue
+        first_section_line = first_section["line"]
 
         # 章引言块 = 章标题行+1 .. 首个小节行-1 的可见正文。
         intro_parts: list[str] = []
@@ -549,17 +566,48 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         intro_text = " ".join(intro_parts)
         intro_len = len(intro_text.replace(" ", ""))
 
+        # 报告行 / 形态 / 篇幅上限：默认“章后导语”形态。
+        report_line = chapter["line"]
+        intro_form = "lead"
+        max_chars = CHAPTER_INTRO_MAX_CHARS
+
+        # 编号引言节形态适配（bug-fix）：章标题后直接进入“引言/概述”小节、章标题与该小节
+        # 之间无正文（或过短）时，改取该小节正文作为章引言检查对象，报告行定位到该小节标题。
+        if intro_len < CHAPTER_INTRO_MIN_CHARS and any(
+            t in first_section["title"] for t in INTRO_SECTION_TITLES_ZH
+        ):
+            section_end = chapter_end
+            for later in headings:
+                if later["line"] > first_section_line and later["level"] <= first_section["level"]:
+                    section_end = later["line"] - 1
+                    break
+            numbered_parts: list[str] = []
+            for line_no in range(first_section_line + 1, min(section_end, len(lines)) + 1):
+                raw = lines[line_no - 1].strip()
+                if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
+                    continue
+                visible = parser.extract_visible_text(raw)
+                if visible:
+                    numbered_parts.append(visible)
+            numbered_text = " ".join(numbered_parts)
+            if numbered_text:
+                intro_text = numbered_text
+                intro_len = len(intro_text.replace(" ", ""))
+                report_line = first_section_line
+                intro_form = "numbered"
+                max_chars = CHAPTER_INTRO_NUMBERED_MAX_CHARS
+
         bridge_suggest = (
             "在章引言第一段用章节号回顾前一章解决了什么、得出什么结论，引出本章为何继续。"
         )
         preview_suggest = "在章引言第二段说明本章针对什么问题、核心思想，必要时预告本章各节安排。"
 
-        # 空章引言：承上（非首个正文章）+ 启下均缺失。
+        # 空章引言：承上（非首个正文章）+ 启下均缺失。第 2 章（order==0）跳过承上（见 docstring）。
         if not intro_text:
             if not is_first_body:
                 out.extend(
                     _chapter_intro_gap(
-                        chapter["line"],
+                        report_line,
                         title,
                         "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
                         bridge_suggest,
@@ -567,7 +615,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
                 )
             out.extend(
                 _chapter_intro_gap(
-                    chapter["line"],
+                    report_line,
                     title,
                     "章引言缺少启下：未说明本章要解决的问题、思路或各节安排",
                     preview_suggest,
@@ -585,7 +633,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         if not has_bridge and not is_first_body:
             out.extend(
                 _chapter_intro_gap(
-                    chapter["line"],
+                    report_line,
                     title,
                     "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
                     bridge_suggest,
@@ -603,7 +651,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
         if not has_roadmap and not has_chapter_action:
             out.extend(
                 _chapter_intro_gap(
-                    chapter["line"],
+                    report_line,
                     title,
                     "章引言缺少启下：未说明本章要解决的问题、思路或各节安排",
                     preview_suggest,
@@ -615,7 +663,7 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
             hit = next(p for p in RELATIVE_REF_PATTERNS_ZH if p in intro_text)
             out.extend(
                 [
-                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
+                    f"% 章引言（{_zh_loc(report_line)}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言使用相对指代“{hit}”",
                     "% 建议：改用章节号（如“第2章”）指代，避免“上一章/上文”这类相对表述。",
                     "% 理由：学位论文规范建议用章节编号指代，便于非线性阅读与精确定位。",
@@ -623,22 +671,27 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
                 ]
             )
 
-        # 篇幅：过简 / 过长（约定 1~2 段、约 300~500 字）。
+        # 篇幅：过简 / 过长（“章后导语”约 40~900 字；“编号引言节”上限放宽到 1600）。
         if intro_len < CHAPTER_INTRO_MIN_CHARS:
             out.extend(
                 [
-                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
+                    f"% 章引言（{_zh_loc(report_line)}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言过简（约{intro_len}字）",
                     "% 建议：扩展为承上启下两段——先承接前章，再交代本章问题、思路与各节安排。",
                     "% 理由：章引言一般为 1~2 个自然段、约 300~500 字，过简难以承担承上启下。",
                     "",
                 ]
             )
-        elif intro_len > CHAPTER_INTRO_MAX_CHARS:
+        elif intro_len > max_chars:
+            observe = (
+                f"编号引言节过长（约{intro_len}字，细节应下沉后续小节）"
+                if intro_form == "numbered"
+                else f"章引言过长（约{intro_len}字）"
+            )
             out.extend(
                 [
-                    f"% 章引言（{_zh_loc(chapter['line'])}）[Severity: Minor] [Priority: P2]: "
-                    f"[Script] 第“{title}”章章引言过长（约{intro_len}字）",
+                    f"% 章引言（{_zh_loc(report_line)}）[Severity: Minor] [Priority: P2]: "
+                    f"[Script] 第“{title}”章{observe}",
                     "% 建议：将具体方法/实验细节下沉到对应小节，章引言保留承上启下两段。",
                     "% 理由：章引言应是简短导览，过长会与正文小节重复并稀释主线。",
                     "",
@@ -1359,12 +1412,261 @@ def _check_intro_mainline(
     return out
 
 
+# ── 过程分析章主线检查（--process-chapter：P-FLOW / P-DERIVE / P-FRAME / P-ORDER / P-PAPER）──
+#
+# 面向工业/过程背景学位论文第 2 章“工艺流程分析 + 总体方法架构”章式的主线闭合检查，
+# 全部为 [Script] 启发式。默认定位第 2 章（绪论后首个正文章），--section 可指定目标章。
+# 判据依据见 research/chapter2-content-analysis.md §7：“第 X 章”映射非 5/5 通例（3/5 只用
+# 方法模块名组织框架），故 P-FRAME 的章号缺失只出 Info、不作 Major。
+
+# 章式预判特征词：章内（含小节标题）出现任一即视为过程分析章，才跑 P-*。
+PROCESS_CHAPTER_FEATURE_RE_ZH = re.compile(r"工艺|流程|过程分析|问题描述|总体框架|方案|影响因素")
+# 小节分类关键词。
+PROCESS_FLOW_SECTION_RE_ZH = re.compile(r"工艺|流程|过程(?:描述|分析|简介)|系统简介|机理")
+PROCESS_DIFFICULTY_SECTION_RE_ZH = re.compile(r"难点|问题|挑战|影响因素|特性分析")
+PROCESS_FRAME_SECTION_RE_ZH = re.compile(r"框架|方案|架构|总体|策略")
+# 工艺特性词 / 因果连接词（P-DERIVE 推导链）。
+PROCESS_TRAIT_RE_ZH = re.compile(
+    r"强?非线性|大?(?:滞后|时滞|惯性)|强?耦合|时变|多工况|多速率|多源异构|波动|不确定|扰动|长尾|不平衡"
+)
+PROCESS_CAUSAL_RE_ZH = re.compile(r"导致|使得|难以|造成|致使|因而|从而")
+# 小论文拼接表述（P-PAPER）。
+PROCESS_PAPER_RE_ZH = re.compile(r"源论文|小论文|[一二两三四五12345]\s*篇(?:学术)?论文")
+# 图引用（extract_visible_text 会剥离 \ref，故 P-FLOW/P-FRAME 查原始行）。
+PROCESS_FIG_REF_RE = re.compile(r"\\ref\{fig:")
+# 方法模块名（P-FRAME 覆盖度）：模块头名 + 模块型后缀，非贪婪避免跨相邻模块合并。
+PROCESS_MODULE_RE_ZH = re.compile(
+    r"[一-鿿A-Za-z0-9\-]{1,8}?"
+    r"(?:模型|网络|模块|策略|算法|控制器|估计器|识别器|优化器|预测器|分类器)"
+)
+
+
+def _process_chapter_range(
+    headings: list[dict], section: str | None, lines_total: int
+) -> tuple[dict, int] | None:
+    """定位过程分析章，返回 (章标题 heading, 章末行) 或 None。
+
+    --section 指定：优先按标题包含匹配，其次按“第N章/数字”序号匹配（chapters 的 1-based 位置）；
+    默认：绪论后首个非豁免正文章（标准工业论文即第 2 章）。
+    """
+    chapters = [h for h in headings if h["level"] == 1]
+    if not chapters:
+        return None
+    target: dict | None = None
+    if section:
+        norm = section.strip()
+        target = next((h for h in chapters if norm and norm in h["title"]), None)
+        if target is None:
+            m = re.search(r"\d+", norm)
+            if m:
+                idx = int(m.group()) - 1
+                if 0 <= idx < len(chapters):
+                    target = chapters[idx]
+    else:
+        body = [h for h in chapters if not _is_chapter_intro_exempt(h["title"])]
+        target = body[0] if body else None
+    if target is None:
+        return None
+    next_line = next((h["line"] for h in chapters if h["line"] > target["line"]), None)
+    end = (next_line - 1) if next_line else lines_total
+    return target, end
+
+
+def _process_subsections(
+    headings: list[dict], chapter_line: int, chapter_end: int
+) -> list[tuple[int, str, int]]:
+    """章内 level>=2 小节：返回 [(标题行, 标题, 小节末行)]（末行到下一同级或更高级标题前）。"""
+    inner = [h for h in headings if chapter_line < h["line"] <= chapter_end and h["level"] >= 2]
+    out: list[tuple[int, str, int]] = []
+    for i, h in enumerate(inner):
+        sub_end = chapter_end
+        for later in inner[i + 1 :]:
+            if later["level"] <= h["level"]:
+                sub_end = later["line"] - 1
+                break
+        out.append((h["line"], h["title"], sub_end))
+    return out
+
+
+def _process_section_text(lines: list[str], start: int, end: int, parser) -> str:
+    """小节正文可见文本（拼接）。"""
+    return " ".join(text for _ln, text in _section_visible_lines(lines, (start, end), parser))
+
+
+def _process_raw_has_fig(lines: list[str], start: int, end: int) -> bool:
+    """小节范围内原始行是否含 \\ref{fig:...}（须查原始行：extract_visible_text 会剥离引用）。"""
+    return any(
+        PROCESS_FIG_REF_RE.search(lines[line_no - 1])
+        for line_no in range(start, min(end, len(lines)) + 1)
+    )
+
+
+def _process_flow(lines: list[str], flow_secs: list[tuple[int, str, int]]) -> list[str]:
+    """P-FLOW（Major/P1）：工艺/流程分析节须引用流程图（多工艺节任一有图即过）。"""
+    if not flow_secs or any(_process_raw_has_fig(lines, ln, e) for ln, _t, e in flow_secs):
+        return []
+    return [
+        f"% 过程分析章（{_zh_loc(flow_secs[0][0])}）[Severity: Major] [Priority: P1]: [Script] "
+        "P-FLOW 工艺/流程分析节未见流程图引用（\\ref{fig:...}）。",
+        "% 建议：为工艺流程节配工艺流程图并在正文引用，按物料流工序段组织描述。",
+        "% 理由：工艺流程图是过程分析章定位研究对象、支撑难点推导的基础。",
+        "",
+    ]
+
+
+def _process_derive(lines: list[str], diff_secs: list[tuple[int, str, int]], parser) -> list[str]:
+    """P-DERIVE（缺特性词 Major/P1；有词无因果 Minor/P2）：难点节的“特性词->因果->难点”链。"""
+    if not diff_secs:
+        return []
+    text = " ".join(_process_section_text(lines, ln + 1, e, parser) for ln, _t, e in diff_secs)
+    ln0 = diff_secs[0][0]
+    if not PROCESS_TRAIT_RE_ZH.search(text):
+        return [
+            f"% 过程分析章（{_zh_loc(ln0)}）[Severity: Major] [Priority: P1]: [Script] "
+            "P-DERIVE 难点/问题节未见工艺特性词（如强非线性、大滞后、强耦合、多工况等）。",
+            "% 建议：按“工艺特性词 -> 导致/使得 -> 建模/控制难点”写出推导链，说明方法必要性。",
+            "% 理由：难点应由工艺特性推导而来，罗列问题名词无法支撑后续方法的必要性。",
+            "",
+        ]
+    if not PROCESS_CAUSAL_RE_ZH.search(text):
+        return [
+            f"% 过程分析章（{_zh_loc(ln0)}）[Severity: Minor] [Priority: P2]: [Script] "
+            "P-DERIVE 难点/问题节出现工艺特性词，但缺少“导致/使得/难以/造成”等因果连接。",
+            "% 建议：补上因果连接词，把工艺特性显式推导到建模/控制难点。",
+            "% 理由：仅罗列特性词而无因果句，推导链不完整，难点显得突兀。",
+            "",
+        ]
+    return []
+
+
+def _process_frame(lines: list[str], frame_secs: list[tuple[int, str, int]], parser) -> list[str]:
+    """P-FRAME（框架图缺 Major；框架空泛 Major；章号映射缺 Info）。"""
+    if not frame_secs:
+        return []
+    out: list[str] = []
+    ln0 = frame_secs[0][0]
+    if not any(_process_raw_has_fig(lines, ln, e) for ln, _t, e in frame_secs):
+        out.extend(
+            [
+                f"% 过程分析章（{_zh_loc(ln0)}）[Severity: Major] [Priority: P1]: [Script] "
+                "P-FRAME 总体框架/方案节未见框架图引用（\\ref{fig:...}）。",
+                "% 建议：配总体框架图（分层组织、模块=后续方法章、数据流箭头），并在正文引用。",
+                "% 理由：总体框架图是“难点 -> 方法架构”结构化回应的核心，缺图难以自证主线闭合。",
+                "",
+            ]
+        )
+    frame_text = " ".join(
+        _process_section_text(lines, ln + 1, e, parser) for ln, _t, e in frame_secs
+    )
+    chapter_refs = set(CHAPTER_NUM_REF_RE.findall(frame_text))
+    module_names = set(PROCESS_MODULE_RE_ZH.findall(frame_text))
+    if len(chapter_refs) + len(module_names) < 2:
+        out.extend(
+            [
+                f"% 过程分析章（{_zh_loc(ln0)}）[Severity: Major] [Priority: P1]: [Script] "
+                "P-FRAME 总体框架节内容空泛：未覆盖 >=2 个方法模块名或后续章指向。",
+                "% 建议：在框架节点名各方法模块（对应后续方法章），说明模块间数据流与衔接。",
+                "% 理由：框架应是对难点的结构化回应，模块数≈后续方法章数，空泛框架无法支撑主线。",
+                "",
+            ]
+        )
+    if not chapter_refs:
+        out.extend(
+            [
+                f"% 过程分析章（{_zh_loc(ln0)}）[Severity: Info] [Priority: P3]: [Script] "
+                "P-FRAME 框架节未显式标注“第 X 章”章号映射（推荐加强项）。",
+                "% 建议：建议显式标注“第 X 章”章号映射以增强可读性/可答辩性；"
+                "用方法模块名 + 后续章引言反向承接亦属合规写法。",
+                "% 理由：3/5 范文用方法模块名组织框架、不写章号亦合规，故为推荐项而非必需；"
+                "显式章号便于盲审与答辩定位。",
+                "",
+            ]
+        )
+    return out
+
+
+def _process_order(
+    flow_secs: list[tuple[int, str, int]],
+    diff_secs: list[tuple[int, str, int]],
+    frame_secs: list[tuple[int, str, int]],
+) -> list[str]:
+    """P-ORDER（Minor/P2）：总体框架节不应先于难点/问题节。"""
+    if not diff_secs or not frame_secs:
+        return []
+    first_diff = min(ln for ln, _t, _e in diff_secs)
+    first_frame = min(ln for ln, _t, _e in frame_secs)
+    if first_frame >= first_diff:
+        return []
+    return [
+        f"% 过程分析章（{_zh_loc(first_frame)}）[Severity: Minor] [Priority: P2]: [Script] "
+        "P-ORDER 总体框架节出现在难点/问题节之前，顺序不变式被破坏。",
+        "% 建议：按“工艺流程 -> 难点/问题 -> 总体框架”组织，框架应是对难点的回应。",
+        "% 理由：难点是“问题”，框架是“对问题的回应”，框架先于难点会割裂主线。",
+        "",
+    ]
+
+
+def _process_paper(lines: list[str], chapter_line: int, chapter_end: int, parser) -> list[str]:
+    """P-PAPER（Minor/P2）：章内“源论文/小论文/N 篇论文”表述有盲审拼接风险。"""
+    for line_no, visible in _section_visible_lines(lines, (chapter_line + 1, chapter_end), parser):
+        if PROCESS_PAPER_RE_ZH.search(visible):
+            return [
+                f"% 过程分析章（{_zh_loc(line_no)}）[Severity: Minor] [Priority: P2]: [Script] "
+                "P-PAPER 正文出现“源论文/小论文/N 篇论文”表述，有小论文拼接盲审风险。",
+                "% 建议：改用“核心问题/研究内容/研究模块”等面向问题的表述。",
+                "% 理由：大论文应体现统一主线，“源论文/小论文”暴露拼接感，易被盲审质询。",
+                "",
+            ]
+    return []
+
+
+def _check_process_chapter(
+    content: str, lines: list[str], parser, section: str | None
+) -> list[str]:
+    """过程分析章主线检查入口（--process-chapter）。"""
+    headings = parser.extract_headings(content)
+    target = _process_chapter_range(headings, section, len(lines))
+    if target is None:
+        return [
+            "% 过程分析章 [Severity: Info] [Priority: P3]: [Script] "
+            "未定位到目标章（默认第 2 章），请用 --section 指定过程分析章。"
+        ]
+    chapter, chapter_end = target
+    chapter_line = chapter["line"]
+    title = chapter["title"]
+
+    # 章式预判：章标题 + 章内可见正文（含小节标题）出现特征词才跑 P-*。
+    chapter_text = title + " " + _process_section_text(lines, chapter_line + 1, chapter_end, parser)
+    if not PROCESS_CHAPTER_FEATURE_RE_ZH.search(chapter_text):
+        return [
+            f"% 过程分析章（{_zh_loc(chapter_line)}）[Severity: Info] [Priority: P3]: [Script] "
+            f"第“{title}”章未见过程分析章特征（工艺/流程/难点/总体框架等）。",
+            "% 若该章为“方法 + 实验”章式，请按方法章规则（thesis-writing-guide 方法章三问 + "
+            "experiment 模块）处理，不套用过程分析章检查。",
+            "",
+        ]
+
+    subs = _process_subsections(headings, chapter_line, chapter_end)
+    flow_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_FLOW_SECTION_RE_ZH.search(t)]
+    diff_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_DIFFICULTY_SECTION_RE_ZH.search(t)]
+    frame_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_FRAME_SECTION_RE_ZH.search(t)]
+
+    out: list[str] = []
+    out.extend(_process_flow(lines, flow_secs))
+    out.extend(_process_derive(lines, diff_secs, parser))
+    out.extend(_process_frame(lines, frame_secs, parser))
+    out.extend(_process_order(flow_secs, diff_secs, frame_secs))
+    out.extend(_process_paper(lines, chapter_line, chapter_end, parser))
+    return out
+
+
 def analyze(
     file_path: Path,
     section: str | None = None,
     cross_section: bool = False,
     motivation_thread: bool = False,
     intro_mainline: bool = False,
+    process_chapter: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -1379,14 +1681,16 @@ def analyze(
     matched_keys: list[str] = []
     if section:
         matched_keys, available = resolve_section_keys(section, sections)
-        if not matched_keys:
+        # --process-chapter 按章标题定位目标章，允许 --section 传入非已知章节键；
+        # 仅当既非已知章节键、又未启用 process_chapter 时才报“未找到章节”。
+        if not matched_keys and not process_chapter:
             avail = ", ".join(available) if available else "（本文档未识别出任何已知章节）"
             return warn + [
                 f"% ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {section}",
                 f"% 可用章节: {avail}",
                 "% 提示：--section 同时接受英文键（introduction/related/...）与中文章节名（绪论/相关工作/...）。",
             ]
-        ranges = [sections[k] for k in matched_keys]
+        ranges = [sections[k] for k in matched_keys] if matched_keys else []
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 
@@ -1461,6 +1765,9 @@ def analyze(
     if intro_mainline:
         out.extend(_check_intro_mainline(content, lines, sections, parser))
 
+    if process_chapter:
+        out.extend(_check_process_chapter(content, lines, parser, section))
+
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -1487,6 +1794,11 @@ def main() -> int:
         action="store_true",
         help="运行绪论主线专项检查（科学问题三要素/四方闭合/首段漏斗/国内外分述）",
     )
+    cli.add_argument(
+        "--process-chapter",
+        action="store_true",
+        help="运行过程分析章主线检查（工艺流程/难点推导/总体框架章式，默认第 2 章，--section 可指定）",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
@@ -1501,6 +1813,7 @@ def main() -> int:
                 args.cross_section,
                 args.motivation_thread,
                 args.intro_mainline,
+                args.process_chapter,
             )
         )
     )
