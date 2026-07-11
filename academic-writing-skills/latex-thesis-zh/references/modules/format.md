@@ -21,6 +21,18 @@ Purpose: Check thesis page layout, heading format, figure/table/equation numberi
 - 方程组、分段条件、成组约束用 `aligned` / `cases` 等结构。
 - 已经能正常放下、编号未被挤行、且没有推导/成组语义的公式，不要为视觉统一强行拆分。
 
+## Source Hygiene (源码卫生：F-MD / F-NOTE)
+
+`check_format.py` 默认输出内置两项源码卫生检查（无需额外 flag），仅定位提示、不改写：
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| F-MD | 可见正文命中 Markdown 加粗 `**…**`（`\*\*` 转义星号不计）——LaTeX 中按字面星号排版，应改 `\textbf{}` | Major/P1 |
+| F-NOTE | 可见正文命中草稿备注词表（"后续可根据…替换/更新/补充""此处占位""待补充/待确认""TODO/FIXME"）——疑似草稿备注泄漏进正文，定稿前应删除或移入注释 | Info/P3 |
+
+两项均只扫可见正文（数学环境/verbatim/注释排除）；F-NOTE 词表刻意收窄，"仍需实验确认"
+一类正常学术让步表述不命中。
+
 ## Key Checks
 
 - Page margins and layout per university template
