@@ -1057,11 +1057,314 @@ def _check_motivation_thread(
     return out
 
 
+# ── 绪论主线专项检查（--intro-mainline：L-SCI / L-MAP / L-FUN / L-DOM）──
+#
+# 面向学位论文第 1 章绪论的四项结构检查，全部为 [Script] 启发式：
+# - L-SCI 科学问题三要素（对象-问题-方法）；
+# - L-MAP 创新点/科学问题/研究内容四方闭合；
+# - L-FUN 首段漏斗（领域背景 -> 瓶颈 -> 本文）；
+# - L-DOM “国内外研究现状”是否真的区分国内外（或显式声明按主题混排）。
+
+SCIENCE_PROBLEM_MARKERS_ZH = ("如何", "能否", "是否", "怎样", "针对", "为何", "什么")
+SCIENCE_PROBLEM_MAX_BARE_LEN = 14
+_SCI_TEMPLATE_ZH = "针对〈对象〉的〈现象/瓶颈〉，研究〈科学问题〉，拟采用〈方法路径〉"
+_MISMATCH_DECLARED_RE_ZH = re.compile(r"不与.{0,12}等量|不.{0,8}一一对应|工程验证贡献")
+_DOM_FOREIGN_RE_ZH = re.compile(r"国外|国际|海外|境外")
+_DOM_DECLARED_RE_ZH = re.compile(r"按(?:主题|问题|方向|任务)(?:组织|梳理|混排|展开)|不.?区分国内外")
+_INNOVATION_ITEM_RE_ZH = re.compile(r"^\\textbf\{[（(]\d+[）)]|^[（(]\d+[）)]")
+
+
+def _strip_inline_markup(text: str) -> str:
+    """去掉 \\item/\\textbf 等行内标记，留下用于启发式判断的纯文本。"""
+    text = re.sub(r"\\(?:item|textbf|textit|emph)\b\s*", "", text)
+    return text.replace("{", "").replace("}", "").strip()
+
+
+def _is_bare_noun_phrase(text: str) -> bool:
+    """科学问题写成短名词短语（缺对象/问题/方法要素）的启发式判定。"""
+    stripped = text.strip()
+    if not stripped:
+        return False
+    return len(stripped) <= SCIENCE_PROBLEM_MAX_BARE_LEN and not any(
+        marker in stripped for marker in SCIENCE_PROBLEM_MARKERS_ZH
+    )
+
+
+def _science_problem_items(lines: list[str], start: int, end: int, parser) -> list[tuple[int, str]]:
+    """收集绪论中的科学问题表述：表格“科学问题”列的单元格 + 枚举条目。"""
+    items: list[tuple[int, str]] = []
+    comment_prefix = parser.get_comment_prefix()
+
+    # 表格形态：表头含“科学问题”的列，逐行取该列单元格。
+    in_table = False
+    col_idx: int | None = None
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if raw.startswith(comment_prefix):
+            continue
+        if "\\begin{tabular" in raw:
+            in_table = True
+            col_idx = None
+            continue
+        if "\\end{tabular" in raw:
+            in_table = False
+            col_idx = None
+            continue
+        if not in_table or "&" not in raw:
+            continue
+        row = raw[:-2].strip() if raw.endswith("\\\\") else raw
+        cells = [c.strip() for c in row.split("&")]
+        if col_idx is None:
+            for idx, cell in enumerate(cells):
+                if "科学问题" in cell:
+                    col_idx = idx
+                    break
+            continue
+        if col_idx < len(cells):
+            cell_text = _strip_inline_markup(parser.extract_visible_text(cells[col_idx]))
+            if cell_text and not cell_text.startswith("\\"):
+                items.append((line_no, cell_text))
+
+    # 枚举形态：提及“科学问题”的段落之后紧跟的 enumerate/itemize 条目。
+    mention_line: int | None = None
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if raw.startswith(comment_prefix):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible and "科学问题" in visible and "&" not in raw:
+            mention_line = line_no
+            continue
+        if mention_line is None:
+            continue
+        if re.match(r"\\begin\{(?:enumerate|itemize)\}", raw):
+            for item_line in range(line_no + 1, min(end, len(lines)) + 1):
+                item_raw = lines[item_line - 1].strip()
+                if re.match(r"\\end\{(?:enumerate|itemize)\}", item_raw):
+                    break
+                if item_raw.startswith("\\item"):
+                    item_text = _strip_inline_markup(parser.extract_visible_text(item_raw))
+                    first_clause = re.split(r"[。：:，,]", item_text, maxsplit=1)[0]
+                    if first_clause:
+                        items.append((item_line, first_clause))
+            mention_line = None
+        elif line_no - mention_line > 3:
+            mention_line = None
+    return items
+
+
+def _check_science_problem_form(
+    lines: list[str], start: int, end: int, parser
+) -> tuple[list[str], int]:
+    """L-SCI：科学问题是否为纯名词短语。返回 (诊断, 科学问题条数)。"""
+    out: list[str] = []
+    items = _science_problem_items(lines, start, end, parser)
+    bare = [(ln, text) for ln, text in items if _is_bare_noun_phrase(text)]
+    for ln, text in bare:
+        out.extend(
+            [
+                f"% 科学问题（{_zh_loc(ln)}）[Severity: Major] [Priority: P1]: [Script] "
+                f"L-SCI 表述“{text}”为短名词短语，缺少对象-问题-方法三要素。",
+                f"% 建议：按“{_SCI_TEMPLATE_ZH}”改写为可检验的问题句。",
+                "% 理由：科学问题应指明研究对象、待回答的问题和方法路径，名词短语只是主题词。",
+                "",
+            ]
+        )
+    return out, len(items)
+
+
+def _find_subsection_range(
+    headings: list[dict], start: int, end: int, pattern: str, lines_total: int
+) -> tuple[int, int] | None:
+    """在 (start, end) 内找标题含 pattern 的子标题，返回其管辖范围。"""
+    for idx, heading in enumerate(headings):
+        if not (start <= heading["line"] <= end) or heading["level"] < 2:
+            continue
+        if pattern not in heading["title"]:
+            continue
+        sub_end = end
+        for later in headings[idx + 1 :]:
+            if later["line"] > heading["line"] and later["level"] <= heading["level"]:
+                sub_end = min(end, later["line"] - 1)
+                break
+        return heading["line"], min(sub_end, lines_total)
+    return None
+
+
+def _count_enum_items(lines: list[str], start: int, end: int) -> int:
+    count = 0
+    in_enum = False
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if re.match(r"\\begin\{(?:enumerate|itemize)\}", raw):
+            in_enum = True
+        elif re.match(r"\\end\{(?:enumerate|itemize)\}", raw):
+            in_enum = False
+        elif in_enum and raw.startswith("\\item"):
+            count += 1
+    return count
+
+
+def _count_innovation_items(lines: list[str], start: int, end: int) -> int:
+    return sum(
+        1
+        for line_no in range(start, min(end, len(lines)) + 1)
+        if _INNOVATION_ITEM_RE_ZH.match(lines[line_no - 1].strip())
+    )
+
+
+def _check_four_way_closure(
+    content: str,
+    lines: list[str],
+    start: int,
+    end: int,
+    parser,
+    science_count: int,
+) -> list[str]:
+    """L-MAP：创新点/科学问题/研究内容条数是否闭合（或显式声明不等量）。"""
+    out: list[str] = []
+    headings = parser.extract_headings(content)
+    counts: dict[str, int] = {}
+
+    content_range = _find_subsection_range(headings, start, end, "研究内容", len(lines))
+    if content_range:
+        n = _count_enum_items(lines, content_range[0], content_range[1])
+        if n:
+            counts["研究内容"] = n
+    innovation_range = _find_subsection_range(headings, start, end, "创新", len(lines))
+    if innovation_range:
+        n = _count_innovation_items(lines, innovation_range[0], innovation_range[1])
+        if n:
+            counts["创新点"] = n
+    if science_count:
+        counts["科学问题"] = science_count
+
+    if len(counts) < 2 or len(set(counts.values())) <= 1:
+        return out
+
+    declared = any(
+        _MISMATCH_DECLARED_RE_ZH.search(parser.extract_visible_text(lines[line_no - 1]))
+        for line_no in range(start, min(end, len(lines)) + 1)
+        if lines[line_no - 1].strip()
+        and not lines[line_no - 1].strip().startswith(parser.get_comment_prefix())
+    )
+    observed = "、".join(f"{name} {count} 条" for name, count in counts.items())
+    if declared:
+        out.append(
+            f"% 绪论主线 [Severity: Info] [Priority: P3]: [Script] L-MAP 条数不等（{observed}），"
+            "但正文已声明不等量对应，视为有意设计。"
+        )
+    else:
+        out.extend(
+            [
+                f"% 绪论主线 [Severity: Major] [Priority: P1]: [Script] "
+                f"L-MAP 科学问题/研究内容/创新点条数不闭合：{observed}。",
+                "% 建议：补一张“科学问题-研究内容-创新点-章节”映射表，或在正文声明不等量的原因"
+                "（如某条为工程验证贡献）。",
+                "% 理由：四方一一对应是绪论主线闭合的最直观证据，条数错位会被答辩质询。",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_funnel_first_para(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """L-FUN：绪论首段是否完成 领域背景 -> 瓶颈 -> 本文 的三层漏斗。"""
+    out: list[str] = []
+    comment_prefix = parser.get_comment_prefix()
+    para_parts: list[str] = []
+    first_line: int | None = None
+    for line_no in range(start + 1, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw:
+            if para_parts:
+                break
+            continue
+        if raw.startswith(comment_prefix):
+            continue
+        if _classify_lead_gap(raw) == "structural":
+            break
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            if first_line is None:
+                first_line = line_no
+            para_parts.append(visible)
+    if not para_parts or first_line is None:
+        return out
+
+    para = " ".join(para_parts)
+    missing: list[str] = []
+    if not INTRO_BACKGROUND_RE_ZH.search(para):
+        missing.append("领域背景")
+    if not INTRO_PROBLEM_RE_ZH.search(para):
+        missing.append("技术瓶颈/问题")
+    if "本文" not in para and "本章" not in para:
+        missing.append("本文定位")
+    if missing:
+        out.extend(
+            [
+                f"% 绪论主线（{_zh_loc(first_line)}）[Severity: Minor] [Priority: P2]: [Script] "
+                f"L-FUN 绪论首段缺少{'、'.join(missing)}层。",
+                "% 建议：首段按“领域背景 -> 技术瓶颈 -> 本文围绕什么展开”三层漏斗组织。",
+                "% 理由：首段直接进入术语或细节，会让读者失去全章的问题锚点。",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_domestic_foreign(
+    content: str, lines: list[str], start: int, end: int, parser
+) -> list[str]:
+    """L-DOM：“国内外研究现状”标题下是否真的分述国内/国外（或声明混排）。"""
+    out: list[str] = []
+    headings = parser.extract_headings(content)
+    dom_range = _find_subsection_range(headings, start, end, "国内外", len(lines))
+    if dom_range is None:
+        return out
+    body = " ".join(
+        text
+        for _ln, text in _section_visible_lines(lines, (dom_range[0] + 1, dom_range[1]), parser)
+    )
+    stripped = body.replace("国内外", "")
+    has_domestic = "国内" in stripped
+    has_foreign = bool(_DOM_FOREIGN_RE_ZH.search(stripped))
+    declared = bool(_DOM_DECLARED_RE_ZH.search(body))
+    if not (has_domestic and has_foreign) and not declared:
+        out.extend(
+            [
+                f"% 绪论主线（{_zh_loc(dom_range[0])}）[Severity: Info] [Priority: P3]: [Script] "
+                "L-DOM 标题为“国内外研究现状”，但正文未见国内/国外分述，也未声明按主题混排。",
+                "% 建议：或分“国外研究现状/国内研究现状”梳理后对比，或在小节开头声明"
+                "“本节按主题组织，国内外工作在各主题内对比”。",
+                "% 理由：标题承诺了国内外对比，正文不兑现会被视为综述路线不清晰。",
+                "",
+            ]
+        )
+    return out
+
+
+def _check_intro_mainline(
+    content: str, lines: list[str], sections: dict[str, tuple[int, int]], parser
+) -> list[str]:
+    """绪论主线四项检查的入口（--intro-mainline）。"""
+    if "introduction" in sections:
+        start, end = sections["introduction"]
+    else:
+        start, end = 1, len(lines)
+    out, science_count = _check_science_problem_form(lines, start, end, parser)
+    out.extend(_check_four_way_closure(content, lines, start, end, parser, science_count))
+    out.extend(_check_funnel_first_para(lines, start, end, parser))
+    out.extend(_check_domestic_foreign(content, lines, start, end, parser))
+    return out
+
+
 def analyze(
     file_path: Path,
     section: str | None = None,
     cross_section: bool = False,
     motivation_thread: bool = False,
+    intro_mainline: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -1155,6 +1458,9 @@ def analyze(
         if motivation_thread and not section:
             out.extend(_check_motivation_thread(lines, sections, parser))
 
+    if intro_mainline:
+        out.extend(_check_intro_mainline(content, lines, sections, parser))
+
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -1176,13 +1482,28 @@ def main() -> int:
         action="store_true",
         help="运行全篇动机红线诊断（承诺映射 + 闭合映射）",
     )
+    cli.add_argument(
+        "--intro-mainline",
+        action="store_true",
+        help="运行绪论主线专项检查（科学问题三要素/四方闭合/首段漏斗/国内外分述）",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
         return 1
 
-    print("\n".join(analyze(args.file, args.section, args.cross_section, args.motivation_thread)))
+    print(
+        "\n".join(
+            analyze(
+                args.file,
+                args.section,
+                args.cross_section,
+                args.motivation_thread,
+                args.intro_mainline,
+            )
+        )
+    )
     return 0
 
 
