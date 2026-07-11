@@ -46,6 +46,23 @@ S1 只判断"有没有导语"。对正文各章（第 2 章至结论前、且含
 
 **Detection**: Script extracts contribution keywords from `introduction`, checks for response keywords ("验证了", "证明了", "实验表明") in `conclusion`. Missing echo → Major/P1.
 
+## Intro Mainline Checks (`--intro-mainline`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --intro-mainline
+```
+
+绪论主线四项专项检查，全部 `[Script]` 启发式，仅在传入该 flag 时运行（默认行为不变）：
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| L-SCI | 科学问题（表格“科学问题”列或枚举条目）不得是短名词短语，须含对象-问题-方法三要素 | Major/P1 |
+| L-MAP | 科学问题/研究内容/创新点条数应闭合；正文声明不等量（如“工程验证贡献，不与……等量”）则降级 Info | Major/P1 |
+| L-FUN | 绪论首段须完成 领域背景 -> 技术瓶颈 -> 本文 三层漏斗 | Minor/P2 |
+| L-DOM | 标题写“国内外研究现状”就必须分述国内/国外，或声明按主题混排 | Info/P3 |
+
+改写模板与判别表见 [`../writing/introduction-guide-zh.md`](../writing/introduction-guide-zh.md)。
+
 ## Thesis Writing Mainline
 
 When the user asks how to rewrite 绪论、方法章节、实验讨论、总结与展望, map the section to:

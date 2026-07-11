@@ -15,6 +15,28 @@ uv run python -B scripts/analyze_literature.py thesis.tex --section related
 - **A3：研究空白推导**
   - 文献综述末尾应从既有工作的共同不足中推出研究空白，再连接本文切入点。
 
+## 绪论引用诊断（B1~B5，`--intro-citations`）
+
+```bash
+uv run python -B scripts/analyze_literature.py thesis.tex --intro-citations --bib refs.bib
+```
+
+作用域为绪论章节（未识别出绪论时按整份文件统计并提示）；`--intro-citations` 忽略
+`--section`。全部输出带 `[Script]` 标注。
+
+- **B1：引用数量区间**——绪论唯一引用键数对照 `--min-cites`/`--max-cites`
+  （默认 120/160，博士档；硕士论文可按校规范减半）。低于下限 Major，高于上限仅 Info。
+- **B2：单点堆引**——一个 `\cite` 挤进 3 篇以上，逐处定位并建议拆到各自观点句。
+- **B3：同作者/团队扎堆**——键名作者前缀归一后同前缀 >=3 篇即提示，并点出整簇共引
+  行号；中文姓氏拼音会有同姓误报，输出已注明需人工复核。
+- **B4：年份分布**（需 `--bib`）——近三年 >=30%、近五年 >=50% 的严口径；缺 bib 时
+  降级为 Info 提示，不报错。`--current-year` 可覆盖基准年（默认系统年份）。
+- **B5：可视化收束**——研究现状范围内没有任何表格/图示时提示补研究演进时间线图或
+  文献对比矩阵表。
+
+阈值出处与选文配比策略见 `../writing/introduction-guide-zh.md`；引用不足时只能从
+用户 .bib 补检，不可编造条目。
+
 ## 推荐重写链条
 
 `共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点`

@@ -24,7 +24,7 @@ metadata:
       structure,
     ]
   version: "5.3.0"
-  last_updated: "2026-07-09"
+  last_updated: "2026-07-11"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -67,8 +67,8 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | `bibliography` | GB/T 7714 or BibTeX validation                                                                                                  | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
 | `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                           | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`             | `references/modules/title.md`                                                                              |
 | `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                               | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`             | `references/modules/deai.md`                                                                               |
-| `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                                 | `references/modules/logic.md`                                                                              |
-| `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出                                                                          | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`          | `references/modules/literature.md`                                                                         |
+| `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure; intro mainline checks (`--intro-mainline`) | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                                 | `references/modules/logic.md`                                                                              |
+| `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出；绪论引用数量/堆引/年份分布诊断（`--intro-citations`）                                                                          | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`          | `references/modules/literature.md`                                                                         |
 | `experiment`   | Review experiment chapter language, discussion layering, and conclusion completeness                                            | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex`                            | `references/modules/experiment.md`                                                                         |
 | `references`   | Cross-reference integrity: undefined `\ref`, unreferenced labels, missing captions, numbering gaps                              | `uv run python $SKILL_DIR/scripts/check_references.py main.tex`                              | `references/modules/references.md`                                                                         |
 | `tables`       | 表格结构校验、三线表生成、booktabs 检查                                                                                         | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex`                                  | `references/modules/tables.md`                                                                             |
@@ -122,6 +122,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/writing/structure-guide.md`: thesis structure, direct-section budget, heading lead-ins.
 - `references/writing/logic-coherence.md`: logic, coherence, and literature-review expectations.
 - `references/writing/thesis-writing-guide.md`: 绪论、章引言（承上启下两段式）、本章小结（单段收束）、文献综述、方法章、实验、结论与摘要/创新点/结论闭合。
+- `references/writing/introduction-guide-zh.md`: 绪论专章——引用配额与年份分布、研究现状可视化（演进时间线/对比矩阵）、科学问题三要素、四方闭合。
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/writing/tense-guide-zh.md`: 英文摘要时态判断级清单（配合 `deai`）。

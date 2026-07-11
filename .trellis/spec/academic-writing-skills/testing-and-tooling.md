@@ -103,3 +103,19 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 若已被 hook 重排：`git checkout` 还原后用上式重写，diff 应只剩语义新增（参考 typst-deai-sync 收敛到 +35/-0 的做法）。
 
 **同类陷阱**：SKILL.md 的表格被全局 hook 重新对齐会触发 `ROUTER_ROW_RE` contract 测试——改 SKILL.md 表格后必须跑 `tests/contracts/test_skill_contracts.py`。
+
+---
+
+## Gotcha: 别给 pytest 命令加 PYTHONIOENCODING=utf-8
+
+> 来源：07-10-thesis-zh-intro-optimization（2026-07-11）。
+
+**What**：`PYTHONIOENCODING=utf-8 uv run pytest tests/contracts/` 会让
+`test_skill_contracts.py` 里 subprocess 跑 `script --help` 的用例炸出
+`TypeError: NoneType + str`（reader 线程按 locale/cp936 解码 UTF-8 输出失败，
+`result.stdout` 变 None）。该环境变量只用于**重定向 JSON 输出到文件**的场景
+（见 yanshan 任务记录），跑 pytest 一律不要加。
+
+**补充**：latex-thesis-zh 的 `evals/evals.json` 是 CRLF + `json.dumps(indent=2,
+ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
+Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
