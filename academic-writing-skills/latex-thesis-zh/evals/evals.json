@@ -553,6 +553,41 @@
           "description": "no detector-evasion promise"
         }
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "我的博士论文绪论被导师批了：引用不到 80 篇而且都是老文献，同一个团队的论文全堆在一个括号里；国内外研究现状没有图表总结；表里的科学问题都是“状态重叠”这种词组。帮我诊断第一章。",
+      "expected_output": "路由 literature --intro-citations（引用数量、堆引、同作者扎堆、--bib 年份分布、缺演进图/对比表）与 logic --intro-mainline（科学问题三要素、四方闭合、首段漏斗、国内外分述）；只诊断并从用户 .bib 补检候选，不编造文献。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--intro-citations",
+          "description": "intro citation diagnostics routed"
+        },
+        {
+          "type": "contains",
+          "text": "--intro-mainline",
+          "description": "intro mainline checks routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(对象.{0,6}问题.{0,6}方法|三要素)",
+          "description": "science-problem triad guidance surfaced"
+        },
+        {
+          "type": "regex",
+          "pattern": "(演进|时间线|对比(矩阵|表格?))",
+          "description": "visual summary of research status suggested"
+        },
+        {
+          "type": "not_contains",
+          "text": "为你生成参考文献",
+          "description": "no fabricated bibliography entries"
+        }
+      ]
     }
   ]
 }
