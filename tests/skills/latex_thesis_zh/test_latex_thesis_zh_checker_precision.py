@@ -241,6 +241,59 @@ class TestFormatNoiseReduction:
         assert not oral
 
 
+# ── R5 源码卫生检查 F-MD / F-NOTE ─────────────────────────────
+
+
+class TestFormatSourceHygiene:
+    def test_markdown_bold_flagged_major(self, tmp_path: Path):
+        """可见正文里的 Markdown **加粗** 命中 F-MD，且为 actionable（status WARNING）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文研究 **多尺度耦合软测量问题** 的建模方法。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        md = [i for i in result["issues"] if i["code"] == "F-MD"]
+        assert md and md[0]["severity"] == "warning"
+        assert md[0]["line"] == 1
+        assert result["status"] == "WARNING"
+
+    def test_escaped_asterisks_not_flagged(self, tmp_path: Path):
+        r"""转义星号 \*\* 是字面星号意图（反斜杠隔开无连续两星），不得命中 F-MD。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("正则用 \\*\\*通配\\*\\* 表示任意匹配。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_double_star_in_math_not_flagged(self, tmp_path: Path):
+        """数学环境内的 ** 被 extract_visible_text 剥离，不得命中 F-MD。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("指数关系 $y = a**b**c$ 成立。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_textbf_not_flagged(self, tmp_path: Path):
+        r"""规范的 \textbf{} 写法不得命中 F-MD（避免误伤正确 LaTeX）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文研究 \\textbf{多尺度耦合软测量问题} 的建模。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_draft_note_flagged_info_only(self, tmp_path: Path):
+        """草稿备注命中 F-NOTE 且仅为 info —— 单独出现时整体仍 PASS。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("图中占位示意，后续可根据现场图纸替换。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        note = [i for i in result["issues"] if i["code"] == "F-NOTE"]
+        assert note and note[0]["severity"] == "info"
+        assert note[0]["line"] == 1
+        assert result["status"] == "PASS"
+
+    def test_academic_hedging_not_flagged(self, tmp_path: Path):
+        """正常学术让步表述（"仍需通过实验确认"）不含备注词形，不得命中 F-NOTE。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("该结论仍需通过实验确认，有待进一步研究。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-NOTE"]
+
+
 # ── 旗标与文档 ────────────────────────────────────────────────
 
 

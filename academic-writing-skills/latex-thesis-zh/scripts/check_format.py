@@ -57,6 +57,24 @@ class FormatChecker:
             "severity": "warning",
             "visible_only": True,
         },
+        # F-MD：Markdown 加粗残留。XeLaTeX 下 **文本** 按字面星号排版（不会加粗），
+        # 应改用 \textbf{}。转义写法 \*\* 因反斜杠隔开而没有连续两颗星，天然不命中；
+        # 数学环境 / verbatim / 注释由 visible_only + 既有跳过逻辑排除。
+        "F-MD": {
+            "pattern": r"\*\*[^*\n]{1,80}\*\*",
+            "message": "LaTeX 中 Markdown **加粗** 会按字面星号排版，应改用 \\textbf{}",
+            "severity": "warning",
+            "visible_only": True,
+        },
+        # F-NOTE：草稿备注泄漏进正文（占位图注、待办等）。词表刻意收窄，只命中
+        # 明确的备注词形；正常学术让步表述（"仍需通过实验确认""有待进一步研究"）
+        # 不含触发词形，不误伤。
+        "F-NOTE": {
+            "pattern": r"后续可根据.{0,20}(?:替换|更新|补充)|此处占位|待补充|待确认|TODO|FIXME",
+            "message": "疑似草稿备注泄漏进正文，定稿前应删除或移入注释",
+            "severity": "info",
+            "visible_only": True,
+        },
     }
 
     _VERBATIM_ENVS = ("verbatim", "lstlisting", "minted")
