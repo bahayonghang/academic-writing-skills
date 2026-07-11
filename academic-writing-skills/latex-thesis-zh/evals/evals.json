@@ -588,6 +588,67 @@
           "description": "no fabricated bibliography entries"
         }
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "我的博士论文第二章写的是工艺流程分析和整篇论文的总体方法框架，帮我检查主线闭合、框架图和后续章节映射对不对。",
+      "expected_output": "识别为过程分析章式，路由到 logic 模块并补读第二章专章指南，用 analyze_logic.py --process-chapter 检查工艺流程图引用、难点推导链、总体框架图与后续各章映射的主线闭合，不改引用和公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "contains",
+          "text": "--process-chapter",
+          "description": "process-chapter mainline flag routed"
+        },
+        {
+          "type": "contains",
+          "text": "process-chapter-guide-zh",
+          "description": "reads the second-chapter process-analysis guide"
+        },
+        {
+          "type": "regex",
+          "pattern": "(工艺|流程|总体框架|框架图|章节映射|第 ?X ?章)",
+          "description": "process-analysis mainline and framework-map concepts surfaced"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "我的第二章不是工艺流程分析章，而是直接写方法推导和实验验证，请不要套用过程分析章那套工艺流程图/框架图检查。",
+      "expected_output": "识别为方法+实验章式而非过程分析章，不套用 --process-chapter 的过程分析章检查（不跑或仅给章式提示），改按学位论文方法章三问（动机/设计/技术优势）与 experiment 模块的讨论分层规则处理。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(方法章|方法推导|实验验证|experiment)",
+          "description": "method-derivation / experiment chapter recognized"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,6}(套用|适用)|按方法章|方法章规则|章式)",
+          "description": "does not force process-analysis-chapter checks; routes by chapter form"
+        },
+        {
+          "type": "regex",
+          "pattern": "(动机|设计|技术优势|讨论分层|三问)",
+          "description": "method-chapter three-questions or experiment discussion layering applied"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
     }
   ]
 }
