@@ -89,6 +89,73 @@ Results:     ❌ MISSING  — No quantitative findings detected → Add key metr
 Conclusion:  ⚠️ VAGUE    — Restates results without implications → Add practical significance
 ```
 
+## 学位论文摘要骨架（thesis 模型）
+
+上面的五要素模型是**会议/期刊小论文**口径。中文学位论文（尤其工科博士）摘要遵循一套不同的
+**骨架结构**：不是 Background/Objective/Methods/Results/Conclusion 五段，而是"对象定位 → 痛点 →
+总起句冒号收束 → 编号工作段 → 可选收尾段"。`analyze_abstract.py` 的 **`--model thesis` 为默认**，
+诊断这套骨架；`--model five` 保留上面的五要素模型作后备（本技能只服务学位论文，五要素模型对
+博士摘要会系统性误报，如 Results 无数值判 MISSING，而合规博士摘要常定性收口）。
+
+### 骨架顺序（宏观）
+
+```text
+① 对象定位首句："X 是……" / "X 产生于……"（研究对象为主语，非方法开头）
+② 痛点/挑战段："然而，……难以/挑战/瓶颈……"
+③ 总起句 + 冒号收束："本文主要研究工作/创新点如下："
+④ 编号工作段 (1)(2)(3)…：每段"针对……问题，提出/建立……，实验/应用表明……"
+⑤ 可选收尾段：综述成果/工程应用（"优化/工程应用"类论文常见，非必需）
+```
+
+段落数 = 背景段(1~2) + 工作段(编号数) + 可选收尾段。
+
+### 与五要素模型的关系
+
+| 维度 | 五要素模型（`--model five`） | 学位论文骨架（`--model thesis`，默认） |
+| --- | --- | --- |
+| 适用 | 会议/期刊小论文 | 中文博士/硕士学位论文 |
+| 主体 | Background/Objective/Methods/Results/Conclusion 五段 | 编号工作段 (1)(2)(3)… |
+| 数值 | Results 无数值判 VAGUE/MISSING | 数值可选（4/5 定性收口合规），出现才查稳健表述 |
+| 字数 | EN 150~250 词 / ZH 200~300 字 | 对齐 check_spec 燕山常量：博士 900~1200 字 / 硕士 500~650 字 |
+
+字数阈值由 `--degree {doctor,master}` 切换（默认 doctor），`--max-chars` 可覆盖上界。
+
+### T-* 分级规律表
+
+诊断项对应 research `abstract-patterns.md` 编号；**★ 标记（≥4/5）为默认告警，2~3/5 规律仅 Info**：
+
+| 检查码 | 内容 | 级别 | 溯源 |
+| --- | --- | --- | --- |
+| T-OPEN | 首句以研究对象为主语定位，非方法开头 | Warning | ★A1 5/5 |
+| T-PAIN | 存在痛点/挑战句（难以/挑战/尚未/瓶颈） | Warning | ★A2 5/5 |
+| T-LEAD | 编号段前有总起句且以"："收束 | Warning | ★A4 5/5 |
+| T-ENUM | 主体为 (1)(2)… 编号工作段，段数与编号一致 | Warning | ★A5 5/5、D4 |
+| T-VERIFY | 验证方式点名（仿真/实测/生产数据/现场应用），非空泛"验证有效" | Warning | ★C2 5/5 |
+| T-ABBR | 缩略语首现即定义中英全称 | Warning | ★E3 5/5 |
+| T-INNOV | 出现创新表述（创新/首次/新方法 或编号工作段本身） | Warning | web A3 校规 |
+| T-TOC-STYLE | 非目录式摘要 / 背景铺陈不过长 | Warning | web A10 软性 |
+| T-PROB | 各工作段以问题导向短语开头（全篇 <50% 才报） | Info | ★B1 |
+| T-VERB | 方法动词属规范集（提出/建立/设计/构建/研究/采用） | Info | ★B4 |
+| T-NUM-HEDGE | 数值指标带"约/以上/区间"稳健表述（有数值才查） | Info | C3 2/2 |
+| T-KW-FIRST | 首个关键词≈研究对象/过程名 | Info | ★D2 |
+| T-VOICE | 只查"我/我们/笔者"；"本文/本论文"合法 | Info | web A6 |
+
+### 中英摘要一致性（`--bilingual`）
+
+thesis 模式加 `--bilingual` 时额外比对英文 Abstract 与中文摘要：
+
+| 检查码 | 内容 | 级别 | 溯源 |
+| --- | --- | --- | --- |
+| B-ORD | 首先/其次/然后/最后 ↔ First/Second/Then/Finally 数量与顺序对齐 | Warning | ★F3 5/5 |
+| B-NUM | 中英数值 token 集合一致 | Error（数值不一致是硬伤） | ★F1；web A9 |
+| B-ENUM | 编号工作段条数一致 | Warning | ★F1 |
+| B-LEN | 英文摘要缺失/过短 | Warning | web A9 |
+| B-SEM | 逐句/逐要素语义对应（[LLM] lane，报告给对照提示词） | — | ★F1 |
+
+时态/语态（★F2 英摘方法句一般现在时被动）**不在此实现**：deai 模块已有英文摘要区域门控的
+时态检测（[tense-guide-zh.md](tense-guide-zh.md) + deai_check），`--bilingual` 报告尾注指路 deai，
+避免双实现漂移（deai trace 不流入本模块）。
+
 ## Constraints
 
 - Never alter the author's core claims or fabricate data

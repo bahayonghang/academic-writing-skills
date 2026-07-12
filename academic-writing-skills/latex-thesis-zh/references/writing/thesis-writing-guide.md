@@ -174,6 +174,12 @@
 
 检查每条创新点是否在结论中被回应，且是否有实验或章节证据支撑。
 
+> 摘要骨架细则（对象定位首句、痛点段、总起句冒号收束、编号工作段、中英一致性、字数校规）
+> 见 [abstract-structure.md](abstract-structure.md) 的「学位论文摘要骨架（thesis 模型）」节，
+> 对应脚本 `analyze_abstract.py`（默认 thesis 模式，`--bilingual` 查中英一致性）。
+> 结论章细则（扁平三段式、贡献条骨架、展望空话黑名单、结论≠摘要、数值一致性）见
+> [conclusion-guide-zh.md](conclusion-guide-zh.md)，对应脚本 `analyze_conclusion.py`。
+
 ## 输出建议格式
 
 ```latex

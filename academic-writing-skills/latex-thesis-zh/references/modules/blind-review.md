@@ -105,3 +105,6 @@ uv run python $SKILL_DIR/scripts/blind_review.py main.tex --check
   可让用户提供通知原文后按同一流程执行（勿把 R3 惯例当校方要求）。
 - **格式合规终检** → 走 `spec-check` 模块（两者互补：spec-check 管格式符合性，
   blind-review 管身份信息隐匿）。
+- **摘要/结论的规范性问题**（骨架缺失、展望空话、结论抄摘要等）→ 走 `abstract`/`conclusion`
+  模块；这类问题命中盲审"规范性"维度（约 20% 权重，Info 级联动，具体口径以本校评审表为准），
+  与身份隐匿是两回事，不在本模块处理。

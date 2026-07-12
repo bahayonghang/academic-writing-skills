@@ -102,6 +102,7 @@ SMOKE_COMMANDS = [
     ("check_references.py", ["main.tex"], {1}, "Undefined reference"),
     ("check_tables.py", ["main.tex"], {1}, "Vertical lines detected"),
     ("analyze_abstract.py", ["main.tex"], {0}, "Thesis Abstract Skeleton Diagnosis"),
+    ("analyze_conclusion.py", ["main.tex"], {0}, "Conclusion Content Check"),
     (
         "check_spec.py",
         ["main.tex", "--template", "yanshan", "--degree", "doctor", "--year", "2026"],
