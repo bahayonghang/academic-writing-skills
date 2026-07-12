@@ -1,0 +1,3 @@
+{"file": "tests/contracts/test_skill_contracts.py", "reason": "ROUTER_ROW_RE and SKILL.md string locks must pass after SKILL.md edits"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/implement.md", "reason": "ordered checklist with per-step validation commands, commit split, rollback points, R3d pre-approved downgrade path"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/research/fixture-chapters3-6-audit.md", "reason": "acceptance retest baseline: user chapters 3-6 expected hits/misses per P1-P10"}

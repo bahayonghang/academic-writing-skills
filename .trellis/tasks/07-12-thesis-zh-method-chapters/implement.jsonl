@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh scripts test import convention; evals.json Bash-python write rule; SKILL.md table formatter gotcha"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md router table lock conventions before editing logic/experiment/format row Use when"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/prd.md", "reason": "requirements R1-R6, fixture evidence table P1-P10, acceptance criteria, chapter-style boundary, 07-11 parallel-work constraint"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/design.md", "reason": "per-script change map D1-D8: P-PAPER extraction, F-NOTE hedge wordlist, F-PLACEHOLDER, --per-chapter E-* family, --first-chapter, false-positive fixes"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/research/body-chapter-conventions.md", "reason": "5-thesis hard conventions (8), anti-false-positive red lines (12), positive check candidates (12) - guide material and negative-test spec"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/research/fixture-chapters3-6-audit.md", "reason": "P1-P10 measured evidence with file:line, current checker behavior, regression reference section 4 (correct behaviors not to break)"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/research/current-skill-coverage.md", "reason": "gap analysis A/B/C, analyze_experiment dead-check mechanics, 07-11 boundary table to avoid duplicate work"}
+{"file": ".trellis/tasks/07-12-thesis-zh-method-chapters/research/web-best-practices.md", "reason": "Tsinghua/CAS/HIT official rules with source URLs for guide citations; blind-review four failure causes; baseline fairness"}
