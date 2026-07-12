@@ -563,3 +563,22 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Status
 
 [OK] **Completed** — just ci 1040 绿（+25 测试）；真实 chapter1.tex 回归：121 唯一键、15 处堆引、近三年 21% 被 B4 命中、表 1-2 五行科学问题全中 L-SCI；4 个功能 commit + 1 个归档 commit
+
+## 2026-07-12: latex-thesis-zh 第二章过程分析章优化（07-11-thesis-zh-process-chapter）
+
+### 关键决策
+
+- P-FLOW/P-DERIVE/P-FRAME/P-ORDER/P-PAPER 挂 logic 新 flag --process-chapter、F-MD/F-NOTE 挂 format 现有 CHINESE_CHECKS，默认行为只有 R2 章引言编号形态 bug-fix
+- “第X章”显式章号映射定 Info 推荐加强项（用户决策）：9 子代理精读证实 5/5 范文框架节均不写章号（映射独占绪论组织结构节），不可升 Major
+- 第二章引言 5/5 为“本章概述式”不承接前章，承上启下检查从第 3 章起适用；编号“2.1 引言”与章后导语 4:1，R2 两形态均适配
+- 本轮只做技能能力建设、不对用户论文出诊断（用户决策）
+
+### 教训
+
+- [WARN] 检查器适配新结构形态要跑完整输出回归：R2 修完 _check_chapter_intro，S1 _check_heading_leads 对同一编号引言章仍误报“未发现导语段落”，追加 _has_numbered_intro_section 豁免（已写入 spec/testing-and-tooling.md）
+- [WARN] ref/thesis 加密 PDF：pikepdf 解密后 Read 工具仍拒读，改走 PyMuPDF 抽全文 .txt 带页码标记再派子代理；解密副本只留 ref/（已 gitignore）绝不入库
+- [WARN] 子代理带回超范围 pyproject.toml version bump（5.3.0→5.4.0）+ uv.lock 波动，git checkout 还原；version 全仓同步不随单 skill 任务动
+
+### Status
+
+[OK] **Completed** — just ci 1072 绿（+32 测试）；5 个功能 commit + 新指南 process-chapter-guide-zh.md（245 行）；关键证据升级：框架节不写章号 3/5→5/5
