@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh scripts test import convention; evals.json Bash-python write rule; SKILL.md table formatter gotcha"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md router table lock conventions before editing logic row Use when"}
+{"file": ".trellis/tasks/07-11-thesis-zh-process-chapter/prd.md", "reason": "requirements R1-R6, fixture evidence table, acceptance criteria, chapter-style boundary"}
+{"file": ".trellis/tasks/07-11-thesis-zh-process-chapter/design.md", "reason": "P-FLOW/P-DERIVE/P-FRAME/P-ORDER/P-PAPER + chapter-intro numbered-form adaptation + F-MD/F-NOTE design and tradeoffs"}
+{"file": ".trellis/tasks/07-11-thesis-zh-process-chapter/research/chapter2-conventions.md", "reason": "5-thesis structural invariants, web-verified TOC evidence, skill gap list"}
+{"file": ".trellis/tasks/07-11-thesis-zh-process-chapter/research/chapter2-content-analysis.md", "reason": "per-section content analysis of 5 reference theses: intro forms, derivation sentences with page numbers, framework-figure conventions (guide writing material)"}
