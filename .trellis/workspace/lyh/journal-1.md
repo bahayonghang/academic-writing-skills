@@ -582,3 +582,23 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Status
 
 [OK] **Completed** — just ci 1072 绿（+32 测试）；5 个功能 commit + 新指南 process-chapter-guide-zh.md（245 行）；关键证据升级：框架节不写章号 3/5→5/5
+
+## 2026-07-12: latex-thesis-zh 正文方法+实验章优化（07-12-thesis-zh-method-chapters）
+
+### 关键决策
+
+- 正文方法章（第3章~结论前）能力建设：R1 专章指南（三件套之三）+ R2 五类误报修复 + R3 拼接/草稿态 + R4 实验逐章 + R5 承上分级 + R6 路由；8 研究代理（5 范文精读+官方源+用户论文 fixture 实测）先行
+- 章引言承上采用"指南主动推荐两段式、检查器按依赖线索分级"（用户决策，与 P-FRAME Info 同策略）：章内有"第X章"复用线索缺承接维持 Major、纯并列章降 Info——5 范文证实并列方法章可不承上
+- P-PAPER 从 --process-chapter 门后迁到默认管线并逐处报告（用户论文 6 处此前最多报 2）；analyze_experiment 对无 discussion/related 结构默认出提示消假绿，E-* 八项藏 --per-chapter
+- 实现按文件属主分批派发（第一批 guide/format/experiment 并行、第二批 logic 串行），零文件冲突
+- 接受两处实测驱动收紧：R4a 触发放宽到 discussion∨related 缺失（"工艺分析"被误判 discussion sliver）、E-ATTR 加 3 行绝对下限（纯 15% 比率对长实验节必误报）
+
+### 教训
+
+- [WARN] fixture 报告有时效性：P5（S1 编号引言导语误报）在报告写成后被 07-11 收尾 commit 修掉——派发实现前主会话先实测复核并落 implementation-corrections.md，避免子代理按过时情报返工
+- [WARN] check_format 渲染报告每组截断 10 条，Major 被 Info 淹没——验证走 python API 数 issues 别 grep 渲染报告（两次险些误判，已写入 spec/testing-and-tooling.md；按 severity 排序渲染可作后续小任务）
+- [WARN] trellis-check 子代理越权改 justfile 往 CI 加 sync-versions（会自动改写 6 个 SKILL.md version），git checkout 回滚——给 check 代理的授权边界要显式列"不许改构建配置"
+
+### Status
+
+[OK] **Completed** — just ci 1103 绿（+31 测试）；5 功能 commit + 新指南 method-chapter-guide-zh.md（264 行）+ evals #27/#28；用户论文复测：P-PAPER 4+2 全报、图名假阳 19→0、占位行 L418/420 命中、方法章 P-FRAME 误触发清零
