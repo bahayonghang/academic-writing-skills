@@ -28,10 +28,12 @@ Purpose: Check thesis page layout, heading format, figure/table/equation numberi
 | Check | Rule | Severity |
 |-------|------|----------|
 | F-MD | 可见正文命中 Markdown 加粗 `**…**`（`\*\*` 转义星号不计）——LaTeX 中按字面星号排版，应改 `\textbf{}` | Major/P1 |
-| F-NOTE | 可见正文命中草稿备注词表（"后续可根据…替换/更新/补充""此处占位""待补充/待确认""TODO/FIXME"）——疑似草稿备注泄漏进正文，定稿前应删除或移入注释 | Info/P3 |
+| F-NOTE | 可见正文命中草稿备注词表（CORE："此处占位/待补充/待确认/TODO/FIXME"）或未定稿对冲词表（HEDGE："待验证/暂以占位/仍在进行/重跑/复算/不代表…性能"）——疑似草稿残留，定稿前应删除或补全 | Info/P3 |
+| F-PLACEHOLDER | 表体行数据格全为空占位且含 ≥2 个显式占位记号（`& --- & --- &`）——占位符表格行未填真实数据（单个 `-`/混真实数据的 N/A 行不报） | Major/P1 |
 
-两项均只扫可见正文（数学环境/verbatim/注释排除）；F-NOTE 词表刻意收窄，"仍需实验确认"
-一类正常学术让步表述不命中。
+三项均只扫可见正文（数学环境/verbatim/注释排除）；F-NOTE 词表刻意收窄，"仍需实验确认"
+一类正常学术让步表述不命中，"复算"带负向断言只命中裸用法。中文图名路径
+（`\includegraphics{中文名.png}`）经 strip_path_args 排除，不触发中英标点混用误报。
 
 ## Key Checks
 

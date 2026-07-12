@@ -649,6 +649,52 @@
           "description": "no fabricated citations"
         }
       ]
+    },
+    {
+      "id": 27,
+      "prompt": "我的博士论文第三到第六章是一章一个方法加同章实验（工业过程建模预测），帮我检查每一章的实验部分写得够不够、方法章骨架规范不规范。",
+      "expected_output": "识别为正文方法+实验章式，补读 method-chapter-guide-zh.md，走 experiment --per-chapter 逐方法章检查数据描述/归因分析/图表引用/框架图/参数/消融（E-DATA~E-ECHO），并说明无显著性检验、人工经验基线、教科书基础节均属工业论文合法惯例不报错；不改引用和公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--per-chapter",
+          "description": "per-chapter experiment flag routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(method-chapter|方法章|逐.?章|每一?章)",
+          "description": "method-chapter guide / per-chapter recognized"
+        },
+        {
+          "type": "regex",
+          "pattern": "(实验|数据|消融|归因|框架图)",
+          "description": "experiment completeness dimensions"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "我的大论文是几篇英文小论文拼的，正文里好几处写了“源论文”“小论文”，还有“待验证”“暂以占位”这种草稿话和一行全是---的空表格，帮我把这些定稿前该清理的都找出来。",
+      "expected_output": "走 logic（默认全章扫 P-PAPER，逐处报告“源论文/小论文/N篇论文”拼接表述）与 format（F-NOTE 草稿态对冲词、F-PLACEHOLDER 占位符表格行），对照 method-chapter-guide-zh.md 拼接感/草稿态清单给出改写；只定位提示不改写正文、不动引用公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(P-PAPER|源论文|小论文|拼接)",
+          "description": "paper-stitching sweep routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(F-NOTE|F-PLACEHOLDER|草稿|占位)",
+          "description": "draft-note / placeholder checks routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(logic|format)",
+          "description": "correct modules"
+        }
+      ]
     }
   ]
 }

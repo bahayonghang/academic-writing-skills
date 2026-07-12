@@ -81,6 +81,33 @@
 
 ---
 
+# 逐方法章实验检查 (--per-chapter)
+
+```bash
+uv run python scripts/analyze_experiment.py thesis.tex --per-chapter
+```
+
+工业/过程背景学位论文常为"综述在绪论 + 无独立讨论章 + 实验分散在各方法章"结构：此时
+B3/B4 的全局 `discussion`/`related` 节不存在，默认模式会输出一条结构提示 Info（不再静默
+假绿），并建议改用 `--per-chapter` 按方法章逐章检查（绪论/结论/综述章自动排除）。
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| E-DATA | 实验节缺数据描述要素（来源/样本量/划分任一词面线索缺失） | Major/P1 |
+| E-ATTR | 实验节归因句占比 < 15% 且归因行 < 3（词表同 B3，逐章计算） | Major/P1 |
+| E-REF | 实验节无 `\ref{tab:...}` 且无 `\ref{fig:...}` 引用（图-表-文字脱钩） | Major/P1 |
+| E-FIG | 框架/结构/策略/方案节无 `\ref{fig:...}`（方法总体框架图缺失，5/5 范文必配） | Major/P1 |
+| E-METRIC | 指标词（RMSE/MAE/R² 等）出现但章内无公式环境且无"X.X 节"复用指涉 | Minor/P2 |
+| E-PARAM | 实验节无参数设置线索（参数表/超参交代） | Minor/P2 |
+| E-ABL | 章内无消融/机制拆解线索 | Info/P3 |
+| E-ECHO | 全章无"第 2 章"回指且无跨章 `\ref`（框架呼应缺失；3/5 范文靠反向承接，故仅 Info） | Info/P3 |
+
+**防误报红线**（工业论文合法惯例，不报）：无统计显著性检验、无均值±方差、优化/决策章用
+"人工经验"作基线、方法章含教科书式基础理论节、并列章不回指第 2 章（仅 E-ECHO Info）。
+写作规范与正反例见 [`../writing/method-chapter-guide-zh.md`](../writing/method-chapter-guide-zh.md)。
+
+---
+
 # 结论完整性检查 (B5)
 
 **规则**：完整的结论必须包含三个要素：

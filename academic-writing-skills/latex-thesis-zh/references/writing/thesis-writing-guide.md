@@ -129,6 +129,11 @@
 > 若第二章为工业/过程背景的**过程分析章式**（工艺流程分析 + 全文方法框架，而非直接写方法），
 > 先读 [process-chapter-guide-zh.md](process-chapter-guide-zh.md)，对应脚本检查为
 > `analyze_logic.py --process-chapter`；判别为"第二章即方法+实验"流派时才套用下述方法章三问。
+>
+> 第 3 章起的正文方法+实验章（"一章一方法 + 同章实验"章式）细则见
+> [method-chapter-guide-zh.md](method-chapter-guide-zh.md)——五段骨架、章引言承上分级、
+> 实验工业版规范、拼接感/草稿态清单；对应脚本为 `analyze_experiment.py --per-chapter`
+> 与默认运行的 P-PAPER 拼接表述扫描。
 
 每个核心章节或模块应回答三件事：
 
