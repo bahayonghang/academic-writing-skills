@@ -48,9 +48,12 @@ ENUM_RE = re.compile(r"[（(]\s*\d{1,2}\s*[)）]")
 OUTLOOK_TRIGGER_RE = re.compile(r"下一步|未来|有待进一步|进一步.{0,4}研究|作出如下展望|展望如下")
 # C-OUTLOOK-FUTURE-PHRASE：未来向措辞存在性（5/5）。
 FUTURE_PHRASE_RE = re.compile(r"有待|未来|下一步|将是|尚需|值得.{0,6}研究|进一步")
-# C-OUTLOOK-TRANS：展望前的局限/承接过渡句（5/5）。
+# C-OUTLOOK-TRANS：展望前的局限/承接过渡句（5/5）。承接式（"作出如下展望"
+# "对…下一步研究"）与局限式（"仍存在不足"）均计入——研究样本中纯承接无局限的
+# 写法同样满足 C-OUTLOOK-TRANS（显式列局限仅 2/5，是加分项非必要项）。
 OUTLOOK_TRANS_RE = re.compile(
     r"仍存在|仍有|仍然存在|仍需|不足|悬而未决|尚需|一定不足|问题.{0,4}值得"
+    r"|作出如下展望|展望如下|下一步.{0,8}(?:研究|工作)|后续研究"
 )
 # C-OUTLOOK-SPEC 反例黑名单（web C6）：展望空话套话。维护节律对齐 deai 词表约定，
 # 命中且同句无具体技术名词才报（见 TECH_TERM_RE）。8~15 条。
@@ -400,7 +403,9 @@ class ConclusionAnalyzer:
         """CC-OUTLOOK-TRANS（C-OUTLOOK-TRANS 5/5）：展望前有局限/承接过渡句，否则 Info。"""
         if not outlook_lines:
             return []
-        window = summary_lines[-2:] + outlook_lines[:1]
+        # 窗口取总结末 6 行 + 展望首 2 行：PDF 抽取/手工换行的源码里过渡句常被
+        # 硬换行拆到边界前数行（Gate B 粉磨篇实测 2 行窗口漏检"仍存在一定不足"）。
+        window = summary_lines[-6:] + outlook_lines[:2]
         window_text = " ".join(t for _, t in window)
         if OUTLOOK_TRANS_RE.search(window_text):
             return []
