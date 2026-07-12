@@ -1,13 +1,12 @@
 """正文方法+实验章（第3章起）逐章检查测试。
 
-文件分区（后续 logic 侧代理会在 logic 区追加 P-PAPER 泛化 / F-PLACEHOLDER /
---first-chapter 等用例）：
+文件分区：
 
-- experiment 区（本文件当前内容）：analyze_experiment.py 的 R4a 结构提示与 R4b
-  `--per-chapter` E-* 检查族。
-- logic 区（待追加）：analyze_logic.py 的拼接感/草稿态/章序相关用例。
+- experiment 区：analyze_experiment.py 的 R4a 结构提示与 R4b `--per-chapter` E-* 检查族。
+- logic 区：analyze_logic.py 的 R2d（方法论论证误报）、R2e（章式预判双信号）、R3a（P-PAPER
+  泛化默认全章）、R4c（--first-chapter）、R5（缺承上分级）。
 
-针对 latex-thesis-zh 的 analyze_experiment.py 副本，经 importlib 按路径加载。
+针对 latex-thesis-zh 的脚本副本，经 importlib 按路径加载。
 fixture 为合成脱敏样本（通用流程工业），保留问题模式、替换领域内容，不用用户论文原文。
 """
 
@@ -252,3 +251,137 @@ def test_e_checks_gated_behind_flag(tmp_path: Path) -> None:
     report = _run(tmp_path, _INTRO + _SICK + _TAIL)  # 默认模式
     for code in ("E-DATA", "E-ATTR", "E-REF", "E-FIG", "E-METRIC", "E-PARAM", "E-ABL", "E-ECHO"):
         assert code not in report, f"{code} 不得在默认模式出现\n{report}"
+
+
+# ══════════════════════════════════════════════════════════════
+# logic 区：analyze_logic.py 的 R2d / R2e / R3a / R4c / R5 用例。
+# ══════════════════════════════════════════════════════════════
+
+logic = _load_zh("analyze_logic")
+
+
+def _run_logic(tmp_path: Path, tex: str, **kwargs) -> str:
+    f = tmp_path / "logic.tex"
+    f.write_text(tex, encoding="utf-8")
+    return "\n".join(logic.analyze(f, **kwargs))
+
+
+# ── R2d：术语定义/分级口径不报方法论论证缺失 ──────────────────
+
+
+def test_r2d_term_definition_not_flagged(tmp_path: Path) -> None:
+    # “本文采用…证据等级”是术语分级定义、非方法选择，不报方法论论证缺失。
+    tex = (
+        _INTRO
+        + "\\chapter{某对象预测方法}\n"
+        + "本文采用离线测试、影子调度与现场投用三类证据构成四级证据等级。\n"
+        + _TAIL
+    )
+    report = _run_logic(tmp_path, tex)
+    assert "方法选择缺乏论证" not in report
+
+
+def test_r2d_bare_method_choice_still_flagged(tmp_path: Path) -> None:
+    # 无理由、无定义口径的“本文采用X方法”仍应报（R2d 不误伤正例）。
+    tex = _INTRO + "\\chapter{某对象预测方法}\n本文采用一种深度神经网络进行建模。\n" + _TAIL
+    report = _run_logic(tmp_path, tex)
+    assert "方法选择缺乏论证" in report
+
+
+# ── R2e：方法章 --process-chapter 只出 Info、不套 P-* ──────────
+
+
+def test_r2e_method_chapter_not_treated_as_process(tmp_path: Path) -> None:
+    # 方法章含“问题描述/总体框架”节（旧宽判据会命中），但章/节标题无过程信号
+    # （工艺/流程/过程分析/变量分析）→ 双信号只出 Info，不套 P-DERIVE/P-FRAME/P-ORDER。
+    tex = (
+        _INTRO
+        + "\\chapter{基于GA的某对象预测方法}\n"
+        + "\\section{问题描述}\n本章描述预测问题的边界与目标。\n"
+        + "\\section{总体框架}\n框架如图\\ref{fig:f}所示，含预测模型与优化策略。\n"
+        + "\\section{仿真实验}\n实验验证方法有效性。\n"
+        + _TAIL
+    )
+    report = _run_logic(tmp_path, tex, process_chapter=True)
+    assert "未见过程分析章特征" in report
+    for marker in ("P-DERIVE", "P-FRAME", "P-ORDER"):
+        assert marker not in report, f"{marker} 不应在方法章命中\n{report}"
+
+
+# ── R3a：P-PAPER 默认全章、逐处报全部命中 ─────────────────────
+
+
+def test_r3a_paper_stitching_reports_all_hits(tmp_path: Path) -> None:
+    # 默认模式（无 flag）扫全部正文行，每处“源论文/小论文/N篇论文”单独一条。
+    tex = (
+        _INTRO
+        + "\\chapter{基于GA的方法}\n"
+        + "源论文一的核心问题是预测精度。\n"
+        + "\\section{建模}\n第二篇源论文对应优化问题。\n"
+        + "\\section{实验}\n三篇论文的方法在此统一验证。\n"
+        + _TAIL
+    )
+    report = _run_logic(tmp_path, tex)
+    assert report.count("P-PAPER") == 3, f"应报 3 处 P-PAPER\n{report}"
+    assert "[Severity: Minor] [Priority: P2]: [Script] P-PAPER" in report
+
+
+def test_r3a_paper_stitching_absent_when_clean(tmp_path: Path) -> None:
+    tex = _INTRO + "\\chapter{基于GA的方法}\n本章围绕核心问题展开研究内容。\n" + _TAIL
+    report = _run_logic(tmp_path, tex)
+    assert "P-PAPER" not in report
+
+
+# ── R4c：--first-chapter 使单章文件承上检查生效 ───────────────
+
+
+def test_r4c_first_chapter_enables_cheng_check(tmp_path: Path) -> None:
+    # 单章文件：首个 \chapter 即第 3 章方法章，引言无承接、章内复用第 2 章成果。
+    tex = (
+        "\\chapter{基于GA的某对象控制方法}\n\\section{引言}\n"
+        "本章面向某对象的约束控制问题，设计一种新的控制方法。"
+        "首先给出被控对象模型，然后设计滚动优化控制器，最后通过仿真验证有效性。\n"
+        "\\section{方法框架}\n本节将第2章建立的预测模型作为约束条件。\n"
+    )
+    # 缺省：首个正文章被当第 2 章特判，不查承上。
+    assert "缺少承上" not in _run_logic(tmp_path, tex)
+    # --first-chapter 3：真实第 3 章，承上缺失被检出（章内有第 2 章依赖线索 → Major）。
+    report = _run_logic(tmp_path, tex, first_chapter=3)
+    assert "章引言缺少承上" in report
+
+
+# ── R5：缺承上分级（依赖章维持 Major / 并列章降 Info）─────────
+
+
+def _two_body_chapters(third_intro: str, third_body: str) -> str:
+    """绪论 + 第 2 章（过程分析，编号引言）+ 第 3 章（方法章，可配引言/正文）。"""
+    return (
+        _INTRO
+        + "\\chapter{某对象过程分析}\n\\section{引言}\n"
+        + "本章承接绪论，围绕过程展开。首先介绍流程，然后分析难点，最后给出框架。\n"
+        + "\\section{流程}\n流程内容若干，交代清楚。\n"
+        + f"\\chapter{{基于GA的某对象优化方法}}\n\\section{{引言}}\n{third_intro}\n"
+        + f"\\section{{方法框架}}\n{third_body}\n"
+        + _TAIL
+    )
+
+
+def test_r5_dependency_chapter_keeps_major(tmp_path: Path) -> None:
+    # 第 3 章引言无承上，但章内复用“第2章”成果（依赖线索）→ 维持 Major。
+    tex = _two_body_chapters(
+        "本章设计一种优化方法。首先给出模型，然后设计算法，最后仿真验证有效性。",
+        "本节将第2章的预测模型作为适应度函数。",
+    )
+    report = _run_logic(tmp_path, tex)
+    assert "第“基于GA的某对象优化方法”章章引言缺少承上" in report
+
+
+def test_r5_parallel_chapter_downgrades_to_info(tmp_path: Path) -> None:
+    # 第 3 章引言无承上、章内亦无“第X章”依赖线索（纯并列）→ 降 Info，不报 Major 承上。
+    tex = _two_body_chapters(
+        "本章面向优化问题独立立论，设计一种优化方法。首先给出模型，然后设计算法，最后仿真验证。",
+        "本节给出优化方法的模块组成与数据流。",
+    )
+    report = _run_logic(tmp_path, tex)
+    assert "第“基于GA的某对象优化方法”章章引言缺少承上" not in report
+    assert "并列方法章可不承上" in report

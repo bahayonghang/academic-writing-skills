@@ -1,6 +1,9 @@
-"""R3 过程分析章主线检查（--process-chapter：P-FLOW/P-DERIVE/P-FRAME/P-ORDER/P-PAPER）。
+"""R3 过程分析章主线检查（--process-chapter：P-FLOW/P-DERIVE/P-FRAME/P-ORDER）。
 
 针对 latex-thesis-zh 的 analyze_logic.py 副本，经 importlib 按路径加载。
+
+P-PAPER 已由 R3a 泛化为默认全章检查（不再挂 --process-chapter），其用例迁移到
+test_body_chapters.py 的 logic 分区（默认模式、报全部命中）。
 
 fixture 为合成脱敏样本（通用流程工业：污水处理 / 换热过程），保留问题模式、替换领域
 内容，不使用用户论文原文。
@@ -191,19 +194,6 @@ def test_porder_correct_order_silent(tmp_path: Path) -> None:
     assert "P-ORDER" not in report
 
 
-# ── P-PAPER：源论文表述 -> Minor ───────────────────────────
-
-
-def test_ppaper_source_paper_phrase_flagged(tmp_path: Path) -> None:
-    report = _run(tmp_path, _SICK, process_chapter=True)
-    assert "P-PAPER" in report
-
-
-def test_ppaper_absent_when_clean(tmp_path: Path) -> None:
-    report = _run(tmp_path, _COMPLIANT, process_chapter=True)
-    assert "P-PAPER" not in report
-
-
 # ── 章式预判：方法+实验章式输出 Info、不套 P-* ─────────────
 
 
@@ -240,5 +230,6 @@ def test_section_override_targets_named_chapter(tmp_path: Path) -> None:
 
 def test_flag_off_no_process_checks(tmp_path: Path) -> None:
     report = _run(tmp_path, _SICK)
-    for marker in ("P-FLOW", "P-DERIVE", "P-FRAME", "P-ORDER", "P-PAPER", "过程分析章"):
+    # P-PAPER 已泛化为默认检查（R3a），故此处不再纳入门控断言（_SICK 含“源论文”会命中）。
+    for marker in ("P-FLOW", "P-DERIVE", "P-FRAME", "P-ORDER", "过程分析章"):
         assert marker not in report

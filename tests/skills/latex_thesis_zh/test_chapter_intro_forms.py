@@ -106,7 +106,10 @@ def test_numbered_intro_second_chapter_missing_qi_flagged() -> None:
 
 
 def test_numbered_intro_third_chapter_missing_cheng_flagged() -> None:
-    """第 3 章编号引言节缺“第 X 章/承接”时，承上缺失应能从引言小节正文查出。"""
+    """第 3 章编号引言节缺“第 X 章/承接”时，承上缺失应能从引言小节正文查出。
+
+    R5/D8：第 3 章正文（方法框架节）复用了“第 2 章”产出（依赖线索），故缺承上维持 Major。
+    """
     tex = (
         _PREAMBLE
         + "\\chapter{某工艺流程分析}\n\\section{引言}\n"
@@ -114,10 +117,10 @@ def test_numbered_intro_third_chapter_missing_cheng_flagged() -> None:
         + "\\section{工艺流程}\n流程内容。\n"
         + "\\chapter{污水处理预测控制方法}\n\\section{引言}\n"
         + "本章设计预测控制方法。首先给出模型，然后设计控制器，最后验证效果。\n"
-        + "\\section{方法框架}\n框架内容。\n"
+        + "\\section{方法框架}\n本节复用第2章建立的软测量模型作为基础。\n"
     )
     report = _intro_findings(tex)
-    # 第 3 章（非首个正文章）承上缺失被指出……
+    # 第 3 章（非首个正文章）承上缺失被指出（有依赖线索 → Major）……
     assert "第“污水处理预测控制方法”章章引言缺少承上" in report
     # ……而第 2 章（首个正文章）承上仍豁免。
     assert "第“某工艺流程分析”章章引言缺少承上" not in report

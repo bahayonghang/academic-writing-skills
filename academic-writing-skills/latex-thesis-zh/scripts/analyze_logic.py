@@ -52,10 +52,18 @@ def _has_transition_zh(text: str) -> bool:
     return any(token in text for values in TRANSITIONS_ZH.values() for token in values)
 
 
+# 术语定义/分级口径句式：`本文采用…证据等级/口径/分级/定义` 是在定义术语而非选择方法，
+# 不应报“方法选择缺乏论证”（R2d 误报修复）。只做同句关键词负向判定，不做语义分析。
+METHOD_DEFINITION_MARKERS_ZH = ("等级", "口径", "分级", "定义", "记作", "表示")
+
+
 def _needs_method_justification_zh(text: str) -> bool:
     if "本文采用" not in text and "本文使用" not in text and "我们采用" not in text:
         return False
-    return not any(m in text for m in ["因为", "由于", "鉴于", "考虑到", "基于", "原因"])
+    if any(m in text for m in ["因为", "由于", "鉴于", "考虑到", "基于", "原因"]):
+        return False
+    # 术语定义/分级口径句式不算方法选择，不报（R2d）。
+    return not any(m in text for m in METHOD_DEFINITION_MARKERS_ZH)
 
 
 # ── 文献综述质量检查 (A1, A3) ──────────────────────────────────
@@ -262,6 +270,9 @@ RELATIVE_REF_PATTERNS_ZH = (
     "下文",
 )
 CHAPTER_NUM_REF_RE = re.compile(r"第\s*\d+\s*章")
+# 章号复用引用（含中文数字）：R5/D8 用它判定“章内其余部分是否复用前章产出”的依赖线索，
+# 以及 _check_chapter_intro 承接检测。比 CHAPTER_NUM_REF_RE（仅阿拉伯数字，P-FRAME 专用）更宽。
+CHAPTER_DEP_REF_RE = re.compile(r"第\s*[一二三四五六七八九十百\d]+\s*章")
 SECTION_NUM_PREVIEW_RE = re.compile(r"\d+\.\d+\s*节")
 # 章引言豁免标题（在 LEAD_EXEMPT_TITLES_ZH 之外，额外排除绪论与收尾章）。
 # 注意：此处“引言”指**章标题**为“引言”的整章（某些论文把第 1 章命名为“引言”），
@@ -507,7 +518,45 @@ def _chapter_intro_gap(line: int, title: str, observe: str, suggest: str) -> lis
     ]
 
 
-def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
+def _chapter_reuses_prior(lines: list[str], start: int, end: int, parser) -> bool:
+    """R5/D8 依赖线索：章内 start..end 是否出现“第X章”复用引用（正文复用了前章产出）。"""
+    comment_prefix = parser.get_comment_prefix()
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(comment_prefix):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible and CHAPTER_DEP_REF_RE.search(visible):
+            return True
+    return False
+
+
+def _chapter_bridge_gap(line: int, title: str, suggest: str, has_dependency: bool) -> list[str]:
+    """缺承上分级（R5/D8）：章内有“第X章”依赖线索 -> 维持 Major；纯并列无线索 -> 降 Info。
+
+    并列方法章引言可不承上是范文核实的合法形态（承上强度∝章间真实依赖）；仅当正文其余部分
+    已复用前章产出（出现“第X章”）却在引言漏掉承接时，才维持原 Major。
+    """
+    if has_dependency:
+        return _chapter_intro_gap(
+            line,
+            title,
+            "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
+            suggest,
+        )
+    return [
+        f"% 章引言（{_zh_loc(line)}）[Severity: Info] [Priority: P3]: [Script] "
+        f"第“{title}”章章引言未显式承接前一章（并列方法章可不承上）。",
+        "% 建议：并列方法章可不承上；若本章复用前章成果，"
+        "建议在引言以角色复用句显式承接（见 method-chapter-guide-zh.md §3）。",
+        "% 理由：承上强度与章间真实依赖成正比，纯并列方法章无需强行承接，故仅作推荐。",
+        "",
+    ]
+
+
+def _check_chapter_intro(
+    content: str, lines: list[str], parser, first_chapter: int | None = None
+) -> list[str]:
     """正文章引言（承上启下两段式）专项检查。
 
     仅作用于正文章（level-1 标题，排除绪论/引言/结论/总结/展望及摘要等），
@@ -521,8 +570,13 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
       检查对象（篇幅上限 CHAPTER_INTRO_NUMBERED_MAX_CHARS）。
 
     第 2 章特判（research §1/§7）：第 2 章引言是“本章概述式”，承接绪论已建立的背景而非
-    前一章结论，故对第 1 个正文章（order==0，即第 2 章）只查“启下 + 篇幅”，跳过“缺承上
-    衔接”；承上启下两段式（含承接前章结论）自第 3 章起适用。
+    前一章结论，故对第 2 章只查“启下 + 篇幅”，跳过“缺承上衔接”；承上启下两段式（含承接
+    前章结论）自第 3 章起适用。默认按 body_chapters 序号定位第 2 章（order==0）；single-file
+    场景可用 ``first_chapter``（R4c）声明本文件首个 \\chapter 的真实章号，据此按真实章号走特判。
+
+    缺承上分级（R5/D8）：第 3 章起“引言存在但无承接”时，若章内其余部分复用了前章产出
+    （出现“第X章”）维持 Major，纯并列章降为 Info 推荐（见 _chapter_bridge_gap）。空引言
+    仍按 Major 报（“无引言”不同于“并列章有引言不承上”）。
     """
     out: list[str] = []
     headings = parser.extract_headings(content)
@@ -536,7 +590,12 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
 
     for order, chapter in enumerate(body_chapters):
         title = chapter["title"]
-        is_first_body = order == 0
+        # 第 2 章特判：默认用 body 序号（order==0）；--first-chapter 声明真实章号后按真实章号判定。
+        if first_chapter is not None:
+            real_num = first_chapter + chapters.index(chapter)
+            is_first_body = real_num == 2
+        else:
+            is_first_body = order == 0
 
         # 本章范围：章标题行 -> 下一个 level-1 标题（或文末）。
         next_chapter_line = next(
@@ -623,22 +682,18 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
             )
             continue
 
-        # 承上：桥接词 / 第X章 / 相对指代 任一即视为有承上尝试（相对指代另行提示措辞）。
+        # 承上：桥接词 / 第X章（含中文数字）/ 相对指代 任一即视为有承上尝试（相对指代另行提示）。
         has_relative_ref = any(p in intro_text for p in RELATIVE_REF_PATTERNS_ZH)
         has_bridge = (
             any(k in intro_text for k in CHAPTER_BRIDGE_KEYWORDS_ZH)
-            or CHAPTER_NUM_REF_RE.search(intro_text) is not None
+            or CHAPTER_DEP_REF_RE.search(intro_text) is not None
             or has_relative_ref
         )
         if not has_bridge and not is_first_body:
-            out.extend(
-                _chapter_intro_gap(
-                    report_line,
-                    title,
-                    "章引言缺少承上衔接：未承接前一章结论或说明递进关系",
-                    bridge_suggest,
-                )
-            )
+            # R5/D8：引言存在但无承接时分级——章内其余部分复用前章产出（依赖线索）维持 Major，
+            # 纯并列章降 Info。has_bridge 已排除引言自身的“第X章”，故扫全章等价于扫“引言之外”。
+            has_dependency = _chapter_reuses_prior(lines, chapter["line"] + 1, chapter_end, parser)
+            out.extend(_chapter_bridge_gap(report_line, title, bridge_suggest, has_dependency))
 
         # 启下：路标预告，或“本章 + 任务动词”说明本章要做什么。
         has_roadmap = (
@@ -698,6 +753,35 @@ def _check_chapter_intro(content: str, lines: list[str], parser) -> list[str]:
                 ]
             )
 
+    return out
+
+
+# ── 小论文拼接感（P-PAPER，默认全章通用检查）─────────────────
+#
+# 工业博士大论文常由已发表英文小论文经 paper-to-chapter 转写整合而成，正文若残留
+# “源论文/小论文/N 篇论文”等元表述会暴露拼接感（盲审第一风险）。R3a 把 P-PAPER 从
+# --process-chapter（仅第 2 章、报首处）提升为默认运行、扫全部正文行、每处命中单独一条。
+PAPER_STITCH_RE = re.compile(r"源论文|小论文|[一二两三四五12345]\s*篇(?:学术)?论文")
+
+
+def _check_paper_stitching(lines: list[str], parser) -> list[str]:
+    """P-PAPER（Minor/P2）：全文正文出现“源论文/小论文/N 篇论文”表述，逐处单独报告。
+
+    注释行由 _section_visible_lines / extract_visible_text 自然过滤；\\cite/\\ref 等
+    命令内文本被剥离，不会误触发。
+    """
+    out: list[str] = []
+    for line_no, visible in _section_visible_lines(lines, (1, len(lines)), parser):
+        if PAPER_STITCH_RE.search(visible):
+            out.extend(
+                [
+                    f"% 正文拼接（{_zh_loc(line_no)}）[Severity: Minor] [Priority: P2]: [Script] "
+                    "P-PAPER 正文出现“源论文/小论文/N 篇论文”表述，有小论文拼接盲审风险。",
+                    "% 建议：改用“核心问题/研究内容/研究模块”等面向问题的表述。",
+                    "% 理由：大论文应体现统一主线，“源论文/小论文”暴露拼接感，易被盲审质询。",
+                    "",
+                ]
+            )
     return out
 
 
@@ -1430,15 +1514,19 @@ def _check_intro_mainline(
     return out
 
 
-# ── 过程分析章主线检查（--process-chapter：P-FLOW / P-DERIVE / P-FRAME / P-ORDER / P-PAPER）──
+# ── 过程分析章主线检查（--process-chapter：P-FLOW / P-DERIVE / P-FRAME / P-ORDER）──
 #
 # 面向工业/过程背景学位论文第 2 章“工艺流程分析 + 总体方法架构”章式的主线闭合检查，
 # 全部为 [Script] 启发式。默认定位第 2 章（绪论后首个正文章），--section 可指定目标章。
+# P-PAPER 已泛化为默认全章检查（R3a，见 _check_paper_stitching），不再挂在本 flag 下。
 # 判据依据见 research/chapter2-content-analysis.md §7：5/5 范文框架节均不写“第 X 章”章号
 # （章号映射惯例放绪论组织结构节），故 P-FRAME 的章号缺失只出 Info、不作 Major。
 
-# 章式预判特征词：章内（含小节标题）出现任一即视为过程分析章，才跑 P-*。
-PROCESS_CHAPTER_FEATURE_RE_ZH = re.compile(r"工艺|流程|过程分析|问题描述|总体框架|方案|影响因素")
+# 章式预判双信号（R2e）：须同时命中 ①过程信号 与 ②框架信号（均在章标题 + level>=2 小节标题上
+# 匹配）才判为过程分析章、套 P-DERIVE/P-FRAME/P-ORDER；否则只出章式提示 Info。方法章（第 3 章起）
+# 标题无过程信号——个别子节偶含“工艺”（如“经验工艺流形”）但无框架信号，双信号据此可靠排除。
+PROCESS_SIGNAL_RE_ZH = re.compile(r"工艺|流程|过程分析|变量分析")
+PROCESS_FRAME_SIGNAL_RE_ZH = re.compile(r"总体框架|技术框架|研究方案|总体方案|方案框架")
 # 小节分类关键词。
 PROCESS_FLOW_SECTION_RE_ZH = re.compile(r"工艺|流程|过程(?:描述|分析|简介)|系统简介|机理")
 PROCESS_DIFFICULTY_SECTION_RE_ZH = re.compile(r"难点|问题|挑战|影响因素|特性分析")
@@ -1448,8 +1536,6 @@ PROCESS_TRAIT_RE_ZH = re.compile(
     r"强?非线性|大?(?:滞后|时滞|惯性)|强?耦合|时变|多工况|多速率|多源异构|波动|不确定|扰动|长尾|不平衡"
 )
 PROCESS_CAUSAL_RE_ZH = re.compile(r"导致|使得|难以|造成|致使|因而|从而")
-# 小论文拼接表述（P-PAPER）。
-PROCESS_PAPER_RE_ZH = re.compile(r"源论文|小论文|[一二两三四五12345]\s*篇(?:学术)?论文")
 # 图引用（extract_visible_text 会剥离 \ref，故 P-FLOW/P-FRAME 查原始行）。
 PROCESS_FIG_REF_RE = re.compile(r"\\ref\{fig:")
 # 方法模块名（P-FRAME 覆盖度）：模块头名 + 模块型后缀，非贪婪避免跨相邻模块合并。
@@ -1624,20 +1710,6 @@ def _process_order(
     ]
 
 
-def _process_paper(lines: list[str], chapter_line: int, chapter_end: int, parser) -> list[str]:
-    """P-PAPER（Minor/P2）：章内“源论文/小论文/N 篇论文”表述有盲审拼接风险。"""
-    for line_no, visible in _section_visible_lines(lines, (chapter_line + 1, chapter_end), parser):
-        if PROCESS_PAPER_RE_ZH.search(visible):
-            return [
-                f"% 过程分析章（{_zh_loc(line_no)}）[Severity: Minor] [Priority: P2]: [Script] "
-                "P-PAPER 正文出现“源论文/小论文/N 篇论文”表述，有小论文拼接盲审风险。",
-                "% 建议：改用“核心问题/研究内容/研究模块”等面向问题的表述。",
-                "% 理由：大论文应体现统一主线，“源论文/小论文”暴露拼接感，易被盲审质询。",
-                "",
-            ]
-    return []
-
-
 def _check_process_chapter(
     content: str, lines: list[str], parser, section: str | None
 ) -> list[str]:
@@ -1653,18 +1725,22 @@ def _check_process_chapter(
     chapter_line = chapter["line"]
     title = chapter["title"]
 
-    # 章式预判：章标题 + 章内可见正文（含小节标题）出现特征词才跑 P-*。
-    chapter_text = title + " " + _process_section_text(lines, chapter_line + 1, chapter_end, parser)
-    if not PROCESS_CHAPTER_FEATURE_RE_ZH.search(chapter_text):
+    subs = _process_subsections(headings, chapter_line, chapter_end)
+
+    # 章式预判（R2e 双信号）：章标题 + 各小节标题须同时含过程信号与框架信号，才判为过程分析章。
+    title_text = " ".join([title] + [t for _ln, t, _e in subs])
+    if not (
+        PROCESS_SIGNAL_RE_ZH.search(title_text) and PROCESS_FRAME_SIGNAL_RE_ZH.search(title_text)
+    ):
         return [
             f"% 过程分析章（{_zh_loc(chapter_line)}）[Severity: Info] [Priority: P3]: [Script] "
-            f"第“{title}”章未见过程分析章特征（工艺/流程/难点/总体框架等）。",
-            "% 若该章为“方法 + 实验”章式，请按方法章规则（thesis-writing-guide 方法章三问 + "
-            "experiment 模块）处理，不套用过程分析章检查。",
+            f"第“{title}”章未见过程分析章特征（章/节标题须同时含 工艺/流程/过程分析/变量分析 "
+            "与 总体框架/技术框架/研究方案）。",
+            "% 若该章为“一章一方法 + 同章实验”方法章式，请按 method-chapter-guide-zh.md 与 "
+            "experiment 模块 --per-chapter 处理，不套用过程分析章检查。",
             "",
         ]
 
-    subs = _process_subsections(headings, chapter_line, chapter_end)
     flow_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_FLOW_SECTION_RE_ZH.search(t)]
     diff_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_DIFFICULTY_SECTION_RE_ZH.search(t)]
     frame_secs = [(ln, t, e) for ln, t, e in subs if PROCESS_FRAME_SECTION_RE_ZH.search(t)]
@@ -1674,7 +1750,6 @@ def _check_process_chapter(
     out.extend(_process_derive(lines, diff_secs, parser))
     out.extend(_process_frame(lines, frame_secs, parser))
     out.extend(_process_order(flow_secs, diff_secs, frame_secs))
-    out.extend(_process_paper(lines, chapter_line, chapter_end, parser))
     return out
 
 
@@ -1685,6 +1760,7 @@ def analyze(
     motivation_thread: bool = False,
     intro_mainline: bool = False,
     process_chapter: bool = False,
+    first_chapter: int | None = None,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -1759,7 +1835,8 @@ def analyze(
     if not section:
         out.extend(_check_heading_leads(content, lines, parser))
         out.extend(_check_chapter_mainline(content, lines, parser))
-        out.extend(_check_chapter_intro(content, lines, parser))
+        out.extend(_check_chapter_intro(content, lines, parser, first_chapter))
+        out.extend(_check_paper_stitching(lines, parser))
 
     if sections:
         # 漏斗检查：全文档模式或显式 --section introduction/绪论 时执行
@@ -1817,6 +1894,13 @@ def main() -> int:
         action="store_true",
         help="运行过程分析章主线检查（工艺流程/难点推导/总体框架章式，默认第 2 章，--section 可指定）",
     )
+    cli.add_argument(
+        "--first-chapter",
+        type=int,
+        default=None,
+        help="声明单章文件内首个 \\chapter 的真实章号（如 chapter3.tex 传 3），"
+        "使承上/第 2 章特判按真实章号走；缺省行为不变（推荐在装配 document.tex 上跑跨章检查）",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
@@ -1832,6 +1916,7 @@ def main() -> int:
                 args.motivation_thread,
                 args.intro_mainline,
                 args.process_chapter,
+                args.first_chapter,
             )
         )
     )
