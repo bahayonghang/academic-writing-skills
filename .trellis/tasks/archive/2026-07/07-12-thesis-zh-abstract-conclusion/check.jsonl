@@ -1,0 +1,3 @@
+{"file": ".trellis/tasks/07-12-thesis-zh-abstract-conclusion/prd.md", "reason": "验收标准与约束（规则分级、本文非禁词、校规可配置、禁改清单）"}
+{"file": ".trellis/tasks/07-12-thesis-zh-abstract-conclusion/design.md", "reason": "检查项 ID 表、级别、与 check_spec/deai/analyze_logic 的零重复边界"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "ci 与测试运行方式"}

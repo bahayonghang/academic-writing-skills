@@ -241,6 +241,213 @@ class TestFormatNoiseReduction:
         assert not oral
 
 
+# ── R5 源码卫生检查 F-MD / F-NOTE ─────────────────────────────
+
+
+class TestFormatSourceHygiene:
+    def test_markdown_bold_flagged_major(self, tmp_path: Path):
+        """可见正文里的 Markdown **加粗** 命中 F-MD，且为 actionable（status WARNING）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文研究 **多尺度耦合软测量问题** 的建模方法。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        md = [i for i in result["issues"] if i["code"] == "F-MD"]
+        assert md and md[0]["severity"] == "warning"
+        assert md[0]["line"] == 1
+        assert result["status"] == "WARNING"
+
+    def test_escaped_asterisks_not_flagged(self, tmp_path: Path):
+        r"""转义星号 \*\* 是字面星号意图（反斜杠隔开无连续两星），不得命中 F-MD。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("正则用 \\*\\*通配\\*\\* 表示任意匹配。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_double_star_in_math_not_flagged(self, tmp_path: Path):
+        """数学环境内的 ** 被 extract_visible_text 剥离，不得命中 F-MD。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("指数关系 $y = a**b**c$ 成立。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_textbf_not_flagged(self, tmp_path: Path):
+        r"""规范的 \textbf{} 写法不得命中 F-MD（避免误伤正确 LaTeX）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文研究 \\textbf{多尺度耦合软测量问题} 的建模。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-MD"]
+
+    def test_draft_note_flagged_info_only(self, tmp_path: Path):
+        """草稿备注命中 F-NOTE 且仅为 info —— 单独出现时整体仍 PASS。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("图中占位示意，后续可根据现场图纸替换。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        note = [i for i in result["issues"] if i["code"] == "F-NOTE"]
+        assert note and note[0]["severity"] == "info"
+        assert note[0]["line"] == 1
+        assert result["status"] == "PASS"
+
+    def test_academic_hedging_not_flagged(self, tmp_path: Path):
+        """正常学术让步表述（"仍需通过实验确认"）不含备注词形，不得命中 F-NOTE。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("该结论仍需通过实验确认，有待进一步研究。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-NOTE"]
+
+
+# ── R2b mixed_punctuation 路径参数剥离 ─────────────────────────
+
+
+class TestMixedPunctuationPathStrip:
+    def test_chinese_figure_name_not_flagged(self, tmp_path: Path):
+        r"""\includegraphics/\input 的中文图名+扩展名点号不得触发 mixed_punctuation（R2b 负例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{figure}\n"
+            "\\includegraphics[width=0.8\\textwidth]{系统总体框架图.png}\n"
+            "\\input{chapters/数据预处理.tex}\n"
+            "\\end{figure}\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "mixed_punctuation"]
+
+    def test_real_mixed_punctuation_still_flagged(self, tmp_path: Path):
+        """真正的可见正文"中文,英文"混排仍命中（剥离逻辑不波及正文，R2b 正例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文提出方法,effectiveness 得到验证。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        mixed = [i for i in result["issues"] if i["code"] == "mixed_punctuation"]
+        assert mixed and mixed[0]["line"] == 1
+
+    def test_mixed_punctuation_on_figure_line_with_real_error(self, tmp_path: Path):
+        """同一行既有中文图名又有真正文混排：图名假阳消除，正文真错仍命中。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("见\\includegraphics{框架图.png}，效果好,很明显。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        mixed = [i for i in result["issues"] if i["code"] == "mixed_punctuation"]
+        # 只应命中"好,"这一处（半角逗号），"框架图.png"的点号被剥离。
+        assert len(mixed) == 1
+
+
+# ── R2c oral_vague "特别"词边界 ────────────────────────────────
+
+
+class TestOralVagueTebie:
+    def test_tebie_shuoming_not_flagged(self, tmp_path: Path):
+        """ "需特别说明"是书面语，不得命中 oral_vague（R2c 负例，修复前会误报）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("需特别说明的是，本文采用固定划分。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "oral_vague"]
+
+    def test_tebie_shi_and_di_not_flagged(self, tmp_path: Path):
+        """书面连接词"特别是/特别地"不得命中（R2c 负例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "多种工况，特别是高负荷段，误差较大。特别地，需单独建模。\n", encoding="utf-8"
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "oral_vague"]
+
+    def test_tebie_hao_still_flagged(self, tmp_path: Path):
+        """ "特别好/特别快"等口语用法仍命中 oral_vague（R2c 正例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("该方法特别好，收敛特别快。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        vague = [i for i in result["issues"] if i["code"] == "oral_vague"]
+        assert vague and vague[0]["severity"] == "warning"
+
+
+# ── R3b F-NOTE 对冲组扩表 ─────────────────────────────────────
+
+
+class TestDraftNoteHedge:
+    def test_hedge_expression_flagged_info(self, tmp_path: Path):
+        """未定稿对冲词（暂以占位/待验证/仍在进行）命中 F-NOTE-HEDGE，severity info（R3b 正例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "此参数暂以占位，数值待验证。实验仍在进行。\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        hedge = [i for i in result["issues"] if i["code"] == "F-NOTE-HEDGE"]
+        assert hedge and all(h["severity"] == "info" for h in hedge)
+        # 文案与核心草稿备注区分开
+        assert "对冲" in hedge[0]["message"]
+
+    def test_fusuan_bare_flagged(self, tmp_path: Path):
+        """ "按第2章口径复算"裸用法命中（R3b 正例，护栏方向一）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("各项指标按第 2 章口径复算。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert [i for i in result["issues"] if i["code"] == "F-NOTE-HEDGE"]
+
+    def test_fusuan_result_not_flagged(self, tmp_path: Path):
+        """ "复算结果一致"是正常学术用法，负向断言挡下（R3b 负例，护栏方向二）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("与原文献相比，复算结果一致，验证了实现正确性。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-NOTE-HEDGE"]
+
+    def test_core_note_unaffected_by_hedge_split(self, tmp_path: Path):
+        """拆表后核心草稿备注仍归 F-NOTE（不误标 HEDGE），保证存量口径不变。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text("图中占位示意，后续可根据现场图纸替换。\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert [i for i in result["issues"] if i["code"] == "F-NOTE"]
+        assert not [i for i in result["issues"] if i["code"] == "F-NOTE-HEDGE"]
+
+
+# ── R3c F-PLACEHOLDER 占位符表格行 ────────────────────────────
+
+
+class TestPlaceholderTableRow:
+    def test_placeholder_row_flagged_warning(self, tmp_path: Path):
+        """表体行 ≥2 个空占位单元格命中 F-PLACEHOLDER，severity warning（R3c 正例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{tabular}{lll}\n"
+            "方法 & 精度 & 召回 \\\\\n"
+            "本文 & --- & --- \\\\\n"
+            "\\end{tabular}\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        ph = [i for i in result["issues"] if i["code"] == "F-PLACEHOLDER"]
+        assert ph and ph[0]["severity"] == "warning"
+        assert ph[0]["line"] == 3
+
+    def test_single_dash_cell_not_flagged(self, tmp_path: Path):
+        """单个 - 单元格（合法负号/缺省）不报（R3c 负例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{tabular}{lll}\n偏差 & -0.5 & - \\\\\n\\end{tabular}\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-PLACEHOLDER"]
+
+    def test_normal_data_row_not_flagged(self, tmp_path: Path):
+        """正常数值行不报（R3c 负例）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{tabular}{lll}\n本文 & 3.5 & 4.2 \\\\\n\\end{tabular}\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-PLACEHOLDER"]
+
+    def test_na_marker_with_real_data_not_flagged(self, tmp_path: Path):
+        """以 --- 标"不适用"但同行含真实数字的正常表格不报（用户 ch5 L631/632 型，防新增假阳）。"""
+        tex = tmp_path / "main.tex"
+        tex.write_text(
+            "\\begin{tabular}{lllll}\nAPC & --- & --- & 91.1 & 0.24 \\\\\n\\end{tabular}\n",
+            encoding="utf-8",
+        )
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "F-PLACEHOLDER"]
+
+
 # ── 旗标与文档 ────────────────────────────────────────────────
 
 

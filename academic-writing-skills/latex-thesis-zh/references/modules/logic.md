@@ -63,6 +63,40 @@ uv run python -B scripts/analyze_logic.py thesis.tex --intro-mainline
 
 改写模板与判别表见 [`../writing/introduction-guide-zh.md`](../writing/introduction-guide-zh.md)。
 
+## Process Chapter Mainline Checks (`--process-chapter`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --process-chapter
+```
+
+过程分析章（工业/过程背景第二章"工艺分析 + 全文方法框架"章式）主线专项检查，全部
+`[Script]` 启发式，仅在传入该 flag 时运行（默认行为不变）。默认扫描第 2 章，`--section` 可覆盖目标章。
+
+**章式预判（双信号）**：目标章的章/节标题须同时命中①过程信号（工艺/流程/过程分析/变量分析）
+与②框架信号（总体框架/技术框架/研究方案/总体方案/方案框架）才套用 P-\* 检查；否则只输出一条
+Info（"若为方法+实验章式请走方法章规则"），不强套过程分析章检查（方法章常见的"问题描述/
+总体框架"节名不再单独触发）。
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| P-FLOW | 工艺/过程分析节内无 `\ref{fig:...}` 流程图引用（工艺章无流程图） | Major/P1 |
+| P-DERIVE | 难点/问题节缺工艺特性词 → Major；有特性词但无因果连接（导致/使得/难以/造成…）→ Minor | Major/P1 或 Minor/P2 |
+| P-FRAME | 框架节无框架图引用，或未覆盖 ≥2 个方法模块名/后续章指向（框架空泛）；"第 X 章"显式章号映射缺失仅 Info（推荐加强项，5/5 范文框架节均不写章号、章号映射惯例放绪论组织结构节，不写亦合规） | Major/P1（缺图/空泛）；Info/P3（缺章号映射） |
+| P-ORDER | 框架节先于难点/问题节出现（违顺序不变式） | Minor/P2 |
+
+写作规范与正反例见 [`../writing/process-chapter-guide-zh.md`](../writing/process-chapter-guide-zh.md)。
+
+## Body-Chapter Stitching & Intro Bridging (default)
+
+- **P-PAPER（默认全章，无需 flag）**：可见正文出现"源论文/小论文/N 篇论文"表述即报（Minor/P2），
+  **逐处报告**不截断——这是盲审最直接的拼接铁证，建议改"核心问题/研究内容/本章"。
+- **缺承上分级**：第 3 章起章引言缺承接时，若章内其余部分出现"第 X 章"依赖线索（复用前章
+  产出）→ 维持 Major；纯并列章 → 降 Info（并列方法章可不承上，5 篇范文核实）。推荐承接
+  写法（角色复用句）见 [`../writing/method-chapter-guide-zh.md`](../writing/method-chapter-guide-zh.md)。
+- **`--first-chapter N`**：单章文件运行时声明文件内首个 `\chapter` 的真实章号，使承上启下
+  检查按真实章序生效（缺省时单章文件被视为第一正文章，承上检查静默）。跨章检查（承上启下、
+  章间主线、P-PAPER 全文覆盖）**建议在装配 document.tex 上运行**。
+
 ## Thesis Writing Mainline
 
 When the user asks how to rewrite 绪论、方法章节、实验讨论、总结与展望, map the section to:

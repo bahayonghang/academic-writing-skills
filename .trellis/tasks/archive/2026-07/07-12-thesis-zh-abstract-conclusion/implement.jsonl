@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/07-12-thesis-zh-abstract-conclusion/research/abstract-patterns.md", "reason": "五篇博士摘要写法规律（★A/B/C/D/E/F 编号 + n/5），T-*/B-* 检查项的直接依据"}
+{"file": ".trellis/tasks/07-12-thesis-zh-abstract-conclusion/research/conclusion-patterns.md", "reason": "五篇结论章写法规律（C-* 编号 + n/5），CC-* 检查项与 conclusion-guide 的直接依据"}
+{"file": ".trellis/tasks/07-12-thesis-zh-abstract-conclusion/research/web-best-practices.md", "reason": "国标/校规/盲审规则候选与来源强度分级；标待核实条款只能按建议口径落地"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试结构、conftest 常量、just 命令约定"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "checker 分级/输出契约约定"}

@@ -119,3 +119,49 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 **补充**：latex-thesis-zh 的 `evals/evals.json` 是 CRLF + `json.dumps(indent=2,
 ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
 Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
+
+---
+
+## Gotcha: 检查器适配新结构形态要跑完整输出回归并扫兄弟检查器
+
+> 来源：07-11-thesis-zh-process-chapter（2026-07-12）。
+
+**What**：给 `_check_chapter_intro`（R2）适配“编号引言节”形态（`\chapter` 后直接
+`\section{引言}`）后，同文件的 `_check_heading_leads`（S1）仍对同一结构报
+“标题后未发现导语段落” Major——只跑目标检查器的单测，看不见兄弟检查器的同型误报。
+
+**Fix**：新结构形态落地时：(1) 用合成 fixture 跑**完整 analyze 输出**做回归断言，
+不只跑目标检查器单测；(2) grep 同文件里消费同一结构信号（标题层级/首子内容）的
+其余检查器逐个核对。07-11 修法：抽 `_has_numbered_intro_section` 帮助函数，S1 仅
+豁免章标题层（下级标题不受影响），`test_chapter_intro_forms.py` 两条守卫用例锁定。
+
+---
+
+## Gotcha: check_format 渲染报告每组截断 10 条，验证与断言走 issues 列表
+
+> 来源：07-12-thesis-zh-method-chapters(2026-07-12)。
+
+**What**:`check_format.py` 的 `generate_report` 对每个 source 组只渲染前 10 条 +
+"... and N more"——Major 级命中(如 F-PLACEHOLDER)会被排在前面的 Info 级(如
+F-NOTE-HEDGE)挤进截断区,grep 渲染报告会得出"未命中"的错误结论(07-12 实测两次
+误判,险些把已正确实现的 F-PLACEHOLDER 当作缺陷返工)。
+
+**Fix**:验证/测试断言一律走 python API 数 `res["issues"]`(按 `code` 字段过滤),
+或 JSON 输出;grep 渲染报告只用于人读预览。后续如做"按 severity 排序渲染"的小任务
+可根治此坑(已记 memory)。
+
+---
+
+## Convention: 检查器默认行为变化只允许"误报/假绿修复"例外,且须双声明
+
+**What**:latex-thesis-zh 检查器的新增能力默认藏在新 flag 后(默认输出零变化);
+**唯一允许改变默认行为的例外是误报修复与假绿修复**(用户已有工作流依赖默认输出,
+误报清除与静默失效提示不算破坏)。每处例外必须:(1) 同步更新受影响的存量单测;
+(2) 在 commit message 正文显式声明"默认行为变化"及原因。
+
+**Why**:07-11(R2 章引言形态适配)与 07-12(R2 五连修/R3a P-PAPER 默认全章/
+R4a analyze_experiment 结构提示)两任务沿用此模式,已成为事实约定;不声明会让
+后续会话把行为差异当回归 bug 排查。
+
+**Example**:07-12 的 P-PAPER 从 `--process-chapter` 门后迁到默认管线并逐处报告
+(commit cc73b07),存量 P-PAPER 单测同 commit 迁移并在 message 声明。

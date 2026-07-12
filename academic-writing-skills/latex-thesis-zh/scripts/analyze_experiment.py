@@ -92,6 +92,58 @@ CONCLUSION_LIMITATIONS_ZH = re.compile(
 )
 
 
+# ── Per-method-chapter experiment checks (E-* family, R4b) ────────
+#
+# Industrial process theses use a "one method per chapter + in-chapter
+# experiment" layout with no global discussion/related chapter, so the B3/B4
+# checks above never fire. These heuristics walk each body chapter, locate its
+# experiment and framework sections, and flag structural gaps. Every finding is
+# tagged [Script]; line numbers point at the hit or the section head. Patterns
+# are module-level constants so they can be tuned per discipline convention.
+
+# Front/back-matter and survey chapters excluded from method-chapter checks.
+NON_METHOD_CHAPTER_RE = re.compile(r"绪论|引言|结论|总结|展望|综述")
+# Experiment-section locator (the in-chapter validation region).
+EXP_SEC_RE = re.compile(r"实验|案例研究|仿真验证|结果(?:及|与)?分析|应用验证")
+# Method/design-section locator.
+METHOD_SEC_RE = re.compile(r"方法|模型|建模|框架|策略|算法|设计")
+# E-FIG requires an overview figure only for framework/structure-named design
+# sections; textbook theory sections (无框架/结构/策略/方案) stay exempt.
+FRAMEWORK_SEC_RE = re.compile(r"框架|结构|策略|方案")
+
+# E-DATA: data-description clues (source + train/test split).
+DATA_SOURCE_RE = re.compile(r"数据|样本|工况")
+DATA_SPLIT_RE = re.compile(r"训练|测试|验证集|划分|\d+\s*[:：/]\s*\d+")
+# E-PARAM: parameter-setting clues.
+PARAM_RE = re.compile(r"参数设置|超参|学习率|迭代次数|表[^。\n]{0,6}参数")
+# E-ABL: ablation / mechanism-decomposition clues.
+ABLATION_RE = re.compile(r"消融|拆解|变体|去除.{0,6}模块|单独(?:使用|验证)")
+# E-METRIC: metric acronyms that should be defined by a formula on first use.
+METRIC_TERM_RE = re.compile(
+    r"(?<![A-Za-z])(?:RMSE|sMAPE|MAPE|MAE|MSE|R2|R²|ISE|IAE|ITAE|FAR|FDR|IGD|HV|GD)(?![A-Za-z])"
+)
+EQUATION_ENV_RE = re.compile(r"\\begin\{(?:equation|align|eqnarray|gather|multline)\*?\}")
+METRIC_REUSE_RE = re.compile(r"[0-9]\.[0-9]\s*节")
+# E-REF / E-FIG: cross-reference probes on raw text (extract_visible_text blanks refs).
+REF_TAB_RE = re.compile(r"\\ref\{tab:")
+REF_FIG_RE = re.compile(r"\\ref\{fig:")
+# E-ECHO: chapter-2 framework echo (textual back-reference or cross-chapter \ref).
+CH2_ECHO_RE = re.compile(r"第[2二]章")
+LABEL_RE = re.compile(r"\\label\{([^}]*)\}")
+REF_TARGET_RE = re.compile(r"\\(?:ref|eqref|autoref)\{([^}]*)\}")
+
+# E-ATTR reuses the B3 attribution word list (ATTRIBUTION_MARKERS_ZH). A per-chapter
+# "结果分析" region can run to hundreds of lines dominated by figure/table/number
+# description, so a flat 15% line-ratio is unreachable even for the well-attributed
+# "描述→定量比较→机理归因" pattern (measured 2.5–3.6% on a high-quality thesis).
+# The real failure mode is a laundry list with near-absent attribution, so the ratio
+# guard is paired with an absolute floor: flag only when both the ratio is low AND
+# fewer than ATTR_MIN_HITS attribution lines exist. Minimum-lines guard lowered to 3.
+ATTR_MIN_LINES = 3
+ATTR_RATIO = 0.15
+ATTR_MIN_HITS = 3
+
+
 def _format_issue(line_no: int, severity: str, priority: str, message: str) -> list[str]:
     loc = _DOC.lineref_en(line_no) if _DOC is not None else f"Line {line_no}"
     return [f"% EXPERIMENT ({loc}) [Severity: {severity}] [Priority: {priority}]: {message}"]
@@ -246,7 +298,193 @@ def _check_conclusion_completeness(lines: list[str], start: int, end: int, parse
     return out
 
 
-def analyze(file_path: Path, section: str | None = None) -> list[str]:
+def _range_raw(lines: list[str], start: int, end: int, parser) -> str:
+    """Join the non-comment raw lines in [start, end] (1-based, inclusive)."""
+    prefix = parser.get_comment_prefix()
+    kept = [
+        lines[ln - 1]
+        for ln in range(start, min(end, len(lines)) + 1)
+        if not lines[ln - 1].strip().startswith(prefix)
+    ]
+    return "\n".join(kept)
+
+
+def _attribution_ratio(lines: list[str], start: int, end: int, parser) -> tuple[int, int]:
+    """Return (attribution_lines, visible_lines) for [start, end], mirroring B3."""
+    total = 0
+    attr = 0
+    for ln in range(start, min(end, len(lines)) + 1):
+        raw = lines[ln - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            continue
+        visible = parser.extract_visible_text(raw)
+        if not visible:
+            continue
+        total += 1
+        if ATTRIBUTION_MARKERS_ZH.search(visible):
+            attr += 1
+    return attr, total
+
+
+def _section_intervals(headings: list, ch_start: int, ch_end: int) -> list[dict]:
+    """Level-2 (\\section) ranges within a chapter [ch_start, ch_end]."""
+    secs = [h for h in headings if h["level"] == 2 and ch_start <= h["line"] <= ch_end]
+    intervals: list[dict] = []
+    for i, h in enumerate(secs):
+        end = secs[i + 1]["line"] - 1 if i + 1 < len(secs) else ch_end
+        intervals.append({"title": h["title"], "start": h["line"], "end": end})
+    return intervals
+
+
+def _check_experiment_chapter(
+    lines: list[str], parser, ch_start: int, ch_end: int, secs: list, exp_secs: list
+) -> list[str]:
+    """Run the E-* heuristics for one method chapter with in-chapter experiments."""
+    out: list[str] = []
+    chapter_raw = _range_raw(lines, ch_start, ch_end, parser)
+    exp_raw = "\n".join(_range_raw(lines, s["start"], s["end"], parser) for s in exp_secs)
+    exp_start = exp_secs[0]["start"]
+
+    # E-DATA (Major): missing data-source or train/test split clue.
+    if not DATA_SOURCE_RE.search(exp_raw) or not DATA_SPLIT_RE.search(exp_raw):
+        out.extend(
+            _format_issue(
+                exp_start,
+                "Major",
+                "P1",
+                "[Script] E-DATA 实验节缺数据描述要素（数据来源/样本量/训练-测试划分线索不足）。",
+            )
+        )
+        out.append("")
+
+    # E-ATTR (Major): result analysis reports numbers without mechanism attribution.
+    attr = total = 0
+    for s in exp_secs:
+        a, t = _attribution_ratio(lines, s["start"], s["end"], parser)
+        attr += a
+        total += t
+    if total >= ATTR_MIN_LINES and attr < ATTR_MIN_HITS and attr / total < ATTR_RATIO:
+        out.extend(
+            _format_issue(
+                exp_start,
+                "Major",
+                "P1",
+                f"[Script] E-ATTR 实验节归因语言偏少（{attr}/{total} 行含机理归因词），"
+                "结果分析或停留在报数字。",
+            )
+        )
+        out.append("")
+
+    # E-REF (Major): analysis text detached from any table/figure.
+    if not REF_TAB_RE.search(exp_raw) and not REF_FIG_RE.search(exp_raw):
+        out.extend(
+            _format_issue(
+                exp_start,
+                "Major",
+                "P1",
+                "[Script] E-REF 实验节未引用任何图表（缺 \\ref{tab:...} 与 \\ref{fig:...}），"
+                "分析文字与图表脱钩。",
+            )
+        )
+        out.append("")
+
+    # E-FIG (Major): framework/structure design section without an overview figure.
+    for s in secs:
+        if not (METHOD_SEC_RE.search(s["title"]) and FRAMEWORK_SEC_RE.search(s["title"])):
+            continue
+        if not REF_FIG_RE.search(_range_raw(lines, s["start"], s["end"], parser)):
+            out.extend(
+                _format_issue(
+                    s["start"],
+                    "Major",
+                    "P1",
+                    "[Script] E-FIG 框架/结构设计节未见总体框架图引用（缺 \\ref{fig:...}）。",
+                )
+            )
+            out.append("")
+
+    # E-METRIC (Minor): metric acronym used but no formula and no cross-section reuse.
+    metric = METRIC_TERM_RE.search(exp_raw)
+    if (
+        metric
+        and not EQUATION_ENV_RE.search(chapter_raw)
+        and not METRIC_REUSE_RE.search(chapter_raw)
+    ):
+        out.extend(
+            _format_issue(
+                exp_start,
+                "Minor",
+                "P2",
+                f"[Script] E-METRIC 出现评价指标（{metric.group(0)}）但本章未给出计算公式，"
+                "也无“X.Y 节”复用指涉。",
+            )
+        )
+        out.append("")
+
+    # E-PARAM (Minor): experiment section without parameter-setting clues.
+    if not PARAM_RE.search(exp_raw):
+        out.extend(
+            _format_issue(
+                exp_start,
+                "Minor",
+                "P2",
+                "[Script] E-PARAM 实验节缺参数设置线索（参数表/超参交代）。",
+            )
+        )
+        out.append("")
+
+    # E-ABL (Info): no ablation / mechanism-decomposition experiment in the chapter.
+    if not ABLATION_RE.search(chapter_raw):
+        out.extend(
+            _format_issue(
+                ch_start,
+                "Info",
+                "P3",
+                "[Script] E-ABL 本章未见消融/机制拆解实验线索。",
+            )
+        )
+        out.append("")
+
+    # E-ECHO (Info): chapter echoes neither the chapter-2 framework nor any
+    # cross-chapter label (a \ref whose target is not defined within this chapter).
+    labels = set(LABEL_RE.findall(chapter_raw))
+    refs = {r for r in REF_TARGET_RE.findall(chapter_raw) if r}
+    cross_ref = any(r not in labels for r in refs)
+    if not CH2_ECHO_RE.search(chapter_raw) and not cross_ref:
+        out.extend(
+            _format_issue(
+                ch_start,
+                "Info",
+                "P3",
+                "[Script] E-ECHO 全章未回指第2章框架（无“第2章/第二章”表述且无跨章引用）。",
+            )
+        )
+        out.append("")
+    return out
+
+
+def _check_per_chapter(lines: list[str], content: str, parser) -> list[str]:
+    """R4b: walk each body method chapter and run the E-* experiment checks."""
+    out: list[str] = []
+    headings = parser.extract_headings(content)
+    total_lines = len(lines)
+    chapters = [h for h in headings if h["level"] == 1]
+    normalize = getattr(parser, "normalize_heading_title", None)
+    for idx, ch in enumerate(chapters):
+        ch_start = ch["line"]
+        ch_end = chapters[idx + 1]["line"] - 1 if idx + 1 < len(chapters) else total_lines
+        title = normalize(ch["title"]) if callable(normalize) else ch["title"]
+        if NON_METHOD_CHAPTER_RE.search(str(title)):
+            continue
+        secs = _section_intervals(headings, ch_start, ch_end)
+        exp_secs = [s for s in secs if EXP_SEC_RE.search(s["title"])]
+        if not exp_secs:
+            continue
+        out.extend(_check_experiment_chapter(lines, parser, ch_start, ch_end, secs, exp_secs))
+    return out
+
+
+def analyze(file_path: Path, section: str | None = None, per_chapter: bool = False) -> list[str]:
     """Review-mode analysis for experiment/discussion/conclusion sections."""
     global _DOC
     parser = get_parser(file_path)
@@ -255,9 +493,17 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     lines = doc.lines
     sections = parser.split_sections(doc.content)
 
-    normalized = _normalize_section(section)
     output: list[str] = doc.warning_lines(parser.get_comment_prefix())
     warn_count = len(output)
+
+    # R4b: per-method-chapter experiment checks (E-* family), gated behind the flag.
+    if per_chapter:
+        output.extend(_check_per_chapter(lines, doc.content, parser))
+        if len(output) == warn_count:
+            output.append("% EXPERIMENT: No per-chapter experiment issues detected.")
+        return output
+
+    normalized = _normalize_section(section)
 
     if sections:
         if (not normalized or normalized == "discussion") and "discussion" in sections:
@@ -272,6 +518,26 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             c_start, c_end = sections["conclusion"]
             output.extend(_check_conclusion_completeness(lines, c_start, c_end, parser))
 
+    # R4a: a scattered "one method per chapter + in-chapter experiment" thesis has
+    # no independent discussion/review chapter (综述 lives in 绪论, 讨论 is embedded in
+    # each experiment section), so B3 has no substantive region and B4 can never run.
+    # Emit a structure hint instead of a silent false green. Note that split_sections
+    # can spuriously key a chapter title containing 分析/讨论 as `discussion`, so the
+    # absence of `related` (B4's hard dependency) is the reliable scattered-structure
+    # signal — fire when either anchor section is missing.
+    if not normalized and ("discussion" not in sections or "related" not in sections):
+        output.extend(
+            _format_issue(
+                1,
+                "Info",
+                "P3",
+                "[Script] 结构提示：未检出独立的讨论章或综述章，B3（讨论深度）/B4（文献回溯）"
+                "在此结构下难以生效；若为“一章一方法 + 同章实验”章式，请改用 --per-chapter "
+                "逐方法章检查。",
+            )
+        )
+        output.append("")
+
     if len(output) == warn_count:
         output.append("% EXPERIMENT: No discussion/conclusion issues detected.")
     return output
@@ -284,6 +550,12 @@ def main() -> int:
     cli.add_argument("input", help="File path or raw experiment data")
     cli.add_argument("--section", help="Section name to analyze")
     cli.add_argument(
+        "--per-chapter",
+        action="store_true",
+        help="Run per-method-chapter experiment checks (E-* family) for theses that "
+        "keep experiments inside each method chapter rather than a global discussion",
+    )
+    cli.add_argument(
         "--generate",
         action="store_true",
         help="Generate analysis prompt instead of reviewing",
@@ -295,7 +567,7 @@ def main() -> int:
         print(generate_request(args.input))
         return 0
 
-    print("\n".join(analyze(path, args.section)))
+    print("\n".join(analyze(path, args.section, per_chapter=args.per_chapter)))
     return 0
 
 
