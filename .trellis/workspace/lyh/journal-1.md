@@ -672,3 +672,36 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 16: 完成 bib-search-citation 双语文档重构
+
+**Date**: 2026-07-14
+**Task**: 完成 bib-search-citation 双语文档重构
+**Branch**: `dev`
+
+### Summary
+
+迁移并完整翻译 3 个 references 与 3 个 examples，统一到 resources/{references,examples}，重写双语概览并通过资源同步、VitePress 与 just ci。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2d91db34cdf37f557d5127b49a4eccc052d0a260` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
