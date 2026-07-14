@@ -3,7 +3,7 @@
   "name": "docs-latex-thesis-zh",
   "title": "重构 latex-thesis-zh 双语文档",
   "description": "同步并翻译 latex-thesis-zh 的 references、templates、examples、技能概览与导航。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,
