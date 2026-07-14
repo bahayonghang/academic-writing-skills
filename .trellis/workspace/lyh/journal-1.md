@@ -705,3 +705,36 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 17: 完成 latex-thesis-zh 双语文档重构
+
+**Date**: 2026-07-14
+**Task**: 完成 latex-thesis-zh 双语文档重构
+**Branch**: `dev`
+
+### Summary
+
+迁移并翻译 48 个公开资源为 96 个双语页面，重写双语技能概览，验证资源契约、VitePress 构建与完整 CI，并规范化 caption-guide 的一处无语义尾随空格。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `21d7ab8` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
