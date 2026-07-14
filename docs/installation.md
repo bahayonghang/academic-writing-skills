@@ -1,118 +1,84 @@
 # Installation
 
-## Prerequisites
+## Requirements
 
-Install the tools required by the skills you plan to use.
+Install only the toolchains required by the skills you use.
 
-| Area | Required |
+| Area | Requirement |
 | --- | --- |
-| Python | Python 3.8+ and `uv` |
-| LaTeX workflows | TeX Live or MiKTeX, plus `latexmk`, `chktex`, `bibtex` or `biber` |
-| Typst workflows | `typst-cli` |
-| Docs development | Node.js if you want to run the VitePress site locally |
+| Repository Python | Python 3.10+ and `uv` |
+| LaTeX skills | TeX Live or MiKTeX; `latexmk`, BibTeX/Biber, and optional `chktex` |
+| Typst skill | Typst CLI |
+| Documentation site | Node.js and npm |
 
-Repo-local Python commands in this project use `uv run python ...`. Tests use `uv run python -m pytest ...`.
-
-## Install the Repository
+## Clone And Install
 
 ```bash
 git clone https://github.com/bahayonghang/academic-writing-skills.git
 cd academic-writing-skills
-uv sync
+uv sync --extra dev
 ```
 
 ## Install Skills
 
-Recommended: install directly with `npx skills`.
+Use `npx skills` for a single skill or the full collection:
 
 ```bash
-# Install individual skills
+npx skills add bahayonghang/academic-writing-skills/cover-letter
+npx skills add bahayonghang/academic-writing-skills/paper-audit
 npx skills add bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
-npx skills add bahayonghang/academic-writing-skills/paper-audit
 
-# Or install all skills at once
+# Install all six
 npx skills add bahayonghang/academic-writing-skills
 ```
 
-If you prefer manual installation, copy the skill folders you need into your Claude skill directory.
+For manual installation, copy the required directory from `academic-writing-skills/` into
+the skills directory used by your agent runtime. Do not copy only `SKILL.md`; each package
+depends on its local scripts, references, templates, examples, and metadata.
 
-Typical folders:
-
-- `academic-writing-skills/latex-paper-en`
-- `academic-writing-skills/latex-thesis-zh`
-- `academic-writing-skills/typst-paper`
-- `academic-writing-skills/bib-search-citation`
-- `academic-writing-skills/paper-audit`
-
-### Manual Copy Example
-
-```powershell
-New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/bib-search-citation" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/paper-audit" "$env:USERPROFILE/.claude/skills/"
-```
-
-Adjust the target directory to your local skill runtime if you are not using `~/.claude/skills`.
-
-## Toolchain Checks
-
-Use these checks only to verify environment availability:
+## Verify The Environment
 
 ```bash
 uv --version
 python --version
-pdflatex --version
+latexmk --version
 xelatex --version
 typst --version
-chktex --version
 ```
 
-## Optional but Recommended Tools
+Run the repository gates from the root:
 
 ```bash
-# macOS
-brew install chktex biber typst
-
-# Ubuntu / Debian
-sudo apt-get install chktex biber
-```
-
-`latexmk` and core TeX tools are usually bundled with TeX distributions.
-
-## Verify the Repository Setup
-
-From the repo root:
-
-```bash
+uv run ruff format --check .
 uv run ruff check .
 uv run pyright
-uv run python -m pytest tests/ academic-writing-skills/*/tests/
+uv run pytest
 ```
 
-## Run the Docs Site
+## Run The Documentation Site
 
 ```bash
-cd docs
-npm install
-npm run docs:dev
+npm --prefix docs install
+npm --prefix docs run docs:dev
 ```
 
-## Troubleshooting
+Use `npm --prefix docs run docs:build` for a production build.
 
-### `pdflatex` or `xelatex` not found
+## Common Problems
 
-Install a LaTeX distribution and ensure its binaries are on `PATH`.
+### A TeX or Typst executable is missing
 
-### `typst` not found
+Install the matching toolchain and verify the executable is on `PATH`. Python dependencies
+do not install TeX or Typst binaries.
 
-Install `typst-cli` and confirm `typst --version` works.
+### `uv run python` cannot resolve the environment
 
-### `uv run python` fails
+Run `uv sync --extra dev` from the repository root, then retry.
 
-Run `uv sync` in the repository root first.
+### A skill opens but a referenced file is missing
+
+Reinstall or recopy the complete skill directory. The skill entrypoint intentionally loads detailed
+guidance from package-local resources.

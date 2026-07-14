@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "先选对学术写作技能，再运行可验证脚本"
-  tagline: "中英文文档已对齐 6 个 SKILL.md：LaTeX、Typst、文献库检索、论文审查与投稿信。"
+  text: "先路由任务，再运行有证据的工作流"
+  tagline: "覆盖 LaTeX、Typst、文献库检索、论文审查与投稿信的六技能双语文档。"
   actions:
     - theme: brand
       text: 快速开始
@@ -13,66 +13,62 @@ hero:
       text: 浏览技能
       link: /zh/skills/
     - theme: alt
-      text: 投稿信
-      link: /zh/skills/cover-letter/
+      text: 使用指南
+      link: /zh/usage
 
 features:
   - icon: ✉️
     title: "`cover-letter`"
-    details: "面向 LaTeX 论文的投稿信流程：生成、优化、证据对齐、期刊适配与投稿前机械检查。"
+    details: "根据论文证据和目标期刊要求生成并核查投稿信。"
   - icon: 🔬
     title: "`paper-audit`"
-    details: "支持 `.tex`、`.typ`、`.pdf` 的深度审稿优先审查，产出双语 Markdown/HTML 报告、review workspace、revision trajectory、claim map 与引用/quote 核查。"
+    details: "执行审稿式审查、投稿门禁、修订路线图与复审。"
   - icon: 📝
     title: "`latex-paper-en`"
-    details: "英文 LaTeX 论文的编译、格式、文献、语法、逻辑、文献综述、图像、caption、实验、伪代码、表格与去 AI 检查。"
+    details: "编译和改进已有英文 LaTeX 期刊或会议论文。"
   - icon: 📚
     title: "`latex-thesis-zh`"
-    details: "中文学位论文的结构映射、GB/T 7714、模板检测、编译、一致性、逻辑、文献综述、摘要与表格检查。"
+    details: "从结构、GB/T 7714 到盲审交付，检查中文 LaTeX 学位论文。"
   - icon: ⚡
     title: "`typst-paper`"
-    details: "Typst 论文的编译、格式、文献、语法、逻辑、文献综述、翻译、伪代码、表格与实验审阅。"
+    details: "编译、审阅和适配已有 Typst 稿件。"
   - icon: 🔎
     title: "`bib-search-citation`"
-    details: "面向 BibTeX / BibLaTeX 文献库的紧凑过滤检索、原始 BibTeX 导出和 LaTeX / Typst 引用片段。"
+    details: "检索本地 BibTeX/BibLaTeX 文献库并返回可用引用。"
 ---
 
-## 本站覆盖内容
+## 从手头材料开始
 
-本站是 `academic-writing-skills/` 下 6 个技能的稳定入口，帮助你先判断任务边界，再选择脚本或提示词。
+| 你手里有 | 先使用 |
+| --- | --- |
+| 投稿论文，需要写给编辑的信 | [`cover-letter`](/zh/skills/cover-letter/) |
+| 需要批评意见或投稿判断的论文 | [`paper-audit`](/zh/skills/paper-audit/) |
+| 英文 LaTeX 论文 | [`latex-paper-en`](/zh/skills/latex-paper-en/) |
+| 中文 LaTeX 学位论文 | [`latex-thesis-zh`](/zh/skills/latex-thesis-zh/) |
+| Typst 论文 | [`typst-paper`](/zh/skills/typst-paper/) |
+| 本地 `.bib` 文献库 | [`bib-search-citation`](/zh/skills/bib-search-citation/) |
 
-你可以用它来：
+## 文档契约
 
-- 在动手前选对技能；
-- 找到最小可运行命令；
-- 区分源码修改、审稿报告、投稿信包装和文献库检索；
-- 按各技能 `SKILL.md` 的边界执行任务。
+每个 `SKILL.md` 都是行为事实来源。文档站将这些契约整理成面向任务的概览和
+完整双语公开资源。
 
-`SKILL.md` 仍是事实来源；文档站负责把它整理成面向用户的工作流、示例与路由规则。
+每个技能使用相同的资源结构：
 
-## 已收录技能
+```text
+skills/<skill>/resources/
+├─ references/
+├─ templates/
+├─ examples/
+└─ agents/
+```
 
-| 技能 | 场景 | 入口 |
-| --- | --- | --- |
-| `cover-letter` | LaTeX 论文投稿信 | [/zh/skills/cover-letter/](/zh/skills/cover-letter/) |
-| `paper-audit` | 审稿式审查、投稿门禁与复审 | [/zh/skills/paper-audit/](/zh/skills/paper-audit/) |
-| `latex-paper-en` | 英文 LaTeX 论文 | [/zh/skills/latex-paper-en/](/zh/skills/latex-paper-en/) |
-| `latex-thesis-zh` | 中文 LaTeX 学位论文 | [/zh/skills/latex-thesis-zh/](/zh/skills/latex-thesis-zh/) |
-| `typst-paper` | Typst 论文 | [/zh/skills/typst-paper/](/zh/skills/typst-paper/) |
-| `bib-search-citation` | 本地 `.bib` 文献库检索与引用提取 | [/zh/skills/bib-search-citation/](/zh/skills/bib-search-citation/) |
+中文站在 `/zh/skills/` 下镜像相同路径。先通过概览选择模块或模式，再只打开
+当前步骤需要的资源。
 
-## 推荐工作流
+## 推荐顺序
 
-| 目标 | 先用 | 然后 |
-| --- | --- | --- |
-| 写或核查投稿信 | `cover-letter generate` 或 `align-check` | 投稿前跑 `journal-fit` 和 `presubmission` |
-| 判断论文能不能投 | `paper-audit quick-audit` 或 `gate` | 需要路线图时跑 `deep-review` |
-| 修论文源码问题 | 对应写作技能 | 先编译，再跑目标模块 |
-| 检索本地文献库 | `bib-search-citation --query` | 需要时再加 `cite:both`、`raw:true` 或返回字段 |
-
-## 快速路径
-
-1. 先看 [/zh/installation](/zh/installation)。
-2. 用 [/zh/quick-start](/zh/quick-start) 跑第一条命令。
-3. 去 [/zh/skills/](/zh/skills/) 选择技能和模块。
-4. 用 [/zh/usage](/zh/usage) 理解跨技能边界与输出预期。
+1. [安装仓库和所需工具链](/zh/installation)。
+2. [选择技能并运行一条真实命令](/zh/quick-start)。
+3. 在对应技能概览中选择模块或模式。
+4. 当请求跨越写作、审查、检索与投稿包装时，使用[跨技能指南](/zh/usage)。

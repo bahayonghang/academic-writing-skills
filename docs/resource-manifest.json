@@ -1,0 +1,2255 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "skill": "bib-search-citation",
+      "kind": "references",
+      "source": "academic-writing-skills/bib-search-citation/references/limitations-and-errors.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e7aa3f48a94374b1092d918a785a7bc337b4963b995d65c0132702b5e907f60c",
+      "en": "docs/skills/bib-search-citation/resources/references/limitations-and-errors.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/references/limitations-and-errors.md"
+    },
+    {
+      "skill": "bib-search-citation",
+      "kind": "references",
+      "source": "academic-writing-skills/bib-search-citation/references/query-syntax.md",
+      "sourceLocale": "en",
+      "sourceSha256": "269add24381a6894d3507b1bc2e8193ee1d2f18b6e51873503d18098bd34cfcf",
+      "en": "docs/skills/bib-search-citation/resources/references/query-syntax.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/references/query-syntax.md"
+    },
+    {
+      "skill": "bib-search-citation",
+      "kind": "references",
+      "source": "academic-writing-skills/bib-search-citation/references/search-planning.md",
+      "sourceLocale": "en",
+      "sourceSha256": "356785fd36dcbe1d41d4163deab1e2381912107cb5abfea1c4f0c03729aac876",
+      "en": "docs/skills/bib-search-citation/resources/references/search-planning.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/references/search-planning.md"
+    },
+    {
+      "skill": "bib-search-citation",
+      "kind": "examples",
+      "source": "academic-writing-skills/bib-search-citation/examples/compact-query.md",
+      "sourceLocale": "en",
+      "sourceSha256": "2430b9dce5b1cd4deaaa7e97f331d999818e73215003eb069dedab855eaae6f7",
+      "en": "docs/skills/bib-search-citation/resources/examples/compact-query.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/examples/compact-query.md"
+    },
+    {
+      "skill": "bib-search-citation",
+      "kind": "examples",
+      "source": "academic-writing-skills/bib-search-citation/examples/preview-summary.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8f591329f243eaad6e24c988df0439f36791ebe152a75fd0dfb30b13476aaa11",
+      "en": "docs/skills/bib-search-citation/resources/examples/preview-summary.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/examples/preview-summary.md"
+    },
+    {
+      "skill": "bib-search-citation",
+      "kind": "examples",
+      "source": "academic-writing-skills/bib-search-citation/examples/raw-bib-export.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4ce676a3dbec768b5ab81cfecb543fa51648f564931ffa608925e866aff31665",
+      "en": "docs/skills/bib-search-citation/resources/examples/raw-bib-export.md",
+      "zh": "docs/zh/skills/bib-search-citation/resources/examples/raw-bib-export.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/ai-disclosure-policy.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ee7090926fe2ac7b1fcfba159310769c41b073bb11f04db6cbeebeb2082e145f",
+      "en": "docs/skills/cover-letter/resources/references/ai-disclosure-policy.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/ai-disclosure-policy.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/CLAIM_EVIDENCE_CONTRACT.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e32426852c55de6dea200cef4b7c578e6f3f5b2d8e1feed9e6d4da2ae4d0467f",
+      "en": "docs/skills/cover-letter/resources/references/CLAIM_EVIDENCE_CONTRACT.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/CLAIM_EVIDENCE_CONTRACT.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/FORBIDDEN_PHRASES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c089e9730490f3fe258574b91308f458b9551767eb9cba71471e4246e18d152c",
+      "en": "docs/skills/cover-letter/resources/references/FORBIDDEN_PHRASES.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/FORBIDDEN_PHRASES.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/ISSUE_SCHEMA.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9fc19f15d8483c91a96b43293660d0e843895e39eb5d1f0b57f729fc4cabde89",
+      "en": "docs/skills/cover-letter/resources/references/ISSUE_SCHEMA.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/ISSUE_SCHEMA.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/JOURNAL_TIERS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8c5afa2d973c5bc674145f4ff4175aa7b8c94e502138c2f82b26d8f3b69ad2a1",
+      "en": "docs/skills/cover-letter/resources/references/JOURNAL_TIERS.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/JOURNAL_TIERS.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/LETTER_STRUCTURE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4ee20ca91fdf70cdc197631a88a985ca0b0c7e7813ba6b79a824d20c6b276d07",
+      "en": "docs/skills/cover-letter/resources/references/LETTER_STRUCTURE.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/LETTER_STRUCTURE.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/MODE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "273f9cc6b3a3c1cb72a63e63b072447a77b42de6b5b625396ca071d3ab9a4b99",
+      "en": "docs/skills/cover-letter/resources/references/MODE_GUIDE.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/MODE_GUIDE.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "references",
+      "source": "academic-writing-skills/cover-letter/references/PRESUBMISSION_RULES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "901dbb6fec73a4a00c3bf51206082f5ff44412a12ec9f4966f43aa213f932c9c",
+      "en": "docs/skills/cover-letter/resources/references/PRESUBMISSION_RULES.md",
+      "zh": "docs/zh/skills/cover-letter/resources/references/PRESUBMISSION_RULES.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/acm.md",
+      "sourceLocale": "en",
+      "sourceSha256": "dc0c2e048f44e1e42038143996f170b47df3df150318672d82ed5d5e3613baa8",
+      "en": "docs/skills/cover-letter/resources/templates/acm.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/acm.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/cell.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c5899c771ac1341ef8c40443940e9841e3230e4396c74a94877bf27942ca1b54",
+      "en": "docs/skills/cover-letter/resources/templates/cell.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/cell.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/cvpr.md",
+      "sourceLocale": "en",
+      "sourceSha256": "75e560cce604ae84258c13493bd3f14a1891bef775116f3ae5a4acb2d14339fa",
+      "en": "docs/skills/cover-letter/resources/templates/cvpr.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/cvpr.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/generic.md",
+      "sourceLocale": "en",
+      "sourceSha256": "636bd7db97d55a601441d0de0e9d8d174e854d42a1dbc0397abea85eec46406e",
+      "en": "docs/skills/cover-letter/resources/templates/generic.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/generic.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/icml.md",
+      "sourceLocale": "en",
+      "sourceSha256": "edde31f4b06d98796bb5790b48e78f31fc941b7de99e4c6dad1f2a99ff4754ae",
+      "en": "docs/skills/cover-letter/resources/templates/icml.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/icml.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/ieee-trans.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c0b21fa44b1505bf7f0bde34ab323ec97488a66032fbd72f05fa718d4263adca",
+      "en": "docs/skills/cover-letter/resources/templates/ieee-trans.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/ieee-trans.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/nature.md",
+      "sourceLocale": "en",
+      "sourceSha256": "285f880dd0d03666f646dde3428c39e218e50a7b1008693e339c8f7cd9cb93b1",
+      "en": "docs/skills/cover-letter/resources/templates/nature.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/nature.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/neurips.md",
+      "sourceLocale": "en",
+      "sourceSha256": "24fb66ca85a1dc7a0710fb76a13f8160362673d9db5e8e2dccf65897692c9a08",
+      "en": "docs/skills/cover-letter/resources/templates/neurips.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/neurips.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/science.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7c8fc9828b80b7fa86f8ac28afaa6d6f03ed4bad23abde8e4aa60e131e562b0b",
+      "en": "docs/skills/cover-letter/resources/templates/science.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/science.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "templates",
+      "source": "academic-writing-skills/cover-letter/templates/springer-lncs.md",
+      "sourceLocale": "en",
+      "sourceSha256": "d5bc173d8630b118689335f29b02c8a4e86190d6870fd22f23eb188f4a7f732e",
+      "en": "docs/skills/cover-letter/resources/templates/springer-lncs.md",
+      "zh": "docs/zh/skills/cover-letter/resources/templates/springer-lncs.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "examples",
+      "source": "academic-writing-skills/cover-letter/examples/align-check-only.md",
+      "sourceLocale": "en",
+      "sourceSha256": "3dddc403142653154d06a012049094cd74a4cb1f74d02e3167660b37763a83dd",
+      "en": "docs/skills/cover-letter/resources/examples/align-check-only.md",
+      "zh": "docs/zh/skills/cover-letter/resources/examples/align-check-only.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "examples",
+      "source": "academic-writing-skills/cover-letter/examples/generate-nature.md",
+      "sourceLocale": "en",
+      "sourceSha256": "86063354eab30c8d1e5291c53ba4a34a9aebbcfa91c1a7c69cf02f820ddf77d8",
+      "en": "docs/skills/cover-letter/resources/examples/generate-nature.md",
+      "zh": "docs/zh/skills/cover-letter/resources/examples/generate-nature.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "examples",
+      "source": "academic-writing-skills/cover-letter/examples/journal-fit-cvpr-vs-tpami.md",
+      "sourceLocale": "en",
+      "sourceSha256": "64e2597bd9b940626f6ec01c4a47b350edb6b4fdeed49930dcc8ef65564e4a5b",
+      "en": "docs/skills/cover-letter/resources/examples/journal-fit-cvpr-vs-tpami.md",
+      "zh": "docs/zh/skills/cover-letter/resources/examples/journal-fit-cvpr-vs-tpami.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "examples",
+      "source": "academic-writing-skills/cover-letter/examples/optimize-and-align.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9125365c967d98ae23fe811b70acb387b080eddec7cc8b73f0c5ac532382a728",
+      "en": "docs/skills/cover-letter/resources/examples/optimize-and-align.md",
+      "zh": "docs/zh/skills/cover-letter/resources/examples/optimize-and-align.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "agents",
+      "source": "academic-writing-skills/cover-letter/agents/claims_evidence_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "6c8733d8558010ab3e067227de00b9cc3ffedda124560022bd306f3e38c60f22",
+      "en": "docs/skills/cover-letter/resources/agents/claims_evidence_reviewer_agent.md",
+      "zh": "docs/zh/skills/cover-letter/resources/agents/claims_evidence_reviewer_agent.md"
+    },
+    {
+      "skill": "cover-letter",
+      "kind": "agents",
+      "source": "academic-writing-skills/cover-letter/agents/committee_editor_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a352f8bd51937d879cad250b53bdf2a69b32e94b7f005145c9d90423ecbc67a0",
+      "en": "docs/skills/cover-letter/resources/agents/committee_editor_agent.md",
+      "zh": "docs/zh/skills/cover-letter/resources/agents/committee_editor_agent.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/citations/journal-abbreviations.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a96dca0b44d6cf9e25e871cd25b80dd329490ddd156c744acdca86c821fcf6ad",
+      "en": "docs/skills/latex-paper-en/resources/references/citations/journal-abbreviations.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/citations/journal-abbreviations.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/citations/styles.md",
+      "sourceLocale": "en",
+      "sourceSha256": "38ed3a039a8b50aec3d2b9c1e833a51b0f8f5d13b528aee012b2c8bf1175ec74",
+      "en": "docs/skills/latex-paper-en/resources/references/citations/styles.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/citations/styles.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/citations/verification.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a5f48e47854db226f89cad7d2e8c077f8598e2850351a8ee555eed7025c3f402",
+      "en": "docs/skills/latex-paper-en/resources/references/citations/verification.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/citations/verification.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/deai/forbidden-terms.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e01203b1d37bf7fc2714516afec44072e0f8712f76eb760a951cce64698dcbd5",
+      "en": "docs/skills/latex-paper-en/resources/references/deai/forbidden-terms.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/forbidden-terms.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/deai/guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "dcc700cf4558b069080115d0ea024ec4b74c6b24b581479af134c751461aeaa8",
+      "en": "docs/skills/latex-paper-en/resources/references/deai/guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/deai/tone-terms-en.md",
+      "sourceLocale": "en",
+      "sourceSha256": "3707200175ee8b35bf125140c61cd0490e99981d60e3e5c526bf05609382aeba",
+      "en": "docs/skills/latex-paper-en/resources/references/deai/tone-terms-en.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-terms-en.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/deai/tone-thresholds.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "83b648ce170881430b73e791bc9bb3cb0c371bc3a61a331944de5ccb46c7888d",
+      "en": "docs/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/evidence/claim-evidence-contract.md",
+      "sourceLocale": "en",
+      "sourceSha256": "636fc3fd9c89dd039a9fb3b00d4e79f286762f3ff4ec1d2eb23af3f648541a93",
+      "en": "docs/skills/latex-paper-en/resources/references/evidence/claim-evidence-contract.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/evidence/claim-evidence-contract.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/evidence/over-claim-guard.md",
+      "sourceLocale": "en",
+      "sourceSha256": "96de3834f51debbb551c876eae6954abd3e4a53db5cfdd28c2ea58b149f24e79",
+      "en": "docs/skills/latex-paper-en/resources/references/evidence/over-claim-guard.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/evidence/over-claim-guard.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/formatting/number-unit-guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "38f0988bf591f78cce8a6be10c677eee4d313bc0f24325dc3c80bd15c4d5635f",
+      "en": "docs/skills/latex-paper-en/resources/references/formatting/number-unit-guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/formatting/number-unit-guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/formatting/table-guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "d080e68f162c0edb9662380f62622f6d97787029b2a4a8c32e16958f0ff16cac",
+      "en": "docs/skills/latex-paper-en/resources/references/formatting/table-guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/formatting/table-guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/latex/compilation.md",
+      "sourceLocale": "en",
+      "sourceSha256": "21f16ff37cc34dfed21ee3a9731c673c1a3e76995bdf58282389c7a6257695d4",
+      "en": "docs/skills/latex-paper-en/resources/references/latex/compilation.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/latex/compilation.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/abstract.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5b7a76993eb31db4050cd818a2075208efd05c79b654e7efdc0ae89d9866b2cd",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/abstract.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/abstract.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/adapt.md",
+      "sourceLocale": "en",
+      "sourceSha256": "888d7dd435035351e090159f4540de31fc6dc0d66aa3739f1751d81c5511fb3a",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/adapt.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/adapt.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/bibliography.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a4293871de2c149f19ff6e3ea122cf699db7e12f2151ac57e753e20d224460ef",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/bibliography.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/bibliography.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/caption.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5f18b396e122e9d600ac469bcf73abcc0833df456568ca844e75e4d95169714f",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/caption.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/caption.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/compile.md",
+      "sourceLocale": "en",
+      "sourceSha256": "996e7ab4b8eb9fdfdbca93ffe74926ca3c32dd67770e9684438f138bb5bcb5be",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/compile.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/compile.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
+      "sourceLocale": "en",
+      "sourceSha256": "dc86fbfd7b188273da6a9c3ba8d0cfd0083c8ed5d9d2c94d6c6411f2c00a7d46",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/experiment.md",
+      "sourceLocale": "en",
+      "sourceSha256": "d83fbf9e495d2024d06cf0260dcd0cc936b816474625958c03efc37a90b23251",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/experiment.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/experiment.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/expression.md",
+      "sourceLocale": "en",
+      "sourceSha256": "465d59ac130249b81515d30cb210c3b81da584e29c60b154b71eb72f57be2363",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/expression.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/expression.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/format.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f6d0216e65309bfa709b28dbb247bb6652fbf8682577fd8d6aff91f7edd7385f",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/format.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/format.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/grammar.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f66f174871a68150cda46900ddd79798f70e217d1240d56b3e469e221d4b6449",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/grammar.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/grammar.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/literature.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5b00a4548aecf599f28a22edc934281ab7bd91d927ceebe27e2b81ad02930aca",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/literature.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/literature.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/logic.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f5b742ff5fa24c3edac0f1b813e9d01dd77194050106572eb583c2bf3a388c25",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/logic.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/logic.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/pseudocode.md",
+      "sourceLocale": "en",
+      "sourceSha256": "d22f067a9340b94c2a1bb34beb1f219423821e9ba7b1be6f1de9753b2b1eeb83",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/pseudocode.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/pseudocode.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/routing-rules.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a94b01fdb19d06ac09d6f450b838028e4122c3e119cdbb60ef1fee1117e76b4c",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/routing-rules.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/routing-rules.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/section-writing.md",
+      "sourceLocale": "en",
+      "sourceSha256": "eae1b8ee34aaf2a16e13938fc06498ff9adf8825684fa0aa7e0664443a1a3393",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/section-writing.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/section-writing.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/sentences.md",
+      "sourceLocale": "en",
+      "sourceSha256": "6b60d96d5a4b6d976b00a49fa9440c20dfc2d6aea863c983512f58db96ec26ab",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/sentences.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/sentences.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/tables.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bfbb34f6b2aa40abb4af897685eb44265ea786c14d7a6e2f95b101ee594bab88",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/tables.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/tables.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/tense-guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "db53c8a070d58dd05a6e9e7e42f6090eff0d6926b36afd703c4c7636205dc73d",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/tense-guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/tense-guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/title.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fb1698b96fe23cc56c4756a381f38e7ee3ba499bc6ab0b55e5d3a3b5b3c3edf8",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/title.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/title.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/translation.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ce7a57db0e494b0399a42e81c853147af7146e4aada87f88bb2883a62233e969",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/translation.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/translation.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/workflow.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b7e336f9b4f1c8cade329ac14cc777f7f429aa7de4d1a5698f493732918a604f",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/workflow.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/workflow.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/review/reviewer-perspective.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5d7fb07502dc7af1d72ab42e51fb377e2cc13a2e86bdae3992472ed996fd13ac",
+      "en": "docs/skills/latex-paper-en/resources/references/review/reviewer-perspective.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/review/reviewer-perspective.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/venues/ai-disclosure.md",
+      "sourceLocale": "en",
+      "sourceSha256": "34b8fe722a5c331374801106dbed8c367007ec90e1da907cba93744ccec4eff3",
+      "en": "docs/skills/latex-paper-en/resources/references/venues/ai-disclosure.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/venues/ai-disclosure.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/venues/catalog.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9760a062986af566ddcbace5ff6ceaa88ea9c5e3ae6a4105bf060e82e92ad48d",
+      "en": "docs/skills/latex-paper-en/resources/references/venues/catalog.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/venues/catalog.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/venues/journal-adaptation-workflow.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4a3169480d55a59819a48cf65673aa752b1d4b55210a9555c84d5fabdf3519f7",
+      "en": "docs/skills/latex-paper-en/resources/references/venues/journal-adaptation-workflow.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/venues/journal-adaptation-workflow.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/abstract-structure.md",
+      "sourceLocale": "en",
+      "sourceSha256": "6d71f0f8de5ca190795e262c5d39bb202c1e49fecd911f2bc00fca002daf2ddd",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/abstract-structure.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/abstract-structure.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/best-practices.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4f2a79c0c708c57ea2cf6a07bda442708aa5f5d49f4d767ad57ce29b04f64158",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/best-practices.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/best-practices.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/common-errors.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b5e94cacbdca076bccbe0a56531d5cbd8863fe9a486066848f9c90a5464321b5",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/common-errors.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/common-errors.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/abstract.md",
+      "sourceLocale": "en",
+      "sourceSha256": "71dfeed31fcadf0c41e6a0466808713af333aa53d71d7830a66494acfd954d77",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/abstract.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/abstract.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/conclusion.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b7bd612ae0e152d17fec87eccdb988d3806142877a3c70f91df10d7739860035",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/conclusion.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/conclusion.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/experiments.md",
+      "sourceLocale": "en",
+      "sourceSha256": "270125dd7d1f70bcc0af51feefe53d28f8da23f8d8b023878912a5068e61c190",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/experiments.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/experiments.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/flow.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5bcf4f6b02f35132fc5dd996c89c7eca5ba0fd876a75d91560384e67f8df11a4",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/flow.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/flow.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/index.md",
+      "sourceLocale": "en",
+      "sourceSha256": "80a863a3d494567e986bb8f81d36d9ea4300822d89f231774785f1dc34917084",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/index.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/index.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/introduction.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fdfe0ac38ea696edb39e3a8ca54f07550458cf63d99b4cf25e9c350bc298c93e",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/introduction.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/introduction.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/method.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4b7129643ce63455c85df79317eefe0b947dee82764e259f45431c694fbb93d7",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/method.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/method.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/related-work.md",
+      "sourceLocale": "en",
+      "sourceSha256": "746c5eede6041e032b6a3a28382e612542c99c99637e430ebb4393057fae15aa",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/related-work.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/related-work.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/self-review.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fb77ebeda20ba32452929ed8e6a3e2d09be8c22e3bb72ad3551015853685bf2b",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/self-review.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/self-review.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/style-guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ca58e291a40c8bde4e66922f4bd8d130b0215c90e933ae79a594af7750b0275c",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/style-guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/style-guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/terminology.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0a916d89aec05ee3a72f53b2c09cd610228e1605c159b8388e94b31d583fd565",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/terminology.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/terminology.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/translation-guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "dfc08fa3182656990484812b650ca0cc86479c7c802c8cccae8461df4935069b",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/translation-guide.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/translation-guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/writing-philosophy.md",
+      "sourceLocale": "en",
+      "sourceSha256": "47d7443210333bbd566d3d76cc1c7f39a198fac103adfeb73d64a692b8c7bd95",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/writing-philosophy.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/writing-philosophy.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-paper-en/templates/acm.md",
+      "sourceLocale": "en",
+      "sourceSha256": "40096a3d45e3764f2cc5266cb02febb111a0cff6d318bfb50e41b91bd37dcd1a",
+      "en": "docs/skills/latex-paper-en/resources/templates/acm.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/templates/acm.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-paper-en/templates/icml.md",
+      "sourceLocale": "en",
+      "sourceSha256": "98cc5a1f98a7ff3a8bfd4793673185a4c359fab6f8c1bd2927d57f4ac6d10fc8",
+      "en": "docs/skills/latex-paper-en/resources/templates/icml.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/templates/icml.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-paper-en/templates/ieee.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bd032728ca7403f613695946c41c65caeccfbba4d4c5450d7cd0b0f150ce495d",
+      "en": "docs/skills/latex-paper-en/resources/templates/ieee.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/templates/ieee.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-paper-en/templates/neurips.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ed6c6eca43ea61fcd8e6b2515c23bb6d7b0a4f84da18b039598ae3708754260e",
+      "en": "docs/skills/latex-paper-en/resources/templates/neurips.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/templates/neurips.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-paper-en/templates/springer-lncs.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fe3a69f91fe2e4355204e08667c2627e0dea8f0967e8462c06183029671ce99c",
+      "en": "docs/skills/latex-paper-en/resources/templates/springer-lncs.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/templates/springer-lncs.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/compile-and-bibliography.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bb7b1a21f81e066e03c60ba930a81e2fb676d63ec3792af4704d799bd184ca1b",
+      "en": "docs/skills/latex-paper-en/resources/examples/compile-and-bibliography.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/compile-and-bibliography.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/experiment-review.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5c8c7f411390ff7fe85bbfe80179470787a436a6670d14f3eedf13ecfdd718e8",
+      "en": "docs/skills/latex-paper-en/resources/examples/experiment-review.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/experiment-review.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/figures-and-title.md",
+      "sourceLocale": "en",
+      "sourceSha256": "550d0316ec18e05afa257b6895644682eec3de1527548de1af78967f787c4f8e",
+      "en": "docs/skills/latex-paper-en/resources/examples/figures-and-title.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/figures-and-title.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/grammar-and-logic.md",
+      "sourceLocale": "en",
+      "sourceSha256": "be659b87d4f0a645ee3a0c3102b8cbda5992d8b707dfef9d8929d2fb341f6390",
+      "en": "docs/skills/latex-paper-en/resources/examples/grammar-and-logic.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/grammar-and-logic.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/literature-review-rewrite.md",
+      "sourceLocale": "en",
+      "sourceSha256": "026f372eb43d437653211a341eb34a79459b4c4dc0daffa625d4b63142109638",
+      "en": "docs/skills/latex-paper-en/resources/examples/literature-review-rewrite.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/literature-review-rewrite.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/multi-module-sequence.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a2a6ac271a1f3e11c3ee384ea72b62de66197cf01685af1736dc864a4bd0dbfe",
+      "en": "docs/skills/latex-paper-en/resources/examples/multi-module-sequence.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/multi-module-sequence.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-paper-en/examples/translation-and-deai.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5cb94b7ffa438057f23c0e69078ec1e730946187cc1f5f7f04df977a558d499f",
+      "en": "docs/skills/latex-paper-en/resources/examples/translation-and-deai.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/examples/translation-and-deai.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/citations/gb-standard.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "dc2f24984f01a2af09ad871228566167159237284c3a3e1c90fd50532cacddb4",
+      "en": "docs/skills/latex-thesis-zh/resources/references/citations/gb-standard.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/citations/gb-standard.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/deai/forbidden-terms.md",
+      "sourceLocale": "en",
+      "sourceSha256": "504686503fbdaece55744f434c068ff3de098fa49bd269eb926bec5024f60a3b",
+      "en": "docs/skills/latex-thesis-zh/resources/references/deai/forbidden-terms.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/forbidden-terms.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "000427ae95ad4649a141aead0f5776c488834a476259907e0d449e9b44bc2a05",
+      "en": "docs/skills/latex-thesis-zh/resources/references/deai/guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/deai/tone-terms-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "849592c191196365119d34c256e823f86b61a24473e219daf6155b93a562f4a5",
+      "en": "docs/skills/latex-thesis-zh/resources/references/deai/tone-terms-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/tone-terms-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/deai/tone-thresholds.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "da77a66fb325c83dc9e165648ed85451bda7fbe27d2dab5a3ebbe647b90560af",
+      "en": "docs/skills/latex-thesis-zh/resources/references/deai/tone-thresholds.yaml",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/tone-thresholds.yaml"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/formatting/caption-guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "038231e5a4442a26320ea9eefea87d23ad7aea76288331c322b4d23e6a155913",
+      "en": "docs/skills/latex-thesis-zh/resources/references/formatting/caption-guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/caption-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/formatting/formula-guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "9da6708b9c71d99c57d74e60c60dc2b7e4915f6a54456113a9607f87f351d68d",
+      "en": "docs/skills/latex-thesis-zh/resources/references/formatting/formula-guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/formula-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/formatting/table-guide.md",
+      "sourceLocale": "en",
+      "sourceSha256": "74919ae87160511e6dacc526f2288215503d0363f25910d6163128082b8d7ddf",
+      "en": "docs/skills/latex-thesis-zh/resources/references/formatting/table-guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/table-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/latex/compilation.md",
+      "sourceLocale": "en",
+      "sourceSha256": "21f16ff37cc34dfed21ee3a9731c673c1a3e76995bdf58282389c7a6257695d4",
+      "en": "docs/skills/latex-thesis-zh/resources/references/latex/compilation.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/latex/compilation.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/abstract.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "cb4bff6469a59b4ab2f8e49aa84025a6974d6ffdd809c7a95a2b4ce77e7aaab0",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/abstract.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/abstract.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/bibliography.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "44dcb17cc9b2b6caa7cebff540454ac6b8ad764f3369ad9a13ab15cf7f6210ea",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/bibliography.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/bibliography.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/blind-review.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "6c0a6ac6dd1deb10fc647c1a3b21c053b730346bc4f3c049404d7c8bbae759af",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/blind-review.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/blind-review.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/compile.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9497bedd9e0af55db678842b43f418e2f50543fb9c031f35d6d9c4ed646c047c",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/compile.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/compile.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/conclusion.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "1230155a3b8ff2babbbe386e8d262ad117b43635e78db6954aaa93e102e0c4ad",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/conclusion.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/conclusion.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/consistency.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bf58c61a6ada43aefafcebd999c365a6e3815318fbe4fe4e819b1068b2c90260",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/consistency.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/consistency.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c3444fe86a31fdb6cc5180d7cd9e558513fe314bc81be4a17cf0060abaa22a4d",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/experiment.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "bc0474b36df85be6a62e21c587ef42c7e79f196845450f41b2de65aab942c695",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/experiment.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/experiment.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/format.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "b3d5fe1cc774b8c7a05b3ab5c10e2301619eb0df536712f801783c413b71cfc3",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/format.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/format.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/literature.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "7a704a0fad44244962b0d0ce7e3e17526aa220cfbfea7bb446eb586a4fc01a28",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/literature.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/literature.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "4c2e435d834b5bb5de21cfd59bff69ebebd8c39eafef1809615a68bf0c02ab48",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/references.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "fa392c145c29923cb73731d9babd2116dce1988664dfb671aa7dd0a02981d31b",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/references.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/references.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "2ef778d8f96fc12c0a04734c4e85b0ccc1706535d395aac1e13dd0962ac4c16e",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/spec-check.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e10074dbcee226a9bedfb5a6738ee7e3f1af9d841db4457ff734a1fa7324525c",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/spec-check.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/spec-check.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/tables.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7bf03e6610e87bb548a47bb0a5c52446b4939076e2b98dfe1ac3894872b756da",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/tables.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/tables.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/template.md",
+      "sourceLocale": "en",
+      "sourceSha256": "549eb09b9f872dbb36b63fa01b19d8478c7423558b89cf3746a52e6b9e0d724a",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/template.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/template.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/title.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7c0edd0d653df84c2d13c6d32689d198299f2382f68531a0ff52a14131cd7cba",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/title.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/title.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/abstract-structure.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "35233f2ea383f851326270bdc4d7ec7f9d6bd1df74c2a2ec726637f7d3431949",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/academic-style-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "17199c5275267b91fb8faa04289e672b04dec6d7f2a3d2427518fd039a375f48",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/academic-style-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/academic-style-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/conclusion-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "53055b01d937f51b6f3d6a817af932b778ca2a6689e3a8153f3451bc729828e7",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/conclusion-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/conclusion-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/introduction-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e55e7fd1d9c3c4ecc74b6ed61153feac898fd76c293d8efde72dc22f278ec196",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/introduction-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/introduction-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/logic-coherence.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "f15657646998a14c39c2a9a0f102ed1b5806aa3fcb38e00abaa4cc073bef7ca9",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/logic-coherence.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/logic-coherence.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/method-chapter-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "1e76c012d8df52f8468f7a63fdb9c5716dadd094f289211793009c0ee96ab4d8",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ecf6b5a29f413c6b941a3d0aa33ef50587194631f6b59125cb2a6d66bb871d18",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/process-chapter-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "fedd8bb95717ac6699b2184c3c2b9c25947c02be740241c72edd91d6b3369c5f",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/process-chapter-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/process-chapter-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/structure-guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "77db604862e8a9dd4719417cbab39d07c798d37a7eb5d8b90263f659f66e53d1",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/structure-guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/structure-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/tense-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "52efdd6070ba85f4523fc178965f4e86f1a093b2a0bebd58d2ad08f4e48fca65",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/tense-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/tense-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/thesis-writing-guide.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "35013e7f5db710d68ba7b06f2c8fc17ebdb7e041e5e8d574659a11c017596066",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/thesis-writing-guide.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/thesis-writing-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/title-optimization.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "bef82031baebd43071c3d058f6bb75da05df64d7394a605e4a597c55e8353091",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/title-optimization.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/title-optimization.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ed0aaca33640cd27262020b68deaf45c5e32e14ca936f1c4dfac3d50314ff932",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/writing-philosophy-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/writing-philosophy-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-thesis-zh/templates/generic.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "2df3da657c32fab59bf43c2af44eff8bc2c9cb34591b2aedd0338334a9613168",
+      "en": "docs/skills/latex-thesis-zh/resources/templates/generic.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/templates/generic.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-thesis-zh/templates/pkuthss.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "839aa1e9245fc7b7a45dcd17a4c8bce17d85d8726030905762baa56ea362ac57",
+      "en": "docs/skills/latex-thesis-zh/resources/templates/pkuthss.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/templates/pkuthss.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-thesis-zh/templates/thuthesis.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "45532a475c57090db2d9c6e15cd0b58bba03f512f19db7ea9f048d1848a02749",
+      "en": "docs/skills/latex-thesis-zh/resources/templates/thuthesis.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/templates/thuthesis.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "templates",
+      "source": "academic-writing-skills/latex-thesis-zh/templates/yanshan.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "55deb2d161f69003e19267254f1fae40ef3c2577556bb4dc726ac729592f7d65",
+      "en": "docs/skills/latex-thesis-zh/resources/templates/yanshan.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/templates/yanshan.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/bibliography-and-deai.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "b1e4c939cac3bc1482e45ef5c6d75d82a6a1771a5f82c0d3ab815d33ed08cf38",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/bibliography-and-deai.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/bibliography-and-deai.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/compile-and-template.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "2a685e0203a1173bd3fc254279bb43c6f3a8f5b829df8c0928e0736400841451",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/compile-and-template.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/compile-and-template.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/literature-review-rewrite.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "c598fb5aad265ce226b8ffeb33aadfc1b9aaedbcdbe1b7b14ed708c696015373",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/literature-review-rewrite.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/literature-review-rewrite.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/logic-and-experiment.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "5dd857520d1a0ff6c67ab1ab7123ff45341a63078821de52b183bae7f4d07fc8",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/logic-and-experiment.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/logic-and-experiment.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/structure-and-consistency.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "edeebc00a53c2f1820129d59c91f00f786dc2d4d0fa1745cc1d71e286a91308b",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/structure-and-consistency.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/structure-and-consistency.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/agent-roster.md",
+      "sourceLocale": "en",
+      "sourceSha256": "622f85d69f291c589af4a61efbaba394053fa04ff35c5c54c16915a5e7702a05",
+      "en": "docs/skills/paper-audit/resources/references/agent-roster.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/agent-roster.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/AUDIT_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "97d18389a0a56b278a7da4ca2e820fa6fc636250091adedb589e2ce0fa2e722a",
+      "en": "docs/skills/paper-audit/resources/references/AUDIT_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/AUDIT_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/CHANGELOG.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c7b1aede5cb48a522dfba561bd53e4feb5d906817709dcc68fa5afebd7656463",
+      "en": "docs/skills/paper-audit/resources/references/CHANGELOG.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/CHANGELOG.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/CHECKLIST.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f0856a5d8060e8524a7a493ef237839c530ede7a685bf447edc5d193ea2b008c",
+      "en": "docs/skills/paper-audit/resources/references/CHECKLIST.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/CHECKLIST.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/CLAIM_EVIDENCE_CONTRACT.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fa38d6a22dd5c37b11d2013b9fc747224d7b4d299f58f8bf57b08c1ee0fb1b94",
+      "en": "docs/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/CONSOLIDATION_RULES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7422a592420907a32d367350280f6df9ee7a6cbe63990385d21c50f2bec3e11d",
+      "en": "docs/skills/paper-audit/resources/references/CONSOLIDATION_RULES.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/CONSOLIDATION_RULES.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/DATA_AVAILABILITY_ADVISORY.md",
+      "sourceLocale": "en",
+      "sourceSha256": "07290cba766e1308053d69d9c1be212f9aa098be500b513fe5d9e505717ff47e",
+      "en": "docs/skills/paper-audit/resources/references/DATA_AVAILABILITY_ADVISORY.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/DATA_AVAILABILITY_ADVISORY.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/DEEP_REVIEW_CRITERIA.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e748c2f5e884961d2ca6dd5ca91d968c17b36e62bfc2789d593b2301ba122686",
+      "en": "docs/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/editorial_decision_standards.md",
+      "sourceLocale": "en",
+      "sourceSha256": "534ffbac2cfecad6ab1e0a8a87d8b3598b3e6bf1d0dc70a72053eb1f740f1752",
+      "en": "docs/skills/paper-audit/resources/references/editorial_decision_standards.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/editorial_decision_standards.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/FORBIDDEN_TERMS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8082612f11d69507111ff7099331b6c264a1cf8ba0e6f6028dee43ec20cfd5e3",
+      "en": "docs/skills/paper-audit/resources/references/FORBIDDEN_TERMS.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/FORBIDDEN_TERMS.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/ISSUE_SCHEMA.md",
+      "sourceLocale": "en",
+      "sourceSha256": "69784efd1f106d17c6e4d31fa7698b0d9442e5008ee70b02f103f8229a7e5051",
+      "en": "docs/skills/paper-audit/resources/references/ISSUE_SCHEMA.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/ISSUE_SCHEMA.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/LITERATURE_GROUNDING_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "58fcc518a0dd39fbd6f54612ccf9a44a187d3a15fc9e4ba9018a88a866753eb1",
+      "en": "docs/skills/paper-audit/resources/references/LITERATURE_GROUNDING_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/LITERATURE_GROUNDING_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/MODE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bbc6c17bb220bf4301eef613e8472e0d51bc3c5da82018a33b43b9aef82bba54",
+      "en": "docs/skills/paper-audit/resources/references/MODE_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/MODE_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/output-layout.md",
+      "sourceLocale": "en",
+      "sourceSha256": "06af45374c12f2abc6618f3fea90a29247b6e92fb8369c188190e26feb28f16d",
+      "en": "docs/skills/paper-audit/resources/references/output-layout.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/output-layout.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ef232da570a045041e0974960652011ca4827bf66e6663ff8e9b4cec1caa9c60",
+      "en": "docs/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/POLISH_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "65bd489e539b041ecc1b8b3651bcc5ffaf13ab95cca39c4e3d622302743c4dbd",
+      "en": "docs/skills/paper-audit/resources/references/POLISH_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/POLISH_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/PRE_SUBMISSION_RULES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fa941d70a16fe2bfcb32895e8df887ec12b8a306807d7225d387b2b60852371b",
+      "en": "docs/skills/paper-audit/resources/references/PRE_SUBMISSION_RULES.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/PRE_SUBMISSION_RULES.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/PRESUBMISSION_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "df0053d8ffe99826a62986ecbda351c4ad9d6a86dd080ba79ef76f28e2a5d57c",
+      "en": "docs/skills/paper-audit/resources/references/PRESUBMISSION_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/PRESUBMISSION_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/QUALITATIVE_STANDARDS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "0b9055f010ff15cf40da1dc00cdf32eae8708b3f0bd4b4187aa9a536fb43f0be",
+      "en": "docs/skills/paper-audit/resources/references/QUALITATIVE_STANDARDS.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/QUALITATIVE_STANDARDS.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/quality_rubrics.md",
+      "sourceLocale": "en",
+      "sourceSha256": "d03d6e33136f978595b0a29fb84762c4cd2b764013350079332b2e902d3f763d",
+      "en": "docs/skills/paper-audit/resources/references/quality_rubrics.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/quality_rubrics.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/QUICK_REFERENCE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e3698945e28c953c84497dd678b8a80161b3ed5ea6aac3fceaf273fb0489a4c0",
+      "en": "docs/skills/paper-audit/resources/references/QUICK_REFERENCE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/QUICK_REFERENCE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/REVIEW_CRITERIA.md",
+      "sourceLocale": "en",
+      "sourceSha256": "82e03bbe95e5edcda82a3f995cb5b113dacbf9e4a7557f3755e0597499a0aa19",
+      "en": "docs/skills/paper-audit/resources/references/REVIEW_CRITERIA.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_CRITERIA.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "24ca4db7ef783eafff6ed520f5bd2f2c74ef780a1a30717524f94cc46319b884",
+      "en": "docs/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/REVIEWER_PSYCHOLOGY.md",
+      "sourceLocale": "en",
+      "sourceSha256": "47c43c129b6a50b5b0be10fef24adb6311a818010307fdc5ef3c5879abe646f9",
+      "en": "docs/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/SCHOLAR_EVAL_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e455caf68c109052d6278a8705cbe25fffd73aefe1ece2eac101242ffd175ce1",
+      "en": "docs/skills/paper-audit/resources/references/SCHOLAR_EVAL_GUIDE.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/SCHOLAR_EVAL_GUIDE.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/SCORING_SYSTEMS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4828e6f7c4aedfed8f97ff56dce83256d51a06cd0ae8e14d2c11dae781410477",
+      "en": "docs/skills/paper-audit/resources/references/SCORING_SYSTEMS.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/SCORING_SYSTEMS.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/scripts-map.md",
+      "sourceLocale": "en",
+      "sourceSha256": "79f6d79c30dfd1be7b21c047d60bef52edf1c9a5ff01f494c18495731fc4363b",
+      "en": "docs/skills/paper-audit/resources/references/scripts-map.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/scripts-map.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "00f935ef53dd727ce614431d90640f9a2066a18650913beed46f214fc8b7d545",
+      "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/TROUBLESHOOTING.md",
+      "sourceLocale": "en",
+      "sourceSha256": "2d671fe77e3fd3495b665826dfa3f768d650bad8145ca12fb7d4e0123990a9d2",
+      "en": "docs/skills/paper-audit/resources/references/TROUBLESHOOTING.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/TROUBLESHOOTING.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/VENUE_RULES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8b343a5461e8bd12762eb90501b374262e93287619b9b83c74c1349d1a963ee6",
+      "en": "docs/skills/paper-audit/resources/references/VENUE_RULES.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/VENUE_RULES.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/workflow-detail.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f247cea3490191dbd62ca0acd9ea7e60e5c75102a4a9355e52feeb967d36659b",
+      "en": "docs/skills/paper-audit/resources/references/workflow-detail.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/workflow-detail.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "templates",
+      "source": "academic-writing-skills/paper-audit/templates/audit_report_template.md",
+      "sourceLocale": "en",
+      "sourceSha256": "26be79b751adc087823c33634f4ad58dcedeb1f1aaf46f860cf2561cec9629dc",
+      "en": "docs/skills/paper-audit/resources/templates/audit_report_template.md",
+      "zh": "docs/zh/skills/paper-audit/resources/templates/audit_report_template.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "templates",
+      "source": "academic-writing-skills/paper-audit/templates/review_report_template.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b9174f908ffcb0aa1c9072cb9adcb0752848dc513f93136439cf5eff14cb88c0",
+      "en": "docs/skills/paper-audit/resources/templates/review_report_template.md",
+      "zh": "docs/zh/skills/paper-audit/resources/templates/review_report_template.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "templates",
+      "source": "academic-writing-skills/paper-audit/templates/revision_suggestions_template.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f2456bed1491132e1a84567c9a6c4f5dac319e08a9697f4fde37acd6f1e3418d",
+      "en": "docs/skills/paper-audit/resources/templates/revision_suggestions_template.md",
+      "zh": "docs/zh/skills/paper-audit/resources/templates/revision_suggestions_template.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-audit/examples/gate_example.md",
+      "sourceLocale": "en",
+      "sourceSha256": "3c12eaeb3ba44ef219cf4a949b69fe7d1a3a2fefac9b7e23c2ed142cf5198497",
+      "en": "docs/skills/paper-audit/resources/examples/gate_example.md",
+      "zh": "docs/zh/skills/paper-audit/resources/examples/gate_example.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-audit/examples/peer_review_primary_view.md",
+      "sourceLocale": "en",
+      "sourceSha256": "0d734d7c1d35eb6bf3f5fa5ceb237c79a6063468d38279c5c817a50dbc9f94e6",
+      "en": "docs/skills/paper-audit/resources/examples/peer_review_primary_view.md",
+      "zh": "docs/zh/skills/paper-audit/resources/examples/peer_review_primary_view.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-audit/examples/review_example.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c51a95b461f498f389a9eb97b614512cb5a6cc7e55d241fa9710ab84efd185a8",
+      "en": "docs/skills/paper-audit/resources/examples/review_example.md",
+      "zh": "docs/zh/skills/paper-audit/resources/examples/review_example.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-audit/examples/self_check_example.md",
+      "sourceLocale": "en",
+      "sourceSha256": "99afadda8d4851f8f72918ce5fe3bf0b24d2b2ca53c9edcba20fe812132517fc",
+      "en": "docs/skills/paper-audit/resources/examples/self_check_example.md",
+      "zh": "docs/zh/skills/paper-audit/resources/examples/self_check_example.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/claims_evidence_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8aa97fd1757f66a455dd09a30db37039f37a73001d8a05184ddcdbd96e33b4e1",
+      "en": "docs/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/committee_editor_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "5dbb420e299322486a8ba4bdd8d5bd42906f13842cb1e7aa1df6b3c8fe5ed7c3",
+      "en": "docs/skills/paper-audit/resources/agents/committee_editor_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/committee_editor_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/committee_literature_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "19c97d4b0c5c12d90b4714dfa2c7c48b8200c82da7ef823955a3af673635b4c1",
+      "en": "docs/skills/paper-audit/resources/agents/committee_literature_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/committee_literature_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/committee_logic_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "986fd72490ba6458806ba7030ffb45a8f58418b46e3e763e1359c127846f0639",
+      "en": "docs/skills/paper-audit/resources/agents/committee_logic_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/committee_logic_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/committee_methodology_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "bd6ad974462319b6a7212f10a7641c71cb7b10c7176217b36e7350d46785f3f8",
+      "en": "docs/skills/paper-audit/resources/agents/committee_methodology_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/committee_methodology_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/committee_theory_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "26fef72dc1738364c84b7bf589372d8fca6d3846b3d02fa3c0b284687d87f368",
+      "en": "docs/skills/paper-audit/resources/agents/committee_theory_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/committee_theory_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "16a4c3da12f559bd929728cd364eb6b1c3390aae3bff4fe70d977937b2844789",
+      "en": "docs/skills/paper-audit/resources/agents/critical_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/critical_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/domain_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "1a7b40a18293d5050f7b234907addb375164a420decdcbc0463cb5938c819748",
+      "en": "docs/skills/paper-audit/resources/agents/domain_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/domain_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/editor_in_chief_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "07e15331aafb7e951a5aac201bfd4a53a61b4857ea06028b46e10ab4b62ffc0f",
+      "en": "docs/skills/paper-audit/resources/agents/editor_in_chief_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/editor_in_chief_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/evaluation_fairness_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "10df77b0b7f6ba36e7c3f32c62c5344fdcf6c8ea697d1fb22d0705e403250613",
+      "en": "docs/skills/paper-audit/resources/agents/evaluation_fairness_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/evaluation_fairness_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/literature_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f22dbba82e98746d2085ff42153ecd4d6e7239eab355fa383ad8abce9e934431",
+      "en": "docs/skills/paper-audit/resources/agents/literature_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/literature_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/methodology_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e3d0efe4b24592bbfa2277f92a03bee282a961d305465c579713d8346c3d77ce",
+      "en": "docs/skills/paper-audit/resources/agents/methodology_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/methodology_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/notation_consistency_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "64f90d21fd338ef64764f1f633b74f47a39e14dac01161ab6bea7e519081217d",
+      "en": "docs/skills/paper-audit/resources/agents/notation_consistency_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/notation_consistency_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/prior_art_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "3df4c980d45536ef72ed921926682c5c7104d4f6c6605aad361f856b20b3b8f2",
+      "en": "docs/skills/paper-audit/resources/agents/prior_art_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/prior_art_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/revision_coach_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "01645f953c4ef9389570dc265a8c8126698006426b6914b6e4454a16dec259ba",
+      "en": "docs/skills/paper-audit/resources/agents/revision_coach_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/revision_coach_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/revision_suggestion_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "0e203fcc0e83615333005e90f5026bf7e0bd135a9af2df27c1fd4f3ac81ba41c",
+      "en": "docs/skills/paper-audit/resources/agents/revision_suggestion_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/revision_suggestion_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/section_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "122950441de53c9b94ef01c3e909c427550f5765ff7cab8697c38a9fab163948",
+      "en": "docs/skills/paper-audit/resources/agents/section_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/section_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/self_consistency_reviewer_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a693667cd4f64f96d2bef32ebfd97413a6950c04b07412d1ba09b678f5c0afdb",
+      "en": "docs/skills/paper-audit/resources/agents/self_consistency_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/self_consistency_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/synthesis_agent.md",
+      "sourceLocale": "en",
+      "sourceSha256": "de2034fd419e84e620e2698c96db6697702e5697015db4389947d4a323808699",
+      "en": "docs/skills/paper-audit/resources/agents/synthesis_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/synthesis_agent.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/ABSTRACT_STRUCTURE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "01729af5ea6172c2d23ee22e9bb37ddd4edf3fe437c93dc2dc71234621a5563e",
+      "en": "docs/skills/typst-paper/resources/references/ABSTRACT_STRUCTURE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/ABSTRACT_STRUCTURE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/AI_TONE_TERMS.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e298bfd6e68e1b1d30f9f6f49dcf3720752ff3c29690084886555ba5fb5bfaa6",
+      "en": "docs/skills/typst-paper/resources/references/AI_TONE_TERMS.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/AI_TONE_TERMS.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/AI_TONE_THRESHOLDS.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "810f5693b6c9b610a3098cc4922ea68fe7dc894ebb6d48feeb445c149e27756e",
+      "en": "docs/skills/typst-paper/resources/references/AI_TONE_THRESHOLDS.yaml",
+      "zh": "docs/zh/skills/typst-paper/resources/references/AI_TONE_THRESHOLDS.yaml"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/BEST_PRACTICES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "19c43473b54bf20dadc7c6c3ead552d89cd8b5ffbd3f5cd88e182766e84e623f",
+      "en": "docs/skills/typst-paper/resources/references/BEST_PRACTICES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/BEST_PRACTICES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/CITATION_STYLES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "74da7bf6030eb250fa21ccd75c5182b43827202ee46b26f3c2e9969b5051affe",
+      "en": "docs/skills/typst-paper/resources/references/CITATION_STYLES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/CITATION_STYLES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/CITATION_VERIFICATION.md",
+      "sourceLocale": "en",
+      "sourceSha256": "91cb87cadb687631a29ed5b99d67d3db1c6f949b27b5fb1e967e04313e892d9d",
+      "en": "docs/skills/typst-paper/resources/references/CITATION_VERIFICATION.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/CITATION_VERIFICATION.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/COMMON_ERRORS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "17d4b439c566e7a470ad866aaea75a20ff8a8fbe34a428478af32158c8d15dc6",
+      "en": "docs/skills/typst-paper/resources/references/COMMON_ERRORS.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/COMMON_ERRORS.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/DEAI_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "6856fdc95f6a866c7de1b7a81decaebd8178a11809b7904d3e79fafc12b17713",
+      "en": "docs/skills/typst-paper/resources/references/DEAI_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/DEAI_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/JOURNAL_ABBREVIATIONS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "22ad36c7891f9bf6e772effc2d381ff4083a31b7e10c86a911353075a4048570",
+      "en": "docs/skills/typst-paper/resources/references/JOURNAL_ABBREVIATIONS.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/JOURNAL_ABBREVIATIONS.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/JOURNAL_ADAPTATION_WORKFLOW.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fdc9f3ebb925556cd110107bd0366d7bca06e02f97e274dde4791cde5e3285e4",
+      "en": "docs/skills/typst-paper/resources/references/JOURNAL_ADAPTATION_WORKFLOW.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/JOURNAL_ADAPTATION_WORKFLOW.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/ABSTRACT.md",
+      "sourceLocale": "en",
+      "sourceSha256": "c47a7993560658928428ad38134189d2f9d17a3e63151ae927b967371c78800f",
+      "en": "docs/skills/typst-paper/resources/references/modules/ABSTRACT.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/ABSTRACT.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/ADAPT.md",
+      "sourceLocale": "en",
+      "sourceSha256": "109c430ca05889e90ed316387c04368d6e9a1dc682e6528222d09d8f9b1c1745",
+      "en": "docs/skills/typst-paper/resources/references/modules/ADAPT.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/ADAPT.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/BIBLIOGRAPHY.md",
+      "sourceLocale": "en",
+      "sourceSha256": "0290d22910b30d692a8264ca01f430871db2ec64d2d134a98bf7ac0423e88e74",
+      "en": "docs/skills/typst-paper/resources/references/modules/BIBLIOGRAPHY.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/BIBLIOGRAPHY.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/CAPTION.md",
+      "sourceLocale": "en",
+      "sourceSha256": "74859b60c1e97673170ab6dab115067f37369facfc77a2fe53d4a855afa7a5eb",
+      "en": "docs/skills/typst-paper/resources/references/modules/CAPTION.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/CAPTION.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/COMPILE.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "40963d1e6b927269618fdd089c4120b58a4ba3ec5e8da0f1e68a2ae70473c647",
+      "en": "docs/skills/typst-paper/resources/references/modules/COMPILE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/COMPILE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/DEAI.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ebca82a81bf2fb638723ad51da3991e59f107689c22cbca1e8cfc310dcbe52bb",
+      "en": "docs/skills/typst-paper/resources/references/modules/DEAI.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/DEAI.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/EXPERIMENT.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7bf18ea444c3e95770287260005a051c06577186f04ef003892170c3956ce160",
+      "en": "docs/skills/typst-paper/resources/references/modules/EXPERIMENT.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/EXPERIMENT.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/EXPRESSION.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "050a25daa624e3bd520f73794959d40e9863a42efa0fa5780420b256474ca4a5",
+      "en": "docs/skills/typst-paper/resources/references/modules/EXPRESSION.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/EXPRESSION.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/FORMAT.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "cbd71225767e0023201ebf51343306529c7afe30578ea7f493e68a813aa17ff8",
+      "en": "docs/skills/typst-paper/resources/references/modules/FORMAT.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/FORMAT.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/GRAMMAR.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "8dd325c5b3d68c8f025c76bb53e536769d1b873922c41572bcb4dbebd1c064b3",
+      "en": "docs/skills/typst-paper/resources/references/modules/GRAMMAR.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/GRAMMAR.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/LITERATURE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b5050a903dd7bc96a7ba4f2ab61a6d59db9808aa125ac0e1368642fd731d230c",
+      "en": "docs/skills/typst-paper/resources/references/modules/LITERATURE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/LITERATURE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/LOGIC.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "795fdacdd02429bf03338063ac44369f83edf001f5775fe7b2cf8695cf71238b",
+      "en": "docs/skills/typst-paper/resources/references/modules/LOGIC.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/LOGIC.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/PSEUDOCODE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "1f54a09e12abeeea00ed29a3a0aa8208645531c54a4647188ac8be11872c9853",
+      "en": "docs/skills/typst-paper/resources/references/modules/PSEUDOCODE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/PSEUDOCODE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/REFERENCES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "fc4d52b60d5097ba294b26569a59660a82baaca3a5f986ecdbc3128d7bc6003b",
+      "en": "docs/skills/typst-paper/resources/references/modules/REFERENCES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/REFERENCES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/SENTENCES.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "812fb8e61eefa8aa3c431d1968d145ab04a27ebce2cde57d0c0018eec83cc9b0",
+      "en": "docs/skills/typst-paper/resources/references/modules/SENTENCES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/SENTENCES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/TABLES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "173a2ab65d056cbc56cb17ee69b63091ab8c3bd32e4803f048431c7f519aff7b",
+      "en": "docs/skills/typst-paper/resources/references/modules/TABLES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/TABLES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/TITLE.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "acd06b601e0525a18edc21f2f2099936044e458c2195055880dd042cc8b2966c",
+      "en": "docs/skills/typst-paper/resources/references/modules/TITLE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/TITLE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/TRANSLATION.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "41c447d0d833f9cd055638cd8178cde2af71c725e593bc699c86306d868dbae1",
+      "en": "docs/skills/typst-paper/resources/references/modules/TRANSLATION.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/TRANSLATION.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/modules/WORKFLOW.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e80c25d7721f74a52989e8c96b77f55f5dcafb824f8e7192aa3a38e18c3a84a0",
+      "en": "docs/skills/typst-paper/resources/references/modules/WORKFLOW.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/modules/WORKFLOW.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/NUMBER_UNIT_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "cefbc848a3d489afa76e80fea131f012c63aeb5afa461c82ce23208645da04be",
+      "en": "docs/skills/typst-paper/resources/references/NUMBER_UNIT_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/NUMBER_UNIT_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/OVER_CLAIM_GUARD.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ed55a59675a68baef0dbfac37d5fa1e491470386e236a72bbca14232971ebf7e",
+      "en": "docs/skills/typst-paper/resources/references/OVER_CLAIM_GUARD.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/OVER_CLAIM_GUARD.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/REVIEWER_PERSPECTIVE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "7ed43109b10fb000e904ace451e3ed669798807a71d3814402cd459b01448e04",
+      "en": "docs/skills/typst-paper/resources/references/REVIEWER_PERSPECTIVE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/REVIEWER_PERSPECTIVE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/skill-routing-notes.md",
+      "sourceLocale": "en",
+      "sourceSha256": "59f3f5fc310b61e0b5890b65347f60a1ad3e0a033161a5282263214fff35fec0",
+      "en": "docs/skills/typst-paper/resources/references/skill-routing-notes.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/skill-routing-notes.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/STYLE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e74e1fd0a14d01dc73c8b6ef6785a56c67fff86631766c0c015271fc62378302",
+      "en": "docs/skills/typst-paper/resources/references/STYLE_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/STYLE_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TABLE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4e59331f196c9dd646a10dd0d55d51b6938bbc76617675eb61b4c40c76bac3ab",
+      "en": "docs/skills/typst-paper/resources/references/TABLE_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TABLE_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TEMPLATES.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a6767daa1522ea1ede0a6552a5825ffa1ca791e6f9033c2055bb0d8e7c89a7bf",
+      "en": "docs/skills/typst-paper/resources/references/TEMPLATES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TEMPLATES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TENSE_GUIDE.md",
+      "sourceLocale": "en",
+      "sourceSha256": "346210a2b3302857f079ed47e2809d60f85764b0276a5e645de2d1bbb5e3d4c2",
+      "en": "docs/skills/typst-paper/resources/references/TENSE_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TENSE_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TERMINOLOGY.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0a916d89aec05ee3a72f53b2c09cd610228e1605c159b8388e94b31d583fd565",
+      "en": "docs/skills/typst-paper/resources/references/TERMINOLOGY.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TERMINOLOGY.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TRANSLATION_GUIDE.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ceceff5bcf364c4954ec57631131bf35fa3259f8f6054177eee9a7e9d80e7fe8",
+      "en": "docs/skills/typst-paper/resources/references/TRANSLATION_GUIDE.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TRANSLATION_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/TYPST_SYNTAX.md",
+      "sourceLocale": "en",
+      "sourceSha256": "87697eba3a853a232c303b7fca6ab34dbd82173189d3e5282cbd5c68a2a61a23",
+      "en": "docs/skills/typst-paper/resources/references/TYPST_SYNTAX.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/TYPST_SYNTAX.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/VENUES.md",
+      "sourceLocale": "en",
+      "sourceSha256": "ce99a3dc966d569e311249b7c57a0e38ce2a7651d24cd5d772093e85bf196177",
+      "en": "docs/skills/typst-paper/resources/references/VENUES.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/VENUES.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/WRITING_PHILOSOPHY.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8dbda91617d6ccb35899facb151163e29c4fec491efae7f8701801ac909b76a9",
+      "en": "docs/skills/typst-paper/resources/references/WRITING_PHILOSOPHY.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/WRITING_PHILOSOPHY.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "templates",
+      "source": "academic-writing-skills/typst-paper/templates/acm.md",
+      "sourceLocale": "en",
+      "sourceSha256": "6022007895f1f34459b8202c1e5bcb62fc975e05ec81514d54488793519e2053",
+      "en": "docs/skills/typst-paper/resources/templates/acm.md",
+      "zh": "docs/zh/skills/typst-paper/resources/templates/acm.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "templates",
+      "source": "academic-writing-skills/typst-paper/templates/ieee.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9212ffc8b18423a21fe9895dbbe92eacc89ea9dfd5cadafee8119cae5fae2d9a",
+      "en": "docs/skills/typst-paper/resources/templates/ieee.md",
+      "zh": "docs/zh/skills/typst-paper/resources/templates/ieee.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "templates",
+      "source": "academic-writing-skills/typst-paper/templates/neurips.md",
+      "sourceLocale": "en",
+      "sourceSha256": "a3ba4f7a447f7201c6d454769a4bd8f77368249a2301ce22f11a235f2fad2aa5",
+      "en": "docs/skills/typst-paper/resources/templates/neurips.md",
+      "zh": "docs/zh/skills/typst-paper/resources/templates/neurips.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "examples",
+      "source": "academic-writing-skills/typst-paper/examples/bibliography-and-pseudocode.md",
+      "sourceLocale": "en",
+      "sourceSha256": "b6161172833c1a4555f2352c86b1c01484e54a71e6dba750db586c3a5c25735f",
+      "en": "docs/skills/typst-paper/resources/examples/bibliography-and-pseudocode.md",
+      "zh": "docs/zh/skills/typst-paper/resources/examples/bibliography-and-pseudocode.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "examples",
+      "source": "academic-writing-skills/typst-paper/examples/bibliography-and-title.md",
+      "sourceLocale": "en",
+      "sourceSha256": "aca753fd2b55a7ef14931080a02b708ab8fd63cb07ca7b11a3096372d1f32d08",
+      "en": "docs/skills/typst-paper/resources/examples/bibliography-and-title.md",
+      "zh": "docs/zh/skills/typst-paper/resources/examples/bibliography-and-title.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "examples",
+      "source": "academic-writing-skills/typst-paper/examples/compile-and-format.md",
+      "sourceLocale": "en",
+      "sourceSha256": "75ffc78f5702be766c1f7f56f51e952a58761c3cc978f5bcbe891df0cf02acc5",
+      "en": "docs/skills/typst-paper/resources/examples/compile-and-format.md",
+      "zh": "docs/zh/skills/typst-paper/resources/examples/compile-and-format.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "examples",
+      "source": "academic-writing-skills/typst-paper/examples/expression-and-translation.md",
+      "sourceLocale": "en",
+      "sourceSha256": "8aaedcb95ca9ef5146aadc1a32332d78a92c1fb2b4643f5d44547920df4772b7",
+      "en": "docs/skills/typst-paper/resources/examples/expression-and-translation.md",
+      "zh": "docs/zh/skills/typst-paper/resources/examples/expression-and-translation.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "examples",
+      "source": "academic-writing-skills/typst-paper/examples/literature-review-rewrite.md",
+      "sourceLocale": "en",
+      "sourceSha256": "2c4920096737a67aaa9c296e865dea27bae8e4add08c283bb74c37747a65228d",
+      "en": "docs/skills/typst-paper/resources/examples/literature-review-rewrite.md",
+      "zh": "docs/zh/skills/typst-paper/resources/examples/literature-review-rewrite.md"
+    }
+  ]
+}
