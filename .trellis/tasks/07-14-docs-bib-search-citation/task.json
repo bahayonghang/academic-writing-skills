@@ -3,7 +3,7 @@
   "name": "docs-bib-search-citation",
   "title": "重构 bib-search-citation 双语文档",
   "description": "同步并翻译 bib-search-citation 的 references、examples、技能概览与导航。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,
