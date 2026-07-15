@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "质检时核对：被改共享成员是否 canonical 先行、三副本（en/audit/cover_letter）逐字节一致、zh/typst 未被越权触碰"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "质检清单：test_parsers_alignment/test_deai_alignment 双锁必绿；SKILL.md 与 references/ 文档改动后 test_skill_contracts 与 test_docs_bilingual_resources 必跑；断言走 python API 的 issues 列表而非渲染报告（渲染每组截断 10 条的坑）；默认行为变化的存量用例同 commit 更新 + message 双声明"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "验收对照：父任务 AC 要求每项修复（含 Low）有回归测试、ALIGNMENTS 按声明更新、just ci 全绿；本任务收尾须回报登记表两处勘误（A-EN-2 SKILL 示例表述、grammar/sentences/expression 盲区遗漏）"}
