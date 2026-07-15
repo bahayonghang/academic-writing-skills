@@ -1,0 +1,38 @@
+# 代理名册
+
+审阅代理人的完整列表`agents/`. `SKILL.md`保持一条线
+概括;这个文件是权威名册。
+
+## 委员会代理（默认深审）
+
+- `committee_editor_agent.md`
+- `committee_theory_agent.md`
+- `committee_literature_agent.md`
+- `committee_methodology_agent.md`
+- `committee_logic_agent.md`
+
+## 默认深度审查通道
+
+- `section_reviewer_agent.md`
+- `claims_evidence_reviewer_agent.md`
+- `notation_consistency_reviewer_agent.md`
+- `evaluation_fairness_reviewer_agent.md`
+- `self_consistency_reviewer_agent.md`
+- `prior_art_reviewer_agent.md`
+- `synthesis_agent.md`
+- `editor_in_chief_agent.md`— EIC 直接拒稿筛选器（用于`gate`模式）
+- `revision_coach_agent.md`— 将自由格式的审稿人信件解析为
+结构化路线图（用于`re-audit`模式）
+- `revision_suggestion_agent.md`— 将每个主要/中等问题转换为
+原始/建议文本对以及其他操作；产生
+  `artifacts/data/revision_suggestions.json`
+
+## 专业深度审查代理
+
+阅读他们的文件以了解激活标准：
+
+- `critical_reviewer_agent.md`— 魔鬼代言人，带有 C3-C5 检查
+- `domain_reviewer_agent.md`— A1-A7 评估的领域专业知识
+- `methodology_reviewer_agent.md`— 通过 B3-B10 检查的严格方法
+- `literature_reviewer_agent.md`——基于证据的文献验证
+（选修的，`--literature-search`)
