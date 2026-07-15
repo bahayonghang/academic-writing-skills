@@ -15,11 +15,12 @@ except ImportError:
     from parsers import get_parser, resolve_section_keys
 
 try:
-    from tex_loader import read_text_robust
+    from tex_loader import assemble, read_text_robust
 except ImportError:
     try:
-        from typ_loader import read_text_robust
+        from typ_loader import assemble, read_text_robust
     except ImportError:
+        assemble = None
         read_text_robust = None
 
 
@@ -80,13 +81,21 @@ def _iter_paragraphs(parser, lines: list[str], start: int, end: int) -> list[tup
 
 def analyze(file_path: Path, section: str | None, max_words: int, max_clauses: int) -> list[str]:
     parser = get_parser(file_path)
-    if read_text_robust is not None:
+    doc = None
+    warning_lines: list[str] = []
+    if assemble is not None:
+        doc = assemble(file_path)
+        content, lines = doc.content, doc.lines
+    elif read_text_robust is not None:
         content, _warning = read_text_robust(file_path)
+        lines = content.split("\n")
     else:
         content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
+        lines = content.split("\n")
     sections = parser.split_sections(content)
     cp = parser.get_comment_prefix()
+    if doc is not None:
+        warning_lines = doc.warning_lines(cp)
 
     if section:
         matched, available = resolve_section_keys(section, sections)
@@ -112,9 +121,10 @@ def analyze(file_path: Path, section: str | None, max_words: int, max_clauses: i
                     continue
 
                 simplified = _simplify_sentence(sent)
+                location = doc.lineref(line_no) if doc is not None else f"Line {line_no}"
                 output.extend(
                     [
-                        f"{cp} LONG SENTENCE (Line {line_no}, {words} words, {clauses} clauses) "
+                        f"{cp} LONG SENTENCE ({location}, {words} words, {clauses} clauses) "
                         "[Severity: Minor] [Priority: P2]",
                         f"{cp} Original: {sent}",
                         f"{cp} Suggested: {simplified}",
@@ -125,7 +135,7 @@ def analyze(file_path: Path, section: str | None, max_words: int, max_clauses: i
                 )
     if not output:
         output.append(f"{cp} LONG SENTENCE: No sentences exceeded configured thresholds.")
-    return output
+    return warning_lines + output
 
 
 def main() -> int:
