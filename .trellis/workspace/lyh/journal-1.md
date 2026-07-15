@@ -808,3 +808,41 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 20: 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers
+**Branch**: `dev`
+
+### Summary
+
+A-EN-1~10 十项发现全部落地：check_references/9 脚本接入 tex_loader.assemble 消多文件盲区、section 别名统一、canonical parsers.py（abstract 环境注册+extract_title 平衡花括号，三副本同步）、grammar/sentences/expression 三脚本+typst 字节镜像、Low 四项清理。5+1 个提交，just ci 1187→1237 passed。发现 prd.md/design.md 关于 R8 正则的内在矛盾，采用 design.md 可执行方案；沉淀第三套对齐锁背景说明与批次提交分组坑到 spec。父任务 8 子任务树 2/8 完成。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f02f372` | (see git log) |
+| `ae9c928` | (see git log) |
+| `1b63d15` | (see git log) |
+| `e6879b1` | (see git log) |
+| `0ada3d5` | (see git log) |
+| `c493486190b99e78076584a8e902bf05e7e98ee8` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
