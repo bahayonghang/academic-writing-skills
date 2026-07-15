@@ -1,0 +1,104 @@
+# AI Tone Threshold Configuration (Chinese thesis)
+#
+# 与 `tone-terms-zh.md` 配对。`deai_check.py` 读取本文件，
+# 文件缺失时使用脚本内 DEFAULT_THRESHOLDS。
+#
+# 依赖说明：解析本文件需要 PyYAML；用户环境缺少 PyYAML 时
+# deai_check.py 不会崩溃，而是回落内置默认阈值并在 stderr 提示
+# （此时本文件的定制不生效）。
+#
+# 触发全部走 [Script] LOW provenance。
+# “每篇”指整份输入文件经 parser.extract_visible_text 抽取后的可见正文。
+
+term_thresholds:
+  # 字符串 -> 每篇出现次数上限。中文不分词，按 substring 计数。
+  首先: 4
+  其次: 4
+  然而: 5
+  此外: 4
+  因此: 6
+  另外: 3
+  进而: 3
+  而且: 4
+  显然: 3
+  通常: 4
+  一般: 5
+  尤其: 3
+  显著: 5
+  全面: 3
+  深入: 3
+  大量: 3
+  众多: 3
+  重要: 5
+  关键: 5
+  核心: 4
+  基本: 4
+  主要: 5
+  最为: 3
+  极为: 3
+  尤为: 3
+
+burstiness:
+  # 连续 N 段段首前 K 个中文字符完全相同时触发。
+  consecutive_paragraphs: 3
+  opening_token_count: 4
+
+throat_clearing:
+  # 段首正则；匹配每段第一条非空可见行，大小写不敏感。
+  patterns:
+    - "^综上所述"
+    - "^总而言之"
+    - "^总的来说"
+    - "^由此可见"
+    - "^值得(?:指出|注意)的是"
+    - "^需要(?:指出|说明)的是"
+    - "^不难(?:发现|看出)"
+    - "^众所周知"
+    - "^毋庸讳言"
+    - "^首先[,，]"
+    - "^其次[,，]"
+    - "^然而[,，]"
+    - "^此外[,，]"
+    - "^一方面"
+    - "^另一方面"
+
+punctuation:
+  # 整篇 “——” 出现总数上限。
+  max_em_dashes_per_doc: 5
+  # 中文感叹号 “！” 与英文 “!” 都视为正文不当。
+  ban_exclamation_in_body: true
+
+overclaim:
+  # 一小批无歧义的过度声称短语（英文；出现在英文摘要/技术表述中）-> 建议键。
+  # 中文过度声称的判断表在 references/writing/over-claim-guard.md。
+  # enabled: false 可关闭本检查而不删除模式。每条发 [Script] LOW 痕迹。
+  enabled: true
+  patterns:
+    "\\bcaused by\\b": soften_causal
+    "\\bdetermines\\b": soften_causal
+    "\\bproves that\\b": soften_causal
+    "\\bfor the first time\\b": qualify_novelty
+    "\\bunprecedented\\b": qualify_novelty
+    "\\buniversally\\b": bound_universal
+    "\\bin all cases\\b": bound_universal
+    "\\bin every case\\b": bound_universal
+    "\\bwill revolutionize\\b": hedge_application
+
+tense:
+  # 英文摘要的现在时报告动词通常是时态错误（方法/结果应为过去时）。中文正文无时态，
+  # 脚本仅在英文摘要区域检查（generic \begin{abstract}、thuthesis \begin{abstract*}、
+  # pkuthss \begin{eabstract}；跳过中文摘要环境 thuthesis 明文 abstract、pkuthss cabstract）；
+  # 命中若紧邻图/表/公式主语则跳过。"is"/"are" 不入正则（合法用法太多），
+  # "presents" 只匹配动词，不匹配 "the present study" 里的形容词（勿把 ? 加回）；
+  # 判断级清单见 references/writing/tense-guide-zh.md。
+  # enabled: false 可关闭本检查。每条发 [Script] LOW 痕迹。
+  enabled: true
+  present_signals:
+    "\\bshows?\\b": past_in_methods_results
+    "\\breveals?\\b": past_in_methods_results
+    "\\bdemonstrates?\\b": past_in_methods_results
+    "\\bindicates?\\b": past_in_methods_results
+    "\\bpresents\\b": past_in_methods_results
+    "\\bconfirms?\\b": past_in_methods_results
+    "\\bachieves?\\b": past_in_methods_results
+    "\\boutperforms?\\b": past_in_methods_results

@@ -11,7 +11,7 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型：**Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
+> 推荐模型：**Claude Opus 4.6/fable5 · GPT 5.6 Sol Max/Xhigh · Gemini 3.1 PRO**  
 > 推荐平台：**Claude Code · Codex**
 
 ## 安装
@@ -27,14 +27,16 @@ npx skills add bahayonghang/academic-writing-skills
 
 ## 选择技能
 
-| 技能 | 适用场景 | 主要输入 | 权威入口 |
-| --- | --- | --- | --- |
-| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md) | 针对已有 LaTeX 论文生成、优化、对齐检查、投稿前检查或评估投稿信与期刊匹配度。 | `.tex`，可选 `.md` 或 `.tex` 投稿信草稿 | `cover-letter/SKILL.md` |
-| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md) | 做审稿人式深度批评、投稿门控、阻塞项归类、修订路线图、期刊风格报告或修订后复审。 | `.tex`、`.typ`、`.pdf` | `paper-audit/SKILL.md` |
-| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md) | 处理已有英文 LaTeX 会议或期刊论文：编译、格式、语法、逻辑、分节、引用、图表、伪代码、标题、翻译和去 AI 化润色。 | `.tex` | `latex-paper-en/SKILL.md` |
-| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md) | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714 引用、高校模板、章节结构、术语、逻辑、摘要、标题、三线表和去 AI 化润色。 | `.tex` | `latex-thesis-zh/SKILL.md` |
-| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md) | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。 | `.typ` | `typst-paper/SKILL.md` |
-| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。 | `.bib` | `bib-search-citation/SKILL.md` |
+
+| 技能                                                                            | 适用场景                                                                    | 主要输入                           | 权威入口                           |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------ | ------------------------------ |
+| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md)               | 针对已有 LaTeX 论文生成、优化、对齐检查、投稿前检查或评估投稿信与期刊匹配度。                              | `.tex`，可选 `.md` 或 `.tex` 投稿信草稿 | `cover-letter/SKILL.md`        |
+| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md)                 | 做审稿人式深度批评、投稿门控、阻塞项归类、修订路线图、期刊风格报告或修订后复审。                                | `.tex`、`.typ`、`.pdf`           | `paper-audit/SKILL.md`         |
+| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md)           | 处理已有英文 LaTeX 会议或期刊论文：编译、格式、语法、逻辑、分节、引用、图表、伪代码、标题、翻译和去 AI 化润色。           | `.tex`                         | `latex-paper-en/SKILL.md`      |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714 引用、高校模板、章节结构、术语、逻辑、摘要、标题、三线表和去 AI 化润色。 | `.tex`                         | `latex-thesis-zh/SKILL.md`     |
+| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。           | `.typ`                         | `typst-paper/SKILL.md`         |
+| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。           | `.bib`                         | `bib-search-citation/SKILL.md` |
+
 
 需要改写或润色源码时，使用对应格式的写作类 skill。需要审稿式诊断但不改源码时，
 使用 `paper-audit`。目标是文献库本身时，使用 `bib-search-citation`。
@@ -65,7 +67,7 @@ npx skills add bahayonghang/academic-writing-skills
 
 - 这些 skills 用于改进和验证已有学术材料，不应虚构实验、引用、期刊政策或无支撑论断。
 - Citation key、DOI、arXiv ID、URL 和本地 `.bib` 命中只是 provenance 字段，
-  不等于文献已经支撑论文中的具体 claim。
+不等于文献已经支撑论文中的具体 claim。
 - 在线检查是可选能力。当最新期刊规则或外部元数据会影响结论时，应从原始来源核验后再视为依据。
 - 源码改写建议应保留 LaTeX 与 Typst 语法；缺少证据时标记为待补证，而不是替用户补造。
 - 审查与脚本输出可能是 JSON、Markdown 报告，也可能是带 severity 和 priority 的注释式 diff finding。

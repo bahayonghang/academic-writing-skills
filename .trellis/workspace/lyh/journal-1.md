@@ -638,3 +638,103 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 15: 建立双语文档资源契约
+
+**Date**: 2026-07-14
+**Task**: 建立双语文档资源契约
+**Branch**: `dev`
+
+### Summary
+
+创建双语文档父子任务树，建立 250 项公开资源 manifest、统一路径检查器、动态侧栏和双语核心入口页；Ruff、Pyright、1157 项 pytest、VitePress build 与 just ci 通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `32bda367ddb7c145643d341d6eb22136e9e3577f` | (see git log) |
+| `8b0475d94b5a7ec879ac3d964b647e4f67d901eb` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 16: 完成 bib-search-citation 双语文档重构
+
+**Date**: 2026-07-14
+**Task**: 完成 bib-search-citation 双语文档重构
+**Branch**: `dev`
+
+### Summary
+
+迁移并完整翻译 3 个 references 与 3 个 examples，统一到 resources/{references,examples}，重写双语概览并通过资源同步、VitePress 与 just ci。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2d91db34cdf37f557d5127b49a4eccc052d0a260` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 17: 完成 latex-thesis-zh 双语文档重构
+
+**Date**: 2026-07-14
+**Task**: 完成 latex-thesis-zh 双语文档重构
+**Branch**: `dev`
+
+### Summary
+
+迁移并翻译 48 个公开资源为 96 个双语页面，重写双语技能概览，验证资源契约、VitePress 构建与完整 CI，并规范化 caption-guide 的一处无语义尾随空格。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `21d7ab8` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

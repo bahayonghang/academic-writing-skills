@@ -16,7 +16,9 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6 · GPT 5.5 · Gemini 3.1 PRO**
+> Recommended models: **Claude Opus 4.6/fable5 · GPT 5.6 Sol Max/Xhigh · Gemini 3.1 PRO**
+>
+>
 > Recommended platforms: **Claude Code · Codex**
 
 ## Install
@@ -33,14 +35,16 @@ usage details live in each `SKILL.md` file and in the docs site.
 
 ## Choose A Skill
 
-| Skill | Use When | Main Inputs | Source Of Truth |
-| --- | --- | --- | --- |
-| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md) | Generate, optimize, align-check, preflight, or journal-fit-check a submission cover letter against an existing LaTeX manuscript. | `.tex`, optional `.md` or `.tex` letter draft | `cover-letter/SKILL.md` |
-| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md) | Run reviewer-style critique, submission gates, blocker triage, revision roadmaps, journal-style reports, or re-audits. | `.tex`, `.typ`, `.pdf` | `paper-audit/SKILL.md` |
-| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md) | Work on existing English LaTeX conference or journal papers: compile, formatting, grammar, logic, sections, references, figures, tables, pseudocode, title, translation, or de-AI polish. | `.tex` | `latex-paper-en/SKILL.md` |
-| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md) | Work on existing Chinese LaTeX theses: compile diagnostics, GB/T 7714 references, university templates, chapter structure, terminology, logic, abstracts, titles, tables, and de-AI polish. | `.tex` | `latex-thesis-zh/SKILL.md` |
-| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md) | Work on existing English or Chinese Typst manuscripts: compile/export diagnostics, venue formatting, references, grammar, logic, tables, pseudocode, title, translation, or de-AI polish. | `.typ` | `typst-paper/SKILL.md` |
-| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | Search, filter, preview, export, or create LaTeX/Typst citation snippets from a local BibTeX or BibLaTeX library. | `.bib` | `bib-search-citation/SKILL.md` |
+
+| Skill                                                                         | Use When                                                                                                                                                                                    | Main Inputs                                   | Source Of Truth                |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------ |
+| [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md)               | Generate, optimize, align-check, preflight, or journal-fit-check a submission cover letter against an existing LaTeX manuscript.                                                            | `.tex`, optional `.md` or `.tex` letter draft | `cover-letter/SKILL.md`        |
+| [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md)                 | Run reviewer-style critique, submission gates, blocker triage, revision roadmaps, journal-style reports, or re-audits.                                                                      | `.tex`, `.typ`, `.pdf`                        | `paper-audit/SKILL.md`         |
+| [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md)           | Work on existing English LaTeX conference or journal papers: compile, formatting, grammar, logic, sections, references, figures, tables, pseudocode, title, translation, or de-AI polish.   | `.tex`                                        | `latex-paper-en/SKILL.md`      |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | Work on existing Chinese LaTeX theses: compile diagnostics, GB/T 7714 references, university templates, chapter structure, terminology, logic, abstracts, titles, tables, and de-AI polish. | `.tex`                                        | `latex-thesis-zh/SKILL.md`     |
+| [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | Work on existing English or Chinese Typst manuscripts: compile/export diagnostics, venue formatting, references, grammar, logic, tables, pseudocode, title, translation, or de-AI polish.   | `.typ`                                        | `typst-paper/SKILL.md`         |
+| [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | Search, filter, preview, export, or create LaTeX/Typst citation snippets from a local BibTeX or BibLaTeX library.                                                                           | `.bib`                                        | `bib-search-citation/SKILL.md` |
+
 
 Use the format-specific writing skills when you want source edits or polish. Use
 `paper-audit` when you want reviewer-style diagnosis without rewriting the
@@ -72,15 +76,15 @@ Align-check this cover letter against main.tex and report unsupported claims onl
 ## Safety And Outputs
 
 - The skills are for improving and validating existing academic material. They
-  should not invent experiments, citations, policies, or unsupported claims.
+should not invent experiments, citations, policies, or unsupported claims.
 - Citation keys, DOI, arXiv IDs, URLs, and local `.bib` matches are provenance
-  fields, not proof that a paper supports a manuscript claim.
+fields, not proof that a paper supports a manuscript claim.
 - Online checks are optional. When current venue rules or external metadata
-  matter, verify them from the original source before treating them as binding.
+matter, verify them from the original source before treating them as binding.
 - Source-editing suggestions should preserve LaTeX and Typst syntax and mark
-  required evidence as pending instead of filling it in.
+required evidence as pending instead of filling it in.
 - Audit and helper-script outputs may be JSON, Markdown reports, or diff-comment
-  style findings with severity and priority.
+style findings with severity and priority.
 
 Example finding shape:
 

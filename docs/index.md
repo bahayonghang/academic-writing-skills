@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Academic Writing Skills"
-  text: "Choose the right academic-writing skill, run the right script, ship with evidence"
-  tagline: "Bilingual docs aligned with the six SKILL.md contracts: LaTeX, Typst, bibliography search, paper audit, and submission cover letters."
+  text: "Route the task, run the evidence-backed workflow"
+  tagline: "Bilingual documentation for six skills covering LaTeX, Typst, bibliography search, paper audit, and submission cover letters."
   actions:
     - theme: brand
       text: Quick Start
@@ -13,79 +13,63 @@ hero:
       text: Browse Skills
       link: /skills/
     - theme: alt
-      text: Cover Letters
-      link: /skills/cover-letter/
+      text: Usage Guide
+      link: /usage
 
 features:
   - icon: ✉️
     title: "`cover-letter`"
-    details: "Submission-letter workflow for LaTeX manuscripts: generate, optimize, align-check, journal-fit, and pre-submission checks against manuscript evidence."
+    details: "Generate and verify submission letters against manuscript evidence and venue expectations."
   - icon: 🔬
     title: "`paper-audit`"
-    details: "Deep-review-first audit for `.tex`, `.typ`, and `.pdf`, with bilingual Markdown/HTML reports, review workspaces, revision trajectories, claim maps, and quote/citation checks."
+    details: "Run reviewer-style audits, submission gates, revision roadmaps, and re-audits."
   - icon: 📝
     title: "`latex-paper-en`"
-    details: "English LaTeX paper workflow for compile, format, bibliography, grammar, logic, literature synthesis, figures, captions, experiments, pseudocode, tables, and de-AI review."
+    details: "Compile and improve existing English LaTeX journal or conference papers."
   - icon: 📚
     title: "`latex-thesis-zh`"
-    details: "Chinese thesis workflow for structure mapping, GB/T 7714 checks, template detection, compilation, consistency, logic, literature, abstract, and tables."
+    details: "Check Chinese LaTeX theses from structure and GB/T 7714 through blind-review delivery."
   - icon: ⚡
     title: "`typst-paper`"
-    details: "Typst paper workflow for compile, format, bibliography, grammar, logic, literature synthesis, translation, pseudocode, tables, and experiments."
+    details: "Compile, review, and adapt existing Typst manuscripts."
   - icon: 🔎
     title: "`bib-search-citation`"
-    details: "BibTeX/BibLaTeX library search with compact filters, raw BibTeX export, and LaTeX or Typst citation snippets."
+    details: "Search local BibTeX/BibLaTeX libraries and return citation-ready results."
 ---
 
-## What This Site Covers
+## Start From The Artifact
 
-This site is the stable entry point for choosing, running, and combining the six skills under `academic-writing-skills/`.
+| You have | Start with |
+| --- | --- |
+| A submission manuscript and need an editor letter | [`cover-letter`](/skills/cover-letter/) |
+| A paper that needs critique or a readiness decision | [`paper-audit`](/skills/paper-audit/) |
+| An English LaTeX paper | [`latex-paper-en`](/skills/latex-paper-en/) |
+| A Chinese LaTeX thesis | [`latex-thesis-zh`](/skills/latex-thesis-zh/) |
+| A Typst paper | [`typst-paper`](/skills/typst-paper/) |
+| A local `.bib` library | [`bib-search-citation`](/skills/bib-search-citation/) |
 
-Use it to:
+## Documentation Contract
 
-- choose the right skill before asking an agent to work on a paper;
-- find the smallest script command that proves or diagnoses the issue;
-- understand which tasks are source editing, which are audit/reporting, and which are submission packaging;
-- follow the same boundaries documented in each skill's `SKILL.md`.
+Each `SKILL.md` is the behavior source of truth. The site turns those contracts into
+task-facing overviews and fully bilingual public resources.
 
-`SKILL.md` remains the source of truth. These pages turn those contracts into user-facing workflows, examples, and cross-skill routing rules.
-
-## Included Skills
-
-| Skill | Best for | Entry |
-| --- | --- | --- |
-| `cover-letter` | Submission cover letters for LaTeX manuscripts | [/skills/cover-letter/](/skills/cover-letter/) |
-| `paper-audit` | Reviewer-style audit, gate checks, and re-audits | [/skills/paper-audit/](/skills/paper-audit/) |
-| `latex-paper-en` | Existing English LaTeX papers | [/skills/latex-paper-en/](/skills/latex-paper-en/) |
-| `latex-thesis-zh` | Existing Chinese LaTeX theses | [/skills/latex-thesis-zh/](/skills/latex-thesis-zh/) |
-| `typst-paper` | Existing Typst papers | [/skills/typst-paper/](/skills/typst-paper/) |
-| `bib-search-citation` | Search and cite local `.bib` libraries | [/skills/bib-search-citation/](/skills/bib-search-citation/) |
-
-## Recommended Workflow Families
-
-| Goal | Start here | Then |
-| --- | --- | --- |
-| Draft or verify a submission letter | `cover-letter generate` or `align-check` | Run `journal-fit` and `presubmission` before sending |
-| Decide whether a paper is ready | `paper-audit quick-audit` or `gate` | Use `deep-review` for roadmap-level critique |
-| Fix source-level manuscript issues | Matching writing skill (`latex-paper-en`, `latex-thesis-zh`, `typst-paper`) | Compile first, then run targeted modules |
-| Find papers in a local bibliography | `bib-search-citation --query` | Add `cite:both`, `raw:true`, or `--return-fields` only when needed |
-
-## Fast Path
-
-1. Start with [/installation](/installation).
-2. Run a real command from [/quick-start](/quick-start).
-3. Use [/skills/](/skills/) to choose a skill and module.
-4. Use [/usage](/usage) for cross-skill routing and output expectations.
-
-## Repository Layout
+Every skill uses the same resource layout:
 
 ```text
-academic-writing-skills/
-├─ cover-letter/
-├─ paper-audit/
-├─ latex-paper-en/
-├─ latex-thesis-zh/
-├─ typst-paper/
-├─ bib-search-citation/
-└─ docs/
+skills/<skill>/resources/
+├─ references/
+├─ templates/
+├─ examples/
+└─ agents/
 ```
+
+The Chinese site mirrors the same paths under `/zh/skills/`. Use the overview to choose
+a module or mode, then open only the resource needed for that step.
+
+## Recommended Sequence
+
+1. [Install the repository and required toolchain](/installation).
+2. [Choose a skill and run one real command](/quick-start).
+3. Use the matching skill overview to select a module or mode.
+4. Use [the cross-skill guide](/usage) when a request spans writing, audit, retrieval,
+   and submission packaging.

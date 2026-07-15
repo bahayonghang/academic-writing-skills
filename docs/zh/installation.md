@@ -1,116 +1,82 @@
 # 安装
 
-## 前置环境
+## 环境要求
 
-按你要使用的技能安装对应工具链。
+只安装你实际使用的技能所需工具链。
 
-| 领域 | 需要 |
+| 领域 | 要求 |
 | --- | --- |
-| Python | Python 3.8+ 与 `uv` |
-| LaTeX 技能 | TeX Live 或 MiKTeX，以及 `latexmk`、`chktex`、`bibtex` 或 `biber` |
-| Typst 技能 | `typst-cli` |
-| 文档站点 | 若要本地运行文档，需要 Node.js |
+| 仓库 Python | Python 3.10+ 与 `uv` |
+| LaTeX 技能 | TeX Live 或 MiKTeX；`latexmk`、BibTeX/Biber 和可选 `chktex` |
+| Typst 技能 | Typst CLI |
+| 文档站 | Node.js 与 npm |
 
-本仓库内的 Python 示例命令统一使用 `uv run python ...`。测试统一使用 `uv run python -m pytest ...`。
-
-## 获取仓库
+## 获取并安装仓库
 
 ```bash
 git clone https://github.com/bahayonghang/academic-writing-skills.git
 cd academic-writing-skills
-uv sync
+uv sync --extra dev
 ```
 
 ## 安装技能
 
-推荐方式：直接使用 `npx skills` 安装。
+使用 `npx skills` 安装单个技能或完整集合：
 
 ```bash
-# 安装单个技能
+npx skills add bahayonghang/academic-writing-skills/cover-letter
+npx skills add bahayonghang/academic-writing-skills/paper-audit
 npx skills add bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
-npx skills add bahayonghang/academic-writing-skills/paper-audit
 
-# 或一次性安装全部技能
+# 安装全部六个技能
 npx skills add bahayonghang/academic-writing-skills
 ```
 
-如果你更偏好手动安装，再将需要的技能目录复制到本地 Claude 技能目录。
+手动安装时，将 `academic-writing-skills/` 下所需技能的完整目录复制到 agent runtime
+使用的技能目录。不要只复制 `SKILL.md`；每个技能都依赖本地 scripts、references、
+templates、examples 与 metadata。
 
-常用目录：
-
-- `academic-writing-skills/latex-paper-en`
-- `academic-writing-skills/latex-thesis-zh`
-- `academic-writing-skills/typst-paper`
-- `academic-writing-skills/bib-search-citation`
-- `academic-writing-skills/paper-audit`
-
-### 手动复制示例
-
-```powershell
-New-Item -ItemType Directory -Path "$env:USERPROFILE/.claude/skills" -Force
-Copy-Item -Recurse "academic-writing-skills/latex-paper-en" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/latex-thesis-zh" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/typst-paper" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/bib-search-citation" "$env:USERPROFILE/.claude/skills/"
-Copy-Item -Recurse "academic-writing-skills/paper-audit" "$env:USERPROFILE/.claude/skills/"
-```
-
-如果你的运行时不是 `~/.claude/skills`，把目标路径替换成你的实际技能目录即可。
-
-## 检查工具链
+## 验证环境
 
 ```bash
 uv --version
 python --version
-pdflatex --version
+latexmk --version
 xelatex --version
 typst --version
-chktex --version
 ```
 
-## 推荐附加工具
+在仓库根目录运行质量门禁：
 
 ```bash
-# macOS
-brew install chktex biber typst
-
-# Ubuntu / Debian
-sudo apt-get install chktex biber
-```
-
-`latexmk` 和大多数 TeX 工具通常已随 TeX 发行版提供。
-
-## 验证仓库环境
-
-在仓库根目录执行：
-
-```bash
+uv run ruff format --check .
 uv run ruff check .
 uv run pyright
-uv run python -m pytest tests/ academic-writing-skills/*/tests/
+uv run pytest
 ```
 
-## 本地运行文档站点
+## 运行文档站
 
 ```bash
-cd docs
-npm install
-npm run docs:dev
+npm --prefix docs install
+npm --prefix docs run docs:dev
 ```
+
+生产构建使用 `npm --prefix docs run docs:build`。
 
 ## 常见问题
 
-### 找不到 `pdflatex` 或 `xelatex`
+### 缺少 TeX 或 Typst 可执行文件
 
-先安装 LaTeX 发行版，并确认二进制已加入 `PATH`。
+安装对应工具链，并确认可执行文件位于 `PATH`。Python 依赖不会安装 TeX 或 Typst。
 
-### 找不到 `typst`
+### `uv run python` 无法解析环境
 
-安装 `typst-cli`，再确认 `typst --version` 能执行。
+在仓库根目录运行 `uv sync --extra dev`，然后重试。
 
-### `uv run python` 失败
+### 技能能打开，但引用文件缺失
 
-通常是因为还没在仓库根目录执行 `uv sync`。
+重新安装或复制完整技能目录。技能入口会按需加载包内详细资源。

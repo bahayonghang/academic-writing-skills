@@ -1,3 +1,7 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { defineConfig } from "vitepress";
 
 function excludeFromLocalSearch(relativePath: string): boolean {
@@ -20,287 +24,165 @@ function excludeFromLocalSearch(relativePath: string): boolean {
 
 const P = "/skills";
 const PZH = "/zh/skills";
+const DOCS_DIR = fileURLToPath(new URL("..", import.meta.url));
+const RESOURCE_KINDS = ["references", "templates", "examples", "agents"] as const;
 
-function latexPaperEnItems(prefix: string) {
-  const base = `${prefix}/latex-paper-en`;
-  const m = `${base}/resources/modules`;
-  const r = `${base}/resources/references`;
-  return [
-    { text: prefix.startsWith("/zh") ? "概览" : "Overview", link: `${base}/` },
-    {
-      text: prefix.startsWith("/zh") ? "模块" : "Modules",
-      collapsed: true,
-      items: [
-        { text: "Abstract", link: `${m}/abstract` },
-        { text: "Adapt", link: `${m}/adapt` },
-        { text: "Bibliography", link: `${m}/bibliography` },
-        { text: "Caption", link: `${m}/caption` },
-        { text: "Figures", link: `${m}/figures` },
-        { text: "Compile", link: `${m}/compile` },
-        { text: "DeAI", link: `${m}/deai` },
-        { text: "Experiment", link: `${m}/experiment` },
-        { text: "Expression", link: `${m}/expression` },
-        { text: "Format", link: `${m}/format` },
-        { text: "Grammar", link: `${m}/grammar` },
-        { text: "Logic", link: `${m}/logic` },
-        { text: "Pseudocode", link: `${m}/pseudocode` },
-        { text: "Section Writing", link: `${m}/section-writing` },
-        { text: "Sentences", link: `${m}/sentences` },
-        { text: "Tables", link: `${m}/tables` },
-        { text: "Tense Guide", link: `${m}/tense-guide` },
-        { text: "Title", link: `${m}/title` },
-        { text: "Translation", link: `${m}/translation` },
-      ],
-    },
-    {
-      text: prefix.startsWith("/zh") ? "参考资料" : "References",
-      collapsed: true,
-      items: [
-        { text: "Abstract Structure", link: `${r}/writing/abstract-structure` },
-        { text: "Best Practices", link: `${r}/writing/best-practices` },
-        { text: "Citation Styles", link: `${r}/citations/styles` },
-        { text: "Citation Verification", link: `${r}/citations/verification` },
-        { text: "Common Errors", link: `${r}/writing/common-errors` },
-        { text: "Compilation", link: `${r}/latex/compilation` },
-        { text: "DeAI Guide", link: `${r}/deai/guide` },
-        { text: "Forbidden Terms", link: `${r}/deai/forbidden-terms` },
-        {
-          text: "Journal Abbreviations",
-          link: `${r}/citations/journal-abbreviations`,
-        },
-        {
-          text: "Journal Adaptation",
-          link: `${r}/venues/journal-adaptation-workflow`,
-        },
-        {
-          text: "Number & Unit Guide",
-          link: `${r}/formatting/number-unit-guide`,
-        },
-        {
-          text: "Reviewer Perspective",
-          link: `${r}/review/reviewer-perspective`,
-        },
-        { text: "Style Guide", link: `${r}/writing/style-guide` },
-        { text: "Table Guide", link: `${r}/formatting/table-guide` },
-        { text: "Terminology", link: `${r}/writing/terminology` },
-        { text: "Translation Guide", link: `${r}/writing/translation-guide` },
-        { text: "Venues", link: `${r}/venues/catalog` },
-        { text: "Writing Philosophy", link: `${r}/writing/writing-philosophy` },
-      ],
-    },
-    {
-      text: prefix.startsWith("/zh") ? "分节写作" : "Section Writing",
-      collapsed: true,
-      items: [
-        { text: "Index", link: `${r}/writing/section-writing/index` },
-        { text: "Abstract", link: `${r}/writing/section-writing/abstract` },
-        {
-          text: "Introduction",
-          link: `${r}/writing/section-writing/introduction`,
-        },
-        {
-          text: "Related Work",
-          link: `${r}/writing/section-writing/related-work`,
-        },
-        { text: "Method", link: `${r}/writing/section-writing/method` },
-        {
-          text: "Experiments",
-          link: `${r}/writing/section-writing/experiments`,
-        },
-        { text: "Conclusion", link: `${r}/writing/section-writing/conclusion` },
-        { text: "Flow", link: `${r}/writing/section-writing/flow` },
-        {
-          text: "Self Review",
-          link: `${r}/writing/section-writing/self-review`,
-        },
-      ],
-    },
-  ];
+type SidebarItem = {
+  text: string;
+  link?: string;
+  collapsed?: boolean;
+  items?: SidebarItem[];
+};
+
+const RESOURCE_LABELS = {
+  en: {
+    references: "References",
+    templates: "Templates",
+    examples: "Examples",
+    agents: "Agent Contracts",
+  },
+  zh: {
+    references: "参考资料",
+    templates: "模板",
+    examples: "示例",
+    agents: "Agent 说明",
+  },
+};
+
+const DIRECTORY_LABELS: Record<string, [string, string]> = {
+  citations: ["Citations", "引用"],
+  deai: ["DeAI", "去 AI"],
+  evidence: ["Evidence", "证据"],
+  formatting: ["Formatting", "格式"],
+  latex: ["LaTeX", "LaTeX"],
+  modules: ["Modules", "模块"],
+  review: ["Review", "审阅"],
+  "section-writing": ["Section Writing", "分节写作"],
+  venues: ["Venues", "期刊与会议"],
+  writing: ["Writing", "写作"],
+};
+
+function humanizeName(name: string): string {
+  return name
+    .replace(/\.md$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function latexThesisZhItems(prefix: string) {
-  const base = `${prefix}/latex-thesis-zh`;
-  const m = `${base}/resources/modules`;
-  const r = `${base}/resources`;
-  return [
-    { text: prefix.startsWith("/zh") ? "概览" : "Overview", link: `${base}/` },
-    {
-      text: prefix.startsWith("/zh") ? "模块" : "Modules",
-      collapsed: true,
-      items: [
-        { text: "Structure", link: `${m}/structure` },
-        { text: "Abstract", link: `${m}/abstract` },
-        { text: "Bibliography", link: `${m}/bibliography` },
-        { text: "Compile", link: `${m}/compile` },
-        { text: "Consistency", link: `${m}/consistency` },
-        { text: "DeAI", link: `${m}/deai` },
-        { text: "Experiment", link: `${m}/experiment` },
-        { text: "Format", link: `${m}/format` },
-        { text: "Logic", link: `${m}/logic` },
-        { text: "Literature", link: `${m}/literature` },
-        { text: "References Check", link: `${m}/references` },
-        { text: "Tables", link: `${m}/tables` },
-        { text: "Template", link: `${m}/template` },
-        { text: "Title", link: `${m}/title` },
-      ],
-    },
-    {
-      text: prefix.startsWith("/zh") ? "参考资料" : "References",
-      collapsed: true,
-      items: [
-        { text: "Abstract Structure", link: `${r}/writing/abstract-structure` },
-        { text: "Academic Style ZH", link: `${r}/writing/academic-style-zh` },
-        { text: "Caption Guide", link: `${r}/formatting/caption-guide` },
-        { text: "Compilation", link: `${r}/latex/compilation` },
-        { text: "DeAI Guide", link: `${r}/deai/guide` },
-        { text: "Forbidden Terms", link: `${r}/deai/forbidden-terms` },
-        { text: "GB Standard", link: `${r}/citations/gb-standard` },
-        { text: "Logic Coherence", link: `${r}/writing/logic-coherence` },
-        { text: "Structure Guide", link: `${r}/writing/structure-guide` },
-        { text: "Table Guide", link: `${r}/formatting/table-guide` },
-        {
-          text: "Tense Guide (EN Abstract)",
-          link: `${r}/writing/tense-guide-zh`,
-        },
-        {
-          text: "Thesis Writing Guide",
-          link: `${r}/writing/thesis-writing-guide`,
-        },
-        { text: "Title Optimization", link: `${r}/writing/title-optimization` },
-        {
-          text: "Writing Philosophy",
-          link: `${r}/writing/writing-philosophy-zh`,
-        },
-      ],
-    },
-    {
-      text: prefix.startsWith("/zh") ? "高校模板" : "University Templates",
-      collapsed: true,
-      items: [
-        { text: "Generic", link: `${r}/templates/generic` },
-        { text: "thuthesis (清华)", link: `${r}/templates/thuthesis` },
-        { text: "pkuthss (北大)", link: `${r}/templates/pkuthss` },
-        { text: "Yanshan (燕山)", link: `${r}/templates/yanshan` },
-      ],
-    },
-  ];
+function readH1(file: string): string | undefined {
+  const content = fs.readFileSync(file, "utf8");
+  return content
+    .split(/\r?\n/)
+    .find((line) => /^#\s+/.test(line))
+    ?.replace(/^#\s+/, "")
+    .replace(/\s+#+\s*$/, "")
+    .replace(/\`/g, "");
 }
 
-function typstPaperItems(prefix: string) {
-  const base = `${prefix}/typst-paper`;
-  const m = `${base}/resources/modules`;
-  const r = `${base}/resources/references`;
-  return [
-    { text: prefix.startsWith("/zh") ? "概览" : "Overview", link: `${base}/` },
-    {
-      text: prefix.startsWith("/zh") ? "模块" : "Modules",
-      collapsed: true,
-      items: [
-        { text: "Abstract", link: `${m}/ABSTRACT` },
-        { text: "Adapt", link: `${m}/ADAPT` },
-        { text: "Bibliography", link: `${m}/BIBLIOGRAPHY` },
-        { text: "Caption", link: `${m}/CAPTION` },
-        { text: "Compile", link: `${m}/COMPILE` },
-        { text: "DeAI", link: `${m}/DEAI` },
-        { text: "Experiment", link: `${m}/EXPERIMENT` },
-        { text: "Expression", link: `${m}/EXPRESSION` },
-        { text: "Format", link: `${m}/FORMAT` },
-        { text: "Grammar", link: `${m}/GRAMMAR` },
-        { text: "Logic", link: `${m}/LOGIC` },
-        { text: "Pseudocode", link: `${m}/PSEUDOCODE` },
-        { text: "Sentences", link: `${m}/SENTENCES` },
-        { text: "Tables", link: `${m}/TABLES` },
-        { text: "Title", link: `${m}/TITLE` },
-        { text: "Translation", link: `${m}/TRANSLATION` },
-      ],
-    },
-    {
-      text: prefix.startsWith("/zh") ? "参考资料" : "References",
-      collapsed: true,
-      items: [
-        { text: "Abstract Structure", link: `${r}/ABSTRACT_STRUCTURE` },
-        { text: "Best Practices", link: `${r}/BEST_PRACTICES` },
-        { text: "Citation Styles", link: `${r}/CITATION_STYLES` },
-        { text: "Citation Verification", link: `${r}/CITATION_VERIFICATION` },
-        { text: "Common Errors", link: `${r}/COMMON_ERRORS` },
-        { text: "DeAI Guide", link: `${r}/DEAI_GUIDE` },
-        { text: "Reviewer Perspective", link: `${r}/REVIEWER_PERSPECTIVE` },
-        { text: "Style Guide", link: `${r}/STYLE_GUIDE` },
-        { text: "Table Guide", link: `${r}/TABLE_GUIDE` },
-        { text: "Templates", link: `${r}/TEMPLATES` },
-        { text: "Tense Guide", link: `${r}/TENSE_GUIDE` },
-        { text: "Terminology", link: `${r}/TERMINOLOGY` },
-        { text: "Translation Guide", link: `${r}/TRANSLATION_GUIDE` },
-        { text: "Typst Syntax", link: `${r}/TYPST_SYNTAX` },
-        { text: "Venues", link: `${r}/VENUES` },
-        { text: "Writing Philosophy", link: `${r}/WRITING_PHILOSOPHY` },
-      ],
-    },
-  ];
+function directoryLabel(directory: string, isZh: boolean): string {
+  const labels = DIRECTORY_LABELS[path.basename(directory).toLowerCase()];
+  return labels ? labels[isZh ? 1 : 0] : humanizeName(path.basename(directory));
 }
 
-function bibSearchCitationItems(prefix: string) {
-  const base = `${prefix}/bib-search-citation`;
-  const r = `${base}/resources`;
+function directoryItems(
+  directory: string,
+  routeBase: string,
+  isZh: boolean,
+): SidebarItem[] {
+  const entries = fs
+    .readdirSync(directory, { withFileTypes: true })
+    .filter((entry) => !entry.name.startsWith("."))
+    .sort((left, right) => {
+      if (left.isDirectory() !== right.isDirectory()) {
+        return left.isDirectory() ? -1 : 1;
+      }
+      return left.name.localeCompare(right.name, "en", {
+        sensitivity: "base",
+      });
+    });
+
+  const items: SidebarItem[] = [];
+  for (const entry of entries) {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      const nested = directoryItems(
+        absolute,
+        `${routeBase}/${entry.name}`,
+        isZh,
+      );
+      if (nested.length > 0) {
+        const indexPath = path.join(absolute, "index.md");
+        items.push({
+          text: fs.existsSync(indexPath)
+            ? readH1(indexPath) || directoryLabel(absolute, isZh)
+            : directoryLabel(absolute, isZh),
+          collapsed: true,
+          items: nested,
+        });
+      }
+      continue;
+    }
+    if (!entry.name.toLowerCase().endsWith(".md")) {
+      continue;
+    }
+    const stem = entry.name.slice(0, -3);
+    items.push({
+      text: readH1(absolute) || humanizeName(entry.name),
+      link:
+        stem.toLowerCase() === "index"
+          ? `${routeBase}/`
+          : `${routeBase}/${stem}`,
+    });
+  }
+  return items;
+}
+
+function resourceItems(prefix: string, skill: string): SidebarItem[] {
+  const isZh = prefix.startsWith("/zh");
+  const locale = isZh ? "zh" : "en";
+  const skillDirectory = path.join(
+    DOCS_DIR,
+    ...(isZh ? ["zh"] : []),
+    "skills",
+    skill,
+  );
+  const resourceRoot = path.join(skillDirectory, "resources");
+  if (!fs.existsSync(resourceRoot)) {
+    return [];
+  }
+
+  const groups: SidebarItem[] = [];
+  for (const kind of RESOURCE_KINDS) {
+    const kindDirectory = path.join(resourceRoot, kind);
+    if (!fs.existsSync(kindDirectory)) {
+      continue;
+    }
+    const items = directoryItems(
+      kindDirectory,
+      `${prefix}/${skill}/resources/${kind}`,
+      isZh,
+    );
+    if (items.length > 0) {
+      groups.push({
+        text: RESOURCE_LABELS[locale][kind],
+        collapsed: true,
+        items,
+      });
+    }
+  }
+  return groups;
+}
+
+function skillItems(prefix: string, skill: string): SidebarItem[] {
+  const base = `${prefix}/${skill}`;
   const isZh = prefix.startsWith("/zh");
   return [
     { text: isZh ? "概览" : "Overview", link: `${base}/` },
-    { text: isZh ? "查询语法" : "Query Syntax", link: `${r}/query-syntax` },
+    ...resourceItems(prefix, skill),
   ];
 }
 
-function paperAuditItems(prefix: string) {
-  const base = `${prefix}/paper-audit`;
-  const r = `${base}/resources`;
-  const isZh = prefix.startsWith("/zh");
-  return [
-    { text: isZh ? "概览" : "Overview", link: `${base}/` },
-    { text: isZh ? "工作流" : "Workflow", link: `${r}/WORKFLOW` },
-    { text: isZh ? "模式说明" : "Modes", link: `${r}/MODES` },
-    { text: isZh ? "输出产物" : "Outputs", link: `${r}/OUTPUTS` },
-    {
-      text: isZh ? "命令与示例" : "CLI & Examples",
-      link: `${r}/CLI_AND_EXAMPLES`,
-    },
-    {
-      text: isZh ? "深度审查标准" : "Deep Review Criteria",
-      link: `${r}/DEEP_REVIEW_CRITERIA`,
-    },
-    {
-      text: isZh ? "过度声明防护" : "Over-Claim Guard",
-      link: `${r}/OVER_CLAIM_GUARD`,
-    },
-    {
-      text: isZh ? "审稿人心理" : "Reviewer Psychology",
-      link: `${r}/REVIEWER_PSYCHOLOGY`,
-    },
-    {
-      text: isZh ? "投稿前机械规则" : "Pre-Submission Rules",
-      link: `${r}/PRE_SUBMISSION_RULES`,
-    },
-    { text: isZh ? "审查清单" : "Checklist", link: `${r}/CHECKLIST` },
-    {
-      text: isZh ? "定性研究标准" : "Qualitative Standards",
-      link: `${r}/QUALITATIVE_STANDARDS`,
-    },
-    {
-      text: isZh ? "主编智能体" : "Editor-in-Chief Agent",
-      link: `${r}/editor_in_chief_agent`,
-    },
-    {
-      text: isZh ? "常见问题" : "Troubleshooting",
-      link: `${r}/TROUBLESHOOTING`,
-    },
-  ];
-}
-
-function coverLetterItems(prefix: string) {
-  const base = `${prefix}/cover-letter`;
-  const isZh = prefix.startsWith("/zh");
-  return [{ text: isZh ? "概览" : "Overview", link: `${base}/` }];
-}
-
-function buildSidebar(prefix: string) {
+function buildSidebar(prefix: string): SidebarItem[] {
   const isZh = prefix.startsWith("/zh");
   return [
     {
@@ -314,6 +196,10 @@ function buildSidebar(prefix: string) {
         {
           text: isZh ? "快速开始" : "Quick Start",
           link: `${isZh ? "/zh" : ""}/quick-start`,
+        },
+        {
+          text: isZh ? "使用指南" : "Usage",
+          link: `${isZh ? "/zh" : ""}/usage`,
         },
       ],
     },
@@ -331,36 +217,36 @@ function buildSidebar(prefix: string) {
         ? "英文论文 (latex-paper-en)"
         : "English Papers (latex-paper-en)",
       collapsed: false,
-      items: latexPaperEnItems(prefix),
+      items: skillItems(prefix, "latex-paper-en"),
     },
     {
       text: isZh
-        ? "中文论文 (latex-thesis-zh)"
+        ? "中文学位论文 (latex-thesis-zh)"
         : "Chinese Thesis (latex-thesis-zh)",
       collapsed: false,
-      items: latexThesisZhItems(prefix),
+      items: skillItems(prefix, "latex-thesis-zh"),
     },
     {
       text: isZh ? "Typst 论文 (typst-paper)" : "Typst Papers (typst-paper)",
       collapsed: false,
-      items: typstPaperItems(prefix),
+      items: skillItems(prefix, "typst-paper"),
     },
     {
       text: isZh
         ? "Bib 文献检索 (bib-search-citation)"
         : "Bib Search (bib-search-citation)",
       collapsed: false,
-      items: bibSearchCitationItems(prefix),
+      items: skillItems(prefix, "bib-search-citation"),
     },
     {
       text: isZh ? "投稿信 (cover-letter)" : "Cover Letters (cover-letter)",
       collapsed: false,
-      items: coverLetterItems(prefix),
+      items: skillItems(prefix, "cover-letter"),
     },
     {
       text: isZh ? "论文审查 (paper-audit)" : "Paper Audit (paper-audit)",
       collapsed: false,
-      items: paperAuditItems(prefix),
+      items: skillItems(prefix, "paper-audit"),
     },
   ];
 }

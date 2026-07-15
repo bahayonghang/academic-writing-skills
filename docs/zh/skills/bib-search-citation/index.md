@@ -1,59 +1,72 @@
 # `bib-search-citation`
 
-面向 BibTeX / BibLaTeX 的 `.bib` 文献库快速检索与引用提取技能，支持带有 Zotero 自定义字段的大型文献库。
+从一个本地 BibTeX/BibLaTeX `.bib` 文献库中检索并生成引用，支持带自定义元数据
+字段的 Zotero 导出。
 
 ## 适用场景
 
-- 按主题词和字段过滤检索大型 `.bib` 文献库。
-- 按作者、年份、类型、DOI、arXiv/eprint、PDF、代码、keywords、annotation 或 abstract 过滤。
-- 生成 LaTeX 和 Typst 引用片段。
-- 返回原始 BibTeX 便于导出或人工复核。
-- 把 JSON 检索结果预览成紧凑摘要。
+- 按主题、作者、年份、venue、DOI、arXiv/eprint、keywords、annotation 或 abstract 检索。
+- 组合 `year>=2024`、`has:code`、`cite:both` 等紧凑过滤条件。
+- 返回稳定 JSON、精确原始 BibTeX 或 LaTeX/Typst 引用片段。
+- 把保存的 JSON 结果预览成紧凑、便于阅读的摘要。
+- 添加词汇级 claim 重叠和时效元数据，交给后续验证。
 
 ## 不适用场景
 
-- 检查 `.tex` 或 `.typ` 项目中已经使用的引用；请用对应写作技能的 bibliography 模块。
-- 编译、格式或修改论文。
-- 改写 Related Work 正文。
-- 没有本地文献库时做在线检索。
-- 把 citation key 当成论文 claim 已被支撑的证据。
+- 检查论文中已经使用的引用；请用对应写作技能的 bibliography 模块。
+- 编译、格式化或改写 `.tex` 或 `.typ` 工程。
+- 在没有本地 `.bib` 文件时做在线发现。
+- 把文献库命中或词汇重叠当作论文支持 claim 的证明。
+- 虚构源文献库中缺失的元数据。
 
 ## 模块路由
 
-| 入口 | 适用场景 | 主命令 |
+| 模块 | 适用场景 | 主命令 |
 | --- | --- | --- |
-| `query` | 一次性紧凑检索 | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --query "mamba time series forecasting author:Cheng year>=2024 has:code cite:both limit:5"` |
-| `spec-json` | 结构化过滤比紧凑查询更清晰 | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
-| `spec-file` | 需要复用保存的检索配置 | `uv run python academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib library.bib --spec-file search.json` |
-| `preview` | 已有 JSON 结果，需要短摘要 | `uv run python academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py --input results.json` |
+| `query` | 使用内联过滤的一次性紧凑检索 | `uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query 'mamba forecasting author:Cheng year>=2024 has:code cite:both limit:5'` |
+| `spec-json` | 复杂请求需要显式结构化过滤 | `uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --spec-json '{"query":"mamba forecasting","filters":{"year_min":2024},"citation_mode":"both"}'` |
+| `spec-file` | 保存的检索需要重复执行 | `uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --spec-file search.json` |
+| `preview` | 已有检索 JSON，需要短摘要 | `uv run python -B academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py --input results.json` |
 
 ## 最小输入
 
-- 一个本地 `.bib` 文件路径。
-- 紧凑 `--query`、内联 `--spec-json` 或保存的 `--spec-file`。
-- 可选排序、数量上限、citation mode、raw BibTeX 或返回字段偏好。
+- 一个本地 `.bib` 路径。
+- 一个紧凑 `--query`、内联 `--spec-json` 或保存的 `--spec-file`。
+- 可选排序、数量上限、返回字段、引用模式、原始导出、时效窗口或 claim 偏好。
+
+## 首条命令
+
+```bash
+uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query 'transformer forecasting year>=2024 has:doi cite:both limit:5'
+uv run python -B academic-writing-skills/bib-search-citation/scripts/preview_bib_search.py --input results.json
+```
+
+`search_bib.py` 负责解析、过滤、评分、排序、原始条目保留和引用生成。
+`preview_bib_search.py` 只渲染已有 JSON。
 
 ## 输出产物
 
-- 结构化 JSON 检索结果。
-- 可选原始 BibTeX 条目。
-- LaTeX 和/或 Typst 引用片段。
-- 由 `preview_bib_search.py` 渲染的紧凑摘要。
+- 包含解释后过滤条件和匹配条目的结构化 JSON。
+- 请求的文献字段与来源标识。
+- 可选的精确 `raw_bib`。
+- 可选的 LaTeX 和 Typst 引用片段。
+- 附加 `meta.recency` 和逐条 `claim_support`，并明确给出限制说明。
 
-## 常见请求
+## 公开资源
 
-```text
-在 references.bib 里找 2024 年后的 Cheng + Mamba 时序预测论文，并返回 LaTeX 和 Typst 引用。
-```
+### 参考资料
 
-```text
-找出 annotation 包含 CodeAvailable 的条目，并显示原始 BibTeX。
-```
+- [查询语法](./resources/references/query-syntax.md)
+- [检索规划默认值](./resources/references/search-planning.md)
+- [已知限制与错误](./resources/references/limitations-and-errors.md)
 
-```text
-列出最新 transformer 时序预测论文，要求有 DOI 并排除 misc。
-```
+### 示例
 
-```text
-找到最像 TimeMachine 的条目，返回一条原始 BibTeX 和引用片段。
-```
+- [紧凑查询](./resources/examples/compact-query.md)
+- [原始 BibTeX 导出](./resources/examples/raw-bib-export.md)
+- [预览摘要](./resources/examples/preview-summary.md)
+
+## 常见请求与交接
+
+本技能负责本地检索和可直接使用的引用输出。当需要检查论文源码中的引用时，交给对应
+写作技能；当需要阅读论文内容并判断它是否支持 claim 时，交给研究验证工作流。
