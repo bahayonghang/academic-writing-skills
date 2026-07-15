@@ -130,5 +130,3 @@ Read only the file matching the active module.
 - “Review the experiments section for overclaiming, missing ablations, and weak baseline comparisons.”
 
 See `examples/` for complete request-to-command walkthroughs.
-
-See `examples/` for complete request-to-command walkthroughs.

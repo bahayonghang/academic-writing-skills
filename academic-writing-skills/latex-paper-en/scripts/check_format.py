@@ -6,6 +6,11 @@ Usage:
     uv run python -B check_format.py main.tex
     uv run python -B check_format.py main.tex --strict
     uv run python -B check_format.py main.tex --config .chktexrc
+
+Note: issue categorization (spacing/quotation/parentheses/.../other) is
+best-effort, keyword-matched against chktex's English-locale message text;
+a non-English chktex locale will categorize everything as "other". Issue
+counts and severity are unaffected either way.
 """
 
 import argparse
