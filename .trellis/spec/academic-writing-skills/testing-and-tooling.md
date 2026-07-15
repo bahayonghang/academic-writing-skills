@@ -177,3 +177,15 @@ R4a analyze_experiment 结构提示)两任务沿用此模式,已成为事实约�
 
 **Example**:07-12 的 P-PAPER 从 `--process-chapter` 门后迁到默认管线并逐处报告
 (commit cc73b07),存量 P-PAPER 单测同 commit 迁移并在 message 声明。
+
+---
+
+## Gotcha: 批次拟提交分组遇到跨批次同文件累积 diff 时不能照搬原分组
+
+> 来源：07-15-audit-fix-latex-paper-en（2026-07-16）。
+
+**What**：implement.md 常按 finding-ID 把工作拆成多个批次（G1/G2/...），每批各自登记"拟提交分组"，但按本任务树的约定 Phase 3.4 才统一提交（批内不 `git commit`）。若后续批次改动了前面批次已改过的同一文件（如某批次加别名解析、另一批次在同文件加 assemble 接入），工作树里该文件已是**累积 diff**——原计划的逐批 whole-file `git add` 无法再干净复现（实测：`analyze_logic.py` 被三个不同批次共同触碰，`analyze_literature.py`/`deai_batch.py`/`check_figures.py` 各被两个批次触碰）。
+
+**Fix**：Phase 3.4 不要用 `git add -p` 做 hunk 级手术拆分（风险高、易切错、且这批改动本就不需要"人类考古级"可逐 commit 回溯）。改为按**实际文件重叠边界**重新分组提交（分组数通常比原计划少）：(1) 每个新分组的 commit message 列全它覆盖的原 finding-ID；(2) 原计划里任何"默认行为变化"双声明随文件一起迁入新分组的 message，不能丢；(3) 提交前用"临时移出后续批次专属的文件+测试、重跑套件"的方式验证每个中间提交仍然绿。
+
+**Why**：本任务树全部 8 个子任务共享"批内不提交、Phase 3.4 统一呈报"的约定；只要 implement.md 是多批次计划，批次间文件重叠就几乎必然发生。遇到时按此法直接重新分组，不必重新论证是否该做 hunk 拆分。
