@@ -1,0 +1,1 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "SKILL.md 受字符串锁与格式化 hook 影响，改动后须跑全量 just ci 验证"}
