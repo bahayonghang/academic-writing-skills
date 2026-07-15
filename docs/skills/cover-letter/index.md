@@ -58,6 +58,44 @@ Supported bundled venues: `nature`, `science`, `cell`, `ieee-trans`, `acm`, `spr
 
 Findings use `severity`, `priority`, `source_kind`, and `comment_type`; script-backed findings are intended to be rerunnable.
 
+## Public Resources
+
+### References
+
+- [AI disclosure policy](./resources/references/ai-disclosure-policy.md)
+- [Claim-evidence contract](./resources/references/CLAIM_EVIDENCE_CONTRACT.md)
+- [Forbidden phrases](./resources/references/FORBIDDEN_PHRASES.md)
+- [Issue schema](./resources/references/ISSUE_SCHEMA.md)
+- [Journal tiers](./resources/references/JOURNAL_TIERS.md)
+- [Letter structure](./resources/references/LETTER_STRUCTURE.md)
+- [Mode guide](./resources/references/MODE_GUIDE.md)
+- [Pre-submission rules](./resources/references/PRESUBMISSION_RULES.md)
+
+### Templates
+
+- [ACM](./resources/templates/acm.md)
+- [Cell](./resources/templates/cell.md)
+- [CVPR](./resources/templates/cvpr.md)
+- [Generic](./resources/templates/generic.md)
+- [ICML](./resources/templates/icml.md)
+- [IEEE Transactions](./resources/templates/ieee-trans.md)
+- [Nature](./resources/templates/nature.md)
+- [NeurIPS](./resources/templates/neurips.md)
+- [Science](./resources/templates/science.md)
+- [Springer LNCS](./resources/templates/springer-lncs.md)
+
+### Examples
+
+- [Align check only](./resources/examples/align-check-only.md)
+- [Generate a Nature letter](./resources/examples/generate-nature.md)
+- [CVPR vs. TPAMI journal fit](./resources/examples/journal-fit-cvpr-vs-tpami.md)
+- [Optimize and align](./resources/examples/optimize-and-align.md)
+
+### Agent Contracts
+
+- [Claims-evidence reviewer](./resources/agents/claims_evidence_reviewer_agent.md)
+- [Committee editor](./resources/agents/committee_editor_agent.md)
+
 ## Common Requests
 
 ```text
