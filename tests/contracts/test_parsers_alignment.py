@@ -78,6 +78,7 @@ ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("_extract_balanced_block", ["en", "typst", "audit", "cover_letter"]),
     ("_strip_typst_markup", ["en", "typst", "audit", "cover_letter"]),
     ("_strip_latex_markup", ["en", "audit", "cover_letter"]),
+    ("_strip_balanced_commands", ["en", "audit", "cover_letter"]),
     # Class-level pattern lists (data, not source)
     ("LatexParser.PRESERVE_PATTERNS", ["en", "zh", "audit", "cover_letter"]),
     ("TypstParser.PRESERVE_PATTERNS", ["en", "zh", "typst", "audit", "cover_letter"]),

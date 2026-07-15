@@ -280,7 +280,25 @@ class LatexParser(DocumentParser):
     def split_sections(self, content: str) -> dict[str, tuple[int, int]]:
         lines_total = len(content.split("\n"))
         headings = self.extract_headings(content)
-        return _split_sections_from_headings(headings, self._classify_heading, lines_total)
+        sections = _split_sections_from_headings(headings, self._classify_heading, lines_total)
+        if "abstract" not in sections:
+            # \begin{abstract}...\end{abstract} environment form (common in
+            # IEEE/ACM templates): the heading-based rules above only match
+            # \section*{Abstract}, so register the environment span here.
+            # Mirrors extract_headings' own comment handling: skip whole
+            # commented-out lines, then strip a trailing inline "% ..." remark.
+            begin_line = None
+            for line_no, raw_line in enumerate(content.split("\n"), 1):
+                stripped = raw_line.strip()
+                if not stripped or stripped.startswith(self.get_comment_prefix()):
+                    continue
+                stripped = re.sub(r"(?<!\\)%.*", "", stripped)
+                if begin_line is None and re.search(r"\\begin\{abstract\}", stripped):
+                    begin_line = line_no
+                if begin_line is not None and re.search(r"\\end\{abstract\}", stripped):
+                    sections["abstract"] = (begin_line, line_no)
+                    break
+        return sections
 
     def extract_visible_text(self, line: str) -> str:
         # Preserve structure markers logic
@@ -629,12 +647,38 @@ def _strip_latex_markup(text: str) -> str:
     return _normalize_whitespace(cleaned)
 
 
+def _strip_balanced_commands(text: str, commands: tuple[str, ...]) -> str:
+    """Remove ``\\<command>{...}`` spans with balanced-brace bodies.
+
+    Unlike a ``\\thanks\\{[^}]*\\}`` regex, this also removes footnote/thanks
+    blocks whose body contains nested braces (e.g. ``\\thanks{\\emph{x}}``),
+    which would otherwise leak affiliation or funding text into the title.
+    """
+    for command in commands:
+        opener = re.compile(r"\\" + command + r"\s*\{")
+        while True:
+            match = opener.search(text)
+            if not match:
+                break
+            brace_idx = match.end() - 1
+            body = _extract_balanced_block(text, brace_idx, "{", "}")
+            end = brace_idx + len(body) + 2  # skip the opening '{' and closing '}'
+            text = text[: match.start()] + " " + text[end:]
+    return text
+
+
 def extract_title(content: str) -> str:
     """Extract document title from LaTeX/Typst source content."""
-    # LaTeX: \title{...}
-    latex_match = re.search(r"\\title(?:\[[^\]]*\])?\{(.+?)\}", content, re.DOTALL)
+    # LaTeX: \title{...} — balanced braces (nested titles like "Learning
+    # {Fast} and {Slow} Dynamics" are not truncated at the first "}"), with
+    # \thanks{...}/\footnote{...} funding statements stripped before cleanup.
+    latex_match = re.search(r"\\title(?:\[[^\]]*\])?\s*\{", content, re.DOTALL)
     if latex_match:
-        return _strip_latex_markup(latex_match.group(1))
+        body = _extract_balanced_block(content, latex_match.end() - 1, "{", "}")
+        if body:
+            body = _strip_balanced_commands(body, ("thanks", "footnote"))
+            return _strip_latex_markup(body)
+        return ""
 
     # Typst template form: #show: ieee.with(title: [ ... ])
     template_title = _extract_template_arg(content, "title")
