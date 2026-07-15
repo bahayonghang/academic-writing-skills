@@ -738,3 +738,40 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 18: 完成双语资源文档重构
+
+**Date**: 2026-07-15
+**Task**: 完成双语资源文档重构
+**Branch**: `dev`
+
+### Summary
+
+完成 cover-letter、paper-audit、latex-paper-en、typst-paper 双语资源迁移与人工抽样；修复规范路径死链、双语链接重写契约和跨平台 CRLF/LF 资源哈希，250 项资源检查、VitePress 构建及干净 worktree just ci 通过；归档四个子任务与父任务。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7d3cfd1` | (see git log) |
+| `4917daf` | (see git log) |
+| `6685119` | (see git log) |
+| `9b2e507` | (see git log) |
+| `982e153` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
