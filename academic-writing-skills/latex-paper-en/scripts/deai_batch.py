@@ -16,10 +16,16 @@ from pathlib import Path
 
 # Import local parsers
 try:
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import get_parser
+    from parsers import get_parser, resolve_section_keys
+
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
 
 
 class DeAIBatchProcessor:
@@ -27,8 +33,12 @@ class DeAIBatchProcessor:
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
-        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
-        self.lines = self.content.split("\n")
+        # Assemble \input/\include so a skeleton main.tex's sections are seen
+        # (A-EN-3). ``process_section_file`` below is explicit single-chapter
+        # processing and intentionally keeps reading its target file directly.
+        self.doc = assemble(file_path)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
         self.comment_prefix = self.parser.get_comment_prefix()
@@ -139,6 +149,7 @@ class DeAIBatchProcessor:
         report.append("DE-AI BATCH PROCESSING REPORT")
         report.append("=" * 70)
         report.append(f"Source file: {self.file_path}")
+        report.extend(self.doc.warning_lines(self.comment_prefix))
         report.append("")
 
         total_traces = 0
@@ -164,7 +175,7 @@ class DeAIBatchProcessor:
             if trace_count > 0:
                 report.append("\nTraces (first 5):")
                 for i, trace in enumerate(analysis["traces"][:5], 1):
-                    report.append(f"\n  [{i}] Line {trace['line']}")
+                    report.append(f"\n  [{i}] {self.doc.lineref(trace['line'])}")
                     report.append(f"      Patterns: {', '.join(trace['patterns'])}")
                     report.append(f"      Visible: {trace['visible'][:100]}")
 
@@ -271,21 +282,30 @@ def main():
         sys.exit(0 if success else 1)
 
     elif args.section:
-        analysis = processor.analyze_section(args.section.lower())
-
-        if not analysis["found"]:
+        # Resolve aliases (methods -> method) instead of a bare .lower() lookup,
+        # matching deai_check.py's resolve_section_keys behavior (A-EN-5).
+        matched, available = resolve_section_keys(args.section, processor.section_ranges)
+        if not matched:
             print(f"[WARNING] Section not found: {args.section}")
+            print(
+                f"[INFO] Available sections: {', '.join(available) if available else '(none detected)'}"
+            )
             sys.exit(1)
 
-        print(f"\nSection: {args.section}")
-        print(f"Lines: {analysis['lines']}")
-        print(f"AI traces: {len(analysis['traces'])}\n")
+        warning_lines = processor.doc.warning_lines(processor.comment_prefix)
+        if warning_lines:
+            print("\n".join(warning_lines))
+        for section_key in matched:
+            analysis = processor.analyze_section(section_key)
+            print(f"\nSection: {section_key}")
+            print(f"Lines: {analysis['lines']}")
+            print(f"AI traces: {len(analysis['traces'])}\n")
 
-        for trace in analysis["traces"][:10]:
-            print(f"Line {trace['line']}:")
-            print(f"  Patterns: {', '.join(trace['patterns'])}")
-            print(f"  Text: {trace['visible'][:100]}")
-            print()
+            for trace in analysis["traces"][:10]:
+                print(f"{processor.doc.lineref(trace['line'])}:")
+                print(f"  Patterns: {', '.join(trace['patterns'])}")
+                print(f"  Text: {trace['visible'][:100]}")
+                print()
 
     else:
         print(f"[INFO] Available sections in {args.file.name}:")

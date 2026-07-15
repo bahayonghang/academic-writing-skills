@@ -12,10 +12,16 @@ import sys
 from pathlib import Path
 
 try:
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from parsers import extract_abstract, get_parser
+    from parsers import extract_abstract, get_parser, resolve_section_keys
+
+try:
+    from tex_loader import AssembledDocument, assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import AssembledDocument, assemble
 
 
 TRANSITIONS = {
@@ -51,7 +57,9 @@ GAP_KEYWORDS_EN = re.compile(
 )
 
 
-def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser) -> list[str]:
+def _check_lit_review_enumeration(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
     """A1: Detect 3+ consecutive author/year enumeration patterns."""
     out: list[str] = []
     consecutive = 0
@@ -71,7 +79,7 @@ def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser
             if consecutive >= 3:
                 out.extend(
                     [
-                        f"% LIT-REVIEW (Lines {streak_start}-{line_no - 1}) "
+                        f"% LIT-REVIEW ({doc.lineref(streak_start, line_no - 1)}) "
                         "[Severity: Major] [Priority: P1]: "
                         f"Author/year enumeration detected ({consecutive} consecutive entries)",
                         "% Suggested: Reorganize by theme clusters with critical analysis.",
@@ -83,7 +91,7 @@ def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser
     if consecutive >= 3:
         out.extend(
             [
-                f"% LIT-REVIEW (Lines {streak_start}-{min(end, len(lines))}) "
+                f"% LIT-REVIEW ({doc.lineref(streak_start, min(end, len(lines)))}) "
                 "[Severity: Major] [Priority: P1]: "
                 f"Author/year enumeration detected ({consecutive} consecutive entries)",
                 "% Suggested: Reorganize by theme clusters with critical analysis.",
@@ -94,7 +102,9 @@ def _check_lit_review_enumeration(lines: list[str], start: int, end: int, parser
     return out
 
 
-def _check_gap_derivation(lines: list[str], start: int, end: int, parser) -> list[str]:
+def _check_gap_derivation(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
     """A3: Check last 10 lines of Related Work for research gap language."""
     out: list[str] = []
     scan_start = max(start, end - 10)
@@ -110,7 +120,7 @@ def _check_gap_derivation(lines: list[str], start: int, end: int, parser) -> lis
     if not found_gap:
         out.extend(
             [
-                f"% LIT-REVIEW (Lines {scan_start}-{end}) "
+                f"% LIT-REVIEW ({doc.lineref(scan_start, end)}) "
                 "[Severity: Major] [Priority: P1]: "
                 "No research gap derivation found at end of Related Work",
                 "% Suggested: Add explicit gap statement connecting literature to your contribution.",
@@ -170,6 +180,11 @@ TRIAD_CONTRIBUTION_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Numeric citation-style bracket, e.g. [12] / [3, 7] / [1-4]. A bare "[" also
+# matches math intervals and stray optional-argument brackets, which falsely
+# counted as "prior work referenced" in the funnel check (A-EN-8).
+NUMERIC_CITE_RE = re.compile(r"\[\d+(?:\s*[,-–]\s*\d+)*\]")
+
 
 def _section_visible_lines(
     lines: list[str], bounds: tuple[int, int], parser
@@ -198,7 +213,7 @@ def _coverage_map(text: str) -> dict[str, bool]:
 
 
 def _check_introduction_funnel(
-    lines: list[str], sections: dict[str, tuple[int, int]], parser
+    lines: list[str], sections: dict[str, tuple[int, int]], parser, doc: AssembledDocument
 ) -> list[str]:
     """Check whether introduction follows background -> problem -> prior work -> contribution."""
     out: list[str] = []
@@ -217,7 +232,9 @@ def _check_introduction_funnel(
         if first_problem is None and INTRO_PROBLEM_RE.search(lowered):
             first_problem = line_no
         if first_prior is None and (
-            INTRO_PRIOR_RE.search(lowered) or "\\cite{" in lines[line_no - 1] or "[" in visible
+            INTRO_PRIOR_RE.search(lowered)
+            or "\\cite{" in lines[line_no - 1]
+            or NUMERIC_CITE_RE.search(visible)
         ):
             first_prior = line_no
         if first_contribution is None and CONTRIBUTION_KEYWORDS_EN.search(lowered):
@@ -229,7 +246,7 @@ def _check_introduction_funnel(
     if first_problem is None or first_contribution < first_problem:
         out.extend(
             [
-                f"% INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                f"% INTRODUCTION ({doc.lineref(first_contribution)}) [Severity: Major] [Priority: P1]: "
                 "Introduction may jump from background directly to contribution.",
                 "% Suggested: Insert the unresolved technical bottleneck before presenting the method.",
                 "% Rationale: Readers need the problem statement before the solution.",
@@ -240,7 +257,7 @@ def _check_introduction_funnel(
     if first_problem is not None and first_prior is None:
         out.extend(
             [
-                f"% INTRODUCTION (Line {first_problem}) [Severity: Major] [Priority: P1]: "
+                f"% INTRODUCTION ({doc.lineref(first_problem)}) [Severity: Major] [Priority: P1]: "
                 "Introduction states the problem but does not derive it from prior work limitations.",
                 "% Suggested: Add a prior-work paragraph explaining what existing methods still fail to solve.",
                 "% Rationale: The contribution should be motivated by concrete insufficiencies in the literature.",
@@ -255,7 +272,7 @@ def _check_introduction_funnel(
     ):
         out.extend(
             [
-                f"% INTRODUCTION (Line {first_contribution}) [Severity: Major] [Priority: P1]: "
+                f"% INTRODUCTION ({doc.lineref(first_contribution)}) [Severity: Major] [Priority: P1]: "
                 "Contribution claim appears before prior-work insufficiencies are established.",
                 "% Suggested: Reorder the introduction so literature limitations appear before the paper contribution.",
                 "% Rationale: This preserves the background -> bottleneck -> prior effort -> contribution funnel.",
@@ -329,7 +346,7 @@ def _check_tri_section_alignment(
 
 
 def _check_cross_section_closure(
-    lines: list[str], sections: dict[str, tuple[int, int]], parser
+    lines: list[str], sections: dict[str, tuple[int, int]], parser, doc: AssembledDocument
 ) -> list[str]:
     """C3: Verify that intro contributions are answered in conclusion."""
     out: list[str] = []
@@ -363,7 +380,7 @@ def _check_cross_section_closure(
     if concl_answers == 0:
         out.extend(
             [
-                f"% LOGIC (Lines {concl_start}-{concl_end}) "
+                f"% LOGIC ({doc.lineref(concl_start, concl_end)}) "
                 "[Severity: Major] [Priority: P1]: "
                 "[Script] Cross-section logic chain may be incomplete",
                 f"% Observation: {intro_claims} contribution claim(s) in Introduction "
@@ -668,15 +685,20 @@ def analyze(
     motivation_thread: bool = False,
 ) -> list[str]:
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
+    doc = assemble(file_path)
+    content = doc.content
+    lines = doc.lines
     sections = parser.split_sections(content)
 
+    matched: list[str] = []
     if section:
-        key = section.lower()
-        if key not in sections:
-            return [f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section}"]
-        ranges = [sections[key]]
+        matched, available = resolve_section_keys(section, sections)
+        if not matched:
+            return [
+                f"% ERROR [Severity: Critical] [Priority: P0]: Section not found: {section} "
+                f"(available: {', '.join(available) if available else '(none detected)'})"
+            ]
+        ranges = [sections[key] for key in matched]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 
@@ -695,7 +717,7 @@ def analyze(
             if _needs_method_justification(visible):
                 out.extend(
                     [
-                        f"% METHODOLOGY (Line {line_no}) [Severity: Major] [Priority: P1]: "
+                        f"% METHODOLOGY ({doc.lineref(line_no)}) [Severity: Major] [Priority: P1]: "
                         "Method choice lacks explicit justification",
                         f"% Current: {visible}",
                         "% Suggested: Add rationale (e.g., efficiency/accuracy/reproducibility reasons).",
@@ -714,7 +736,7 @@ def analyze(
             ):
                 out.extend(
                     [
-                        f"% LOGIC (Line {line_no}) [Severity: Major] [Priority: P1]: "
+                        f"% LOGIC ({doc.lineref(line_no)}) [Severity: Major] [Priority: P1]: "
                         "Potential logical jump between problem and solution",
                         f"% Current: {visible}",
                         "% Suggested: Add explicit transition (e.g., Therefore/Thus/To address this).",
@@ -728,17 +750,17 @@ def analyze(
     # ── Section-level checks ───────────────────────────────────
     if sections:
         if not section and "introduction" in sections:
-            out.extend(_check_introduction_funnel(lines, sections, parser))
+            out.extend(_check_introduction_funnel(lines, sections, parser, doc))
 
         related_key = "related"
         if related_key in sections:
             r_start, r_end = sections[related_key]
-            if not section or section.lower() == related_key:
-                out.extend(_check_lit_review_enumeration(lines, r_start, r_end, parser))
-                out.extend(_check_gap_derivation(lines, r_start, r_end, parser))
+            if not section or related_key in matched:
+                out.extend(_check_lit_review_enumeration(lines, r_start, r_end, parser, doc))
+                out.extend(_check_gap_derivation(lines, r_start, r_end, parser, doc))
 
         if cross_section and not section:
-            out.extend(_check_cross_section_closure(lines, sections, parser))
+            out.extend(_check_cross_section_closure(lines, sections, parser, doc))
         if not section:
             out.extend(_check_tri_section_alignment(content, lines, sections, parser))
         if motivation_thread and not section:
@@ -746,6 +768,10 @@ def analyze(
 
     if not out:
         out.append("% LOGIC/METHODOLOGY: No rule-based coherence issues detected.")
+
+    warning_lines = doc.warning_lines(parser.get_comment_prefix())
+    if warning_lines:
+        out = warning_lines + out
     return out
 
 

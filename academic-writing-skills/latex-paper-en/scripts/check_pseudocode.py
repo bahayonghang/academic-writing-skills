@@ -21,6 +21,12 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
+
 COMMENT_PREFIX = "%"
 REF_RE = re.compile(r"\\(?:ref|autoref|cref|Cref|pageref)\{([^}]+)\}")
 LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
@@ -53,8 +59,9 @@ class PseudocodeChecker:
     def __init__(self, tex_file: str, venue: str = "") -> None:
         self.tex_file = Path(tex_file).resolve()
         self.venue = venue.lower().strip()
-        self.content = self.tex_file.read_text(encoding="utf-8")
-        self.lines = self.content.splitlines()
+        self.doc = assemble(self.tex_file)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         self.issues: list[dict] = []
 
     def _add_issue(self, line: int | None, severity: str, priority: str, message: str) -> None:
@@ -242,11 +249,12 @@ class PseudocodeChecker:
         return sorted(self.issues, key=lambda item: (item.get("line") or 0, item["severity"]))
 
     def generate_report(self, issues: list[dict]) -> str:
-        if not issues:
+        warning_lines = self.doc.warning_lines(COMMENT_PREFIX)
+        if not issues and not warning_lines:
             return ""
-        lines = []
+        lines = list(warning_lines)
         for issue in issues:
-            line_part = f"(Line {issue['line']}) " if issue.get("line") else ""
+            line_part = f"({self.doc.lineref(issue['line'])}) " if issue.get("line") else ""
             lines.append(
                 f"{COMMENT_PREFIX} PSEUDOCODE {line_part}[Severity: {issue['severity']}] "
                 f"[Priority: {issue['priority']}]: {issue['message']}"

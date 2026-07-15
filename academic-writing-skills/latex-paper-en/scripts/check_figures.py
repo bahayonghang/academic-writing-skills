@@ -25,13 +25,23 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import get_parser
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
+
 
 class FigureChecker:
     def __init__(self, file_path: Path, min_dpi: int = 300):
         self.file_path = file_path
+        # self.root_dir stays the entry file's own directory: assemble()'s
+        # include resolution root and the \graphicspath / \includegraphics
+        # relative-path root are the same directory (design §2.4).
         self.root_dir = file_path.parent
         self.min_dpi = min_dpi
-        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
+        self.doc = assemble(file_path)
+        self.content = self.doc.content
         self.parser = get_parser(file_path)
 
         # Try to find graphics path in LaTeX
@@ -139,9 +149,6 @@ class FigureChecker:
             try:
                 with Image.open(path) as img:
                     width, height = img.size
-                    # Assume typical figure width of 3 inches if metadata missing
-                    # This is a heuristic estimate
-                    width / 3.0
 
                     # Try to get real DPI
                     info = img.info
@@ -167,23 +174,28 @@ class FigureChecker:
 
         print(f"Found {len(figures)} figures.")
         print("-" * 60)
+        warning_lines = self.doc.warning_lines(self.parser.get_comment_prefix())
+        for line in warning_lines:
+            print(line)
 
         issues_count = 0
 
         for fig in figures:
             if fig["status"] == "MISSING":
-                print(f"[ERROR] Line {fig['line']}: Image not found: {fig['rel_path']}")
+                print(
+                    f"[ERROR] {self.doc.lineref(fig['line'])}: Image not found: {fig['rel_path']}"
+                )
                 issues_count += 1
                 continue
 
             quality_issues = self.check_quality(fig)
             if quality_issues:
-                print(f"[WARN]  Line {fig['line']}: {fig['rel_path']}")
+                print(f"[WARN]  {self.doc.lineref(fig['line'])}: {fig['rel_path']}")
                 for issue in quality_issues:
                     print(f"        - {issue}")
                 issues_count += 1
             else:
-                print(f"[OK]    Line {fig['line']}: {fig['rel_path']}")
+                print(f"[OK]    {self.doc.lineref(fig['line'])}: {fig['rel_path']}")
 
         print("-" * 60)
         if issues_count == 0:

@@ -22,6 +22,14 @@ except ImportError:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from parsers import extract_abstract, extract_title
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    import os
+
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from tex_loader import assemble
+
 
 # Ineffective words to remove
 INEFFECTIVE_WORDS = [
@@ -257,7 +265,9 @@ def format_report(
 
 
 def _load_content(tex_path: Path) -> str:
-    return tex_path.read_text(encoding="utf-8", errors="ignore")
+    # Assemble \input/\include so a skeleton main.tex's abstract/title in a
+    # sub-file is still visible to keyword extraction (A-EN-3).
+    return assemble(tex_path).content
 
 
 def _resolve_batch_files(pattern_or_file: str) -> list[Path]:

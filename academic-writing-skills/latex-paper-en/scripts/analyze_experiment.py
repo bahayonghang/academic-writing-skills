@@ -16,6 +16,12 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import get_parser
 
+try:
+    from tex_loader import AssembledDocument, assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import AssembledDocument, assemble
+
 
 SECTION_ALIASES = {
     "experiment": "experiment",
@@ -120,7 +126,9 @@ DISCUSSION_CATEGORY_MARKERS_EN = {
 CITE_KEY_RE = re.compile(r"\\(?:cite\w*)\*?(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
 
 
-def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> list[str]:
+def _check_discussion_depth(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
     """B3: Check ratio of explanatory vs data-repetition lines in discussion."""
     out: list[str] = []
     total_visible = 0
@@ -146,13 +154,16 @@ def _check_discussion_depth(lines: list[str], start: int, end: int, parser) -> l
                 "Discussion may lack depth: low ratio of explanatory/attribution "
                 f"language ({attribution_lines}/{total_visible} lines). "
                 "Add causal analysis explaining why results occur.",
+                doc,
             )
         )
         out.append("")
     return out
 
 
-def _check_discussion_structure(lines: list[str], start: int, end: int, parser) -> list[str]:
+def _check_discussion_structure(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
     """Check whether long discussions cover multiple argumentative categories."""
     out: list[str] = []
     visible_lines: list[str] = []
@@ -186,6 +197,7 @@ def _check_discussion_structure(lines: list[str], start: int, end: int, parser) 
                 "Discussion may lack layered structure: it should cover at least two categories "
                 "(mechanism, comparison with prior work, limitations/boundaries, implications/outlook) "
                 "instead of only restating results.",
+                doc,
             )
         )
         out.append("")
@@ -208,6 +220,7 @@ def _extract_cite_keys_in_range(lines: list[str], start: int, end: int) -> set[s
 def _check_results_literature_echo(
     lines: list[str],
     sections: dict[str, tuple[int, int]],
+    doc: AssembledDocument,
 ) -> list[str]:
     """B4: Check if citation keys from Related Work appear in Discussion."""
     out: list[str] = []
@@ -228,6 +241,7 @@ def _check_results_literature_echo(
                 "P1",
                 "No citations from Related Work reappear in Discussion. "
                 "Compare your findings with prior work to strengthen the narrative.",
+                doc,
             )
         )
         out.append("")
@@ -255,7 +269,9 @@ CONCLUSION_LIMITATIONS_RE = re.compile(
 )
 
 
-def _check_conclusion_completeness(lines: list[str], start: int, end: int, parser) -> list[str]:
+def _check_conclusion_completeness(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
     """B5: Conclusion must contain findings + implications + limitations/future."""
     out: list[str] = []
     section_text = ""
@@ -277,21 +293,25 @@ def _check_conclusion_completeness(lines: list[str], start: int, end: int, parse
     if not has_limitations:
         out.extend(
             _format_issue(
-                start, "Major", "P1", "Conclusion lacks limitations or future work discussion."
+                start, "Major", "P1", "Conclusion lacks limitations or future work discussion.", doc
             )
         )
         out.append("")
     if not has_implications:
         out.extend(
             _format_issue(
-                start, "Minor", "P2", "Conclusion lacks implications or broader impact statement."
+                start,
+                "Minor",
+                "P2",
+                "Conclusion lacks implications or broader impact statement.",
+                doc,
             )
         )
         out.append("")
     if not has_findings:
         out.extend(
             _format_issue(
-                start, "Minor", "P2", "Conclusion lacks explicit summary of core findings."
+                start, "Minor", "P2", "Conclusion lacks explicit summary of core findings.", doc
             )
         )
         out.append("")
@@ -319,9 +339,11 @@ def _normalize_section(section: str | None) -> str | None:
     return SECTION_ALIASES.get(normalized, normalized)
 
 
-def _format_issue(line_no: int, severity: str, priority: str, message: str) -> list[str]:
+def _format_issue(
+    line_no: int, severity: str, priority: str, message: str, doc: AssembledDocument
+) -> list[str]:
     return [
-        f"% EXPERIMENT (Line {line_no}) [Severity: {severity}] [Priority: {priority}]: {message}"
+        f"% EXPERIMENT ({doc.lineref(line_no)}) [Severity: {severity}] [Priority: {priority}]: {message}"
     ]
 
 
@@ -334,8 +356,15 @@ def _has_specific_comparator(raw: str, visible: str) -> bool:
     return bool(SPECIFIC_COMPARATOR_RE.search(raw) or SPECIFIC_COMPARATOR_RE.search(visible))
 
 
-def _add_issue(output: list[str], line_no: int, severity: str, priority: str, message: str) -> None:
-    output.extend(_format_issue(line_no, severity, priority, message))
+def _add_issue(
+    output: list[str],
+    line_no: int,
+    severity: str,
+    priority: str,
+    message: str,
+    doc: AssembledDocument,
+) -> None:
+    output.extend(_format_issue(line_no, severity, priority, message, doc))
     output.append("")
 
 
@@ -357,8 +386,9 @@ def _fallback_ranges(lines: list[str], section_key: str) -> list[tuple[int, int]
 
 def analyze(file_path: Path, section: str | None = None) -> list[str]:
     parser = get_parser(file_path)
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
+    doc = assemble(file_path)
+    content = doc.content
+    lines = doc.lines
     sections = parser.split_sections(content)
 
     selected_ranges: list[tuple[int, int]] = []
@@ -414,6 +444,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                             "Major",
                             "P1",
                             "Comparison claim names only generic baselines; cite or name the exact comparator.",
+                            doc,
                         )
                         line_level_baseline_flagged = True
                 elif not COMPARATOR_HINT_RE.search(lowered):
@@ -423,6 +454,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                         "Major",
                         "P1",
                         "Performance claim lacks an explicit baseline or comparator.",
+                        doc,
                     )
                     line_level_baseline_flagged = True
 
@@ -433,6 +465,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                         "Major",
                         "P1",
                         "Performance claim is not tied to a concrete metric or numeric result.",
+                        doc,
                     )
 
             if OVERCLAIM_RE.search(lowered):
@@ -442,6 +475,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                     "Major",
                     "P1",
                     "Wording sounds promotional; keep the claim evidence-backed and specific.",
+                    doc,
                 )
 
             if UNSUPPORTED_RE.search(lowered):
@@ -451,6 +485,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                     "Critical",
                     "P0",
                     "Conclusion overreaches the reported evidence; avoid universal or guarantee-style claims.",
+                    doc,
                 )
 
         section_anchor = start
@@ -464,6 +499,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 "Major",
                 "P1",
                 "Section does not identify a concrete baseline or comparator for the main claim.",
+                doc,
             )
         if section_text and not ABLATION_RE.search(section_text):
             _add_issue(
@@ -472,6 +508,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 "Minor",
                 "P2",
                 "No ablation or component-level evidence is mentioned; verify that contribution attribution is covered.",
+                doc,
             )
         if section_text and not STATS_RE.search(section_text):
             _add_issue(
@@ -480,6 +517,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 "Minor",
                 "P2",
                 "No statistical significance, variance, or confidence information is mentioned.",
+                doc,
             )
         if section_text and not EFFICIENCY_RE.search(section_text):
             _add_issue(
@@ -488,6 +526,7 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 "Minor",
                 "P2",
                 "No efficiency comparison is mentioned; verify whether runtime, memory, or parameter cost should be reported.",
+                doc,
             )
 
     # ── Section-level discussion, echo & conclusion checks ─────
@@ -496,20 +535,24 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             not normalized_section or normalized_section == "discussion"
         ) and "discussion" in sections:
             d_start, d_end = sections["discussion"]
-            output.extend(_check_discussion_depth(lines, d_start, d_end, parser))
-            output.extend(_check_discussion_structure(lines, d_start, d_end, parser))
+            output.extend(_check_discussion_depth(lines, d_start, d_end, parser, doc))
+            output.extend(_check_discussion_structure(lines, d_start, d_end, parser, doc))
 
         if not normalized_section:
-            output.extend(_check_results_literature_echo(lines, sections))
+            output.extend(_check_results_literature_echo(lines, sections, doc))
 
         if (
             not normalized_section or normalized_section == "conclusion"
         ) and "conclusion" in sections:
             c_start, c_end = sections["conclusion"]
-            output.extend(_check_conclusion_completeness(lines, c_start, c_end, parser))
+            output.extend(_check_conclusion_completeness(lines, c_start, c_end, parser, doc))
 
     if not output:
         output.append("% EXPERIMENT: No rule-based experiment review issues detected.")
+
+    warning_lines = doc.warning_lines(parser.get_comment_prefix())
+    if warning_lines:
+        output = warning_lines + output
     return output
 
 
