@@ -1,33 +1,33 @@
-# Abstract Section Writing
+# 摘要部分写作
 
-## Objective
+## 客观的
 
-Make the abstract readable in one pass: task, challenge, core technical idea, evidence-backed result, and implication must be visible without forcing the reader into the full paper.
+使摘要一次性可读：任务、挑战、核心技术思想、有证据支持的结果和含义必须是可见的，而不强迫读者阅读整篇论文。
 
-## Choose One Logic Pattern
+## 选择一种逻辑模式
 
-| Pattern | Use When | Paragraph Roles |
+|图案|使用时间|段落角色|
 | --- | --- | --- |
-| Challenge -> Contribution | One main technical contribution solves a clear bottleneck | task, challenge, contribution, benefit, evidence |
-| Challenge -> Insight -> Contribution | The key novelty is an insight before an implementation | task, challenge, insight, implementation, evidence |
-| Multiple Contributions | The paper has 2-3 separable technical contributions | task, contribution+advantage, contribution+advantage, result |
+|挑战->贡献|一项主要技术贡献解决了一个明显的瓶颈|任务、挑战、贡献、收益、证据|
+|挑战->洞察->贡献|关键的新颖之处在于实施前的洞察力|任务、挑战、见解、实施、证据|
+|多重贡献|该论文有 2-3 个独立的技术贡献|任务、贡献+优势、贡献+优势、结果|
 
-## Rewrite Workflow
+## 重写工作流程
 
-1. Extract visible evidence from the paper first: named method, datasets, metrics, tables/figures, and contribution claims.
-2. Decide the abstract pattern above.
-3. Keep each sentence to one role; avoid mixing task definition, method mechanics, and result claims in one overloaded sentence.
-4. Mention technical names only after they are readable from context.
-5. Bound result language to the reported setting.
+1. 首先从论文中提取可见证据：命名方法、数据集、指标、表格/图形和贡献声明。
+2. 确定上面的抽象模式。
+3. 保持每个句子一个角色；避免在一个重载的句子中混合任务定义、方法机制和结果声明。
+4. 仅在从上下文中可以读取技术名称后才提及技术名称。
+5. 将结果语言绑定到报告的设置。
 
-## Claim-Evidence Guardrails
+## 声明-证据护栏
 
-- A result sentence needs a metric, dataset/setting, and table/figure or section anchor when available.
-- A novelty sentence needs a method or contribution anchor in Introduction/Method.
-- If the current paper lacks numbers, write `results suggest` or `experiments indicate` only when the local experiment section actually supports it.
-- Do not add a new result, dataset, or baseline because an abstract "needs" one.
+- 结果句子需要指标、数据集/设置以及表格/图形或部分锚点（如果可用）。
+- 新颖的句子需要在引言/方法中提供方法或贡献锚。
+- 如果当前论文缺少数字，请写`results suggest`或者`experiments indicate`只有当地实验部门真正支持的时候。
+- 不要添加新的结果、数据集或基线，因为抽象“需要”这些结果、数据集或基线。
 
-## Output Pattern
+## 输出模式
 
 ```text
 Section objective: ...

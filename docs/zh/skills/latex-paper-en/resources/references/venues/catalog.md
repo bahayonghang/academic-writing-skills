@@ -1,215 +1,259 @@
-# Venue-Specific Requirements
+# 期刊或会议特定要求
 
+> **摘要索引。** 每个期刊或会议都有自己的快照
+> `../templates/`;加载`templates/<venue>.md`当用户命名a时直接
+> 具体期刊或会议（`ieee`, `acm`, `neurips`, `icml`, `springer-lncs`).
+> 该文件保留了跨期刊或会议概述（快速参考表，
+> 预提交清单、重新提交转换、图形规格）。
 
-## Table of Contents
+## 目录
 
-- [IEEE Conferences/Journals](#ieee-conferencesjournals)
-  - [Style](#style)
-  - [Format](#format)
-  - [Citations](#citations)
-  - [Figures/Tables](#figurestables)
-- [ACM Conferences](#acm-conferences)
-  - [Style](#style)
-  - [Format](#format)
-  - [Special Requirements](#special-requirements)
-- [Springer (LNCS)](#springer-lncs)
-  - [Style](#style)
-  - [Format](#format)
-  - [Figures/Tables](#figurestables)
-  - [Citations](#citations)
+- [IEEE 会议/期刊](#ieee-conferencesjournals)
+  - [款式](#style)
+  - [格式](#format)
+  - [引文](#citations)
+  - [图/表](#figurestables)
+- [ACM 会议](#acm-conferences)
+  - [款式](#style)
+  - [格式](#format)
+  - [特殊要求](#special-requirements)
+- [施普林格 (LNCS)](#springer-lncs)
+  - [款式](#style)
+  - [格式](#format)
+  - [图/表](#figurestables)
+  - [引文](#citations)
 - [NeurIPS / ICML](#neurips-icml)
-  - [Style](#style)
-  - [Format](#format)
-  - [Special](#special)
+  - [款式](#style)
+  - [格式](#format)
+  - [特殊](#special)
 - [CVPR / ICCV / ECCV](#cvpr-iccv-eccv)
-  - [Style](#style)
-  - [Format](#format)
-  - [Figures](#figures)
-- [ArXiv Preprints](#arxiv-preprints)
-  - [Format](#format)
-  - [Best Practices](#best-practices)
-- [Conference Quick Reference Table](#conference-quick-reference-table)
-- [Pre-Submission Checklist](#pre-submission-checklist)
-  - [Universal (All Venues)](#universal-all-venues)
-- [Resubmission Format Conversion](#resubmission-format-conversion)
-  - [Common Conversion Paths](#common-conversion-paths)
-  - [Content Migration Principles](#content-migration-principles)
-- [Figure and Table Specifications](#figure-and-table-specifications)
-  - [Tables](#tables)
-  - [Figures](#figures)
+  - [款式](#style)
+  - [格式](#format)
+  - [人物](#figures)
+- [ArXiv 预印本](#arxiv-preprints)
+  - [格式](#format)
+  - [最佳实践](#best-practices)
+- [会议快速参考表](#conference-quick-reference-table)
+- [预提交清单](#pre-submission-checklist)
+  - [通用（所有期刊或会议）](#universal-all-venues)
+- [重新提交格式转换](#resubmission-format-conversion)
+  - [常用转换路径](#common-conversion-paths)
+  - [内容迁移原理](#content-migration-principles)
+- [图和表规格](#figure-and-table-specifications)
+  - [表格](#tables)
+  - [人物](#figures)
 
 ---
 
-## IEEE Conferences/Journals
+## IEEE 会议/期刊
 
-### Style
-- Active voice for contributions
-- Past tense for methods
-- Present tense for results discussion
+### 风格
 
-### Format
-- Two-column layout
-- Abstract: 150-200 words
-- Keywords: 3-5 terms
+- 贡献的积极声音
+- 方法的过去式
+- 结果讨论的现在时
 
-### Citations
-- IEEE style: [1], [2-4]
-- Full reference in bibliography
+### 格式
 
-### Figures/Tables
-- Captions below figures
-- Captions above tables
-- Referenced in text before appearing
+- 两列布局
+- 摘要：单段，最多 250 个字（IEEE 作者中心指导；没有全球性的“150-200 个字”规则 — 限制因出版物而异）
+- 关键词：3-5个术语
 
-## ACM Conferences
+### 引文
 
-### Style
-- Structured abstract (some venues)
-- Author-date citations accepted
+- IEEE 风格：[1]、[2-4]
+- 参考书目中的完整参考
 
-### Format
-- ACM reference format
-- CCS concepts required
-- Keywords required
+### 图/表
 
-### Special Requirements
-- Accessibility requirements
-- Supplementary material guidelines
+- 图下方有文字说明
+- 表格上方的标题
+- 在出现之前在文本中引用
 
-## Springer (LNCS)
+### 伪代码
 
-### Style
-- British or American English (consistent)
-- Third person preferred
+- IEEEtran 只识别`figure`和`table`作为标准浮标；不要假定有专门的`algorithm`float 是 IEEE 安全的。
+- 更喜欢`figure` + `algorithmicx` / `algpseudocodex`IEEE 提交中的 LaTeX 伪代码。
+- 为伪代码块提供正常的图形标题，并在图形出现之前在文本中引用它。
+- 更喜欢直接字幕，例如`Adaptive inference procedure`而不是`The proposed algorithm...`.
+- 显式输入/输出标记和简短的内联注释是建议的默认值，而不是 IEEE 硬性要求。
 
-### Format
-- Single column
-- Strict page limits
-- Camera-ready deadline strict
+## ACM 会议
 
-### Figures/Tables
-- Figure captions: below
-- Table captions: above
-- High resolution (300 dpi minimum)
+### 风格
 
-### Citations
-- Numbered: [1]
-- Springer nature template
+- 结构化摘要（部分期刊或会议）
+- 接受作者日期引用
+
+### 格式
+
+- ACM参考格式
+- 所需 CCS 概念
+- 需要关键词
+
+### 特殊要求
+
+- 无障碍要求
+- 补充材料指南
+
+## 施普林格 (LNCS)
+
+### 风格
+
+- 英式或美式英语（一致）
+- 优选第三人称
+
+### 格式
+
+- 单列
+- 严格的页面限制
+- 相机就绪期限严格
+
+### 图/表
+
+- 图说明：如下
+- 表格标题：上方
+- 高分辨率（最低 300 dpi）
+
+### 引文
+
+- 编号：[1]
+- 施普林格自然模板
 
 ## NeurIPS / ICML
 
-### Style
-- Concise writing essential
-- Mathematical notation consistent
+### 风格
 
-### Format
-- 8-page main paper
-- Unlimited appendix
-- Blind review requirements
+- 简洁的写作必不可少
+- 数学符号一致
 
-### Special
-- Broader impact statement
-- Reproducibility checklist
-- Code submission encouraged
+### 格式
 
-## CVPR / ICCV / ECCV
+- NeurIPS：9页主论文（相机就绪+1=10）； ICML：8 页提交（可拍照 9 页）
+- 无限附录；参考文献不算数
+- 盲审要求
 
-### Style
-- Visual results emphasized
-- Quantitative comparisons required
+### 特别的
 
-### Format
-- Double-blind review
-- Supplementary video allowed
-- 8 pages + references
+- ICML 需要一份“影响声明”（正式名称）； NeurIPS 需要论文
+清单。 ICML 相机就绪和 NeurIPS 需要简单摘要
+位置追踪——不是 NeurIPS 主线论文。
+- 再现性检查表
+- 鼓励提交代码
 
-### Figures
-- High-quality visualizations
-- Comparison figures expected
-- Video demonstrations encouraged
+## CVPR/ICCV/ECCV
 
-## ArXiv Preprints
+### 风格
 
-### Format
-- No strict format
-- PDF preferred
-- Abstract: 1500 characters max
+- 强调视觉效果
+- 需要进行定量比较
 
-### Best Practices
-- Include author affiliations
-- Link to code/data
-- Version control with updates
+### 格式
 
----
+- 双盲评审
+- 允许补充视频
+- 8 页，包括图表（参考文献不算）
+- LLM政策：作者对所有内容负全部责任；编造的
+引文或明显的事实错误可能会在未经审查的情况下被拒绝，
+并且“法学硕士写的”并不是辩护
 
-## Conference Quick Reference Table
+### 人物
 
-| Conference | Page Limit | Extra (Camera-Ready) | Key Requirement | Template |
-|------------|------------|---------------------|-----------------|----------|
-| **NeurIPS 2025** | 9 pages | +0 | Mandatory checklist, lay summary | neurips.sty |
-| **ICML 2026** | 8 pages | +1 | Broader Impact Statement | icml2026.sty |
-| **ICLR 2026** | 9 pages | +1 | LLM disclosure, reciprocal review | iclr2026.sty |
-| **ACL 2025** | 8 pages (long) | varies | Limitations section mandatory | acl.sty |
-| **AAAI 2026** | 7 pages | +1 | Strict style file adherence | aaai2026.sty |
-| **COLM 2025** | 9 pages | +1 | Language model focus | colm2025.sty |
+- 高质量的可视化
+- 预期比较数字
+- 鼓励视频演示
 
-**Universal Requirements:**
-- Double-blind review (anonymize submissions)
-- References don't count toward page limit
-- Appendices unlimited but reviewers not required to read
-- LaTeX required for all venues
+## ArXiv 预印本
+
+### 格式
+
+- 无严格格式
+- 首选 PDF
+- 摘要：最多 1920 个字符（元数据限制）
+
+### 最佳实践
+
+- 包括作者隶属关系
+- 链接到代码/数据
+- 版本控制与更新
 
 ---
 
-## Pre-Submission Checklist
+## 会议快速参考表
 
-### Universal (All Venues)
-- [ ] Paper compiles without errors
-- [ ] All figures referenced in text
-- [ ] All tables referenced in text
-- [ ] No orphaned citations
-- [ ] No placeholder text (TODO, FIXME, XXX)
-- [ ] Anonymous submission (no author names)
-- [ ] Page limit respected
-- [ ] Consistent notation throughout
-- [ ] All acronyms defined on first use
-- [ ] Limitations section included
+|会议|页数限制|额外（相机就绪）|关键要求|模板|
+| --------------------- | -------------- | --------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+|**NeurIPS 2025/2026**|9页| +1 (=10)                    |强制性论文清单|neurips_2025.sty / neurips_2026.sty|
+|**ICML 2026**|8页| +1 (=9)                     |“影响声明”+外行摘要（相机）|icml2026.sty|
+|**ICLR 2026**|9页| +1 (=10)                    |法学硕士披露（如果未披露则拒绝），互惠修订|iclr2026_conference.sty|
+|**ACL 2026 / ARR**|8页（长）| +1 (=9)                     |限制 + 强制性 NLP 清单|acl.sty（还提供Word模板）|
+|**AAAI 2026**|7页|无免费（购买 300 美元/页，≤2）|严格的样式文件遵守|AAAI2026.sty|
+|**COLM 2026**|9页| +1 (=10)                    |语言模型焦点； ICLR 式 LLM 披露|colm2026_conference.sty|
 
----
+**通用要求：**
 
-## Resubmission Format Conversion
-
-### Common Conversion Paths
-
-| From → To | Page Change | Key Adjustments |
-|-----------|-------------|-----------------|
-| NeurIPS → ICML | 9 → 8 | Cut 1 page, add Broader Impact |
-| ICML → ICLR | 8 → 9 | Expand experiments, add LLM disclosure |
-| NeurIPS → ACL | 9 → 8 | Restructure for NLP, add Limitations |
-| ICLR → AAAI | 9 → 7 | Significant cuts, strict style |
-| Any → COLM | varies → 9 | Reframe for language model focus |
-
-### Content Migration Principles
-1. **Never copy LaTeX preambles** between templates — start fresh with target template
-2. **Copy ONLY content sections** (abstract, sections, figures, tables, bib entries)
-3. When cutting pages: move proofs to appendix, condense related work, combine tables
-4. When expanding: add ablations, expand limitations, include qualitative examples
+- 双盲评审（匿名提交）
+- 参考文献不计入页数限制
+- 附录无限制，但审稿人无需阅读
+- NeurIPS/ICML/ICLR/COLM 需要 LaTeX； ACL和AAAI也接受官方
+Word 模板 — 不要假设“所有场所都需要 LaTeX”
 
 ---
 
-## Figure and Table Specifications
+## 预提交清单
 
-### Tables
-Use `booktabs` package for professional tables:
-- Bold best value per metric
-- Include direction symbols (↑ higher is better, ↓ lower is better)
-- Right-align numerical columns
-- Consistent decimal precision
+### 环球影城（所有期刊或会议）
 
-### Figures
-- **Vector graphics** (PDF, EPS) for all plots and diagrams
-- **Raster** (PNG 600 DPI) only for photographs
-- **Colorblind-safe palettes**: Okabe-Ito or Paul Tol recommended
-- **Grayscale readability**: Verify figures work without color (8% of men have color vision deficiency)
-- **No title inside figure** — the caption serves this function
-- **Self-contained captions** — reader should understand without main text
+- [ ] 论文编译没有错误
+- [ ] 文本中引用的所有数字
+- [ ] 文本中引用的所有表格
+- [ ] 没有孤立引用
+- [ ] 无占位符文本（TODO、FIXME、XXX）
+- [ ] 匿名提交（无作者姓名）
+- [ ] 遵守页数限制
+- [ ] 始终保持一致的符号
+- [ ] 所有首字母缩略词均在首次使用时定义
+- [ ] 包括限制部分
+
+---
+
+## 重新提交格式转换
+
+### 常见转化路径
+
+|从 → 到|页面变更|主要调整|
+| -------------- | ----------- | -------------------------------------- |
+|NeurIPS → ICML| 9 → 8       |删去 1 页，添加影响陈述|
+|ICML → ICLR| 8 → 9       |扩大实验，添加LLM披露|
+|NeurIPS → ACL| 9 → 8       |NLP 重构，添加限制|
+|ICLR → AAAI| 9 → 7       |大幅剪裁，严谨风格|
+|任意 → COLM|变化 → 9|重新构建语言模型焦点|
+
+### 内容迁移原则
+
+1. **切勿在模板之间复制 LaTeX 序言** - 从目标模板开始
+2. **仅复制内容部分**（摘要、部分、图形、表格、参考文献条目）
+3. 剪切页面时：将校样移至附录、压缩相关工作、合并表格
+4. 扩展时：添加消融、扩展限制、包括定性示例
+
+---
+
+## 图和表规格
+
+### 表格
+
+使用专业表的 `booktabs` 套件：
+
+- 每个指标的最佳价值加粗
+- 包含方向符号（↑ 越高越好，↓ 越低越好）
+- 右对齐数字列
+- 一致的小数精度
+
+### 人物
+
+- **矢量图形**（PDF、EPS）适用于所有绘图和图表
+- **光栅** (PNG 600 DPI) 仅适用于照片
+- **色盲安全调色板**：推荐 Okabe-Ito 或 Paul Tol
+- **灰度可读性**：验证数字在没有颜色的情况下是否有效（8% 的男性有色觉缺陷）
+- **图中没有标题** - 标题起到此作用
+- **独立的标题** - 读者无需正文即可理解

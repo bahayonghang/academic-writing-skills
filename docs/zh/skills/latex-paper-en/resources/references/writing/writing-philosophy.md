@@ -1,141 +1,142 @@
-# Writing Philosophy for Academic Papers
+# 学术论文写作哲学
 
-> "A paper is a short, rigorous, evidence-based technical story with a takeaway readers care about." — Neel Nanda
+> “论文是一篇简短、严谨、基于证据的技术故事，其中包含读者关心的要点。” — 尼尔·南达
 
-## Table of Contents
-- [The Narrative Principle](#the-narrative-principle)
-- [5-Sentence Abstract Formula](#5-sentence-abstract-formula)
-- [Gopen-Swan 7 Principles](#gopen-swan-7-principles)
-- [Word Choice](#word-choice)
-- [Precision Over Brevity](#precision-over-brevity)
-- [Micro-Level Tips](#micro-level-tips)
-- [Section-by-Section Guide](#section-by-section-guide)
-- [Time Allocation](#time-allocation)
+## 目录
+- [叙事原理](#the-narrative-principle)
+- [5句摘要公式](#5-sentence-abstract-formula)
+- [Gopen-Swan 七项原则](#gopen-swan-7-principles)
+- [选词](#word-choice)
+- [精确胜于简洁](#precision-over-brevity)
+- [微观提示](#micro-level-tips)
+- [逐节指南](#section-by-section-guide)
+- [时间分配](#time-allocation)
 
-## The Narrative Principle
+## 叙事原则
 
-(Neel Nanda, Google DeepMind)
+（尼尔·南达，谷歌 DeepMind）
 
-Your paper is NOT a collection of experiments — it's a story with ONE clear contribution.
+你的论文不是一系列实验——它是一个有一个明确贡献的故事。
 
-**Three Pillars** (must be crystal clear by end of introduction):
+**三大支柱**（在介绍结束时必须非常清楚）：
 
-| Pillar | Description | Example |
+|支柱|描述|例子|
 |--------|-------------|---------|
-| **The What** | 1-3 specific novel claims within cohesive theme | "We prove that X achieves Y under condition Z" |
-| **The Why** | Rigorous empirical evidence supporting claims | Strong baselines, experiments distinguishing hypotheses |
-| **The So What** | Why readers should care | Connection to recognized community problems |
+|**什么**|1-3 个具有凝聚力主题的具体新颖主张|“我们证明 X 在条件 Z 下实现 Y”|
+|**为什么**|支持主张的严格经验证据|强大的基线，实验区分假设|
+|**那又怎么样**|为什么读者应该关心|与公认的社区问题的联系|
 
-**If you cannot state your contribution in one sentence, you don't yet have a paper.**
+**如果你不能用一句话表达你的贡献，那么你还没有一篇论文。**
 
-## 5-Sentence Abstract Formula
+## 5句抽象公式
 
-(Sebastian Farquhar, DeepMind)
+（塞巴斯蒂安·法夸尔，DeepMind）
 
-1. What you achieved: "We introduce...", "We prove...", "We demonstrate..."
-2. Why this is hard and important
-3. How you do it (with specialist keywords for discoverability)
-4. What evidence you have
-5. Your most remarkable number/result
+1. 您取得的成就：“我们介绍...”、“我们证明...”、“我们演示...”
+2. 为什么这既困难又重要
+3. 你是如何做到的（使用专业关键词以提高可发现性）
+4. 你有什么证据
+5. 您最引人注目的数字/结果
 
-**Delete** generic openings like "Large language models have achieved remarkable success..."
+**删除**通用开头，例如“大型语言模型取得了显着的成功......”
 
-## Gopen-Swan 7 Principles
+## Gopen-Swan 7 原则
 
-(Based on "The Science of Scientific Writing")
+（基于《科学写作的科学》）
 
-| # | Principle | Rule | Example |
+| # |原则|规则|例子|
 |---|-----------|------|---------|
-| 1 | **Subject-verb proximity** | Keep subject and verb close | ❌ "The model, which was trained on..., achieves" → ✅ "The model achieves... after training on..." |
-| 2 | **Stress position** | Place emphasis at sentence ends | ❌ "Accuracy improves by 15% when using attention" → ✅ "When using attention, accuracy improves by **15%**" |
-| 3 | **Topic position** | Put context first, new info after | ✅ "Given these constraints, we propose..." |
-| 4 | **Old before new** | Familiar info → unfamiliar info | Link backward, then introduce new |
-| 5 | **One unit, one function** | Each paragraph makes one point | Split multi-point paragraphs |
-| 6 | **Action in verb** | Use verbs, not nominalizations | ❌ "We performed an analysis" → ✅ "We analyzed" |
-| 7 | **Context before new** | Set stage before presenting | Explain before showing equation |
+| 1 |**主谓接近**|保持主语和动词接近|❌“经过......训练的模型实现了”→ ✅“模型在......训练后实现了......”|
+| 2 |**重音位置**|将强调放在句子末尾|❌“使用注意力时，准确率提高了 15%” → ✅“使用注意力时，准确率提高了 **15%**”|
+| 3 |**主题位置**|将上下文放在前面，将新信息放在后面|✅“鉴于这些限制，我们建议……”|
+| 4 |**先旧后新**|熟悉的信息→陌生的信息|向后链接，然后引入新的|
+| 5 |**一个单元，一种功能**|每一段都表达一个观点|分割多点段落|
+| 6 |**动词中的动作**|使用动词，而不是名词化|❌“我们进行了分析”→ ✅“我们进行了分析”|
+| 7 |**新之前的上下文**|演示前设置舞台|显示方程之前先解释一下|
 
-## Word Choice
+## 选词
 
-(Zachary Lipton)
+（扎卡里·利普顿）
 
-### Be Specific
-- ❌ "performance" → ✅ "accuracy" or "latency" (say what you mean)
-- ❌ "significant" → ✅ "statistically significant (p < 0.05)" or remove
+### 具体一点
+- ❌“性能”→ ✅“准确性”或“延迟”（说出你的意思）
+- ❌“显着”→ ✅“统计显着（p < 0.05）”或删除
 
-### Eliminate Hedging
-Drop "may" and "can" unless genuinely uncertain.
-- ❌ "This may improve performance" → ✅ "This improves accuracy by 3.2%"
+### 消除对冲
+除非确实不确定，否则删除“可能”和“可以”。
+- ❌“这可能会提高性能”→ ✅“这会将准确性提高 3.2%”
 
-### Avoid Incremental Vocabulary
-- ❌ "combine," "modify," "expand" → ✅ "develop," "propose," "introduce"
+### 避免增量词汇
+- ❌“组合”、“修改”、“扩展”→ ✅“开发”、“提议”、“引入”
 
-### Delete Intensifiers
-- ❌ "provides *very* tight approximation" → ✅ "provides tight approximation"
+### 删除增强器
+- ❌“提供*非常*紧密的近似”→ ✅“提供紧密的近似”
 
-## Precision Over Brevity
+## 精确胜于简洁
 
-(Jacob Steinhardt, UC Berkeley)
+（雅各布·斯坦哈特，加州大学伯克利分校）
 
-- **Consistent terminology**: Different terms for same concept creates confusion. Pick one and stick with it.
-- **State assumptions formally**: Before theorems, list all assumptions explicitly
-- **Intuition + rigor**: Provide intuitive explanations alongside formal proofs
-- **Define before use**: Every symbol and term defined before first use
+- **一致的术语**：同一概念的不同术语会造成混乱。选择一个并坚持下去。
+- **正式陈述假设**：在定理之前，明确列出所有假设
+- **直觉+严谨**：提供直观的解释和正式的证明
+- **使用前定义**：首次使用前定义的每个符号和术语
 
-## Micro-Level Tips
+## 微观层面的技巧
 
-(Ethan Perez, Anthropic)
+（伊桑·佩雷斯，《人类》）
 
-- [ ] **Minimize pronouns**: ❌ "This shows..." → ✅ "This result shows..."
-- [ ] **Verbs early**: Position verbs near sentence start
-- [ ] **Unfold apostrophes**: ❌ "X's Y" → ✅ "The Y of X" (when awkward)
-- [ ] **Delete filler words**: "actually," "a bit," "very," "really," "basically," "quite," "essentially"
-- [ ] **Avoid vague "this"**: Always attach a noun after "this"
-- [ ] **Active voice**: ❌ "The method was applied" → ✅ "We applied the method"
+- [ ] **最小化代词**： ❌“这显示...”→ ✅“这个结果显示...”
+- [ ] **动词早**：将动词放在句子开头附近
+- [ ] **展开撇号**：❌“X's Y”→ ✅“X 的 Y”（尴尬时）
+- [ ] **删除填充词**：“实际上”、“有点”、“非常”、“真的”、“基本上”、“相当”、“本质上”
+- [ ] **避免模糊的“this”**：始终在“this”之后附加名词
+- [ ] **主动语态**：❌“该方法已应用”→ ✅“我们应用了该方法”
 
-## Section-by-Section Guide
+## 逐节指南
 
-| Section | Length | Key Requirements |
+|部分|长度|主要要求|
 |---------|--------|-----------------|
-| **Abstract** | 150-250 words | 5-sentence formula; delete generic openings |
-| **Introduction** | 1-1.5 pages max | 2-4 bullet contribution list; methods should start by page 2-3 |
-| **Methods** | As needed | Enable reimplementation; all hyperparameters listed |
-| **Experiments** | Main body | State claim before each experiment; error bars mandatory |
-| **Related Work** | 1-1.5 pages | Organize methodologically, not paper-by-paper |
-| **Limitations** | 0.5-1 page | Required by all major venues; pre-empt reviewer criticisms |
+|**摘要**|150-250 词|5 句公式；删除通用空话|
+|**介绍**|最多 1-1.5 页|2-4 项目符号贡献列表；方法应从第 2-3 页开始|
+|**方法**|根据需要|启用重新实现；列出所有超参数|
+|**实验**|主体|每次实验前声明声明；误差线强制|
+|**相关工作**|1-1.5页|按方法论组织；每篇引用的作品都需要单独讨论；最多 2 条聚集引用|
+|**限制**|0.5-1页|各大期刊或会议均要求；先发制人地批评审稿人|
 
-### Introduction Must Include:
-- Clear problem statement
-- 2-4 bullet contribution list (max 1-2 lines each)
-- Brief approach overview
+### 简介必须包括：
+- 明确的问题陈述
+- 2-4 个项目符号贡献列表（每条最多 1-2 行）
+- 简要方法概述
+- **引文整合**：每篇被引用的作品必须附有对其贡献、方法或限制的简要描述 - 最多 2 条集群引用，无需讨论（请参阅 style-guide.md 反引文堆叠规则）
 
-### Experiments Must Include:
-- What claim each experiment supports
-- Error bars with methodology (std dev vs std error)
-- Hyperparameter search ranges
-- Compute infrastructure (GPU type, total hours)
+### 实验必须包括：
+- 每个实验支持什么主张
+- 带有方法的误差线（标准偏差与标准误差）
+- 超参数搜索范围
+- 计算基础设施（GPU 类型、总小时数）
 
-## Time Allocation
+## 时间分配
 
-(Neel Nanda)
+（尼尔·南达）
 
-Spend approximately **equal time** on each of:
-1. The abstract
-2. The introduction
-3. The figures
-4. Everything else combined
+在以下各项上花费大约**相同的时间**：
+1. 摘要
+2. 简介
+3. 数字
+4. 其他一切结合起来
 
-**Why?** Most reviewers form judgments before reaching your methods.
+**为什么？** 大多数审稿人在达到你的方法之前都会做出判断。
 
-**Reader encounter order**: title → abstract → introduction → figures → maybe the rest.
+**读者遇到的顺序**：标题→摘要→引言→图表→也许是其余的。
 
-## Sources
+## 来源
 
-| Source | Key Contribution | Link |
+|来源|主要贡献|关联|
 |--------|-----------------|------|
-| Neel Nanda (Google DeepMind) | The Narrative Principle | [How to Write ML Papers](https://www.alignmentforum.org/posts/eJGptPbbFPZGLpjsp/) |
-| Sebastian Farquhar (DeepMind) | 5-sentence abstract formula | [How to Write ML Papers](https://sebastianfarquhar.com/on-research/2024/11/04/how_to_write_ml_papers/) |
-| Gopen & Swan | 7 principles of reader expectations | [Science of Scientific Writing](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf) |
-| Zachary Lipton | Word choice, eliminating hedging | [Heuristics for Scientific Writing](https://www.approximatelycorrect.com/2018/01/29/heuristics-technical-scientific-writing-machine-learning-perspective/) |
-| Jacob Steinhardt (UC Berkeley) | Precision, consistent terminology | [Writing Tips](https://bounded-regret.ghost.io/) |
-| Ethan Perez (Anthropic) | Micro-level clarity tips | [Easy Paper Writing Tips](https://ethanperez.net/easy-paper-writing-tips/) |
-| Andrej Karpathy | Single contribution focus | Various lectures |
+|尼尔·南达（谷歌 DeepMind）|叙事原则|[如何撰写 ML 论文](https://www.alignmentforum.org/posts/eJGptPbbFPZGLpjsp/) |
+|塞巴斯蒂安·法夸尔（DeepMind）|5句抽象公式|[如何撰写 ML 论文](https://sebastianfarquhar.com/on-research/2024/11/04/how_to_write_ml_papers/) |
+|戈彭与天鹅|读者期望的 7 条原则|[科学写作科学](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf) |
+|扎卡里·利普顿|词语选择，消除对冲|[科学写作的启发法](https://www.approximatelycorrect.com/2018/01/29/heuristics-technical-scientific-writing-machine-learning-perspective/) |
+|雅各布·斯坦哈特（加州大学伯克利分校）|精确、一致的术语|[写作技巧](https://bounded-regret.ghost.io/) |
+|伊桑·佩雷斯（人类）|微观清晰度技巧|[简单论文写作技巧](https://ethanperez.net/easy-paper-writing-tips/) |
+|安德烈·卡帕蒂|单一贡献焦点|各种讲座|

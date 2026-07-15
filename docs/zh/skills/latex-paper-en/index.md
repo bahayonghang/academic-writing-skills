@@ -58,6 +58,82 @@
 - 默认保留 citation、label、math 和 LaTeX 结构的源码友好建议。
 - 可在 `paper-audit` 或 `cover-letter` 前使用的模块级 findings。
 
+## 公开资源
+
+### 参考资料
+
+- [期刊名称缩写](./resources/references/citations/journal-abbreviations.md)
+- [引文风格指南](./resources/references/citations/styles.md)
+- [引文验证指南](./resources/references/citations/verification.md)
+- [受保护条款 - 请勿修改](./resources/references/deai/forbidden-terms.md)
+- [De-AI英语学术论文写作指南](./resources/references/deai/guide.md)
+- [AI Tone 术语（英文） — 参考](./resources/references/deai/tone-terms-en.md)
+- [AI Tone Threshold Configuration (English papers)](./resources/references/deai/tone-thresholds.yaml)
+- [声明-证据合同](./resources/references/evidence/claim-evidence-contract.md)
+- [超额声明保护](./resources/references/evidence/over-claim-guard.md)
+- [数字和单位格式指南](./resources/references/formatting/number-unit-guide.md)
+- [三行表格指南](./resources/references/formatting/table-guide.md)
+- [LaTeX 编译指南](./resources/references/latex/compilation.md)
+- [模块：摘要](./resources/references/modules/abstract.md)
+- [模块：适应](./resources/references/modules/adapt.md)
+- [模块：参考书目](./resources/references/modules/bibliography.md)
+- [图形和表格标题生成指南](./resources/references/modules/caption.md)
+- [模块：编译](./resources/references/modules/compile.md)
+- [模块：去AI编辑](./resources/references/modules/deai.md)
+- [模块：实验回顾](./resources/references/modules/experiment.md)
+- [模块：表达重组](./resources/references/modules/expression.md)
+- [模块：格式检查](./resources/references/modules/format.md)
+- [模块：语法分析](./resources/references/modules/grammar.md)
+- [模块：文献综述综合](./resources/references/modules/literature.md)
+- [模块：逻辑连贯性和方法论深度](./resources/references/modules/logic.md)
+- [模块：伪代码审查](./resources/references/modules/pseudocode.md)
+- [路由规则 — 完整详细信息](./resources/references/modules/routing-rules.md)
+- [模块：章节写作](./resources/references/modules/section-writing.md)
+- [模块：长句分析](./resources/references/modules/sentences.md)
+- [模块：表格](./resources/references/modules/tables.md)
+- [时态指南](./resources/references/modules/tense-guide.md)
+- [模块：标题优化](./resources/references/modules/title.md)
+- [模块：翻译（中文 -> 英文）](./resources/references/modules/translation.md)
+- [工作流程和最佳实践](./resources/references/modules/workflow.md)
+- [审稿人观点指南](./resources/references/review/reviewer-perspective.md)
+- [法学硕士/人工智能援助披露政策 (2026-06)](./resources/references/venues/ai-disclosure.md)
+- [期刊或会议特定要求](./resources/references/venues/catalog.md)
+- [期刊改编工作流程](./resources/references/venues/journal-adaptation-workflow.md)
+- [抽象结构指南](./resources/references/writing/abstract-structure.md)
+- [最佳实践](./resources/references/writing/best-practices.md)
+- [学术写作中常见的中式英语错误](./resources/references/writing/common-errors.md)
+- [摘要部分写作](./resources/references/writing/section-writing/abstract.md)
+- [结论部分写作](./resources/references/writing/section-writing/conclusion.md)
+- [实验和讨论部分写作](./resources/references/writing/section-writing/experiments.md)
+- [段落流程和反向大纲](./resources/references/writing/section-writing/flow.md)
+- [章节写作参考索引](./resources/references/writing/section-writing/index.md)
+- [引言部分写作](./resources/references/writing/section-writing/introduction.md)
+- [方法部分写作](./resources/references/writing/section-writing/method.md)
+- [相关工作部分写作](./resources/references/writing/section-writing/related-work.md)
+- [面向审稿人的自我评审](./resources/references/writing/section-writing/self-review.md)
+- [学术写作风格指南](./resources/references/writing/style-guide.md)
+- [Academic Terminology Reference](./resources/references/writing/terminology.md)
+- [Academic Translation Guide](./resources/references/writing/translation-guide.md)
+- [学术论文写作哲学](./resources/references/writing/writing-philosophy.md)
+
+### 模板
+
+- [ACM 会议 (LaTeX)](./resources/templates/acm.md)
+- [ICML（乳胶）](./resources/templates/icml.md)
+- [IEEE 会议/期刊 (LaTeX)](./resources/templates/ieee.md)
+- [NeurIPS（乳胶）](./resources/templates/neurips.md)
+- [施普林格 (LNCS) (乳胶)](./resources/templates/springer-lncs.md)
+
+### 示例
+
+- [示例：编译和参考书目](./resources/examples/compile-and-bibliography.md)
+- [示例：实验回顾](./resources/examples/experiment-review.md)
+- [示例：数字和标题](./resources/examples/figures-and-title.md)
+- [示例：语法和逻辑复习](./resources/examples/grammar-and-logic.md)
+- [文献综述重写](./resources/examples/literature-review-rewrite.md)
+- [示例：多模块序列](./resources/examples/multi-module-sequence.md)
+- [示例：翻译与去AI](./resources/examples/translation-and-deai.md)
+
 ## 常见请求
 
 ```text

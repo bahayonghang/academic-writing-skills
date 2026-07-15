@@ -1,28 +1,28 @@
-# Section-Writing Reference Index
+# 章节写作参考索引
 
-Use this reference bank for one-section-at-a-time drafting, rewrite planning, paragraph-role design, and claim-evidence self-review in existing English LaTeX papers.
+使用此参考库对现有英文 LaTeX 论文进行一次一个章节的起草、重写计划、段落角色设计以及声明证据自我审查。
 
-## Loading Rule
+## 加载规则
 
-Load only the file for the active section:
+仅加载活动部分的文件：
 
-- `abstract.md`: abstract logic, contribution variants, and result-bound constraints.
-- `introduction.md`: task/application funnel, technical bottleneck, solution pipeline, and contribution closure.
-- `related-work.md`: topic design, comparison, limitation, gap, and current-work positioning.
-- `method.md`: method overview and module triad: motivation, design, technical advantage.
-- `experiments.md`: claim-to-experiment planning, baselines, ablations, discussion, tables, and limitations.
-- `conclusion.md`: solved problem, evidence recap, implication, limitation, and future work.
-- `flow.md`: paragraph clarity, topic sentence, reverse outline, transitions.
-- `self-review.md`: reviewer-facing claim-evidence and rejection-risk checklist.
+- `abstract.md`：抽象逻辑、贡献变体和结果绑定约束。
+- `introduction.md`：任务/应用程序漏斗、技术瓶颈、解决方案管道和贡献结束。
+- `related-work.md`：主题设计、比较、限制、差距和当前工作定位。
+- `method.md`：方法概述和模块三元组：动机、设计、技术优势。
+- `experiments.md`：声明实验计划、基线、消融、讨论、表格和限制。
+- `conclusion.md`：已解决的问题、证据回顾、含义、限制和未来的工作。
+- `flow.md`：段落清晰度、主题句、反向大纲、过渡。
+- `self-review.md`：面向审稿人的声明-证据和拒绝风险清单。
 
-Do not load the whole directory by default.
+默认情况下不加载整个目录。
 
-## Relationship To Existing Modules
+## 与现有模块的关系
 
-- Use `section-writing` for drafting, rewrite plans, paragraph roles, and self-review.
-- Use `logic`, `literature`, `experiment`, and `abstract` for script-backed or diagnostic checks.
-- It is valid to run a diagnostic module first, then use this reference bank to turn findings into a source-preserving rewrite proposal.
+- 使用 `section-writing` 起草、重写计划、段落角色和自我审查。
+- 使用`logic`, `literature`, `experiment`， 和`abstract`用于脚本支持或诊断检查。
+- 首先运行诊断模块是有效的，然后使用此参考库将发现结果转化为保留源代码的重写建议。
 
-## Attribution
+## 归因
 
-This reference bank is a paraphrased, LaTeX-specific adaptation of ideas from `ref/Research-Paper-Writing-Skills/research-paper-writing`, which is MIT-licensed by Master-cai and credits Prof. Peng Sida's public research-writing notes. The local files are adapted for existing LaTeX paper projects, progressive disclosure, and claim-evidence safety.
+该参考库是对 `ref/Research-Paper-Writing-Skills/research-paper-writing` 思想的释义、特定于 LaTeX 的改编，该思想已获得 MIT 蔡大师许可，并注明彭斯达教授的公开研究写作笔记。本地文件适用于现有的 LaTeX 纸质项目、渐进式披露和声明-证据安全。

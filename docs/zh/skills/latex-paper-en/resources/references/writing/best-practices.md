@@ -1,7 +1,7 @@
-# Best Practices
+# 最佳实践
 
-1. **Start with Format Check**: Always verify document compiles before other checks
-2. **Iterative Refinement**: Apply one module at a time for better control
-3. **Preserve Protected Elements**: Never modify `\cite{}`, `\ref{}`, `\label{}`, math environments
-4. **Verify Before Commit**: Review all suggestions before accepting changes
-5. Use with version control (git) to track changes; combine with LaTeX Workshop for real-time preview
+1. **从格式检查开始**：始终在其他检查之前验证文档编译
+2. **迭代细化**：一次应用一个模块以实现更好的控制
+3. **保留受保护的元素**：切勿修改`\cite{}`, `\ref{}`, `\label{}`, 数学环境
+4. **提交前验证**：在接受更改之前查看所有建议
+5. 与版本控制（git）一起使用来跟踪更改；结合LaTeX Workshop进行实时预览

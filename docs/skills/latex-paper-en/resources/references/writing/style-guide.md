@@ -121,6 +121,58 @@ Restate the idea in your own words with citation.
 ### Direct Quote (Sparingly)
 Only for definitions or exceptionally well-phrased ideas.
 
+### Anti-Citation-Stacking Rules (Introduction & Related Work)
+
+Stacking 3+ references without individual discussion is a common AI writing pattern and is unacceptable in top-tier venues. These rules apply to both Introduction and Related Work sections.
+
+**Rules:**
+1. **Max 2 clustered citations** without discussion per sentence
+   - ❌ "Many methods have been proposed [1], [2], [3], [4], [5]."
+   - ✅ "Smith et al. [1] proposed X for scenario A. Building on this, Jones [2] extended the approach to B, while Wang et al. [3] addressed limitation C."
+
+2. **Every cited work must earn its citation** with at least one of:
+   - A summary of its core contribution (1 clause minimum)
+   - A comparison with another cited work
+   - A specific limitation that motivates your work
+
+3. **Narrative over parenthetical** in Introduction and Related Work body:
+   - Use integral citations (author as subject) for key works: "Smith et al. [1] demonstrated..."
+   - Reserve non-integral citations (content focus) for well-established facts only: "Gradient descent is widely used [1], [2]."
+
+4. **Funnel-appropriate density (Introduction):**
+   - Background paragraph (broad context): up to 2 clustered citations for established facts
+   - Problem statement paragraph: each citation must be individually discussed
+   - Gap/motivation paragraph: every cited limitation must reference a specific paper
+
+5. **Categorical discussion (Related Work):**
+   - Group works by methodology/approach, not chronologically
+   - Within each group, discuss each work's specific contribution and limitation
+   - Use comparative language between works: "Unlike [1], method [2] addresses..."
+
+**Positive patterns (Introduction):**
+```latex
+Smith et al. [1] proposed method X, achieving Y% accuracy on dataset Z.
+However, their approach assumes A, which limits applicability to B.
+Jones [2] relaxed this assumption by introducing C, but at the cost of D.
+In contrast, our method addresses both limitations by...
+```
+
+**Positive patterns (Related Work):**
+```latex
+\textbf{Transformer-based methods.} Vaswani et al. [1] introduced the
+self-attention mechanism for sequence modeling. Li et al. [2] adapted this
+architecture for time series, but their method requires O(n^2) memory.
+Zhou et al. [3] proposed ProbSparse attention to reduce complexity to O(n log n),
+though at the cost of approximation error.
+```
+
+**Negative patterns (FORBIDDEN):**
+```latex
+Many researchers have studied this problem [1], [2], [3], [4], [5].
+Several methods have been proposed [6], [7], [8], [9], [10], [11], [12].
+Recent advances include [13], [14], [15], [16], [17], [18], [19], [20].
+```
+
 ## Common Section Patterns
 
 ### Introduction

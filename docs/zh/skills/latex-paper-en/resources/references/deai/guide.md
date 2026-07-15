@@ -1,205 +1,205 @@
-# De-AI Writing Guide for English Academic Papers
+# De-AI英语学术论文写作指南
 
 
 ## 目录
 
-- [目的 (Purpose)](#目的-purpose)
-- [核心原则 (Core Principles)](#核心原则-core-principles)
-  - [1. Syntax Fidelity (语法保真优先)](#1-syntax-fidelity-语法保真优先)
-  - [2. Zero Fabrication (零捏造)](#2-zero-fabrication-零捏造)
-  - [3. Information Density (提高信息密度)](#3-information-density-提高信息密度)
-  - [4. Academic Restraint (克制措辞)](#4-academic-restraint-克制措辞)
-- [Academic Humanization Contract](#academic-humanization-contract)
-- [Common AI Writing Patterns to Remove](#common-ai-writing-patterns-to-remove)
-  - [Category 1: Empty Phrases (空话口号)](#category-1-empty-phrases-空话口号)
-  - [Category 2: Over-Confident Language (过度确定)](#category-2-over-confident-language-过度确定)
-  - [Category 3: Mechanical Structures (机械排比)](#category-3-mechanical-structures-机械排比)
-  - [Category 4: Vague Quantification (模糊量化)](#category-4-vague-quantification-模糊量化)
-  - [Category 5: Template Introductions (模板引言)](#category-5-template-introductions-模板引言)
-- [Structural-Level Traces (LLM-judgment)](#structural-level-traces-llm-judgment)
-- [Section-Specific Guidelines](#section-specific-guidelines)
-  - [Abstract (摘要)](#abstract-摘要)
-  - [Introduction (引言)](#introduction-引言)
-  - [Related Work (相关工作)](#related-work-相关工作)
-  - [Methods (方法)](#methods-方法)
-  - [Experiments (实验)](#experiments-实验)
-  - [Results (结果)](#results-结果)
-  - [Discussion (讨论)](#discussion-讨论)
-  - [Conclusion (结论)](#conclusion-结论)
-- [Output Format for De-AI Editing](#output-format-for-de-ai-editing)
-- [Change Categories](#change-categories)
-- [Detection Checklist (use with `deai_check.py --analyze`)](#detection-checklist-use-with-deai_checkpy---analyze)
-  - [High-Priority AI Traces (Must Fix)](#high-priority-ai-traces-must-fix)
-  - [Medium-Priority AI Traces (Should Fix)](#medium-priority-ai-traces-should-fix)
-  - [Low-Priority AI Traces (Consider Fixing)](#low-priority-ai-traces-consider-fixing)
-- [Section-Wise AI Trace Density Scores](#section-wise-ai-trace-density-scores)
-- [Quick Reference: Common Replacements](#quick-reference-common-replacements)
-- [Bibliography](#bibliography)
+- [目的（目的）](#目的-purpose)
+- [核心原则(Coreprinciples)](#核心原则-core-principles)
+  - [1.语法保真优先(语法保真优先)](#1-syntax-fidelity-语法保真优先)
+  - [2.零捏造](#2-zero-fabrication-零捏造)
+  - [3.信息密度 (提高信息密度)](#3-information-density-提高信息密度)
+  - [4.学术克制(克制措辞)](#4-academic-restraint-克制措辞)
+- [学术人性化契约](#academic-humanization-contract)
+- [需要删除的常见AI写作模式](#common-ai-writing-patterns-to-remove)
+  - [类别一：空话口号](#category-1-empty-phrases-空话口号)
+  - [类别2：过度确定的语言](#category-2-over-confident-language-过度确定)
+  - [类别3：机械结构(机械排比)](#category-3-mechanical-structures-机械排比)
+  - [类别4：模糊量化](#category-4-vague-quantification-模糊量化)
+  - [类别 5：模板化引言（模板引言）](#category-5-template-introductions-模板引言)
+- [结构级痕迹（LLM-判断）](#structural-level-traces-llm-judgment)
+- [特定部分指南](#section-specific-guidelines)
+  - [摘要（摘要）](#abstract-摘要)
+  - [简介(引言)](#introduction-引言)
+  - [相关工作（相关工作）](#related-work-相关工作)
+  - [方法(方法)](#methods-方法)
+  - [实验（实验）](#experiments-实验)
+  - [结果 (结果)](#results-结果)
+  - [讨论（讨论）](#discussion-讨论)
+  - [结论(结论)](#conclusion-结论)
+- [De-AI 编辑的输出格式](#output-format-for-de-ai-editing)
+- [更改类别](#change-categories)
+- [检测清单（与`deai_check.py --analyze`)](#detection-checklist-use-with-deai_checkpy---analyze)
+  - [高优先级AI跟踪（必须修复）](#high-priority-ai-traces-must-fix)
+  - [中优先级 AI 跟踪（应修复）](#medium-priority-ai-traces-should-fix)
+  - [低优先级 AI 跟踪（考虑修复）](#low-priority-ai-traces-consider-fixing)
+- [分段 AI 迹线密度分数](#section-wise-ai-trace-density-scores)
+- [快速参考：常见替代品](#quick-reference-common-replacements)
+- [参考书目](#bibliography)
 
 ---
 
-## 目的 (Purpose)
+## 目的（目的）
 
-This guide helps reduce AI-generated writing traces while maintaining technical accuracy and LaTeX syntax integrity.
+本指南有助于减少 AI 生成的书写痕迹，同时保持技术准确性和 LaTeX 语法完整性。
 
-**Target Mode**: IEEE TOP期刊 (Mode I) - Concise, precise, and restrained
-
----
-
-## 核心原则 (Core Principles)
-
-### 1. Syntax Fidelity (语法保真优先)
-- **NEVER modify**: LaTeX commands, environments, math, citations, labels
-- **ONLY modify**: Visible paragraph text, section titles, caption text
-- **Preserve**: All structural integrity for compilation
-
-### 2. Zero Fabrication (零捏造)
-- **NEVER add**: New data, metrics, comparisons, experimental settings
-- **NEVER add**: New claims, contributions, or conclusions
-- **ONLY improve**: Expression clarity and natural flow
-
-### 3. Information Density (提高信息密度)
-- Every sentence must convey verifiable information
-- Delete empty phrases without substance
-- Replace vague claims with specific statements (if available)
-- Mark unverifiable claims as [PENDING VERIFICATION]
-
-### 4. Academic Restraint (克制措辞)
-- Avoid over-confident language without evidence
-- Use appropriate hedging for speculative claims
-- Present contributions objectively, not hyperbolically
+**目标模式**：IEEE TOP期刊（模式一）——简洁、精确、内敛
 
 ---
 
-## Academic Humanization Contract
+## 核心原则（核心原则）
 
-Reducing AI tone is not detector evasion. Preserve the paper before smoothing the prose:
+### 1.语法保真优先
+- **切勿修改**：LaTeX 命令、环境、数学、引文、标签
+- **仅修改**：可见段落文本、章节标题、标题文本
+- **保留**：编译时的所有结构完整性
 
-1. Protect syntax anchors: `\cite{}`, `\ref{}`, `\label{}`, equations, environments, macros, and source layout.
-2. Extract the academic payload: facts/evidence, author stance, section logic, claim-evidence links, and boundaries.
-3. Remove rhetorical scaffolds only after the payload is clear.
+### 2. 零捏造
+- **切勿添加**：新数据、指标、比较、实验设置
+- **切勿添加**：新的主张、贡献或结论
+- **唯一改进**：表达清晰度和自然流畅
 
-Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` or `needs evidence`; do not invent citations, baselines, metrics, experiments, or conclusions.
+### 3. 提高信息密度
+- 每句话都必须传达可验证的信息
+- 删除没有实质意义的空话
+- 用具体的陈述替换模糊的主张（如果有）
+- 将无法验证的声明标记为 [待验证]
 
-### Rhetorical Scaffold Checks
+### 4. 克制措辞
+- 避免在没有证据的情况下过度自信的语言
+- 对投机声明使用适当的对冲
+- 客观地而非夸张地呈现贡献
 
-| Category | Common trigger | Academic fix |
+---
+
+## 学术人性化契约
+
+降低 AI 音调并不是躲避探测器。在平滑散文之前保存论文：
+
+1. 保护语法锚点：`\cite{}`, `\ref{}`, `\label{}`、方程、环境、宏和源布局。
+2. 提取学术有效负载：事实/证据、作者立场、章节逻辑、主张-证据链接和边界。
+3. 只有在有效载荷明确之后才可以拆除修辞支架。
+
+默认输出应该是调查结果、风险摘要或重写蓝图。仅当用户要求散文时才给出散文建议。将缺少的支持标记为`[PENDING VERIFICATION]`或者`needs evidence`;不要发明引文、基线、指标、实验或结论。
+
+### 修辞支架检查
+
+|类别|通用触发|学术修复|
 |----------|----------------|--------------|
-| Empty contrast shell | not merely A, but B; not only A but also B | Keep only when it names a baseline, criterion, and evidence |
-| Fake insight marker | essentially; in fact; the key is; more importantly | Remove the marker and state the evidence-backed claim directly |
-| Lecture colon | The conclusion is:; The reason is simple: | Use a normal academic sentence or a concrete inventory noun |
-| Vague referent | this shows; things; aspects; factors | Name the object, mechanism, result, factor, or limitation |
+|空对比壳|不只是A，还有B；不仅是A，还有B|仅在指定基线、标准和证据时保留|
+|虚假洞察标记|本质上;实际上;关键是；更重要的是|删除标记并直接陈述有证据支持的主张|
+|演讲冒号|结论是：；原因很简单：|使用正常的学术句子或具体的清单名词|
+|所指对象模糊|由此可见;事物;方面；因素|命名对象、机制、结果、因素或限制|
 
 ---
 
-## Common AI Writing Patterns to Remove
+## 需要删除的常见人工智能写作模式
 
-### Category 1: Empty Phrases (空话口号)
+### 第一类：空话口号
 
-| ❌ AI-like | ✅ Human-like | Notes |
+|❌ 类AI|✅ 类人|笔记|
 |-----------|---------------|-------|
-| significant improvement | reduces error by X% | Use specific numbers |
-| comprehensive analysis | analyzes X, Y, Z | List what was analyzed |
-| effective solution | outperforms baseline by X | State comparison metric |
-| important contribution | proposes method for X | State the contribution |
-| robust performance | maintains accuracy under Y | Specify condition |
-| novel approach | extends X by introducing Y | Explain what's new |
+|显着改善|误差减少 X%|使用特定数字|
+|综合分析|分析 X、Y、Z|列出分析的内容|
+|有效的解决方案|优于基线 X|状态比较指标|
+|重要贡献|提出 X 的方法|说明贡献|
+|稳健的性能|在 Y 下保持精度|指定条件|
+|新颖的方法|通过引入 Y 来扩展 X|解释一下新内容|
 
-**Detection Pattern**: Look for adjectives that can be replaced with measurable claims.
+**检测模式**：寻找可以用可衡量的主张替换的形容词。
 
-### Category 2: Over-Confident Language (过度确定)
+### 第二类：过度确定
 
-| ❌ Absolute | ✅ Qualified |
+|❌绝对|✅ 合格|
 |-------------|--------------|
-| obviously | the results indicate |
-| clearly | evidence suggests |
-| necessarily | under these conditions |
-| completely | in most cases |
-| undoubtedly | appears to be |
-| always | consistently in our experiments |
-| never | rarely observed |
+|明显地|结果表明|
+|清楚地|证据表明|
+|一定|在这些条件下|
+|完全地|大多数情况下|
+|无疑|看来是|
+|总是|在我们的实验中始终如一|
+|绝不|很少观察到|
 
-**Detection Pattern**: Absolute claims without qualification or evidence.
+**检测模式**：没有资格或证据的绝对主张。
 
-> For graded conservative-wording tables (causal / firstness / universality / effect-size / application), see [`../evidence/over-claim-guard.md`](../evidence/over-claim-guard.md).
+> 对于分级保守措辞表（因果/第一性/普遍性/效果大小/应用），请参阅[`../evidence/over-claim-guard.md`](../evidence/over-claim-guard.md).
 
-### Category 3: Mechanical Structures (机械排比)
+### 类别3：机械结构（机械排比）
 
-**Three-part parallelisms without substance**:
-❌ "Our method is **fast**, **accurate**, and **efficient**."
-✅ "Our method processes 1000 samples/sec with 95% accuracy."
+**无实质内容的三部分并行**：
+❌“我们的方法**快速**、**准确**、**高效**。”
+✅“我们的方法每秒处理 1000 个样本，准确率达 95%。”
 
-**Template transitions**:
-❌ "In recent years, deep learning has developed rapidly."
-✅ "Deep learning has achieved state-of-the-art performance in X since 2020."
+**模板转换**：
+❌“近年来，深度学习发展迅速。”
+✅“自 2020 年以来，深度学习在 X 领域取得了最先进的性能。”
 
-**Generic openings**:
-❌ "With the rapid development of technology..."
-✅ Start directly with the specific problem context.
+**通用空缺**：
+❌“随着科技的飞速发展……”
+✅ 直接从具体的问题背景开始。
 
-**Detection Pattern**: Phrases that could apply to any paper in any field.
+**检测模式**：可以适用于任何领域任何论文的短语。
 
-### Category 4: Vague Quantification (模糊量化)
+### 第四类：模糊量化（模糊量化）
 
-| ❌ Vague | ✅ Specific |
+|❌ 模糊|✅ 具体|
 |----------|------------|
-| many studies | three recent studies [1-3] |
-| numerous experiments | experiments on X datasets |
-| substantial gain | 12% improvement |
-| the majority | 78% of cases |
-| significantly better | outperforms by p<0.01 |
+|许多研究|最近的三项研究 [1-3]|
+|大量的实验|X数据集上的实验|
+|实质性的收获|提高 12%|
+|大多数|78% 的案例|
+|明显更好|表现优于 p<0.01|
 
-**Detection Pattern**: Quantifiers without actual numbers or references.
+**检测模式**：没有实际数字或参考的量词。
 
-### Category 5: Template Introductions (模板引言)
+### 第五类：模板介绍（模板引言）
 
-❌ "Time series forecasting is an important problem with wide applications."
-✅ "Time series forecasting is critical for supply chain optimization [1], energy management [2], and financial planning [3]."
+❌“时间序列预测是一个具有广泛应用的重要问题。”
+✅ “时间序列预测对于供应链优化 [1]、能源管理 [2] 和财务规划 [3] 至关重要。”
 
-❌ "Machine learning has revolutionized many fields."
-✅ "Machine learning has improved prediction accuracy in healthcare [1], manufacturing [2], and finance [3]."
+❌“机器学习已经彻底改变了许多领域。”
+✅ “机器学习提高了医疗保健 [1]、制造 [2] 和金融 [3] 领域的预测准确性。”
 
-**Detection Pattern**: Broad generalizations that could be in any textbook.
-
----
-
-## Structural-Level Traces (LLM-judgment)
-
-These are not word- or sentence-level tells — they live in document structure, so a
-script cannot catch them. Judge them by reading the whole draft, and tag any finding
-`[LLM]`.
-
-1. **Over-symmetric IMRAD** — every section padded to the same shape (introduction always 4 paragraphs; discussion always "recap + compare + implication + limitation"). Real papers are uneven: some sections short, some long. Signal: paragraph counts symmetric across sections.
-2. **Declarative scaffolding transitions** — "Having established X, we next turn to Y." / "With this in hand, we proceed to…". Real writing transitions implicitly: the next sentence enters the new topic without announcing it.
-3. **Stance-less discussion** — pros and cons each listed but none committed to. Real authors take a position ("we consider X more plausible than Y because…").
-4. **Uniform paragraph length** — 80% of paragraphs are 5–7 sentences. Real cadence varies: a 3-sentence emphasis paragraph next to a 10-sentence argument.
-
-**How to fix**: break the symmetry — merge thin paragraphs, split overloaded ones, delete announced transitions, and make the discussion commit to a view.
+**检测模式**：任何教科书中都可以出现的广泛概括。
 
 ---
 
-## Section-Specific Guidelines
+## 结构级痕迹（LLM-判断）
 
-### Abstract (摘要)
+这些不是单词或句子级别的讲述——它们存在于文档结构中，所以
+脚本无法捕获它们。通过阅读整个草稿来判断它们，并标记任何发现
+`[LLM]`。
 
-**Structure**: Purpose → Method → Key Results (with numbers) → Conclusion
+1. **过度对称的 IMRAD** — 每个部分都填充为相同的形状（介绍总是 4 段；讨论总是“回顾 + 比较 + 暗示 + 限制”）。真正的论文参差不齐：有些部分短，有些部分长。信号：段落计数在各节之间对称。
+2. **声明式脚手架转换** — “建立 X 后，我们接下来转向 Y。” /“有了这个，我们就继续……”。真正的写作是隐式过渡的：下一句话不经意间就进入了新的主题。
+3. **无立场的讨论**——各自列出了优点和缺点，但没有人承诺。真正的作者采取立场（“我们认为 X 比 Y 更合理，因为……”）。
+4. **统一的段落长度** — 80% 的段落由 5-7 个句子组成。真正的节奏各不相同：一个 3 句话的强调段落，旁边是一个 10 句话的论证。
 
-**Common AI Traps**:
-- ❌ "We propose a novel approach for..."
-- ✅ "We propose an attention-based mechanism for..."
+**如何修复**：打破对称性 - 合并薄段落，拆分超载段落，删除已宣布的过渡，并使讨论提交到一个视图。
 
-- ❌ "Experimental results show significant improvements."
-- ✅ "On dataset X, our method reduces MAE by 12\% compared to the baseline."
+---
 
-- ❌ "This work has important implications for..."
-- ✅ "This method enables real-time forecasting with <10ms latency."
+## 特定部分指南
 
-**Constraints**:
-- No generic claims ("novel", "significant", "important") without specifics
-- Include concrete numbers for key results
-- State specific contributions, not general value
+### 摘要（摘要）
 
-**Example**:
+**结构**：目的→方法→关键结果（带数字）→结论
+
+**常见的人工智能陷阱**：
+- ❌“我们提出了一种新颖的方法......”
+- ✅“我们提出了一种基于注意力的机制......”
+
+- ❌“实验结果显示显着改善。”
+- ✅ “在数据集 X 上，与基线相比，我们的方法将 MAE 降低了 12%。”
+
+- ❌“这项工作对......具有重要意义”
+- ✅“此方法可以实现延迟 <10 毫秒的实时预测。”
+
+**限制**：
+- 没有具体细节的通用声明（“新颖”、“重要”、“重要”）
+- 包括关键结果的具体数字
+- 说明具体贡献，而不是一般价值
+
+**例子**：
 ```latex
 % ❌ AI-like
 This paper proposes a novel deep learning approach for time series
@@ -216,26 +216,26 @@ the attention mechanism improves long-term dependency capture.
 
 ---
 
-### Introduction (引言)
+### 简介（引言）
 
-**Structure**: Importance → Gap → Contribution → Organization
+**结构**：重要性→差距→贡献→组织
 
-**Common AI Traps**:
-- ❌ "Time series forecasting plays an important role in modern society."
-- ✅ "Time series forecasting is critical for energy grid optimization [1]."
+**常见的人工智能陷阱**：
+- ❌“时间序列预测在现代社会中发挥着重要作用。”
+- ✅ “时间序列预测对于能源网格优化至关重要 [1]。”
 
-- ❌ "However, existing methods have limitations."
-- ✅ "However, existing methods fail to capture long-term dependencies in noisy environments [2, 3]."
+- ❌“然而，现有方法有局限性。”
+- ✅ “然而，现有方法无法捕获嘈杂环境中的长期依赖关系 [2, 3]。”
 
-- ❌ "Our main contributions are as follows:"
-- ✅ "This paper makes three contributions:"
+- ❌“我们的主要贡献如下：”
+- ✅“这篇论文做出了三个贡献：”
 
-**Contribution Statement Rules**:
-- Each contribution must be verifiable
-- Avoid "novel", "first", "state-of-the-art" without evidence
-- State what you did, not how important it is
+**贡献声明规则**：
+- 每项贡献都必须是可验证的
+- 避免在没有证据的情况下使用“新颖”、“第一”、“最先进”
+- 说明你做了什么，而不是它有多重要
 
-**Example**:
+**例子**：
 ```latex
 % ❌ AI-like
 Time series forecasting is very important. Many researchers study this
@@ -252,27 +252,27 @@ reduces prediction error by 12\% compared to standard Transformers.
 
 ---
 
-### Related Work (相关工作)
+### 相关工作（相关工作）
 
-**Structure**: Categorize → Compare → Position
+**结构**：分类→比较→位置
 
-**Common AI Traps**:
-- ❌ "Smith et al. proposed a method. It is good."
-- ✅ "Smith et al. [1] proposed X, which achieves Y accuracy on dataset Z."
+**常见的人工智能陷阱**：
+- ❌“Smith等人提出了一个方法，很好。”
+- ✅“Smith 等人 [1] 提出了 X，它在数据集 Z 上实现了 Y 精度。”
 
-- ❌ "Existing methods can be divided into two types: A and B."
-- ✅ "Existing methods follow two paradigms: statistical approaches [1-3] and deep learning approaches [4-6]."
+- ❌“现有的方法可以分为两种：A和B。”
+- ✅“现有方法遵循两种范式：统计方法 [1-3] 和深度学习方法 [4-6]。”
 
-- ❌ "Our method is different from them."
-- ✅ "Unlike [1, 2], our method incorporates attention mechanisms to..."
+- ❌“我们的方法和他们不一样。”
+- ✅ “与 [1, 2] 不同，我们的方法结合了注意力机制......”
 
-**Guidelines**:
-- Group by approach/paradigm, not chronologically
-- Compare specific technical differences
-- State what you do differently
-- Avoid vague praise ("excellent", "outstanding")
+**指南**：
+- 按方法/范式分组，而不是按时间顺序分组
+- 比较具体的技术差异
+- 说明你的做法有何不同
+- 避免含糊的赞扬（“优秀”、“杰出”）
 
-**Example**:
+**例子**：
 ```latex
 % ❌ AI-like
 Many people have studied time series forecasting. Some use statistics,
@@ -290,27 +290,27 @@ accuracy with limited data.
 
 ---
 
-### Methods (方法)
+### 方法（方法）
 
-**Structure**: Overview → Details → Algorithm → Complexity
+**结构**：概述→细节→算法→复杂性
 
-**Common AI Traps**:
-- ❌ "We use a neural network. It is very powerful."
-- ✅ "We use a 3-layer LSTM with 256 hidden units."
+**常见的人工智能陷阱**：
+- ❌“我们使用神经网络。它非常强大。”
+- ✅“我们使用具有 256 个隐藏单元的 3 层 LSTM。”
 
-- ❌ "The algorithm works well."
-- ✅ "The algorithm converges within 100 epochs."
+- ❌“该算法运行良好。”
+- ✅“算法在 100 个时期内收敛。”
 
-- ❌ "The model has good performance."
-- ✅ "The model processes 1000 samples/second."
+- ❌“该模型具有良好的性能。”
+- ✅“模型每秒处理 1000 个样本。”
 
-**Guidelines**:
-- Provide implementation details for reproducibility
-- State hyperparameters and architecture choices
-- Include algorithm complexity if relevant
-- Focus on what you did, not how well it works (that's Results)
+**指南**：
+- 提供可重复性的实施细节
+- 状态超参数和架构选择
+- 如果相关，请包括算法复杂性
+- 专注于你所做的事情，而不是它的效果如何（这就是结果）
 
-**Example**:
+**例子**：
 ```latex
 % ❌ AI-like
 We use a deep learning model. The model has many layers and learns
@@ -325,49 +325,49 @@ on a single NVIDIA V100 GPU.
 
 ---
 
-### Experiments (实验)
+### 实验（实验）
 
-**Structure**: Setup → Datasets → Metrics → Baselines
+**结构**：设置→数据集→指标→基线
 
-**Common AI Traps**:
-- ❌ "We conducted extensive experiments."
-- ✅ "We evaluated on 5 datasets from UCR archive."
+**常见的人工智能陷阱**：
+- ❌“我们进行了广泛的实验。”
+- ✅“我们评估了 UCR 档案中的 5 个数据集。”
 
-- ❌ "We compared with many methods."
-- ✅ "We compared with 4 baselines: ARIMA [1], LSTM [2], Transformer [3], and Informer [4]."
+- ❌“我们比较了很多方法。”
+- ✅“我们与 4 个基线进行了比较：ARIMA [1]、LSTM [2]、Transformer [3] 和 Informer [4]。”
 
-- ❌ "The experimental setup is reasonable."
-- ✅ "We use 70%/15%/15% train/validation/test split."
+- ❌“实验设置合理。”
+- ✅“我们使用 70%/15%/15% 的训练/验证/测试分割。”
 
-**Guidelines**:
-- State what you actually did
-- List specific datasets and baselines
-- Describe evaluation metrics
-- Avoid subjective assessments ("reasonable", "comprehensive")
+**指南**：
+- 说明你实际做了什么
+- 列出特定数据集和基线
+- 描述评估指标
+- 避免主观评估（“合理”、“全面”）
 
 ---
 
-### Results (结果)
+### 结果 (结果)
 
-**Structure**: Main results → Ablation → Analysis
+**结构**：主要结果→消融→分析
 
-**Common AI Traps**:
-- ❌ "Our method performs much better than baselines."
-- ✅ "Our method reduces MAE by 12\% compared to the best baseline."
+**常见的人工智能陷阱**：
+- ❌“我们的方法比基线的表现要好得多。”
+- ✅“与最佳基线相比，我们的方法将 MAE 降低了 12%。”
 
-- ❌ "The results demonstrate the effectiveness of our method."
-- ✅ "Table 1 shows that our method achieves lowest MAE on 4/5 datasets."
+- ❌“结果证明了我们方法的有效性。”
+- ✅ “表 1 显示我们的方法在 4/5 数据集上实现了最低的 MAE。”
 
-- ❌ "We can see from Figure 2 that our method is superior."
-- ✅ "Figure 2 shows that our method maintains accuracy with 50% less training data."
+- ❌“从图 2 可以看出，我们的方法更优越。”
+- ✅“图 2 显示，我们的方法在训练数据减少 50% 的情况下仍保持了准确性。”
 
-**Guidelines**:
-- Report facts and numbers only
-- Don't explain why (that's Discussion)
-- Avoid interpretive language ("superior", "outperforms" without numbers)
-- Let tables/figures speak for themselves
+**指南**：
+- 仅报告事实和数字
+- 不要解释原因（这是讨论）
+- 避免解释性语言（没有数字的“优越”、“优于”）
+- 让表格/数字说明一切
 
-**Example**:
+**例子**：
 ```latex
 % ❌ AI-like
 The experimental results are shown in Table 1. Our method performs
@@ -383,51 +383,51 @@ reduces MAE by 12\% on average.
 
 ---
 
-### Discussion (讨论)
+### 讨论（讨论）
 
-**Structure**: Interpretation → Mechanism → Limitations → Future Work
+**结构**：解释→机制→局限性→未来的工作
 
-**Common AI Traps**:
-- ❌ "The good performance proves our method is excellent."
-- ✅ "The improved accuracy suggests that attention mechanisms capture long-term dependencies."
+**常见的人工智能陷阱**：
+- ❌“良好的性能证明我们的方法是优秀的。”
+- ✅“准确性的提高表明注意力机制捕获了长期依赖性。”
 
-- ❌ "Our method has no limitations."
-- ✅ "Our method requires more training time (2.3 hours vs 1.5 hours for baselines)."
+- ❌“我们的方法没有任何限制。”
+- ✅“我们的方法需要更多的训练时间（基线为 2.3 小时，而基线为 1.5 小时）。”
 
-- ❌ "Future work includes more experiments."
-- ✅ "Future work will explore the attention mechanism's interpretability."
+- ❌“未来的工作包括更多的实验。”
+- ✅“未来的工作将探索注意力机制的可解释性。”
 
-**Guidelines**:
-- Explain mechanisms, not just outcomes
-- Acknowledge failures and boundary conditions
-- State limitations honestly
-- Propose specific future work
-
----
-
-### Conclusion (结论)
-
-**Structure**: Summary → Answer research question → Future work
-
-**Common AI Traps**:
-- ❌ "In this paper, we proposed a novel method that achieved significant improvements."
-- ✅ "This paper proposed an attention-based mechanism that reduces MAE by 12\%."
-
-- ❌ "Our work has important theoretical and practical value."
-- ✅ "This work enables real-time forecasting with limited computational resources."
-
-- ❌ "In the future, we will continue to improve our method."
-- ✅ "Future work will extend this method to multivariate time series with missing data."
-
-**Guidelines**:
-- Answer the research question directly
-- No new results or claims
-- No new experiments
-- Specific, actionable future work
+**指南**：
+- 解释机制，而不仅仅是结果
+- 确认故障和边界条件
+- 诚实地陈述限制
+- 提出今后的具体工作
 
 ---
 
-## Output Format for De-AI Editing
+### 结论（结论）
+
+**结构**：总结→回答研究问题→未来的工作
+
+**常见的人工智能陷阱**：
+- ❌“在本文中，我们提出了一种新方法，取得了重大改进。”
+- ✅“这篇论文提出了一种基于注意力的机制，可以将 MAE 降低 12\%。”
+
+- ❌“我们的工作具有重要的理论和实践价值。”
+- ✅“这项工作可以利用有限的计算资源进行实时预测。”
+
+- ❌“未来，我们将不断改进我们的方法。”
+- ✅“未来的工作将将此方法扩展到具有缺失数据的多变量时间序列。”
+
+**指南**：
+- 直接回答研究问题
+- 没有新的结果或声明
+- 没有新的实验
+- 具体的、可操作的未来工作
+
+---
+
+## De-AI 编辑的输出格式
 
 ```latex
 % ============================================================
@@ -446,73 +446,73 @@ reduces MAE by 12\% on average.
 [revised source code]
 ```
 
-## Change Categories
+## 更改类别
 
-1. **Removed empty phrase**: Deleted vague adjective/adverb
-2. **Added specificity**: Replaced vague with concrete
-3. **Split long sentence**: Divided sentence >50 words
-4. **Reordered structure**: Improved logical flow
-5. **Downgraded claim**: Added appropriate hedging
-6. **Deleted redundancy**: Removed repetitive content
-7. **Added subject**: Inserted missing grammatical subject
-8. **Fixed template expression**: Replaced generic with specific
-
----
-
-## Detection Checklist (use with `deai_check.py --analyze`)
-
-### High-Priority AI Traces (Must Fix)
-- [ ] Adjectives without specifics: significant, comprehensive, effective, important
-- [ ] Absolute claims: obviously, clearly, necessarily, completely
-- [ ] Vague quantifiers: many, numerous, substantial, majority
-- [ ] Template phrases: in recent years, more and more, play an important role
-
-### Medium-Priority AI Traces (Should Fix)
-- [ ] Mechanical parallelisms without substance
-- [ ] Generic openings that apply to any paper
-- [ ] Over-confident predictions or claims
-- [ ] Three-part lists without specific content
-
-### Low-Priority AI Traces (Consider Fixing)
-- [ ] Repetitive sentence structures
-- [ ] Over-use of transition words
-- [ ] Passive voice where active is clearer
+1. **删除了空短语**：删除了模糊的形容词/副词
+2. **增加特异性**：用具体替换模糊
+3. **分割长句**：分割句子>50个字
+4. **重新排序的结构**：改进的逻辑流程
+5. **降级声明**：添加适当的对冲
+6. **删除冗余**：删除重复内容
+7. **添加主题**：插入缺少的语法主题
+8. **固定模板表达式**：用特定替换通用
 
 ---
 
-## Section-Wise AI Trace Density Scores
+## 检测清单（与 `deai_check.py --analyze` 配合使用）
 
-After running `deai_check.py --analyze`, prioritize sections with:
+### 高优先级 AI 跟踪（必须修复）
+- [ ] 没有具体细节的形容词：重要的、全面的、有效的、重要的
+- [ ] 绝对主张：明显、明显、必然、完全
+- [ ] 模糊量词：许多、众多、实质性、大多数
+- [ ] 模板短语：近年来越来越多，发挥着重要作用
 
-| Score | Action |
+### 中优先级 AI 跟踪（应修复）
+- [ ] 没有实质意义的机械平行
+- [ ] 适用于任何论文的通用开口
+- [ ] 过于自信的预测或主张
+- [ ] 无具体内容的三部分列表
+
+### 低优先级 AI 跟踪（考虑修复）
+- [ ] 重复的句子结构
+- [ ] 过度使用过渡词
+- [ ] 主动语态更清晰的被动语态
+
+---
+
+## 分段 AI 迹线密度分数
+
+运行 `deai_check.py --analyze` 后，使用以下内容确定各个部分的优先级：
+
+|分数|行动|
 |-------|--------|
-| >70% | Critical: Rewrite immediately |
-| 50-70% | High: Rewrite soon |
-| 30-50% | Medium: Review and revise |
-| <30% | Low: Minor polish only |
+| >70% |关键：立即重写|
+| 50-70% |高：很快重写|
+| 30-50% |媒介：审查和修改|
+| <30% |低：仅轻微抛光|
 
 ---
 
-## Quick Reference: Common Replacements
+## 快速参考：常见替代品
 
-| ❌ Remove | ✅ Replace With |
+|❌ 删除|✅ 替换为|
 |-----------|-----------------|
-| significant improvement | [specific metric + number] |
-| comprehensive study | analyze X, Y, Z |
-| effective solution | outperforms baseline by X% |
-| novel approach | extends X by introducing Y |
-| robust performance | maintains accuracy under [condition] |
-| clearly/obviously | evidence suggests / results indicate |
-| many studies | [number] studies [citations] |
-| in recent years | since [year] / in [specific period] |
-| more and more | increasingly / growing from X to Y |
-| play an important role | enables / is critical for / is essential to |
+|显着改善|[具体指标+数字]|
+|综合研究|分析 X、Y、Z|
+|有效的解决方案|优于基线 X%|
+|新颖的方法|通过引入 Y 来扩展 X|
+|稳健的性能|在[条件]下保持准确性|
+|显然/显然|证据表明/结果表明|
+|许多研究|[数量] 研究 [引用次数]|
+|最近几年|自[年份]/[特定时期]以来|
+|越来越多|越来越/从 X 到 Y 增长|
+|发挥重要作用|使/对于/至关重要/对于|
 
 ---
 
-## Bibliography
+## 参考书目
 
-This guide should be used together with:
-- [style-guide.md](../writing/style-guide.md): General academic writing rules
-- [common-errors.md](../writing/common-errors.md): Chinglish patterns to avoid
-- [catalog.md](../venues/catalog.md): Venue-specific requirements
+本指南应与以下各项一起使用：
+- [style-guide.md](../writing/style-guide.md)：一般学术写作规则
+- [common-errors.md](../writing/common-errors.md)：要避免的中式英语模式
+- [catalog.md](../venues/catalog.md)：期刊或会议特定要求

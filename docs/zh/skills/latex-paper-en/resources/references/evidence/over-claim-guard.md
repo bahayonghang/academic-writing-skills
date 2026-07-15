@@ -1,20 +1,20 @@
-# Over-Claim Guard
+# 超额声明保护
 
-Conservative-wording reference for English papers. The goal is **not** timid prose —
-it is to state evidence strength precisely: strong evidence earns strong wording,
-weak evidence gets weak wording.
+英文论文的保守措辞参考。目标不是**胆怯的散文——
+准确地陈述证据强度：有力的证据赢得有力的措辞，
+证据薄弱，措辞薄弱。
 
-## Boundary with `claim-evidence-contract.md`
+## 与 `claim-evidence-contract.md` 的边界
 
-- `claim-evidence-contract.md` decides **whether the visible evidence supports a claim**
-  (the strength ladder `unsupported → observed → supported → strong`).
-- This file decides **how to word a claim once its strength is known** (the verb/qualifier
-  to pick so the sentence does not outrun the evidence).
+- `claim-evidence-contract.md` 决定**可见证据是否支持主张**
+（力量阶梯`unsupported → observed → supported → strong`）。
+- 该文件决定**一旦知道其强度**如何表达声明（动词/限定词
+选择这样的句子不会超出证据）。
 
-Use them together: the contract sets the ceiling, this guide picks the wording under it.
-Where they appear to conflict, the contract wins (it is about substance, not phrasing).
+一起使用它们：合同设定上限，本指南选择其下的措辞。
+当它们出现冲突时，合同胜出（这是关于实质内容，而不是措辞）。
 
-## Certainty ladder (verbs, strongest → weakest)
+## 确定性阶梯（动词，最强 → 最弱）
 
 ```
 demonstrate / prove                         ← intervention + controlled experiment
@@ -30,112 +30,112 @@ may indicate / could suggest / appear to    ← marginal or predictive
 hint at / point toward                      ← very weak signal or hypothesis
 ```
 
-Pick the rung that matches the evidence. Do not climb a rung the data cannot reach.
+选择与证据相匹配的梯级。不要爬上数据无法到达的梯级。
 
-## Substitution tables
+## 替换表
 
-### 1. Causal (the most common over-claim: correlation stated as causation)
+### 1.因果关系（最常见的过度主张：相关性被表述为因果关系）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| caused by | associated with / linked to |
-| drives / driving | contributes to / is associated with |
-| determines | influences / shapes |
-| responsible for | implicated in / associated with |
-| results in | is followed by / co-occurs with |
-| proves that | indicates / provides evidence that |
+|引起的|与/链接到|
+|驱动/驾驶|有助于/与...相关|
+|决定|影响/形状|
+|负责|涉及/与...有关|
+|结果|随后/同时出现|
+|证明|表明/提供证据表明|
 
-Causal wording is allowed only with a controlled intervention (ablation, randomized
-assignment, A/B test), an instrumental-variable design, or an already-established
-mechanism your data reproduce. Otherwise use association wording.
+仅在受控干预（消融、随机
+作业、A/B 测试）、工具变量设计或已经建立的
+您的数据重现机制。否则使用关联措辞。
 
-### 2. Novelty / firstness (reviewers verify these in seconds)
+### 2.新颖性/首创性（审稿人在几秒钟内验证这些）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| the first to | the first, to our knowledge / among the first to |
-| novel (self-labeled) | name what is new; drop the label |
-| unprecedented | substantial / notable |
-| previously unknown | not extensively studied |
+|第一个到|据我们所知，第一个/第一个|
+|小说（自有标签）|说出新内容；放下标签|
+|空前的|实质性的/显着的|
+|以前未知的|没有广泛研究|
 
-### 3. Universality (one setting studied, all settings claimed)
+### 3. 普遍性（研究一种设置，声明所有设置）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| always / never | generally / rarely |
-| in all cases | in the cases studied |
-| universally | across the benchmarks evaluated |
-| any dataset | the datasets sampled |
+|总是/从不|一般/很少|
+|在所有情况下|在研究的案例中|
+|普遍地|跨越评估的基准|
+|任何数据集|采样的数据集|
 
-### 4. Effect size (vague magnitude word with no number)
+### 4. 效应大小（没有数字的模糊大小词）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| strong improvement | reduces error by X% |
-| large effect | β = X.XX (95% CI: …) |
-| significant gain | improved from X to Y (p = …) |
-| highly significant | p < 1 × 10⁻¹⁰ |
-| robust | consistent across N runs / stable under [perturbation] |
+|强有力的改进|误差减少 X%|
+|作用大|β = X.XX（95% CI：……）|
+|显着的收益|从 X 改进到 Y (p = ...)|
+|非常重要的|p < 1 × 10⁻1⁰|
+|强壮的|在 N 次运行中保持一致/在[扰动]下稳定|
 
-If the number itself carries the weight, drop the adjective — the number speaks.
+如果数字本身就有分量，那就去掉形容词——数字会说话。
 
-### 5. Temporal / inferred order (present data, past mechanism)
+### 5. 时间/推断顺序（当前数据，过去机制）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| X drove the change | the change is consistent with X |
-| occurred at time T | estimates suggest ~T (CI: …) |
-| migrated from A to B | the data are consistent with a path A→B |
+|X 推动了变革|变化与X一致|
+|发生在时间 T|估计表明〜T（CI：...）|
+|从A迁移到B|数据符合路径A→B|
 
-### 6. Application / impact (downstream uses not demonstrated here)
+### 6. 应用/影响（此处未展示下游用途）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| will revolutionize | has potential implications for |
-| will be widely used | may be useful for / could inform |
-| solves the problem of X | addresses one aspect of X |
-| ready for deployment | provides a candidate approach for [setting] |
+|将彻底改变|有潜在影响|
+|将被广泛使用|可能有用/可以告知|
+|解决了X的问题|解决 X 的一方面|
+|准备部署|为[设置]提供了一种候选方法|
 
-### 7. Comparison (disparaging prior work)
+### 7.比较（贬低以前的工作）
 
-| ❌ over-claim | ✅ conservative |
+|❌ 过度主张|✅ 保守|
 |---|---|
-| previous methods failed to | previous methods were limited by |
-| outperforms all prior work | compares favorably with [specific methods] |
-| resolves the long-standing debate | adds evidence to one side of the debate |
+|以前的方法都失败了|以前的方法受到以下限制|
+|优于所有先前的工作|与【具体方法】相比毫不逊色|
+|解决了长期存在的争论|为辩论的一方添加证据|
 
-## High-frequency trap phrases
+## 高频陷阱短语
 
-| trap | safe replacement |
+|陷阱|安全更换|
 |---|---|
-| "Our results demonstrate X." (X causal) | "Our results are consistent with X." |
-| "This is the first work to …" | "To our knowledge, among the first to …" |
-| "X plays a critical role in Y." | "X has been implicated in Y / may contribute to Y." |
-| "These findings have important implications for …" | "These findings provide a basis for further study of …" |
-| "X is a key driver of Y." | "X is associated with Y." |
-| "Strongly supports" | "Is consistent with / provides evidence in line with" |
+|“我们的结果证明了 X。” （X 因果）|“我们的结果与 X 一致。”|
+|“这是第一个作品……”|“据我们所知，最先……”|
+|“X 在 Y 中起着至关重要的作用。”|“X 与 Y 有牵连/可能对 Y 有贡献。”|
+|“这些发现对......具有重要意义”|“这些发现为进一步研究……提供了基础”|
+|“X 是 Y 的关键驱动力。”|“X 与 Y 相关。”|
+|“强烈支持”|“符合/提供符合的证据”|
 
-## Reverse calibration: when NOT to hedge
+## 反向校准：何时不进行对冲
 
-Hedging weak evidence is right; hedging strong evidence is timid. Use strong wording when:
+对冲弱证据是正确的；对冲有力的证据是胆怯。在以下情况下使用强硬措辞：
 
-- a controlled intervention (ablation / RCT / A-B) gives a causal result → `demonstrate`;
-- multiple methods / datasets / seeds replicate the result → `robustly`, with the evidence named;
-- an established mechanism is reproduced → `confirms` / `validates`;
-- a large effect with a strong statistic → strong wording **plus** the number.
+- 受控干预（消融/随机对照试验/A-B）给出因果结果 → `demonstrate`；
+- 多种方法/数据集/种子复制结果 → `robustly`，并命名证据；
+- 再现既定机制→`confirms` / `validates`;
+- 强大的统计效果→强大的措辞**加上**数字。
 
-## Self-check (scan after drafting a paragraph)
+## 自检（起草一段后扫描）
 
-- [ ] Used `first` / `novel`? Did you actually search the literature, or add "to our knowledge"?
-- [ ] Used `cause` / `drive` / `determine`? Is there an intervention? If not → `associated with`.
-- [ ] Used `all` / `always` / `universally`? Is the scope bounded to what you studied?
-- [ ] Used `significant` / `strong` / `substantial`? Is a number attached?
-- [ ] Listed implications you did not demonstrate? Add `may` / `could`.
-- [ ] Disparaged prior work? Reframe to "limited by", not "failed".
+- [ ] 用过的`first` / `novel`？您是否真的搜索过文献，或者添加了“据我们所知”？
+- [ ] 用过的`cause` / `drive` / `determine`？有干预吗？如果没有→`associated with`.
+- [ ] 用过的`all` / `always` / `universally`？范围是否限于您所学的内容？
+- [ ] 用过的`significant` / `strong` / `substantial`？附有号码吗？
+- [ ] 列出的含义您没有证明？添加`may` / `could`.
+- [ ] 贬低之前的工作？重新定义为“受限于”，而不是“失败”。
 
-## Script support
+## 脚本支持
 
-`deai_check.py` flags a focused set of unambiguous over-claim phrases (causal /
-firstness / universality / application) as `[Script]` LOW traces and points back to
-this guide. The script is a safety net for the obvious cases; the tables above cover
-the judgment calls it cannot make.
+`deai_check.py` 标记一组明确的过度声明短语（因果/
+首创性/通用性/应用）作为 `[Script]` 低跟踪并指向
+本指南。该脚本是针对明显情况的安全网；上面的表格涵盖了
+它无法做出判断。

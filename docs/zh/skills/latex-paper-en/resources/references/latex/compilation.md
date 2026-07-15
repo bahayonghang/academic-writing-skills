@@ -1,34 +1,36 @@
-# LaTeX Compilation Guide
+# LaTeX 编译指南
 
-## Compiler Selection
+## 编译器选择
 
 ### pdfLaTeX
-- **Best for**: English papers, fast compilation
-- **Limitations**: Poor CJK support, requires `CJKutf8` package
-- **Command**: `latexmk -pdf main.tex`
+- **最适合**：英文论文，快速编译
+- **限制**：CJK 支持较差，需要 `CJKutf8` 包
+- **命令**：`latexmk -pdf main.tex`
 
-### XeLaTeX (Recommended for Chinese)
-- **Best for**: Chinese documents, Unicode support, system fonts
-- **Packages**: `ctex`, `xeCJK`, `fontspec`
-- **Command**: `latexmk -xelatex main.tex`
+### XeLaTeX（推荐中文）
+- **最适合**：中文文档、Unicode 支持、系统字体
+- **套餐**：`ctex`, `xeCJK`, `fontspec`
+- **命令**：`latexmk -xelatex main.tex`
 
 ### LuaLaTeX
-- **Best for**: Modern features, Lua scripting, complex typography
-- **Note**: Actively maintained, recommended for future-proofing
-- **Command**: `latexmk -lualatex main.tex`
+- **最适合**：现代功能、Lua 脚本、复杂的排版
+- **注意**：积极维护，建议面向未来
+- **命令**：`latexmk -lualatex main.tex`
 
-## latexmk Configuration
+## 乳胶配置
 
-Create `.latexmkrc` in project root:
+在项目根目录中创建 `.latexmkrc`：
 
 ```perl
 # For XeLaTeX (Chinese documents)
 $pdf_mode = 5;  # xelatex
-$xelatex = 'xelatex -interaction=nonstopmode -shell-escape %O %S';
+$xelatex = 'xelatex -interaction=nonstopmode -no-shell-escape %O %S';
 
 # For pdfLaTeX (English papers)
 # $pdf_mode = 1;
-# $pdflatex = 'pdflatex -interaction=nonstopmode -shell-escape %O %S';
+# $pdflatex = 'pdflatex -interaction=nonstopmode -no-shell-escape %O %S';
+
+# Enable -shell-escape only for sources you have explicitly verified as trusted.
 
 # Bibliography
 $bibtex_use = 2;
@@ -41,9 +43,9 @@ $biber = 'biber %O %S';
 @generated_exts = (@generated_exts, 'synctex.gz', 'nav', 'snm', 'vrb');
 ```
 
-## Common Issues
+## 常见问题
 
-### Chinese Font Not Found
+### 找不到中文字体
 ```latex
 % Specify fonts explicitly
 \setCJKmainfont{SimSun}[BoldFont=SimHei, ItalicFont=KaiTi]
@@ -51,7 +53,7 @@ $biber = 'biber %O %S';
 \setCJKmonofont{FangSong}
 ```
 
-### Missing Package
+### 包裹丢失
 ```bash
 # TeX Live
 tlmgr install <package-name>
@@ -60,14 +62,14 @@ tlmgr install <package-name>
 # Or use MiKTeX Console
 ```
 
-### Bibliography Not Updating
+### 参考书目未更新
 ```bash
 # Force rebuild
 latexmk -C main.tex  # Clean all
 latexmk -xelatex main.tex  # Rebuild
 ```
 
-## Watch Mode (Continuous Compilation)
+## 观看模式（连续编译）
 
 ```bash
 # Auto-recompile on file changes
@@ -77,12 +79,12 @@ latexmk -xelatex -pvc main.tex
 latexmk -xelatex -pvc -view=pdf main.tex
 ```
 
-## Cross-Platform Notes
+## 跨平台笔记
 
-### Windows
-- Install MiKTeX or TeX Live
-- Use PowerShell or CMD
-- Path: Use forward slashes or escaped backslashes
+### 视窗
+- 安装 MiKTeX 或 TeX Live
+- 使用 PowerShell 或 CMD
+- 路径：使用正斜杠或转义反斜杠
 
 ### Linux
 ```bash

@@ -24,11 +24,13 @@ Create `.latexmkrc` in project root:
 ```perl
 # For XeLaTeX (Chinese documents)
 $pdf_mode = 5;  # xelatex
-$xelatex = 'xelatex -interaction=nonstopmode -shell-escape %O %S';
+$xelatex = 'xelatex -interaction=nonstopmode -no-shell-escape %O %S';
 
 # For pdfLaTeX (English papers)
 # $pdf_mode = 1;
-# $pdflatex = 'pdflatex -interaction=nonstopmode -shell-escape %O %S';
+# $pdflatex = 'pdflatex -interaction=nonstopmode -no-shell-escape %O %S';
+
+# Enable -shell-escape only for sources you have explicitly verified as trusted.
 
 # Bibliography
 $bibtex_use = 2;

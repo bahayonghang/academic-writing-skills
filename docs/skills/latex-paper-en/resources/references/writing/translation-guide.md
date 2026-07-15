@@ -1,63 +1,63 @@
 # Academic Translation Guide
 
 
-## 目录
+## Table of contents
 
-- [Overview / 概述](#overview-概述)
-- [1. Translation Principles / 翻译原则](#1-translation-principles-翻译原则)
-  - [1.1 Core Principles / 核心原则](#11-core-principles-核心原则)
-  - [1.2 Academic Tone / 学术语气](#12-academic-tone-学术语气)
-- [2. Common Chinglish Corrections / 常见中式英语修正](#2-common-chinglish-corrections-常见中式英语修正)
-  - [2.1 Redundant Expressions / 冗余表达](#21-redundant-expressions-冗余表达)
-  - [2.2 Verb Improvements / 动词改进](#22-verb-improvements-动词改进)
-  - [2.3 Structure Improvements / 结构改进](#23-structure-improvements-结构改进)
-- [3. Section-Specific Guidelines / 各章节翻译指南](#3-section-specific-guidelines-各章节翻译指南)
-  - [3.1 Abstract / 摘要](#31-abstract-摘要)
-  - [3.2 Introduction / 引言](#32-introduction-引言)
-  - [3.3 Related Work / 相关工作](#33-related-work-相关工作)
-  - [3.4 Method / 方法](#34-method-方法)
-  - [3.5 Experiments / 实验](#35-experiments-实验)
-  - [3.6 Conclusion / 结论](#36-conclusion-结论)
-- [4. Tense Usage Summary / 时态使用总结](#4-tense-usage-summary-时态使用总结)
-- [5. Translation Workflow / 翻译工作流](#5-translation-workflow-翻译工作流)
-  - [Step 1: Terminology Extraction / 术语提取](#step-1-terminology-extraction-术语提取)
-  - [Step 2: Structure Mapping / 结构映射](#step-2-structure-mapping-结构映射)
-  - [Step 3: Sentence Translation / 句子翻译](#step-3-sentence-translation-句子翻译)
-  - [Step 4: Polish & Review / 润色审查](#step-4-polish-review-润色审查)
-- [6. Quick Reference Patterns / 快速参考模板](#6-quick-reference-patterns-快速参考模板)
-  - [6.1 Proposing Method / 提出方法](#61-proposing-method-提出方法)
-  - [6.2 Describing Results / 描述结果](#62-describing-results-描述结果)
-  - [6.3 Comparing Methods / 比较方法](#63-comparing-methods-比较方法)
-  - [6.4 Analyzing Results / 分析结果](#64-analyzing-results-分析结果)
-- [7. Domain-Specific Notes / 领域特定说明](#7-domain-specific-notes-领域特定说明)
+- [Overview / Overview](#overview-概述)
+- [1. Translation Principles / Translation Principles](#1-translation-principles-翻译原则)
+  - [1.1 Core Principles / Core Principles](#11-core-principles-核心原则)
+  - [1.2 Academic Tone / Academic Tone](#12-academic-tone-学术语气)
+- [2. Common Chinglish Corrections / Common Chinese English Corrections](#2-common-chinglish-corrections-常见中式英语修正)
+  - [2.1 Redundant Expressions / Redundant Expressions](#21-redundant-expressions-冗余表达)
+  - [2.2 Verb Improvements / Verb Improvements](#22-verb-improvements-动词改进)
+  - [2.3 Structure Improvements / Structure Improvements](#23-structure-improvements-结构改进)
+- [3. Section-Specific Guidelines / Translation Guidelines for Each Chapter](#3-section-specific-guidelines-各章节翻译指南)
+  - [3.1 Abstract / Abstract](#31-abstract-摘要)
+  - [3.2 Introduction / Introduction](#32-introduction-引言)
+  - [3.3 Related Work / Related Work](#33-related-work-相关工作)
+  - [3.4 Method / Method](#34-method-方法)
+  - [3.5 Experiments / Experiments](#35-experiments-实验)
+  - [3.6 Conclusion / Conclusion](#36-conclusion-结论)
+- [4. Tense Usage Summary / Tense Usage Summary](#4-tense-usage-summary-时态使用总结)
+- [5. Translation Workflow / Translation Workflow](#5-translation-workflow-翻译工作流)
+  - [Step 1: Terminology Extraction / terminology extraction](#step-1-terminology-extraction-术语提取)
+  - [Step 2: Structure Mapping / Structure Mapping](#step-2-structure-mapping-结构映射)
+  - [Step 3: Sentence Translation / Sentence Translation](#step-3-sentence-translation-句子翻译)
+  - [Step 4: Polish & Review / Polish review](#step-4-polish-review-润色审查)
+- [6. Quick Reference Patterns / Quick Reference Templates](#6-quick-reference-patterns-快速参考模板)
+  - [6.1 Proposing Method / Proposing method](#61-proposing-method-提出方法)
+  - [6.2 Describing Results / Description results](#62-describing-results-描述结果)
+  - [6.3 Comparing Methods / Comparative Methods](#63-comparing-methods-比较方法)
+  - [6.4 Analyzing Results / Analysis results](#64-analyzing-results-分析结果)
+- [7. Domain-Specific Notes / Domain-specific notes](#7-domain-specific-notes-领域特定说明)
   - [Deep Learning Papers](#deep-learning-papers)
   - [Time Series Papers](#time-series-papers)
   - [Industrial Control Papers](#industrial-control-papers)
-- [Checklist / 检查清单](#checklist-检查清单)
+- [Checklist / Checklist](#checklist-检查清单)
 
 ---
 
-> 中英学术翻译指南 - 从中文草稿到英文论文
+> A guide to Chinese-English academic translation – from Chinese draft to English paper
 
-## Overview / 概述
+## Overview / Overview
 
-本指南帮助将中文学术草稿翻译为符合国际期刊/会议标准的英文论文。
-核心原则：**准确性 > 流畅性 > 简洁性**
+This guide helps translate Chinese academic drafts into English papers that meet international journal/conference standards.
+Core Principles: **Accuracy > Fluency > Simplicity**
 
 ---
 
-## 1. Translation Principles / 翻译原则
+## 1. Translation Principles / Translation Principles
 
-### 1.1 Core Principles / 核心原则
+### 1.1 Core Principles / Core Principles
 
-| 原则 | 说明 | 示例 |
+|in principle|illustrate|Example|
 |------|------|------|
-| **准确性** | 技术术语必须准确，不可意译 | 卷积 → convolution (非 rolling) |
-| **一致性** | 同一术语全文统一 | 不要混用 method/approach/technique |
-| **简洁性** | 避免冗余表达 | ❌ in order to → ✅ to |
-| **客观性** | 避免主观评价词 | ❌ very good → ✅ effective |
+|**accuracy**|Technical terms must be accurate and cannot be paraphrased|convolution → convolution (not rolling)|
+|**consistency**|The same term is unified throughout the text|Don't mix method/approach/technique|
+|**Simplicity**|Avoid redundant expressions|❌ in order to → ✅ to|
+|**objectivity**|Avoid subjective evaluation words|❌ very good → ✅ effective|
 
-### 1.2 Academic Tone / 学术语气
+### 1.2 Academic Tone / academic tone
 
 ```
 ❌ 避免:
@@ -73,51 +73,51 @@
 
 ---
 
-## 2. Common Chinglish Corrections / 常见中式英语修正
+## 2. Common Chinglish Corrections / Common Chinese English corrections
 
-### 2.1 Redundant Expressions / 冗余表达
+### 2.1 Redundant Expressions / redundant expressions
 
-| ❌ Chinglish | ✅ Academic English | 说明 |
+|❌ Chinglish|✅Academic English|illustrate|
 |--------------|---------------------|------|
-| in recent years | recently | 简化 |
-| more and more | increasingly | 简化 |
-| play an important role in | is crucial for / contributes to | 简化 |
-| make a contribution to | contribute to | 简化 |
-| have a great influence on | significantly affect | 简化 |
-| in order to | to | 简化 |
-| due to the fact that | because / since | 简化 |
-| a large number of | many / numerous | 简化 |
-| in the field of | in | 简化 |
-| it is worth noting that | notably | 简化 |
+|in recent years|recently|simplify|
+|more and more|increasingly|simplify|
+|play an important role in|is crucial for / contributes to|simplify|
+|make a contribution to|contribute to|simplify|
+|have a great influence on|significantly affect|simplify|
+|in order to|to|simplify|
+|due to the fact that|because / since|simplify|
+|a large number of|many / numerous|simplify|
+|in the field of|in|simplify|
+|it is worth noting that|notably|simplify|
 
-### 2.2 Verb Improvements / 动词改进
+### 2.2 Verb Improvements/verb improvements
 
-| ❌ Weak Verb | ✅ Strong Verb | Context |
+|❌Weak Verb|✅ Strong Verb|Context|
 |--------------|----------------|---------|
-| use | employ, utilize, leverage, adopt | 方法使用 |
-| get | obtain, achieve, acquire, derive | 获得结果 |
-| make | construct, develop, generate, create | 构建 |
-| do | perform, conduct, execute, carry out | 执行 |
-| show | demonstrate, illustrate, indicate, reveal | 展示 |
-| give | provide, offer, present, yield | 提供 |
-| have | possess, exhibit, contain | 具有 |
-| put forward | propose, present, introduce | 提出 |
+|use|employ, utilize, leverage, adopt|Method usage|
+|get|obtain, achieve, acquire, derive|Get results|
+|make|construct, develop, generate, create|build|
+|do|perform, conduct, execute, carry out|implement|
+|show|demonstrate, illustrate, indicate, reveal|exhibit|
+|give|provide, offer, present, yield|supply|
+|have|possess, exhibit, contain|have|
+|put forward|propose, present, introduce|propose|
 
-### 2.3 Structure Improvements / 结构改进
+### 2.3 Structure Improvements/structural improvements
 
-| ❌ Chinese Structure | ✅ English Structure |
+|❌ Chinese Structure|✅ English Structure|
 |---------------------|---------------------|
-| 本文提出了一种... | We propose... / This paper presents... |
-| 首先...然后...最后... | First,... Subsequently,... Finally,... |
-| 通过...实现了... | ... is achieved by/through... |
-| 与...相比，...更好 | Compared with..., ... outperforms... |
-| 实验结果表明... | Experimental results demonstrate that... |
+|This article proposes a...|We propose... / This paper presents...|
+|First...then...finally...|First,... Subsequently,... Finally,...|
+|Achieved by...|... is achieved by/through...|
+|is better than|Compared with..., ... outperforms...|
+|Experimental results show...|Experimental results demonstrate that...|
 
 ---
 
-## 3. Section-Specific Guidelines / 各章节翻译指南
+## 3. Section-Specific Guidelines / Translation Guidelines for Each Chapter
 
-### 3.1 Abstract / 摘要
+### 3.1 Abstract / Abstract
 
 ```
 结构: Background → Problem → Method → Results → Conclusion
@@ -135,7 +135,7 @@
 [Conclusion] Our approach achieves state-of-the-art performance.
 ```
 
-### 3.2 Introduction / 引言
+### 3.2 Introduction/Introduction
 
 ```
 结构: Context → Problem → Limitations → Contribution → Organization
@@ -151,7 +151,7 @@ The main contributions of this paper are summarized as follows:
 • Extensive experiments demonstrate that ...
 ```
 
-### 3.3 Related Work / 相关工作
+### 3.3 Related Work / related work
 
 ```
 时态: 现在完成时 + 过去时
@@ -165,7 +165,7 @@ The main contributions of this paper are summarized as follows:
 - 总结: Overall, In summary
 ```
 
-### 3.4 Method / 方法
+### 3.4 Method / method
 
 ```
 时态: 现在时 (描述方法本身)
@@ -181,7 +181,7 @@ where $x$ denotes the input, $W$ represents the weight matrix,
 and $b$ is the bias term.
 ```
 
-### 3.5 Experiments / 实验
+### 3.5 Experiments / Experiments
 
 ```
 时态:
@@ -201,7 +201,7 @@ and $b$ is the bias term.
 - 最优: achieves the best/lowest/highest
 ```
 
-### 3.6 Conclusion / 结论
+### 3.6 Conclusion / conclusion
 
 ```
 时态:
@@ -217,42 +217,42 @@ In future work, we plan to extend ...
 
 ---
 
-## 4. Tense Usage Summary / 时态使用总结
+## 4. Tense Usage Summary/Tense Usage Summary
 
-| Section | Tense | Example |
+|Section|Tense|Example|
 |---------|-------|---------|
-| Abstract - Background | Present | ... is an important task |
-| Abstract - Method | Present | We propose... |
-| Abstract - Results | Past | achieved, obtained |
-| Introduction - Background | Present | ... has attracted attention |
-| Introduction - Contribution | Present | We propose... |
-| Related Work - General | Present Perfect | have been proposed |
-| Related Work - Specific | Past | proposed, introduced |
-| Method | Present | consists of, computes |
-| Experiments - Setup | Past | was conducted |
-| Experiments - Results | Present | shows, demonstrates |
-| Conclusion - Summary | Past | proposed, presented |
-| Conclusion - Future | Future | will explore |
+|Abstract - Background|Present|... is an important task|
+|Abstract-Method|Present|We propose...|
+|Abstract-Results|Past|achieved, obtained|
+|Introduction-Background|Present|... has attracted attention|
+|Introduction - Contribution|Present|We propose...|
+|Related Work-General|Present Perfect|have been proposed|
+|Related Work-Specific|Past|proposed, introduced|
+|Method|Present|consists of, computes|
+|Experiments-Setup|Past|was conducted|
+|Experiments-Results|Present|shows, demonstrates|
+|Conclusion - Summary|Past|proposed, presented|
+|Conclusion - Future|Future|will explore|
 
 ---
 
-## 5. Translation Workflow / 翻译工作流
+## 5. Translation Workflow/Translation Workflow
 
-### Step 1: Terminology Extraction / 术语提取
+### Step 1: Terminology Extraction / terminology extraction
 ```
 1. 识别中文稿中的专业术语
 2. 查阅 terminology.md 确定标准译法
 3. 建立本文术语表，确保一致性
 ```
 
-### Step 2: Structure Mapping / 结构映射
+### Step 2: Structure Mapping / structure mapping
 ```
 1. 分析中文段落结构
 2. 调整为英文学术结构（主题句在前）
 3. 确保逻辑连接词使用正确
 ```
 
-### Step 3: Sentence Translation / 句子翻译
+### Step 3: Sentence Translation / Sentence Translation
 ```
 1. 识别主干（主谓宾）
 2. 处理修饰成分
@@ -260,7 +260,7 @@ In future work, we plan to extend ...
 4. 简化冗余表达
 ```
 
-### Step 4: Polish & Review / 润色审查
+### Step 4: Polish & Review / polish review
 ```
 1. 检查术语一致性
 2. 检查时态正确性
@@ -270,9 +270,9 @@ In future work, we plan to extend ...
 
 ---
 
-## 6. Quick Reference Patterns / 快速参考模板
+## 6. Quick Reference Patterns/Quick Reference Templates
 
-### 6.1 Proposing Method / 提出方法
+### 6.1 Proposing Method/Proposing method
 
 ```latex
 % 中文: 本文提出了一种基于...的...方法
@@ -281,7 +281,7 @@ This paper presents a [ADJ] approach to [PROBLEM] using [METHOD].
 In this work, we introduce [METHOD] that [BENEFIT].
 ```
 
-### 6.2 Describing Results / 描述结果
+### 6.2 Describing Results/Describing results
 
 ```latex
 % 中文: 实验结果表明，我们的方法取得了最好的效果
@@ -294,7 +294,7 @@ The proposed method achieves [VALUE] [METRIC], which is [X]% higher
 than the best baseline.
 ```
 
-### 6.3 Comparing Methods / 比较方法
+### 6.3 Comparing Methods/Comparison methods
 
 ```latex
 % 中文: 与传统方法相比，我们的方法具有以下优势
@@ -306,7 +306,7 @@ Unlike previous methods that [LIMITATION], our method [ADVANTAGE].
 While existing approaches [LIMITATION], we address this by [SOLUTION].
 ```
 
-### 6.4 Analyzing Results / 分析结果
+### 6.4 Analyzing Results / Analysis results
 
 ```latex
 % 中文: 这是因为...
@@ -322,34 +322,34 @@ An interesting observation is that [FINDING].
 
 ---
 
-## 7. Domain-Specific Notes / 领域特定说明
+## 7. Domain-Specific Notes / Domain-specific notes
 
 ### Deep Learning Papers
-- 模型名称保持原文（BERT, GPT, ResNet）
-- 超参数使用标准符号（$\alpha$, $\beta$, $\lambda$）
-- 损失函数用 $\mathcal{L}$ 表示
+- Model names remain original (BERT, GPT, ResNet)
+- Hyperparameters use standard notation ($\alpha$, $\beta$, $\lambda$）
+- The loss function is represented by $\mathcal{L}$
 
 ### Time Series Papers
-- 时间索引用 $t$，序列长度用 $T$ 或 $L$
-- 预测步长用 horizon 或 forecasting horizon
-- 历史窗口用 lookback window 或 historical window
+- The time index is $t$, and the sequence length is $T$ or $L$.
+- Use horizon or forecasting horizon for forecast step size
+- Use lookback window or historical window for historical window
 
 ### Industrial Control Papers
-- 控制变量用标准符号（$u$ 输入，$y$ 输出，$x$ 状态）
-- 强调实际应用场景和工业意义
-- 注意安全性和可靠性相关表述
+- Control variables use standard notation ($u$ input, $y$ output, $x$ state)
+- Emphasis on practical application scenarios and industrial significance
+- Pay attention to statements related to safety and reliability
 
 ---
 
-## Checklist / 检查清单
+## Checklist/Checklist
 
-翻译完成后，请检查：
+Once the translation is complete, please check:
 
-- [ ] 术语全文一致
-- [ ] 时态使用正确
-- [ ] 无 Chinglish 表达
-- [ ] 无冗余词汇
-- [ ] 学术语气恰当
-- [ ] 公式符号统一
-- [ ] 图表标题规范
-- [ ] 参考文献格式正确
+- [ ] Terminology consistent throughout the text
+- [ ] Use correct tenses
+- [ ] No Chinglish expression
+- [ ] No redundant vocabulary
+- [ ] Appropriate academic tone
+- [ ] Unification of formula symbols
+- [ ] Chart title specifications
+- [ ] Reference format is correct
