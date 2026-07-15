@@ -24,6 +24,14 @@ def _load_checker():
 checker = _load_checker()
 
 
+def test_resource_hash_normalizes_text_line_endings(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.md"
+    crlf = tmp_path / "crlf.md"
+    lf.write_bytes(b"# Guide\n\nBody\n")
+    crlf.write_bytes(b"# Guide\r\n\r\nBody\r\n")
+    assert checker.sha256(lf) == checker.sha256(crlf)
+
+
 def test_manifest_matches_live_public_inventory() -> None:
     entries = checker.load_manifest(MANIFEST_PATH)
     assert not checker.validate_inventory(entries, REPO_ROOT)

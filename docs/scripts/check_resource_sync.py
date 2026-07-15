@@ -24,6 +24,7 @@ KIND_SUFFIXES = {
     "agents": {".md"},
 }
 SOURCE_LOCALES = {"en", "zh", "neutral"}
+TEXT_RESOURCE_SUFFIXES = {".md", ".yaml", ".yml"}
 FENCE_RE = re.compile(r"^(`{3,}|~{3,})")
 HEADING_RE = re.compile(r"^(#{1,6})\s+")
 INLINE_CODE_RE = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
@@ -38,7 +39,14 @@ LATIN_RE = re.compile(r"[A-Za-z]")
 
 
 def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(_normalized_resource_bytes(path)).hexdigest()
+
+
+def _normalized_resource_bytes(path: Path) -> bytes:
+    content = path.read_bytes()
+    if path.suffix.lower() in TEXT_RESOURCE_SUFFIXES:
+        return content.replace(b"\r\n", b"\n")
+    return content
 
 
 def public_source_files(repo_root: Path = REPO_ROOT) -> list[tuple[str, str, Path]]:
@@ -294,9 +302,9 @@ def validate_targets(
         if not all(target.is_file() for target in targets.values()):
             continue
 
-        source_bytes = source.read_bytes()
-        en_bytes = targets["en"].read_bytes()
-        zh_bytes = targets["zh"].read_bytes()
+        source_bytes = _normalized_resource_bytes(source)
+        en_bytes = _normalized_resource_bytes(targets["en"])
+        zh_bytes = _normalized_resource_bytes(targets["zh"])
         source_locale = entry["sourceLocale"]
         if source_locale == "neutral":
             if en_bytes != source_bytes or zh_bytes != source_bytes:

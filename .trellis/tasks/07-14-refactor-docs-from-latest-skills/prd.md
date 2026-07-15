@@ -86,23 +86,23 @@
 
 ## Acceptance Criteria
 
-- [ ] AC1: 6 个技能概览页的模块/模式、主命令、输入、输出与当前 `SKILL.md`
+- [x] AC1: 6 个技能概览页的模块/模式、主命令、输入、输出与当前 `SKILL.md`
       一致，英文与中文页面逐项对应。
-- [ ] AC2: 首页、技能总览、quick start 和 usage 不再描述已删除或更名的能力，
+- [x] AC2: 首页、技能总览、quick start 和 usage 不再描述已删除或更名的能力，
       并能把常见任务路由到正确技能。
-- [ ] AC3: 所有由 `SKILL.md` 明确公开路由的 reference、template、example 和
+- [x] AC3: 所有由 `SKILL.md` 明确公开路由的 reference、template、example 和
       Markdown agent 说明均有可达的中英文文档入口；新增的 skill-routing、
       output/workflow detail、abstract/conclusion 等资料按所属技能接入。
-- [ ] AC4: 文档资源树、技能概览和 `docs/.vitepress/config.ts` 之间不存在失效链接、
+- [x] AC4: 文档资源树、技能概览和 `docs/.vitepress/config.ts` 之间不存在失效链接、
       孤立的公开资源或指向旧文件名的导航。
-- [ ] AC5: 每个公开 resource 都同时存在英文版和中文版；两版的标题层级、代码块、
+- [x] AC5: 每个公开 resource 都同时存在英文版和中文版；两版的标题层级、代码块、
       命令、路径、关键标识符和链接目标通过自动检查保持对齐，抽样人工复核确认译文
       没有降低约束强度或增加不存在的能力。
-- [ ] AC6: 建立最小可执行的一致性检查，能够在技能路由、公开资源、双语结构或
+- [x] AC6: 建立最小可执行的一致性检查，能够在技能路由、公开资源、双语结构或
       不可翻译 token 再次漂移时失败。
-- [ ] AC7: `npm --prefix docs run docs:build`、相关定向检查、`git diff --check`
+- [x] AC7: `npm --prefix docs run docs:build`、相关定向检查、`git diff --check`
       以及仓库适用的完整质量门禁通过。
-- [ ] AC8: 最终 diff 不包含任务开始前已有的 `README*` 或 Trellis 运行时改动。
+- [x] AC8: 最终 diff 不包含任务开始前已有的 `README*` 或 Trellis 运行时改动。
 
 ## Out of Scope
 

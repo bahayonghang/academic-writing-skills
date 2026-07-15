@@ -35,7 +35,7 @@ uv run python docs/scripts/check_resource_sync.py --write-manifest --inventory-o
 | `kind` | string | `references` / `templates` / `examples` / `agents` |
 | `source` | repo-relative path | 真实源文件，保持文件名大小写 |
 | `sourceLocale` | enum | `en` / `zh` / `neutral`，逐文件判定 |
-| `sourceSha256` | hex string | 当前源文件 SHA-256 |
+| `sourceSha256` | hex string | 当前源文件 SHA-256；Markdown/YAML 先将 CRLF 规范化为 LF |
 | `en` | repo-relative path | `docs/skills/<skill>/resources/<kind>/...` |
 | `zh` | repo-relative path | `docs/zh/skills/<skill>/resources/<kind>/...` |
 
@@ -46,7 +46,7 @@ uv run python docs/scripts/check_resource_sync.py --write-manifest --inventory-o
 `sourceLocale=en|zh` 的同语言页面必须与源文件一致；只有迁移到规范资源树后为保证
 链接可解析所必需的 Markdown 链接目标重写可以例外，链接标签和其他正文不得借机
 改写。另一语言页面做完整翻译，且两种语言的链接目标列表必须相同。
-`neutral` 资源两份都与源文件字节一致。Markdown 译文必须保留标题层级、代码块、
+`neutral` 资源两份在规范化文本换行后与源文件字节一致。Markdown 译文必须保留标题层级、代码块、
 inline code token 和表格形状；链接目标只能在两种语言中同步重写，并由 VitePress
 build 证明可解析。
 
@@ -65,6 +65,8 @@ build 证明可解析。
 | 旧目录或额外文件残留 | `unexpected or legacy resource` |
 
 `--inventory-only` 只用于核心契约建立阶段，不能作为技能翻译或最终 CI 的完成证明。
+文本资源哈希和同语言内容比较统一将 CRLF 规范化为 LF，避免同一 Git blob 因 Windows
+checkout 行尾策略不同而产生假漂移；其他字节差异仍必须失败。
 
 ## 5. Good / Base / Bad Cases
 
