@@ -52,6 +52,67 @@ Typst academic paper assistant for existing `.typ` manuscripts in English or Chi
 - Source-preserving suggestions that keep `@cite`, labels, math, and Typst structure intact by default.
 - Module-level findings that can feed later audit or submission workflows.
 
+## Public Resources
+
+### References
+
+- [Abstract Structure Guide](./resources/references/ABSTRACT_STRUCTURE.md)
+- [AI Tone Terms (Bilingual, Typst) — Reference](./resources/references/AI_TONE_TERMS.md)
+- [AI Tone Threshold Configuration (Typst, bilingual)](./resources/references/AI_TONE_THRESHOLDS.yaml)
+- [Best Practices](./resources/references/BEST_PRACTICES.md)
+- [Citation Style Guide](./resources/references/CITATION_STYLES.md)
+- [Citation Verification Guide](./resources/references/CITATION_VERIFICATION.md)
+- [Common Chinglish Errors in Academic Writing](./resources/references/COMMON_ERRORS.md)
+- [De-AI Writing Guide for Typst Academic Papers](./resources/references/DEAI_GUIDE.md)
+- [Journal Name Abbreviations](./resources/references/JOURNAL_ABBREVIATIONS.md)
+- [Journal Adaptation Workflow](./resources/references/JOURNAL_ADAPTATION_WORKFLOW.md)
+- [Module: Abstract](./resources/references/modules/ABSTRACT.md)
+- [Module: Adapt](./resources/references/modules/ADAPT.md)
+- [Module: Bibliography](./resources/references/modules/BIBLIOGRAPHY.md)
+- [Figure and Table Caption Generation Guide (Typst)](./resources/references/modules/CAPTION.md)
+- [module:compile](./resources/references/modules/COMPILE.md)
+- [Module: De-AI editing](./resources/references/modules/DEAI.md)
+- [Role](./resources/references/modules/EXPERIMENT.md)
+- [Module: Academic Expression](./resources/references/modules/EXPRESSION.md)
+- [Module: Format Check](./resources/references/modules/FORMAT.md)
+- [Module: Syntax Analysis (English)](./resources/references/modules/GRAMMAR.md)
+- [Module: Literature Review Synthesis](./resources/references/modules/LITERATURE.md)
+- [Module: Logical connection and methodological depth](./resources/references/modules/LOGIC.md)
+- [Module: Pseudocode Review](./resources/references/modules/PSEUDOCODE.md)
+- [Module: References](./resources/references/modules/REFERENCES.md)
+- [Module: Analysis of long and difficult sentences](./resources/references/modules/SENTENCES.md)
+- [Module: Tables](./resources/references/modules/TABLES.md)
+- [Module: Title Optimization](./resources/references/modules/TITLE.md)
+- [Module: Translation (Chinese to English)](./resources/references/modules/TRANSLATION.md)
+- [Workflow & Best Practices](./resources/references/modules/WORKFLOW.md)
+- [Number and Unit Formatting Guide](./resources/references/NUMBER_UNIT_GUIDE.md)
+- [Over-Claim Guard](./resources/references/OVER_CLAIM_GUARD.md)
+- [Reviewer Perspective Guide](./resources/references/REVIEWER_PERSPECTIVE.md)
+- [Routing, Workflow, and Safety Notes (typst-paper)](./resources/references/skill-routing-notes.md)
+- [Academic Writing Style Guide (Typst)](./resources/references/STYLE_GUIDE.md)
+- [Three-Line Table Guide (Typst)](./resources/references/TABLE_GUIDE.md)
+- [Typst Academic Template Example](./resources/references/TEMPLATES.md)
+- [Tense Guide](./resources/references/TENSE_GUIDE.md)
+- [Academic Terminology Reference](./resources/references/TERMINOLOGY.md)
+- [Academic Translation Guide](./resources/references/TRANSLATION_GUIDE.md)
+- [Typst Syntax Reference for Academic Writing](./resources/references/TYPST_SYNTAX.md)
+- [Venue-Specific Requirements for Typst Papers](./resources/references/VENUES.md)
+- [Writing Philosophy for Academic Papers](./resources/references/WRITING_PHILOSOPHY.md)
+
+### Templates
+
+- [ACM Conferences and Journals (Typst)](./resources/templates/acm.md)
+- [IEEE Conferences and Journals (Typst)](./resources/templates/ieee.md)
+- [NeurIPS / ICML / ICLR (Typst)](./resources/templates/neurips.md)
+
+### Examples
+
+- [Example: Bibliography And Pseudocode](./resources/examples/bibliography-and-pseudocode.md)
+- [Example: Bibliography And Title](./resources/examples/bibliography-and-title.md)
+- [Example: Compile And Format](./resources/examples/compile-and-format.md)
+- [Example: Expression And Translation](./resources/examples/expression-and-translation.md)
+- [Literature Review Rewrite](./resources/examples/literature-review-rewrite.md)
+
 ## Common Requests
 
 ```text

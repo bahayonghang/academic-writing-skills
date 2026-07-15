@@ -133,6 +133,57 @@ Restate the idea in your own words with citation.
 ### Direct Quote (Sparingly)
 Only for definitions or exceptionally well-phrased ideas.
 
+### Anti-Citation-Stacking Rules (Introduction & Related Work)
+
+Stacking 3+ references without individual discussion is a common AI writing pattern and is unacceptable in top-tier venues. These rules apply to both Introduction and Related Work sections.
+
+**Rules:**
+1. **Max 2 clustered citations** without discussion per sentence
+   - ❌ "Many methods have been proposed @smith2020 @jones2021 @wang2022 @li2023 @chen2024."
+   - ✅ "@smith2020 proposed X for scenario A. Building on this, @jones2021 extended the approach to B, while @wang2022 addressed limitation C."
+
+2. **Every cited work must earn its citation** with at least one of:
+   - A summary of its core contribution (1 clause minimum)
+   - A comparison with another cited work
+   - A specific limitation that motivates your work
+
+3. **Narrative over parenthetical** in Introduction and Related Work:
+   - Use integral citations (author as subject) for key works: "@smith2020 demonstrated..."
+   - Reserve non-integral citations for well-established facts only: "Gradient descent is widely used @smith2020 @jones2021."
+
+4. **Funnel-appropriate density (Introduction):**
+   - Background paragraph (broad context): up to 2 clustered citations for established facts
+   - Problem statement paragraph: each citation must be individually discussed
+   - Gap/motivation paragraph: every cited limitation must reference a specific paper
+
+5. **Categorical discussion (Related Work):**
+   - Group works by methodology/approach, not chronologically
+   - Within each group, discuss each work's specific contribution and limitation
+   - Use comparative language between works: "Unlike @smith2020, @jones2021 addresses..."
+
+**Positive patterns (Introduction):**
+```typst
+@smith2020 proposed method X, achieving Y% accuracy on dataset Z.
+However, their approach assumes A, which limits applicability to B.
+@jones2021 relaxed this assumption by introducing C, but at the cost of D.
+In contrast, our method addresses both limitations by...
+```
+
+**Positive patterns (Related Work):**
+```typst
+*Transformer-based methods.* @vaswani2017 introduced the self-attention
+mechanism for sequence modeling. @li2019 adapted this architecture for
+time series, but their method requires $O(n^2)$ memory. @zhou2021 proposed
+ProbSparse attention to reduce complexity to $O(n log n)$, though at the
+cost of approximation error.
+```
+
+**Negative patterns (FORBIDDEN):**
+```typst
+Many researchers have studied this problem @a2020 @b2021 @c2022 @d2023 @e2024.
+Several methods have been proposed @f2020 @g2021 @h2022 @i2023 @j2024 @k2024.
+```
+
 ## Common Section Patterns
 
 ### Introduction

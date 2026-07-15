@@ -65,7 +65,7 @@ If a flagged line is one of these, it is a false positive — leave it.
 
 - This guide is about **tense**. Wording strength (causal / firstness / universality)
   lives in [OVER_CLAIM_GUARD.md](OVER_CLAIM_GUARD.md).
-- Surface grammar beyond tense lives in [modules/GRAMMAR.md](../modules/GRAMMAR.md).
+- Surface grammar beyond tense lives in [modules/GRAMMAR.md](modules/GRAMMAR.md).
 
 ## Script support
 

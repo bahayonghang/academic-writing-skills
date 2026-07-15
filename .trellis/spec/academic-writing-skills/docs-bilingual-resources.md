@@ -43,9 +43,12 @@ uv run python docs/scripts/check_resource_sync.py --write-manifest --inventory-o
 `examples/**/*.md`、`agents/**/*.md`。脚本、evals、fixtures 和
 `agents/openai.yaml` 不进入文档资源树。
 
-`sourceLocale=en|zh` 的同语言页面必须与源文件完全一致；另一语言页面做完整翻译。
+`sourceLocale=en|zh` 的同语言页面必须与源文件一致；只有迁移到规范资源树后为保证
+链接可解析所必需的 Markdown 链接目标重写可以例外，链接标签和其他正文不得借机
+改写。另一语言页面做完整翻译，且两种语言的链接目标列表必须相同。
 `neutral` 资源两份都与源文件字节一致。Markdown 译文必须保留标题层级、代码块、
-inline code token、链接目标和表格形状。
+inline code token 和表格形状；链接目标只能在两种语言中同步重写，并由 VitePress
+build 证明可解析。
 
 ## 4. Validation & Error Matrix
 
@@ -56,8 +59,9 @@ inline code token、链接目标和表格形状。
 | 源内容变化但未更新散列 | `sourceSha256 ... expected ...` |
 | 两条记录写入同一目标 | `duplicate target path` |
 | 单技能缺少任一语言页面 | `missing en/zh target` |
-| 同语言页面擅自改写源规则 | `<locale> target must match source exactly` |
-| 译文改动命令、代码、链接或表格结构 | 对应 Markdown shape error |
+| 同语言页面擅自改写链接目标以外的源规则 | `<locale> target must match source except rewritten link targets` |
+| 两种语言链接目标不同 | `bilingual link targets differ` |
+| 译文改动命令、代码或表格结构 | 对应 Markdown shape error |
 | 旧目录或额外文件残留 | `unexpected or legacy resource` |
 
 `--inventory-only` 只用于核心契约建立阶段，不能作为技能翻译或最终 CI 的完成证明。
@@ -76,7 +80,8 @@ inline code token、链接目标和表格形状。
   完全一致，并验证规范路径。
 - router 变化必须从 `SKILL.md` 解析，断言英中文 `usage.md` 同时包含新模块/模式。
 - 安装面变化必须断言两种语言列出全部公开技能。
-- Markdown 结构保护至少覆盖一个通过样例和一个技术 token 漂移失败样例。
+- Markdown 结构保护至少覆盖一个通过样例和一个技术 token 漂移失败样例；链接迁移
+  必须覆盖双语同步重写通过、双语目标漂移失败和源语言非链接正文漂移失败。
 - 最终运行单技能/全量 checker、VitePress build、Ruff、Pyright 与 pytest。
 
 ## 7. Wrong vs Correct

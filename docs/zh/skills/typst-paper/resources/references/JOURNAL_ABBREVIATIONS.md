@@ -1,78 +1,78 @@
-# Journal Name Abbreviations
+# 期刊名称缩写
 
-This reference provides ISO 4 abbreviation rules and common examples for journal name standardization in bibliographies.
+本参考提供了参考书目中期刊名称标准化的 ISO 4 缩写规则和常见示例。
 
-## ISO 4 Rules
+## ISO 4 规则
 
-1. Single-word titles are never abbreviated (e.g., "Nature", "Science", "Lancet")
-2. Each significant word is abbreviated independently using the ISSN LTWA (List of Title Word Abbreviations)
-3. Prepositions, articles, and conjunctions are omitted unless they are the first word
-4. Abbreviated words end with a period
+1. 单字标题绝不会缩写（例如“Nature”、“Science”、“Lancet”）
+2. 每个重要单词均使用 ISSN LTWA（标题词缩写列表）独立缩写
+3. 介词、冠词和连词除非是第一个词，否则被省略
+4. 缩写词以句点结尾
 
-## Common Word Abbreviations
+## 常用词缩写
 
-| Full Word | Abbreviation | Full Word | Abbreviation |
+|全文|缩写|全文|缩写|
 |-----------|-------------|-----------|-------------|
-| Abstracts | Abstr. | Academy | Acad. |
-| Advances | Adv. | American | Am. |
-| Analysis | Anal. | Annals | Ann. |
-| Annual | Annu. | Applied | Appl. |
-| Artificial | Artif. | Association | Assoc. |
-| Biomedical | Biomed. | Bulletin | Bull. |
-| Chemical | Chem. | Clinical | Clin. |
-| Communications | Commun. | Computational | Comput. |
-| Computer | Comput. | Conference | Conf. |
-| Control | Control | Design | Des. |
-| Electrical | Electr. | Electronic | Electron. |
-| Engineering | Eng. | Environmental | Environ. |
-| European | Eur. | Experimental | Exp. |
-| General | Gen. | Geophysical | Geophys. |
-| Industrial | Ind. | Information | Inf. |
-| Intelligence | Intell. | International | Int. |
-| Journal | J. | Learning | Learn. |
-| Letters | Lett. | Machine | Mach. |
-| Management | Manag. | Materials | Mater. |
-| Mathematics | Math. | Mechanical | Mech. |
-| Medical | Med. | Methods | Methods |
-| Molecular | Mol. | National | Natl. |
-| Networks | Netw. | Numerical | Numer. |
-| Optimization | Optim. | Physical | Phys. |
-| Proceedings | Proc. | Processing | Process. |
-| Psychology | Psychol. | Recognition | Recognit. |
-| Research | Res. | Review | Rev. |
-| Robotics | Robot. | Royal | R. |
-| Sciences | Sci. | Signal | Signal |
-| Society | Soc. | Software | Softw. |
-| Statistical | Stat. | Studies | Stud. |
-| Systems | Syst. | Technology | Technol. |
-| Transactions | Trans. | University | Univ. |
-| Vision | Vis. | | |
+|摘要|摘要。|学院|阿卡德。|
+|进展|副词。|美国人|是。|
+|分析|肛门。|志|安.|
+|年度的|安努。|应用|应用。|
+|人造的|阿蒂夫。|协会|副教授。|
+|生物医学|生物医学。|公告|公牛。|
+|化学|化学。|临床|临床。|
+|通讯|交流。|计算型|计算。|
+|电脑|计算。|会议|会议。|
+|控制|控制|设计|德斯。|
+|电气|电。|电子的|电子。|
+|工程|工程师。|环境的|环境。|
+|欧洲的|欧元。|实验性的|过期。|
+|一般的|将军|地球物理|地球物理学。|
+|工业的|工业。|信息|信息。|
+|智力|英特尔。|国际的|国际。|
+|杂志|J。|学习|学习。|
+|信件|莱特。|机器|马赫。|
+|管理|马纳格。|材料|马特。|
+|数学|数学。|机械的|机甲。|
+|医疗的|医学。|方法|方法|
+|分子|摩尔。|国家的|国家。|
+|网络|网络。|数值|数字。|
+|优化|最佳。|身体的|物理。|
+|会议记录|过程。|加工|过程。|
+|心理学|心理。|认出|认识。|
+|研究|资源。|审查|牧师。|
+|机器人技术|机器人。|皇家|R。|
+|科学|科学。|信号|信号|
+|社会|苏克。|软件|软件。|
+|统计|统计。|研究|螺柱。|
+|系统|系统。|技术|技术。|
+|交易|跨。|大学|大学。|
+|想象|维斯。| | |
 
-## Common Journal Abbreviation Examples
+## 常见期刊缩写示例
 
-| Full Name | ISO 4 Abbreviation |
+|姓名|ISO 4 缩写|
 |-----------|-------------------|
-| Nature | Nature |
-| Science | Science |
-| Nature Communications | Nat. Commun. |
-| Nature Machine Intelligence | Nat. Mach. Intell. |
-| IEEE Transactions on Pattern Analysis and Machine Intelligence | IEEE Trans. Pattern Anal. Mach. Intell. |
-| IEEE Transactions on Neural Networks and Learning Systems | IEEE Trans. Neural Netw. Learn. Syst. |
-| Journal of the American Chemical Society | J. Am. Chem. Soc. |
-| Journal of Machine Learning Research | J. Mach. Learn. Res. |
-| Artificial Intelligence | Artif. Intell. |
-| International Journal of Computer Vision | Int. J. Comput. Vis. |
-| Proceedings of the National Academy of Sciences | Proc. Natl. Acad. Sci. |
-| Annual Review of Computer Science | Annu. Rev. Comput. Sci. |
-| ACM Computing Surveys | ACM Comput. Surv. |
-| Physical Review Letters | Phys. Rev. Lett. |
-| Advanced Materials | Adv. Mater. |
+|自然|自然|
+|科学|科学|
+|自然通讯|纳特。交流。|
+|自然机器智能|纳特。马赫。英特尔。|
+|IEEE 模式分析和机器智能汇刊|IEEE 传输。模式肛门。马赫。英特尔。|
+|IEEE 神经网络和学习系统汇刊|IEEE 传输。神经网络。学习。系统。|
+|美国化学会杂志|J. Am.化学。苏克。|
+|机器学习研究杂志|J.马赫.学习。资源。|
+|人工智能|阿蒂夫。英特尔。|
+|国际计算机视觉杂志|国际。 J. 计算机。维斯。|
+|美国国家科学院院刊|过程。国家。阿卡德。科学。|
+|计算机科学年度评论|安努。修订版计算。科学。|
+|ACM 计算调查|ACM 计算。幸存者。|
+|物理评论快报|物理。莱特牧师。|
+|先进材料|副词。马特。|
 
-## External Resources
+## 外部资源
 
-- **ISSN LTWA database**: https://www.issn.org/services/online-services/access-to-the-ltwa/
-- **Web of Science JCR**: Use journal profile pages for official abbreviations
-- **CAS Source Index (CASSI)**: https://cassi.cas.org/ for chemistry journals
-- **NLM Catalog**: https://www.ncbi.nlm.nih.gov/nlmcatalog/ for biomedical journals (Vancouver style)
+- **ISSN LTWA 数据库**：https://www.issn.org/services/online-services/access-to-the-ltwa/
+- **Web of Science JCR**：使用期刊简介页面作为官方缩写
+- **CAS 来源索引 (CASSI)**：化学期刊的 https://cassi.cas.org/
+- **NLM 目录**：生物医学期刊的 https://www.ncbi.nlm.nih.gov/nlmcatalog/（温哥华风格）
 
-When in doubt, check the journal's own website or the ISSN LTWA database. Do not guess abbreviations — mark as `[Unverified]` if uncertain.
+如有疑问，请检查期刊自己的网站或 ISSN LTWA 数据库。不要猜测缩写 - 如果不确定，请标记为 `[Unverified]`。

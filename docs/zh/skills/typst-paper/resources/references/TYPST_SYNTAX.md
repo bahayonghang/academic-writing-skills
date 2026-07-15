@@ -1,58 +1,57 @@
-# Typst Syntax Reference for Academic Writing
+# 学术写作的 Typst 语法参考
 
+## 目录
 
-## Table of Contents
-
-- [Basic Syntax](#basic-syntax)
-  - [Text Formatting](#text-formatting)
-  - [Headings](#headings)
-  - [Paragraphs](#paragraphs)
-  - [Lists](#lists)
-- [Math](#math)
-  - [Inline Math](#inline-math)
-  - [Display Math](#display-math)
-  - [Common Math Symbols](#common-math-symbols)
-- [Figures and Tables](#figures-and-tables)
-  - [Figures](#figures)
-  - [Tables](#tables)
-- [Citations and References](#citations-and-references)
-  - [Citations](#citations)
-  - [Bibliography](#bibliography)
-  - [Citation Styles](#citation-styles)
-- [Page Setup](#page-setup)
-  - [Basic Page Configuration](#basic-page-configuration)
-  - [Two-Column Layout](#two-column-layout)
-  - [Headers and Footers](#headers-and-footers)
-- [Text Formatting](#text-formatting)
-  - [Font Settings](#font-settings)
-  - [Paragraph Settings](#paragraph-settings)
-  - [Heading Settings](#heading-settings)
-- [Cross-References](#cross-references)
-  - [Labels](#labels)
-  - [References](#references)
-- [Functions and Variables](#functions-and-variables)
-  - [Define Variables](#define-variables)
-  - [Define Functions](#define-functions)
-  - [Conditional Content](#conditional-content)
-- [Show Rules (Styling)](#show-rules-styling)
-  - [Style Headings](#style-headings)
-  - [Style Links](#style-links)
-  - [Style Figures](#style-figures)
-- [Comments](#comments)
-- [Special Characters](#special-characters)
-- [Code Blocks](#code-blocks)
-- [Common Patterns for Academic Papers](#common-patterns-for-academic-papers)
-  - [Title and Authors](#title-and-authors)
-  - [Abstract](#abstract)
-  - [Acknowledgments](#acknowledgments)
-- [Tips for Academic Writing](#tips-for-academic-writing)
-- [Resources](#resources)
+- [基本语法](#basic-syntax)
+  - [文本格式](#text-formatting)
+  - [标题](#headings)
+  - [段落](#paragraphs)
+  - [列表](#lists)
+- [数学](#math)
+  - [内联数学](#inline-math)
+  - [显示数学](#display-math)
+  - [常用数学符号](#common-math-symbols)
+- [图表](#figures-and-tables)
+  - [图](#figures)
+  - [表格](#tables)
+- [引文和参考文献](#citations-and-references)
+  - [引文](#citations)
+  - [参考书目](#bibliography)
+  - [引文样式](#citation-styles)
+- [页面设置](#page-setup)
+  - [基本页面配置](#basic-page-configuration)
+  - [两栏布局](#two-column-layout)
+  - [页眉和页脚](#headers-and-footers)
+- [文本格式](#text-formatting)
+  - [字体设置](#font-settings)
+  - [段落设置](#paragraph-settings)
+  - [标题设置](#heading-settings)
+- [交叉引用](#cross-references)
+  - [标签](#labels)
+  - [参考文献](#references)
+- [函数和变量](#functions-and-variables)
+  - [定义变量](#define-variables)
+  - [定义函数](#define-functions)
+  - [条件内容](#conditional-content)
+- [展示规则（造型）](#show-rules-styling)
+  - [样式标题](#style-headings)
+  - [样式链接](#style-links)
+  - [风格人偶](#style-figures)
+- [评论](#comments)
+- [特殊字符](#special-characters)
+- [代码块](#code-blocks)
+- [学术论文常见模式](#common-patterns-for-academic-papers)
+  - [标题和作者](#title-and-authors)
+  - [摘要](#abstract)
+  - [致谢](#acknowledgments)
+- [学术写作技巧](#tips-for-academic-writing)
+- [资源](#resources)
 
 ---
 
-## Basic Syntax
+## 基本语法
 
-### Text Formatting
+### 文本格式
 
 ```typst
 // Bold
@@ -68,7 +67,7 @@ _italic text_
 *_bold and italic_*
 ```
 
-### Headings
+### 标题
 
 ```typst
 = Level 1 Heading
@@ -77,7 +76,7 @@ _italic text_
 ==== Level 4 Heading
 ```
 
-### Paragraphs
+### 段落
 
 ```typst
 // Normal paragraph
@@ -93,7 +92,7 @@ First paragraph.
 Second paragraph.
 ```
 
-### Lists
+### 列表
 
 ```typst
 // Unordered list
@@ -117,9 +116,9 @@ Second paragraph.
 
 ---
 
-## Math
+## 数学
 
-### Inline Math
+### 内联数学
 
 ```typst
 The equation $x^2 + y^2 = z^2$ is the Pythagorean theorem.
@@ -127,13 +126,15 @@ The equation $x^2 + y^2 = z^2$ is the Pythagorean theorem.
 Variables $a$, $b$, and $c$ are defined as...
 ```
 
-### Display Math
+### 显示数学
 
 ```typst
 // Centered display math
 $ x = (a + b) / 2 $
 
-// Numbered equation with label
+// Equation numbering must be enabled first; the label only makes it
+// referenceable, it does NOT auto-number on its own.
+#set math.equation(numbering: "(1)")
 $ y = m x + c $ <eq:line>
 
 // Multi-line equations
@@ -141,7 +142,7 @@ $ x &= a + b \
   &= c + d $
 ```
 
-### Common Math Symbols
+### 常见的数学符号
 
 ```typst
 // Greek letters
@@ -177,9 +178,9 @@ $ f(x) = cases(
 
 ---
 
-## Figures and Tables
+## 图表
 
-### Figures
+### 人物
 
 ```typst
 // Basic figure
@@ -203,7 +204,7 @@ $ f(x) = cases(
 As shown in @fig:example, the method...
 ```
 
-### Tables
+### 表格
 
 ```typst
 // Basic table
@@ -235,9 +236,9 @@ As shown in @fig:example, the method...
 
 ---
 
-## Citations and References
+## 引文和参考文献
 
-### Citations
+### 引文
 
 ```typst
 // Single citation
@@ -249,11 +250,12 @@ Recent studies @smith2020 @jones2021 @wang2022 show...
 // Citation in parentheses
 The method has been studied extensively (@smith2020, @jones2021).
 
-// Suppress author name (numeric style)
-The method [1] shows...
+// Suppress author name (Typst uses #cite with a form, NOT a bare "[1]")
+The method #cite(<smith2020>, form: "normal") shows...
+// (Bare "[1]" is just literal text, not a Typst citation.)
 ```
 
-### Bibliography
+### 参考书目
 
 ```typst
 // BibTeX file
@@ -266,7 +268,7 @@ The method [1] shows...
 #bibliography(("refs1.bib", "refs2.bib"), style: "ieee")
 ```
 
-### Citation Styles
+### 引文样式
 
 ```typst
 // IEEE (numeric)
@@ -281,15 +283,16 @@ The method [1] shows...
 // MLA
 #bibliography("refs.bib", style: "mla")
 
-// GB/T 7714-2015 (Chinese)
-#bibliography("refs.bib", style: "gb-7714-2015")
+// GB/T 7714-2015 (Chinese). Built-in ids: gb-7714-2015-numeric /
+// -author-date / -note (GB/T 7714-2025 has no built-in hayagriva style yet).
+#bibliography("refs.bib", style: "gb-7714-2015-numeric")
 ```
 
 ---
 
-## Page Setup
+## 页面设置
 
-### Basic Page Configuration
+### 基本页面配置
 
 ```typst
 #set page(
@@ -302,18 +305,24 @@ The method [1] shows...
 )
 ```
 
-### Two-Column Layout
+### 两栏布局
 
 ```typst
+// `#set page(columns: 2)` sets the column count. `column-gutter` is NOT a
+// page parameter; control the inter-column gap with the columns() function.
 #set page(
   paper: "us-letter",
   margin: 1in,
   columns: 2,
-  column-gutter: 0.33in
 )
+
+// To customize the gutter, wrap the body:
+#columns(2, gutter: 0.33in)[
+  // body content
+]
 ```
 
-### Headers and Footers
+### 页眉和页脚
 
 ```typst
 #set page(
@@ -334,9 +343,9 @@ The method [1] shows...
 
 ---
 
-## Text Formatting
+## 文本格式
 
-### Font Settings
+### 字体设置
 
 ```typst
 #set text(
@@ -359,7 +368,7 @@ The method [1] shows...
 )
 ```
 
-### Paragraph Settings
+### 段落设置
 
 ```typst
 #set par(
@@ -370,7 +379,7 @@ The method [1] shows...
 )
 ```
 
-### Heading Settings
+### 标题设置
 
 ```typst
 // Numbered headings
@@ -385,9 +394,9 @@ The method [1] shows...
 
 ---
 
-## Cross-References
+## 交叉参考
 
-### Labels
+### 标签
 
 ```typst
 // Label a figure
@@ -403,7 +412,7 @@ $ x = y + z $ <eq:sum>
 #figure(table(...)) <tab:results>
 ```
 
-### References
+### 参考
 
 ```typst
 // Reference a figure
@@ -424,9 +433,9 @@ See #ref(<fig:example>, supplement: [Figure])
 
 ---
 
-## Functions and Variables
+## 函数和变量
 
-### Define Variables
+### 定义变量
 
 ```typst
 #let author = "John Smith"
@@ -436,7 +445,7 @@ See #ref(<fig:example>, supplement: [Figure])
 #author wrote #title.
 ```
 
-### Define Functions
+### 定义函数
 
 ```typst
 #let emphasis(body) = {
@@ -447,7 +456,7 @@ See #ref(<fig:example>, supplement: [Figure])
 This is #emphasis[important].
 ```
 
-### Conditional Content
+### 条件内容
 
 ```typst
 #let draft = true
@@ -463,9 +472,9 @@ This is #emphasis[important].
 
 ---
 
-## Show Rules (Styling)
+## 显示规则（样式）
 
-### Style Headings
+### 样式标题
 
 ```typst
 #show heading.where(level: 1): it => {
@@ -479,7 +488,7 @@ This is #emphasis[important].
 }
 ```
 
-### Style Links
+### 样式链接
 
 ```typst
 #show link: it => {
@@ -488,7 +497,7 @@ This is #emphasis[important].
 }
 ```
 
-### Style Figures
+### 风格人物
 
 ```typst
 #show figure: it => {
@@ -499,7 +508,7 @@ This is #emphasis[important].
 
 ---
 
-## Comments
+## 评论
 
 ```typst
 // Single-line comment
@@ -512,7 +521,7 @@ This is #emphasis[important].
 
 ---
 
-## Special Characters
+## 特殊字符
 
 ```typst
 // Non-breaking space
@@ -534,37 +543,37 @@ word...
 
 ---
 
-## Code Blocks
+## 代码块
 
-```typst
+````typst
 // Inline code
 The function `main()` is the entry point.
 
 // Code block
 ```python
-def hello():
-    print("Hello, world!")
+定义你好（）：
+print("你好，世界！")
 ```
-```
+````
 
 ---
 
-## Common Patterns for Academic Papers
+## 学术论文的常见模式
 
-### Title and Authors
+### 标题和作者
 
 ```typst
 #align(center)[
   #text(size: 16pt, weight: "bold")[
     Your Paper Title
   ]
-  
+
   #v(0.5em)
-  
+
   Author Name#super[1], Co-author Name#super[2]
-  
+
   #v(0.3em)
-  
+
   #text(size: 10pt)[
     #super[1]University Name, #super[2]Institution Name \
     #link("mailto:author@email.com")
@@ -572,7 +581,7 @@ def hello():
 ]
 ```
 
-### Abstract
+### 摘要
 
 ```typst
 #heading(outlined: false, numbering: none)[Abstract]
@@ -584,7 +593,7 @@ Your abstract text here...
 *Keywords:* keyword1, keyword2, keyword3
 ```
 
-### Acknowledgments
+### 致谢
 
 ```typst
 #heading(outlined: false, numbering: none)[Acknowledgments]
@@ -594,20 +603,20 @@ This work was supported by...
 
 ---
 
-## Tips for Academic Writing
+## 学术写作技巧
 
-1. **Use labels consistently**: `<fig:name>`, `<tab:name>`, `<eq:name>`, `<sec:name>`
-2. **Keep figures readable**: Use `width: 80%` or similar
-3. **Number equations**: Use `$ ... $ <eq:label>` for important equations
-4. **Consistent formatting**: Use `#set` rules at the beginning
-5. **Modular content**: Use `#include "section.typ"` for large documents
-6. **Version control**: Typst files are plain text, perfect for Git
+1. **一致地使用标签**：`<fig:name>`, `<tab:name>`, `<eq:name>`, `<sec:name>`
+2. **保持数字可读**：使用 `width: 80%` 或类似的
+3. **数字方程**：重要方程使用 `$ ... $ <eq:label>`
+4. **一致的格式**：开头使用 `#set` 规则
+5. **模块化内容**：对大型文档使用 `#include "section.typ"`
+6. **版本控制**：Typst 文件是纯文本，非常适合 Git
 
 ---
 
-## Resources
+## 资源
 
-- [Typst Documentation](https://typst.app/docs/)
-- [Typst Universe](https://typst.app/universe/) - Templates and packages
-- [Typst Tutorial](https://typst.app/docs/tutorial/)
-- [Typst Reference](https://typst.app/docs/reference/)
+- [打字员文档](https://typst.app/docs/)
+- [Typst Universe](https://typst.app/universe/) - 模板和包
+- [打字教程](https://typst.app/docs/tutorial/)
+- [打字员参考](https://typst.app/docs/reference/)

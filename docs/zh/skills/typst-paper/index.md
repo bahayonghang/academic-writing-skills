@@ -52,6 +52,67 @@
 - 默认保留 `@cite`、label、math 和 Typst 结构的源码友好建议。
 - 可进入后续 audit 或投稿流程的模块级 findings。
 
+## 公开资源
+
+### 参考资料
+
+- [抽象结构指南](./resources/references/ABSTRACT_STRUCTURE.md)
+- [AI Tone Terms (Bilingual, Typst) — Reference](./resources/references/AI_TONE_TERMS.md)
+- [AI Tone Threshold Configuration (Typst, bilingual)](./resources/references/AI_TONE_THRESHOLDS.yaml)
+- [最佳实践](./resources/references/BEST_PRACTICES.md)
+- [引文风格指南](./resources/references/CITATION_STYLES.md)
+- [引文验证指南](./resources/references/CITATION_VERIFICATION.md)
+- [学术写作中常见的中式英语错误](./resources/references/COMMON_ERRORS.md)
+- [Typst学术论文去AI写作指南](./resources/references/DEAI_GUIDE.md)
+- [期刊名称缩写](./resources/references/JOURNAL_ABBREVIATIONS.md)
+- [期刊改编工作流程](./resources/references/JOURNAL_ADAPTATION_WORKFLOW.md)
+- [模块：摘要](./resources/references/modules/ABSTRACT.md)
+- [模块：适应](./resources/references/modules/ADAPT.md)
+- [模块：参考书目](./resources/references/modules/BIBLIOGRAPHY.md)
+- [图形和表格标题生成指南 (Typst)](./resources/references/modules/CAPTION.md)
+- [模块：编译](./resources/references/modules/COMPILE.md)
+- [模块：去AI化编辑](./resources/references/modules/DEAI.md)
+- [角色](./resources/references/modules/EXPERIMENT.md)
+- [模块：学术表达](./resources/references/modules/EXPRESSION.md)
+- [模块：格式检查](./resources/references/modules/FORMAT.md)
+- [模块：语法分析（英文）](./resources/references/modules/GRAMMAR.md)
+- [模块：文献综述综合](./resources/references/modules/LITERATURE.md)
+- [模块：逻辑衔接与方法论深度](./resources/references/modules/LOGIC.md)
+- [模块：伪代码审查](./resources/references/modules/PSEUDOCODE.md)
+- [模块：参考文献](./resources/references/modules/REFERENCES.md)
+- [模块：长难句分析](./resources/references/modules/SENTENCES.md)
+- [模块：表格](./resources/references/modules/TABLES.md)
+- [模块：标题优化](./resources/references/modules/TITLE.md)
+- [模块：翻译（中译英）](./resources/references/modules/TRANSLATION.md)
+- [工作流程和最佳实践](./resources/references/modules/WORKFLOW.md)
+- [数字和单位格式指南](./resources/references/NUMBER_UNIT_GUIDE.md)
+- [超额声明保护](./resources/references/OVER_CLAIM_GUARD.md)
+- [审稿人观点指南](./resources/references/REVIEWER_PERSPECTIVE.md)
+- [路线、工作流程和安全注意事项（打字纸）](./resources/references/skill-routing-notes.md)
+- [学术写作风格指南（Typst）](./resources/references/STYLE_GUIDE.md)
+- [三行表格指南（打字员）](./resources/references/TABLE_GUIDE.md)
+- [Typst 学术模板示例](./resources/references/TEMPLATES.md)
+- [时态指南](./resources/references/TENSE_GUIDE.md)
+- [Academic Terminology Reference](./resources/references/TERMINOLOGY.md)
+- [Academic Translation Guide](./resources/references/TRANSLATION_GUIDE.md)
+- [学术写作的 Typst 语法参考](./resources/references/TYPST_SYNTAX.md)
+- [Typst 试卷的期刊或会议特定要求](./resources/references/VENUES.md)
+- [学术论文写作哲学](./resources/references/WRITING_PHILOSOPHY.md)
+
+### 模板
+
+- [ACM 会议和期刊 (Typst)](./resources/templates/acm.md)
+- [IEEE 会议和期刊 (Typst)](./resources/templates/ieee.md)
+- [NeurIPS / ICML / ICLR (Typst)](./resources/templates/neurips.md)
+
+### 示例
+
+- [示例：参考书目和伪代码](./resources/examples/bibliography-and-pseudocode.md)
+- [示例：参考书目和标题](./resources/examples/bibliography-and-title.md)
+- [示例：编译和格式化](./resources/examples/compile-and-format.md)
+- [示例：表达和翻译](./resources/examples/expression-and-translation.md)
+- [文献综述重写](./resources/examples/literature-review-rewrite.md)
+
 ## 常见请求
 
 ```text

@@ -110,6 +110,39 @@ def test_target_validation_supports_skill_and_full_scopes(tmp_path: Path) -> Non
     assert checker.validate_targets([entry], tmp_path, skill="demo")
 
 
+def test_target_validation_allows_synchronized_link_rewrites(tmp_path: Path) -> None:
+    source = tmp_path / "academic-writing-skills" / "demo" / "references" / "guide.md"
+    en = tmp_path / "docs" / "skills" / "demo" / "resources" / "references" / "guide.md"
+    zh = tmp_path / "docs" / "zh" / "skills" / "demo" / "resources" / "references" / "guide.md"
+    for path in (source, en, zh):
+        path.parent.mkdir(parents=True, exist_ok=True)
+    source_text = "# Guide\n\nSee [details](../references/detail.md).\n"
+    source.write_text(source_text, encoding="utf-8")
+    en.write_text("# Guide\n\nSee [details](../detail.md).\n", encoding="utf-8")
+    zh.write_text("# 指南\n\n参见 [详情](../detail.md)。\n", encoding="utf-8")
+    entry = {
+        "skill": "demo",
+        "kind": "references",
+        "source": source.relative_to(tmp_path).as_posix(),
+        "sourceLocale": "en",
+        "sourceSha256": checker.sha256(source),
+        "en": en.relative_to(tmp_path).as_posix(),
+        "zh": zh.relative_to(tmp_path).as_posix(),
+    }
+    assert not checker.validate_targets([entry], tmp_path, skill="demo")
+
+    zh.write_text("# 指南\n\n参见 [详情](../other.md)。\n", encoding="utf-8")
+    assert "bilingual link targets differ" in "\n".join(
+        checker.validate_targets([entry], tmp_path, skill="demo")
+    )
+
+    zh.write_text("# 指南\n\n参见 [详情](../detail.md)。\n", encoding="utf-8")
+    en.write_text("# Changed\n\nSee [details](../detail.md).\n", encoding="utf-8")
+    assert "must match source except rewritten link targets" in "\n".join(
+        checker.validate_targets([entry], tmp_path, skill="demo")
+    )
+
+
 def test_inventory_only_cli_passes() -> None:
     result = subprocess.run(
         [sys.executable, str(CHECKER_PATH), "--inventory-only"],

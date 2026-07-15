@@ -21,12 +21,12 @@
 
 ## Acceptance Criteria
 
-- [ ] 当前 50 个源资源均有规范英文页和中文页；无漏项、多余项或旧路径残留。
-- [ ] 两种语言的概览模块/模式、命令、输入和输出逐项对应当前 `SKILL.md`。
-- [ ] `check_resource_sync.py --skill typst-paper` 通过。
-- [ ] 标题层级、代码块、inline 技术 token、表格结构和相对链接检查通过。
-- [ ] 对 `references/skill-routing-notes.md`、`references/TYPST_SYNTAX.md`、PSEUDOCODE/REFERENCES/DEAI modules、IEEE template 完成逐段双语抽样复核。
-- [ ] VitePress build 与 `git diff --check` 通过。
+- [x] 当前 50 个源资源均有规范英文页和中文页；无漏项、多余项或旧路径残留。
+- [x] 两种语言的概览模块/模式、命令、输入和输出逐项对应当前 `SKILL.md`。
+- [x] `check_resource_sync.py --skill typst-paper` 通过。
+- [x] 标题层级、代码块、inline 技术 token、表格结构和相对链接检查通过。
+- [x] 对 `references/skill-routing-notes.md`、`references/TYPST_SYNTAX.md`、PSEUDOCODE/REFERENCES/DEAI modules、IEEE template 完成逐段双语抽样复核。
+- [x] VitePress build 与 `git diff --check` 通过。
 
 ## Out of Scope
 

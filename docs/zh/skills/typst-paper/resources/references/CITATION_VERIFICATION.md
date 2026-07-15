@@ -1,37 +1,37 @@
-# Citation Verification Guide
+# 引文验证指南
 
-## Table of Contents
-- [AI Citation Error Rate Warning](#ai-citation-error-rate-warning)
-- [6-Step Verification Workflow](#6-step-verification-workflow)
-- [API-Based Verification](#api-based-verification)
-- [Exa MCP Integration](#exa-mcp-integration)
-- [Citation Rules Quick Reference](#citation-rules-quick-reference)
-- [Typst-Specific: Hayagriva Format](#typst-specific-hayagriva-format)
+## 目录
+- [AI引文错误率警告](#ai-citation-error-rate-warning)
+- [6步验证工作流程](#6-step-verification-workflow)
+- [基于API的验证](#api-based-verification)
+- [Exa MCP 集成](#exa-mcp-integration)
+- [引文规则快速参考](#citation-rules-quick-reference)
+- [特定打字员：Hayagriva 格式](#typst-specific-hayagriva-format)
 
-## AI Citation Error Rate Warning
+## AI引文错误率警告
 
-**WARNING: AI-generated citations have a ~40% error rate.** Hallucinated references — papers that don't exist, wrong authors, incorrect years, fabricated DOIs — are a serious form of academic misconduct.
+**警告：人工智能生成的引文错误率约为 40%。** 幻觉参考文献——不存在的论文、错误的作者、不正确的年份、捏造的 DOI——是一种严重的学术不端行为。
 
-**The Golden Rule**: NEVER generate BibTeX entries from memory. ALWAYS fetch programmatically.
+**黄金法则**：永远不要从内存中生成 BibTeX 条目。始终以编程方式获取。
 
-| Action | Correct | Wrong |
+|行动|正确的|错误的|
 |--------|---------|-------|
-| Adding a citation | Search API → verify → fetch BibTeX | Write BibTeX from memory |
-| Uncertain about a paper | Mark as `[CITATION NEEDED]` | Guess the reference |
-| Can't find exact paper | Note: "placeholder — verify" | Invent similar-sounding paper |
+|添加引用|搜索 API → 验证 → 获取 BibTeX|从内存中编写 BibTeX|
+|对论文不确定|标记为`[CITATION NEEDED]` |猜猜参考|
+|找不到准确的论文|注：“占位符——验证”|发明类似的纸|
 
-## 6-Step Verification Workflow
+## 6 步验证工作流程
 
-- [ ] **Step 1**: Search using Exa MCP or Semantic Scholar API
-- [ ] **Step 2**: Verify paper exists in 2+ sources (Semantic Scholar + arXiv/CrossRef)
-- [ ] **Step 3**: Retrieve BibTeX via DOI (programmatically, not from memory)
-- [ ] **Step 4**: Verify the claim you're citing actually appears in the paper
-- [ ] **Step 5**: Add verified BibTeX to bibliography
-- [ ] **Step 6**: If ANY step fails → mark as placeholder, inform user
+- [ ] **第 1 步**：使用 Exa MCP 或 Semantic Sc​​holar API 进行搜索
+- [ ] **第 2 步**：验证论文存在于 2 个以上来源（语义学者 + arXiv/CrossRef）
+- [ ] **步骤 3**：通过 DOI 检索 BibTeX（以编程方式，而不是从内存中）
+- [ ] **第 4 步**：验证您引用的主张是否确实出现在论文中
+- [ ] **步骤 5**：将经过验证的 BibTeX 添加到参考书目中
+- [ ] **步骤 6**：如果任何步骤失败 → 标记为占位符，通知用户
 
-## API-Based Verification
+## 基于API的验证
 
-### Search with Semantic Scholar
+### 使用语义学者搜索
 
 ```python
 from semanticscholar import SemanticScholar
@@ -43,7 +43,7 @@ for paper in results:
     print(f"  DOI: {paper.externalIds.get('DOI', 'N/A')}")
 ```
 
-### Retrieve BibTeX via DOI
+### 通过 DOI 检索 BibTeX
 
 ```python
 import requests
@@ -62,7 +62,7 @@ bibtex = doi_to_bibtex("10.48550/arXiv.1706.03762")
 print(bibtex)
 ```
 
-### Verify via arXiv
+### 通过 arXiv 验证
 
 ```python
 import requests
@@ -80,45 +80,45 @@ def search_arxiv(query: str, max_results: int = 5):
         print(f"{title} [arXiv:{arxiv_id}]")
 ```
 
-## Exa MCP Integration
+## Exa MCP 集成
 
-For the best paper search experience, install Exa MCP:
+为了获得最佳论文搜索体验，请安装 Exa MCP：
 
 ```bash
 # Claude Code
 claude mcp add exa -- npx -y mcp-remote "https://mcp.exa.ai/mcp"
 ```
 
-Exa enables searches like:
-- "Find papers on RLHF for language models published after 2023"
-- "Search for transformer architecture papers by Vaswani"
+Exa 支持以下搜索：
+- “查找 2023 年后发表的语言模型的 RLHF 论文”
+- “搜索 Vaswani 的变压器架构论文”
 
-Then verify results with Semantic Scholar API and fetch BibTeX via DOI.
+然后使用 Semantic Sc​​holar API 验证结果并通过 DOI 获取 BibTeX。
 
-## Citation Rules Quick Reference
+## 引文规则快速参考
 
-| Situation | Action |
+|情况|行动|
 |-----------|--------|
-| Found paper, got DOI, fetched BibTeX | Use the citation |
-| Found paper, no DOI | Use arXiv BibTeX or manual entry from paper |
-| Paper exists but can't fetch BibTeX | Mark placeholder, inform user |
-| Uncertain if paper exists | Mark `[CITATION NEEDED]`, inform user |
-| "I think there's a paper about X" | **NEVER cite** — search first or mark placeholder |
+|找到论文，获取 DOI，获取 BibTeX|使用引文|
+|找到论文，没有 DOI|使用 arXiv BibTeX 或从纸上手动输入|
+|论文存在但无法获取 BibTeX|标记占位符，通知用户|
+|不确定论文是否存在|标记`[CITATION NEEDED]`，通知用户|
+|“我认为有一篇关于 X 的论文”|**切勿引用** — 首先搜索或标记占位符|
 
-## Placeholder Format
+## 占位符格式
 
-When you cannot verify a citation:
+当您无法验证引文时：
 
 ```typst
 // EXPLICIT PLACEHOLDER - requires human verification
 @PLACEHOLDER_author2024_verify_this  // TODO: Verify this citation exists
 ```
 
-**Always tell the user**: "I've marked [X] citations as placeholders that need verification."
+**始终告诉用户**：“我已将 [X] 引文标记为需要验证的占位符。”
 
-## Typst-Specific: Hayagriva Format
+## 特定类型：Hayagriva 格式
 
-Typst natively supports Hayagriva YAML format alongside BibTeX:
+Typst 本身支持 Hayagriva YAML 格式以及 BibTeX：
 
 ```yaml
 # references.yml (Hayagriva format)
@@ -141,11 +141,12 @@ vaswani2017:
 #bibliography("references.yml", style: "ieee")
 ```
 
-When verifying citations for Typst, the same 6-step workflow applies. The only difference is the bibliography format (`.yml` vs `.bib`).
+验证 Typst 的引文时，适用相同的 6 步工作流程。唯一的区别是参考书目格式（`.yml`与`.bib`).
 
-## API References
+## API 参考
 
-- [Semantic Scholar API](https://api.semanticscholar.org/api-docs/)
-- [CrossRef API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/)
+- [语义学者 API](https://api.semanticscholar.org/api-docs/)
+- [交叉引用 API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/)
 - [arXiv API](https://info.arxiv.org/help/api/basics.html)
-- [Hayagriva Format](https://github.com/typst/hayagriva/blob/main/docs/file-format.md)
+- [马头明王格式](https://github.com/typst/hayagriva/blob/main/docs/file-format.md)
+
