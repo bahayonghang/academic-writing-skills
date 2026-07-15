@@ -23,7 +23,7 @@ metadata:
       bibliography,
       structure,
     ]
-  version: "5.3.0"
+  version: "6.0.0"
   last_updated: "2026-07-12"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)

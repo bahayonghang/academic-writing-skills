@@ -106,6 +106,18 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 
 ---
 
+## Gotcha: paper-audit/SKILL.md 正文标题版本号受 contract 测试跟随 frontmatter
+
+> 来源：07-15-audit-fix-version-ci（2026-07-15）。
+
+**What**：`tests/contracts/test_skill_contracts.py::test_paper_audit_skill_argument_hint_matches_cli_contract` 会从 paper-audit/SKILL.md frontmatter 的 `version` 字段动态提取 `major.minor`，断言正文标题字面等于 `# Paper Audit Skill v{major}.{minor}`。这是六个 SKILL.md 里**唯一**在正文重复版本号的技能——只改 frontmatter（如全仓版本 bump）会让该测试红，且失败信息不会直接指向"正文标题没跟着改"。
+
+**Fix**：改 paper-audit `version` frontmatter 时，同 commit 检查并同步正文标题行；验证走 `uv run --extra dev python -m pytest tests/contracts/test_skill_contracts.py -q`（`test_skill_versions.py` 不检查正文标题，只跑它会漏掉这个坑）。
+
+**Why**：其余五个 SKILL.md 无此重复，版本 bump 时最容易漏改的就是这一个特例。
+
+---
+
 ## Gotcha: 别给 pytest 命令加 PYTHONIOENCODING=utf-8
 
 > 来源：07-10-thesis-zh-intro-optimization（2026-07-11）。

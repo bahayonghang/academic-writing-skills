@@ -19,7 +19,7 @@ metadata:
       zotero,
       bib,
     ]
-  version: "5.3.0"
+  version: "6.0.0"
   last_updated: "2026-07-09"
 argument-hint: "--bib library.bib --query QUERY"
 allowed-tools: Read, Bash(uv *)
