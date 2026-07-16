@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "共享 parser 逻辑先改 latex-paper-en canonical、typst 逐字节镜像、zh 保留分歧的总规则；bare import 永远拿到 EN 副本"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh/typst 副本测试必须 importlib 按路径加载 + 全量恢复 sys.path/sys.modules；检查器默认行为变化仅限误报/假绿修复例外且 commit 须声明；pytest 别加 PYTHONIOENCODING"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务发现登记表 A-TY-1/A-TY-2 的证据与处置；顺序约束 3：typst 与 en 同触对齐锁，并行时 en 先合"}
+{"file": ".trellis/tasks/07-15-audit-fix-typst-paper/prd.md", "reason": "本任务需求、行为裁决（协议相对 URL=注释）与回归测试清单"}
+{"file": ".trellis/tasks/07-15-audit-fix-typst-paper/design.md", "reason": "函数所有权声明、_strip_typst_line_comment 算法、五副本位点清单（file:line）、ALIGNMENTS +2 行、clean_text 块注释次序调换的原因"}
