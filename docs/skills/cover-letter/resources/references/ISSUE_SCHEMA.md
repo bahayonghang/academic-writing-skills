@@ -13,7 +13,8 @@ Simplified, field-compatible variant of `paper-audit/references/ISSUE_SCHEMA.md`
   "severity": "major|moderate|minor",
   "source_kind": "script|llm",
   "confidence": "high|medium|low|unverified",
-  "source_section": "header|opening|contributions|fit|declarations|closing",
+  "source_section": "header|opening|body|contributions|fit|declarations|closing",
+  "char_offset": 128,
   "manuscript_section_anchor": "abstract|introduction|results|conclusion|none",
   "evidence_anchor": [
     {
@@ -43,7 +44,11 @@ Simplified, field-compatible variant of `paper-audit/references/ISSUE_SCHEMA.md`
 ## Optional fields
 
 - `confidence` — high / medium / low / unverified; demote to `unverified` when the cover-letter quote cannot be located.
-- `source_section` — which logical section of the letter the issue lives in.
+- `source_section` — which logical section of the letter the issue lives in; deterministic
+  claim mapping emits `header`, `opening`, `body`, or `closing`, while semantic lanes may use
+  `contributions`, `fit`, or `declarations`.
+- `char_offset` — zero-based character offset of the claim in the analyzed letter text; `-1`
+  when the sentence cannot be located.
 - `manuscript_section_anchor` — which section of the manuscript the claim should be supported by; `none` when the issue is about the letter itself (e.g. tone) and not a claim-vs-manuscript alignment.
 - `evidence_anchor` / `claim_strength` / `missing_evidence` / `allowed_wording` / `forbidden_wording` — added when the issue is about claim accuracy. Follows the `CLAIM_EVIDENCE_CONTRACT.md` contract.
 - `quote_verified` — populated by `verify_letter_against_manuscript.py`.

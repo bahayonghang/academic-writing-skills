@@ -31,6 +31,11 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents. It i
 
 Compatibility aliases: `self-check` -> `quick-audit`; `review` -> `deep-review`.
 
+Deep-review dispatches five committee agents and six or more lane agents, then uses
+`synthesis_agent.md`. Mode-specific agents cover `gate`, `re-audit`, and post-consolidation
+revision suggestions. Specialized reviewer playbooks under `agents/` are reference material,
+not auto-dispatched; see the [agent roster](./resources/references/agent-roster.md).
+
 ## Minimum Inputs
 
 - `paper.tex`, `paper.typ`, or `paper.pdf`.

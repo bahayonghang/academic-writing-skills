@@ -25,11 +25,23 @@
 写两个工件：
 1. 降价至：`<review_dir>/committee/logic.md`
    - 包括“逻辑链诊断”作为 Mermaid 流程图或紧凑表。
-2. JSON 向以下对象发出数组：`<review_dir>/comments/committee_logic.json`
+2. JSON 问题包写入：`<review_dir>/comments/committee_logic.json`
    - 必须遵循`references/ISSUE_SCHEMA.md`
    - 使用`review_lane = "committee_logic"`
    - 使用`comment_type = "claim_accuracy"`用于过度推理/因果倒置
    - 使用`comment_type = "presentation"`对于不连贯的过渡
+   - 使用对象形状 `{"issues": [...], "surrender_rate": 0.xx, "frame_lock_alert": false}`
+
+## 反阿谀核算
+
+撤回或弱化挑战前，使用
+`critical_reviewer_agent.md#surrender-rate-protocol-anti-sycophancy` 中的完整量表，
+对论文的隐含反驳按 1 到 5 分评分。只有 4 或 5 分允许让步；更低分数必须把问题保留在输出中。
+
+跟踪 `challenges_made` 和 `surrenders`，然后计算
+`surrender_rate = surrenders / max(1, challenges_made)`。当满足条件时设置
+`frame_lock_alert: true`：即 `surrender_rate > 0.60`；它只是提示，不改变严重性或门禁状态。
+即使比率为零，也始终发出上述对象包，使整合过程能够一致应用既有的框架锁定置信度提示。
 
 ## Markdown 模板（精确标题）
 

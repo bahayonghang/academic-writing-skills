@@ -80,7 +80,7 @@
     {
       "claim": "First to apply X to Y",
       "prior_art": "Smith et al. (2024) applied X to Y in a different context",
-      "severity": "Major"
+      "severity": "major"
     }
   ],
   "strengths": [
@@ -91,6 +91,9 @@
   ]
 }
 ```
+
+如果要把本参考审稿手册的输出写入 `comments/*.json` 供整合使用，
+必须先把每个问题转换为 `references/ISSUE_SCHEMA.md` 格式。
 
 ## 质量门
 

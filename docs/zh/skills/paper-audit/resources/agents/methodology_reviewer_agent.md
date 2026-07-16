@@ -113,7 +113,7 @@
       "problem": "Results in Table 2 show small differences (0.3-1.8%) but no confidence intervals.",
       "why": "Without statistical testing, improvements may be within noise.",
       "suggestion": "Add bootstrap CIs or paired t-tests across 3+ random seeds.",
-      "severity": "Major",
+      "severity": "major",
       "location": "Section 5.2, Table 2"
     }
   ],
@@ -122,6 +122,9 @@
   ]
 }
 ```
+
+如果要把本参考审稿手册的输出写入 `comments/*.json` 供整合使用，
+必须先把每个问题转换为 `references/ISSUE_SCHEMA.md` 格式。
 
 ## 质量门
 

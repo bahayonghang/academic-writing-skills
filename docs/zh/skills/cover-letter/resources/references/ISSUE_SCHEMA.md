@@ -13,7 +13,8 @@
   "severity": "major|moderate|minor",
   "source_kind": "script|llm",
   "confidence": "high|medium|low|unverified",
-  "source_section": "header|opening|contributions|fit|declarations|closing",
+  "source_section": "header|opening|body|contributions|fit|declarations|closing",
+  "char_offset": 128,
   "manuscript_section_anchor": "abstract|introduction|results|conclusion|none",
   "evidence_anchor": [
     {
@@ -43,7 +44,10 @@
 ## 可选字段
 
 - `confidence` — 高/中/低/未验证；当无法找到投稿信报价时，降级为 `unverified`。
-- `source_section` — 问题位于信件的哪个逻辑部分。
+- `source_section` — 问题位于信件的哪个逻辑部分；确定性声明映射会发出
+  `header`、`opening`、`body` 或 `closing`，语义通道也可以使用
+  `contributions`、`fit` 或 `declarations`。
+- `char_offset` — 声明在所分析信件文本中的零基字符偏移量；无法定位句子时为 `-1`。
 - `manuscript_section_anchor` — 主张应得到论文稿件的哪一部分的支持； `none` 当问题是关于信件本身（例如语气）而不是权利要求与论文稿件的对齐时。
 - `evidence_anchor` / `claim_strength` / `missing_evidence` / `allowed_wording` / `forbidden_wording` - 当问题涉及声明准确性时添加。遵循 `CLAIM_EVIDENCE_CONTRACT.md` 合同。
 - `quote_verified` — 由 `verify_letter_against_manuscript.py` 填充。

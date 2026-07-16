@@ -29,7 +29,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 | `structure` | You need a chapter and section map | `uv run python academic-writing-skills/latex-thesis-zh/scripts/map_structure.py main.tex` |
 | `consistency` | Terms, abbreviations, or names drift across chapters | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py main.tex --terms` |
 | `template` | The thesis class or school template is unclear | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py main.tex` |
-| `bibliography` | BibTeX data or GB/T 7714 compliance needs checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
+| `bibliography` | BibTeX data or GB/T 7714 compliance needs checking; use `--standard gb7714-2025` for the standard effective from 2026-07-01 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | Thesis, chapter, or section titles need review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `deai` | Visible Chinese prose contains AI-writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
 | `logic` | The introduction funnel, chapter handoffs, mainline, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex` |

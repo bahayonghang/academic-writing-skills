@@ -107,7 +107,7 @@ When literature search results are provided as part of Phase 0 context:
       "problem": "The paper does not cite or compare with Chen et al. (2025) which addresses the same problem.",
       "why": "Without this comparison, novelty claims in Section 1 are unsubstantiated.",
       "suggestion": "Add Chen et al. to related work and include in experimental comparison if possible.",
-      "severity": "Major",
+      "severity": "major",
       "location": "Section 2.3, Section 5"
     }
   ],
@@ -116,6 +116,9 @@ When literature search results are provided as part of Phase 0 context:
   ]
 }
 ```
+
+If this reference playbook's output is written to `comments/*.json` for
+consolidation, convert each issue to `references/ISSUE_SCHEMA.md` first.
 
 ## Quality Gates
 

@@ -253,6 +253,22 @@ Suggested JSON spec:
 
 ## Edge cases
 
+### Colons in free text
+
+A compact token shaped like `name:value` is interpreted as a field filter when
+`name` starts with an ASCII letter or underscore. This includes unfamiliar names:
+`genotype:phenotype` becomes a filter on the field `genotype`, so the token is
+removed from the free-text query and does not contribute to relevance scoring.
+When that field is absent from every entry, `meta.parse_warnings` reports an
+`unknown_field_filter` warning.
+
+Tokens whose prefix starts with a digit do not match the field-filter syntax.
+For example, `10:30` remains free text. If a letter-prefixed colon token was meant
+as free text, replace the colon with a space (`genotype phenotype`). The relevance
+tokenizer already treats punctuation as a separator, so this preserves the terms
+used for scoring. Real fields such as `note:` and `title:` always remain filters
+and do not warn when the field exists in the library.
+
 ### Filter-only query (no topic words)
 
 When the user only wants to filter without a topic search, all matching entries receive a score of zero and the sort mode determines the order. Example:

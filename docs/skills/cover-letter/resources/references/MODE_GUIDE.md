@@ -2,9 +2,9 @@
 
 Per-mode workflow detail for the five cover-letter modes. The single command
 surface is `scripts/cover_letter.py --mode <mode>`; the only flags it accepts
-are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
-`--json`. `align-check` runs as a default capability inside `generate` and
-`optimize`.
+are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`),
+`--json`, and `--dedup-length` (journal-fit mode only; see Mode 2 and Mode 4).
+`align-check` runs as a default capability inside `generate` and `optimize`.
 
 ## Mode 1: `generate`
 
@@ -26,6 +26,12 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 6. **Default align-check integration**: if the synthesized letter is saved to a file, run `--mode align-check` against it; any `claim_accuracy` issue with `claim_strength: unsupported` must be resolved before presenting the letter.
 7. Run `--mode presubmission` on the final letter and surface findings (declarations, length, clichés, tone).
 
+Corresponding-author extraction trusts only an explicit `\corresponding{...}` or
+`\correspondingauthor{...}` command. IEEE `\thanks{...}` and acmart
+`\authornote{...}` prose intentionally fall back to the first parsed author: guessing from
+free text can mistake an email local part for a person's name. Confirm the corresponding
+author manually when those template-specific forms are used.
+
 **Output**: the cover letter text, plus `% PRESUBMISSION` and `% ALIGNCHECK` comment blocks listing any unresolved findings.
 
 ## Mode 2: `optimize`
@@ -46,6 +52,7 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 3. Claude proposes section-level rewrites as LaTeX-comment diff suggestions (never source edits), each anchored to a line in the original letter.
 4. Any rewrite that introduces a new claim must pass align-check (trace to manuscript evidence or be flagged for user verification).
 5. Re-run `--mode align-check` on proposed rewrites saved to a file to confirm no regression.
+6. If a `journal-fit` pass is also run in this session (optional; see the Mode Integration Matrix), pass `--dedup-length` so the two checks do not both report the same template `word_limit` — `optimize`'s own `presubmission` pass already reports length via its finer-grained two-tier `L1` check.
 
 **Output**: a LaTeX-comment review of the original letter with severity / priority / suggested rewrites.
 
@@ -79,6 +86,7 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 - `--letter <cover_letter.md|.tex>`
 - `--venue <venue-name>` (alias of `--journal`)
 - `--json` for structured output
+- `--dedup-length` (optional; default off): skip this mode's own word-count sub-check when a `presubmission` pass in the same session already reports length via its finer-grained `L1` check (see Mode 2 step 6 and the Mode Integration Matrix).
 
 **Workflow steps**:
 
@@ -86,13 +94,14 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 2. Read `templates/<venue>.md` for the tier and venue expectations.
 3. Read `references/JOURNAL_TIERS.md` for tier strategy.
 4. `journal_fit_check` scores four sub-axes:
-   - `scope_fit`: does the letter name the venue's scope dimensions?
+   - `scope_fit`: does the letter name the venue's scope dimensions? (top-journal tier: one matched keyword is enough for HIGH, reflecting the tight ~350-word budget; other tiers need two.)
    - `novelty_framing`: is the novelty pitch calibrated for the tier?
    - `evidence_density`: does claim density match what the venue expects?
-   - `format_compliance`: word count, required declarations, banned phrases.
+   - `format_compliance`: word count (skipped when `--dedup-length` is set), required declarations, banned phrases.
 5. Overall verdict = worst sub-axis (LOW anywhere → LOW; else MEDIUM if any MEDIUM; HIGH only when all four HIGH).
+6. A response with no `tier` in the active template's frontmatter is reported in `warnings` (defaults to mid-journal scoring).
 
-**Heuristic limitations (disclose to the user)**: `journal-fit` is a `[Script]` heuristic, not editorial judgment. `scope_fit` matches a small fixed keyword set per venue, so a well-targeted letter that phrases scope differently can read LOW; `evidence_density` counts only first-person claim sentences ("we report/show/..."), so passive or third-person framing undercounts. Treat the verdict as a prompt to check framing, not a gate. Manuscript content is not read in this mode.
+**Heuristic limitations (disclose to the user)**: `journal-fit` is a `[Script]` heuristic, not editorial judgment. `scope_fit` matches a small fixed keyword set per venue, so a well-targeted letter that phrases scope differently can read LOW; `evidence_density` counts `LETTER_CLAIM_PATTERNS` claim-bearing sentences (the same extractor `align-check` uses — first-person "we report/show/...", "our work," direction+number, deployment, and similar claim styles), so a letter that avoids all of those styles can still undercount. Treat the verdict as a prompt to check framing, not a gate. Manuscript content is not read in this mode.
 
 **Output**: per-axis verdict (HIGH / MEDIUM / LOW) with quotes as evidence; overall verdict; per-axis suggestions.
 
@@ -124,6 +133,8 @@ are `--mode`, `--manuscript`, `--letter`, `--journal` (alias `--venue`), and
 | `align-check`   | Always                           | Always                     | No                          | No                        |
 | `journal-fit`   | No                               | No                         | No                          | Always                    |
 | `presubmission` | No                               | No                         | Always                      | No                        |
+
+`generate` and `optimize`'s "Optional" `journal_fit_check` call always runs alongside a mandatory `presubmission_check` pass in the same session — pass `--dedup-length` to that `journal-fit` call so length is reported once (via `presubmission`'s `L1`), not twice.
 
 ## Routing Rules
 

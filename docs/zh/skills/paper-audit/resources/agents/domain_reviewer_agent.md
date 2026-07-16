@@ -107,7 +107,7 @@
       "problem": "The paper does not cite or compare with Chen et al. (2025) which addresses the same problem.",
       "why": "Without this comparison, novelty claims in Section 1 are unsubstantiated.",
       "suggestion": "Add Chen et al. to related work and include in experimental comparison if possible.",
-      "severity": "Major",
+      "severity": "major",
       "location": "Section 2.3, Section 5"
     }
   ],
@@ -116,6 +116,9 @@
   ]
 }
 ```
+
+如果要把本参考审稿手册的输出写入 `comments/*.json` 供整合使用，
+必须先把每个问题转换为 `references/ISSUE_SCHEMA.md` 格式。
 
 ## 质量门
 

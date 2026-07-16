@@ -27,9 +27,11 @@
 原始/建议文本对以及其他操作；产生
   `artifacts/data/revision_suggestions.json`
 
-## 专业深度审查代理
+## 参考审稿手册（不自动派发）
 
-阅读他们的文件以了解激活标准：
+这些文件保留了供委员会和审查通道提示复用的详细标准；当前工作流不会自动派发它们。
+其中的 A5-A7、B6-B10 和 C3-C5 标准仍由现行审查标准链接。
+完整派发接线属于后续任务 `paper-audit-specialized-reviewer-wiring`。
 
 - `critical_reviewer_agent.md`— 魔鬼代言人，带有 C3-C5 检查
 - `domain_reviewer_agent.md`— A1-A7 评估的领域专业知识

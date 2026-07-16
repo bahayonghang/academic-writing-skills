@@ -255,6 +255,18 @@ TimeMachine raw:true cite:both limit:1
 
 ## 边缘情况
 
+### 自由文本中的冒号
+
+当紧凑 token 形如 `name:value`，且 `name` 以 ASCII 字母或下划线开头时，它会被解释为
+字段过滤。这也适用于陌生字段名：`genotype:phenotype` 会变成对 `genotype` 字段的过滤，
+因此该 token 会从自由文本查询中移除，不再参与相关性评分。当所有条目都没有该字段时，
+`meta.parse_warnings` 会报告 `unknown_field_filter` 警告。
+
+前缀以数字开头的 token 不匹配字段过滤语法，例如 `10:30` 仍保留为自由文本。如果以字母
+开头的冒号 token 本意是自由文本，请把冒号替换为空格（`genotype phenotype`）。相关性
+tokenizer 本来就会把标点当作分隔符，因此这种改写会保留参与评分的词。`note:`、`title:`
+等真实字段始终按过滤条件处理；只要文献库中存在该字段，就不会发出警告。
+
 ### 仅过滤查询（没有主题词）
 
 当用户只想过滤而不做主题检索时，所有匹配条目的分数均为零，由排序模式决定顺序。

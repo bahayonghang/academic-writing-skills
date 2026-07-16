@@ -114,12 +114,14 @@ Analyze the logical flow at the paragraph level across the entire paper:
 
 ## Severity Classification
 
-| Severity    | Definition                                    | Handling                              |
-| ----------- | --------------------------------------------- | ------------------------------------- |
-| CRITICAL    | Fatal flaw in core argument                   | Cannot be ignored in final assessment |
-| MAJOR       | Seriously undermines credibility but fixable  | Must be addressed in revision         |
-| MINOR       | Doesn't affect core argument but worth noting | Optional to address                   |
-| OBSERVATION | Alternative perspective, not a defect         | Informational only                    |
+| Severity   | Definition                                    | Handling                                               |
+| ---------- | --------------------------------------------- | ------------------------------------------------------ |
+| `major`    | Fatal flaw or serious credibility failure     | Fatal flaws also set `gate_blocker: true`; never omit  |
+| `moderate` | Material weakness that remains bounded        | Must be addressed or explicitly justified             |
+| `minor`    | Doesn't affect the core argument              | Optional to address                                    |
+
+Put alternative perspectives in `missing_perspectives`; do not emit them as
+issues merely to preserve the former `OBSERVATION` label.
 
 ## Surrender-Rate Protocol (Anti-Sycophancy)
 
@@ -185,16 +187,22 @@ captured reviewer.
     {
       "dimension": "Overgeneralization",
       "title": "Generality claims based on narrow benchmarks",
-      "description": "Claims 'general long-document understanding' but tests only on English Wikipedia and news articles.",
-      "severity": "MAJOR",
-      "location": "Abstract, Section 5"
+      "quote": "general long-document understanding",
+      "explanation": "The paper tests only on English Wikipedia and news articles.",
+      "comment_type": "claim_accuracy",
+      "severity": "major",
+      "source_kind": "llm",
+      "source_section": "Abstract, Section 5"
     },
     {
       "dimension": "Alternative Explanation",
       "title": "Speedup may be due to input truncation",
-      "description": "The gating function may effectively truncate inputs rather than enabling true sparse attention.",
-      "severity": "MAJOR",
-      "location": "Section 3.2"
+      "quote": "",
+      "explanation": "The gating function may effectively truncate inputs rather than enabling true sparse attention.",
+      "comment_type": "methodology",
+      "severity": "major",
+      "source_kind": "llm",
+      "source_section": "Section 3.2"
     }
   ],
   "challenges_made": 11,

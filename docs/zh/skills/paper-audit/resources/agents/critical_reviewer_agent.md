@@ -115,11 +115,12 @@
 ## 严重程度分类
 
 |严重性|定义|处理|
-| ----------- | --------------------------------------------- | ------------------------------------- |
-|批判的|核心论点的致命缺陷|最终评估中不可忽视|
-|主要的|严重损害可信度但可以修复|必须在修订中解决|
-|次要的|不影响核心论点，但值得注意|可选地址|
-|观察|另类视角，不是缺陷|仅供参考|
+| ---------- | --------------------------------------------- | ------------------------------------------------------ |
+| `major` |致命缺陷或严重的可信度问题|致命缺陷还应设置 `gate_blocker: true`；不得省略|
+| `moderate` |有实质影响但范围有限的弱点|必须处理或明确论证其合理性|
+| `minor` |不影响核心论点|可选处理|
+
+把替代视角放入 `missing_perspectives`；不要仅为了保留旧的 `OBSERVATION` 标签而把它们发出为问题。
 
 ## 投降率协议（反阿谀奉承）
 
@@ -185,16 +186,22 @@
     {
       "dimension": "Overgeneralization",
       "title": "Generality claims based on narrow benchmarks",
-      "description": "Claims 'general long-document understanding' but tests only on English Wikipedia and news articles.",
-      "severity": "MAJOR",
-      "location": "Abstract, Section 5"
+      "quote": "general long-document understanding",
+      "explanation": "The paper tests only on English Wikipedia and news articles.",
+      "comment_type": "claim_accuracy",
+      "severity": "major",
+      "source_kind": "llm",
+      "source_section": "Abstract, Section 5"
     },
     {
       "dimension": "Alternative Explanation",
       "title": "Speedup may be due to input truncation",
-      "description": "The gating function may effectively truncate inputs rather than enabling true sparse attention.",
-      "severity": "MAJOR",
-      "location": "Section 3.2"
+      "quote": "",
+      "explanation": "The gating function may effectively truncate inputs rather than enabling true sparse attention.",
+      "comment_type": "methodology",
+      "severity": "major",
+      "source_kind": "llm",
+      "source_section": "Section 3.2"
     }
   ],
   "challenges_made": 11,

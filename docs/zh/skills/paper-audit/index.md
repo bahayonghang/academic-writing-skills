@@ -31,6 +31,11 @@
 
 兼容别名：`self-check` -> `quick-audit`；`review` -> `deep-review`。
 
+deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后交给
+`synthesis_agent.md` 综合。`gate`、`re-audit` 和 consolidation 后的修订建议分别使用
+对应的模式专属 agent。`agents/` 下的 specialized reviewer playbook 仅作参考，不会自动派发；
+完整边界见[代理名册](./resources/references/agent-roster.md)。
+
 ## 最小输入
 
 - `paper.tex`、`paper.typ` 或 `paper.pdf`。

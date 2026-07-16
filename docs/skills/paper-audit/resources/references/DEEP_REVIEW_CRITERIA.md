@@ -16,10 +16,10 @@ Use this file when running `deep-review`.
 10. **Self-consistency of standards**
 11. **Table structure violations** — missing three-line format (booktabs), vertical lines present, inconsistent number precision within columns, caption placed below instead of above
 12. **Abstract structural incompleteness** — missing elements in the five-element model (Background / Objective / Methods / Results / Conclusion), data-free results section, hollow conclusion that merely restates results
-13. **Theory contribution deficiency** — core concepts undefined or ambiguous, no substantive dialogue with existing theories, theoretical increment not identifiable (see A5-A7 in domain_reviewer_agent.md)
-14. **Qualitative methodology opacity** — sampling rationale missing, coding process undescribed, no saturation discussion, absent reflexivity in sensitive research (see B6-B10 in methodology_reviewer_agent.md)
+13. **Theory contribution deficiency** — core concepts undefined or ambiguous, no substantive dialogue with existing theories, theoretical increment not identifiable (see A5-A7 in domain_reviewer_agent.md, reference playbook)
+14. **Qualitative methodology opacity** — sampling rationale missing, coding process undescribed, no saturation discussion, absent reflexivity in sensitive research (see B6-B10 in methodology_reviewer_agent.md, reference playbook)
 15. **Pseudo-innovation / straw man** — fabricated research gap, mischaracterized prior work, selective citation that hides overlap with existing methods (see prior_art_reviewer_agent.md)
-16. **Paragraph-level argument incoherence** — logical jumps between adjacent paragraphs, causal inversions, evidence that does not support the stated claim (see C5 in critical_reviewer_agent.md)
+16. **Paragraph-level argument incoherence** — logical jumps between adjacent paragraphs, causal inversions, evidence that does not support the stated claim (see C5 in critical_reviewer_agent.md, reference playbook)
 
 ## Editor-in-Chief screening (gate mode)
 
