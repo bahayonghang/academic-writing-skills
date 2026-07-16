@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/07-15-audit-fix-cover-letter/prd.md", "reason": "验收对照：11 项 AC、must-stay-green 既往修复测试清单（CL-1 数值窗口 / CL-2 salutation / CL-3 结构痕迹 / CL-4 披露一致性）逐条核验"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务级验收：每项修复含 Low 有回归测试、无 CRITICAL 第四级、遵守红线；A-CL-7 若 blocked 须在父任务集成阶段登记复查"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "检查项：新测试装载惯用法与加载守卫用例是否合规；默认行为变化 commit 是否双声明；渲染报告截断陷阱——断言走 python API 不 grep 渲染输出"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "检查项：parsers/tex_loader 副本零改动、tests/contracts/test_parsers_alignment.py 全程绿；references 改动后跑 tests/contracts 确认 MODE_GUIDE flag 契约（test_mode_guide_flags_all_exist_in_cli）"}
