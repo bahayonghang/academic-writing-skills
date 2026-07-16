@@ -9,6 +9,7 @@
 | [testing-and-tooling.md](./testing-and-tooling.md)             | 按技能副本脚本的测试加载约定、BibTeX 扫描器维护、阈值与 evals 工具约定 | 给 zh/typst 副本写测试、改 BibTeX 扫描或 evals/阈值配置之前       |
 | [spec-checklist-convention.md](./spec-checklist-convention.md) | 逐项检查清单五列格式、CHECKERS 双向锁、TEMPLATE_THRESHOLDS 阈值来源规则 | 改 templates/*.md 清单、check_spec.py 检查器、SKILL.md 路由表之前 |
 | [docs-bilingual-resources.md](./docs-bilingual-resources.md)   | 技能公开资源到双语 VitePress 页面、manifest、侧栏和检查器的可执行契约  | 增删 references/templates/examples/agents 或修改 docs 资源之前    |
+| [paper-audit-boundary-contracts.md](./paper-audit-boundary-contracts.md) | paper-audit severity、ScholarEval 模块映射与外置 BibTeX 数据流契约 | 修改 consolidation、ScholarEval 或 literature comparison 链路之前 |
 | [cover-letter-contracts.md](./cover-letter-contracts.md)       | cover-letter claim 位置、journal-fit 去重与警告 payload 契约          | 修改 cover-letter claim/journal-fit/统一 CLI 数据流之前           |
 
 ## 背景速览
