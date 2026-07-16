@@ -10,6 +10,7 @@ from pathlib import Path
 from paths import WorkspaceLayout
 
 SEVERITY_ORDER = {"major": 0, "moderate": 1, "minor": 2}
+SEVERITY_ALIASES = {"critical": "major", "observation": "minor"}
 CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2, "unverified": 3}
 VALID_TYPES = {"methodology", "claim_accuracy", "presentation", "missing_information"}
 VALID_SOURCE_KINDS = {"llm", "script"}
@@ -40,8 +41,12 @@ def sanitize_issue(issue: dict) -> dict:
     """Fill defaults and normalize the expected issue schema."""
     title = issue.get("title", "Untitled issue").strip()
     quote = issue.get("quote", "").strip()
-    explanation = issue.get("explanation", "").strip()
-    severity = str(issue.get("severity", "moderate")).lower()
+    explanation = str(issue.get("explanation", "") or "").strip()
+    if not explanation:
+        explanation = str(issue.get("description", "") or "").strip()
+    severity_raw = str(issue.get("severity", "moderate")).strip().lower()
+    critical_input = severity_raw == "critical"
+    severity = SEVERITY_ALIASES.get(severity_raw, severity_raw)
     comment_type = issue.get("comment_type", "missing_information")
     source_kind = str(issue.get("source_kind", "llm")).lower()
     confidence = str(issue.get("confidence", "medium")).lower()
@@ -56,7 +61,9 @@ def sanitize_issue(issue: dict) -> dict:
         confidence = "medium"
 
     related = [item for item in issue.get("related_sections", []) if item]
-    section = issue.get("source_section", "").strip()
+    section = str(issue.get("source_section", "") or "").strip()
+    if not section:
+        section = str(issue.get("location", "") or "").strip()
     if section and section not in related:
         related = [section, *related]
 
@@ -72,7 +79,9 @@ def sanitize_issue(issue: dict) -> dict:
         "related_sections": related,
         "root_cause_key": issue.get("root_cause_key") or slugify(title),
         "review_lane": issue.get("review_lane", "").strip(),
-        "gate_blocker": bool(issue.get("gate_blocker", severity == "major")),
+        "gate_blocker": (
+            True if critical_input else bool(issue.get("gate_blocker", severity == "major"))
+        ),
         "quote_verified": issue.get("quote_verified"),
     }
 
