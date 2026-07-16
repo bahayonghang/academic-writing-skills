@@ -21,6 +21,35 @@ except ImportError:
     from tex_loader import iter_files, read_text_robust
 
 
+ABBREV_STOPWORDS = frozenset(
+    {
+        "PDF",
+        "URL",
+        "HTTP",
+        "HTTPS",
+        "API",
+        "TODO",
+        "FIXME",
+        "IEEE",
+        "ACM",
+        "ISO",
+        "IEC",
+        "GB",
+        "DOI",
+        "ISBN",
+        "ISSN",
+        "GPU",
+        "CPU",
+        "RAM",
+        "USB",
+        "FPGA",
+        "LED",
+        "MCU",
+    }
+)
+ABBREV_MIN_USES = 2
+
+
 class ConsistencyChecker:
     """Check terminology and abbreviation consistency across thesis files."""
 
@@ -234,7 +263,7 @@ class ConsistencyChecker:
             for match in re.finditer(abbrev_pattern, content):
                 abbrev = match.group(1)
                 # Skip common non-abbreviation uppercase
-                if abbrev in ["PDF", "URL", "HTTP", "HTTPS", "API", "TODO", "FIXME"]:
+                if abbrev in ABBREV_STOPWORDS:
                     continue
                 line_num = content[: match.start()].count("\n") + 1
                 usages[abbrev].append((str(tex_file.name), line_num))
@@ -244,7 +273,7 @@ class ConsistencyChecker:
 
         # Abbreviations used but not defined
         for abbrev, usage_list in usages.items():
-            if abbrev not in definitions and len(usage_list) > 0:
+            if abbrev not in definitions and len(usage_list) >= ABBREV_MIN_USES:
                 first_usage = usage_list[0]
                 issues.append(
                     {
