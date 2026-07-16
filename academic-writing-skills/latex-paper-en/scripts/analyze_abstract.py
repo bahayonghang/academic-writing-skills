@@ -20,6 +20,15 @@ from pathlib import Path
 
 from parsers import extract_abstract
 
+try:
+    from tex_loader import assemble, read_text_robust
+except ImportError:
+    try:
+        from typ_loader import assemble, read_text_robust
+    except ImportError:
+        assemble = None
+        read_text_robust = None
+
 
 class AbstractAnalyzer:
     """Analyze abstract structure against the five-element model."""
@@ -208,7 +217,15 @@ class AbstractAnalyzer:
                 "elements": {},
             }
 
-        content = self.tex_file.read_text(encoding="utf-8", errors="replace")
+        # Assemble \input/\include (or Typst #include) so an abstract that
+        # lives in a sub-file is still seen (A-EN-3); loader-agnostic so this
+        # module stays byte-identical between the en and typst copies.
+        if assemble is not None:
+            content = assemble(self.tex_file).content
+        elif read_text_robust is not None:
+            content, _warning = read_text_robust(self.tex_file)
+        else:
+            content = self.tex_file.read_text(encoding="utf-8", errors="replace")
         abstract_text = extract_abstract(content)
 
         if not abstract_text.strip():

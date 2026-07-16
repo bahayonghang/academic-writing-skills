@@ -298,6 +298,12 @@ class TestFormatSourceHygiene:
 
 
 class TestMixedPunctuationPathStrip:
+    def test_reference_label_and_cite_keys_not_flagged(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text("\\ref{eq:能量}\\label{sec:方法}\\cite{张三2024}\n", encoding="utf-8")
+        result = check_format.FormatChecker(str(tex)).check()
+        assert not [i for i in result["issues"] if i["code"] == "mixed_punctuation"]
+
     def test_chinese_figure_name_not_flagged(self, tmp_path: Path):
         r"""\includegraphics/\input 的中文图名+扩展名点号不得触发 mixed_punctuation（R2b 负例）。"""
         tex = tmp_path / "main.tex"

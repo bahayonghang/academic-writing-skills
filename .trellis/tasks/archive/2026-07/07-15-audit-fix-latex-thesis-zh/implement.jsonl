@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本共享面与对齐锁总则：改 zh parsers 前确认 canonical/镜像/zh 三层关系与 bare import 陷阱"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 副本测试必须 importlib 按路径加载、路径常量走 tests.support.paths、检查器默认行为变化双声明、check_format 渲染截断走 issues 列表、pytest 禁加 PYTHONIOENCODING"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "R9 触及 check_spec.py MODULE_COMMANDS 与 SKILL.md 路由表，需遵循清单/检查器/路由三方一致约定"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务发现登记表 A-ZH-1..9 与决策 D5/D6 的权威口径及验证命令"}

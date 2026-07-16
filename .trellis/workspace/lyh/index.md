@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 17
-- **Last Active**: 2026-07-14
+- **Total Sessions**: 26
+- **Last Active**: 2026-07-16
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~740 | Active |
+| `journal-1.md` | ~1055 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,15 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 26 | 2026-07-16 | 完成六技能深度审计发布集成 | `240e420`, `2b1f46b`, `0d1f18d` | `dev` |
+| 25 | 2026-07-16 | 完成 bib 查询解析健壮性修复 | `0bbe5ca`, `a51c898` | `dev` |
+| 24 | 2026-07-16 | 完成 paper-audit 深度审计修复 | `51fc3fe`, `a82ce46`, `cbdf854`, `1dff418` | `dev` |
+| 23 | 2026-07-16 | 完成 latex-thesis-zh 深审修复 | `ec3e5ba`, `eb9e60f`, `362930f`, `0f25345` | `dev` |
+| 22 | 2026-07-16 | 六技能审计修复：cover-letter 声明与事实匹配精度 | `7a3c1ba` | `dev` |
+| 21 | 2026-07-16 | 六技能审计修复：typst-paper 行注释与 abstract 截断 | `0979ba9` | `dev` |
+| 20 | 2026-07-16 | 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers | `f02f372`, `ae9c928`, `1b63d15`, `e6879b1`, `0ada3d5`, `c493486190b99e78076584a8e902bf05e7e98ee8` | `dev` |
+| 19 | 2026-07-15 | 六技能审计修复：version-ci 版本同步 | `e53de88` | `dev` |
+| 18 | 2026-07-15 | 完成双语资源文档重构 | `7d3cfd1`, `4917daf`, `6685119`, `9b2e507`, `982e153` | `dev` |
 | 17 | 2026-07-14 | 完成 latex-thesis-zh 双语文档重构 | `21d7ab8` | `dev` |
 | 16 | 2026-07-14 | 完成 bib-search-citation 双语文档重构 | `2d91db34cdf37f557d5127b49a4eccc052d0a260` | `dev` |
 | 15 | 2026-07-14 | 建立双语文档资源契约 | `32bda367ddb7c145643d341d6eb22136e9e3577f`, `8b0475d94b5a7ec879ac3d964b647e4f67d901eb` | `dev` |

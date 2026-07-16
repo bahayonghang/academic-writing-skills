@@ -1,44 +1,44 @@
-# Experiments And Discussion Section Writing
+# 实验和讨论部分写作
 
-## Objective
+## 客观的
 
-Convince reviewers that the paper's claims are empirically tested: effectiveness, causal contribution, robustness, and realistic limits should be visible.
+让审稿人相信论文的主张经过了实证检验：有效性、因果贡献、稳健性和现实限制应该是可见的。
 
-## Claim-To-Experiment Plan
+## 声称实验计划
 
-Start from the paper's main claims:
+从论文的主要主张开始：
 
-| Claim Type | Evidence Needed |
+|声明类型|需要证据|
 | --- | --- |
-| Better performance | strong/recent baselines, same protocol, standard metrics |
-| Module contributes | ablation removing/replacing the module |
-| Robustness/generalization | harder settings, OOD cases, sensitivity analysis |
-| Efficiency | runtime, memory, parameter count, or deployment setting |
-| Mechanistic explanation | qualitative results, error analysis, or discussion tied to design |
+|更好的性能|强/最新基线、相同协议、标准指标|
+|模块贡献|烧蚀移除/更换模块|
+|稳健性/泛化性|更难的设置、OOD 案例、敏感性分析|
+|效率|运行时、内存、参数计数或部署设置|
+|机理解释|定性结果、错误分析或与设计相关的讨论|
 
-If a claim has no matching experiment, mark `needs evidence` rather than writing around the gap.
+如果某个声明没有匹配的实验，请标记 `needs evidence`，而不是在空白处书写。
 
-## Section Roles
+## 部分角色
 
-1. **Setup**: datasets, metrics, baselines, implementation settings, and protocol fairness.
-2. **Main comparison**: one message per table/figure; state the comparison target and bounded conclusion.
-3. **Ablation**: connect each design choice to a result delta.
-4. **Analysis/discussion**: explain why results occur; compare to related work when appropriate.
-5. **Limitations**: state scope boundaries or failure cases honestly.
+1. **设置**：数据集、指标、基线、实现设置和协议公平性。
+2. **主要比较**：每个表/图一条消息；陈述比较目标和有界结论。
+3. **消融**：将每个设计选择连接到结果增量。
+4. **分析/讨论**：解释结果发生的原因；适当时与相关工作进行比较。
+5. **限制**：诚实地陈述范围边界或失败案例。
 
-## Table And Figure Communication
+## 表格与图形交流
 
-- One table, one message.
-- Put metric direction in headers when possible, such as `PSNR ↑` or `LPIPS ↓`.
-- Keep captions focused on setting/protocol/notation.
-- Do not claim significance unless variance, statistical test, or repeated-run evidence is visible.
+- 一张桌子，一条消息。
+- 尽可能将公制方向放入标题中，例如`PSNR ↑`或者`LPIPS ↓`.
+- 将标题集中在设置/协议/符号上。
+- 除非有可见的方差、统计检验或重复运行证据，否则不要声称显着性。
 
-## Discussion Layering
+## 讨论分层
 
-A strong discussion does not repeat numbers. It should move through:
+激烈的讨论不会重复数字。它应该通过：
 
 ```text
 finding -> mechanism/interpretation -> comparison to prior work -> limitation or implication
 ```
 
-Do not add prior-work comparisons unless the referenced work is already cited or the user asks for verified literature work.
+不要添加先前工作的比较，除非引用的工作已被引用或用户要求经过验证的文献工作。

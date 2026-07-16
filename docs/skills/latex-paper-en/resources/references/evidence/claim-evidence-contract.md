@@ -11,7 +11,10 @@ Use this shape when emitting a claim-evidence map:
   "claim": "exact manuscript claim or proposed claim",
   "section_key": "abstract|introduction|results|discussion|conclusion|...",
   "evidence_anchor": [
-    {"type": "citation|figure_or_table|metric|section|analysis_artifact|missing", "text": "visible anchor"}
+    {
+      "type": "citation|figure_or_table|metric|section|analysis_artifact|missing",
+      "text": "visible anchor"
+    }
   ],
   "claim_strength": "unsupported|observed|supported|strong",
   "missing_evidence": ["specific missing support or verification action"],
@@ -22,12 +25,12 @@ Use this shape when emitting a claim-evidence map:
 
 ## Strength Ladder
 
-| Strength | Meaning | Safe action |
-|---|---|---|
-| `unsupported` | No visible citation, metric, figure/table, section, or artifact anchor supports the claim. | Soften, mark missing evidence, or remove. |
-| `observed` | A local observation or metric is visible, but cross-checking or comparison support is incomplete. | Keep bounded to the observed setting. |
-| `supported` | At least one visible anchor exists, but the source still needs claim-level verification. | Keep the claim only within the anchor's scope. |
-| `strong` | Metric plus figure/table/artifact support is visible and the boundary is explicit. | Keep, while preserving dataset/method/setting limits. |
+| Strength      | Meaning                                                                                           | Safe action                                           |
+| ------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `unsupported` | No visible citation, metric, figure/table, section, or artifact anchor supports the claim.        | Soften, mark missing evidence, or remove.             |
+| `observed`    | A local observation or metric is visible, but cross-checking or comparison support is incomplete. | Keep bounded to the observed setting.                 |
+| `supported`   | At least one visible anchor exists, but the source still needs claim-level verification.          | Keep the claim only within the anchor's scope.        |
+| `strong`      | Metric plus figure/table/artifact support is visible and the boundary is explicit.                | Keep, while preserving dataset/method/setting limits. |
 
 ## Evidence Anchor Rules
 
@@ -42,3 +45,9 @@ Use this shape when emitting a claim-evidence map:
 - Never invent baselines, p-values, ablations, sample sizes, citations, figures, or datasets.
 - When evidence is missing, write the missing evidence explicitly instead of filling the gap.
 - Prefer bounded wording such as "in the reported setting" or "the presented results suggest" over universal claims.
+
+## See also
+
+- [`over-claim-guard.md`](over-claim-guard.md) — once a claim's strength is known, that guide
+  gives the verb/qualifier tables for wording it conservatively. This contract sets the ceiling;
+  the guard picks the wording under it.

@@ -18,6 +18,7 @@ chapters/appendix-gbk.tex # GB18030 编码边角文件
 chapters/achievements.tex # 攻读学位期间成果（盲审 R2 埋点）
 chapters/acknowledgement.tex # 致谢（盲审 R1 埋点）
 references.bib            # 含缺字段条目的虚构文献库
+references-gbk.bib        # GB18030 编码的虚构中文文献库（编码回退埋点）
 ```
 
 ## 埋点清单（已知问题 → 预期检出）

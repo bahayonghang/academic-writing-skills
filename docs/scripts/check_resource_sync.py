@@ -24,16 +24,29 @@ KIND_SUFFIXES = {
     "agents": {".md"},
 }
 SOURCE_LOCALES = {"en", "zh", "neutral"}
+TEXT_RESOURCE_SUFFIXES = {".md", ".yaml", ".yml"}
 FENCE_RE = re.compile(r"^(`{3,}|~{3,})")
 HEADING_RE = re.compile(r"^(#{1,6})\s+")
 INLINE_CODE_RE = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)(?:\s+['\"][^'\"]*['\"])?\)")
+LINK_TARGET_RE = re.compile(
+    r"(?P<prefix>!?\[[^\]]*\]\()"
+    r"(?P<target>[^)\s]+)"
+    r"(?P<suffix>(?:\s+['\"][^'\"]*['\"])?\))"
+)
 HAN_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff]")
 LATIN_RE = re.compile(r"[A-Za-z]")
 
 
 def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(_normalized_resource_bytes(path)).hexdigest()
+
+
+def _normalized_resource_bytes(path: Path) -> bytes:
+    content = path.read_bytes()
+    if path.suffix.lower() in TEXT_RESOURCE_SUFFIXES:
+        return content.replace(b"\r\n", b"\n")
+    return content
 
 
 def public_source_files(repo_root: Path = REPO_ROOT) -> list[tuple[str, str, Path]]:
@@ -225,7 +238,17 @@ def _markdown_shape(text: str) -> dict[str, list[Any]]:
     }
 
 
-def compare_markdown(source: str, translated: str, label: str = "translation") -> list[str]:
+def _mask_markdown_link_targets(text: str) -> str:
+    return LINK_TARGET_RE.sub(r"\g<prefix><link-target>\g<suffix>", text)
+
+
+def compare_markdown(
+    source: str,
+    translated: str,
+    label: str = "translation",
+    *,
+    allow_link_rewrites: bool = False,
+) -> list[str]:
     source_shape = _markdown_shape(source)
     translated_shape = _markdown_shape(translated)
     errors: list[str] = []
@@ -236,6 +259,8 @@ def compare_markdown(source: str, translated: str, label: str = "translation") -
         "links": "link targets",
         "tableShape": "table shape",
     }
+    if allow_link_rewrites:
+        labels.pop("links")
     for field, description in labels.items():
         if source_shape[field] != translated_shape[field]:
             errors.append(f"{label}: {description} differ from source")
@@ -277,28 +302,49 @@ def validate_targets(
         if not all(target.is_file() for target in targets.values()):
             continue
 
-        source_bytes = source.read_bytes()
-        en_bytes = targets["en"].read_bytes()
-        zh_bytes = targets["zh"].read_bytes()
+        source_bytes = _normalized_resource_bytes(source)
+        en_bytes = _normalized_resource_bytes(targets["en"])
+        zh_bytes = _normalized_resource_bytes(targets["zh"])
         source_locale = entry["sourceLocale"]
         if source_locale == "neutral":
             if en_bytes != source_bytes or zh_bytes != source_bytes:
                 errors.append(f"{entry['source']}: neutral targets must match source exactly")
             continue
 
-        faithful_bytes = en_bytes if source_locale == "en" else zh_bytes
-        if faithful_bytes != source_bytes:
-            errors.append(f"{entry['source']}: {source_locale} target must match source exactly")
-
         if source.suffix.lower() == ".md":
             source_text = source.read_text(encoding="utf-8-sig")
-            for locale, target in targets.items():
-                target_text = target.read_text(encoding="utf-8-sig")
-                errors.extend(
-                    compare_markdown(source_text, target_text, f"{entry['source']} {locale}")
+            target_texts = {
+                locale: target.read_text(encoding="utf-8-sig") for locale, target in targets.items()
+            }
+            faithful_text = target_texts[source_locale]
+            if _mask_markdown_link_targets(faithful_text) != _mask_markdown_link_targets(
+                source_text
+            ):
+                errors.append(
+                    f"{entry['source']}: {source_locale} target must match source except "
+                    "rewritten link targets"
                 )
+            for locale, _target in targets.items():
+                errors.extend(
+                    compare_markdown(
+                        source_text,
+                        target_texts[locale],
+                        f"{entry['source']} {locale}",
+                        allow_link_rewrites=True,
+                    )
+                )
+            en_links = _markdown_shape(target_texts["en"])["links"]
+            zh_links = _markdown_shape(target_texts["zh"])["links"]
+            if en_links != zh_links:
+                errors.append(f"{entry['source']}: bilingual link targets differ")
             if len(_strip_non_prose(source_text).strip()) >= 120 and en_bytes == zh_bytes:
                 errors.append(f"{entry['source']}: prose translation is identical across locales")
+        else:
+            faithful_bytes = en_bytes if source_locale == "en" else zh_bytes
+            if faithful_bytes != source_bytes:
+                errors.append(
+                    f"{entry['source']}: {source_locale} target must match source exactly"
+                )
 
     for resource_root, expected in expected_by_root.items():
         actual = set()

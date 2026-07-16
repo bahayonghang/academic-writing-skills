@@ -283,6 +283,73 @@ def test_consolidate_review_findings_deduplicates_exact_overlaps() -> None:
     assert consolidated[0]["severity"] == "major"
 
 
+@pytest.mark.parametrize("severity", ["CRITICAL", "Critical", " critical "])
+def test_sanitize_issue_normalizes_critical_to_major_gate_blocker(severity: str) -> None:
+    from consolidate_review_findings import sanitize_issue
+
+    issue = sanitize_issue({"severity": severity, "gate_blocker": False})
+
+    assert issue["severity"] == "major"
+    assert issue["gate_blocker"] is True
+
+
+@pytest.mark.parametrize(
+    ("severity", "expected"),
+    [("Major", "major"), ("MODERATE", "moderate"), (" Minor ", "minor")],
+)
+def test_sanitize_issue_severity_case_insensitive(severity: str, expected: str) -> None:
+    from consolidate_review_findings import sanitize_issue
+
+    assert sanitize_issue({"severity": severity})["severity"] == expected
+
+
+def test_sanitize_issue_maps_observation_to_minor() -> None:
+    from consolidate_review_findings import sanitize_issue
+
+    assert sanitize_issue({"severity": "OBSERVATION"})["severity"] == "minor"
+
+
+def test_sanitize_issue_field_aliases() -> None:
+    from consolidate_review_findings import sanitize_issue
+
+    issue = sanitize_issue(
+        {
+            "description": "The evidence does not support the claim.",
+            "location": "Results, paragraph 2",
+        }
+    )
+
+    assert issue["explanation"] == "The evidence does not support the claim."
+    assert issue["source_section"] == "Results, paragraph 2"
+    assert issue["quote"] == ""
+
+
+def test_load_comment_files_end_to_end_critical_fixture(tmp_path: Path) -> None:
+    from consolidate_review_findings import consolidate_findings, load_comment_files
+
+    comments_dir = tmp_path / "comments"
+    comments_dir.mkdir()
+    (comments_dir / "committee_logic.json").write_text(
+        json.dumps(
+            [
+                {"title": "Presentation issue", "severity": "moderate"},
+                {
+                    "title": "Fatal validity flaw",
+                    "severity": "CRITICAL",
+                    "gate_blocker": False,
+                },
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    consolidated = consolidate_findings(load_comment_files(comments_dir))
+
+    assert consolidated[0]["title"] == "Fatal validity flaw"
+    assert consolidated[0]["severity"] == "major"
+    assert consolidated[0]["gate_blocker"] is True
+
+
 def test_verify_quotes_marks_missing_quotes() -> None:
     from verify_quotes import verify_quotes
 

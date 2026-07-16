@@ -15,11 +15,12 @@ except ImportError:
     from parsers import get_parser, resolve_section_keys
 
 try:
-    from tex_loader import read_text_robust
+    from tex_loader import assemble, read_text_robust
 except ImportError:
     try:
-        from typ_loader import read_text_robust
+        from typ_loader import assemble, read_text_robust
     except ImportError:
+        assemble = None
         read_text_robust = None
 
 
@@ -55,13 +56,21 @@ def _enhance(text: str) -> tuple[str, list[str]]:
 
 def analyze(file_path: Path, section: str | None) -> list[str]:
     parser = get_parser(file_path)
-    if read_text_robust is not None:
+    doc = None
+    warning_lines: list[str] = []
+    if assemble is not None:
+        doc = assemble(file_path)
+        content, lines = doc.content, doc.lines
+    elif read_text_robust is not None:
         content, _warning = read_text_robust(file_path)
+        lines = content.split("\n")
     else:
         content = file_path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.split("\n")
+        lines = content.split("\n")
     sections = parser.split_sections(content)
     cp = parser.get_comment_prefix()
+    if doc is not None:
+        warning_lines = doc.warning_lines(cp)
 
     if section:
         matched, available = resolve_section_keys(section, sections)
@@ -86,9 +95,10 @@ def analyze(file_path: Path, section: str | None) -> list[str]:
             revised, changes = _enhance(visible)
             if revised.lower() == visible.lower() or not changes:
                 continue
+            location = doc.lineref(line_no) if doc is not None else f"Line {line_no}"
             out.extend(
                 [
-                    f"{cp} EXPRESSION (Line {line_no}) [Severity: Minor] [Priority: P2]: "
+                    f"{cp} EXPRESSION ({location}) [Severity: Minor] [Priority: P2]: "
                     f"Improve academic tone",
                     f"{cp} Original: {visible}",
                     f"{cp} Revised:  {revised}",
@@ -98,7 +108,7 @@ def analyze(file_path: Path, section: str | None) -> list[str]:
             )
     if not out:
         out.append(f"{cp} EXPRESSION: No weak-expression patterns detected.")
-    return out
+    return warning_lines + out
 
 
 def main() -> int:

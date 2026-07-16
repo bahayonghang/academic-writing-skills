@@ -99,11 +99,13 @@ class ReferenceChecker:
         severity: str,
         priority: str,
         message: str,
+        file: str | None = None,
     ) -> None:
         """Append a structured issue dict."""
         self.issues.append(
             {
                 "module": "REFERENCES",
+                "file": file if file is not None else self.file_path,
                 "line": line,
                 "severity": severity,
                 "priority": priority,
@@ -168,6 +170,7 @@ class ReferenceChecker:
             if ref.name not in defined:
                 self._add_issue(
                     line=ref.line,
+                    file=ref.file,
                     severity="Critical",
                     priority="P0",
                     message=(
@@ -183,6 +186,7 @@ class ReferenceChecker:
             if lbl.prefix in TRACKED_PREFIXES and lbl.name not in referenced:
                 self._add_issue(
                     line=lbl.line,
+                    file=lbl.file,
                     severity="Minor",
                     priority="P2",
                     message=f"Unreferenced label: \\label{{{lbl.name}}} is never cited in text",
@@ -224,6 +228,7 @@ class ReferenceChecker:
             if not CAPTION_RE.search(env_text):
                 self._add_issue(
                     line=lbl.line,
+                    file=lbl.file,
                     severity="Major",
                     priority="P1",
                     message=(
@@ -250,6 +255,7 @@ class ReferenceChecker:
             if name in label_lines and ref_line < label_lines[name]:
                 self._add_issue(
                     line=ref_line,
+                    file=next((ref.file for ref in refs if ref.name == name), self.file_path),
                     severity="Minor",
                     priority="P2",
                     message=(
@@ -264,7 +270,7 @@ class ReferenceChecker:
         Severity: Minor, P2.
         """
         numeric_suffix_re = re.compile(r"^(.*?)(\d+)$")
-        series: dict[str, list[tuple[int, int]]] = {}
+        series: dict[str, list[tuple[int, int, str]]] = {}
 
         for lbl in labels:
             m = numeric_suffix_re.match(lbl.name)
@@ -274,7 +280,7 @@ class ReferenceChecker:
             num = int(m.group(2))
             if base not in series:
                 series[base] = []
-            series[base].append((num, lbl.line))
+            series[base].append((num, lbl.line, lbl.file))
 
         for series_key, entries in series.items():
             if len(entries) < 2:
@@ -293,6 +299,7 @@ class ReferenceChecker:
                     report_line = entries_sorted[i][1]
                     self._add_issue(
                         line=report_line,
+                        file=entries_sorted[i][2],
                         severity="Minor",
                         priority="P2",
                         message=(
@@ -344,12 +351,13 @@ class ThesisReferenceChecker(ReferenceChecker):
         self.encoding_warnings: list[str] = []
         for node in iter_files(self.main_file):
             if node.exists and node.content is not None:
-                self.all_files[str(node.path)] = node.content
+                self.all_files[node.rel] = node.content
                 if node.warning:
                     self.encoding_warnings.append(node.warning)
         # Build combined content (used by base class for caption/env detection)
         combined = "\n".join(self.all_files.values())
         super().__init__(combined, str(self.main_file))
+        self.multi_file = len(self.all_files) > 1
         # Per-file label/ref lists (populated by _scan_all_files)
         self._all_labels: list[LabelInfo] = []
         self._all_refs: list[RefInfo] = []
@@ -393,13 +401,16 @@ class ThesisReferenceChecker(ReferenceChecker):
 # ---------------------------------------------------------------------------
 
 
-def _format_issues(issues: list[dict], comment_prefix: str = "%") -> str:
+def _format_issues(issues: list[dict], comment_prefix: str = "%", multi_file: bool = False) -> str:
     """Format issues into the project's output protocol."""
     if not issues:
         return ""
     lines = []
     for issue in sorted(issues, key=lambda x: x.get("line") or 0):
-        line_part = f"(Line {issue['line']}) " if issue.get("line") else ""
+        if multi_file and issue.get("file") and issue.get("line"):
+            line_part = f"{issue['file']}:{issue['line']} "
+        else:
+            line_part = f"(Line {issue['line']}) " if issue.get("line") else ""
         lines.append(
             f"{comment_prefix} REFERENCES {line_part}"
             f"[Severity: {issue['severity']}] [Priority: {issue['priority']}]: "
@@ -436,7 +447,9 @@ def main() -> int:
     if args.json:
         print(json.dumps(issues, indent=2, ensure_ascii=False))
     else:
-        output = _format_issues(issues, comment_prefix=COMMENT_PREFIX)
+        output = _format_issues(
+            issues, comment_prefix=COMMENT_PREFIX, multi_file=checker.multi_file
+        )
         if output:
             print(output)
 

@@ -106,6 +106,18 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 
 ---
 
+## Gotcha: paper-audit/SKILL.md 正文标题版本号受 contract 测试跟随 frontmatter
+
+> 来源：07-15-audit-fix-version-ci（2026-07-15）。
+
+**What**：`tests/contracts/test_skill_contracts.py::test_paper_audit_skill_argument_hint_matches_cli_contract` 会从 paper-audit/SKILL.md frontmatter 的 `version` 字段动态提取 `major.minor`，断言正文标题字面等于 `# Paper Audit Skill v{major}.{minor}`。这是六个 SKILL.md 里**唯一**在正文重复版本号的技能——只改 frontmatter（如全仓版本 bump）会让该测试红，且失败信息不会直接指向"正文标题没跟着改"。
+
+**Fix**：改 paper-audit `version` frontmatter 时，同 commit 检查并同步正文标题行；验证走 `uv run --extra dev python -m pytest tests/contracts/test_skill_contracts.py -q`（`test_skill_versions.py` 不检查正文标题，只跑它会漏掉这个坑）。
+
+**Why**：其余五个 SKILL.md 无此重复，版本 bump 时最容易漏改的就是这一个特例。
+
+---
+
 ## Gotcha: 别给 pytest 命令加 PYTHONIOENCODING=utf-8
 
 > 来源：07-10-thesis-zh-intro-optimization（2026-07-11）。
@@ -119,6 +131,27 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 **补充**：latex-thesis-zh 的 `evals/evals.json` 是 CRLF + `json.dumps(indent=2,
 ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
 Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
+
+### Convention: JSON 管道输入必须在字节边界按 UTF-8 解码
+
+**What**：Windows 上的 Python CLI 若从另一脚本接收 UTF-8 JSON，不能直接使用
+`sys.stdin.read()`；应优先读取 `sys.stdin.buffer` 并显式 `.decode("utf-8")`，仅在
+`StringIO` 等无 `buffer` 的测试流中回退到文本读取。
+
+```python
+buffer = getattr(sys.stdin, "buffer", None)
+content = buffer.read().decode("utf-8") if buffer is not None else sys.stdin.read()
+```
+
+**Why**：生产者通过 `stdout.buffer` 写出 UTF-8，但 Windows 子进程的 `sys.stdin`
+可能按 locale/cp936 解码。包含长横线等字符的 JSON 会产生代理字符（例如 `U+DC94`），
+随后在 UTF-8 输出时抛 `UnicodeEncodeError: surrogates not allowed`。该问题曾被
+`bib-search-citation` preview 不渲染 warnings 所遮蔽，直到 duplicate-key warning
+进入真实搜索到 preview 管道才暴露。
+
+**Tests Required**：至少一条 subprocess 管道测试使用 `ensure_ascii=False` 的非 ASCII
+warning payload，断言消费者 exit 0 且能渲染该 warning；不要通过给 pytest 设置
+`PYTHONIOENCODING` 掩盖边界错误。
 
 ---
 
@@ -165,3 +198,35 @@ R4a analyze_experiment 结构提示)两任务沿用此模式,已成为事实约�
 
 **Example**:07-12 的 P-PAPER 从 `--process-chapter` 门后迁到默认管线并逐处报告
 (commit cc73b07),存量 P-PAPER 单测同 commit 迁移并在 message 声明。
+
+---
+
+## Convention: latex-thesis-zh 的 BibTeX 解析必须走平衡扫描器
+
+**What**：`latex-thesis-zh/scripts/verify_bib.py` 必须通过技能内的
+`bib_scan.parse_bib_entries(content)` 解析条目，并用 `tex_loader.read_text_robust(path)`
+读取文件。禁止恢复为 `[^@]` 条目正则或 `[^{}]` 字段正则；这些表达式无法表达 BibTeX
+的平衡括号、引号、`@string` 宏和截断条目重同步语义。
+
+**Why**：正则旧实现会静默吞掉值内含 `@` 的后续条目、丢弃含 `^` 或多层花括号的字段，
+并把 GB18030 文献库乱码当成无中文条目的 PASS。各 skill 独立安装，不能从
+`bib-search-citation` 跨技能 import，因此 zh 侧保留 vendored `bib_scan.py`；修改扫描语义时
+须对照 `bib-search-citation/scripts/search_bib.py` 的同名函数，并保留 zh 所需的 warning 映射。
+
+**Tests Required**：运行
+`tests/skills/latex_thesis_zh/test_verify_bib_scanner.py`，至少锁定 `^`、值内 `@`、多层花括号、
+引号内花括号、未闭合条目 warning+resync、`@comment`/`@preamble` 跳过、`@string` 展开与
+GB18030 编码 warning；同时跑既有 gb7714 与 scripts 回归，确认 entry dict 仍为
+`type/key/fields/raw`。
+
+---
+
+## Gotcha: 批次拟提交分组遇到跨批次同文件累积 diff 时不能照搬原分组
+
+> 来源：07-15-audit-fix-latex-paper-en（2026-07-16）。
+
+**What**：implement.md 常按 finding-ID 把工作拆成多个批次（G1/G2/...），每批各自登记"拟提交分组"，但按本任务树的约定 Phase 3.4 才统一提交（批内不 `git commit`）。若后续批次改动了前面批次已改过的同一文件（如某批次加别名解析、另一批次在同文件加 assemble 接入），工作树里该文件已是**累积 diff**——原计划的逐批 whole-file `git add` 无法再干净复现（实测：`analyze_logic.py` 被三个不同批次共同触碰，`analyze_literature.py`/`deai_batch.py`/`check_figures.py` 各被两个批次触碰）。
+
+**Fix**：Phase 3.4 不要用 `git add -p` 做 hunk 级手术拆分（风险高、易切错、且这批改动本就不需要"人类考古级"可逐 commit 回溯）。改为按**实际文件重叠边界**重新分组提交（分组数通常比原计划少）：(1) 每个新分组的 commit message 列全它覆盖的原 finding-ID；(2) 原计划里任何"默认行为变化"双声明随文件一起迁入新分组的 message，不能丢；(3) 提交前用"临时移出后续批次专属的文件+测试、重跑套件"的方式验证每个中间提交仍然绿。
+
+**Why**：本任务树全部 8 个子任务共享"批内不提交、Phase 3.4 统一呈报"的约定；只要 implement.md 是多批次计划，批次间文件重叠就几乎必然发生。遇到时按此法直接重新分组，不必重新论证是否该做 hunk 拆分。

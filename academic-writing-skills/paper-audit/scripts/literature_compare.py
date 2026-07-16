@@ -75,6 +75,56 @@ def _extract_citation_titles(content: str) -> list[str]:
     return titles
 
 
+def _extract_bibtex_titles(bib_content: str) -> list[str]:
+    """Extract balanced braced or quoted BibTeX ``title`` field values."""
+    titles: list[str] = []
+    field_re = re.compile(r"(?i)\btitle\s*=\s*")
+
+    for match in field_re.finditer(bib_content):
+        start = match.end()
+        if start >= len(bib_content):
+            continue
+
+        opener = bib_content[start]
+        if opener == "{":
+            depth = 1
+            index = start + 1
+            while index < len(bib_content) and depth:
+                char = bib_content[index]
+                if char == "\\":
+                    index += 2
+                    continue
+                if char == "{":
+                    depth += 1
+                elif char == "}":
+                    depth -= 1
+                index += 1
+            if depth:
+                continue
+            raw_title = bib_content[start + 1 : index - 1]
+        elif opener == '"':
+            index = start + 1
+            while index < len(bib_content):
+                if bib_content[index] == "\\":
+                    index += 2
+                    continue
+                if bib_content[index] == '"':
+                    break
+                index += 1
+            if index >= len(bib_content):
+                continue
+            raw_title = bib_content[start + 1 : index]
+        else:
+            continue
+
+        title = re.sub(r"[{}]", "", raw_title)
+        title = re.sub(r"\s+", " ", title).strip()
+        if title:
+            titles.append(title)
+
+    return titles
+
+
 def _compute_freshness(results: list, current_year: int = 2026) -> dict[str, int]:
     """Compute freshness distribution of search results by year range."""
     dist: dict[str, int] = {}
@@ -97,6 +147,7 @@ def compare_with_literature(
     paper_content: str,
     paper_citations: list[str],
     literature_results: list,
+    bib_content: str = "",
 ) -> LiteratureComparisonResult:
     """
     Compare paper's bibliography against external literature search results.
@@ -105,12 +156,13 @@ def compare_with_literature(
         paper_content: Full paper text content.
         paper_citations: Citation keys from the paper (e.g., from \\cite{}).
         literature_results: SearchResult objects from literature search.
+        bib_content: Optional content loaded from external BibTeX files.
 
     Returns:
         LiteratureComparisonResult with comparisons, coverage, and grounding score.
     """
     # Extract titles from paper bibliography
-    bib_titles = _extract_citation_titles(paper_content)
+    bib_titles = _extract_citation_titles(paper_content) + _extract_bibtex_titles(bib_content)
 
     # Also use citation keys as fallback identifiers
     cited_identifier_set = set(paper_citations) | {t.lower()[:30] for t in bib_titles}

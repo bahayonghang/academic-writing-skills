@@ -1,170 +1,170 @@
-# Common Chinglish Errors in Academic Writing
+# 学术写作中常见的中式英语错误
 
 
-## Table of Contents
+## 目录
 
-- [Category 1: Sentence Structure](#category-1-sentence-structure)
-  - [1.1 Topic-Prominent Structure](#11-topic-prominent-structure)
-  - [1.2 Run-on Sentences](#12-run-on-sentences)
-  - [1.3 Missing Articles](#13-missing-articles)
-- [Category 2: Word Choice](#category-2-word-choice)
-  - [2.1 Weak Verbs](#21-weak-verbs)
-  - [2.2 Informal Expressions](#22-informal-expressions)
-  - [2.3 Redundant Expressions](#23-redundant-expressions)
-- [Category 3: Hedging (避免绝对化)](#category-3-hedging-避免绝对化)
-  - [Forbidden Absolute Words](#forbidden-absolute-words)
-  - [Academic Hedging](#academic-hedging)
-- [Category 4: Tense Usage](#category-4-tense-usage)
-  - [Abstract](#abstract)
-  - [Introduction](#introduction)
-  - [Methods](#methods)
-  - [Results](#results)
-  - [Discussion](#discussion)
-- [Category 5: Common Phrase Errors](#category-5-common-phrase-errors)
-  - [Preposition Errors](#preposition-errors)
-  - [Collocation Errors](#collocation-errors)
-- [Category 6: Chinese-English Translation Patterns](#category-6-chinese-english-translation-patterns)
-  - [6.1 Direct Translation Errors](#61-direct-translation-errors)
-  - [6.2 Academic Expression Patterns](#62-academic-expression-patterns)
-- [Typst-Specific Notes](#typst-specific-notes)
-  - [Comment Syntax](#comment-syntax)
-  - [Common Typst Errors](#common-typst-errors)
+- [类别1：句子结构](#category-1-sentence-structure)
+  - [1.1 主题突出结构](#11-topic-prominent-structure)
+  - [1.2 连读句](#12-run-on-sentences)
+  - [1.3 缺失物品](#13-missing-articles)
+- [类别2：词语选择](#category-2-word-choice)
+  - [2.1 弱动词](#21-weak-verbs)
+  - [2.2 非正式表达](#22-informal-expressions)
+  - [2.3 冗余表达式](#23-redundant-expressions)
+- [类别3：避免绝对化](#category-3-hedging-避免绝对化)
+  - [禁止绝对字词](#forbidden-absolute-words)
+  - [学术对冲](#academic-hedging)
+- [类别4：紧张使用](#category-4-tense-usage)
+  - [摘要](#abstract)
+  - [简介](#introduction)
+  - [方法](#methods)
+  - [结果](#results)
+  - [讨论](#discussion)
+- [类别5：常见短语错误](#category-5-common-phrase-errors)
+  - [介词错误](#preposition-errors)
+  - [搭配错误](#collocation-errors)
+- [第六类：汉英翻译模式](#category-6-chinese-english-translation-patterns)
+  - [6.1 直接翻译错误](#61-direct-translation-errors)
+  - [6.2 学术表达模式](#62-academic-expression-patterns)
+- [打字机专用注释](#typst-specific-notes)
+  - [注释语法](#comment-syntax)
+  - [常见打字错误](#common-typst-errors)
 
 ---
 
-## Category 1: Sentence Structure
+## 第一类：句子结构
 
-### 1.1 Topic-Prominent Structure
-❌ "This method, its advantage is obvious."
-✅ "The advantage of this method is obvious."
+### 1.1 主题突出结构
+❌“这个方法，它的优势是显而易见的。”
+✅“这种方法的优点是显而易见的。”
 
-### 1.2 Run-on Sentences
-❌ "We propose a method it can solve the problem."
-✅ "We propose a method that can solve the problem."
+### 1.2 连贯句
+❌“我们提出了一种可以解决问题的方法。”
+✅“我们提出了一种可以解决问题的方法。”
 
-### 1.3 Missing Articles
-❌ "Deep learning is popular technology."
-✅ "Deep learning is a popular technology."
+### 1.3 缺失的文章
+❌“深度学习是流行技术。”
+✅“深度学习是一项流行的技术。”
 
-## Category 2: Word Choice
+## 第二类：选词
 
-### 2.1 Weak Verbs
-| Chinglish | Academic |
+### 2.1 弱动词
+|中式英语|学术的|
 |-----------|----------|
-| make | construct, generate, produce, create |
-| do | perform, conduct, execute, carry out |
-| get | obtain, achieve, derive, acquire |
-| use | employ, utilize, leverage, adopt |
-| show | demonstrate, illustrate, reveal, indicate |
-| find | discover, identify, observe, determine |
+|制作|构造、生成、生产、创造|
+|做|执行、进行、执行、实行|
+|得到|获得、获得、获得、获得|
+|使用|雇用、利用、利用、采用|
+|展示|演示、说明、揭示、指示|
+|寻找|发现、识别、观察、确定|
 
-### 2.2 Informal Expressions
-| Avoid | Use Instead |
+### 2.2 非正式表达
+|避免|使用替代|
 |-------|-------------|
-| a lot of | numerous, substantial, considerable |
-| big | significant, substantial, major |
-| very | highly, considerably, substantially |
-| things | factors, elements, aspects, components |
-| good | effective, efficient, optimal, superior |
+|很多|大量的，大量的，大量的|
+|大的|重要的，重要的，主要的|
+|非常|高度、显着、显着|
+|事物|因素、要素、方面、组成部分|
+|好的|有效的、高效的、最佳的、卓越的|
 
-### 2.3 Redundant Expressions
-| Redundant | Concise |
+### 2.3 冗余表达式
+|多余的|简洁的|
 |-----------|---------|
-| completely eliminate | eliminate |
-| future prospects | prospects |
-| past history | history |
-| basic fundamentals | fundamentals |
-| advance planning | planning |
+|彻底消除|排除|
+|前景|前景|
+|过去的历史|历史|
+|基本原理|基础知识|
+|提前计划|规划|
 
-## Category 3: Hedging (避免绝对化)
+## 第三类：对冲（避免绝对化）
 
-### Forbidden Absolute Words
-- ❌ "obviously", "clearly", "certainly", "undoubtedly"
-- ❌ "always", "never", "all", "none"
-- ❌ "prove", "prove that" (unless mathematical proof)
+### 禁止的绝对词
+- ❌ “显然”、“显然”、“当然”、“无疑”
+- ❌ “总是”、“从不”、“全部”、“没有”
+- ❌“证明”，“证明”（除非数学证明）
 
-### Academic Hedging
-- ✅ "It appears that...", "It seems that..."
-- ✅ "The results suggest...", "The data indicate..."
-- ✅ "This may be attributed to..."
-- ✅ "One possible explanation is..."
+### 学术对冲
+- ✅“看来……”、“看来……”
+- ✅ “结果表明......”，“数据表明......”
+- ✅“这可能归因于……”
+- ✅“一种可能的解释是……”
 
-## Category 4: Tense Usage
+## 第 4 类：时态用法
 
-### Abstract
-- Present tense for general statements
-- Past tense for specific findings
+### 摘要
+- 一般陈述的现在时
+- 具体发现的过去时
 
-### Introduction
-- Present tense for established facts
-- Present perfect for recent developments
+### 介绍
+- 既定事实的现在时
+- 最近发展的现在完成时
 
-### Methods
-- Past tense (what you did)
+### 方法
+- 过去时（你做了什么）
 
-### Results
-- Past tense for your findings
-- Present tense for tables/figures ("Table 1 shows...")
+### 结果
+- 你的发现的过去时态
+- 表格/数字的现在时（“表 1 显示...”）
 
-### Discussion
-- Present tense for interpretations
-- Past tense for referencing results
+### 讨论
+- 用于解释的现在时
+- 引用结果的过去时
 
-## Category 5: Common Phrase Errors
+## 类别 5：常见短语错误
 
-### Preposition Errors
-| Wrong | Correct |
+### 介词错误
+|错误的|正确的|
 |-------|---------|
-| according with | according to |
-| based in | based on |
-| compare with (similar) | compare to (similar) |
-| different with | different from |
-| focus at | focus on |
+|根据|根据|
+|设于|基于|
+|与（相似）比较|与（相似）比较|
+|不同与|不同于|
+|聚焦于|专注于|
 
-### Collocation Errors
-| Wrong | Correct |
+### 搭配错误
+|错误的|正确的|
 |-------|---------|
-| do an experiment | conduct/perform an experiment |
-| make a conclusion | draw/reach a conclusion |
-| take efforts | make efforts |
-| rise a question | raise a question |
-| solve problems | address/tackle problems |
+|做一个实验|进行/进行实验|
+|做出结论|得出/得出结论|
+|努力|努力|
+|提出问题|提出问题|
+|解决问题|解决/处理问题|
 
-## Category 6: Chinese-English Translation Patterns
+## 第六类：汉英翻译模式
 
-### 6.1 Direct Translation Errors
-| 中文 | ❌ Chinglish | ✅ English |
+### 6.1 直接翻译错误
+|中文|❌ 中式英语|✅ 英语|
 |------|-------------|-----------|
-| 越来越多 | more and more | increasingly |
-| 近年来 | in recent years | recently / since 2020 |
-| 发挥重要作用 | play an important role | is crucial for / enables |
-| 取得了很大进展 | made great progress | has advanced significantly |
-| 随着...的发展 | with the development of | as X advances / given advances in |
+|越来越多|越来越多|日益|
+|最近|最近几年|最近/自 2020 年以来|
+|发挥重要作用|发挥重要作用|对于/使能至关重要|
+|取得了很大进展|取得了很大的进步|已显着进步|
+|随着...的发展|随着发展|随着X的进步/给定的进步|
 
-### 6.2 Academic Expression Patterns
-| 中文 | English |
+### 6.2 学术表达模式
+|中文|英语|
 |------|---------|
-| 本文提出... | We propose... / This paper presents... |
-| 实验结果表明... | Experimental results demonstrate that... |
-| 与...相比 | Compared with... / In comparison to... |
-| 综上所述 | In summary / In conclusion |
-| 值得注意的是 | Notably / It is worth noting that |
+|下面提出...|我们建议.../本文提出...|
+|实验结果展示...|实验结果表明...|
+|与...相比|与...相比/与...相比|
+|综上说|总而言之/结论|
+|表示的是|值得注意的是/值得注意的是|
 
-## Typst-Specific Notes
+## 打字机特定注释
 
-### Comment Syntax
+### 注释语法
 ```typst
 // This is a single-line comment
 /* This is a
    multi-line comment */
 ```
 
-### Common Typst Errors
-❌ Using LaTeX syntax: `\cite{}`
-✅ Using Typst syntax: `@cite`
+### 常见打字错误
+❌ 使用 LaTeX 语法：`\cite{}`
+✅ 使用 Typst 语法：`@cite`
 
-❌ Using LaTeX math: `\frac{a}{b}`
-✅ Using Typst math: `$a/b$` or `$(a)/(b)$`
+❌ 使用 LaTeX 数学：`\frac{a}{b}`
+✅ 使用 Typst 数学：`$a/b$`或者`$(a)/(b)$`
 
-❌ Using LaTeX environments: `\begin{figure}`
-✅ Using Typst functions: `#figure(...)`
+❌使用LaTeX环境：`\begin{figure}`
+✅ 使用 Typst 函数：`#figure(...)`

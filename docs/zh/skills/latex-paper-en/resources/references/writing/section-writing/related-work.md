@@ -1,48 +1,48 @@
-# Related Work Section Writing
+# 相关工作部分写作
 
-## Objective
+## 客观的
 
-Position the paper against the most relevant research lines so novelty is easy to verify and the gap feels earned, not asserted.
+将论文定位在最相关的研究方向上，这样新颖性就很容易验证，并且差距让人感觉是应得的，而不是断言的。
 
-## Topic Design
+## 主题设计
 
-Use 2-4 focused topic clusters:
+使用 2-4 个重点主题集群：
 
-1. mainstream methods for the task;
-2. methods closest to the core idea;
-3. auxiliary techniques or theory the method builds on;
-4. evaluation settings or datasets when those define the gap.
+1. 任务的主流方法；
+2. 最接近核心思想的方法；
+3. 该方法所依据的辅助技术或理论；
+4. 评估设置或数据集（当它们定义差距时）。
 
-## Paragraph Role Template
+## 段落角色模板
 
-Each topic paragraph should contain:
+每个主题段落应包含：
 
-1. **Topic scope**: what line of work is being discussed.
-2. **Representative methods**: compact summary of shared paradigm.
-3. **Comparison**: mechanism, assumption, strength, or trade-off.
-4. **Limitation**: what remains unresolved for the target challenge.
-5. **Bridge**: how the current paper differs without overclaiming.
+1. **主题范围**：正在讨论的工作范围。
+2. **代表性方法**：共享范式的紧凑总结。
+3. **比较**：机制、假设、强度或权衡。
+4. **限制**：目标挑战尚未解决的问题。
+5. **桥梁**：当前论文有何不同，但又没有过分夸大。
 
-## Rewrite Chain
+## 重写链
 
-Use this chain for rewrite blueprints:
+使用此链重写蓝图：
 
 ```text
 Consensus -> Disagreement -> Limitations -> Gap -> This paper
 ```
 
-This chain should preserve existing citation anchors. Do not add new citations unless the user asks for literature research and provides or confirms sources.
+该链应保留现有的引用锚。除非用户要求进行文献研究并提供或确认来源，否则不要添加新的引文。
 
-## Safety Rules
+## 安全规则
 
-- A citation key only proves the source is cited; it does not prove support for the exact gap claim.
-- Do not hide the strongest baseline. If it is missing from the draft, flag the missing comparison instead of writing around it.
-- Do not turn "few papers discuss X" into "no work has studied X" unless verified.
-- Use bounded distinction language: `differs from`, `targets`, `focuses on`, `complements`, `addresses the setting of`.
+- 引文关键字仅证明来源被引用；它并不能证明对确切差距主张的支持。
+- 不要隐藏最强的基线。如果草稿中缺少它，请标记缺少的比较，而不是围绕它书写。
+- 除非经过验证，否则不要将“很少有论文讨论 X”变成“没有研究过 X”。
+- 使用有界区分语言：`differs from`, `targets`, `focuses on`, `complements`, `addresses the setting of`.
 
-## Claim-Evidence Map
+## 声明-证据图
 
-For each gap or novelty claim:
+对于每个差距或新颖性声明：
 
 ```text
 Claim: ...

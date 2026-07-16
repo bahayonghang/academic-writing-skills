@@ -1,99 +1,99 @@
-# Common Chinglish Errors in Academic Writing
+# 学术写作中常见的中式英语错误
 
-## Category 1: Sentence Structure
+## 第一类：句子结构
 
-### 1.1 Topic-Prominent Structure
-❌ "This method, its advantage is obvious."
-✅ "The advantage of this method is obvious."
+### 1.1 主题突出结构
+❌“这个方法，它的优势是显而易见的。”
+✅“这种方法的优点是显而易见的。”
 
-### 1.2 Run-on Sentences
-❌ "We propose a method it can solve the problem."
-✅ "We propose a method that can solve the problem."
+### 1.2 连贯句
+❌“我们提出了一种可以解决问题的方法。”
+✅“我们提出了一种可以解决问题的方法。”
 
-### 1.3 Missing Articles
-❌ "Deep learning is popular technology."
-✅ "Deep learning is a popular technology."
+### 1.3 缺失的文章
+❌“深度学习是流行技术。”
+✅“深度学习是一项流行的技术。”
 
-## Category 2: Word Choice
+## 第二类：选词
 
-### 2.1 Weak Verbs
-| Chinglish | Academic |
+### 2.1 弱动词
+|中式英语|学术的|
 |-----------|----------|
-| make | construct, generate, produce, create |
-| do | perform, conduct, execute, carry out |
-| get | obtain, achieve, derive, acquire |
-| use | employ, utilize, leverage, adopt |
-| show | demonstrate, illustrate, reveal, indicate |
-| find | discover, identify, observe, determine |
+|制作|构造、生成、生产、创造|
+|做|执行、进行、执行、实行|
+|得到|获得、获得、获得、获得|
+|使用|雇用、利用、利用、采用|
+|展示|演示、说明、揭示、指示|
+|寻找|发现、识别、观察、确定|
 
-### 2.2 Informal Expressions
-| Avoid | Use Instead |
+### 2.2 非正式表达
+|避免|使用替代|
 |-------|-------------|
-| a lot of | numerous, substantial, considerable |
-| big | significant, substantial, major |
-| very | highly, considerably, substantially |
-| things | factors, elements, aspects, components |
-| good | effective, efficient, optimal, superior |
+|很多|大量的，大量的，大量的|
+|大的|重要的，重要的，主要的|
+|非常|高度、显着、显着|
+|事物|因素、要素、方面、组成部分|
+|好的|有效的、高效的、最佳的、卓越的|
 
-### 2.3 Redundant Expressions
-| Redundant | Concise |
+### 2.3 冗余表达式
+|多余的|简洁的|
 |-----------|---------|
-| completely eliminate | eliminate |
-| future prospects | prospects |
-| past history | history |
-| basic fundamentals | fundamentals |
-| advance planning | planning |
+|彻底消除|排除|
+|前景|前景|
+|过去的历史|历史|
+|基本原理|基础知识|
+|提前计划|规划|
 
-## Category 3: Hedging (避免绝对化)
+## 第三类：对冲（避免绝对化）
 
-### Forbidden Absolute Words
-- ❌ "obviously", "clearly", "certainly", "undoubtedly"
-- ❌ "always", "never", "all", "none"
-- ❌ "prove", "prove that" (unless mathematical proof)
+### 禁止的绝对词
+- ❌ “显然”、“显然”、“当然”、“无疑”
+- ❌ “总是”、“从不”、“全部”、“没有”
+- ❌“证明”，“证明”（除非数学证明）
 
-### Academic Hedging
-- ✅ "It appears that...", "It seems that..."
-- ✅ "The results suggest...", "The data indicate..."
-- ✅ "This may be attributed to..."
-- ✅ "One possible explanation is..."
+### 学术对冲
+- ✅“看来……”、“看来……”
+- ✅ “结果表明......”，“数据表明......”
+- ✅“这可能归因于……”
+- ✅“一种可能的解释是……”
 
-## Category 4: Tense Usage
+## 第 4 类：时态用法
 
-### Abstract
-- Present tense for general statements
-- Past tense for specific findings
+### 摘要
+- 一般陈述的现在时
+- 具体发现的过去时
 
-### Introduction
-- Present tense for established facts
-- Present perfect for recent developments
+### 介绍
+- 既定事实的现在时
+- 最近发展的现在完成时
 
-### Methods
-- Past tense (what you did)
+### 方法
+- 过去时（你做了什么）
 
-### Results
-- Past tense for your findings
-- Present tense for tables/figures ("Table 1 shows...")
+### 结果
+- 你的发现的过去时态
+- 表格/数字的现在时（“表 1 显示...”）
 
-### Discussion
-- Present tense for interpretations
-- Past tense for referencing results
+### 讨论
+- 用于解释的现在时
+- 引用结果的过去时
 
-## Category 5: Common Phrase Errors
+## 类别 5：常见短语错误
 
-### Preposition Errors
-| Wrong | Correct |
+### 介词错误
+|错误的|正确的|
 |-------|---------|
-| according with | according to |
-| based in | based on |
-| compare with (similar) | compare to (similar) |
-| different with | different from |
-| focus at | focus on |
+|根据|根据|
+|设于|基于|
+|与（相似）比较|与（相似）比较|
+|不同与|不同于|
+|聚焦于|专注于|
 
-### Collocation Errors
-| Wrong | Correct |
+### 搭配错误
+|错误的|正确的|
 |-------|---------|
-| do an experiment | conduct/perform an experiment |
-| make a conclusion | draw/reach a conclusion |
-| take efforts | make efforts |
-| rise a question | raise a question |
-| solve problems | address/tackle problems |
+|做一个实验|进行/进行实验|
+|做出结论|得出/得出结论|
+|努力|努力|
+|提出问题|提出问题|
+|解决问题|解决/处理问题|

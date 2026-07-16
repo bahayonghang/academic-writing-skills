@@ -2,28 +2,35 @@
 
 This reference defines the formatting rules for four major citation styles used in academic publishing. Use this when validating bibliography entries with `verify_bib.py --style <style>`.
 
+> `verify_bib.py --style` accepts `ieee`, `apa`, `mla`, `chicago`, and
+> `gb-7714-2015-numeric`. Vancouver / Nature below are documented as formatting
+> references only; the rendered bibliography is driven by hayagriva style ids in
+> `#bibliography("refs.bib", style: ...)`.
+
 ## Style Comparison Matrix
 
-| Feature | IEEE | APA 7th | Vancouver | Nature |
-|---------|------|---------|-----------|--------|
-| In-text format | `[1]` numeric | `(Smith, 2023)` author-year | `(1)` or superscript | Superscript |
-| Author threshold | 6 → et al. | 3 → et al. (in-text: 1-2 spell, 3+ et al.) | 6 → et al. | 5 → et al. |
-| Journal name | ISO 4 abbreviated | Full name, italicized | NLM abbreviated | ISO 4 abbreviated |
-| Volume | Bold | Italicized | Bold | Bold |
-| Pages | en dash (pp. 1--10) | en dash (pp. 1--10) | en dash (1--10) | en dash (1--10) |
-| DOI | Required when available | Required as URL | Optional | Required when available |
-| Year position | After author | After author in parens | After journal | After journal |
+| Feature          | IEEE                    | APA 7th                                    | Vancouver            | Nature                  |
+| ---------------- | ----------------------- | ------------------------------------------ | -------------------- | ----------------------- |
+| In-text format   | `[1]` numeric           | `(Smith, 2023)` author-year                | `(1)` or superscript | Superscript             |
+| Author threshold | 6 → et al.              | 3 → et al. (in-text: 1-2 spell, 3+ et al.) | 6 → et al.           | 5 → et al.              |
+| Journal name     | ISO 4 abbreviated       | Full name, italicized                      | NLM abbreviated      | ISO 4 abbreviated       |
+| Volume           | Bold                    | Italicized                                 | Bold                 | Bold                    |
+| Pages            | en dash (pp. 1--10)     | en dash (pp. 1--10)                        | en dash (1--10)      | en dash (1--10)         |
+| DOI              | Required when available | Required as URL                            | Optional             | Required when available |
+| Year position    | After author            | After author in parens                     | After journal        | After journal           |
 
 ## IEEE Style
 
 **In-text**: `[1]`, `[2-4]`, `[1], [3]`
 
 **Reference format**:
+
 ```
 [1] A. B. Author, C. D. Author, and E. F. Author, "Article title," J. Abbrev., vol. 10, no. 2, pp. 1--15, Mar. 2023, doi: 10.xxxx/xxxxx.
 ```
 
 **Rules**:
+
 - Authors: initials before surname, up to 6 listed, then "et al."
 - Title: sentence case in double quotes
 - Journal: ISO 4 abbreviation, italicized
@@ -37,11 +44,13 @@ This reference defines the formatting rules for four major citation styles used 
 **In-text**: `(Smith, 2023)`, `(Smith & Jones, 2023)`, `(Smith et al., 2023)` for 3+
 
 **Reference format**:
+
 ```
 Author, A. B., Author, C. D., & Author, E. F. (2023). Article title. Journal Name, 10(2), 1--15. https://doi.org/10.xxxx/xxxxx
 ```
 
 **Rules**:
+
 - Authors: surname, initials; up to 20 listed, 21+ use first 19 + ... + last
 - In-text: 1-2 authors spell out, 3+ use "et al."
 - Title: sentence case, no quotes
@@ -56,11 +65,13 @@ Author, A. B., Author, C. D., & Author, E. F. (2023). Article title. Journal Nam
 **In-text**: `(1)` or superscript `¹`, numbered by order of appearance
 
 **Reference format**:
+
 ```
 1. Author AB, Author CD, Author EF. Article title. J Abbrev. 2023;10(2):1-15.
 ```
 
 **Rules**:
+
 - Authors: surname followed by initials (no periods, no commas between initials)
 - Up to 6 authors listed, then "et al."
 - Title: sentence case, no quotes
@@ -74,11 +85,13 @@ Author, A. B., Author, C. D., & Author, E. F. (2023). Article title. Journal Nam
 **In-text**: Superscript numbers `¹`, `²,³`, `⁴⁻⁶`
 
 **Reference format**:
+
 ```
 1. Author, A. B., Author, C. D. & Author, E. F. Article title. J. Abbrev. 10, 1--15 (2023).
 ```
 
 **Rules**:
+
 - Authors: surname, initials; up to 5 listed, then "et al."
 - Title: sentence case, no quotes, no period after title
 - Journal: ISO 4 abbreviation, italicized
@@ -105,9 +118,10 @@ When a field cannot be confirmed (DOI not found, page numbers uncertain):
 
 ## Style Detection Heuristic
 
-When `--style` is not specified, attempt detection from:
-1. `\bibliographystyle{IEEEtran}` → IEEE
-2. `\bibliographystyle{apalike}` or `\usepackage{apacite}` → APA
-3. `\bibliographystyle{vancouver}` or `\usepackage{vancouver}` → Vancouver
-4. Document class or preamble hints for Nature-family journals
+When `--style` is not specified, attempt detection from the Typst source:
+
+1. `#bibliography(..., style: "ieee")` → IEEE
+2. `#bibliography(..., style: "apa")` → APA
+3. `#bibliography(..., style: "gb-7714-2015-numeric")` → Chinese GB/T 7714
+4. Venue named in `#show: <template>.with(...)` (e.g. `charged-ieee` → IEEE)
 5. Default: IEEE (most common in CS/EE)

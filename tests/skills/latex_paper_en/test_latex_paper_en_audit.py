@@ -142,7 +142,16 @@ def test_graphicspath_subdir_resolves():
 
 def test_long_sentence_detected_across_wrapped_lines():
     result = _run("analyze_sentences.py", str(MAIN_TEX), "--max-words", "50")
-    assert "LONG SENTENCE (Line" in result.stdout
+    # A-EN-3: this fixture is itself a multi-file project (main.tex \input's
+    # sections/intro.tex), so once analyze_sentences.py assembles it the
+    # location label correctly switches from bare "Line N" to "main.tex:N"
+    # (AssembledDocument.lineref, multi_file=True) — this is the intended
+    # default-behavior change from adopting tex_loader.assemble(), not a
+    # regression in the "Line N" single-file format itself (see
+    # test_analyze_sentences_single_file_line_format_unchanged and
+    # test_analyze_sentences_finds_long_sentence_in_included_file in
+    # test_multifile_scripts.py for the single-file/multi-file behavior pair).
+    assert "LONG SENTENCE (main.tex:" in result.stdout
 
 
 # ── E14: model-name labels do not create a phantom numbering gap ──────────────

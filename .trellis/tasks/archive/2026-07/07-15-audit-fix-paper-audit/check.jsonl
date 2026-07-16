@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "质检时核对：默认行为变化双声明是否落在 W1/W3 的 commit message；pytest 命令未加 PYTHONIOENCODING；渲染报告截断陷阱——断言走 issues 列表/JSON 而非 grep 报告"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "核对 W3 新测试是否误用 bare import 拿到 EN 副本（应含加载守卫断言）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "核对 W1/W2 未增删 references/agents 文件、docs 资源契约测试仍绿"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "逐条对照 A-PA-1..8 处置与父任务验收标准（每项修复含 Low 有回归测试、无 CRITICAL 第四级、无 '4 specialized' 残留）"}

@@ -1,22 +1,22 @@
-# Paragraph Flow And Reverse Outline
+# 段落流程和反向大纲
 
-## Objective
+## 客观的
 
-Check whether a section is easy to follow from a reader's perspective before polishing sentence style.
+在润色句子风格之前，从读者的角度检查某个部分是否易于理解。
 
-## Paragraph Test
+## 段落测试
 
-For each paragraph, answer:
+对于每个段落，回答：
 
-1. What is the one message of this paragraph?
-2. Does the first sentence state or clearly prepare that message?
-3. Does every sentence connect to the previous sentence by cause, contrast, consequence, refinement, or example?
-4. Are key nouns and technical terms defined before reuse?
-5. Does the paragraph connect back to the section objective?
+1. 这一段的一条信息是什么？
+2. 第一句话是否陈述或清楚地准备了该信息？
+3. 每个句子是否通过原因、对比、结果、细化或示例与前一个句子相关？
+4. 关键名词和技术术语在重用之前是否已定义？
+5. 该段落是否与该部分的目标相关？
 
-## Reverse Outline
+## 反向轮廓
 
-Build a compact reverse outline:
+构建紧凑的反向轮廓：
 
 ```text
 Section objective:
@@ -25,18 +25,18 @@ P2 topic sentence -> evidence/explanation -> role
 P3 topic sentence -> evidence/explanation -> role
 ```
 
-Flag any paragraph whose topic sentence does not map to the section objective, or whose evidence does not map to the topic sentence.
+标记主题句未映射到章节目标或其证据未映射到主题句的任何段落。
 
-## Transition Diagnosis
+## 过渡诊断
 
-Use explicit relation labels before suggesting words:
+在建议单词之前使用明确的关系标签：
 
-| Relation | Use When | Typical Signal |
+|关系|使用时间|典型信号|
 | --- | --- | --- |
-| cause | next sentence explains why | because, due to, therefore |
-| contrast | next sentence limits or opposes | however, in contrast |
-| consequence | next sentence states result | consequently, as a result |
-| refinement | next sentence narrows meaning | specifically, in particular |
-| example | next sentence grounds a claim | for example, e.g. |
+|原因|下一句话解释了原因|因为，由于，因此|
+|对比|下一句限制或反对|然而，相比之下|
+|结果|下一句话说明结果|因此，作为结果|
+|细化|下一句缩小意思|具体地，特别地|
+|例子|下一句话为主张提供依据|例如，例如|
 
-Do not add transitions that fake logic. If the relation is missing, propose a bridging sentence or reorder paragraphs.
+不要添加伪造逻辑的转换。如果缺少关系，请提出一个桥接句或重新排列段落。

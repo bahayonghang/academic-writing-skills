@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/07-15-audit-fix-typst-paper/prd.md", "reason": "逐条核对 Acceptance Criteria：tests-first 红转绿、五副本 grep 零残留、just ci 全绿、不动 version/last_updated"}
+{"file": ".trellis/tasks/07-15-audit-fix-typst-paper/design.md", "reason": "核对锁定成员字节一致（en/audit/cover_letter/typst 四副本 + zh 帮助函数与 PRESERVE）、ALIGNMENTS 仅新增 _strip_typst_line_comment 与 TypstParser.clean_text 两行、en 任务函数零交集"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "质检时确认：新测试用 importlib 路径加载并含加载守卫、commit message 已声明默认行为变化、未给 pytest 加 PYTHONIOENCODING"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "对照父任务 AC：每项修复（含 Low 的 A-TY-2）有回归测试；对齐锁按 design.md 声明更新且副本一致"}

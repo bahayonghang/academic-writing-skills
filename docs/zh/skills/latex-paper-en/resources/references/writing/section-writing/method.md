@@ -1,42 +1,42 @@
-# Method Section Writing
+# 方法部分写作
 
-## Objective
+## 客观的
 
-Make the method reproducible and motivated: readers should understand what each module does, why it is needed, and why it should help.
+使方法具有可重复性和动机：读者应该理解每个模块的作用、为什么需要它以及为什么它应该有帮助。
 
-## Pre-Writing Table
+## 预写表
 
-Before drafting, build this table:
+在起草之前，先构建此表：
 
-| Module | Input -> Output | Why Needed | Why It Works | Evidence Later |
+|模块|输入->输出|为什么需要|为什么它有效|稍后提供证据|
 | --- | --- | --- | --- | --- |
-| ... | ... | ... | ... | table/ablation/analysis |
+| ... | ... | ... | ... |表格/消融/分析|
 
-If a module has no motivation or no later evidence, mark it before writing prose.
+如果某个模块没有动机或没有后来的证据，请在撰写散文之前对其进行标记。
 
-## Section Structure
+## 剖面结构
 
-1. **Overview**: task setting, core contribution, pipeline figure pointer, and subsection map.
-2. **Module subsections**: one subsection per technical module or design unit.
-3. **Implementation details**: hyperparameters, normalization, training setup, practical choices.
+1. **概述**：任务设置、核心贡献、管线图指针、分段图。
+2. **模块小节**：每个技术模块或设计单元一个小节。
+3. **实现细节**：超参数、标准化、训练设置、实际选择。
 
-## Module Triad
+## 模块三元组
 
-Each method subsection should cover:
+每个方法小节应涵盖：
 
-1. **Motivation**: what challenge or failure mode requires this module.
-2. **Design**: concrete representation, network, data structure, algorithm, or forward process.
-3. **Technical advantage**: why this design is better suited than alternatives, preferably tied to measurable behavior.
+1. **动机**：什么挑战或失败模式需要此模块。
+2. **设计**：具体表示、网络、数据结构、算法或前向过程。
+3. **技术优势**：为什么这种设计比其他设计更适合，最好与可测量的行为相关。
 
-## Writing Order
+## 书写顺序
 
-1. Draft the design backbone first: `Given input -> step 1 -> step 2 -> output`.
-2. Add motivation before or around the design so the reader knows why each operation exists.
-3. Add technical advantage after the design, keeping claims bounded to what experiments can test.
-4. Check notation and term consistency across the pipeline figure, equations, captions, and subsection titles.
+1. 首先起草设计主干：`Given input -> step 1 -> step 2 -> output`。
+2. 在设计之前或周围添加动机，以便读者知道每个操作存在的原因。
+3. 在设计之后添加技术优势，将声明限制在实验可以测试的范围内。
+4. 检查管道图、方程、标题和小节标题之间的符号和术语一致性。
 
-## Hard Boundaries
+## 硬性界限
 
-- Do not invent equations, hyperparameters, algorithm steps, complexity claims, or implementation details.
-- If a detail is missing, write a reviewer-facing TODO rather than filling it in.
-- Preserve math, macros, labels, and figure references verbatim unless source edits are explicitly requested.
+- 不要发明方程、超参数、算法步骤、复杂性声明或实现细节。
+- 如果缺少细节，请写一个面向审阅者的 TODO，而不是填写它。
+- 除非明确要求进行源代码编辑，否则逐字保留数学、宏、标签和图形引用。

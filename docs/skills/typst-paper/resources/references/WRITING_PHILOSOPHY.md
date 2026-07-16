@@ -100,13 +100,14 @@ Drop "may" and "can" unless genuinely uncertain.
 | **Introduction** | 1-1.5 pages max | 2-4 bullet contribution list; methods should start by page 2-3 |
 | **Methods** | As needed | Enable reimplementation; all hyperparameters listed |
 | **Experiments** | Main body | State claim before each experiment; error bars mandatory |
-| **Related Work** | 1-1.5 pages | Organize methodologically, not paper-by-paper |
+| **Related Work** | 1-1.5 pages | Organize methodologically; each cited work needs individual discussion; max 2 clustered citations |
 | **Limitations** | 0.5-1 page | Required by all major venues; pre-empt reviewer criticisms |
 
 ### Introduction Must Include:
 - Clear problem statement
 - 2-4 bullet contribution list (max 1-2 lines each)
 - Brief approach overview
+- **Citation integration**: Each cited work must be accompanied by a brief description of its contribution, method, or limitation — max 2 clustered citations without discussion (see STYLE_GUIDE.md Anti-Citation-Stacking Rules)
 
 ### Experiments Must Include:
 - What claim each experiment supports

@@ -14,6 +14,12 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from tex_loader import AssembledDocument, assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import AssembledDocument, assemble
+
 
 class TableChecker:
     """Validate LaTeX tables against the three-line (booktabs) standard."""
@@ -33,9 +39,10 @@ class TableChecker:
         self.content = ""
         self.lines: list[str] = []
         self.issues: list[dict] = []
+        self.doc: AssembledDocument | None = None
 
     def _load(self) -> bool:
-        """Load the .tex file content."""
+        """Load the .tex file content (assembling \\input/\\include, A-EN-3)."""
         if not self.tex_file.exists():
             self.issues.append(
                 {
@@ -47,8 +54,9 @@ class TableChecker:
                 }
             )
             return False
-        self.content = self.tex_file.read_text(encoding="utf-8", errors="replace")
-        self.lines = self.content.split("\n")
+        self.doc = assemble(self.tex_file)
+        self.content = self.doc.content
+        self.lines = self.doc.lines
         return True
 
     def check(self, fix_suggestions: bool = False) -> dict:
@@ -385,6 +393,10 @@ class TableChecker:
         lines.append(f"Status: {result['status']}")
         lines.append(f"Issues: {result['issue_count']}")
 
+        if self.doc is not None:
+            for warning in self.doc.warning_lines("%"):
+                lines.append(warning)
+
         if result["issues"]:
             lines.append("")
             lines.append("-" * 60)
@@ -399,7 +411,8 @@ class TableChecker:
             for category, issues in sorted(by_category.items()):
                 lines.append(f"\n[{category.upper()}] ({len(issues)} issues)")
                 for issue in issues:
-                    prefix = f"  Line {issue['line']}" if issue["line"] else "  Global"
+                    location = self.doc.lineref(issue["line"]) if self.doc and issue["line"] else ""
+                    prefix = f"  {location}" if location else "  Global"
                     lines.append(f"{prefix}: [{issue['level']}] {issue['message']}")
                     if issue.get("fix"):
                         lines.append(f"    Fix: {issue['fix']}")

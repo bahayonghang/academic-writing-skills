@@ -1,17 +1,20 @@
-# Claim-Evidence Contract
+# 声明-证据合同
 
-This reference defines the lightweight contract used when a writing or audit flow needs to judge whether manuscript claims are supported by visible evidence. It is an advisory contract, not permission to invent missing evidence.
+该参考定义了当写作或审计流程需要判断论文稿件声明是否得到可见证据支持时使用的轻量级合约。这是一份咨询合同，而不是发明缺失证据的许可。
 
-## Claim Candidate Record
+## 索取候选人记录
 
-Use this shape when emitting a claim-evidence map:
+发出声明证据图时使用此形状：
 
 ```json
 {
   "claim": "exact manuscript claim or proposed claim",
   "section_key": "abstract|introduction|results|discussion|conclusion|...",
   "evidence_anchor": [
-    {"type": "citation|figure_or_table|metric|section|analysis_artifact|missing", "text": "visible anchor"}
+    {
+      "type": "citation|figure_or_table|metric|section|analysis_artifact|missing",
+      "text": "visible anchor"
+    }
   ],
   "claim_strength": "unsupported|observed|supported|strong",
   "missing_evidence": ["specific missing support or verification action"],
@@ -20,25 +23,31 @@ Use this shape when emitting a claim-evidence map:
 }
 ```
 
-## Strength Ladder
+## 力量阶梯
 
-| Strength | Meaning | Safe action |
-|---|---|---|
-| `unsupported` | No visible citation, metric, figure/table, section, or artifact anchor supports the claim. | Soften, mark missing evidence, or remove. |
-| `observed` | A local observation or metric is visible, but cross-checking or comparison support is incomplete. | Keep bounded to the observed setting. |
-| `supported` | At least one visible anchor exists, but the source still needs claim-level verification. | Keep the claim only within the anchor's scope. |
-| `strong` | Metric plus figure/table/artifact support is visible and the boundary is explicit. | Keep, while preserving dataset/method/setting limits. |
+|力量|意义|安全行动|
+| ------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `unsupported` |没有可见的引文、度量、图/表、部分或工件锚点支持该声明。|软化、标记缺失的证据或移除。|
+| `observed`    |局部观察或指标是可见的，但交叉检查或比较支持不完整。|保持受观察环境的限制。|
+| `supported`   |至少存在一个可见的锚点，但来源仍需要声明级验证。|仅将声明保留在锚点的范围内。|
+| `strong`      |指标加图形/表格/工件支持是可见的并且边界是明确的。|保留，同时保留数据集/方法/设置限制。|
 
-## Evidence Anchor Rules
+## 证据锚规则
 
-- A citation key proves only that a reference is cited. It does not prove the cited paper supports the manuscript sentence until claim support is checked.
-- A figure supports patterns and comparisons; a table supports exact values. Do not use a figure-only anchor for an exact numeric claim unless the value is readable or separately tabulated.
-- A metric without a dataset, baseline, or unit of analysis should remain `observed`, not `strong`.
-- A section or appendix reference is useful only when the target section actually contains the promised method, proof, data, or limitation.
+- 引用键仅证明参考文献被引用。在检查声明支持之前，它不能证明被引用的论文支持论文稿件句子。
+- 图形支持模式和比较；表格支持精确值。除非该值可读或单独制表，否则请勿使用仅包含数字的锚点来表示精确的数字声明。
+- 应保留没有数据集、基线或分析单位的指标`observed`， 不是`strong`.
+- 仅当目标部分实际包含承诺的方法、证明、数据或限制时，部分或附录引用才有用。
 
-## Output Discipline
+## 输出规则
 
-- Preserve the author's original claim text when reporting problems.
-- Never invent baselines, p-values, ablations, sample sizes, citations, figures, or datasets.
-- When evidence is missing, write the missing evidence explicitly instead of filling the gap.
-- Prefer bounded wording such as "in the reported setting" or "the presented results suggest" over universal claims.
+- 报告问题时保留作者的原始声明文本。
+- 切勿发明基线、p 值、消融、样本量、引文、图表或数据集。
+- 当证据缺失时，明确写出缺失的证据，而不是填补空白。
+- 与普遍的主张相比，更喜欢有限制的措辞，例如“在报告的环境中”或“所呈现的结果表明”。
+
+## 参见
+
+- [`over-claim-guard.md`](over-claim-guard.md) ——一旦知道了某个声明的强度，该指南
+给出了保守措辞的动词/限定词表。本合同规定了上限；
+警卫挑选下面的措辞。

@@ -20,8 +20,8 @@ metadata:
       align-check,
       journal-fit,
     ]
-  version: "5.3.0"
-  last_updated: "2026-07-09"
+  version: "6.0.0"
+  last_updated: "2026-07-16"
 argument-hint: "--mode generate|optimize|align-check|journal-fit|presubmission --manuscript main.tex --letter cover_letter.md --journal nature|science|cell|ieee-trans|acm|springer-lncs|neurips|icml|cvpr|generic [--json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---

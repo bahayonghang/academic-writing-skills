@@ -53,6 +53,10 @@ DRAFT_NOTE_HEDGE = [
 # mixed_punctuation；检查前按等长空格剥离，保留其余列号。
 # 出处：fixture ch4 L88/111/152/161/187/230 六条中文图名假阳。
 _PATH_ARG_RE = re.compile(r"\\(?:includegraphics(?:\[[^\]]*\])?|input|bibliography)\{[^}]*\}")
+_KEY_ARG_RE = re.compile(
+    r"\\(?:cite[a-zA-Z]*|ref|eqref|autoref|cref|Cref|pageref|label)\*?\{[^}]*\}"
+    r"|\\hyperref\[[^\]]*\]"
+)
 
 # 单个空占位单元格（表体行去空白后的整格内容）。仅 --/--- / — / \ldots / 待填 命中；
 # 单个 - 或任意含数字/文字的真实数据不命中。用于 F-PLACEHOLDER 行级判定。
@@ -273,6 +277,7 @@ class FormatChecker:
                 target = parser.extract_visible_text(line) if visible_only else line
                 if check_info.get("strip_path_args"):
                     target = _PATH_ARG_RE.sub(lambda m: " " * len(m.group()), target)
+                    target = _KEY_ARG_RE.sub(lambda m: " " * len(m.group()), target)
                 if not target:
                     continue
 

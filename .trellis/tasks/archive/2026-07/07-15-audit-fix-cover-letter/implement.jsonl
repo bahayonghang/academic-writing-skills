@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务发现登记表 A-CL-1..11 的证据、处置与顺序约束（A-EN-10→A-CL-7）是本任务的需求源"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本共享面与对齐锁背景：bare import 永远解析到 EN 副本，本任务不得触碰 parsers/tex_loader 副本"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "cover-letter 测试必须 importlib spec_from_file_location + 对称恢复 sys.path/sys.modules；路径常量只从 tests.support.paths 导入；默认行为变化须双声明；pytest 禁加 PYTHONIOENCODING"}
+{"file": ".trellis/tasks/07-15-audit-fix-cover-letter/design.md", "reason": "本任务逐项设计：NUMBER_UNIT_PATTERN 单源契约、方向词窗口、dedup flag、A-CL-7 两分支预案"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "本任务修改 references/MODE_GUIDE.md 与 CLAIM_EVIDENCE_CONTRACT.md 内容（不增删文件）；确认不触发 docs 资源契约的新增/删除路径，docs 同步归 07-14 文档子任务"}

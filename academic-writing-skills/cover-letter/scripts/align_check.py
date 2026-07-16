@@ -20,12 +20,22 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from build_letter_claim_map import STRONG_CLAIM_PATTERN, build_claim_map
+from build_letter_claim_map import (
+    _SALUTATION_RE,
+    STRONG_CLAIM_PATTERN,
+    build_claim_map,
+    strip_tex_comments,
+)
 from extract_manuscript_facts import extract_facts, load_manuscript_text
 from presubmission_check import DECLARATION_PATTERNS
 from verify_letter_against_manuscript import verify_claim_candidates
 
 MODULE = "ALIGNCHECK"
+
+_VALEDICTION_RE = re.compile(
+    r"^(?:Sincerely|Best regards|Kind regards|Yours (?:sincerely|faithfully)|Respectfully)\b",
+    re.IGNORECASE | re.MULTILINE,
+)
 
 # STRONG_CLAIM_PATTERN is owned by build_letter_claim_map (single source of
 # truth) so claim-strength wording and severity classification stay in sync.
@@ -65,6 +75,7 @@ class AlignCheckIssue:
     allowed_wording: str
     forbidden_wording: list[str]
     quote_verified: bool
+    char_offset: int = -1
 
 
 def _section_anchor_for_claim(candidate: dict, facts: dict) -> str:
@@ -133,7 +144,38 @@ def _has_scope_or_wording_risk(candidate: dict) -> bool:
     return has_strong_wording or lacks_anchor
 
 
-def candidate_to_issue(candidate: dict, facts: dict) -> AlignCheckIssue | None:
+def _source_section_for_offset(offset: int, letter_text: str) -> str:
+    """Map a claim offset to structural cover-letter sections only."""
+    if offset < 0:
+        return "body"
+
+    salutation = _SALUTATION_RE.search(letter_text)
+    if salutation is None:
+        return "body"
+    if offset < salutation.end():
+        return "header"
+
+    valediction = _VALEDICTION_RE.search(letter_text)
+    if valediction is not None and offset >= valediction.start():
+        return "closing"
+
+    opening_start = salutation.end()
+    opening_end_match = re.search(r"\n\s*\n", letter_text[opening_start:])
+    opening_end = (
+        opening_start + opening_end_match.start()
+        if opening_end_match is not None
+        else len(letter_text)
+    )
+    if opening_start <= offset < opening_end:
+        return "opening"
+    return "body"
+
+
+def candidate_to_issue(
+    candidate: dict,
+    facts: dict,
+    letter_text: str | None = None,
+) -> AlignCheckIssue | None:
     """Convert a verified claim candidate to an AlignCheckIssue."""
     strength = candidate.get("claim_strength")
     if strength == "observed" and not _has_scope_or_wording_risk(candidate):
@@ -142,6 +184,7 @@ def candidate_to_issue(candidate: dict, facts: dict) -> AlignCheckIssue | None:
         return None
     severity = _classify_severity(candidate)
     section_anchor = _section_anchor_for_claim(candidate, facts)
+    char_offset = int(candidate.get("char_offset", -1))
     return AlignCheckIssue(
         title="Cover letter claim lacks manuscript support",
         quote=candidate.get("claim", "")[:280],
@@ -156,7 +199,11 @@ def candidate_to_issue(candidate: dict, facts: dict) -> AlignCheckIssue | None:
         priority=_priority_for_severity(severity),
         source_kind="script",
         confidence=candidate.get("confidence", "unverified"),
-        source_section="contributions",
+        source_section=(
+            _source_section_for_offset(char_offset, letter_text)
+            if letter_text is not None
+            else "body"
+        ),
         manuscript_section_anchor=section_anchor,
         evidence_anchor=candidate.get("evidence_anchor", []),
         claim_strength=candidate.get("claim_strength", "unsupported"),
@@ -164,21 +211,8 @@ def candidate_to_issue(candidate: dict, facts: dict) -> AlignCheckIssue | None:
         allowed_wording=candidate.get("allowed_wording", ""),
         forbidden_wording=candidate.get("forbidden_wording", []),
         quote_verified=bool(candidate.get("quote_verified")),
+        char_offset=char_offset,
     )
-
-
-def _strip_tex_comments(text: str) -> str:
-    """Drop unescaped LaTeX ``%`` comments line by line.
-
-    Applied to the manuscript (and to ``.tex`` letters) before disclosure
-    matching so a commented-out declaration such as ``% We used ChatGPT`` does
-    not read as an active AI-disclosure statement.
-    """
-    out: list[str] = []
-    for line in text.splitlines():
-        match = re.search(r"(?<!\\)%", line)
-        out.append(line[: match.start()] if match else line)
-    return "\n".join(out)
 
 
 def _ai_disclosure_polarity(text: str) -> str:
@@ -239,8 +273,8 @@ def _check_ai_disclosure_consistency(
     disclosure is the presubmission ``D-ai_disclosure`` check's job, not this
     lane's.
     """
-    manuscript_clean = _strip_tex_comments(manuscript_text)
-    letter_clean = _strip_tex_comments(letter_text) if letter_is_tex else letter_text
+    manuscript_clean = strip_tex_comments(manuscript_text)
+    letter_clean = strip_tex_comments(letter_text) if letter_is_tex else letter_text
     letter_polarity = _ai_disclosure_polarity(letter_clean)
     manuscript_polarity = _ai_disclosure_polarity(manuscript_clean)
     if letter_polarity == manuscript_polarity:
@@ -302,13 +336,20 @@ def run_align_check(
 ) -> tuple[list[AlignCheckIssue], dict]:
     """Run the full align-check pipeline. Returns ``(issues, claim_map)``."""
     letter_text = Path(letter_path).read_text(encoding="utf-8", errors="replace")
+    letter_is_tex = Path(letter_path).suffix.lower() == ".tex"
+    # A-CL-2: a `.tex` letter's `%` comments must not surface as claim
+    # candidates (e.g. `% Our work demonstrates a 99% reduction ...`); `.md`
+    # letters keep their raw text — `%` there is prose, not a comment marker.
+    # The disclosure check below still receives the original `letter_text`; it
+    # strips comments itself via `letter_is_tex`.
+    claim_source_text = strip_tex_comments(letter_text) if letter_is_tex else letter_text
     # Expand \input/\include so a multi-file manuscript (main.tex skeleton) is
     # anchored against its assembled body — otherwise facts come back empty and
     # genuinely-supported letter claims are all mis-reported as unsupported.
     manuscript_text = load_manuscript_text(manuscript_path)
 
     facts = extract_facts(manuscript_text)
-    claim_map = build_claim_map(letter_text, manuscript_facts=facts)
+    claim_map = build_claim_map(claim_source_text, manuscript_facts=facts)
     verified_candidates = verify_claim_candidates(
         claim_map.get("claim_candidates", []),
         manuscript_text,
@@ -322,14 +363,14 @@ def run_align_check(
 
     issues: list[AlignCheckIssue] = []
     for candidate in verified_candidates:
-        issue = candidate_to_issue(candidate, facts)
+        issue = candidate_to_issue(candidate, facts, claim_source_text)
         if issue is not None:
             issues.append(issue)
 
     disclosure_issue = _check_ai_disclosure_consistency(
         letter_text,
         manuscript_text,
-        letter_is_tex=Path(letter_path).suffix.lower() == ".tex",
+        letter_is_tex=letter_is_tex,
     )
     if disclosure_issue is not None:
         issues.append(disclosure_issue)

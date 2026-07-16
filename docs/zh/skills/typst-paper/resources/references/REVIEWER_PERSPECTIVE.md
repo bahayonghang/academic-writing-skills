@@ -1,96 +1,96 @@
-# Reviewer Perspective Guide
+# 审稿人观点指南
 
-## Table of Contents
-- [Four-Dimensional Review Criteria](#four-dimensional-review-criteria)
-- [Six-Point Scoring Scale](#six-point-scoring-scale)
-- [Reviewer Reading Behavior](#reviewer-reading-behavior)
-- [Pre-Submission Checklist](#pre-submission-checklist)
-- [Rebuttal Best Practices](#rebuttal-best-practices)
+## 目录
+- [四维审查标准](#four-dimensional-review-criteria)
+- [六点评分标准](#six-point-scoring-scale)
+- [审稿人阅读行为](#reviewer-reading-behavior)
+- [预提交清单](#pre-submission-checklist)
+- [反驳最佳实践](#rebuttal-best-practices)
 
-## Four-Dimensional Review Criteria
+## 四维审核标准
 
-| Criterion | What Reviewers Look For | Common Deduction Reasons |
+|标准|审稿人寻找什么|常见扣除原因|
 |-----------|------------------------|--------------------------|
-| **Quality** | Technical soundness, well-supported claims | Flawed proofs, missing baselines, unfair comparisons |
-| **Clarity** | Clear writing, reproducible by experts | Ambiguous notation, missing details, poor organization |
-| **Significance** | Community impact, advances understanding | Incremental improvement, narrow applicability |
-| **Originality** | New insights (doesn't require new method) | Known results, obvious extensions |
+|**质量**|技术健全，主张得到充分支持|有缺陷的证据、缺失基线、不公平的比较|
+|**明晰**|文字清晰，专家可重现|符号不明确、细节缺失、组织不善|
+|**意义**|社区影响，增进理解|渐进式改进，适用范围狭窄|
+|**独创性**|新见解（不需要新方法）|已知的结果，明显的扩展|
 
-## Six-Point Scoring Scale
+## 六分制评分标准
 
-(NeurIPS scale, widely adopted)
+（NeurIPS 量表，广泛采用）
 
-| Score | Rating | Typical Characteristics |
+|分数|等级|典型特征|
 |-------|--------|------------------------|
-| 6 | **Strong Accept** | Groundbreaking contribution, technically flawless, very high impact |
-| 5 | **Accept** | Technically solid, high impact, well-written |
-| 4 | **Borderline Accept** | Solid contribution, limited evaluation or novelty concerns |
-| 3 | **Borderline Reject** | Technical merits but weaknesses outweigh strengths |
-| 2 | **Reject** | Technical flaws, insufficient evaluation, unclear contribution |
-| 1 | **Strong Reject** | Known results, ethical issues, or fundamental errors |
+| 6 |**强烈接受**|开创性的贡献，技术完美，影响力非常大|
+| 5 |**接受**|技术扎实，影响力大，写得好|
+| 4 |**边界接受**|贡献扎实，评估有限或新颖性问题|
+| 3 |**边界拒绝**|技术优点但缺点大于优点|
+| 2 |**拒绝**|技术缺陷、评估不足、贡献不明确|
+| 1 |**强烈拒绝**|已知结果、道德问题或根本错误|
 
-### What Moves Papers from 3→4 (Borderline → Accept):
-- [ ] Address obvious weakness proactively (limitations section)
-- [ ] Add one more strong baseline or ablation
-- [ ] Improve clarity of main contribution statement
-- [ ] Add reproducibility details (code, hyperparameters)
+### 是什么让论文从 3→4（边界→接受）：
+- [ ] 主动解决明显的弱点（限制部分）
+- [ ] 添加一个更强的基线或消融
+- [ ] 提高主要贡献声明的清晰度
+- [ ] 添加再现性详细信息（代码、超参数）
 
-## Reviewer Reading Behavior
+## 审稿人阅读行为
 
-Understanding how reviewers read helps prioritize your effort:
+了解审稿人的阅读方式有助于优先考虑您的工作：
 
-| Paper Section | % Reviewers Who Read | Time Spent | Implication |
+|造纸部|阅读过的评论者百分比|花费的时间|含义|
 |---------------|---------------------|------------|-------------|
-| Abstract | 100% | 2-3 min | Must be perfect |
-| Introduction | 90%+ (skimmed) | 3-5 min | Front-load contribution |
-| Figures/Tables | Before methods | 2-3 min | Figure 1 is critical |
-| Methods | Only if interested | 5-10 min | Don't bury the lede |
-| Experiments | If methods seem sound | 5-10 min | Clear claims + evidence |
-| Appendix | Rarely (<30%) | As needed | Supplementary only |
+|摘要| 100% |2-3 分钟|必须完善|
+|介绍|90%+（脱脂）|3-5分钟|前载贡献|
+|图/表|方法之前|2-3分钟|图1很关键|
+|方法|仅当有兴趣时|5-10分钟|不要埋葬lede|
+|实验|如果方法看起来合理|5-10分钟|明确的主张+证据|
+|附录|很少（<30%）|根据需要|仅供补充|
 
-**Key Insight**: If your abstract and intro don't hook reviewers, they may never read your methods.
+**关键见解**：如果您的摘要和简介没有吸引审稿人，他们可能永远不会阅读您的方法。
 
-## Pre-Submission Checklist
+## 预提交清单
 
-### Universal Checklist (All Venues)
-- [ ] Paper compiles without errors
-- [ ] All figures are referenced in text
-- [ ] All tables are referenced in text
-- [ ] No orphaned citations (every \cite has a bib entry)
-- [ ] No placeholder text (TODO, FIXME, XXX)
-- [ ] Anonymous submission (no author names in blind review)
-- [ ] Page limit respected (excluding references)
-- [ ] Consistent notation throughout
-- [ ] All acronyms defined on first use
-- [ ] Limitations section included
+### 通用清单（所有期刊或会议）
+- [ ] 论文编译没有错误
+- [ ] 所有图表均在正文中引用
+- [ ] 所有表格均在文本中引用
+- [ ] 没有孤立的引文（每个 \cite 都有一个围脖条目）
+- [ ] 无占位符文本（TODO、FIXME、XXX）
+- [ ] 匿名投稿（盲审无作者姓名）
+- [ ] 遵守页数限制（不包括参考文献）
+- [ ] 始终保持一致的符号
+- [ ] 所有首字母缩略词均在首次使用时定义
+- [ ] 包括限制部分
 
-### NeurIPS Specific (16 items)
-- [ ] Paper checklist completed (Appendix)
-- [ ] Broader Impact Statement included
-- [ ] Code submission prepared (if applicable)
-- [ ] Lay summary prepared (for accepted papers)
-- [ ] Ethics review flagged if applicable
-- [ ] Supplementary material ≤ 50MB
-- [ ] Main paper ≤ 9 pages (+ unlimited references/appendix)
-- [ ] Uses official NeurIPS style file
-- [ ] Reproducibility details: random seeds, compute, datasets
-- [ ] Error bars included with methodology specified
-- [ ] Statistical significance tests where appropriate
-- [ ] Dataset licensing and consent documented
-- [ ] Potential negative societal impacts discussed
-- [ ] Limitations clearly stated
-- [ ] Comparison with appropriate baselines
-- [ ] Ablation studies for key design choices
+### NeurIPS 特定（16 项）
+- [ ] 已完成的纸质清单（附录）
+- [ ] 包括更广泛的影响声明
+- [ ] 准备提交代码（如果适用）
+- [ ] 准备好总结（针对已接受的论文）
+- [ ] 道德审查标记（如果适用）
+- [ ] 补充材料≤50MB
+- [ ] 主论文 ≤ 9 页（+ 无限参考文献/附录）
+- [ ] 使用官方 NeurIPS 样式文件
+- [ ] 再现性细节：随机种子、计算、数据集
+- [ ] 指定方法中包含误差线
+- [ ] 适当时进行统计显着性检验
+- [ ] 记录数据集许可和同意
+- [ ] 讨论潜在的负面社会影响
+- [ ] 明确规定限制
+- [ ] 与适当基线的比较
+- [ ] 关键设计选择的消融研究
 
-## Rebuttal Best Practices
+## 反驳最佳实践
 
-### Dennett's Criticism Method (Adapted for Academic Rebuttals)
-1. **Acknowledge**: Re-state the reviewer's concern fairly
-2. **Agree**: Find points of agreement
-3. **Learn**: Show what you learned from the criticism
-4. **Respond**: Then (and only then) address disagreements with evidence
+### 丹尼特批评法（适用于学术反驳）
+1. **确认**：公平地重申审稿人的担忧
+2. **同意**：寻找共识点
+3. **学习**：展示您从批评中学到的东西
+4. **回应**：然后（并且只有在那时）解决与证据的分歧
 
-### Rebuttal Structure Template
+### 反驳结构模板
 
 ```
 We thank Reviewer [X] for their thoughtful feedback.
@@ -109,11 +109,11 @@ We agree that [acknowledgment]. To address this:
 - [Bullet list of all modifications]
 ```
 
-### Common Rebuttal Mistakes
-- ❌ Arguing that the reviewer is wrong
-- ❌ Ignoring a concern (address ALL points)
-- ❌ Promising future work instead of showing results
-- ❌ Being defensive or dismissive
-- ✅ Providing concrete evidence (new experiments, tables)
-- ✅ Acknowledging valid criticisms
-- ✅ Showing actual revisions made
+### 常见的反驳错误
+- ❌ 争论审稿​​人是错误的
+- ❌ 忽略问题（解决所有问题）
+- ❌ 承诺未来的工作而不是展示结果
+- ❌ 防御或轻视
+- ✅ 提供具体证据（新实验、表格）
+- ✅ 接受有效的批评
+- ✅ 显示实际所做的修改

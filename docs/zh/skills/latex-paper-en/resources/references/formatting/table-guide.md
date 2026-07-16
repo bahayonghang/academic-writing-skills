@@ -1,23 +1,23 @@
-# Three-Line Table Guide
+# 三行表格指南
 
-This guide defines the standard for professional academic tables using the "three-line" (booktabs) convention. All table-related checks and generation follow these rules.
+本指南使用“三行”（书签）约定定义了专业学术表格的标准。所有与表相关的检查和生成都遵循这些规则。
 
-## Three-Line Table Standard
+## 三行表标准
 
-A three-line table has exactly three horizontal rules and **no vertical lines**:
+三行表格恰好有三个水平线并且**没有垂直线**：
 
-1. **Top rule** (`\toprule`): above column headers
-2. **Mid rule** (`\midrule`): below column headers, above data rows
-3. **Bottom rule** (`\bottomrule`): below the last data row
+1. **顶部规则** (`\toprule`)：列标题上方
+2. **中间规则** (`\midrule`)：列标题下方，数据行上方
+3. **底部规则** (`\bottomrule`)：最后一个数据行下方
 
-### Anti-Patterns (must flag)
+### 反模式（必须标记）
 
-- Vertical lines (`|` in column spec, `\vline`, `\hline` with `|`)
-- Internal horizontal lines (`\hline` or `\cline` between data rows, except for grouping sub-headers)
-- Using `\hline` instead of booktabs commands
-- Missing `\usepackage{booktabs}` in preamble
+- 垂直线（`|`在列规格中，`\vline`, `\hline`和`|`)
+- 内部水平线（`\hline`或者`\cline`数据行之间，分组子标题除外）
+- 使用 `\hline` 代替 booktabs 命令
+- 序言中缺少 `\usepackage{booktabs}`
 
-### Minimal Correct Example
+### 最小正确示例
 
 ```latex
 \begin{table}[t]
@@ -35,9 +35,9 @@ A three-line table has exactly three horizontal rules and **no vertical lines**:
 \end{table}
 ```
 
-## Decimal Alignment
+## 小数点对齐
 
-Use the `siunitx` package `S` column type to align numbers by decimal point:
+使用`siunitx`包裹`S`按小数点对齐数字的列类型：
 
 ```latex
 \usepackage{siunitx}
@@ -46,40 +46,40 @@ Use the `siunitx` package `S` column type to align numbers by decimal point:
 % Wrap non-numeric headers in braces: {Precision}
 ```
 
-When `siunitx` is unavailable, right-align numeric columns with `r` and ensure consistent decimal places manually.
+什么时候`siunitx`不可用，将数字列右对齐`r`并手动确保小数点位置一致。
 
-## Statistical Significance Markers
+## 统计显着性标记
 
-Use superscript symbols with footnote definitions in the table note:
+在表注中使用带有脚注定义的上标符号：
 
-| Symbol | Meaning |
+|象征|意义|
 |--------|---------|
-| `*`    | p < 0.05 |
-| `**`   | p < 0.01 |
-| `***`  | p < 0.001 |
-| `n.s.` | not significant |
+| `*`    |p < 0.05|
+| `**`   |p < 0.01|
+| `***`  |p < 0.001|
+| `n.s.` |不重要|
 
-Place significance markers immediately after the value: `91.2***`.
+将显着性标记放置在值之后：`91.2***`。
 
-## Number Precision Rules
+## 数字精度规则
 
-| Data type | Precision | Example |
+|数据类型|精确|例子|
 |-----------|-----------|---------|
-| Percentage | 1 decimal place | 85.3% |
-| Mean ± SD | 2 decimal places | 3.14 ± 0.05 |
-| p-value | 3 significant figures | 0.0032 |
-| Correlation coefficient | 2-3 decimal places | 0.87 |
-| Large counts | No decimals | 1,024 |
+|百分比|小数点后 1 位| 85.3% |
+|平均值±标准差|2 位小数| 3.14 ± 0.05 |
+|p 值|3 位有效数字| 0.0032 |
+|相关系数|2-3 位小数| 0.87 |
+|大计数|无小数| 1,024 |
 
-Precision must be consistent within each column. Mixed precision in the same column is a warning.
+每列内的精度必须一致。同一列中的混合精度是一个警告。
 
-## Caption and Note Placement
+## 标题和注释的位置
 
-- **Caption**: above the table (`\caption{...}` before `\begin{tabular}`)
-- **Label**: immediately after caption (`\label{tab:...}`)
-- **Table note**: below the table, starting with "Note." (English) or "注：" (Chinese)
+- **标题**：表格上方（`\caption{...}`前`\begin{tabular}`)
+- **标签**：紧接在标题之后 (`\label{tab:...}`)
+- **表注**：位于表下方，以“注”开头。 （英文）或“注：”（中文）
 
-Table note format:
+表注格式：
 
 ```latex
 \begin{tablenotes}
@@ -89,27 +89,27 @@ Table note format:
 \end{tablenotes}
 ```
 
-Or use `\par\vspace{2pt}{\footnotesize Note. ...}` after `\end{tabular}` if `threeparttable` is not loaded.
+或者使用`\par\vspace{2pt}{\footnotesize Note. ...}`后`\end{tabular}`如果`threeparttable`未加载。
 
-## Bold Best Values
+## 大胆的最佳价值
 
-In comparison tables, bold the best value in each column using `\textbf{}`. When using `siunitx` S columns, use `\bfseries` or wrap in `{\textbf{91.2}}`.
+在比较表中，使用粗体显示每列中的最佳值`\textbf{}`。使用时`siunitx`S 柱，使用`\bfseries`或包裹在`{\textbf{91.2}}`.
 
-Add direction indicators when the "best" direction is ambiguous:
+当“最佳”方向不明确时添加方向指示器：
 
-- `↑` (higher is better): accuracy, recall, F1
-- `↓` (lower is better): error rate, latency, loss
+- `↑`（越高越好）：准确率、召回率、F1
+- `↓`（越低越好）：错误率、延迟、丢失
 
-## Booktabs Package Requirements
+## Booktabs 包要求
 
-The `booktabs` package must be loaded for `\toprule`, `\midrule`, `\bottomrule`. These commands produce variable-weight rules (top/bottom are heavier than mid) for a professional appearance.
+这`booktabs`必须加载包`\toprule`, `\midrule`, `\bottomrule`。这些命令生成可变权重规则（顶部/底部比中间重）以实现专业外观。
 
-Never mix `\hline` with booktabs commands in the same table.
+切勿将 `\hline` 与同一表中的 booktabs 命令混合使用。
 
-## Word Compatibility Note
+## 单词兼容性注意事项
 
-When submitting to venues that require .docx, convert the three-line table by:
-1. Create a standard table in Word
-2. Select the entire table → Borders → No Border
-3. Add top border to first row, bottom border to header row, bottom border to last row
-4. Result: a three-line table matching the booktabs aesthetic
+当提交到需要 .docx 的场所时，请通过以下方式转换三行表格：
+1. 在Word中创建标准表格
+2. 选择整个表格→边框→无边框
+3. 将顶部边框添加到第一行，将底部边框添加到标题行，将底部边框添加到最后一行
+4. 结果：符合书页美感的三行表格

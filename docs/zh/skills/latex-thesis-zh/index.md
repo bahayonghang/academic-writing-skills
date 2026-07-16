@@ -27,7 +27,7 @@
 | `structure` | 需要论文章节与小节地图 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/map_structure.py main.tex` |
 | `consistency` | 跨章节术语、缩略语或命名漂移 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py main.tex --terms` |
 | `template` | 论文 class 或学校模板不明确 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py main.tex` |
-| `bibliography` | 需要检查 BibTeX 数据或 GB/T 7714 合规性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
+| `bibliography` | 需要检查 BibTeX 数据或 GB/T 7714 合规性；2026-07-01 起实施的新国标使用 `--standard gb7714-2025` | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 需要审阅论文、章或节标题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `deai` | 中文可见正文存在 AI 写作痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
 | `logic` | 绪论漏斗、章节承接、主线或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex` |

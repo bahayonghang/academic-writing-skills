@@ -58,6 +58,82 @@ English LaTeX paper assistant for existing `.tex` conference and journal manuscr
 - Source-preserving suggestions that keep citations, labels, math, and LaTeX structure intact by default.
 - Module-specific findings suitable for staged fixing before `paper-audit` or `cover-letter` workflows.
 
+## Public Resources
+
+### References
+
+- [Journal Name Abbreviations](./resources/references/citations/journal-abbreviations.md)
+- [Citation Style Guide](./resources/references/citations/styles.md)
+- [Citation Verification Guide](./resources/references/citations/verification.md)
+- [Protected Terms - DO NOT Modify](./resources/references/deai/forbidden-terms.md)
+- [De-AI Writing Guide for English Academic Papers](./resources/references/deai/guide.md)
+- [AI Tone Terms (English) — Reference](./resources/references/deai/tone-terms-en.md)
+- [AI Tone Threshold Configuration (English papers)](./resources/references/deai/tone-thresholds.yaml)
+- [Claim-Evidence Contract](./resources/references/evidence/claim-evidence-contract.md)
+- [Over-Claim Guard](./resources/references/evidence/over-claim-guard.md)
+- [Number and Unit Formatting Guide](./resources/references/formatting/number-unit-guide.md)
+- [Three-Line Table Guide](./resources/references/formatting/table-guide.md)
+- [LaTeX Compilation Guide](./resources/references/latex/compilation.md)
+- [Module: Abstract](./resources/references/modules/abstract.md)
+- [Module: Adapt](./resources/references/modules/adapt.md)
+- [Module: Bibliography](./resources/references/modules/bibliography.md)
+- [Figure and Table Caption Generation Guide](./resources/references/modules/caption.md)
+- [Module: Compile](./resources/references/modules/compile.md)
+- [Module: De-AI Editing](./resources/references/modules/deai.md)
+- [Module: Experiment Review](./resources/references/modules/experiment.md)
+- [Module: Expression Restructuring](./resources/references/modules/expression.md)
+- [Module: Format Check](./resources/references/modules/format.md)
+- [Module: Grammar Analysis](./resources/references/modules/grammar.md)
+- [Module: Literature Review Synthesis](./resources/references/modules/literature.md)
+- [Module: Logical Coherence & Methodological Depth](./resources/references/modules/logic.md)
+- [Module: Pseudocode Review](./resources/references/modules/pseudocode.md)
+- [Routing Rules — Full Detail](./resources/references/modules/routing-rules.md)
+- [Module: Section Writing](./resources/references/modules/section-writing.md)
+- [Module: Long Sentence Analysis](./resources/references/modules/sentences.md)
+- [Module: Tables](./resources/references/modules/tables.md)
+- [Tense Guide](./resources/references/modules/tense-guide.md)
+- [Module: Title Optimization](./resources/references/modules/title.md)
+- [Module: Translation (Chinese -> English)](./resources/references/modules/translation.md)
+- [Workflow & Best Practices](./resources/references/modules/workflow.md)
+- [Reviewer Perspective Guide](./resources/references/review/reviewer-perspective.md)
+- [LLM / AI-Assistance Disclosure Policies (2026-06)](./resources/references/venues/ai-disclosure.md)
+- [Venue-Specific Requirements](./resources/references/venues/catalog.md)
+- [Journal Adaptation Workflow](./resources/references/venues/journal-adaptation-workflow.md)
+- [Abstract Structure Guide](./resources/references/writing/abstract-structure.md)
+- [Best Practices](./resources/references/writing/best-practices.md)
+- [Common Chinglish Errors in Academic Writing](./resources/references/writing/common-errors.md)
+- [Abstract Section Writing](./resources/references/writing/section-writing/abstract.md)
+- [Conclusion Section Writing](./resources/references/writing/section-writing/conclusion.md)
+- [Experiments And Discussion Section Writing](./resources/references/writing/section-writing/experiments.md)
+- [Paragraph Flow And Reverse Outline](./resources/references/writing/section-writing/flow.md)
+- [Section-Writing Reference Index](./resources/references/writing/section-writing/index.md)
+- [Introduction Section Writing](./resources/references/writing/section-writing/introduction.md)
+- [Method Section Writing](./resources/references/writing/section-writing/method.md)
+- [Related Work Section Writing](./resources/references/writing/section-writing/related-work.md)
+- [Reviewer-Facing Self-Review](./resources/references/writing/section-writing/self-review.md)
+- [Academic Writing Style Guide](./resources/references/writing/style-guide.md)
+- [Academic Terminology Reference](./resources/references/writing/terminology.md)
+- [Academic Translation Guide](./resources/references/writing/translation-guide.md)
+- [Writing Philosophy for Academic Papers](./resources/references/writing/writing-philosophy.md)
+
+### Templates
+
+- [ACM Conferences (LaTeX)](./resources/templates/acm.md)
+- [ICML (LaTeX)](./resources/templates/icml.md)
+- [IEEE Conferences/Journals (LaTeX)](./resources/templates/ieee.md)
+- [NeurIPS (LaTeX)](./resources/templates/neurips.md)
+- [Springer (LNCS) (LaTeX)](./resources/templates/springer-lncs.md)
+
+### Examples
+
+- [Example: Compile And Bibliography](./resources/examples/compile-and-bibliography.md)
+- [Example: Experiment Review](./resources/examples/experiment-review.md)
+- [Example: Figures And Title](./resources/examples/figures-and-title.md)
+- [Example: Grammar And Logic Review](./resources/examples/grammar-and-logic.md)
+- [Literature Review Rewrite](./resources/examples/literature-review-rewrite.md)
+- [Example: Multi-Module Sequence](./resources/examples/multi-module-sequence.md)
+- [Example: Translation And De-AI](./resources/examples/translation-and-deai.md)
+
 ## Common Requests
 
 ```text

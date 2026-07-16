@@ -1,85 +1,85 @@
-# Abstract Structure Guide
+# 抽象结构指南
 
-An effective academic abstract contains five structural elements that together tell a complete research story. This guide defines each element, how to detect it, and what makes it strong or weak.
+有效的学术摘要包含五个结构元素，它们共同讲述一个完整的研究故事。本指南定义了每个元素、如何检测它以及它的强弱因素。
 
-## Five-Element Model
+## 五元模型
 
-### 1. Background
+### 一、背景
 
-**Purpose**: Establish the research context — the real-world problem, knowledge gap, or motivation.
+**目的**：建立研究背景——现实世界的问题、知识差距或动机。
 
-**Detection markers (EN)**: "however", "remains unclear", "limited research", "growing interest", "challenge", "gap", "despite", "little is known", "increasingly important"
+**检测标记 (EN)**：“然而”、“仍不清楚”、“研究有限”、“兴趣日益浓厚”、“挑战”、“差距”、“尽管”、“知之甚少”、“日益重要”
 
-**Detection markers (ZH)**: "然而", "尚不清楚", "研究不足", "日益增长", "挑战", "空白", "尽管", "鲜有研究"
+**检测标记（ZH）**：“然而”、“尚蜡烛”、“研究不足”、“极度增长”、“挑战”、“空白”、“尽管”、“鲜有研究”
 
-**Quality criteria**: Moves from broad context to specific gap in 1-2 sentences. A vague background restates the field name without identifying a gap.
+**质量标准**：从广泛的上下文转向 1-2 个句子中的具体间隙。模糊的背景重述了字段名称，但没有标识出间隙。
 
-### 2. Objective
+### 2. 目的
 
-**Purpose**: State what this specific study aims to answer or accomplish.
+**目的**：说明这项具体研究的目的是回答或完成什么。
 
-**Detection markers (EN)**: "this study aims", "we investigate", "the purpose of", "this paper presents", "we propose", "our goal", "in this work", "we address", "this research examines"
+**检测标记（EN）**：“这项研究的目的”、“我们调查”、“目的”、“本文提出”、“我们建议”、“我们的目标”、“在这项工作中”、“我们解决”、“这项研究检查”
 
-**Detection markers (ZH)**: "本文旨在", "本研究探讨", "本文提出", "研究目的", "为此我们", "本工作", "本文研究"
+**检测标记（ZH）**：“论文旨在”、“本研究探讨”、“论文提出”、“研究目的”、“为了我们”、“本工作”、“论文研究”
 
-**Quality criteria**: Specific and falsifiable. A vague objective says "we study X" without specifying what aspect or what question about X.
+**质量标准**：具体且可证伪。模糊的目标说“我们研究 X”，但没有具体说明 X 的哪些方面或什么问题。
 
-### 3. Methods
+### 3. 方法
 
-**Purpose**: Describe the approach, data, tools, or analytical framework used.
+**目的**：描述所使用的方法、数据、工具或分析框架。
 
-**Detection markers (EN)**: "we propose", "using", "dataset", "participants", "method", "approach", "framework", "model", "algorithm", "collected", "trained", "evaluated", "sample", "experiment"
+**检测标记（EN）**：“我们建议”、“使用”、“数据集”、“参与者”、“方法”、“途径”、“框架”、“模型”、“算法”、“收集”、“训练”、“评估”、“样本”、“实验”
 
-**Detection markers (ZH)**: "采用", "方法", "数据集", "样本", "模型", "算法", "框架", "实验", "训练", "评估"
+**检测标记（ZH）**：“采用”、“方法”、“数据集”、“样本”、“模型”、“算法”、“框架”、“实验”、“训练”、“评估”
 
-**Quality criteria**: Names the specific technique, data source, or experimental setup. Missing methods make the abstract feel like an opinion piece.
+**质量标准**：命名特定技术、数据源或实验设置。缺少方法使摘要感觉像是一篇观点文章。
 
-### 4. Results
+### 4. 结果
 
-**Purpose**: Report the key findings with concrete data.
+**目的**：用具体数据报告主要发现。
 
-**Detection markers (EN)**: "results show", "achieved", "outperforms", "accuracy", "improved", "reduced", "found that", "demonstrates", "significant", numbers, percentages, p-values
+**检测标记 (EN)**：“结果显示”、“实现”、“优于”、“准确性”、“改进”、“减少”、“发现”、“证明”、“显着”、数字、百分比、p 值
 
-**Detection markers (ZH)**: "结果表明", "达到", "优于", "准确率", "提高", "降低", "发现", "显著", numbers
+**检测标记 (ZH)**: "结果表明", "达到", "平衡", "准确率", "提高", "降低", "发现", "显着", 数字
 
-**Quality criteria**: Must contain at least one quantitative finding (number, percentage, ratio, or comparative statement with magnitude). A results section without numbers is classified as VAGUE.
+**质量标准**：必须包含至少一项定量发现（数字、百分比、比率或大小比较陈述）。没有数字的结果部分被归类为 VAGUE。
 
-### 5. Conclusion / Significance
+### 5. 结论/意义
 
-**Purpose**: State the contribution, implications, or practical value of the findings.
+**目的**：说明研究结果的贡献、影响或实用价值。
 
-**Detection markers (EN)**: "our findings suggest", "contributes to", "implications", "demonstrates that", "can be used", "enables", "provides", "advances", "potential"
+**检测标记 (EN)**：“我们的发现表明”、“有助于”、“影响”、“证明”、“可以使用”、“启用”、“提供”、“进步”、“潜力”
 
-**Detection markers (ZH)**: "研究发现表明", "为...提供", "有助于", "具有...意义", "可用于", "推动", "贡献"
+**检测标记（ZH）**：“研究发现表明”、“为...提供”、“有助于”、“具有...意义”、“可用于”、“推动”、“贡献”
 
-**Quality criteria**: Goes beyond restating results — connects findings to the broader field or practice. A hollow conclusion just repeats the results in different words.
+**质量标准**：超越重述结果——将发现与更广泛的领域或实践联系起来。空洞的结论只是用不同的语言重复结果。
 
-## Common Defect Patterns
+## 常见缺陷模式
 
-| Defect | Description | Typical fix |
+|缺点|描述|典型修复|
 |--------|-------------|-------------|
-| Missing background | Jumps straight to "We propose..." | Add 1 sentence on the problem context |
-| Vague objective | "We study deep learning for NLP" | Specify: "We investigate whether... improves..." |
-| No methods | Describes results without explaining how | Add the core technique and data source |
-| Data-free results | "Our method performs well" | Add a key metric: "achieves 94.2% F1" |
-| Echo conclusion | Restates results verbatim | Add implication: "enabling real-time..." |
+|缺少背景|直接跳到“我们建议……”|在问题上下文中添加 1 句话|
+|目标模糊|“我们研究深度学习是为了 NLP”|指定：“我们调查……是否改善……”|
+|没有方法|描述结果但不解释如何进行|添加核心技术和数据源|
+|无数据结果|“我们的方法表现良好”|添加一个关键指标：“实现 94.2% F1”|
+|回声结论|逐字重述结果|添加含义：“启用实时...”|
 
-## Word Count Guidelines
+## 字数统计指南
 
-| Context | Language | Range |
+|语境|语言|范围|
 |---------|----------|-------|
-| Default (no venue specified) | English | 150–250 words |
-| Default (no venue specified) | Chinese | 200–300 characters |
-| IEEE conference | English | 150–200 words |
-| ACM conference | English | 150–250 words |
-| NeurIPS/ICML | English | ≤ 200 words (strict) |
-| Chinese thesis (GB/T) | Chinese | 300–500 characters |
+|默认（未指定地点）|英语|150–250 字|
+|默认（未指定地点）|中国人|200–300 个字符|
+|IEEE会议|英语|150–200 字|
+|ACM会议|英语|150–250 字|
+|NeurIPS/ICML|英语|≤200字（严格）|
+|中文论文（GB/T）|中国人|300–500 个字符|
 
-Venue-specific limits override defaults. Check VENUES.md for exact requirements.
+特定于期刊或会议的限制会覆盖默认值。检查 VENUES.md 了解确切的要求。
 
-## Diagnostic Output Format
+## 诊断输出格式
 
-The analyzer outputs a per-element diagnosis:
+分析仪输出每个元素的诊断：
 
 ```
 Background:  ✅ PRESENT  — "Despite growing interest in X, the impact of Y remains unclear."
@@ -89,9 +89,9 @@ Results:     ❌ MISSING  — No quantitative findings detected → Add key metr
 Conclusion:  ⚠️ VAGUE    — Restates results without implications → Add practical significance
 ```
 
-## Constraints
+## 约束条件
 
-- Never alter the author's core claims or fabricate data
-- Never add results or conclusions not present in the original text
-- Preserve all citations, labels, and math environments
-- Mark all modifications with brackets: [ADDED: ...] or [REVISED: ...]
+- 切勿改变作者的核心主张或捏造数据
+- 切勿添加原文中未出现的结果或结论
+- 保留所有引文、标签和数学环境
+- 用括号标记所有修改：[添加：...] 或 [修订：...]

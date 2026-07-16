@@ -59,6 +59,43 @@ def _read_source(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _load_bibliography_content(path: Path, content: str, fmt: str) -> str:
+    """Load external BibTeX sources referenced by a LaTeX or Typst paper."""
+    references: list[str] = []
+    if fmt == ".tex":
+        for match in re.finditer(r"\\bibliography\s*\{([^}]+)\}", content):
+            references.extend(item.strip() for item in match.group(1).split(",") if item.strip())
+        references.extend(
+            match.group(1).strip()
+            for match in re.finditer(r"\\addbibresource\s*(?:\[[^\]]*\]\s*)?\{([^}]+)\}", content)
+            if match.group(1).strip()
+        )
+    elif fmt == ".typ":
+        references.extend(
+            match.group(1).strip()
+            for match in re.finditer(r'#?bibliography\s*\(\s*"([^"]+)"', content)
+            if match.group(1).strip().lower().endswith(".bib")
+        )
+
+    loaded: list[str] = []
+    seen: set[Path] = set()
+    for reference in references:
+        bib_path = Path(reference)
+        if fmt == ".tex" and not bib_path.suffix:
+            bib_path = bib_path.with_suffix(".bib")
+        if bib_path.suffix.lower() != ".bib":
+            continue
+        resolved = (path.parent / bib_path).resolve()
+        if resolved in seen or not resolved.is_file():
+            continue
+        seen.add(resolved)
+        try:
+            loaded.append(_read_source(resolved))
+        except (OSError, UnicodeError):
+            continue
+    return "\n\n".join(loaded)
+
+
 TOP_LEVEL_DEEP_REVIEW_ARTIFACTS: tuple[str, ...] = (
     "artifacts/meta/metadata.json",
     "artifacts/meta/phase0_context.md",
@@ -2512,6 +2549,7 @@ def run_audit(
                     paper_content=content,
                     paper_citations=citation_keys,
                     literature_results=literature_context.filtered_results,
+                    bib_content=_load_bibliography_content(path, content, fmt),
                 )
                 literature_context.comparison_result = comparison_result
                 literature_grounding_score = comparison_result.grounding_score

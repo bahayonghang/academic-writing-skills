@@ -16,6 +16,14 @@
   `meta.parse_warnings` 列表会报告解析问题：因缺少闭合括号等结构缺陷而跳过的
   条目、重复 citation key（受影响的每条结果也带有 `warnings` 字段），以及位于
   `%` 标记后的条目（真正的 BibTeX 仍会解析这些条目）。
+- **`has:code` 是词边界启发式，不是语义分类器**。它可以避免 `reported`、
+  `encoder` 和 `barcode` 等子字符串误匹配，但不能理解否定语义
+  （`without a linked repository` 仍会匹配），也不能排除 `dress code` 等泛化短语。
+- **紧凑查询中的未配对引号**会触发 tokenizer 回退，而不是直接报错。双引号短语仍会
+  作为一组处理，单引号则按字面字符处理；该回退会以 `query_tokenizer_fallback`
+  记录在 `meta.parse_warnings` 中。
+- **年份消歧后缀**支持一个小写 ASCII 字母，因此 `2024a` 会按 2024 年参与过滤。
+  更长或大写的后缀不会被解释为 BibTeX 年份消歧标记。
 
 ## 错误处理
 

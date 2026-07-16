@@ -1,48 +1,48 @@
-# Introduction Section Writing
+# 引言部分写作
 
-## Objective
+## 客观的
 
-Build a reviewer-facing funnel: meaningful task -> unmet target or failure case -> root technical bottleneck -> proposed solution -> why it works -> evidence and contributions.
+构建面向审稿人的漏斗：有意义的任务 -> 未实现的目标或失败案例 -> 根本技术瓶颈 -> 提出的解决方案 -> 为什么有效 -> 证据和贡献。
 
-## Backward Planning Questions
+## 向后规划问题
 
-Answer these before writing:
+在写作之前先回答这些问题：
 
-1. What technical problem is solved, and why is there no established solution?
-2. What exactly is new: task, metric, pipeline, module, design choice, finding, or insight?
-3. Why should this contribution solve the bottleneck?
-4. Which experiments or analyses later support the main promises?
+1. 解决了什么技术问题，为什么没有既定的解决方案？
+2. 到底什么是新的：任务、指标、管道、模块、设计选择、发现或洞察？
+3. 为什么这个贡献要解决瓶颈？
+4. 后来哪些实验或分析支持主要承诺？
 
-## Forward Section Roles
+## 前部角色
 
-| Role | Required Content | Failure Signal |
+|角色|所需内容|故障信号|
 | --- | --- | --- |
-| Task/application opening | Define task or application value and target requirement | Opens with generic importance but no task boundary |
-| Prior-work limitation | Summarize representative methods by mechanism and limitation | Paper-by-paper list with no technical reason |
-| Technical bottleneck | State the unresolved challenge and root cause | Gap is a marketing claim, not a mechanism |
-| Proposed solution | Introduce pipeline or key insight with a figure anchor if present | Method appears before the challenge is clear |
-| Why it works | Explain technical advantage in bounded terms | Claims novelty without mechanism |
-| Evidence/contributions | Preview experiments and enumerate contributions | Contributions do not map to later evidence |
+|任务/申请开放|定义任务或应用程序价值和目标要求|以一般重要性打开，但没有任务边界|
+|先前工作限制|按机制和局限性总结代表性方法|无技术原因的逐篇论文列表|
+|技术瓶颈|陈述未解决的挑战和根本原因|差距是一种营销主张，而不是一种机制|
+|建议的解决方案|通过图形锚点（如果存在）介绍管道或关键见解|方法在挑战明确之前出现|
+|为什么它有效|用有限的术语解释技术优势|声称新颖但没有机制|
+|证据/贡献|预览实验并列举贡献|贡献不会映射到后来的证据|
 
-## Introduction Patterns
+## 介绍模式
 
-Use one pattern that matches the paper:
+使用一种与论文匹配的图案：
 
-- **Task first**: for niche tasks; define input/output before applications.
-- **Application first**: for familiar tasks; open with use cases and target requirements.
-- **General-to-specific**: for a new setting inside a familiar area.
-- **Open with challenge**: when the unresolved failure case is immediately understandable.
+- **任务优先**：针对利基任务；在应用程序之前定义输入/输出。
+- **先应用**：用于熟悉的任务；打开用例和目标要求。
+- **一般到具体**：用于熟悉区域内的新设置。
+- **带着挑战开始**：当未解决的失败案例可以立即理解时。
 
-## Anti-Pattern
+## 反模式
 
-Do not write the story as "a naive baseline exists, then we patch it." That makes the contribution look obvious. Instead, explain the real technical bottleneck that prior families of methods still cannot resolve.
+不要将故事写成“存在一个幼稚的基线，然后我们修补它”。这使得贡献看起来很明显。相反，解释先前的方法系列仍然无法解决的真正技术瓶颈。
 
-## Claim-Evidence Closure
+## 声明-证据结案
 
-Every contribution sentence should map forward:
+每个贡献句都应该向前映射：
 
 ```text
 Intro promise -> Method mechanism -> Experiment evidence -> Conclusion answer
 ```
 
-If a contribution has no corresponding experiment or analysis, either mark missing evidence or weaken the claim.
+如果贡献没有相应的实验或分析，要么标记缺失的证据，要么削弱主张。

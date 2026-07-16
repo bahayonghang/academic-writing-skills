@@ -14,6 +14,7 @@ import importlib.util
 import json
 import re
 import sys
+from dataclasses import dataclass
 from types import ModuleType
 
 import pytest
@@ -100,6 +101,7 @@ def test_extract_title_strips_thanks_and_keeps_nested_braces() -> None:
     extract = _load("extract_manuscript_facts")
     text = (FIXTURES / "thanks_author_fixture.tex").read_text(encoding="utf-8")
     facts = extract.extract_facts(text)
+    assert not hasattr(extract, "_extract_title_local")
     assert facts["title"] == "Adaptive Latency-Aware Inference for Streaming Detection"
     assert "NSF" not in facts["title"]
     assert "supported" not in facts["title"]
@@ -117,6 +119,38 @@ def test_extract_corresponding_author_never_scrapes_thanks_email() -> None:
     facts = extract.extract_facts(text)
     assert facts["authors"] == ["Alice Smith", "Bob Jones"]
     assert facts["corresponding_author"] == "Alice Smith"
+
+
+def test_extract_corresponding_author_authornote_falls_back_safely() -> None:
+    """acmart ``\\authornote`` prose is not treated as an explicit identity.
+
+    Guessing from free text can scrape an email local part as an author, so the
+    extractor intentionally falls back to the first parsed author instead.
+    """
+    extract = _load("extract_manuscript_facts")
+    text = (
+        r"\title{Streaming Detection}"
+        r"\author{Alice Smith}\authornote{Corresponding author: alice.smith@uni.edu}"
+        r"\author{Bob Jones}"
+        r"\begin{abstract}We study streaming detection.\end{abstract}"
+    )
+    facts = extract.extract_facts(text)
+    assert facts["authors"] == ["Alice Smith", "Bob Jones"]
+    assert facts["corresponding_author"] == "Alice Smith"
+    assert "@" not in facts["corresponding_author"]
+
+
+def test_unified_exit_code_handles_dicts_and_dataclasses() -> None:
+    cli = _load("cover_letter")
+
+    @dataclass
+    class Finding:
+        severity: str
+
+    assert cli._exit_code([Finding(""), {"severity": "major"}]) == 2
+    assert cli._exit_code([Finding("minor"), {"severity": ""}]) == 1
+    assert cli._exit_code([Finding("")]) == 1
+    assert cli._exit_code([]) == 0
 
 
 def test_presubmission_detects_opener_cliche_and_banned_phrases() -> None:
@@ -201,6 +235,61 @@ def test_build_letter_claim_map_extracts_numeric_unit_claims() -> None:
     assert any("2.1x faster" in claim for claim in claims)
     assert any("12 sensor modalities" in claim for claim in claims)
     assert any("$1.2M" in claim for claim in claims)
+
+
+def test_build_letter_claim_map_cli_strips_tex_comments(tmp_path, capsys) -> None:
+    """A-CL-2: the build_letter_claim_map.py CLI entry point also strips `%`
+    comments for a `.tex` letter (mirrors the align_check pipeline fix)."""
+    builder = _load("build_letter_claim_map")
+    letter = tmp_path / "letter.tex"
+    letter.write_text(
+        "Dear Editor,\n\n"
+        "% Our work demonstrates a 99\\% reduction in latency on Bench-9.\n"
+        "We report a 47\\% reduction in latency on Bench-1.\n",
+        encoding="utf-8",
+    )
+    builder.main([str(letter)])
+    claim_map = json.loads(capsys.readouterr().out)
+    claims = [c["claim"] for c in claim_map["claim_candidates"]]
+    assert not any("99" in claim for claim in claims)
+    assert any("47" in claim for claim in claims)
+
+
+def test_number_unit_pattern_rejects_bare_s_collision() -> None:
+    """A-CL-3: word-character units carry a trailing `\\b` so "3 seconds"
+    cannot collapse to a bare "3 s" token that also matches unrelated text
+    like "3 sensor streams" (verify-side cross-match + anchor typing)."""
+    verifier = _load("verify_letter_against_manuscript")
+    builder = _load("build_letter_claim_map")
+
+    # The historical collision: same "3 s" needle from both sides must no
+    # longer cross-match.
+    assert (
+        verifier._has_numeric_match(
+            "processes a batch in 3 seconds", "the system handles 3 sensor streams"
+        )
+        is False
+    )
+    # A genuine "3 seconds" statement in the manuscript still verifies.
+    assert verifier._has_numeric_match(
+        "processes a batch in 3 seconds", "the batch processes in 3 seconds flat"
+    )
+
+    # "3 sensor streams" no longer produces a spurious `metric` anchor.
+    anchors = builder._detect_anchors("The system supports 3 sensor streams.")
+    assert not any(a["type"] == "metric" and a["text"].strip() == "3 s" for a in anchors)
+
+    # Units that were already correct keep matching.
+    for claim, manuscript in (
+        ("47 ms latency", "the system achieves 47 ms latency"),
+        ("5 GB memory", "peak memory use is 5 GB"),
+        ("2.1x faster", "the method runs 2.1x faster"),
+    ):
+        assert verifier._has_numeric_match(claim, manuscript) is True
+
+    # "3 ppm" must not be mis-tokenized as the "pp" unit.
+    anchors_ppm = builder._detect_anchors("Concentration reaches 3 ppm in this setting.")
+    assert not any(a["type"] == "metric" for a in anchors_ppm)
 
 
 def test_extract_manuscript_facts_captures_extended_headline_numbers() -> None:

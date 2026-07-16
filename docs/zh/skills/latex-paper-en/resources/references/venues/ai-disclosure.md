@@ -1,41 +1,41 @@
-# LLM / AI-Assistance Disclosure Policies (2026-06)
+# 法学硕士/人工智能援助披露政策 (2026-06)
 
-> Factual reference for where and whether AI assistance must be disclosed at
-> major venues. This file describes **disclosure obligations only**. It does not
-> provide any advice on evading AI-detection — the `deai` module is a
-> readability/clarity aid, not a detector-evasion tool. When a paper used an LLM
-> in any non-trivial way, disclose it per the target venue's policy below.
+> 关于人工智能援助必须在何处以及是否必须披露的事实参考
+> 主要期刊或会议。本文件仅描述**披露义务**。它不
+> 提供有关逃避 AI 检测的任何建议 — `deai` 模块是
+> 可读性/清晰度辅助，而不是逃避检测器的工具。当论文使用 LLM 时
+> 以任何重要的方式，根据下面目标场所的政策进行披露。
 
-All listed venues **permit** language polishing. They differ on what must be
-disclosed and where. "Polishing" = grammar/spelling/wording; "generative use" =
-drafting text, generating code, or producing analysis.
+所有列出的场所**允许**语言润色。他们在必须是什么方面存在分歧
+披露及地点。 “润色”=语法/拼写/措辞； “生成性使用”=
+起草文本、生成代码或进行分析。
 
-| Venue / publisher | Polishing | Generative use disclosure | Where | Desk-reject risk |
+|地点/出版社|抛光|生成使用披露|在哪里|直接拒稿风险|
 |-------------------|-----------|---------------------------|-------|------------------|
-| NeurIPS 2025/2026 | exempt | declare in the paper checklist when an LLM is a core method component | checklist | checklist required; LLMs cannot be authors |
-| ICML 2026 | exempt | author fully responsible; prompt injection forbidden | n/a | prompt injection = desk reject |
-| ICLR 2026 | exempt | significant ideation/writing role must be described | dedicated LLM-usage section (may be appendix) | undisclosed significant use → desk reject |
-| COLM 2026 | exempt (light aid) | significant role must be disclosed | dedicated section (ICLR-style) | undisclosed significant use → desk reject |
-| ACL / ARR | exempt | generative writing/code **must** be declared | Responsible NLP Checklist + Acknowledgements | wrong/misleading checklist → desk reject |
-| CVPR | n/a (no mechanism) | author fully responsible | n/a | fabricated citations / factual errors → reject without review |
-| IEEE | "suggested, not required" | AI-**generated** content (text/figures/code) must be disclosed | Acknowledgments section (name system + affected sections) | — |
-| ACM | exempt after revision | generated content disclosed prominently | within the Work (e.g. Acknowledgements) | LLMs cannot be authors |
-| Springer Nature | "AI-assisted copy editing" exempt | generative use recorded | Methods | AI-generated images forbidden; LLM not an author |
-| Elsevier | grammar/spelling exempt | all other generative use declared | a "Declaration of Generative AI…" statement before the references | published with the paper |
-| Science | — | AI use disclosed | cover letter **and** in the paper | undisclosed use can be misconduct |
-| ICMJE journals (medical) | — | AI use disclosed | cover letter **and** manuscript (Section V, 2026-01) | undisclosed use can constitute misconduct |
+|NeurIPS 2025/2026|豁免|当LLM是核心方法组件时，在论文清单中声明|清单|需要清单；法学硕士不能成为作者|
+|ICML 2026|豁免|作者负全部责任；禁止提示注入|不适用|提示注入 = 直接拒稿|
+|ICLR 2026|豁免|必须描述重要的构思/写作角色|专门的法学硕士使用部分（可能是附录）|未公开的重要用途 → 直接拒稿|
+|2026年COLM|豁免（轻度援助）|必须披露重要作用|专用部分（ICLR 型）|未公开的重要用途 → 直接拒稿|
+|访问控制列表/ARR|豁免|生成写作/代码**必须**声明|负责任的 NLP 检查表 + 致谢|错误/误导性清单 → 直接拒稿|
+|CVPR|不适用（无机制）|作者负全部责任|不适用|捏造的引文/事实错误 → 未经审查而拒绝|
+|IEEE|“建议，非必需”|人工智能**生成的**内容（文本/图形/代码）必须公开|致谢部分（名称系统+受影响的部分）| — |
+|ACM|修改后豁免|生成的内容显着披露|工作范围内（例如致谢）|法学硕士不能成为作者|
+|施普林格自然|“人工智能辅助文案编辑”豁免|生成性使用记录|方法|禁止人工智能生成的图像； LLM不是作者|
+|爱思唯尔|语法/拼写豁免|声明的所有其他生成用途|参考文献之前的“生成人工智能声明……”声明|与论文一起发表|
+|科学| — |人工智能使用披露|论文中的投稿信**和**|未公开的使用可能属于不当行为|
+|ICMJE 期刊（医学）| — |人工智能使用披露|投稿信**和**论文稿件（第五节，2026-01）|未公开的使用可能构成不当行为|
 
-## Practical guidance
+## 实用指导
 
-- arXiv: generative AI cannot be listed as an author; significant use should be
-  disclosed per field convention. Since 2025-10-31, arXiv CS review/survey/position
-  articles need proof of peer review at a journal/conference (workshops do not count).
-- A cover letter is the right place for disclosure at medical/ICMJE journals,
-  Science, and many Elsevier titles; ML conferences use checklists or a dedicated
-  section instead. See `cover-letter` skill for the letter-side declaration.
-- When in doubt, disclose. Disclosure is never penalized; undisclosed significant
-  use is, at several venues, grounds for desk rejection or a misconduct finding.
+- arXiv：生成式 AI 不能列为作者；重要用途应该是
+根据现场惯例披露。自 2025 年 10 月 31 日起，arXiv CS 审查/调查/立场
+文章需要在期刊/会议上进行同行评审的证明（研讨会不计算在内）。
+- 投稿信是在医学/ICMJE 期刊上披露信息的正确位置，
+科学，以及许多爱思唯尔的书籍；机器学习会议使用清单或专用的
+部分代替。信面声明请参见 `cover-letter` 技能。
+- 如有疑问，请披露。披露信息绝不会受到惩罚；未公开的重大
+在一些场所，使用会成为办公桌拒绝或不当行为认定的理由。
 
-> Sources: per-venue 2026 author guides and CFPs; ICMJE 2026-01 Recommendations;
-> IEEE / ACM / Springer Nature / Elsevier AI policy pages; arXiv help/blog.
-> See the parent audit's `latex-paper-en-venue-factcheck.md` for the full citation list.
+> 来源：2026 年各期刊或会议作者指南和 CFP； ICMJE 2026-01 建议；
+> IEEE / ACM / Springer Nature / Elsevier 人工智能政策页面； arXiv 帮助/博客。
+> 有关完整的引文列表，请参阅父级审计的 `latex-paper-en-venue-factcheck.md`。

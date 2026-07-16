@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "质检时核对 zh 副本未破坏对齐锁总则（zh 已锁三项零改动、未误动 EN 副本）"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对新增测试用 importlib 加载+守卫断言、默认行为变化 commit 双声明、断言走 issues 列表而非渲染报告"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "核对 SKILL.md 路由表改动未破坏 ROUTER_ROW_RE/router_help 契约与 MODULE_COMMANDS 一致性"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "逐条对照 A-ZH-1..9 处置与父任务验收标准（每项修复含 Low 均有回归测试）"}

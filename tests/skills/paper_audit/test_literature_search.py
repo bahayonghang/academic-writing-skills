@@ -1,7 +1,9 @@
 """Tests for literature search, comparison, scoring model, and 9-dim ScholarEval."""
 
+import importlib.util
 import json
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -13,6 +15,40 @@ from tests.support.paths import SCRIPT_DIR_AUDIT
 _scripts_audit = SCRIPT_DIR_AUDIT
 if str(_scripts_audit) not in sys.path:
     sys.path.insert(0, str(_scripts_audit))
+
+
+@contextmanager
+def _load_audit_literature_search():
+    """Load literature_search and its parsers dependency from paper-audit by path."""
+    saved_path = list(sys.path)
+    module_names = ("parsers", "audit_literature_search")
+    saved_modules = {name: sys.modules.pop(name, None) for name in module_names}
+    try:
+        sys.path.insert(0, str(SCRIPT_DIR_AUDIT))
+
+        parsers_spec = importlib.util.spec_from_file_location(
+            "parsers", SCRIPT_DIR_AUDIT / "parsers.py"
+        )
+        assert parsers_spec and parsers_spec.loader
+        parsers_module = importlib.util.module_from_spec(parsers_spec)
+        sys.modules["parsers"] = parsers_module
+        parsers_spec.loader.exec_module(parsers_module)
+
+        search_spec = importlib.util.spec_from_file_location(
+            "audit_literature_search", SCRIPT_DIR_AUDIT / "literature_search.py"
+        )
+        assert search_spec and search_spec.loader
+        search_module = importlib.util.module_from_spec(search_spec)
+        sys.modules["audit_literature_search"] = search_module
+        search_spec.loader.exec_module(search_module)
+        yield search_module, parsers_module
+    finally:
+        sys.path[:] = saved_path
+        for name, module in saved_modules.items():
+            if module is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = module
 
 
 # ============================================================
@@ -65,6 +101,42 @@ transformer, attention, neural network
         meta = extract_search_metadata("", "paper.tex", parser)
         assert isinstance(meta, dict)
         assert "title" in meta
+
+    @pytest.mark.parametrize(
+        ("content", "expected_title", "abstract_fragment"),
+        [
+            (
+                "#show: ieee.with(\n"
+                "  title: [Graph Reasoning],\n"
+                "  abstract: [We study graph reasoning.]\n"
+                ")",
+                "Graph Reasoning",
+                "study graph reasoning",
+            ),
+            (
+                '#set document(title: "Set Document Title")\n\n'
+                "= Abstract\nThis abstract comes from a Typst heading.\n",
+                "Set Document Title",
+                "Typst heading",
+            ),
+        ],
+    )
+    def test_extract_search_metadata_typst_end_to_end(
+        self, content: str, expected_title: str, abstract_fragment: str
+    ) -> None:
+        """A-PA-8: exercise the real paper-audit parser import chain for Typst."""
+        with _load_audit_literature_search() as (search_module, parsers_module):
+            search_file = search_module.__file__
+            parsers_file = parsers_module.__file__
+            assert search_file is not None
+            assert parsers_file is not None
+            assert Path(search_file).resolve().parent == SCRIPT_DIR_AUDIT.resolve()
+            assert Path(parsers_file).resolve().parent == SCRIPT_DIR_AUDIT.resolve()
+
+            metadata = search_module.extract_search_metadata(content, "paper.typ", object())
+
+        assert metadata["title"] == expected_title
+        assert abstract_fragment in metadata["abstract"]
 
 
 class TestQueryGeneration:
@@ -348,6 +420,92 @@ class TestLiteratureCompare:
         )
         assert entry.novelty_impact == "medium"
 
+    def test_extract_bibtex_titles(self) -> None:
+        from literature_compare import _extract_bibtex_titles
+
+        bib_content = r"""
+@article{nested,
+  title = {{Deep} Learning for Science},
+  booktitle = {Proceedings of a Conference}
+}
+@book{quoted,
+  title = "Reliable Research Workflows"
+}
+"""
+
+        assert _extract_bibtex_titles(bib_content) == [
+            "Deep Learning for Science",
+            "Reliable Research Workflows",
+        ]
+
+    def test_compare_with_literature_uses_external_bib_titles(self) -> None:
+        from literature_compare import compare_with_literature
+        from literature_search import SearchResult
+
+        result = SearchResult(
+            title="Deep Learning for Science",
+            authors=["A. Author"],
+            year=2025,
+            abstract="A related study.",
+            url="https://example.test/paper",
+            source="fixture",
+            relevance_score=0.9,
+        )
+        comparison = compare_with_literature(
+            paper_content=r"\cite{nested}",
+            paper_citations=["nested"],
+            literature_results=[result],
+            bib_content="@article{nested, title = {{Deep} Learning for Science}}",
+        )
+
+        assert comparison.coverage.coverage_ratio > 0
+
+    def test_compare_with_literature_keeps_bibitem_and_empty_bib_behavior(self) -> None:
+        from literature_compare import compare_with_literature
+        from literature_search import SearchResult
+
+        result = SearchResult(
+            title="Reliable Research Workflows",
+            authors=["A. Author"],
+            year=2025,
+            abstract="A related study.",
+            url="https://example.test/paper",
+            source="fixture",
+            relevance_score=0.9,
+        )
+        paper = r'\bibitem{workflow} A. Author. "Reliable Research Workflows". 2025.'
+
+        without_argument = compare_with_literature(paper, ["workflow"], [result])
+        with_empty_bib = compare_with_literature(paper, ["workflow"], [result], bib_content="")
+
+        assert without_argument.coverage.coverage_ratio == 1.0
+        assert with_empty_bib.coverage == without_argument.coverage
+
+    def test_load_bibliography_content_for_latex_and_typst(self, tmp_path: Path) -> None:
+        from audit import _load_bibliography_content
+
+        main_bib = "@article{main, title = {Main Reference}}"
+        extra_bib = "@article{extra, title = {Extra Reference}}"
+        (tmp_path / "refs.bib").write_text(main_bib, encoding="utf-8")
+        (tmp_path / "extra.bib").write_text(extra_bib, encoding="utf-8")
+        tex_path = tmp_path / "paper.tex"
+        typ_path = tmp_path / "paper.typ"
+
+        latex = _load_bibliography_content(
+            tex_path,
+            r"\bibliography{refs,missing}\n\addbibresource{extra.bib}",
+            ".tex",
+        )
+        typst = _load_bibliography_content(
+            typ_path,
+            '#bibliography("refs.bib")',
+            ".typ",
+        )
+
+        assert main_bib in latex
+        assert extra_bib in latex
+        assert main_bib in typst
+
     def test_render_comparison_report(self) -> None:
         from literature_compare import (
             CoverageAssessment,
@@ -413,6 +571,39 @@ class TestScholarEval9Dim:
         scores = evaluate_from_audit(issues)
         assert "literature_grounding_partial" in scores
         assert scores["literature_grounding_partial"] is None
+
+    def test_module_dimension_map_covers_audit_modules(self) -> None:
+        from scholar_eval import MODULE_DIMENSION_MAP
+
+        assert MODULE_DIMENSION_MAP == {
+            "LOGIC": "soundness",
+            "GRAMMAR": "clarity",
+            "SENTENCES": "clarity",
+            "FORMAT": "clarity",
+            "DEAI": "clarity",
+            "CONSISTENCY": "clarity",
+            "FIGURES": "presentation",
+            "VISUAL": "presentation",
+            "REFERENCES": "presentation",
+            "CITATIONS": "presentation",
+            "BIB": "presentation",
+            "PRESUBMISSION": "presentation",
+            "EXPERIMENT": "reproducibility",
+            "PSEUDOCODE": "reproducibility",
+        }
+
+    def test_reproducibility_signal_from_experiment_module(self) -> None:
+        from scholar_eval import evaluate_from_audit
+
+        experiment = evaluate_from_audit(
+            [{"module": "EXPERIMENT", "severity": "Critical", "message": "missing seeds"}]
+        )
+        legacy_logic_heuristic = evaluate_from_audit(
+            [{"module": "LOGIC", "severity": "Critical", "message": "method is unclear"}]
+        )
+
+        assert experiment["reproducibility_partial"] < 10.0
+        assert legacy_logic_heuristic["reproducibility_partial"] == 10.0
 
     def test_merge_literature_grounding_mixed(self) -> None:
         from scholar_eval import merge_scores
@@ -549,6 +740,15 @@ class TestScoringModel:
         scorer = RegressionScorer.load_model(model_file)
         assert scorer.coefficients == {"soundness": 0.2, "clarity": 0.15}
         assert scorer.intercept == 1.0
+
+    def test_extract_features_none_defaults_characterization(self) -> None:
+        """A-PA-7 characterization: None defaults to 5 but is not below-five."""
+        from scoring_model import RegressionScorer
+
+        features = RegressionScorer()._extract_features({"novelty": None, "soundness": 4.0})
+
+        assert features["novelty"] == 5.0
+        assert features["dims_below_5"] == 1.0
 
     def test_save_model_to_json(self, tmp_path: Path) -> None:
         from scoring_model import RegressionScorer
@@ -787,6 +987,57 @@ class TestScoringChainIntegration:
         report = render_report(result)
         assert "left unscored" in report
         assert "renormalized" in report
+
+    def test_run_audit_passes_external_bib_content_to_comparison(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        import literature_compare
+        import literature_search
+        from audit import run_audit
+
+        related = literature_search.SearchResult(
+            title="External Bibliography Reference",
+            authors=["A. Author"],
+            year=2025,
+            abstract="A related study.",
+            url="https://example.test/external",
+            source="fixture",
+            relevance_score=0.9,
+        )
+
+        def fake_context(**kwargs):
+            return literature_search.LiteratureContext(
+                paper_title="Scoring Chain Test",
+                paper_abstract="We show gains.",
+                search_queries=["q"],
+                results=[related],
+                filtered_results=[related],
+            )
+
+        real_compare = literature_compare.compare_with_literature
+        captured: dict[str, str] = {}
+
+        def record_compare(*args, bib_content="", **kwargs):
+            captured["bib_content"] = bib_content
+            return real_compare(*args, bib_content=bib_content, **kwargs)
+
+        monkeypatch.setattr(literature_search, "build_literature_context", fake_context)
+        monkeypatch.setattr(literature_compare, "compare_with_literature", record_compare)
+
+        tex = tmp_path / "paper.tex"
+        tex.write_text(_SCORING_FIXTURE + "\n\\bibliography{refs}\n", encoding="utf-8")
+        (tmp_path / "refs.bib").write_text(
+            "@article{external, title = {External Bibliography Reference}}",
+            encoding="utf-8",
+        )
+        monkeypatch.chdir(tmp_path)
+
+        result = run_audit(
+            str(tex), mode="quick-audit", lang="en", scholar_eval=True, literature_search=True
+        )
+
+        assert "External Bibliography Reference" in captured["bib_content"]
+        assert result.literature_context.comparison_result.coverage.coverage_ratio > 0
 
     def test_weighted_average_renormalizes_without_literature_grounding(self) -> None:
         """Missing literature_grounding renormalizes weights to 1.00."""

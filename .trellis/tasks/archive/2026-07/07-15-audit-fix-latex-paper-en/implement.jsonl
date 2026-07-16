@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本非共享 import 的总纲：改共享逻辑先改 latex-paper-en、typst 逐字节镜像；conftest 只把 EN/AUDIT 放 sys.path 前排（bare import 永远拿 EN 副本）——本任务 canonical parsers.py 改动与三副本同步的根依据"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "新测试须从 tests.support.paths 取路径常量；非 EN/AUDIT 副本用 importlib 按路径加载并对称恢复 sys.modules；pytest 禁加 PYTHONIOENCODING；SKILL.md 改动后必跑 test_skill_contracts（ROUTER_ROW_RE hook 陷阱）；检查器默认行为变化仅限误报/假绿修复且 commit message 双声明——Batch 1-5 的测试写法与验证命令全部依此"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务 PRD：A-EN-1..10 发现登记表（证据 file:line 与处置）、D1-D7 决策、子任务排序约束（en 先于 cover-letter、与 typst 并行须先合 en）——本任务 scope 与 AC 的事实源"}

@@ -1,56 +1,56 @@
-# Number and Unit Formatting Guide
+# 数字和单位格式指南
 
-This reference defines conventions for numbers, units, and statistical reporting in academic papers.
+本参考文献定义了学术论文中数字、单位和统计报告的约定。
 
-## SI Unit Formatting
+## SI 单位格式
 
-- Always insert a space between the number and the unit: `5 kg`, `100 mL`, `25 °C`
-- Exceptions: percentage (`5%`), degree symbol alone (`45°`), currency (`$100`)
-- Use SI base/derived units; spell out non-standard units on first use
-- In LaTeX: use `\SI{5}{kg}` (siunitx) or `5\,kg` for thin space
-- In Typst: use `5 #unit("kg")` or manual thin space `5#h(0.15em)kg`
+- 始终在数字和单位之间插入空格：`5 kg`, `100 mL`, `25 °C`
+- 例外：百分比 (`5%`), 单独的度数符号 (`45°`）， 货币 （`$100`)
+- 使用 SI 基本/派生单位；首次使用时拼出非标准单位
+- 在 LaTeX 中：使用`\SI{5}{kg}`（siunitx）或`5\,kg`适用于狭小的空间
+- 在打字机中：使用`5 #unit("kg")`或手动薄空间`5#h(0.15em)kg`
 
-## Number-Word Thresholds
+## 数字-单词阈值
 
-| Context | Rule |
+|语境|规则|
 |---------|------|
-| Sentence start | Always spell out: "Twenty participants..." |
-| Values 1-9 in prose | Spell out: "three experiments", "five categories" |
-| Values 10+ in prose | Use digits: "12 features", "256 samples" |
-| Precise measurements | Always digits: "3 mL", "7 days" |
-| Large round numbers | Mixed: "1.2 million", "3 billion" |
-| Adjacent numbers | Alternate forms: "two 3-layer networks" |
+|句子开始|始终拼写：“二十名参与者......”|
+|散文中的价值观1-9|拼出：“三个实验”、“五个类别”|
+|散文价值10+|使用数字：“12个特征”，“256个样本”|
+|精确测量|始终为数字：“3 mL”、“7 天”|
+|大整数|参差不齐：“120万”、“30亿”|
+|相邻数字|替代形式：“两个三层网络”|
 
-## Statistical Reporting
+## 统计报告
 
-| Measure | Format | Example |
+|措施|格式|例子|
 |---------|--------|---------|
-| Percentage | 1 decimal place | 85.3% |
-| Mean +/- SD | 2 decimal places | 3.14 +/- 0.05 |
-| p-value | Exact (3 sig figs) or threshold | p = 0.003, p < 0.001 |
-| Correlation | 2-3 decimal places | r = 0.87 |
-| Confidence interval | Same precision as estimate | [2.10, 4.18] |
-| Effect size (Cohen's d) | 2 decimal places | d = 0.75 |
-| F-statistic | 2 decimal places with df | F(2, 47) = 3.85 |
-| t-statistic | 2 decimal places with df | t(49) = 2.10 |
-| Chi-square | 2 decimal places with df | chi-sq(3) = 7.81 |
+|百分比|小数点后 1 位| 85.3% |
+|平均值+/-标准差|2 位小数| 3.14 +/- 0.05 |
+|p 值|精确（3 个数字）或阈值|p = 0.003，p < 0.001|
+|相关性|2-3 位小数|r = 0.87|
+|置信区间|与估计精度相同| [2.10, 4.18] |
+|效应大小（Cohen's d）|2 位小数|d = 0.75|
+|F统计量|df 保留 2 位小数|F(2, 47) = 3.85|
+|t统计量|df 保留 2 位小数|t(49) = 2.10|
+|卡方|df 保留 2 位小数|卡方(3) = 7.81|
 
-## Consistency Rules
+## 一致性规则
 
-- Precision must be consistent within each column of a table
-- Precision must be consistent for the same measure across the paper
-- Report exact p-values when p >= 0.001; use "p < 0.001" otherwise
-- Never report "p = 0.000" — use "p < 0.001"
+- 表中每一列的精度必须一致
+- 整篇论文中相同测量的精度必须保持一致
+- 当 p >= 0.001 时报告精确的 p 值；否则使用“p < 0.001”
+- 切勿报告“p = 0.000”——使用“p < 0.001”
 
-## Range Formatting
+## 范围格式
 
-- Use en dash for number ranges: "10--20", "pp. 1--15"
-- In LaTeX: `10--20` renders as `10–20`
-- In Typst: `10--20` or `10#sym.dash.en 20`
-- Do not use "from X-Y"; use "from X to Y" or "X--Y"
+- 使用破折号表示数字范围：“10--20”、“第 1--15 页”
+- 在乳胶中：`10--20`呈现为`10–20`
+- 在打字机中：`10--20`或者`10#sym.dash.en 20`
+- 不要使用“从 X-Y”；使用“从 X 到 Y”或“X--Y”
 
-## Large Number Formatting
+## 大数字格式化
 
-- Use comma separators for numbers >= 1,000: `1,024`, `10,000`
-- In some European venues, use period: `1.024`, `10.000` — check venue guide
-- Scientific notation for very large/small: `3.2 x 10^5`, `1.5 x 10^{-3}`
+- 对于 >= 1,000 的数字使用逗号分隔符：`1,024`, `10,000`
+- 在欧洲部分期刊或会议，使用期限：`1.024`, `10.000`— 查看期刊或会议指南
+- 非常大/非常小的科学记数法：`3.2 x 10^5`, `1.5 x 10^{-3}`

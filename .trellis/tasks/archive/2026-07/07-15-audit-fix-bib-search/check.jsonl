@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/design.md", "reason": "验收对照：错误面契约总表逐行复现；CODE_HINT 逐词语义表与负/正例清单；fixture 三条目 flags.code 稳定性结论"}
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/implement.md", "reason": "检查每批次 tests-first 是否真实执行（先红后绿）、四个回滚点 commit 拆分、收尾评审门四条"}
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/prd.md", "reason": "AC 清单逐项勾验：每项发现（含 Low）有回归测试、28 项既有测试保持绿、preview 无 warnings 输入逐字节不变、SKILL.md 零改动"}
+{"file": "academic-writing-skills/bib-search-citation/tests/test_bib_search.py", "reason": "新增测试落点与既有 28 项回归基线；broken/phantom/quote_trap fixture 测试必须保持绿"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验证命令与 just ci 约定；pyright basic 看 error 数不是 warning 数"}

@@ -270,7 +270,25 @@ class LatexParser(DocumentParser):
     def split_sections(self, content: str) -> dict[str, tuple[int, int]]:
         lines_total = len(content.split("\n"))
         headings = self.extract_headings(content)
-        return _split_sections_from_headings(headings, self._classify_heading, lines_total)
+        sections = _split_sections_from_headings(headings, self._classify_heading, lines_total)
+        if "abstract" not in sections:
+            # \begin{abstract}...\end{abstract} environment form (common in
+            # IEEE/ACM templates): the heading-based rules above only match
+            # \section*{Abstract}, so register the environment span here.
+            # Mirrors extract_headings' own comment handling: skip whole
+            # commented-out lines, then strip a trailing inline "% ..." remark.
+            begin_line = None
+            for line_no, raw_line in enumerate(content.split("\n"), 1):
+                stripped = raw_line.strip()
+                if not stripped or stripped.startswith(self.get_comment_prefix()):
+                    continue
+                stripped = re.sub(r"(?<!\\)%.*", "", stripped)
+                if begin_line is None and re.search(r"\\begin\{abstract\}", stripped):
+                    begin_line = line_no
+                if begin_line is not None and re.search(r"\\end\{abstract\}", stripped):
+                    sections["abstract"] = (begin_line, line_no)
+                    break
+        return sections
 
     def extract_visible_text(self, line: str) -> str:
         # Preserve structure markers logic
@@ -397,7 +415,6 @@ class TypstParser(DocumentParser):
         r"#figure\([^)]+\)",  # Figures
         r"#table\([^)]+\)",  # Tables
         r"\$[^$]+\$",  # Math $...$
-        r"//.*",  # Line comments
         r"/\*.*?\*/",  # Block comments
         r"<[a-zA-Z0-9_-]+>",  # Labels <label>
         r"#link\([^)]+\)",  # Links
@@ -423,8 +440,7 @@ class TypstParser(DocumentParser):
         temp_line = line
 
         # Remove comments first for Typst
-        if "//" in temp_line:
-            temp_line = temp_line.split("//")[0]
+        temp_line = _strip_typst_line_comment(temp_line)
 
         preserved = []
         for pattern in self.PRESERVE_PATTERNS:
@@ -477,9 +493,11 @@ class TypstParser(DocumentParser):
         return headings
 
     def clean_text(self, content: str, keep_structure: bool = False) -> str:
-        # Remove comments
-        content = re.sub(r"//.*", "", content)
+        # Remove block comments FIRST: a per-line "//" strip would otherwise eat
+        # the "*/" terminator on lines like "still hidden // note */" and leave
+        # the block unclosed.
         content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
+        content = "\n".join(_strip_typst_line_comment(ln) for ln in content.split("\n"))
 
         # Remove math
         content = re.sub(r"\$[^$]+\$", "", content)
@@ -563,6 +581,41 @@ def _extract_template_arg(content: str, arg: str) -> str:
     return ""
 
 
+def _strip_typst_line_comment(line: str) -> str:
+    """Strip a Typst line comment, keeping ``//`` that lives inside URLs,
+    double-quoted strings, or raw-text backticks (approximates the Typst
+    lexer; block comments are handled separately by the callers)."""
+    in_string = False  # "..." code-mode strings, e.g. #link("...") args
+    in_raw = False  # `...` raw text
+    i, n = 0, len(line)
+    while i < n:
+        ch = line[i]
+        if in_string:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == '"':
+                in_string = False
+        elif in_raw:
+            if ch == "`":
+                in_raw = False
+        elif ch == '"':
+            in_string = True
+        elif ch == "`":
+            in_raw = True
+        elif ch == ":" and line.startswith("://", i):
+            # URL scheme: consume the token up to the next whitespace, so
+            # ``https://example.com//path`` never opens a comment.
+            i += 3
+            while i < n and not line[i].isspace():
+                i += 1
+            continue
+        elif ch == "/" and line.startswith("//", i):
+            return line[:i]
+        i += 1
+    return line
+
+
 def _strip_typst_markup(text: str) -> str:
     """Strip lightweight Typst markup for title/abstract extraction."""
     cleaned = text
@@ -590,12 +643,38 @@ def _strip_latex_markup(text: str) -> str:
     return _normalize_whitespace(cleaned)
 
 
+def _strip_balanced_commands(text: str, commands: tuple[str, ...]) -> str:
+    """Remove ``\\<command>{...}`` spans with balanced-brace bodies.
+
+    Unlike a ``\\thanks\\{[^}]*\\}`` regex, this also removes footnote/thanks
+    blocks whose body contains nested braces (e.g. ``\\thanks{\\emph{x}}``),
+    which would otherwise leak affiliation or funding text into the title.
+    """
+    for command in commands:
+        opener = re.compile(r"\\" + command + r"\s*\{")
+        while True:
+            match = opener.search(text)
+            if not match:
+                break
+            brace_idx = match.end() - 1
+            body = _extract_balanced_block(text, brace_idx, "{", "}")
+            end = brace_idx + len(body) + 2  # skip the opening '{' and closing '}'
+            text = text[: match.start()] + " " + text[end:]
+    return text
+
+
 def extract_title(content: str) -> str:
     """Extract document title from LaTeX/Typst source content."""
-    # LaTeX: \title{...}
-    latex_match = re.search(r"\\title(?:\[[^\]]*\])?\{(.+?)\}", content, re.DOTALL)
+    # LaTeX: \title{...} — balanced braces (nested titles like "Learning
+    # {Fast} and {Slow} Dynamics" are not truncated at the first "}"), with
+    # \thanks{...}/\footnote{...} funding statements stripped before cleanup.
+    latex_match = re.search(r"\\title(?:\[[^\]]*\])?\s*\{", content, re.DOTALL)
     if latex_match:
-        return _strip_latex_markup(latex_match.group(1))
+        body = _extract_balanced_block(content, latex_match.end() - 1, "{", "}")
+        if body:
+            body = _strip_balanced_commands(body, ("thanks", "footnote"))
+            return _strip_latex_markup(body)
+        return ""
 
     # Typst template form: #show: ieee.with(title: [ ... ])
     template_title = _extract_template_arg(content, "title")
@@ -653,7 +732,7 @@ def extract_abstract(content: str) -> str:
 
     # Typst heading-based abstract: "= Abstract" / "= 摘要"
     typst_heading_abs = re.search(
-        r"^=\s+(?:摘要|[Aa]bstract)\s*\n(.*?)(?=^=\s+|\Z)",
+        r"^=\s+(?:摘要|[Aa]bstract)\s*\n(.*?)(?=^=+\s+|\Z)",
         content,
         re.DOTALL | re.MULTILINE,
     )

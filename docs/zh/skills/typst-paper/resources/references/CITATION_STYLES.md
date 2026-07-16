@@ -1,113 +1,127 @@
-# Citation Style Guide
+# 引文风格指南
 
-This reference defines the formatting rules for four major citation styles used in academic publishing. Use this when validating bibliography entries with `verify_bib.py --style <style>`.
+本参考定义了学术出版中使用的四种主要引用样式的格式规则。使用 `verify_bib.py --style <style>` 验证参考书目条目时使用此选项。
 
-## Style Comparison Matrix
+> `verify_bib.py --style`接受`ieee`, `apa`, `mla`, `chicago`， 和
+> `gb-7714-2015-numeric`。下面的温哥华/自然记录为格式
+> 仅供参考；渲染的参考书目由 hayagriva 风格的 ID 驱动
+> `#bibliography("refs.bib", style: ...)`。
 
-| Feature | IEEE | APA 7th | Vancouver | Nature |
-|---------|------|---------|-----------|--------|
-| In-text format | `[1]` numeric | `(Smith, 2023)` author-year | `(1)` or superscript | Superscript |
-| Author threshold | 6 → et al. | 3 → et al. (in-text: 1-2 spell, 3+ et al.) | 6 → et al. | 5 → et al. |
-| Journal name | ISO 4 abbreviated | Full name, italicized | NLM abbreviated | ISO 4 abbreviated |
-| Volume | Bold | Italicized | Bold | Bold |
-| Pages | en dash (pp. 1--10) | en dash (pp. 1--10) | en dash (1--10) | en dash (1--10) |
-| DOI | Required when available | Required as URL | Optional | Required when available |
-| Year position | After author | After author in parens | After journal | After journal |
+## 风格比较矩阵
 
-## IEEE Style
+|特征|IEEE|APA第七名|温哥华|自然|
+| ---------------- | ----------------------- | ------------------------------------------ | -------------------- | ----------------------- |
+|文本格式| `[1]`数字| `(Smith, 2023)`作者年份| `(1)`或上标|上标|
+|作者门槛|6 → 等。|3 → 等。 （文本内：1-2 个咒语，3+ 等）|6 → 等。|5 → 等。|
+|期刊名称|ISO 4 缩写|全名，斜体|NLM 缩写|ISO 4 缩写|
+|体积|大胆的|斜体|大胆的|大胆的|
+|页数|破折号（第 1--10 页）|破折号（第 1--10 页）|连字符 (1--10)|连字符 (1--10)|
+|DOI|可用时需要|需要作为 URL|选修的|可用时需要|
+|年份位置|作者之后|括号内为作者之后|日记之后|日记之后|
 
-**In-text**: `[1]`, `[2-4]`, `[1], [3]`
+## IEEE风格
 
-**Reference format**:
+**文中**：`[1]`, `[2-4]`, `[1], [3]`
+
+**参考格式**：
+
 ```
 [1] A. B. Author, C. D. Author, and E. F. Author, "Article title," J. Abbrev., vol. 10, no. 2, pp. 1--15, Mar. 2023, doi: 10.xxxx/xxxxx.
 ```
 
-**Rules**:
-- Authors: initials before surname, up to 6 listed, then "et al."
-- Title: sentence case in double quotes
-- Journal: ISO 4 abbreviation, italicized
-- Volume/number/pages: `vol. X, no. Y, pp. A--B`
-- Month abbreviated: Jan., Feb., Mar., Apr., May, Jun., Jul., Aug., Sep., Oct., Nov., Dec.
-- DOI required when available
-- Pages use en dash (`--` in BibTeX, renders as `–`)
+**规则**：
 
-## APA 7th Edition
+- 作者：姓氏前的首字母缩写，最多列出 6 位，然后是“et al”。
+- 标题：双引号中的句子大小写
+- 期刊：ISO 4 缩写，斜体
+- 卷/页数/页数：`vol. X, no. Y, pp. A--B`
+- 月份缩写：一月、二月、三月、四月、五月、六月、七月、八月、九月、十月、十一月、十二月
+- 需要 DOI（如有）
+- 页面使用破折号 (`--`在 BibTeX 中，呈现为`–`)
 
-**In-text**: `(Smith, 2023)`, `(Smith & Jones, 2023)`, `(Smith et al., 2023)` for 3+
+## APA 第 7 版
 
-**Reference format**:
+**文中**：`(Smith, 2023)`, `(Smith & Jones, 2023)`, `(Smith et al., 2023)`适合 3 岁以上
+
+**参考格式**：
+
 ```
 Author, A. B., Author, C. D., & Author, E. F. (2023). Article title. Journal Name, 10(2), 1--15. https://doi.org/10.xxxx/xxxxx
 ```
 
-**Rules**:
-- Authors: surname, initials; up to 20 listed, 21+ use first 19 + ... + last
-- In-text: 1-2 authors spell out, 3+ use "et al."
-- Title: sentence case, no quotes
-- Journal: full name, italicized
-- Volume italicized, issue in parentheses (not italicized)
-- DOI formatted as URL: `https://doi.org/10.xxxx/xxxxx`
-- Hanging indent (0.5 inch)
-- No "pp." before page numbers in journals
+**规则**：
 
-## Vancouver Style
+- 作者：姓氏、缩写；最多列出 20 个，21+ 使用前 19 + ... + 最后一个
+- 文本内：1-2 位作者拼写出来，3 位以上使用“et al”。
+- 标题：句子大小写，不带引号
+- 期刊：全名，斜体
+- 卷斜体，问题在括号中（非斜体）
+- DOI 格式为 URL：`https://doi.org/10.xxxx/xxxxx`
+- 悬挂缩进（0.5 英寸）
+- 没有“页”。期刊页码之前
 
-**In-text**: `(1)` or superscript `¹`, numbered by order of appearance
+## 温哥华风格
 
-**Reference format**:
+**文中**：`(1)`或上标`¹`，按出现顺序编号
+
+**参考格式**：
+
 ```
 1. Author AB, Author CD, Author EF. Article title. J Abbrev. 2023;10(2):1-15.
 ```
 
-**Rules**:
-- Authors: surname followed by initials (no periods, no commas between initials)
-- Up to 6 authors listed, then "et al."
-- Title: sentence case, no quotes
-- Journal: NLM (PubMed) abbreviation
-- No spaces between volume, issue, pages: `2023;10(2):1-15`
-- DOI typically omitted in print; include for online-only
-- Pages: en dash preferred but hyphen accepted
+**规则**：
 
-## Nature Style
+- 作者：姓氏后跟缩写（缩写之间没有句点，缩写之间没有逗号）
+- 最多列出 6 位作者，然后是“et al”。
+- 标题：句子大小写，不带引号
+- 期刊：NLM（PubMed）缩写
+- 卷、期、页之间没有空格：`2023;10(2):1-15`
+- DOI 通常在印刷品中省略；仅限在线使用
+- 页数：首选破折号，但接受连字符
 
-**In-text**: Superscript numbers `¹`, `²,³`, `⁴⁻⁶`
+## 自然风格
 
-**Reference format**:
+**文本内**：上标数字`¹`, `²,³`, `⁴⁻⁶`
+
+**参考格式**：
+
 ```
 1. Author, A. B., Author, C. D. & Author, E. F. Article title. J. Abbrev. 10, 1--15 (2023).
 ```
 
-**Rules**:
-- Authors: surname, initials; up to 5 listed, then "et al."
-- Title: sentence case, no quotes, no period after title
-- Journal: ISO 4 abbreviation, italicized
-- Volume bold, pages with en dash, year in parentheses
-- No "vol.", "no.", "pp." labels
-- DOI required when available (appended after year)
+**规则**：
 
-## En Dash Rule
+- 作者：姓氏、缩写；最多列出 5 个，然后是“et al”。
+- 标题：句子大小写，无引号，标题后无句号
+- 期刊：ISO 4 缩写，斜体
+- 卷粗体，页码带破折号，年份放在括号中
+- 没有“卷”、“否”、“页”。标签
+- 需要 DOI（如有）（年份后附加）
 
-All styles require en dash (`–`, Unicode U+2013) between page ranges, not hyphen (`-`).
+## 破折号规则
 
-In BibTeX: use `--` which renders as en dash. Flag single hyphens in page fields.
+所有样式都需要短划线（`–`, Unicode U+2013) 之间的页面范围，而不是连字符 (`-`).
 
-**Validation check**: `pages` field should contain `--` not a single `-`.
+在 BibTeX 中：使用 `--`，它呈现为破折号。标记页面字段中的单个连字符。
 
-## Unverifiable Fields
+**验证检查**：`pages`字段应包含`--`没有一个`-`.
 
-When a field cannot be confirmed (DOI not found, page numbers uncertain):
+## 无法验证的字段
 
-- English: mark as `[Unverified]`
-- Chinese: mark as `[待核实]`
-- Never fabricate DOI, page numbers, volume, or issue numbers
-- Flag uncertain entries separately rather than guessing silently
+当某个字段无法确认时（未找到 DOI、页码不确定）：
 
-## Style Detection Heuristic
+- 英文：标记为`[Unverified]`
+- 中文：标记为`[待核实]`
+- 切勿伪造 DOI、页码、卷号或期号
+- 单独标记不确定的条目而不是默默猜测
 
-When `--style` is not specified, attempt detection from:
-1. `\bibliographystyle{IEEEtran}` → IEEE
-2. `\bibliographystyle{apalike}` or `\usepackage{apacite}` → APA
-3. `\bibliographystyle{vancouver}` or `\usepackage{vancouver}` → Vancouver
-4. Document class or preamble hints for Nature-family journals
-5. Default: IEEE (most common in CS/EE)
+## 风格检测启发式
+
+当未指定 `--style` 时，尝试从 Typst 源进行检测：
+
+1. `#bibliography(..., style: "ieee")` → IEEE
+2. `#bibliography(..., style: "apa")` → APA
+3. `#bibliography(..., style: "gb-7714-2015-numeric")`→中国GB/T 7714
+4. 地点命名于`#show: <template>.with(...)`（例如。`charged-ieee`→ IEEE)
+5. 默认值：IEEE（在 CS/EE 中最常见）

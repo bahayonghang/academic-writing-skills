@@ -275,10 +275,17 @@ class TestCheckConsistency:
 
     def test_abbreviation_undefined(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
-        tex.write_text("本文使用 BERT 模型进行实验。", encoding="utf-8")
+        tex.write_text("本文使用 BERT 模型。随后用 BERT 进行实验。", encoding="utf-8")
         checker = check_consistency.ConsistencyChecker([str(tex)])
         result = checker.check_abbreviations()
         assert any(i["abbreviation"] == "BERT" for i in result["issues"])
+
+    def test_abbreviation_single_use_and_stopwords_are_ignored(self, tmp_path: Path):
+        tex = tmp_path / "main.tex"
+        tex.write_text("本文使用 XYZC 模型，并在 IEEE 平台用 GPU 运行。", encoding="utf-8")
+        checker = check_consistency.ConsistencyChecker([str(tex)])
+        result = checker.check_abbreviations()
+        assert not result["issues"]
 
     def test_abbreviation_defined(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
@@ -474,6 +481,14 @@ class TestParsersZh:
         parser = parsers_zh.TypstParser()
         headings = parser.extract_headings(content)
         assert [heading["level"] for heading in headings] == [1, 2, 3, 4]
+
+    def test_typst_parser_extract_visible_text_keeps_inline_url(self):
+        """A-TY-1: zh TypstParser is not method-locked in ALIGNMENTS, so it
+        needs its own regression for the URL-aware comment scanner."""
+        parser = parsers_zh.TypstParser()
+        visible = parser.extract_visible_text("See https://example.com/x for details.")
+        assert "example.com" in visible
+        assert "details" in visible
 
 
 # ── compile.py (zh) ───────────────────────────────────────────

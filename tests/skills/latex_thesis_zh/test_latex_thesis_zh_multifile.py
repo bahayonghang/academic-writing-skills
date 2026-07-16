@@ -59,6 +59,7 @@ parsers_zh = _load_zh("parsers")
 analyze_logic_zh = _load_zh("analyze_logic")
 deai_check_zh = _load_zh("deai_check")
 check_consistency_zh = _load_zh("check_consistency")
+check_references_zh = _load_zh("check_references")
 
 
 # ── fixtures ──────────────────────────────────────────────────
@@ -90,6 +91,27 @@ def _write_multifile_project(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     return main
+
+
+def test_reference_issues_include_relative_file_and_multifile_location(tmp_path: Path) -> None:
+    chapters = tmp_path / "chapters"
+    chapters.mkdir()
+    (tmp_path / "main.tex").write_text("\\input{chapters/ch1}\n", encoding="utf-8")
+    (chapters / "ch1.tex").write_text("正文见\\ref{fig:missing}。\n", encoding="utf-8")
+
+    checker = check_references_zh.ThesisReferenceChecker(str(tmp_path / "main.tex"))
+    issues = checker.run_all()
+    undefined = next(issue for issue in issues if "Undefined reference" in issue["message"])
+    assert undefined["file"] == "chapters/ch1.tex"
+    output = check_references_zh._format_issues(issues, multi_file=True)
+    assert "chapters/ch1.tex:1" in output
+
+
+def test_reference_single_file_format_stays_line_based() -> None:
+    checker = check_references_zh.ReferenceChecker(r"正文见\ref{fig:missing}。", "main.tex")
+    output = check_references_zh._format_issues(checker.run_all())
+    assert "(Line 1)" in output
+    assert "main.tex:1" not in output
 
 
 # ── tex_loader ────────────────────────────────────────────────

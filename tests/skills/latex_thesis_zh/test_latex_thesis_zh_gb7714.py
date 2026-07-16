@@ -184,3 +184,11 @@ def test_no_google_web_search_in_source():
     source = (_ZH_DIR / "verify_bib.py").read_text(encoding="utf-8")
     assert "google_web_search" not in source
     assert "WebSearch" in source
+
+
+def test_router_and_spec_command_document_2025_standard() -> None:
+    skill_source = (_ZH_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
+    bibliography_row = next(line for line in skill_source.splitlines() if "`bibliography`" in line)
+    spec_source = (_ZH_DIR / "check_spec.py").read_text(encoding="utf-8")
+    assert "gb7714-2025" in bibliography_row
+    assert "gb7714-2025" in spec_source

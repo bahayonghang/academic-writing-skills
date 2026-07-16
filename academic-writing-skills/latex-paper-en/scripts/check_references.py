@@ -19,8 +19,14 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+try:
+    from tex_loader import AssembledDocument, assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import AssembledDocument, assemble
+
 # ---------------------------------------------------------------------------
-# Regex patterns (LaTeX, single-file)
+# Regex patterns (LaTeX, multi-file via tex_loader.assemble)
 # ---------------------------------------------------------------------------
 
 LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
@@ -43,8 +49,9 @@ class LabelInfo:
 
     name: str  # Full label name (e.g., "fig:arch")
     prefix: str  # Prefix (e.g., "fig", "tab", "eq")
-    line: int  # Definition line number (1-indexed)
-    file: str  # Source file path
+    line: int  # Definition line number in the assembled document (1-indexed)
+    file: str  # Source file path (relative, multi-file aware)
+    src_line: int = 0  # Line number within the source file itself
 
 
 @dataclass
@@ -52,9 +59,10 @@ class RefInfo:
     """Reference information."""
 
     name: str  # Referenced label name
-    line: int  # Reference line number (1-indexed)
-    file: str  # Source file path
+    line: int  # Reference line number in the assembled document (1-indexed)
+    file: str  # Source file path (relative, multi-file aware)
     command: str  # Reference command (e.g., "ref", "eqref", "autoref")
+    src_line: int = 0  # Line number within the source file itself
 
 
 # ---------------------------------------------------------------------------
@@ -63,13 +71,21 @@ class RefInfo:
 
 
 class ReferenceChecker:
-    """Single-file LaTeX reference integrity checker."""
+    """LaTeX reference integrity checker (multi-file aware via tex_loader)."""
 
-    def __init__(self, content: str, file_path: str = "") -> None:
+    def __init__(
+        self, content: str, file_path: str = "", doc: AssembledDocument | None = None
+    ) -> None:
         self.content = content
         self.file_path = file_path
         self.lines = content.splitlines()
         self.issues: list[dict] = []
+        # ``doc`` carries the assembled-line -> source-file mapping. When the
+        # class is instantiated directly (e.g. in tests) without a ``doc``,
+        # fall back to single-file semantics: an ``AssembledDocument`` with
+        # ``multi_file=False`` makes ``lineref()`` return "Line N" verbatim,
+        # matching the pre-assemble output byte-for-byte.
+        self.doc = doc or AssembledDocument(entry=Path(file_path or "input.tex"))
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -92,6 +108,7 @@ class ReferenceChecker:
         message: str,
     ) -> None:
         """Append a structured issue dict."""
+        src_file, src_line = self.doc.origin(line)
         self.issues.append(
             {
                 "module": "REFERENCES",
@@ -99,6 +116,9 @@ class ReferenceChecker:
                 "severity": severity,
                 "priority": priority,
                 "message": message,
+                "location": self.doc.lineref(line),
+                "file": src_file,
+                "source_line": src_line,
             }
         )
 
@@ -123,7 +143,12 @@ class ReferenceChecker:
             for match in LABEL_RE.finditer(line):
                 name = match.group(1).strip()
                 prefix = self._extract_prefix(name)
-                labels.append(LabelInfo(name=name, prefix=prefix, line=lineno, file=self.file_path))
+                src_file, src_line = self.doc.origin(lineno)
+                labels.append(
+                    LabelInfo(
+                        name=name, prefix=prefix, line=lineno, file=src_file, src_line=src_line
+                    )
+                )
         return labels
 
     def find_refs(self) -> list[RefInfo]:
@@ -138,7 +163,12 @@ class ReferenceChecker:
                 # Extract the command name from the full match
                 cmd_match = re.match(r"\\(\w+)\{", match.group(0))
                 command = cmd_match.group(1) if cmd_match else "ref"
-                refs.append(RefInfo(name=name, line=lineno, file=self.file_path, command=command))
+                src_file, src_line = self.doc.origin(lineno)
+                refs.append(
+                    RefInfo(
+                        name=name, line=lineno, file=src_file, command=command, src_line=src_line
+                    )
+                )
         return refs
 
     # ------------------------------------------------------------------
@@ -213,7 +243,7 @@ class ReferenceChecker:
                     priority="P1",
                     message=(
                         f"Missing caption in {env_type} environment: "
-                        f"\\label{{{lbl.name}}} at line {lbl.line} has no \\caption"
+                        f"\\label{{{lbl.name}}} at {self.doc.lineref(lbl.line)} has no \\caption"
                     ),
                 )
 
@@ -240,8 +270,8 @@ class ReferenceChecker:
                     severity="Minor",
                     priority="P2",
                     message=(
-                        f"Reference before definition: \\ref{{{name}}} at line {ref_line} "
-                        f"appears before \\label{{{name}}} at line {label_lines[name]}"
+                        f"Reference before definition: \\ref{{{name}}} at {self.doc.lineref(ref_line)} "
+                        f"appears before \\label{{{name}}} at {self.doc.lineref(label_lines[name])}"
                     ),
                 )
 
@@ -319,12 +349,18 @@ class ReferenceChecker:
 
 
 def _format_issues(issues: list[dict], comment_prefix: str = "%") -> str:
-    """Format issues into the project's output protocol."""
+    """Format issues into the project's output protocol.
+
+    ``location`` is a single-file "Line N" or multi-file "sections/x.tex:N"
+    label (see ``AssembledDocument.lineref``); issues built before that field
+    existed fall back to the bare line number for safety.
+    """
     if not issues:
         return ""
     lines = []
     for issue in sorted(issues, key=lambda x: x.get("line") or 0):
-        line_part = f"(Line {issue['line']}) " if issue.get("line") else ""
+        location = issue.get("location") or (f"Line {issue['line']}" if issue.get("line") else "")
+        line_part = f"({location}) " if location else ""
         lines.append(
             f"{comment_prefix} REFERENCES {line_part}"
             f"[Severity: {issue['severity']}] [Priority: {issue['priority']}]: "
@@ -353,17 +389,23 @@ def main() -> int:
         return 1
 
     try:
-        content = path.read_text(encoding="utf-8")
+        # Assemble \input/\include/\subfile so labels/refs that live in a
+        # sub-file are seen together with the entry file; otherwise a
+        # cross-file \ref reads as a false "Undefined reference" (A-EN-1).
+        doc = assemble(path)
     except OSError as exc:
         print(f"[ERROR] Cannot read file: {exc}", file=sys.stderr)
         return 1
 
-    checker = ReferenceChecker(content, str(path))
+    checker = ReferenceChecker(doc.content, str(path), doc=doc)
     issues = checker.run_all()
 
     if args.json:
         print(json.dumps(issues, indent=2, ensure_ascii=False))
     else:
+        warning_lines = doc.warning_lines(COMMENT_PREFIX)
+        if warning_lines:
+            print("\n".join(warning_lines))
         output = _format_issues(issues, comment_prefix=COMMENT_PREFIX)
         if output:
             print(output)

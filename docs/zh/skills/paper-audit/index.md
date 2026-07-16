@@ -31,6 +31,11 @@
 
 兼容别名：`self-check` -> `quick-audit`；`review` -> `deep-review`。
 
+deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后交给
+`synthesis_agent.md` 综合。`gate`、`re-audit` 和 consolidation 后的修订建议分别使用
+对应的模式专属 agent。`agents/` 下的 specialized reviewer playbook 仅作参考，不会自动派发；
+完整边界见[代理名册](./resources/references/agent-roster.md)。
+
 ## 最小输入
 
 - `paper.tex`、`paper.typ` 或 `paper.pdf`。
@@ -68,6 +73,77 @@
 - `artifacts/sections/`、`artifacts/comments/`、`artifacts/committee/`、`artifacts/references/`
 
 报告语言由 `--lang en|zh` 控制。标题、标签和表头会切换语言；issue quote、source tag 和结构化字段值保持原文。
+
+## 公开资源
+
+### 参考资料
+
+- [代理名册](./resources/references/agent-roster.md)
+- [审核指南](./resources/references/AUDIT_GUIDE.md)
+- [变更日志](./resources/references/CHANGELOG.md)
+- [预提交清单](./resources/references/CHECKLIST.md)
+- [声明-证据合同](./resources/references/CLAIM_EVIDENCE_CONTRACT.md)
+- [合并规则](./resources/references/CONSOLIDATION_RULES.md)
+- [数据可用性咨询](./resources/references/DATA_AVAILABILITY_ADVISORY.md)
+- [深入审查标准](./resources/references/DEEP_REVIEW_CRITERIA.md)
+- [编辑决策标准](./resources/references/editorial_decision_standards.md)
+- [FORBIDDEN_TERMS.md](./resources/references/FORBIDDEN_TERMS.md)
+- [问题架构](./resources/references/ISSUE_SCHEMA.md)
+- [文学基础评分指南](./resources/references/LITERATURE_GROUNDING_GUIDE.md)
+- [模式指南](./resources/references/MODE_GUIDE.md)
+- [输出布局](./resources/references/output-layout.md)
+- [超额声明防护（审核通道参考）](./resources/references/OVER_CLAIM_GUARD.md)
+- [波兰语指南](./resources/references/POLISH_GUIDE.md)
+- [提交前机械规则](./resources/references/PRE_SUBMISSION_RULES.md)
+- [预提交模式集成](./resources/references/PRESUBMISSION_GUIDE.md)
+- [定性研究标准参考](./resources/references/QUALITATIVE_STANDARDS.md)
+- [论文审核质量准则](./resources/references/quality_rubrics.md)
+- [快速参考](./resources/references/QUICK_REFERENCE.md)
+- [审核标准](./resources/references/REVIEW_CRITERIA.md)
+- [查看审查通道指南](./resources/references/REVIEW_LANE_GUIDE.md)
+- [审稿心理学](./resources/references/REVIEWER_PSYCHOLOGY.md)
+- [ScholarEval 9 维评分指南](./resources/references/SCHOLAR_EVAL_GUIDE.md)
+- [评分系统](./resources/references/SCORING_SYSTEMS.md)
+- [脚本地图](./resources/references/scripts-map.md)
+- [审阅者通道模板](./resources/references/SUBAGENT_TEMPLATES.md)
+- [故障排除](./resources/references/TROUBLESHOOTING.md)
+- [期刊或会议特定规则](./resources/references/VENUE_RULES.md)
+- [工作流程细节](./resources/references/workflow-detail.md)
+
+### 模板
+
+- [审计报告模板](./resources/templates/audit_report_template.md)
+- [深度审查报告模板](./resources/templates/review_report_template.md)
+- [修订路线图模板](./resources/templates/revision_suggestions_template.md)
+
+### 示例
+
+- [门模式输出示例](./resources/examples/gate_example.md)
+- [同行评审主要视图示例](./resources/examples/peer_review_primary_view.md)
+- [深入审查示例输出](./resources/examples/review_example.md)
+- [自检示例输出](./resources/examples/self_check_example.md)
+
+### Agent 契约
+
+- [声明与证据审查代理](./resources/agents/claims_evidence_reviewer_agent.md)
+- [委员会编辑代理（预审屏幕）](./resources/agents/committee_editor_agent.md)
+- [委员会评审员3（文献对话审核员）](./resources/agents/committee_literature_agent.md)
+- [委员会审核员4（逻辑链审核员）](./resources/agents/committee_logic_agent.md)
+- [委员会审查员2（方法透明度检查员）](./resources/agents/committee_methodology_agent.md)
+- [委员会评审员1（理论贡献询问员）](./resources/agents/committee_theory_agent.md)
+- [批判性评论代理（魔鬼代言人）](./resources/agents/critical_reviewer_agent.md)
+- [域名审核代理](./resources/agents/domain_reviewer_agent.md)
+- [主编代理（直接拒稿筛选员）](./resources/agents/editor_in_chief_agent.md)
+- [评估公平性审核代理](./resources/agents/evaluation_fairness_reviewer_agent.md)
+- [文献审稿代理](./resources/agents/literature_reviewer_agent.md)
+- [方法论审稿代理](./resources/agents/methodology_reviewer_agent.md)
+- [符号和数字一致性审核代理](./resources/agents/notation_consistency_reviewer_agent.md)
+- [现有技术审阅代理](./resources/agents/prior_art_reviewer_agent.md)
+- [修订辅导代理](./resources/agents/revision_coach_agent.md)
+- [修改建议代理](./resources/agents/revision_suggestion_agent.md)
+- [部分审稿代理](./resources/agents/section_reviewer_agent.md)
+- [自洽审阅代理](./resources/agents/self_consistency_reviewer_agent.md)
+- [合成剂](./resources/agents/synthesis_agent.md)
 
 ## 常见请求
 

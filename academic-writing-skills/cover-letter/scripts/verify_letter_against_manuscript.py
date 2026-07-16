@@ -18,6 +18,7 @@ import re
 import sys
 from pathlib import Path
 
+from build_letter_claim_map import NUMBER_UNIT_PATTERN
 from parsers import LatexParser
 
 UNVERIFIED_CONFIDENCE = "unverified"
@@ -34,8 +35,10 @@ _NUMERIC_WINDOW = 160
 # these sits next to a number in the letter claim, the manuscript window around
 # that same number must contain it too — "3% throughput improvement" must not
 # verify against a manuscript that only reports "3% accuracy improvement"
-# (CL-1). Direction-only words (reduction / improvement) stay on the looser
-# any-co-occurrence gate below because they name no metric.
+# (CL-1). Direction-only words (reduction / improvement) name no metric, so
+# they use the tighter `_DIRECTION_RE` / `_DIRECTION_WINDOW` gate below instead
+# (A-CL-4); a claim with neither a specific metric nor a direction word keeps
+# the loosest any-keyword gate further down.
 _SPECIFIC_METRIC_RE = re.compile(
     r"\b(?:accuracy|f1|auc|precision|recall|rmse|mae|latency|throughput|"
     r"speedup|error|memory|footprint|cost|savings|modalit(?:y|ies))\b",
@@ -44,6 +47,18 @@ _SPECIFIC_METRIC_RE = re.compile(
 # How far (in characters) from the number, inside the letter claim, a specific
 # metric word may sit and still count as naming that number.
 _CLAIM_METRIC_WINDOW = 40
+
+# Direction-only words name no metric identity, so they cannot use
+# `_SPECIFIC_METRIC_RE`'s all-must-match gate above. The original code left
+# them on the *loosest* gate (`_NUMERIC_WINDOW` = 160, any-keyword — see
+# `metric_keywords` in `_has_numeric_match`), which let a direction word
+# anywhere in that wide neighborhood "verify" a number it does not actually
+# describe (A-CL-4). Mirror `local_specific`'s mechanism with a tighter,
+# direction-specific window instead.
+_DIRECTION_RE = re.compile(r"\b(?:reduction|improvement)\b", re.IGNORECASE)
+# A direction noun usually sits in the same clause as the number it modifies;
+# 60 characters is roughly one clause (vs. the 160-char loose fallback).
+_DIRECTION_WINDOW = 60
 
 
 def _strip_manuscript(content: str) -> str:
@@ -76,10 +91,12 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
     Every specific metric word adjacent to the number in the claim (within
     ``_CLAIM_METRIC_WINDOW`` characters) must also appear in the manuscript
     window — the letter cannot re-attach a manuscript number to a different
-    metric (CL-1). Claims whose keywords are direction-only keep the original
-    any-keyword co-occurrence gate."""
+    metric (CL-1). A direction-only claim (reduction/improvement, no specific
+    metric word) instead requires the direction word within
+    ``_DIRECTION_WINDOW`` of the number in the manuscript (A-CL-4). Claims with
+    neither keep the original any-keyword co-occurrence gate."""
     number_patterns = (
-        r"\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|s|MB|GB|FLOPs?)",
+        NUMBER_UNIT_PATTERN,
         r"(?:\$|USD\s*)\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?\b",
         r"\b\d+(?:\.\d+)?\s+(?:sensor\s+)?modalit(?:y|ies)\b",
         r"\b\d+(?:\.\d+)?\s+(?:datasets?|benchmarks?|studies|facilit(?:y|ies))\b",
@@ -87,6 +104,10 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
     numbers: list[str] = []
     for pattern in number_patterns:
         numbers.extend(re.findall(pattern, claim, flags=re.IGNORECASE))
+    # This keyword set is `_SPECIFIC_METRIC_RE ∪ _DIRECTION_RE` — every word it
+    # matches is handled by one of the two tighter co-occurrence branches below;
+    # a metric word that belonged to neither would silently fall through to the
+    # loosest any-keyword gate.
     metric_keywords = re.findall(
         r"\b(?:accuracy|f1|auc|precision|recall|rmse|mae|latency|throughput|"
         r"speedup|error|reduction|improvement|memory|footprint|cost|savings|modalit(?:y|ies))\b",
@@ -107,13 +128,17 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
         # Specific metric words that sit next to this number in the claim name
         # what the number measures; verification must find all of them again.
         local_specific: set[str] = set()
+        local_direction: set[str] = set()
         claim_idx = claim_norm.find(needle)
         if claim_idx != -1:
             local_lo = max(0, claim_idx - _CLAIM_METRIC_WINDOW)
             local_hi = claim_idx + len(needle) + _CLAIM_METRIC_WINDOW
+            local_window = claim_norm[local_lo:local_hi]
             local_specific = {
-                match.group(0).lower()
-                for match in _SPECIFIC_METRIC_RE.finditer(claim_norm[local_lo:local_hi])
+                match.group(0).lower() for match in _SPECIFIC_METRIC_RE.finditer(local_window)
+            }
+            local_direction = {
+                match.group(0).lower() for match in _DIRECTION_RE.finditer(local_window)
             }
         start = 0
         while True:
@@ -125,6 +150,12 @@ def _has_numeric_match(claim: str, manuscript: str) -> bool:
             window = manuscript_norm[lo:hi]
             if local_specific:
                 if all(kw in window for kw in local_specific):
+                    return True
+            elif local_direction:
+                direction_lo = max(0, idx - _DIRECTION_WINDOW)
+                direction_hi = idx + len(needle) + _DIRECTION_WINDOW
+                direction_window = manuscript_norm[direction_lo:direction_hi]
+                if all(kw in direction_window for kw in local_direction):
                     return True
             elif keywords:
                 if any(kw in window for kw in keywords):

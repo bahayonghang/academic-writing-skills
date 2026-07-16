@@ -22,6 +22,12 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import get_parser, resolve_section_keys
 
+try:
+    from tex_loader import assemble
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import assemble
+
 
 # --- AI tone thresholds (data-driven via references/deai/tone-thresholds.yaml) ---
 
@@ -304,7 +310,11 @@ class AITraceChecker:
 
     def __init__(self, file_path: Path, tier: str | None = None):
         self.file_path = file_path
-        self.content = file_path.read_text(encoding="utf-8", errors="ignore")
+        # Assemble \input/\include so a skeleton main.tex sees the sections
+        # that live in sub-files (A-EN-3); self.doc also maps assembled line
+        # numbers back to "source:line" for report/JSON rendering.
+        self.doc = assemble(file_path)
+        self.content = self.doc.content
         self.lines = self.content.split("\n")
         self.parser = get_parser(file_path)
         self.section_ranges = self.parser.split_sections(self.content)
@@ -972,7 +982,7 @@ class AITraceChecker:
                 report.append(f"\n{section_name.upper()}:")
                 for trace in result["traces"][:10]:
                     report.append(
-                        f"  Line {trace['line']} [{trace['category']}]"
+                        f"  {self.doc.lineref(trace['line'])} [{trace['category']}]"
                         f"{self._dim_tag(trace['category'])}"
                     )
                     report.append(f"    {trace['text'][:80]}")
@@ -988,7 +998,7 @@ class AITraceChecker:
             report.append("-" * 70)
             for trace in doc_traces:
                 report.append(
-                    f"  Line {trace['line']} [{trace['category']}]"
+                    f"  {self.doc.lineref(trace['line'])} [{trace['category']}]"
                     f"{self._dim_tag(trace['category'])} "
                     f"({trace.get('section', 'document')})"
                 )
@@ -1031,6 +1041,13 @@ def main():
     if args.fix_suggestions:
         analysis = checker.analyze_document()
         suggestions = checker.generate_suggestions_json(analysis)
+        # Additive fields only (generate_suggestions_json itself is a locked
+        # member, see test_deai_alignment.py): back-fill source-file location
+        # for each suggestion so multi-file projects point at the right file.
+        for item in suggestions:
+            src_file, src_line = checker.doc.origin(item["line"])
+            item["source_file"] = src_file
+            item["source_line"] = src_line
         if args.output:
             with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(suggestions, f, indent=2)
@@ -1042,6 +1059,9 @@ def main():
     if args.analyze:
         analysis = checker.analyze_document()
         report = checker.generate_report(analysis)
+        warning_lines = checker.doc.warning_lines(checker.comment_prefix)
+        if warning_lines:
+            report = "\n".join(warning_lines) + "\n" + report
 
         if args.output:
             args.output.write_text(report, encoding="utf-8")
@@ -1074,13 +1094,16 @@ def main():
                 file=sys.stderr,
             )
             sys.exit(2)
+        warning_lines = checker.doc.warning_lines(checker.comment_prefix)
+        if warning_lines:
+            print("\n".join(warning_lines))
         for section_key in matched:
             result = checker.check_section(section_key)
             score = checker.calculate_density_score(result)
             print(f"\nSection: {section_key}")
             print(f"Density: {score:.1f}%")
             for trace in result["traces"]:
-                print(f"Line {trace['line']}: {trace['text']}")
+                print(f"{checker.doc.lineref(trace['line'])}: {trace['text']}")
                 print(f"-> {checker._get_instruction(trace['suggestion_type'])}\n")
 
     elif args.score:

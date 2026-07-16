@@ -738,3 +738,318 @@ trellis-research 网络核实三校规范来源（清华/北大写作指南逐�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 18: 完成双语资源文档重构
+
+**Date**: 2026-07-15
+**Task**: 完成双语资源文档重构
+**Branch**: `dev`
+
+### Summary
+
+完成 cover-letter、paper-audit、latex-paper-en、typst-paper 双语资源迁移与人工抽样；修复规范路径死链、双语链接重写契约和跨平台 CRLF/LF 资源哈希，250 项资源检查、VitePress 构建及干净 worktree just ci 通过；归档四个子任务与父任务。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7d3cfd1` | (see git log) |
+| `4917daf` | (see git log) |
+| `6685119` | (see git log) |
+| `9b2e507` | (see git log) |
+| `982e153` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 19: 六技能审计修复：version-ci 版本同步
+
+**Date**: 2026-07-15
+**Task**: 六技能审计修复：version-ci 版本同步
+**Branch**: `dev`
+
+### Summary
+
+六个 SKILL.md 版本号 5.3.0 对齐 pyproject 6.0.0（A-REL-1），恢复 test_skill_versions/just ci 绿色基线；发现并记录 paper-audit 正文标题需跟随 frontmatter 版本号的 contract 测试坑（testing-and-tooling.md）。父任务 07-15-skills-deep-audit-opt 8 子任务树第 1/8 完成。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e53de88` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 20: 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers
+**Branch**: `dev`
+
+### Summary
+
+A-EN-1~10 十项发现全部落地：check_references/9 脚本接入 tex_loader.assemble 消多文件盲区、section 别名统一、canonical parsers.py（abstract 环境注册+extract_title 平衡花括号，三副本同步）、grammar/sentences/expression 三脚本+typst 字节镜像、Low 四项清理。5+1 个提交，just ci 1187→1237 passed。发现 prd.md/design.md 关于 R8 正则的内在矛盾，采用 design.md 可执行方案；沉淀第三套对齐锁背景说明与批次提交分组坑到 spec。父任务 8 子任务树 2/8 完成。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f02f372` | (see git log) |
+| `ae9c928` | (see git log) |
+| `1b63d15` | (see git log) |
+| `e6879b1` | (see git log) |
+| `0ada3d5` | (see git log) |
+| `c493486190b99e78076584a8e902bf05e7e98ee8` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 21: 六技能审计修复：typst-paper 行注释与 abstract 截断
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：typst-paper 行注释与 abstract 截断
+**Branch**: `dev`
+
+### Summary
+
+A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/字符串/raw 三态跳读）替代裸 split("//")，PRESERVE_PATTERNS 的 //.* 条目五副本整条删除（单一所有权）；extract_abstract lookahead 放宽到任意级 heading。5 副本同步，1 个提交（批次重叠预判成立，未强行拆分）。just ci 1237→1259 passed。父任务 8 子任务树 3/8 完成。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0979ba9` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 22: 六技能审计修复：cover-letter 声明与事实匹配精度
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：cover-letter 声明与事实匹配精度
+**Branch**: `dev`
+
+### Summary
+
+完成 A-CL-1..11：统一 claim/数字单位与 tex 注释处理，收紧方向词数值验证；校准 journal-fit claim/scope，新增长度去重 flag 与缺 tier 警告；新增 char_offset/source_section，删除本地 title fork并记录通讯作者安全回退。cover-letter 78 passed、contracts 179 passed、just ci 1281 passed。源 inventory 已同步，完整双语 target 同步按父任务 D7 留给 release-integration。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7a3c1ba` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 23: 完成 latex-thesis-zh 深审修复
+
+**Date**: 2026-07-16
+**Task**: 完成 latex-thesis-zh 深审修复
+**Branch**: `dev`
+
+### Summary
+
+完成 A-ZH-1..9：修复结论章节与嵌套标题解析、BibTeX 平衡扫描和 GB18030 读取、多文件引用定位、编译器指令优先及检查器误报；补齐回归测试与 BibTeX 维护规范，just ci 1297 passed。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ec3e5ba` | (see git log) |
+| `eb9e60f` | (see git log) |
+| `362930f` | (see git log) |
+| `0f25345` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 24: 完成 paper-audit 深度审计修复
+
+**Date**: 2026-07-16
+**Task**: 完成 paper-audit 深度审计修复
+**Branch**: `dev`
+
+### Summary
+
+按 W1-W3 修复 CRITICAL 严重级与 schema 兼容、审稿拓扑和共识契约、ScholarEval 维度映射及外置 BibTeX 题名链路；补齐边界 spec，并通过 paper-audit、contracts 与 just ci 验证。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `51fc3fe` | (see git log) |
+| `a82ce46` | (see git log) |
+| `cbdf854` | (see git log) |
+| `1dff418` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 25: 完成 bib 查询解析健壮性修复
+
+**Date**: 2026-07-16
+**Task**: 完成 bib 查询解析健壮性修复
+**Branch**: `dev`
+
+### Summary
+
+按 A-BIB-1 至 A-BIB-6 完成 tests-first 修复：查询 tokenizer 回退、has:code 词边界、year 消歧后缀、SpecError、preview warnings 与冒号自由文本指引；技能测试 42 passed，lint/typecheck 通过，双语资源 hash 同步留给终批 R4a。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0bbe5ca` | (see git log) |
+| `a51c898` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 26: 完成六技能深度审计发布集成
+
+**Date**: 2026-07-16
+**Task**: 完成六技能深度审计发布集成
+**Branch**: `dev`
+
+### Summary
+
+完成 audit-release-integration：同步审计后双语资源与概览，更新六技能 last_updated，补齐 6.0.0 CHANGELOG；contracts、lint、Pyright、全量测试、资源检查、文档构建和 just ci 全绿，并依序归档子任务与父任务。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `240e420` | (see git log) |
+| `2b1f46b` | (see git log) |
+| `0d1f18d` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

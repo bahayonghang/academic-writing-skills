@@ -17,6 +17,7 @@ SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 preview_bib_search = importlib.import_module("preview_bib_search")
+search_bib = importlib.import_module("search_bib")
 
 SEARCH_SCRIPT = SCRIPTS_DIR / "search_bib.py"
 PREVIEW_SCRIPT = SCRIPTS_DIR / "preview_bib_search.py"
@@ -121,6 +122,7 @@ def test_preview_from_stdin_renders_summary_and_hides_raw_bib():
     assert "LaTeX: \\cite{Lee2025Photovoltaic}" in preview
     assert "Typst: @Lee2025Photovoltaic | #cite(<Lee2025Photovoltaic>)" in preview
     assert "@article{Lee2025Photovoltaic" not in preview
+    assert "Warnings" not in preview
 
 
 def test_preview_input_file_mode_and_truncation():
@@ -138,6 +140,63 @@ def test_preview_reports_invalid_payload(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(sys, "stdin", io.StringIO(""))
     with pytest.raises(ValueError, match="expected JSON input"):
         preview_bib_search.load_payload(type("Args", (), {"input": None})())
+
+
+def test_preview_renders_parse_warnings_from_broken_bib():
+    payload = run_search_on(FIXTURES_DIR / "broken.bib", "--query", "recovered")
+    preview = run_python_script(
+        PREVIEW_SCRIPT,
+        input_text=json.dumps(payload, ensure_ascii=False),
+    ).stdout
+
+    assert "Warnings (" in preview
+    assert "[unbalanced_entry]" in preview
+
+
+def test_preview_renders_per_result_duplicate_warning(tmp_path: Path):
+    bib = tmp_path / "dup-preview.bib"
+    bib.write_text(
+        "@article{Smith2020,\n"
+        "  title = {Widget Study One},\n"
+        "  author = {Smith, Alice},\n"
+        "  year = {2020},\n"
+        "}\n\n"
+        "@article{Smith2020,\n"
+        "  title = {Widget Study Two},\n"
+        "  author = {Smith, Bob},\n"
+        "  year = {2021},\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    payload = run_search_on(bib, "--query", "widget")
+    preview = run_python_script(
+        PREVIEW_SCRIPT,
+        input_text=json.dumps(payload, ensure_ascii=False),
+    ).stdout
+
+    assert "  Warning: duplicate_key" in preview
+
+
+def test_preview_truncates_long_warning_list():
+    payload = {
+        "meta": {
+            "parse_warnings": [
+                {"type": f"warning_{index}", "message": f"message {index}"} for index in range(7)
+            ]
+        },
+        "results": [],
+    }
+
+    preview = preview_bib_search.render_preview(payload)
+    assert len([line for line in preview.splitlines() if line.startswith("  - [")]) == 5
+    assert "... and 2 more" in preview
+
+
+def test_preview_encoding_fallback_line():
+    payload = {"meta": {"encoding_fallback": "latin-1"}, "results": []}
+
+    preview = preview_bib_search.render_preview(payload)
+    assert "Encoding: latin-1 fallback" in preview
 
 
 # ── A3: recency report (additive meta) + optional claim binding ───────────────
@@ -289,6 +348,25 @@ def test_typo_field_filter_emits_warning():
     assert any(w["type"] == "unknown_field_filter" for w in payload["meta"]["parse_warnings"])
 
 
+def test_colon_free_text_hint_in_unknown_field_warning():
+    payload = run_search("--query", "signal genotype:phenotype")
+    warnings = [
+        warning
+        for warning in payload["meta"]["parse_warnings"]
+        if warning["type"] == "unknown_field_filter"
+    ]
+
+    assert len(warnings) == 1
+    assert "replace the colon with a space" in warnings[0]["message"]
+
+
+def test_numeric_colon_token_stays_free_text():
+    payload = run_search("--query", "meeting 10:30 forecasting")
+
+    assert "10:30" in payload["meta"]["query"]
+    assert payload["meta"]["applied_filters"] == {}
+
+
 def test_nonpositive_limit_is_rejected():
     """limit:0 and negative limits are explicit errors, not silent defaults (B17)."""
     for limit_args in (["--query", "mamba limit:0"], ["--query", "mamba", "--limit", "-1"]):
@@ -410,3 +488,97 @@ def test_percent_commented_entry_parses_with_warning(tmp_path: Path):
     assert len(commented) == 1
     assert commented[0]["key"] == "Commented2019"
     assert "@comment" in commented[0]["message"]
+
+
+# ── Audit fixes: code hints and year disambiguation ──────────────────────────
+
+
+def test_has_code_word_boundary_negatives():
+    for text in (
+        "reported results",
+        "encoder-decoder",
+        "barcode",
+        "we encode the signal",
+    ):
+        assert search_bib.has_code({"note": text}) is False, text
+
+
+def test_has_code_word_boundary_positives():
+    for text in (
+        "code available",
+        "github.com/x",
+        "source code released",
+        "CodeAvailable",
+    ):
+        assert search_bib.has_code({"note": text}) is True, text
+
+
+def test_has_code_fixture_flags_stable():
+    payload = run_search("--query", "forecasting has:code sort:title limit:5")
+
+    assert {result["key"] for result in payload["results"]} == {
+        "Doe2024Mamba",
+        "Lee2025Photovoltaic",
+        "Roe2023Transformer",
+    }
+    assert all(result["flags"]["code"] is True for result in payload["results"])
+
+
+def test_year_disambiguation_suffix(tmp_path: Path):
+    assert search_bib.entry_year({"year": "{2024a}"}) == 2024
+    assert search_bib.entry_year({"year": "{20245}"}) is None
+
+    bib = tmp_path / "year-suffix.bib"
+    bib.write_text(
+        "@article{Suffix2024a, title={Widget Study}, year={2024a}}\n",
+        encoding="utf-8",
+    )
+    payload = run_search_on(bib, "--query", "widget year>=2024")
+    assert [result["key"] for result in payload["results"]] == ["Suffix2024a"]
+
+
+# ── Audit fixes: compact query parsing ───────────────────────────────────────
+
+
+def test_unbalanced_quote_query_falls_back_with_warning():
+    payload = run_search("--query", "children's early language forecasting")
+
+    assert "children's" in payload["meta"]["query"]
+    assert any(
+        warning["type"] == "query_tokenizer_fallback"
+        for warning in payload["meta"]["parse_warnings"]
+    )
+    assert "_query_warnings" not in payload["meta"]
+
+
+def test_fallback_keeps_double_quoted_phrases():
+    payload = run_search("--query", 'children\'s forecasting claim:"low latency"')
+
+    assert payload["results"]
+    assert all(result["claim_support"]["claim"] == "low latency" for result in payload["results"])
+
+
+def test_balanced_quotes_unchanged():
+    payload = run_search("--query", 'forecasting claim:"low latency" limit:2')
+
+    assert payload["meta"]["returned_entries"] == 2
+    assert not [
+        warning
+        for warning in payload["meta"]["parse_warnings"]
+        if warning["type"] == "query_tokenizer_fallback"
+    ]
+
+
+def test_noninteger_control_values_raise_spec_error():
+    for query in ("forecasting limit:abc", "forecasting recent:x", "forecasting year:20x4"):
+        completed = subprocess.run(
+            [sys.executable, str(SEARCH_SCRIPT), "--bib", str(FIXTURE_BIB), "--query", query],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+
+        assert completed.returncode == 2, query
+        error = json.loads(completed.stderr)["error"]
+        assert "must be an integer" in error, query

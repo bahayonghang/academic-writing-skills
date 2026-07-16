@@ -58,6 +58,44 @@
 
 findings 包含 `severity`、`priority`、`source_kind` 和 `comment_type`，脚本发现应可重复运行验证。
 
+## 公开资源
+
+### 参考资料
+
+- [AI 披露政策](./resources/references/ai-disclosure-policy.md)
+- [声明-证据契约](./resources/references/CLAIM_EVIDENCE_CONTRACT.md)
+- [禁用措辞](./resources/references/FORBIDDEN_PHRASES.md)
+- [问题结构](./resources/references/ISSUE_SCHEMA.md)
+- [期刊层级](./resources/references/JOURNAL_TIERS.md)
+- [投稿信结构](./resources/references/LETTER_STRUCTURE.md)
+- [模式指南](./resources/references/MODE_GUIDE.md)
+- [投稿前规则](./resources/references/PRESUBMISSION_RULES.md)
+
+### 模板
+
+- [ACM](./resources/templates/acm.md)
+- [Cell](./resources/templates/cell.md)
+- [CVPR](./resources/templates/cvpr.md)
+- [通用模板](./resources/templates/generic.md)
+- [ICML](./resources/templates/icml.md)
+- [IEEE Transactions](./resources/templates/ieee-trans.md)
+- [Nature](./resources/templates/nature.md)
+- [NeurIPS](./resources/templates/neurips.md)
+- [Science](./resources/templates/science.md)
+- [Springer LNCS](./resources/templates/springer-lncs.md)
+
+### 示例
+
+- [仅做对齐检查](./resources/examples/align-check-only.md)
+- [生成 Nature 投稿信](./resources/examples/generate-nature.md)
+- [CVPR 与 TPAMI 期刊适配](./resources/examples/journal-fit-cvpr-vs-tpami.md)
+- [优化并对齐](./resources/examples/optimize-and-align.md)
+
+### Agent 契约
+
+- [声明-证据审查员](./resources/agents/claims_evidence_reviewer_agent.md)
+- [委员会编辑](./resources/agents/committee_editor_agent.md)
+
 ## 常见请求
 
 ```text

@@ -1,75 +1,75 @@
-# Tense Guide
+# 时态指南
 
-How verb tense maps to paper sections, and which present-tense signal words usually
-mark a mistake. The goal is not blanket past tense — each section has a convention,
-and the most common error is narrating Methods/Results in the present tense.
+动词时态如何映射到论文部分，以及通常使用哪些现在时信号词
+标记一个错误。目标不是笼统的过去式——每个部分都有一个惯例，
+最常见的错误是用现在时叙述方法/结果。
 
-The script (`deai_check.py`) flags a focused set of present-tense **reporting verbs**
-inside Methods/Results as `[Script]` LOW traces. The tables below cover the judgment
-calls the script deliberately leaves alone (notably `is` / `are`).
+脚本 (`deai_check.py`) 标记一组集中的现在时 **报告动词**
+内部方法/结果为 `[Script]` 低迹线。下表涵盖了判决
+调用脚本故意不去管（特别是`is` / `are`).
 
-## Tense by section
+## 按节时态
 
-| Section / part                                | Default tense          | Example                                             |
+|部分/部分|默认时态|例子|
 | --------------------------------------------- | ---------------------- | --------------------------------------------------- |
-| Abstract — background                         | present                | "Long-context inference _is_ expensive for ..."     |
-| Abstract — methods                            | past                   | "We _trained_ ... / Models _were evaluated_ on ..." |
-| Abstract — results                            | past                   | "The model _achieved_ 92.3% / We _observed_ ..."    |
-| Abstract — conclusion                         | present                | "These results _provide_ a basis for ..."           |
-| Introduction — known background               | present                | "Quantization _reduces_ memory footprint."          |
-| Introduction — a specific prior study         | past                   | "Vaswani et al. _introduced_ the Transformer."      |
-| Introduction — prior conclusion still holding | present                | "Attention _is_ effective for long sequences."      |
-| Introduction — aims of this work              | past (+ some present)  | "Here we _propose_ X and _present_ a study of ..."  |
-| **Methods**                                   | **past (absolute)**    | "We _sampled_ ... / Inputs _were normalized_ ..."   |
-| **Results**                                   | **past (absolute)**    | "Accuracy _ranged_ from ... / We _found_ ..."       |
-| Results — describing a figure/table itself    | present                | "Figure 2 _shows_ ... / Table 1 _lists_ ..."        |
-| Discussion — restating a finding              | past                   | "We _found_ that ..."                               |
-| Discussion — interpreting                     | present                | "These results _suggest_ that ..."                  |
-| Discussion — inference / speculation          | present + modal        | "_may_ indicate / _could_ explain"                  |
-| Discussion — limitations                      | present                | "A limitation of this study _is_ ..."               |
-| Figure / table caption                        | **present (absolute)** | "Figure 1 _shows_ the architecture of ..."          |
+|摘要 — 背景|展示|“长上下文推理对于......来说是昂贵的”|
+|摘要——方法|过去的|“我们_训练_.../模型_被评估_......”|
+|摘要——结果|过去的|“模型_实现_92.3%/我们_观察_......”|
+|摘要——结论|展示|“这些结果为……提供了基础”|
+|简介——已知背景|展示|“量化_减少_内存占用。”|
+|简介——一项具体的先前研究|过去的|“Vaswani 等人_推出_变形金刚。”|
+|引言——之前的结论仍然成立|展示|“注意力对于长序列来说是有效的。”|
+|简介——这项工作的目标|过去（+一些现在）|“在这里，我们_提议_ X 并_提出_一项关于……的研究”|
+|**方法**|**过去（绝对）**|“我们_采样_.../输入_已标准化_...”|
+|**结果**|**过去（绝对）**|“准确度_范围_自……/我们_发现_……”|
+|结果——描述图/表本身|展示|“图 2_显示_.../表 1_列表_...”|
+|讨论——重申一个发现|过去的|“我们发现……”|
+|讨论——口译|展示|“这些结果表明……”|
+|讨论——推理/推测|现在时 + 情态|“_可能_表明/_可以_解释”|
+|讨论——局限性|展示|“这项研究的局限性_是_......”|
+|图/表标题|**现在（绝对）**|“图 1_显示_......的架构”|
 
-## Signal words (scan Methods / Results)
+## 信号词（扫描方法/结果）
 
-The most common slip is a present-tense reporting verb where past tense is expected:
+最常见的错误是报告动词现在时态，而应该是过去时态：
 
 - `shows / reveals / demonstrates / indicates / presents / confirms / achieves / outperforms`
-  in Methods/Results narration → usually should be `showed / revealed / demonstrated / …`.
-  The script flags these.
+在方法/结果叙述中 → 通常应为 `showed / revealed / demonstrated / …`。
+脚本标记了这些。
 
-### `is` / `are` — check by hand (not flagged by the script)
+### `is` / `are`— 手动检查（未由脚本标记）
 
-Present-tense `is` / `are` in Methods/Results is _often_ a tense error, but it has too
-many legitimate uses to flag automatically. Keep it when it is:
+现在时`is` / `are`在方法/结果中通常是一个紧张的错误，但它也有
+自动标记的许多合法用途。当它处于以下状态时保留它：
 
-- a **definition**: "Let _G_ be ... / The loss _is defined as_ ...";
-- a **standing general truth**: "Cross-entropy _is_ convex in the logits.";
-- describing **a figure/table**: "Table 2 _is_ organized by ...";
-- a **software capability**: "The library _supports_ mixed precision.".
+- a **定义**：“让_G_是.../损失_定义为_...”；
+- **普遍真理**：“交叉熵在逻辑上是凸的。”；
+- 描述**图/表**：“表 2 _is_ 由...组织”；
+- a **软件功能**：“库_支持_混合精度。”。
 
-Otherwise prefer past tense: "The threshold _was set_ to 0.5" (not "_is_ set"),
-"Samples _were drawn_" (not "_are drawn_").
+否则更喜欢过去时：“阈值被设置为 0.5”（而不是“已设置”），
+“样本_已抽取_”（不是“_已抽取_”）。
 
-## Exceptions the script skips (present tense is correct)
+## 脚本跳过的异常（现在时是正确的）
 
-1. **Figures / tables / equations as subject**: "Figure 3 _shows_ ...", "as _shown_ in
-   Fig. 4", "Table 1 _lists_ ...", "Equation 2 _gives_ ..." — describing the artifact
-   itself takes present tense.
-2. **Software / tool capability**: "The toolkit _provides_ ...".
-3. **General definitions and standing truths** that happen to sit inside a methods
-   paragraph.
+1. **数字/表格/方程作为主题**：“图 3 _显示_ ...”、“如_所示_
+图 4"、"表 1 _lists_ ..."、"方程 2 _gives_ ..." — 描述工件
+本身采用现在时。
+2. **软件/工具功能**：“工具包_提供_ ...”。
+3. **一般定义和长期真理**恰好位于方法内部
+段落。
 
-If a flagged line is one of these, it is a false positive — leave it.
+如果标记的行是其中之一，则它是误报 - 保留它。
 
-## Boundary with other guides
+## 与其他指南的边界
 
-- This guide is about **tense**. Wording strength (causal / firstness / universality)
-  lives in [OVER_CLAIM_GUARD.md](OVER_CLAIM_GUARD.md).
-- Surface grammar beyond tense lives in [modules/GRAMMAR.md](../modules/GRAMMAR.md).
+- 本指南是关于**紧张**的。措辞强度（因果性/第一性/普遍性）
+居住在 [OVER_CLAIM_GUARD.md](OVER_CLAIM_GUARD.md)。
+- 超出时态的表面语法位于 [modules/GRAMMAR.md](modules/GRAMMAR.md) 中。
 
-## Script support
+## 脚本支持
 
-`deai_check.py` flags present-tense reporting verbs in Methods/Results as `[Script]`
-LOW traces (config: `tense:` in `references/AI_TONE_THRESHOLDS.yaml`, toggle with
-`enabled`). It guards against figure/table/software false positives but cannot judge
-`is` / `are` — use the checklist above for those.
+`deai_check.py`将方法/结果中的现在时报告动词标记为`[Script]`
+低迹线（配置：`tense:`在`references/AI_TONE_THRESHOLDS.yaml`, 切换
+`enabled`）。可以防止图/表/软件误报，但无法判断
+`is` / `are`— 使用上面的清单。
