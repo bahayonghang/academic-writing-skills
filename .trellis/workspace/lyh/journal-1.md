@@ -879,3 +879,36 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 22: 六技能审计修复：cover-letter 声明与事实匹配精度
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：cover-letter 声明与事实匹配精度
+**Branch**: `dev`
+
+### Summary
+
+完成 A-CL-1..11：统一 claim/数字单位与 tex 注释处理，收紧方向词数值验证；校准 journal-fit claim/scope，新增长度去重 flag 与缺 tier 警告；新增 char_offset/source_section，删除本地 title fork并记录通讯作者安全回退。cover-letter 78 passed、contracts 179 passed、just ci 1281 passed。源 inventory 已同步，完整双语 target 同步按父任务 D7 留给 release-integration。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7a3c1ba` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
