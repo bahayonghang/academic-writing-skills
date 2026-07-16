@@ -22,7 +22,11 @@ LETTER_CLAIM_PATTERNS = (
     r"\bwe (?:argue|conclude|claim|establish)\b",
     r"\bthe (?:first|only|main) (?:framework|method|approach|tool|system)\b",
     # Sentences that name a concrete metric or improvement — claim-bearing even
-    # when subject is not "we" / "our" (common in cover-letter prose):
+    # when subject is not "we" / "our" (common in cover-letter prose). This
+    # unit set is a claim *trigger*, not the `NUMBER_UNIT_PATTERN` single
+    # source below (A-CL-3): it has no bare "s" unit, so it does not share the
+    # "3 seconds" vs "3 sensor streams" collision, and stays local on purpose
+    # so unifying it would not silently widen what counts as a claim sentence.
     r"\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|MB|GB|FLOPs?)\s*.{0,80}\b(?:reduc\w*|improv\w*|speedup|gain|increas\w*|decreas\w*|faster|better|higher|lower)\b",
     r"\b(?:reduc\w*|improv\w*|speedup|gain|increas\w*|decreas\w*|faster|better|higher|lower)\b.{0,80}\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|MB|GB|FLOPs?)",
     # Domain-count and money claims do not always use an improvement verb but
@@ -35,6 +39,17 @@ LETTER_CLAIM_PATTERNS = (
     r"\b(?:cost savings|adopted by|production use|industrial pilot|pilot studies)\b",
 )
 
+# Single source for the "number + unit" token shared by this module's
+# ``ANCHOR_PATTERNS["metric"]``, ``verify_letter_against_manuscript.py``, and
+# ``extract_manuscript_facts.py`` (A-CL-3). Word-character units (pp/x/ms/s/
+# seconds/MB/GB/FLOPs) carry a trailing ``\b`` so "3 seconds" cannot collapse
+# to a bare "3 s" token that also matches unrelated text like "3 sensor
+# streams"; ``%`` and ``×`` are non-word characters so a boundary is already
+# implied there and is not written explicitly. ``\\?%`` keeps accepting the
+# LaTeX-escaped ``\%`` form (downstream consumers normalize it away with
+# ``.replace("\\", "")``).
+NUMBER_UNIT_PATTERN = r"\b\d+(?:\.\d+)?\s*(?:\\?%|×|(?:pp|x|ms|s|seconds?|MB|GB|FLOPs?)\b)"
+
 ANCHOR_PATTERNS = {
     "citation": (
         r"\\cite(?:[a-zA-Z*]+)?(?:\[[^\]]*\]){0,2}\{[^}]+\}",
@@ -43,7 +58,7 @@ ANCHOR_PATTERNS = {
     ),
     "figure_or_table": (r"\b(?:Fig\.|Figure|Table|Tab\.|Algorithm|Alg\.|Equation|Eq\.)\s*~?\d+",),
     "metric": (
-        r"\b\d+(?:\.\d+)?\s*(?:%|pp|x|×|ms|s|MB|GB|FLOPs?)",
+        NUMBER_UNIT_PATTERN,
         r"\b\d+(?:\.\d+)?\s+(?:sensor\s+)?modalit(?:y|ies)\b",
         r"(?:\$|USD\s*)\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?\b",
         r"\b(?:accuracy|f1|auc|precision|recall|rmse|mae|latency|throughput|speedup|"
@@ -59,6 +74,24 @@ STRONG_CLAIM_PATTERN = re.compile(
     r")\b",
     re.IGNORECASE,
 )
+
+
+def strip_tex_comments(text: str) -> str:
+    """Drop unescaped LaTeX ``%`` comments line by line.
+
+    Single source (A-CL-2) for both the claim-extraction pipeline below and
+    ``align_check.py``'s AI-disclosure consistency check, which imports this.
+    Applied to the manuscript and to ``.tex`` letters so a commented-out line
+    such as ``% Our work demonstrates a 99% reduction ...`` or ``% We used
+    ChatGPT`` does not read as an active claim or AI-disclosure statement.
+    ``.md`` letters are never passed through this — ``%`` there is ordinary
+    prose (e.g. "47% reduction"), not a comment marker.
+    """
+    out: list[str] = []
+    for line in text.splitlines():
+        match = re.search(r"(?<!\\)%", line)
+        out.append(line[: match.start()] if match else line)
+    return "\n".join(out)
 
 
 # "Dear Editor," / "Dear Prof. Smith," ends in a comma, so sentence splitting
@@ -85,6 +118,16 @@ def extract_claims(text: str, max_items: int | None = None) -> list[str]:
         if max_items is not None and len(claims) >= max_items:
             break
     return claims
+
+
+def _locate_sentence(sentence: str, text: str, start: int = 0) -> int:
+    """Locate a whitespace-normalized sentence in its original letter text."""
+    tokens = sentence.split()
+    if not tokens:
+        return -1
+    pattern = r"\s+".join(re.escape(token) for token in tokens)
+    match = re.search(pattern, text[start:])
+    return start + match.start() if match else -1
 
 
 def _detect_anchors(text: str) -> list[dict[str, str]]:
@@ -235,6 +278,7 @@ def build_claim_candidate(
     sentence: str,
     index: int,
     manuscript_facts: dict | None,
+    char_offset: int = -1,
 ) -> dict:
     """Build an additive claim candidate record."""
     local_anchors = _detect_anchors(sentence)
@@ -253,6 +297,7 @@ def build_claim_candidate(
         "id": f"letter:{index + 1}",
         "section_key": "letter",
         "claim": sentence,
+        "char_offset": char_offset,
         "evidence_anchor": all_anchors,
         "claim_strength": strength,
         "missing_evidence": _missing_evidence(sentence, all_anchors, supported),
@@ -273,10 +318,20 @@ def build_claim_map(letter_text: str, manuscript_facts: dict | None, max_items: 
     all_claims = extract_claims(letter_text)
     total = len(all_claims)
     claims = all_claims[:max_items]
-    candidates = [
-        build_claim_candidate(claim, index=i, manuscript_facts=manuscript_facts)
-        for i, claim in enumerate(claims)
-    ]
+    candidates: list[dict] = []
+    search_start = 0
+    for index, claim in enumerate(claims):
+        char_offset = _locate_sentence(claim, letter_text, search_start)
+        candidates.append(
+            build_claim_candidate(
+                claim,
+                index=index,
+                manuscript_facts=manuscript_facts,
+                char_offset=char_offset,
+            )
+        )
+        if char_offset >= 0:
+            search_start = char_offset + 1
     return {
         "letter_claims": claims,
         "claim_candidates": candidates,
@@ -305,6 +360,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     letter_text = letter_path.read_text(encoding="utf-8", errors="replace")
+    if letter_path.suffix.lower() == ".tex":
+        letter_text = strip_tex_comments(letter_text)
 
     manuscript_facts = None
     if args.manuscript_facts:

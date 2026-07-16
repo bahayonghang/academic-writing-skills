@@ -36,10 +36,12 @@ def _jsonable(value: Any) -> Any:
 
 
 def _exit_code(findings: list[Any]) -> int:
-    severities = {
-        str(getattr(finding, "severity", "") or finding.get("severity", "")).lower()
-        for finding in findings
-    }
+    def _severity(finding: Any) -> str:
+        if isinstance(finding, dict):
+            return str(finding.get("severity", "")).lower()
+        return str(getattr(finding, "severity", "")).lower()
+
+    severities = {_severity(finding) for finding in findings}
     if "major" in severities:
         return 2
     if findings:
@@ -159,7 +161,7 @@ def _run_presubmission(args: argparse.Namespace, journal: str) -> tuple[dict[str
 def _run_journal_fit(args: argparse.Namespace, journal: str) -> tuple[dict[str, Any], int]:
     letter = _require_path(args.letter, "--letter")
     skill_dir = Path(__file__).resolve().parent.parent
-    result = run_journal_fit(letter, journal, skill_dir)
+    result = run_journal_fit(letter, journal, skill_dir, dedup_length=bool(args.dedup_length))
     findings = findings_from_result(result)
     payload = {
         "mode": "journal-fit",
@@ -170,6 +172,7 @@ def _run_journal_fit(args: argparse.Namespace, journal: str) -> tuple[dict[str, 
             "tier": result.tier,
             "overall": result.overall,
             "axes": _jsonable(result.axes),
+            "warnings": result.warnings,
         },
         "findings": _jsonable(findings),
     }
@@ -217,6 +220,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Target bundled template / venue",
     )
     parser.add_argument("--json", action="store_true", help="Emit structured JSON")
+    parser.add_argument(
+        "--dedup-length",
+        action="store_true",
+        help=(
+            "journal-fit mode only: skip its own word-count sub-check (banned phrases "
+            "still run) so length is reported once, via presubmission's `L1` check."
+        ),
+    )
     return parser
 
 

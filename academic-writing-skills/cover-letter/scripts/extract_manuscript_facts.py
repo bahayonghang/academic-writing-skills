@@ -16,12 +16,13 @@ import re
 import sys
 from pathlib import Path
 
+from build_letter_claim_map import NUMBER_UNIT_PATTERN
 from parsers import (
     LatexParser,
     _extract_balanced_block,
-    _strip_latex_markup,
     extract_abstract,
     extract_latex_citation_keys,
+    extract_title,
 )
 from tex_loader import assemble
 
@@ -43,7 +44,8 @@ AUTHOR_COMMAND_PREFIXES: tuple[str, ...] = (
 # free-text fallback (``corresponding author: <name>``) reached into
 # ``\thanks{Corresponding author: a@u.edu}`` and reported the email local part
 # as a fabricated author, so it is intentionally removed; we fall back to the
-# first extracted author instead.
+# first extracted author instead. IEEE ``\thanks`` and acmart ``\authornote``
+# prose therefore remain known gaps rather than becoming guessed identities.
 CORRESPONDING_AUTHOR_PATTERNS: tuple[str, ...] = (r"\\corresponding(?:author)?\s*\{([^}]+)\}",)
 
 CONTRIBUTIONS_HEADER_PATTERNS: tuple[str, ...] = (
@@ -221,28 +223,9 @@ def extract_section_anchors(content: str) -> dict[str, tuple[int, int]]:
     return parser.split_sections(content)
 
 
-def _extract_title_local(content: str) -> str:
-    """Extract the LaTeX title with balanced braces, stripping ``\\thanks``.
-
-    ``parsers.extract_title`` still uses a non-greedy ``\\{(.+?)\\}`` that
-    truncates nested-brace titles and leaks ``\\thanks`` funding statements into
-    the letter opening. The cover-letter facts blob needs an accurate, clean
-    title, so it is captured locally (parsers.py is owned by the en-family
-    foundation task and is out of scope here).
-    """
-    match = re.search(r"\\title(?:\[[^\]]*\])?\s*\{", content)
-    if not match:
-        return ""
-    body = _extract_balanced_block(content, match.end() - 1, "{", "}")
-    if not body:
-        return ""
-    body = _strip_balanced_commands(body, ("thanks", "footnote"))
-    return _strip_latex_markup(body)
-
-
 def extract_facts(content: str) -> dict:
     """Build the manuscript facts blob."""
-    title = _extract_title_local(content)
+    title = extract_title(content)
     abstract = extract_abstract(content)
     authors = extract_authors(content)
     corresponding = extract_corresponding_author(content, authors)
@@ -251,10 +234,10 @@ def extract_facts(content: str) -> dict:
     citations = sorted(extract_latex_citation_keys(content))
 
     # Headline numeric tokens (for cover-letter quantitative anchor lookup).
-    # Accept either bare "47%" or LaTeX-escaped "47\%". No trailing \b because
-    # `%` is a non-word character so the boundary would never satisfy.
+    # NUMBER_UNIT_PATTERN accepts either bare "47%" or LaTeX-escaped "47\%"
+    # (single source shared with build_letter_claim_map / verify, A-CL-3).
     number_patterns = (
-        r"\b\d+(?:\.\d+)?\s*(?:\\?%|pp|x|×|ms|MB|GB|FLOPs?)",
+        NUMBER_UNIT_PATTERN,
         r"(?:\$|USD\s*)\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?\b",
         r"\b\d+(?:\.\d+)?\s+(?:sensor\s+)?modalit(?:y|ies)\b",
     )

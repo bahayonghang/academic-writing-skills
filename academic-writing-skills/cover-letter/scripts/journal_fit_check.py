@@ -18,10 +18,11 @@ import argparse
 import json
 import re
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from build_letter_claim_map import extract_claims
 from parsers import LatexParser
 from template_meta import split_frontmatter
 
@@ -63,6 +64,7 @@ class JournalFitResult:
     tier: str
     overall: str
     axes: list[AxisVerdict]
+    warnings: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -104,16 +106,15 @@ def _count_words(text: str) -> int:
 
 
 def _count_claims(text: str) -> int:
-    return len(
-        re.findall(
-            r"\bwe (?:report|present|show|demonstrate|find|propose|introduce|describe|provide)\b",
-            text,
-            flags=re.IGNORECASE,
-        )
-    )
+    """Count claim-bearing sentences using the shared `LETTER_CLAIM_PATTERNS`
+    extractor (A-CL-1) — not just first-person "we report/present/..."
+    sentences, which undercounted "our work demonstrates," bare-numeric, and
+    other claim styles common in cover-letter prose (the same extractor
+    `align_check.py`'s claim pipeline uses, so both stay in sync)."""
+    return len(extract_claims(text))
 
 
-def _check_scope_fit(letter_text: str, venue: str) -> AxisVerdict:
+def _check_scope_fit(letter_text: str, venue: str, tier: str) -> AxisVerdict:
     evidence: list[str] = []
     suggestions: list[str] = []
     venue_words = {
@@ -148,6 +149,17 @@ def _check_scope_fit(letter_text: str, venue: str) -> AxisVerdict:
         )
     if len(hits) == 1:
         evidence.append(f"Letter references only one scope keyword: {hits[0]}")
+        # Top-journal letters run under a hard ~350-word ceiling that rewards
+        # density over checklist-style scope name-dropping; one well-placed
+        # scope keyword is enough at that tier (A-CL-6). Other tiers keep the
+        # original two-keyword bar.
+        if tier == "top-journal":
+            return AxisVerdict(
+                axis="scope_fit",
+                verdict="HIGH",
+                evidence=evidence,
+                suggestions=[],
+            )
         suggestions.append(f"Strengthen scope fit by referencing more of {list(scope_keywords)}.")
         return AxisVerdict(
             axis="scope_fit",
@@ -169,8 +181,13 @@ def _check_scope_fit(letter_text: str, venue: str) -> AxisVerdict:
 
 def _check_novelty_framing(letter_text: str, tier: str) -> AxisVerdict:
     """Top-tier needs paradigm-shift framing; mid-tier needs methodological framing; conference needs contribution framing."""
+    # "broad scientific" is a `_check_scope_fit` scope keyword, not a
+    # paradigm-shift verb — it used to double-count here (A-CL-6, original
+    # audit finding 8), inflating novelty_framing off the same phrase that
+    # already earned scope_fit credit. Removed; it contributes to scope_fit
+    # only now.
     paradigm_signals = re.findall(
-        r"\b(?:resolve|answer|establish|address|reframe|paradigm|broad scientific)\b",
+        r"\b(?:resolve|answer|establish|address|reframe|paradigm)\b",
         letter_text,
         flags=re.IGNORECASE,
     )
@@ -280,12 +297,22 @@ def _check_evidence_density(letter_text: str, tier: str) -> AxisVerdict:
 def _check_format_compliance(
     letter_text: str,
     meta: dict[str, Any],
+    *,
+    include_length: bool = True,
 ) -> AxisVerdict:
     evidence: list[str] = []
     suggestions: list[str] = []
     word_count = _count_words(letter_text)
     limit = int(meta.get("word_limit") or 400)
-    if word_count > int(limit * 1.20):
+    if not include_length:
+        # A-CL-5: presubmission's `L1` check (two-tier Minor/Major, precise
+        # over-count) already covers length; journal-fit's own coarse
+        # HIGH/MEDIUM/LOW word-count axis double-reports the same template
+        # `word_limit` in the "optimize + journal-fit" workflow. Opt-in via
+        # `--dedup-length`; default behavior (`include_length=True`) is
+        # unchanged.
+        evidence.append("Word-count check delegated to presubmission L1 (--dedup-length).")
+    elif word_count > int(limit * 1.20):
         evidence.append(f"Letter is {word_count} words; template ceiling {limit} (+20%).")
         suggestions.append(f"Trim by at least {word_count - limit} words.")
         return AxisVerdict(
@@ -294,7 +321,7 @@ def _check_format_compliance(
             evidence=evidence,
             suggestions=suggestions,
         )
-    if word_count > limit:
+    elif word_count > limit:
         evidence.append(f"Letter is {word_count} words; template ceiling {limit}.")
         suggestions.append(f"Tighten by {word_count - limit} words to stay within budget.")
     # Banned phrases
@@ -373,23 +400,36 @@ def findings_from_result(result: JournalFitResult) -> list[JournalFitFinding]:
     return findings
 
 
-def run_journal_fit(letter_path: Path, venue: str, skill_dir: Path) -> JournalFitResult:
+def run_journal_fit(
+    letter_path: Path,
+    venue: str,
+    skill_dir: Path,
+    *,
+    dedup_length: bool = False,
+) -> JournalFitResult:
     """Run all four sub-axis checks and return the consolidated verdict."""
     meta, _ = _read_template(skill_dir, venue)
+    warnings: list[str] = []
+    if not meta.get("tier"):
+        # A-CL-10: `meta.get("tier") or "mid-journal"` used to fall back
+        # silently; a custom template that forgot `tier` in its frontmatter
+        # got scored as mid-journal with no indication anything was assumed.
+        warnings.append(f"Template `{venue}` frontmatter has no `tier`; defaulting to mid-journal.")
     tier = str(meta.get("tier") or "mid-journal")
     letter_text = _read_letter_visible(letter_path)
 
     axes = [
-        _check_scope_fit(letter_text, venue),
+        _check_scope_fit(letter_text, venue, tier),
         _check_novelty_framing(letter_text, tier),
         _check_evidence_density(letter_text, tier),
-        _check_format_compliance(letter_text, meta),
+        _check_format_compliance(letter_text, meta, include_length=not dedup_length),
     ]
     return JournalFitResult(
         venue=meta.get("venue", venue),
         tier=tier,
         overall=_overall_verdict(axes),
         axes=axes,
+        warnings=warnings,
     )
 
 
@@ -397,6 +437,8 @@ def _format_protocol(result: JournalFitResult) -> str:
     lines = [
         f"% {MODULE} Venue: {result.venue}  Tier: {result.tier}  Overall: {result.overall}",
     ]
+    for warning in result.warnings:
+        lines.append(f"% {MODULE} [Warning] {warning}")
     for axis in result.axes:
         lines.append(f"% {MODULE} [Axis: {axis.axis}] [Verdict: {axis.verdict}]")
         for ev in axis.evidence:
@@ -423,6 +465,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON")
     parser.add_argument("--output", "-o", help="Optional output path")
+    parser.add_argument(
+        "--dedup-length",
+        action="store_true",
+        help=(
+            "Skip journal-fit's own word-count sub-check (banned phrases still run); "
+            "use when also running `presubmission`, whose `L1` check already covers length."
+        ),
+    )
     args = parser.parse_args(argv)
 
     if args.venue not in VENUES:
@@ -438,7 +488,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     skill_dir = Path(__file__).resolve().parent.parent
-    result = run_journal_fit(letter_path, args.venue, skill_dir)
+    result = run_journal_fit(letter_path, args.venue, skill_dir, dedup_length=args.dedup_length)
 
     if args.json:
         payload = json.dumps(
@@ -448,6 +498,7 @@ def main(argv: list[str] | None = None) -> int:
                 "overall": result.overall,
                 "axes": [asdict(axis) for axis in result.axes],
                 "findings": [asdict(finding) for finding in findings_from_result(result)],
+                "warnings": result.warnings,
             },
             indent=2,
             ensure_ascii=False,

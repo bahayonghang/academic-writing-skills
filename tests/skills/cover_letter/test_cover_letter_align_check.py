@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from types import ModuleType
 
@@ -71,6 +72,68 @@ def test_align_check_issue_schema_has_required_fields() -> None:
         as_dict = issue.__dict__
         missing = required - set(as_dict)
         assert not missing, f"issue missing fields {missing}: {as_dict}"
+
+
+def test_claim_offsets_drive_source_section_and_json_output(tmp_path, capsys) -> None:
+    align = _load("align_check")
+    letter = tmp_path / "letter.md"
+    letter.write_text(
+        "Dear Editor,\n\n"
+        "We report a 47% reduction in latency on Bench-X.\n\n"
+        "Our work demonstrates a 5 GB memory reduction on Bench-Y.\n\n"
+        "Sincerely,\nA. Author\n",
+        encoding="utf-8",
+    )
+    manuscript = tmp_path / "paper.tex"
+    manuscript.write_text(
+        r"\title{Unrelated Study}\begin{abstract}No matching metrics appear here.\end{abstract}",
+        encoding="utf-8",
+    )
+
+    issues, claim_map = align.run_align_check(letter, manuscript)
+    candidates = claim_map["claim_candidates"]
+    assert candidates and all(candidate["char_offset"] >= 0 for candidate in candidates)
+    issues_by_quote = {
+        issue.quote: issue for issue in issues if issue.comment_type == "claim_accuracy"
+    }
+    opening = next(claim for claim in candidates if "47%" in claim["claim"])
+    body = next(claim for claim in candidates if "5 GB" in claim["claim"])
+    assert issues_by_quote[opening["claim"]].source_section == "opening"
+    assert issues_by_quote[body["claim"]].source_section == "body"
+    assert {issue.source_section for issue in issues} <= {
+        "header",
+        "opening",
+        "body",
+        "contributions",
+        "fit",
+        "declarations",
+        "closing",
+    }
+
+    code = align.main(["--letter", str(letter), "--manuscript", str(manuscript), "--json"])
+    assert code in {1, 2}
+    payload = json.loads(capsys.readouterr().out)
+    claim_issues = [item for item in payload if item["comment_type"] == "claim_accuracy"]
+    assert claim_issues and all(item["char_offset"] >= 0 for item in claim_issues)
+
+
+def test_candidate_to_issue_without_letter_text_falls_back_to_body() -> None:
+    align = _load("align_check")
+    candidate = {
+        "claim": "Our work demonstrates a 5 GB memory reduction.",
+        "claim_strength": "unsupported",
+        "confidence": "unverified",
+        "evidence_anchor": [],
+        "missing_evidence": ["matching manuscript evidence"],
+        "allowed_wording": "",
+        "forbidden_wording": [],
+        "quote_verified": False,
+        "char_offset": -1,
+    }
+    issue = align.candidate_to_issue(candidate, {})
+    assert issue is not None
+    assert issue.source_section == "body"
+    assert issue.char_offset == -1
 
 
 def test_align_check_severity_classification_caps_at_major() -> None:
@@ -387,3 +450,60 @@ def test_align_check_commented_manuscript_disclosure_not_flagged(tmp_path) -> No
     )
     disc = _disclosure_findings(align, _LETTER_SILENT, commented, tmp_path)
     assert disc == []
+
+
+# --- A-CL-2: .tex letter claim pipeline strips % comments -------------------
+
+
+def test_align_check_tex_letter_comment_does_not_produce_claim(tmp_path) -> None:
+    """A commented-out `.tex` letter line must not surface as a claim
+    candidate, while an active line with an escaped `47\\%` still does."""
+    align = _load("align_check")
+    letter = tmp_path / "letter.tex"
+    letter.write_text(
+        "Dear Editor,\n\n"
+        "% Our work demonstrates a 99\\% reduction in latency on Bench-9.\n"
+        "We report a 47\\% reduction in latency on Bench-1.\n",
+        encoding="utf-8",
+    )
+    _, claim_map = align.run_align_check(letter, FIXTURES / "generate_fixture.tex")
+    claims = [c["claim"] for c in claim_map["claim_candidates"]]
+    assert not any("99" in claim for claim in claims), "commented-out claim must not surface"
+    assert any("47" in claim for claim in claims), "active escaped claim must survive"
+
+
+def test_align_check_md_letter_percent_claim_extraction_unaffected(tmp_path) -> None:
+    """A-CL-2 control: `.md` letters are never comment-stripped (`%` there is
+    prose, e.g. "47% reduction") — behavior must be unchanged by the fix."""
+    align = _load("align_check")
+    letter = tmp_path / "letter.md"
+    letter.write_text(
+        "Dear Editor,\n\nOur work demonstrates a 47% reduction in latency on Bench-1.\n",
+        encoding="utf-8",
+    )
+    _, claim_map = align.run_align_check(letter, FIXTURES / "generate_fixture.tex")
+    claims = [c["claim"] for c in claim_map["claim_candidates"]]
+    assert any("47" in claim for claim in claims)
+
+
+# --- A-CL-4: direction-only numeric verification needs a tight window -------
+
+
+def test_direction_only_numeric_match_requires_tight_window() -> None:
+    """A direction-only claim (reduction/improvement, no specific metric
+    keyword) must require the direction word within `_DIRECTION_WINDOW` (60
+    chars) of the number in the manuscript, not the old 160-char loose gate."""
+    verifier = _load("verify_letter_against_manuscript")
+    # "improvement" sits ~142 chars from "30%", describing an unrelated
+    # subsystem — inside the old 160-char loose window (used to falsely
+    # verify) but outside the new 60-char direction window.
+    manuscript = (
+        "We measured a 30% change in an unrelated subsystem metric today. "
+        "This sentence is only here as neutral padding text to add some length. "
+        "A completely different improvement occurred in another subsystem entirely."
+    )
+    assert (
+        verifier._has_numeric_match("achieves a 30% improvement over baseline", manuscript) is False
+    )
+    # Sanity: the CL-1 pinned direction-only case (distance ~1 char) still verifies.
+    assert verifier._has_numeric_match("47% reduction", "we report a 47% reduction in latency")
