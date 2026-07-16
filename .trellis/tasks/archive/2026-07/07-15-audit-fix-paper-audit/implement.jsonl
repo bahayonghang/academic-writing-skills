@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本共享面总览与 bare-import 永远解析到 EN 副本的规则；W3 测试加载 AUDIT 副本前必读"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "importlib 按路径加载副本脚本模式（A-PA-8 Typst e2e 测试）、evals.json 禁 Edit/Write、pytest 禁 PYTHONIOENCODING、检查器默认行为变化须双声明（W1 CRITICAL / W3 reproducibility 假绿修复适用）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "W1/W2 修改 references/ 与 agents/ 文档内容的资源契约——只改内容不增删文件，避免 docs manifest/检查器破坏"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务 A-PA-1..8 证据登记与 D2/D3 决策原文；A-PA-8 误报澄清（extract_title/extract_abstract 存在于 parsers.py:632/664）"}
