@@ -846,3 +846,36 @@ A-EN-1~10 十项发现全部落地：check_references/9 脚本接入 tex_loader.
 ### Next Steps
 
 - None - task complete
+
+
+## Session 21: 六技能审计修复：typst-paper 行注释与 abstract 截断
+
+**Date**: 2026-07-16
+**Task**: 六技能审计修复：typst-paper 行注释与 abstract 截断
+**Branch**: `dev`
+
+### Summary
+
+A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/字符串/raw 三态跳读）替代裸 split("//")，PRESERVE_PATTERNS 的 //.* 条目五副本整条删除（单一所有权）；extract_abstract lookahead 放宽到任意级 heading。5 副本同步，1 个提交（批次重叠预判成立，未强行拆分）。just ci 1237→1259 passed。父任务 8 子任务树 3/8 完成。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0979ba9` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 20
+- **Total Sessions**: 21
 - **Last Active**: 2026-07-16
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~848 | Active |
+| `journal-1.md` | ~881 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 21 | 2026-07-16 | 六技能审计修复：typst-paper 行注释与 abstract 截断 | `0979ba9` | `dev` |
 | 20 | 2026-07-16 | 六技能审计修复：latex-paper-en 多文件解析与 canonical parsers | `f02f372`, `ae9c928`, `1b63d15`, `e6879b1`, `0ada3d5`, `c493486190b99e78076584a8e902bf05e7e98ee8` | `dev` |
 | 19 | 2026-07-15 | 六技能审计修复：version-ci 版本同步 | `e53de88` | `dev` |
 | 18 | 2026-07-15 | 完成双语资源文档重构 | `7d3cfd1`, `4917daf`, `6685119`, `9b2e507`, `982e153` | `dev` |
