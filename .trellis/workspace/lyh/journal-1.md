@@ -984,3 +984,37 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 25: 完成 bib 查询解析健壮性修复
+
+**Date**: 2026-07-16
+**Task**: 完成 bib 查询解析健壮性修复
+**Branch**: `dev`
+
+### Summary
+
+按 A-BIB-1 至 A-BIB-6 完成 tests-first 修复：查询 tokenizer 回退、has:code 词边界、year 消歧后缀、SpecError、preview warnings 与冒号自由文本指引；技能测试 42 passed，lint/typecheck 通过，双语资源 hash 同步留给终批 R4a。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0bbe5ca` | (see git log) |
+| `a51c898` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
