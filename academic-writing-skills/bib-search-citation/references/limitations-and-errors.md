@@ -18,6 +18,17 @@ These are documented so results are reported honestly, not silently:
   skipped over a structural defect such as a missing closing brace, duplicate
   citation keys (each affected result also carries a `warnings` field), and
   entries sitting behind a `%` marker, which real BibTeX still parses.
+- **`has:code` is a word-boundary heuristic**, not a semantic classifier. It
+  avoids substring matches such as `reported`, `encoder`, and `barcode`, but it
+  does not understand negation (`without a linked repository` still matches) or
+  reject generic phrases such as `dress code`.
+- **Unbalanced compact-query quotes** trigger a tokenizer fallback instead of an
+  error. Double-quoted phrases still group, while single quotes are treated as
+  literal characters; the fallback is reported as `query_tokenizer_fallback` in
+  `meta.parse_warnings`.
+- **Year disambiguation suffixes** accept one lowercase ASCII letter, so `2024a`
+  is filtered as year 2024. Longer or uppercase suffixes are not interpreted as
+  BibTeX year disambiguation markers.
 
 ## Error handling
 

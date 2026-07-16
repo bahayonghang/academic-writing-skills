@@ -14,6 +14,8 @@ from typing import Any
 ABSTRACT_LIMIT = 240
 ANNOTATION_LIMIT = 160
 KEYWORDS_LIMIT = 120
+WARNINGS_LIMIT = 5
+WARNING_TEXT_LIMIT = 200
 WHITESPACE_RE = re.compile(r"\s+")
 
 
@@ -42,7 +44,11 @@ def truncate_text(value: Any, limit: int) -> str:
 
 
 def load_payload(args: argparse.Namespace) -> dict[str, Any]:
-    content = Path(args.input).read_text(encoding="utf-8") if args.input else sys.stdin.read()
+    if args.input:
+        content = Path(args.input).read_text(encoding="utf-8")
+    else:
+        buffer = getattr(sys.stdin, "buffer", None)
+        content = buffer.read().decode("utf-8") if buffer is not None else sys.stdin.read()
     if not content.strip():
         raise ValueError("expected JSON input on stdin or via --input")
 
@@ -122,6 +128,27 @@ def iter_citation_lines(citations: Any) -> Iterable[str]:
     return lines
 
 
+def render_warnings(meta: dict[str, Any]) -> list[str]:
+    warnings = meta.get("parse_warnings") or []
+    if not isinstance(warnings, list) or not warnings:
+        return []
+
+    lines = [f"Warnings ({len(warnings)}):"]
+    for warning in warnings[:WARNINGS_LIMIT]:
+        if isinstance(warning, dict):
+            warning_type = normalize_text(warning.get("type")) or "warning"
+            message = normalize_text(warning.get("message")) or render_simple_value(warning)
+            rendered = f"[{warning_type}] {message}"
+        else:
+            rendered = render_simple_value(warning)
+        lines.append(f"  - {truncate_text(rendered, WARNING_TEXT_LIMIT)}")
+
+    remaining = len(warnings) - WARNINGS_LIMIT
+    if remaining > 0:
+        lines.append(f"  ... and {remaining} more (see meta.parse_warnings in the JSON output)")
+    return lines
+
+
 def render_entry(index: int, entry: dict[str, Any]) -> list[str]:
     key = normalize_text(entry.get("key")) or "<missing-key>"
     entry_type = normalize_text(entry.get("entry_type")) or "unknown"
@@ -163,6 +190,10 @@ def render_entry(index: int, entry: dict[str, Any]) -> list[str]:
         lines.append(f"  Abstract: {abstract}")
 
     lines.extend(iter_citation_lines(entry.get("citations")))
+    warnings = entry.get("warnings") or []
+    if isinstance(warnings, list):
+        for warning in warnings:
+            lines.append(f"  Warning: {truncate_text(warning, WARNING_TEXT_LIMIT)}")
     return lines
 
 
@@ -179,6 +210,10 @@ def render_preview(payload: dict[str, Any]) -> str:
         f"Query: {query} | sort={sort_mode} | returned={returned} of {matched} matched ({total} total)",
         render_filter_summary(meta.get("applied_filters")),
     ]
+    encoding_fallback = normalize_text(meta.get("encoding_fallback"))
+    if encoding_fallback:
+        lines.append(f"Encoding: {encoding_fallback} fallback (file was not valid UTF-8)")
+    lines.extend(render_warnings(meta))
 
     if not results:
         lines.append("Results: none")

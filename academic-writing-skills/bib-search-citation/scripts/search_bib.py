@@ -27,8 +27,9 @@ WHITESPACE_RE = re.compile(r"\s+")
 FIELD_OP_RE = re.compile(
     r"^(?P<neg>-)?(?P<field>[A-Za-z_][A-Za-z0-9_-]*)(?P<op>:|=|>=|<=|>|<)(?P<value>.+)$"
 )
+_FALLBACK_TOKEN_RE = re.compile(r'(?:[^\s"]+|"[^"]*")+')
 # Year detection now spans 1500-2099 so historical references are not dropped (B26).
-YEAR_RE = re.compile(r"\b(1[5-9]\d{2}|20\d{2})\b")
+YEAR_RE = re.compile(r"\b(1[5-9]\d{2}|20\d{2})[a-z]?\b")
 
 # ── LaTeX accent handling (B6) ────────────────────────────────────────────────
 # Combining diacritics keyed by the LaTeX accent command. After substitution the
@@ -135,7 +136,9 @@ CODE_HINT_TERMS = [
     "repo",
     "source code",
     "code available",
+    "codeavailable",
 ]
+CODE_HINT_RE = re.compile(r"\b(?:" + "|".join(re.escape(term) for term in CODE_HINT_TERMS) + r")\b")
 PDF_FIELDS = ["file", "pdf", "url"]
 FIELD_ALIASES = {
     "authors": "author",
@@ -496,7 +499,21 @@ def tokenize(text: str) -> list[str]:
 
 
 def spec_from_compact_query(query_text: str) -> dict[str, Any]:
-    tokens = shlex.split(query_text or "")
+    query_warnings: list[dict[str, str]] = []
+    try:
+        tokens = shlex.split(query_text or "")
+    except ValueError:
+        tokens = _fallback_tokenize(query_text or "")
+        query_warnings.append(
+            {
+                "type": "query_tokenizer_fallback",
+                "message": (
+                    "query contains an unbalanced quote; fell back to whitespace "
+                    "tokenization (double-quoted phrases still group, single quotes "
+                    "are treated literally)"
+                ),
+            }
+        )
     free_terms: list[str] = []
     filters: dict[str, Any] = {}
     spec: dict[str, Any] = {
@@ -533,7 +550,16 @@ def spec_from_compact_query(query_text: str) -> dict[str, Any]:
             raise SpecError(f"unhandled parsed token kind: {kind}")
 
     spec["query"] = " ".join(free_terms).strip()
+    if query_warnings:
+        spec["_query_warnings"] = query_warnings
     return spec
+
+
+def _fallback_tokenize(text: str) -> list[str]:
+    tokens = _FALLBACK_TOKEN_RE.findall(text)
+    return [
+        token[1:-1] if token.startswith('"') and token.endswith('"') else token for token in tokens
+    ]
 
 
 def parse_query_token(token: str) -> tuple[str, Any] | None:
@@ -562,7 +588,7 @@ def parse_query_token(token: str) -> tuple[str, Any] | None:
             raise SpecError(f"unsupported sort mode: {value}")
         return ("sort", lowered)
     if field == "limit":
-        return ("limit", int(value))
+        return ("limit", _parse_int(value, "limit"))
     if field == "fields":
         return ("return_fields", split_csv_values(value))
     if field == "cite":
@@ -573,7 +599,7 @@ def parse_query_token(token: str) -> tuple[str, Any] | None:
     if field == "raw":
         return ("include_raw_bib", parse_bool(value))
     if field == "recent":
-        return ("recent_window", int(value))
+        return ("recent_window", _parse_int(value, "recent window"))
     if field == "claim":
         return ("claim", value)
 
@@ -618,21 +644,28 @@ def parse_bool(value: str) -> bool:
     raise SpecError(f"could not parse boolean value: {value}")
 
 
+def _parse_int(value: str, what: str) -> int:
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise SpecError(f"{what} must be an integer, got {value!r}") from exc
+
+
 def parse_year_filter(op: str, value: str, neg: bool) -> dict[str, Any]:
     years = split_csv_values(value)
     if op in {":", "="}:
         if len(years) == 1:
-            year = int(years[0])
+            year = _parse_int(years[0], "year filter value")
             if neg:
                 return {"exclude_years": [year]}
             return {"year_min": year, "year_max": year}
-        parsed_years = [int(item) for item in years]
+        parsed_years = [_parse_int(item, "year filter value") for item in years]
         if neg:
             return {"exclude_years": parsed_years}
         return {"years_in": parsed_years}
     if neg:
         raise SpecError("negated year comparisons like -year>=2024 are not supported")
-    year = int(value)
+    year = _parse_int(value, "year filter value")
     if op == ">=":
         return {"year_min": year}
     if op == ">":
@@ -952,7 +985,7 @@ def entry_year(fields: dict[str, str]) -> int | None:
     for source in ("year", "date"):
         match = YEAR_RE.search(normalize_text(fields.get(source, "")))
         if match:
-            return int(match.group(0))
+            return int(match.group(1))
     return None
 
 
@@ -974,7 +1007,7 @@ def derive_venue(fields: dict[str, str]) -> str:
 
 def has_code(fields: dict[str, str]) -> bool:
     combined = " ".join(normalize_text(fields.get(name, "")) for name in CODE_HINT_FIELDS).lower()
-    return any(term in combined for term in CODE_HINT_TERMS)
+    return CODE_HINT_RE.search(combined) is not None
 
 
 def has_pdf(fields: dict[str, str]) -> bool:
@@ -1329,15 +1362,18 @@ def _field_filter_warnings(
         present.update(entry["fields"].keys())
     warnings: list[dict[str, Any]] = []
     for group in ("field_contains", "field_excludes"):
-        for field_name in filters.get(group) or {}:
+        for field_name, needles in (filters.get(group) or {}).items():
             if field_name.lower() not in present:
+                example_value = normalize_text(needles[0]) if needles else "..."
                 warnings.append(
                     {
                         "type": "unknown_field_filter",
                         "field": field_name,
                         "message": (
                             f"filter field '{field_name}' is not present in any entry; "
-                            "check for a typo"
+                            f"if '{field_name}:{example_value}' was meant as free text, "
+                            "replace the colon with a space; otherwise check the field "
+                            "name for a typo"
                         ),
                     }
                 )
@@ -1418,6 +1454,7 @@ def main() -> None:
     except (json.JSONDecodeError, SpecError, ValueError) as exc:
         write_json({"error": str(exc)}, sys.stderr)
         raise SystemExit(2) from exc
+    query_warnings = spec.pop("_query_warnings", [])
 
     bib_path = Path(args.bib)
     try:
@@ -1428,7 +1465,10 @@ def main() -> None:
 
     raw_entries, parse_warnings, _macros = parse_bib_entries(content)
     entries = [build_entry(item) for item in raw_entries]
-    extra_meta = {"parse_warnings": parse_warnings, "encoding_fallback": encoding_fallback}
+    extra_meta = {
+        "parse_warnings": [*query_warnings, *parse_warnings],
+        "encoding_fallback": encoding_fallback,
+    }
     output = run_search(entries, spec, extra_meta)
     write_json(output, sys.stdout)
 
