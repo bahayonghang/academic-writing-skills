@@ -113,7 +113,7 @@ When literature search results are provided:
       "problem": "Results in Table 2 show small differences (0.3-1.8%) but no confidence intervals.",
       "why": "Without statistical testing, improvements may be within noise.",
       "suggestion": "Add bootstrap CIs or paired t-tests across 3+ random seeds.",
-      "severity": "Major",
+      "severity": "major",
       "location": "Section 5.2, Table 2"
     }
   ],
@@ -122,6 +122,9 @@ When literature search results are provided:
   ]
 }
 ```
+
+If this reference playbook's output is written to `comments/*.json` for
+consolidation, convert each issue to `references/ISSUE_SCHEMA.md` first.
 
 ## Quality Gates
 

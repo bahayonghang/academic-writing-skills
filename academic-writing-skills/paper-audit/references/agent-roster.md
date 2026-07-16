@@ -27,9 +27,13 @@ summary; this file is the authoritative roster.
   an original/suggested text pair plus additional actions; produces
   `artifacts/data/revision_suggestions.json`
 
-## Specialized deep-review agents
+## Reference reviewer playbooks (not auto-dispatched)
 
-Read their files for activation criteria:
+These files preserve detailed criteria reused by the committee and lane
+prompts; they are not automatically dispatched by the current workflow. Their
+A5-A7, B6-B10, and C3-C5 criteria remain linked from the live review criteria.
+Full dispatch wiring belongs to the follow-up task
+`paper-audit-specialized-reviewer-wiring`.
 
 - `critical_reviewer_agent.md` — devil's advocate with C3-C5 checks
 - `domain_reviewer_agent.md` — domain expertise with A1-A7 assessments

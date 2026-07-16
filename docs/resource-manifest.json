@@ -1293,7 +1293,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/agent-roster.md",
       "sourceLocale": "en",
-      "sourceSha256": "622f85d69f291c589af4a61efbaba394053fa04ff35c5c54c16915a5e7702a05",
+      "sourceSha256": "07cb57d092226e2c6c4e2df46f909bf45acd7e96a084df85446a44e67cab966c",
       "en": "docs/skills/paper-audit/resources/references/agent-roster.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/agent-roster.md"
     },
@@ -1356,7 +1356,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/DEEP_REVIEW_CRITERIA.md",
       "sourceLocale": "en",
-      "sourceSha256": "e748c2f5e884961d2ca6dd5ca91d968c17b36e62bfc2789d593b2301ba122686",
+      "sourceSha256": "e3635be31beb09567cabf64d71ba475c2cfd35901aac56222b02603718a787dd",
       "en": "docs/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md"
     },
@@ -1365,7 +1365,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/editorial_decision_standards.md",
       "sourceLocale": "en",
-      "sourceSha256": "5306c5bb83677f014e9215d7b1ae09dca5ad3b77ec1c85186bb87359bf0876ff",
+      "sourceSha256": "90153f40a6eddd15e755d09ad5d7023eeb9a613eab829f61af77fdda640d7d82",
       "en": "docs/skills/paper-audit/resources/references/editorial_decision_standards.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/editorial_decision_standards.md"
     },
@@ -1662,7 +1662,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/committee_logic_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "986fd72490ba6458806ba7030ffb45a8f58418b46e3e763e1359c127846f0639",
+      "sourceSha256": "f2e7fbd9139b713b315d25349509e02af3d4da17bcb255c8a49c20143bb10d66",
       "en": "docs/skills/paper-audit/resources/agents/committee_logic_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/committee_logic_agent.md"
     },
@@ -1689,7 +1689,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "444cc22d32ee6db20e6453155d52e9cf6215552326ffa7239788f4eb7c1bfe39",
+      "sourceSha256": "d35064c6b51fbbf9e09d65f0b4e5facb099ca3fb74c1cea14037af1f7fb2658f",
       "en": "docs/skills/paper-audit/resources/agents/critical_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/critical_reviewer_agent.md"
     },
@@ -1698,7 +1698,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/domain_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "993d7275fd51c3b2304d6e751d9dc0cfd62beb0455b941072eaf5c5f6522a295",
+      "sourceSha256": "dca05a2bbdf4ef74e3a8ca7e0c9cd0fc39b13ab4a3c14ef8f36482955c2fb5bf",
       "en": "docs/skills/paper-audit/resources/agents/domain_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/domain_reviewer_agent.md"
     },
@@ -1725,7 +1725,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/literature_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "f22dbba82e98746d2085ff42153ecd4d6e7239eab355fa383ad8abce9e934431",
+      "sourceSha256": "a32d3ada55fc6f7473f4de97967763af31907ad7e966e1b1e6f52ee7bc13d043",
       "en": "docs/skills/paper-audit/resources/agents/literature_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/literature_reviewer_agent.md"
     },
@@ -1734,7 +1734,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/methodology_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "d5c4a5756132e0bb2dc7850f22f0fcfd1b6f900517915cd0250623db8d8117fb",
+      "sourceSha256": "3a4f7baca449d6127f55c07ae97bfc5eeb44afb9772d0699f7ae6ef19179f5ae",
       "en": "docs/skills/paper-audit/resources/agents/methodology_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/methodology_reviewer_agent.md"
     },
@@ -1797,7 +1797,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/synthesis_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "2f895c5f81694356bc34ce550b013c0bd34fa89e1774baf9008398009af31fea",
+      "sourceSha256": "6a6534674c4fede9b2e2af883086a11f9868c6608e956eeb6120226222c5dc1b",
       "en": "docs/skills/paper-audit/resources/agents/synthesis_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/synthesis_agent.md"
     },

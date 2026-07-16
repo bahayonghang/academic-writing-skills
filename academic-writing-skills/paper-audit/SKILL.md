@@ -204,11 +204,12 @@ Full script roster with purposes: `references/scripts-map.md`.
 
 ## Reviewer Lanes
 
-Deep-review dispatches 5 committee agents, 6+ lane agents, and 4 specialized
-agents from `agents/` (`editor_in_chief_agent.md` for `gate`,
-`revision_coach_agent.md` for `re-audit`, revision-suggestion agent
-post-consolidation). Full roster and activation criteria:
-`references/agent-roster.md`.
+Deep-review dispatches 5 committee agents and 6+ lane agents, then uses
+`synthesis_agent.md`. Mode-specific agents include `editor_in_chief_agent.md`
+for `gate`, `revision_coach_agent.md` for `re-audit`, and
+`revision_suggestion_agent.md` after consolidation. Specialized reviewer
+playbooks under `agents/` are reference material, not auto-dispatched. Full
+roster and activation details: `references/agent-roster.md`.
 
 ## Examples
 

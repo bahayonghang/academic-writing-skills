@@ -8,10 +8,12 @@ Reference document for the Synthesis Agent. Defines consensus classification, ar
 
 | Label | Definition | Threshold | Handling |
 |-------|-----------|-----------|----------|
-| `[CONSENSUS-ALL]` | All 3 agent reviewers flag the same issue | 3/3 agree | Priority 1 — author MUST address |
-| `[CONSENSUS-MAJORITY]` | 2 of 3 agent reviewers flag the same issue | 2/3 agree | Priority 1 or 2 (severity-dependent) |
-| `[SPLIT]` | No majority — fundamental disagreement | <2/3 | Requires arbitration; document all positions |
+| `[CONSENSUS-ALL]` | All N reviewer lanes flag the same issue | N/N agree | Priority 1 — author MUST address |
+| `[CONSENSUS-MAJORITY]` | A simple majority, but not all lanes, flag the same issue | `floor(N/2)+1` through N-1 agree | Priority 1 or 2 (severity-dependent) |
+| `[SPLIT]` | No simple majority — fundamental disagreement | fewer than `floor(N/2)+1` agree | Requires arbitration; document all positions |
 | `[AUTOMATED-ONLY]` | Issue found only by Phase 0 scripts | Script-detected | Include as-is; severity from script |
+
+For example, majority is 2/3 when N=3 and 3/5 or 4/5 when N=5.
 
 ### Matching Criteria
 
@@ -30,16 +32,16 @@ When reviewers disagree (SPLIT), the Synthesis Agent resolves using these princi
 ### Priority 1: Evidence Principle
 The position backed by **specific textual evidence** (quotes, data points, citations) outweighs positions based on general impressions.
 
-**Example**: Methodology Reviewer says "Table 3 shows p < 0.05" vs. Critical Reviewer says "results seem unconvincing" — Methodology Reviewer's evidence-backed position wins.
+**Example**: The `committee_methodology` lane says "Table 3 shows p < 0.05" while the `committee_logic` lane says "results seem unconvincing". The methodology lane's evidence-backed position wins.
 
 ### Priority 2: Expertise Principle
 On domain-specific disputes, weight the relevant specialist higher:
 
 | Dispute Type | Primary Authority | Rationale |
 |-------------|-------------------|-----------|
-| Research design, statistics | Methodology Reviewer | Technical methods expertise |
-| Literature coverage, novelty | Domain Reviewer | Field knowledge |
-| Logical argument, overclaims | Critical Reviewer | Argumentation expertise |
+| Research design, statistics | `committee_methodology` / `evaluation_fairness` lane | Technical methods expertise |
+| Literature coverage, novelty | `committee_theory`, `committee_literature` / `prior_art` lane | Field knowledge |
+| Logical argument, overclaims | `committee_logic` / `claims_vs_evidence` lane | Argumentation expertise |
 | Cross-cutting (scope unclear) | Equal weight | Use Evidence Principle |
 
 ### Priority 3: Conservative Principle
@@ -86,10 +88,10 @@ A **score divergence** occurs when two reviewers rate the same dimension with a 
 
 | Dimension | Primary Source | Secondary Source | Merge Rule |
 |-----------|---------------|-----------------|------------|
-| Soundness | Methodology Reviewer | Critical Reviewer | Average; flag if gap > 2 |
-| Reproducibility | Methodology Reviewer | — | Direct use |
-| Novelty | Domain Reviewer | — | Direct use |
-| Significance | Domain Reviewer | — | Direct use |
+| Soundness | `committee_methodology` / `evaluation_fairness` | `committee_logic` / `claims_vs_evidence` | Average; flag if gap > 2 |
+| Reproducibility | `committee_methodology` / `evaluation_fairness` | — | Direct use |
+| Novelty | `committee_theory`, `committee_literature` / `prior_art` | — | Direct use |
+| Significance | `committee_theory` / `committee_literature` | — | Direct use |
 | 4-dim NeurIPS (Quality, Clarity, Significance, Originality) | Phase 0 script | — | Direct use (objective, deduction-based) |
 
 ---
@@ -98,7 +100,7 @@ A **score divergence** occurs when two reviewers rate the same dimension with a 
 
 ### For Review Mode (Advisory)
 
-| Consensus | Average Score (8-dim) | Recommendation | Typical Action |
+| Consensus | Average Score (9-dim ScholarEval) | Recommendation | Typical Action |
 |-----------|----------------------|----------------|---------------|
 | CONSENSUS-ALL on critical flaw | Any | **Reject** | Fundamental rework needed |
 | CONSENSUS-ALL, no critical | >= 7.0 | **Accept** | Minor revisions at most |
@@ -144,5 +146,5 @@ Phase 0 automated findings that no agent reviewer addresses should be included v
 ### When an Agent Finding Contradicts Automated Data
 If an agent reviewer's assessment contradicts objective automated data (e.g., agent says "citations are complete" but BIB module found undefined references), the automated data takes precedence for factual matters.
 
-### When Critical Reviewer Flags a CRITICAL Issue
-Critical Reviewer CRITICAL findings are **never suppressed**, even if other reviewers disagree. They must appear in the final report and be addressed in the Revision Roadmap as Priority 1. The Synthesis Agent may note that other reviewers disagree, but the finding itself must remain.
+### When a Reviewer Flags a CRITICAL-Rated Issue
+CRITICAL-rated findings are normalized to `major + gate_blocker=true` and are **never suppressed**, even if other reviewers disagree. They must appear in the final report and be addressed in the Revision Roadmap as Priority 1. The Synthesis Agent may note that other reviewers disagree, but the finding itself must remain.

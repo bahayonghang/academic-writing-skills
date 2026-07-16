@@ -80,7 +80,7 @@ This agent is OPTIONAL and only dispatched when:
     {
       "claim": "First to apply X to Y",
       "prior_art": "Smith et al. (2024) applied X to Y in a different context",
-      "severity": "Major"
+      "severity": "major"
     }
   ],
   "strengths": [
@@ -91,6 +91,9 @@ This agent is OPTIONAL and only dispatched when:
   ]
 }
 ```
+
+If this reference playbook's output is written to `comments/*.json` for
+consolidation, convert each issue to `references/ISSUE_SCHEMA.md` first.
 
 ## Quality Gates
 
