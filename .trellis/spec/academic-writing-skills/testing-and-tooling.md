@@ -132,6 +132,27 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
 Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
 
+### Convention: JSON 管道输入必须在字节边界按 UTF-8 解码
+
+**What**：Windows 上的 Python CLI 若从另一脚本接收 UTF-8 JSON，不能直接使用
+`sys.stdin.read()`；应优先读取 `sys.stdin.buffer` 并显式 `.decode("utf-8")`，仅在
+`StringIO` 等无 `buffer` 的测试流中回退到文本读取。
+
+```python
+buffer = getattr(sys.stdin, "buffer", None)
+content = buffer.read().decode("utf-8") if buffer is not None else sys.stdin.read()
+```
+
+**Why**：生产者通过 `stdout.buffer` 写出 UTF-8，但 Windows 子进程的 `sys.stdin`
+可能按 locale/cp936 解码。包含长横线等字符的 JSON 会产生代理字符（例如 `U+DC94`），
+随后在 UTF-8 输出时抛 `UnicodeEncodeError: surrogates not allowed`。该问题曾被
+`bib-search-citation` preview 不渲染 warnings 所遮蔽，直到 duplicate-key warning
+进入真实搜索到 preview 管道才暴露。
+
+**Tests Required**：至少一条 subprocess 管道测试使用 `ensure_ascii=False` 的非 ASCII
+warning payload，断言消费者 exit 0 且能渲染该 warning；不要通过给 pytest 设置
+`PYTHONIOENCODING` 掩盖边界错误。
+
 ---
 
 ## Gotcha: 检查器适配新结构形态要跑完整输出回归并扫兄弟检查器
