@@ -118,6 +118,7 @@ SECTION_KEY_ALIASES = {
     "分析": "discussion",
     "结论": "conclusion",
     "总结": "conclusion",
+    "结论与展望": "conclusion",
     "总结与展望": "conclusion",
 }
 
@@ -144,7 +145,7 @@ class LatexParser(DocumentParser):
 
     HEADING_PATTERN = re.compile(
         r"\\(?P<command>chapter|section|subsection|subsubsection|paragraph)\*?"
-        r"(?:\[[^\]]*\])?\{(?P<title>[^}]*)\}"
+        r"(?:\[[^\]]*\])?\{"
     )
 
     HEADING_LEVELS = {
@@ -180,7 +181,7 @@ class LatexParser(DocumentParser):
         ("introduction", 2, r"^(?:绪论|引言)$"),
         ("contribution", 2, r"^(?:创新点|主要贡献)$"),
         ("related", 2, r"^(?:相关工作|文献综述)$"),
-        ("conclusion", 2, r"^(?:结论|总结与展望)$"),
+        ("conclusion", 2, r"^(?:结论|总结)(?:与展望)?$"),
         ("method", 1, r"(?:方法|原理|设计)"),
         ("experiment", 2, r"(?:实验|实现|测试)"),
         ("result", 2, r"(?:结果|性能)"),
@@ -225,7 +226,18 @@ class LatexParser(DocumentParser):
     def split_sections(self, content: str) -> dict[str, tuple[int, int]]:
         lines_total = len(content.split("\n"))
         headings = self.extract_headings(content)
-        return _split_sections_from_headings(headings, self._classify_heading, lines_total)
+        in_conclusion_chapter = False
+
+        def classify(heading: dict[str, Any]) -> str | None:
+            nonlocal in_conclusion_chapter
+            key = self._classify_heading(heading)
+            if heading["level"] == 1:
+                in_conclusion_chapter = key == "conclusion"
+            if in_conclusion_chapter and heading["level"] > 1 and key == "conclusion":
+                return None
+            return key
+
+        return _split_sections_from_headings(headings, classify, lines_total)
 
     def extract_visible_text(self, line: str) -> str:
         temp_line = line
@@ -267,13 +279,16 @@ class LatexParser(DocumentParser):
             match = self.HEADING_PATTERN.search(stripped)
             if not match:
                 continue
+            title = _extract_balanced_block(stripped, match.end() - 1, "{", "}")
+            if not title:
+                continue
             command = match.group("command")
             headings.append(
                 {
                     "line": line_no,
                     "level": self.HEADING_LEVELS[command],
                     "command": command,
-                    "title": match.group("title").strip(),
+                    "title": title.strip(),
                 }
             )
         return headings
@@ -305,7 +320,7 @@ class TypstParser(DocumentParser):
         ("introduction", 1, r"^(?:绪论|引言)$"),
         ("contribution", 1, r"^(?:创新点|主要贡献)$"),
         ("related", 1, r"^(?:相关工作|文献综述)$"),
-        ("conclusion", 1, r"(?:结论|总结与展望)"),
+        ("conclusion", 1, r"^(?:结论|总结)(?:与展望)?$"),
         ("method", 1, r"(?:方法|原理|设计)"),
         ("experiment", 1, r"(?:实验|实现|测试)"),
         ("result", 1, r"(?:结果|性能)"),
@@ -398,6 +413,29 @@ def _normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def _extract_balanced_block(content: str, start_idx: int, opener: str, closer: str) -> str:
+    """Extract a balanced block body from content starting at opener index."""
+    if start_idx < 0 or start_idx >= len(content) or content[start_idx] != opener:
+        return ""
+
+    depth = 0
+    block_start = -1
+
+    for i in range(start_idx, len(content)):
+        char = content[i]
+        if char == opener:
+            depth += 1
+            if depth == 1:
+                block_start = i + 1
+        elif char == closer:
+            depth -= 1
+            if depth == 0 and block_start >= 0:
+                return content[block_start:i]
+            if depth < 0:
+                return ""
+    return ""
+
+
 def _strip_typst_line_comment(line: str) -> str:
     """Strip a Typst line comment, keeping ``//`` that lives inside URLs,
     double-quoted strings, or raw-text backticks (approximates the Typst
@@ -447,14 +485,16 @@ def extract_title(content: str) -> str:
     Supports \\ctitle, \\title commands commonly used in Chinese thesis templates.
     """
     # Chinese title: \ctitle{...}
-    ctitle = re.search(r"\\ctitle\{(.+?)\}", content, re.DOTALL)
+    ctitle = re.search(r"\\ctitle\{", content, re.DOTALL)
     if ctitle:
-        return _strip_latex_markup(ctitle.group(1))
+        body = _extract_balanced_block(content, ctitle.end() - 1, "{", "}")
+        return _strip_latex_markup(body) if body else ""
 
     # Standard: \title{...}
-    title = re.search(r"\\title(?:\[[^\]]*\])?\{(.+?)\}", content, re.DOTALL)
+    title = re.search(r"\\title(?:\[[^\]]*\])?\{", content, re.DOTALL)
     if title:
-        return _strip_latex_markup(title.group(1))
+        body = _extract_balanced_block(content, title.end() - 1, "{", "}")
+        return _strip_latex_markup(body) if body else ""
 
     return ""
 

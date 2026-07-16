@@ -32,6 +32,12 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+try:
+    from tex_loader import read_text_robust
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from tex_loader import read_text_robust
+
 
 class LaTeXCompiler:
     """Unified LaTeX compilation with multiple recipes."""
@@ -90,23 +96,20 @@ class LaTeXCompiler:
     def _detect_compiler(self) -> str:
         """Auto-detect appropriate compiler based on document content."""
         try:
-            content = self.tex_file.read_text(encoding="utf-8", errors="ignore")
+            content, _warning = read_text_robust(self.tex_file)
         except Exception:
             return "pdflatex"  # Default fallback
+
+        # An explicit document directive takes precedence over heuristics.
+        for compiler in ("xelatex", "lualatex", "pdflatex"):
+            if re.search(rf"%\s*!TEX\s+program\s*=\s*{compiler}", content, re.IGNORECASE):
+                return compiler
 
         # Check for Chinese content
         for pattern in self.CHINESE_PATTERNS:
             if re.search(pattern, content):
                 print("[INFO] Detected Chinese content, using xelatex")
                 return "xelatex"
-
-        # Check for explicit engine specification
-        if re.search(r"%\s*!TEX\s+program\s*=\s*xelatex", content, re.IGNORECASE):
-            return "xelatex"
-        if re.search(r"%\s*!TEX\s+program\s*=\s*lualatex", content, re.IGNORECASE):
-            return "lualatex"
-        if re.search(r"%\s*!TEX\s+program\s*=\s*pdflatex", content, re.IGNORECASE):
-            return "pdflatex"
 
         # Check for fontspec (requires xelatex or lualatex)
         if re.search(r"\\usepackage.*{fontspec}", content):
