@@ -9,7 +9,7 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "6.0.0"
-  last_updated: "2026-07-09"
+  last_updated: "2026-07-16"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--scholar-eval] [--regression] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---

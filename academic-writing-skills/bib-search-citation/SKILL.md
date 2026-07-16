@@ -20,7 +20,7 @@ metadata:
       bib,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-09"
+  last_updated: "2026-07-16"
 argument-hint: "--bib library.bib --query QUERY"
 allowed-tools: Read, Bash(uv *)
 ---

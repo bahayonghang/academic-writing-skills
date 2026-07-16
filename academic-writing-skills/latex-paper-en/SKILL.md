@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-09"
+  last_updated: "2026-07-16"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
