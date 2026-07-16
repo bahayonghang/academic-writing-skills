@@ -62,6 +62,23 @@ DEDUCTIONS_10: dict[str, float] = {
     "Minor": 0.5,
 }
 
+MODULE_DIMENSION_MAP: dict[str, str] = {
+    "LOGIC": "soundness",
+    "GRAMMAR": "clarity",
+    "SENTENCES": "clarity",
+    "FORMAT": "clarity",
+    "DEAI": "clarity",
+    "CONSISTENCY": "clarity",
+    "FIGURES": "presentation",
+    "VISUAL": "presentation",
+    "REFERENCES": "presentation",
+    "CITATIONS": "presentation",
+    "BIB": "presentation",
+    "PRESUBMISSION": "presentation",
+    "EXPERIMENT": "reproducibility",
+    "PSEUDOCODE": "reproducibility",
+}
+
 
 # --- Data Models ---
 
@@ -88,13 +105,13 @@ def _deduct_score(base: float, issues: list[dict]) -> float:
 
 
 def _check_reproducibility_signals(issues: list[dict]) -> float:
-    """Heuristic check for reproducibility signals from audit issues."""
-    method_issues = [
+    """Score reproducibility from experiment and pseudocode audit issues."""
+    reproducibility_issues = [
         i
         for i in issues
-        if i.get("module", "").upper() == "LOGIC" and "method" in i.get("message", "").lower()
+        if MODULE_DIMENSION_MAP.get(str(i.get("module", "")).upper()) == "reproducibility"
     ]
-    return _deduct_score(10, method_issues)
+    return _deduct_score(10, reproducibility_issues)
 
 
 def evaluate_from_audit(
@@ -111,33 +128,21 @@ def evaluate_from_audit(
     Returns:
         Dict mapping dimension names to scores (1-10 scale).
     """
-    # Group issues by module
-    by_module: dict[str, list[dict]] = {}
+    # Route each known audit module to exactly one script-evaluable dimension.
+    by_dimension: dict[str, list[dict]] = {}
     for issue in audit_issues:
-        mod = issue.get("module", "").upper()
-        by_module.setdefault(mod, []).append(issue)
+        module = str(issue.get("module", "")).upper()
+        dimension = MODULE_DIMENSION_MAP.get(module)
+        if dimension:
+            by_dimension.setdefault(dimension, []).append(issue)
 
     scores: dict[str, float | None] = {}
 
-    # Soundness <- logic issues
-    scores["soundness"] = _deduct_score(10, by_module.get("LOGIC", []))
+    scores["soundness"] = _deduct_score(10, by_dimension.get("soundness", []))
+    scores["clarity"] = _deduct_score(10, by_dimension.get("clarity", []))
+    scores["presentation"] = _deduct_score(10, by_dimension.get("presentation", []))
 
-    # Clarity <- grammar + sentences + format + deai
-    clarity_issues = (
-        by_module.get("GRAMMAR", [])
-        + by_module.get("SENTENCES", [])
-        + by_module.get("FORMAT", [])
-        + by_module.get("DEAI", [])
-    )
-    scores["clarity"] = _deduct_score(10, clarity_issues)
-
-    # Presentation <- figures + visual + references
-    presentation_issues = (
-        by_module.get("FIGURES", []) + by_module.get("VISUAL", []) + by_module.get("REFERENCES", [])
-    )
-    scores["presentation"] = _deduct_score(10, presentation_issues)
-
-    # Reproducibility (partial) <- method-related issues
+    # Reproducibility (partial) <- experiment + pseudocode issues
     scores["reproducibility_partial"] = _check_reproducibility_signals(audit_issues)
 
     # Literature Grounding (partial) <- from literature_compare.py
