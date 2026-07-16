@@ -15,6 +15,14 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from bib_scan import parse_bib_entries
+    from tex_loader import read_text_robust
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
+    from bib_scan import parse_bib_entries
+    from tex_loader import read_text_robust
+
 
 class BibTeXVerifier:
     """Verify BibTeX file integrity and completeness."""
@@ -62,38 +70,51 @@ class BibTeXVerifier:
 
     def parse(self) -> list[dict]:
         """Parse BibTeX file."""
+        self.issues = []
         try:
-            content = self.bib_file.read_text(encoding="utf-8", errors="ignore")
+            content, encoding_warning = read_text_robust(self.bib_file)
         except Exception as e:
-            self.issues.append({"type": "file_error", "message": str(e)})
+            self.issues.append(
+                {
+                    "key": "-",
+                    "type": "file_error",
+                    "severity": "error",
+                    "message": str(e),
+                }
+            )
             return []
 
-        entries = []
-        # Robust regex for entries
-        entry_pattern = r"@(\w+)\s*{\s*([^,]+)\s*,([^@]*?)(?=\n\s*@|\Z)"
-
-        for match in re.finditer(entry_pattern, content, re.DOTALL):
-            entries.append(
+        raw_entries, parse_warnings, _macros = parse_bib_entries(content)
+        entries = [
+            {
+                "type": entry["entry_type"],
+                "key": entry["key"],
+                "fields": entry["fields"],
+                "raw": entry["raw_bib"],
+            }
+            for entry in raw_entries
+        ]
+        if encoding_warning:
+            self.issues.append(
                 {
-                    "type": match.group(1).lower(),
-                    "key": match.group(2).strip(),
-                    "fields": self._parse_fields(match.group(3)),
-                    "raw": match.group(0),
+                    "key": "-",
+                    "type": "encoding_warning",
+                    "severity": "warning",
+                    "message": encoding_warning,
+                }
+            )
+        for warning in parse_warnings:
+            self.issues.append(
+                {
+                    "key": warning.get("key", "-"),
+                    "type": warning["type"],
+                    "severity": "warning",
+                    "message": warning["message"],
                 }
             )
 
         self.entries = entries
         return entries
-
-    def _parse_fields(self, fields_str: str) -> dict[str, str]:
-        fields = {}
-        # Parse field = {value} or "value" or number
-        field_pattern = r'(\w+)\s*=\s*(?:\{([^^{}]*(?:\{[^{}]*\}[^{}]*)*)\}|"([^"]*)"|(\d+))'
-        for match in re.finditer(field_pattern, fields_str):
-            name = match.group(1).lower()
-            val = match.group(2) or match.group(3) or match.group(4) or ""
-            fields[name] = val.strip()
-        return fields
 
     def verify(self) -> dict:
         if not self.entries:
@@ -102,7 +123,7 @@ class BibTeXVerifier:
         results = {
             "total_entries": len(self.entries),
             "valid_entries": 0,
-            "issues": [],
+            "issues": list(self.issues),
             "status": "PASS",
             "needs_online_check": [],
         }

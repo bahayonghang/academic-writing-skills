@@ -23,11 +23,11 @@ from typing import Callable, Optional
 
 try:
     from parsers import LatexParser, extract_title, get_parser
-    from tex_loader import assemble
+    from tex_loader import assemble, read_text_robust
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import LatexParser, extract_title, get_parser
-    from tex_loader import assemble
+    from tex_loader import assemble, read_text_robust
 
 # ── 清单解析 ─────────────────────────────────────────────────
 
@@ -169,6 +169,7 @@ TEMPLATE_THRESHOLDS: dict[str, dict[str, dict]] = {
 MODULE_COMMANDS = {
     "tables": "uv run python $SKILL_DIR/scripts/check_tables.py main.tex",
     "references": "uv run python $SKILL_DIR/scripts/check_references.py main.tex",
+    # 2026-07-01 起可改用 --standard gb7714-2025 按新国标检查。
     "bibliography": "uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714",
     "consistency": "uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms",
     "format": "uv run python $SKILL_DIR/scripts/check_format.py main.tex",
@@ -331,11 +332,14 @@ class SpecContext:
         years: list[int] = []
         if paths:
             count = 0
+            encoding_notes: list[str] = []
             for p in paths:
                 try:
-                    text = p.read_text(encoding="utf-8", errors="replace")
+                    text, warning = read_text_robust(p)
                 except OSError:
                     continue
+                if warning:
+                    encoding_notes.append(warning)
                 starts = [
                     m
                     for m in re.finditer(r"@(\w+)\s*[{(]", text)
@@ -349,7 +353,10 @@ class SpecContext:
                         ym = re.search(r"date\s*=\s*[{\"]?\s*(\d{4})", chunk)
                     if ym:
                         years.append(int(ym.group(1)))
-            return count, years, f"来源: {', '.join(p.name for p in paths)}"
+            note = f"来源: {', '.join(p.name for p in paths)}"
+            if encoding_notes:
+                note += f"；编码提示: {'; '.join(encoding_notes)}"
+            return count, years, note
         # thebibliography 环境兜底
         items = re.findall(
             r"\\bibitem(?:\[[^\]]*\])?\{[^}]*\}((?:.|\n)*?)(?=\\bibitem|\\end\{)", self.content
