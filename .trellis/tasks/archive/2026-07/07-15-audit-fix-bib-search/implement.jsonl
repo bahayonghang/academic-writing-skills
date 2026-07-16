@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/prd.md", "reason": "R1-R6 需求与 AC；范围红线（不改 SKILL.md、不改过滤语义）；与父 PRD 两处偏差声明（10:30 示例不成立、codeavailable 补项）"}
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/design.md", "reason": "D-1~D-6 逐项设计与已实测 file:line 证据；CODE_HINT_TERMS 逐词语义表（D4 交付物）；错误面契约总表；风险回滚"}
+{"file": ".trellis/tasks/07-15-audit-fix-bib-search/implement.md", "reason": "tests-first 四批次清单、每批验证命令与回滚点、收尾评审门"}
+{"file": ".trellis/tasks/07-15-skills-deep-audit-opt/prd.md", "reason": "父任务登记表 A-BIB-1..6 原始证据与处置、决策 D4（has:code 逐词界定）与 D6（last_updated 延后）、子任务排序约束"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试导入约定（skill tests 目录 sys.path）、evals.json 格式化 hook 陷阱（本任务不触碰但需知晓）、just 命令族"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 字符串锁与 router 表约定——确认本任务零改动 SKILL.md 的边界依据"}
