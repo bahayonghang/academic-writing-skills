@@ -12,6 +12,41 @@
 
 - 暂无。
 
+## [6.0.0] - 2026-07-16
+
+### Changed
+
+- 六个公开技能的 metadata 版本统一到 `6.0.0`，并同步 `paper-audit` 正文版本契约
+  （A-REL-1，`e53de88`）。
+- `paper-audit` 将深度审稿拓扑对齐到实际 committee/lane 工作流，统一普通多数公式与
+  `major + gate_blocker` 语义，并明确未自动派发的 reviewer playbook 边界
+  （A-PA-2 ~ A-PA-4，`a82ce46`）。
+
+### Fixed
+
+- `latex-paper-en` 修复多文件装配、section 别名、abstract 环境和嵌套标题提取，补齐
+  grammar/sentences/expression 的 EN/Typst 字节对齐，并清理格式检查与路由文案遗留
+  （A-EN-1 ~ A-EN-10，`f02f372`、`ae9c928`、`1b63d15`、`e6879b1`、`0ada3d5`）。
+- `typst-paper` 以 URL/字符串感知扫描器统一五份 parser 的行注释语义，并阻止多级 heading
+  内容渗入摘要（A-TY-1 ~ A-TY-2，`0979ba9`）。
+- `cover-letter` 修复 claim 计数、TeX 注释、数字单位与方向词误配、顶刊 scope 校准、
+  section 定位和模板警告，并移除本地标题解析 fork（A-CL-1 ~ A-CL-11，`7a3c1ba`）。
+- `latex-thesis-zh` 修复结论章节分类、BibTeX 平衡扫描与 GB18030 读取、多文件引用定位、
+  编译器指令优先级和嵌套标题提取，同时降低标点与缩写误报并补充 GB/T 7714-2025 路由
+  （A-ZH-1 ~ A-ZH-9，`ec3e5ba`、`eb9e60f`、`362930f`）。
+- `paper-audit` 修复 CRITICAL 严重级降级与字段兼容，接通 ScholarEval 缺失模块信号和
+  外置 BibTeX 题名比较，并以回归测试锁定延后处理的评分现状与 Typst 元数据链路
+  （A-PA-1 ~ A-PA-8，`51fc3fe`、`cbdf854`）。
+- `bib-search-citation` 修复不配对引号、非整数过滤值、`has:code` 子串误判、年份消歧后缀
+  与静默 warning 呈现，并补充含冒号自由文本的可操作提示
+  （A-BIB-1 ~ A-BIB-6，`0bbe5ca`）。
+
+### Tests and Tooling
+
+- 扩展 parser/deai/writing-module 对齐锁与六技能回归覆盖，并把多文件装配、BibTeX 扫描、
+  paper-audit 跨层边界和 UTF-8 JSON 管道约定固化到项目规范
+  （`c493486`、`0f25345`、`1dff418`、`a51c898`）。
+
 ## [5.3.0] - 2026-07-09
 
 > 当前工作区已将项目版本推进到 `5.3.0`；本节按 `5.2.0` 之后的 Git 历史整理。
