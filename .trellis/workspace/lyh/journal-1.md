@@ -912,3 +912,39 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 23: 完成 latex-thesis-zh 深审修复
+
+**Date**: 2026-07-16
+**Task**: 完成 latex-thesis-zh 深审修复
+**Branch**: `dev`
+
+### Summary
+
+完成 A-ZH-1..9：修复结论章节与嵌套标题解析、BibTeX 平衡扫描和 GB18030 读取、多文件引用定位、编译器指令优先及检查器误报；补齐回归测试与 BibTeX 维护规范，just ci 1297 passed。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ec3e5ba` | (see git log) |
+| `eb9e60f` | (see git log) |
+| `362930f` | (see git log) |
+| `0f25345` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
