@@ -180,6 +180,26 @@ R4a analyze_experiment 结构提示)两任务沿用此模式,已成为事实约�
 
 ---
 
+## Convention: latex-thesis-zh 的 BibTeX 解析必须走平衡扫描器
+
+**What**：`latex-thesis-zh/scripts/verify_bib.py` 必须通过技能内的
+`bib_scan.parse_bib_entries(content)` 解析条目，并用 `tex_loader.read_text_robust(path)`
+读取文件。禁止恢复为 `[^@]` 条目正则或 `[^{}]` 字段正则；这些表达式无法表达 BibTeX
+的平衡括号、引号、`@string` 宏和截断条目重同步语义。
+
+**Why**：正则旧实现会静默吞掉值内含 `@` 的后续条目、丢弃含 `^` 或多层花括号的字段，
+并把 GB18030 文献库乱码当成无中文条目的 PASS。各 skill 独立安装，不能从
+`bib-search-citation` 跨技能 import，因此 zh 侧保留 vendored `bib_scan.py`；修改扫描语义时
+须对照 `bib-search-citation/scripts/search_bib.py` 的同名函数，并保留 zh 所需的 warning 映射。
+
+**Tests Required**：运行
+`tests/skills/latex_thesis_zh/test_verify_bib_scanner.py`，至少锁定 `^`、值内 `@`、多层花括号、
+引号内花括号、未闭合条目 warning+resync、`@comment`/`@preamble` 跳过、`@string` 展开与
+GB18030 编码 warning；同时跑既有 gb7714 与 scripts 回归，确认 entry dict 仍为
+`type/key/fields/raw`。
+
+---
+
 ## Gotcha: 批次拟提交分组遇到跨批次同文件累积 diff 时不能照搬原分组
 
 > 来源：07-15-audit-fix-latex-paper-en（2026-07-16）。
