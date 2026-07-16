@@ -948,3 +948,39 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 24: 完成 paper-audit 深度审计修复
+
+**Date**: 2026-07-16
+**Task**: 完成 paper-audit 深度审计修复
+**Branch**: `dev`
+
+### Summary
+
+按 W1-W3 修复 CRITICAL 严重级与 schema 兼容、审稿拓扑和共识契约、ScholarEval 维度映射及外置 BibTeX 题名链路；补齐边界 spec，并通过 paper-audit、contracts 与 just ci 验证。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `51fc3fe` | (see git log) |
+| `a82ce46` | (see git log) |
+| `cbdf854` | (see git log) |
+| `1dff418` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
