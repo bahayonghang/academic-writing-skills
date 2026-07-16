@@ -221,6 +221,49 @@ This paper studies time series forecasting.
     assert "time series forecasting" in parsers_typst.extract_abstract(content)
 
 
+# ── parsers.py URL-aware line-comment stripping (A-TY-1) ──────────
+
+
+def test_typst_parsers_extract_visible_text_keeps_inline_url() -> None:
+    parser = parsers_typst.TypstParser()
+    visible = parser.extract_visible_text("See https://example.com/x for details.")
+    assert "example.com" in visible
+    assert "details" in visible
+
+
+def test_typst_parsers_extract_visible_text_keeps_url_with_double_slash_path() -> None:
+    parser = parsers_typst.TypstParser()
+    line = "https://example.com//path more prose"
+    assert parser.extract_visible_text(line) == line
+
+
+def test_typst_parsers_extract_visible_text_bare_protocol_relative_is_comment() -> None:
+    """Decision lock: a bare ``//host`` (no quotes) is Typst comment syntax."""
+    parser = parsers_typst.TypstParser()
+    assert parser.extract_visible_text("//cdn.example.com") == ""
+
+
+def test_typst_parsers_clean_text_preserves_url_and_strips_comment_lines() -> None:
+    parser = parsers_typst.TypstParser()
+    content = (
+        "See https://example.com/x for details.\n"
+        "// this whole line is a comment\n"
+        "Trailing prose after comment. // note\n"
+    )
+    cleaned = parser.clean_text(content)
+    assert cleaned == "See https://example.com/x for details.\nTrailing prose after comment."
+
+
+# ── parsers.py extract_abstract Typst heading lookahead (A-TY-2) ──
+
+
+def test_typst_parsers_extract_abstract_stops_at_any_level_heading() -> None:
+    content = "= Abstract\nWe present a method.\n== Keywords\nforecasting, transformers\n"
+    result = parsers_typst.extract_abstract(content)
+    assert result == "We present a method."
+    assert "Keywords" not in result
+
+
 # ── analyze_logic.py (WP1: Literature Review Quality for Typst) ──
 
 

@@ -425,7 +425,6 @@ class TypstParser(DocumentParser):
         r"#figure\([^)]+\)",  # Figures
         r"#table\([^)]+\)",  # Tables
         r"\$[^$]+\$",  # Math $...$
-        r"//.*",  # Line comments
         r"/\*.*?\*/",  # Block comments
         r"<[a-zA-Z0-9_-]+>",  # Labels <label>
         r"#link\([^)]+\)",  # Links
@@ -451,8 +450,7 @@ class TypstParser(DocumentParser):
         temp_line = line
 
         # Remove comments first for Typst
-        if "//" in temp_line:
-            temp_line = temp_line.split("//")[0]
+        temp_line = _strip_typst_line_comment(temp_line)
 
         preserved = []
         for pattern in self.PRESERVE_PATTERNS:
@@ -505,9 +503,11 @@ class TypstParser(DocumentParser):
         return headings
 
     def clean_text(self, content: str, keep_structure: bool = False) -> str:
-        # Remove comments
-        content = re.sub(r"//.*", "", content)
+        # Remove block comments FIRST: a per-line "//" strip would otherwise eat
+        # the "*/" terminator on lines like "still hidden // note */" and leave
+        # the block unclosed.
         content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
+        content = "\n".join(_strip_typst_line_comment(ln) for ln in content.split("\n"))
 
         # Remove math
         content = re.sub(r"\$[^$]+\$", "", content)
@@ -618,6 +618,41 @@ def _extract_template_arg(content: str, arg: str) -> str:
     if str_match:
         return _normalize_whitespace(str_match.group(1))
     return ""
+
+
+def _strip_typst_line_comment(line: str) -> str:
+    """Strip a Typst line comment, keeping ``//`` that lives inside URLs,
+    double-quoted strings, or raw-text backticks (approximates the Typst
+    lexer; block comments are handled separately by the callers)."""
+    in_string = False  # "..." code-mode strings, e.g. #link("...") args
+    in_raw = False  # `...` raw text
+    i, n = 0, len(line)
+    while i < n:
+        ch = line[i]
+        if in_string:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == '"':
+                in_string = False
+        elif in_raw:
+            if ch == "`":
+                in_raw = False
+        elif ch == '"':
+            in_string = True
+        elif ch == "`":
+            in_raw = True
+        elif ch == ":" and line.startswith("://", i):
+            # URL scheme: consume the token up to the next whitespace, so
+            # ``https://example.com//path`` never opens a comment.
+            i += 3
+            while i < n and not line[i].isspace():
+                i += 1
+            continue
+        elif ch == "/" and line.startswith("//", i):
+            return line[:i]
+        i += 1
+    return line
 
 
 def _strip_typst_markup(text: str) -> str:
@@ -736,7 +771,7 @@ def extract_abstract(content: str) -> str:
 
     # Typst heading-based abstract: "= Abstract" / "= 摘要"
     typst_heading_abs = re.search(
-        r"^=\s+(?:摘要|[Aa]bstract)\s*\n(.*?)(?=^=\s+|\Z)",
+        r"^=\s+(?:摘要|[Aa]bstract)\s*\n(.*?)(?=^=+\s+|\Z)",
         content,
         re.DOTALL | re.MULTILINE,
     )

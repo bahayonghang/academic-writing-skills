@@ -475,6 +475,14 @@ class TestParsersZh:
         headings = parser.extract_headings(content)
         assert [heading["level"] for heading in headings] == [1, 2, 3, 4]
 
+    def test_typst_parser_extract_visible_text_keeps_inline_url(self):
+        """A-TY-1: zh TypstParser is not method-locked in ALIGNMENTS, so it
+        needs its own regression for the URL-aware comment scanner."""
+        parser = parsers_zh.TypstParser()
+        visible = parser.extract_visible_text("See https://example.com/x for details.")
+        assert "example.com" in visible
+        assert "details" in visible
+
 
 # ── compile.py (zh) ───────────────────────────────────────────
 

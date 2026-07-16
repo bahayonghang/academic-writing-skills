@@ -77,6 +77,7 @@ ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("_normalize_whitespace", ["en", "zh", "typst", "audit", "cover_letter"]),
     ("_extract_balanced_block", ["en", "typst", "audit", "cover_letter"]),
     ("_strip_typst_markup", ["en", "typst", "audit", "cover_letter"]),
+    ("_strip_typst_line_comment", ["en", "zh", "typst", "audit", "cover_letter"]),
     ("_strip_latex_markup", ["en", "audit", "cover_letter"]),
     ("_strip_balanced_commands", ["en", "audit", "cover_letter"]),
     # Class-level pattern lists (data, not source)
@@ -106,6 +107,7 @@ ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("LatexParser.HEADING_LEVELS", ["en", "audit", "cover_letter"]),
     ("LatexParser.SECTION_TITLE_RULES", ["en", "audit", "cover_letter"]),
     ("LatexParser.clean_text", ["en", "audit", "cover_letter"]),
+    ("TypstParser.clean_text", ["en", "typst", "audit", "cover_letter"]),
     ("TypstParser.split_sections", ["en", "typst", "audit", "cover_letter"]),
     ("TypstParser.extract_headings", ["en", "typst", "audit", "cover_letter"]),
     ("TypstParser._classify_heading", ["en", "typst", "audit", "cover_letter"]),

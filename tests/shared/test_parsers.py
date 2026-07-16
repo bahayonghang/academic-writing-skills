@@ -77,6 +77,101 @@ def test_typst_clean_text_block_comment(typst_parser: TypstParser) -> None:
     assert typst_parser.clean_text(content) == "Hello World."
 
 
+# ── TypstParser URL-aware line-comment stripping (A-TY-1) ─────────
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "See https://example.com/x for details.",
+        "See http://example.com for details.",
+    ],
+)
+def test_typst_extract_visible_text_keeps_inline_url_and_prose(
+    typst_parser: TypstParser, line: str
+) -> None:
+    visible = typst_parser.extract_visible_text(line)
+    assert "example.com" in visible
+    assert "details" in visible
+
+
+def test_typst_extract_visible_text_keeps_url_with_double_slash_path(
+    typst_parser: TypstParser,
+) -> None:
+    """Single-ownership lock: a URL token swallows its own ``//`` path segment,
+    so the whole line (URL + trailing prose) stays visible."""
+    line = "https://example.com//path more prose"
+    assert typst_parser.extract_visible_text(line) == line
+
+
+def test_typst_extract_visible_text_link_call_hides_but_prose_visible(
+    typst_parser: TypstParser,
+) -> None:
+    line = '#link("https://example.com") hosts the code.'
+    visible = typst_parser.extract_visible_text(line)
+    assert "hosts the code." in visible
+    assert "https://example.com" not in visible
+
+
+def test_typst_extract_visible_text_link_call_with_protocol_relative_url(
+    typst_parser: TypstParser,
+) -> None:
+    line = '#link("//cdn.example.com/l.js") text'
+    assert typst_parser.extract_visible_text(line) == "text"
+
+
+def test_typst_extract_visible_text_whole_line_comment_is_empty(
+    typst_parser: TypstParser,
+) -> None:
+    assert typst_parser.extract_visible_text("// pure comment") == ""
+
+
+def test_typst_extract_visible_text_trailing_comment_stripped(
+    typst_parser: TypstParser,
+) -> None:
+    assert typst_parser.extract_visible_text("Prose here. // trailing") == "Prose here."
+
+
+def test_typst_extract_visible_text_colon_space_slash_not_a_url(
+    typst_parser: TypstParser,
+) -> None:
+    assert typst_parser.extract_visible_text("a: // comment") == "a:"
+
+
+def test_typst_extract_visible_text_bare_protocol_relative_is_comment(
+    typst_parser: TypstParser,
+) -> None:
+    """Decision lock: a bare ``//host`` (no quotes) is Typst comment syntax
+    (the compiler only auto-links ``http(s)://``), so it must vanish."""
+    assert typst_parser.extract_visible_text("//cdn.example.com") == ""
+
+
+def test_typst_extract_visible_text_raw_backtick_slashes_preserved(
+    typst_parser: TypstParser,
+) -> None:
+    line = "`code // x` prose"
+    assert typst_parser.extract_visible_text(line) == line
+
+
+def test_typst_extract_visible_text_block_comment_and_line_comment_same_line(
+    typst_parser: TypstParser,
+) -> None:
+    line = "/* hidden */ prose // note"
+    assert typst_parser.extract_visible_text(line) == "prose"
+
+
+def test_typst_clean_text_preserves_url_and_strips_comment_lines(
+    typst_parser: TypstParser,
+) -> None:
+    content = (
+        "See https://example.com/x for details.\n"
+        "// this whole line is a comment\n"
+        "Trailing prose after comment. // note\n"
+    )
+    cleaned = typst_parser.clean_text(content)
+    assert cleaned == "See https://example.com/x for details.\nTrailing prose after comment."
+
+
 def test_extract_title_and_abstract_for_latex() -> None:
     content = r"""
 \documentclass{article}
@@ -121,6 +216,20 @@ We evaluate robustness under noise.
 def test_extract_abstract_for_typst_with_markup() -> None:
     content = "#abstract[We present #emph[a robust] pipeline.]"
     assert extract_abstract(content) == "We present a robust pipeline."
+
+
+def test_extract_abstract_typst_heading_stops_at_any_level_heading() -> None:
+    """A-TY-2: a sub-heading like ``== Keywords`` must terminate capture too,
+    not just a level-1 heading."""
+    content = "= Abstract\nWe present a method.\n== Keywords\nforecasting, transformers\n"
+    result = extract_abstract(content)
+    assert result == "We present a method."
+    assert "Keywords" not in result
+
+
+def test_extract_abstract_typst_heading_level1_still_stops_capture() -> None:
+    content = "= Abstract\nWe present a method.\n= Introduction\nIntro text.\n"
+    assert extract_abstract(content) == "We present a method."
 
 
 def test_extract_latex_citation_keys_with_optional_args() -> None:

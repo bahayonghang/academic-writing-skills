@@ -318,7 +318,6 @@ class TypstParser(DocumentParser):
         r"#figure\([^)]+\)",
         r"#table\([^)]+\)",
         r"\$[^$]+\$",
-        r"//.*",
         r"/\*.*?\*/",
         r"<[a-zA-Z0-9_-]+>",
         r"#link\([^)]+\)",
@@ -341,8 +340,7 @@ class TypstParser(DocumentParser):
 
     def extract_visible_text(self, line: str) -> str:
         temp_line = line
-        if "//" in temp_line:
-            temp_line = temp_line.split("//")[0]
+        temp_line = _strip_typst_line_comment(temp_line)
 
         preserved = []
         for pattern in self.PRESERVE_PATTERNS:
@@ -398,6 +396,41 @@ def get_parser(file_path: Any) -> DocumentParser:
 def _normalize_whitespace(text: str) -> str:
     """Collapse whitespace to single spaces."""
     return re.sub(r"\s+", " ", text).strip()
+
+
+def _strip_typst_line_comment(line: str) -> str:
+    """Strip a Typst line comment, keeping ``//`` that lives inside URLs,
+    double-quoted strings, or raw-text backticks (approximates the Typst
+    lexer; block comments are handled separately by the callers)."""
+    in_string = False  # "..." code-mode strings, e.g. #link("...") args
+    in_raw = False  # `...` raw text
+    i, n = 0, len(line)
+    while i < n:
+        ch = line[i]
+        if in_string:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == '"':
+                in_string = False
+        elif in_raw:
+            if ch == "`":
+                in_raw = False
+        elif ch == '"':
+            in_string = True
+        elif ch == "`":
+            in_raw = True
+        elif ch == ":" and line.startswith("://", i):
+            # URL scheme: consume the token up to the next whitespace, so
+            # ``https://example.com//path`` never opens a comment.
+            i += 3
+            while i < n and not line[i].isspace():
+                i += 1
+            continue
+        elif ch == "/" and line.startswith("//", i):
+            return line[:i]
+        i += 1
+    return line
 
 
 def _strip_latex_markup(text: str) -> str:
