@@ -30,6 +30,38 @@ Extended routing guidance for `latex-paper-en`. The SKILL.md keeps only the core
 - For `literature`, default to diagnosis + rewrite blueprint first; only produce paragraph-level rewriting when the user explicitly asks for prose.
 - For `section-writing`, return a section objective, compact outline, paragraph roles, rewrite blueprint or prose proposal, claim-evidence map, and self-review checklist. Mark missing evidence instead of filling it.
 
+## Rewrite contract scope
+
+The single test is: **does the module emit text that can directly replace the source?** If it only emits an instruction about how to change something, the rewrite happens on the LLM side and only the `[LLM]` layer applies. The three groups are listed explicitly — do not extend the contract to a module because it "looks like polishing".
+
+- **Contract applies (`[Script]` + `[LLM]` layers)**: `expression`, `grammar`, `sentences`, `translation`.
+- **`[LLM]` layer only** (no script, or the script emits instructions rather than replacement text): `section-writing`, `caption`, `adapt`, `deai`. `deai` output such as `-> Suggestion: vary sentence length` is a behavioural instruction; the rewrite the LLM derives from it carries the `[LLM]`-layer fields.
+- **Excluded — no contract block at all**: `compile`, `format`, `bibliography`, `figures`, `tables`, `pseudocode`, `logic`, `literature`, `experiment`, `abstract`, `title`. These are diagnostic; adding the fields there is noise.
+
+### Layer rules
+
+- `[Script]` may emit `Meaning-Check: NEEDS-LLM` only, and may set only `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`. A rule engine that claims `PRESERVED` manufactures a false guarantee, which is worse than no contract at all.
+- `[LLM]` may emit `PRESERVED` plus the full `Risk-Flags` closed set, but `PRESERVED` stays a proposal for the author to verify.
+- `Risk-Flags` is a closed set: `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, `overstatement`, `ambiguity`, `terminology-drift`, `invented-claim`. Do not invent new values.
+- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement` and cite `references/evidence/over-claim-guard.md` plus the four-level reporting-verb ladder in `references/writing/style-guide.md`.
+- When the source meaning is genuinely unclear, flag `ambiguity` and offer the conservative reading — never silently pick the stronger one.
+
+### Edit axes and asking boundary
+
+- `--goal grammar|clarity|concision|coherence` is what the edit is for; `--strength minimal|moderate|restructure` is how far it may go. They are orthogonal: `--goal concision --strength minimal` and `--goal coherence --strength restructure` are both valid. `--goal` is not a severity ladder.
+- Strength semantics, identical across skills:
+
+| Value         | May change                                                  | Must not change                              |
+| ------------- | ----------------------------------------------------------- | -------------------------------------------- |
+| `minimal`     | Wording, punctuation, clear grammar errors                  | Sentence structure, paragraph order          |
+| `moderate`    | Above, plus splitting/merging sentences, reordering clauses | Paragraph order, adding or removing claims   |
+| `restructure` | Above, plus paragraph order and topic-sentence placement    | Adding or removing claims (always forbidden) |
+
+- All three levels stay under the core rule: never add a claim, mechanism, citation, result, limitation, method, or authorial intent that is not in the source.
+- Defaults are `--goal grammar` and `--strength minimal` — the smallest change that solves the task.
+- This does not turn into a questionnaire. The existing rule still holds: infer the module, do not ask by default. Ask about goal, strength, or author intent only when the answer would change this edit — for example when a sentence is ambiguous enough that two readings produce different rewrites.
+- `--tier` keeps its existing meaning: `deai` detection sensitivity (light flags fewer items, heavy flags more). It is never reused as an edit-strength control, and the two vocabularies deliberately do not overlap.
+
 ## Safety rationale (full text)
 
 - Don't invent citations, metrics, baselines, or experimental results — fabricated evidence is harder to retract once the user trusts it than a clearly flagged gap.

@@ -17,11 +17,19 @@ uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introdu
 
 **输出格式**:
 ```typst
-// LONG SENTENCE (Line 45, 67 words, 5 clauses) [Severity: Minor] [Priority: P2]
+// LONG SENTENCE (Line 45, 67 words, 5 clauses) [Severity: Minor] [Priority: P2] [Script]
 // Original: ...
 // Suggested: ...
 // Rationale: Sentence exceeds complexity threshold, split for readability.
+// Changed:       split proposal only; source not rewritten
+// Protected:     none
+// Meaning-Check: NEEDS-LLM
+// Risk-Flags:    not-assessed
 ```
+
+**改写契约**：本模块产出具体的 `Suggested:` 句子，适用改写契约。字段名保持 `Suggested:`（它是提案而非已应用的编辑），四个契约字段追加其后。`[Script]` 层恒为 `Meaning-Check: NEEDS-LLM`，`Risk-Flags` 常态为 `not-assessed`——拆句正是语义最容易悄悄漂移的地方。只有 `[LLM]` 层可提出 `PRESERVED`。字段定义与 `Risk-Flags` 闭集见 `references/skill-routing-notes.md`。
+
+**不得升高措辞强度或凭空补连接关系**：把并列陈述拆成因果链（`we did X; Y improved` → `Y improved because of X`）等于新增论断。保持原有关系，或置 `Risk-Flags: overstatement`。判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。
 
 **拆分策略**:
 1. 识别主干结构

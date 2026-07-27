@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "质检首项：test_writing_modules_alignment 三组哈希必须一致；确认未越权改 parsers.py / deai_check.py / analyze_abstract.py"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "质检：B 档降级的存量用例是否同 commit 更新、commit message 是否双声明；测试是否用 tests.support.paths"}
+{"file": ".trellis/tasks/07-27-polish-en-expression-fix/design.md", "reason": "验收对照 A/B/C 三档分级表与保护 token 分级：确认无 C 档项被误实现为自动检出（尤其基因/化学名不得引入词典）"}

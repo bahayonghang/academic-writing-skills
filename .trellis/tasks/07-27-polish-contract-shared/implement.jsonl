@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "契约测试写法：新测试路径常量从 tests.support.paths 导入；SKILL.md 改动触发 ROUTER_ROW_RE；本任务只断言文档不断言脚本输出"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "references/ 增删会联动双语 VitePress manifest 与侧栏检查器——C1 要在六个模块文档加 over-claim 指针，须确认不破坏资源契约"}
+{"file": ".trellis/tasks/07-27-polish-capability-upgrade/prd.md", "reason": "父任务 D1-D5 五项 Scope Decision 与 findings 更正（P1-3 的「并非不可达」、P1-2 的三轴区分）是本任务 design 的事实源"}

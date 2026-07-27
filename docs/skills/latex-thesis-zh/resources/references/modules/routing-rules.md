@@ -9,6 +9,39 @@ The “Routing Rules” section in SKILL.md gives the serial order and pointers;
 - When polishing the same passage in several rounds, work from coarse to fine in the order “argument/logic -> sentence structure -> vocabulary/typesetting.” Do not reverse the order; see `references/writing/writing-philosophy-zh.md`.
 - When a script fails, return the exact command, exit code, and key error before proposing the smallest next step. Do not silently switch modules to hide the failure.
 
+## Rewrite Contract Scope
+
+There is only one test: **does the module emit text that can directly replace the source?** If it emits only an instruction about how to change something, the rewrite happens on the LLM side and only the `[LLM]` layer applies. The three groups are listed explicitly — do not add a contract block to a module because it "looks like polishing."
+
+- **Contract applies (`[Script]` + `[LLM]` layers)**: `expression`.
+- **`[LLM]` layer only** (no script, or the script emits instructions rather than replacement text): `deai`. Its `-> 建议: 长短句交替` output is a behavioural instruction; the rewrite the LLM derives from it carries the `[LLM]`-layer fields.
+- **Excluded — no contract block at all**: `compile`, `format`, `structure`, `consistency`, `template`, `bibliography`, `references`, `tables`, `title`, `logic`, `literature`, `experiment`, `abstract`, `conclusion`, `spec-check`, `blind-review`. These are diagnostic modules; adding the fields there only creates noise.
+
+### Layer Rules
+
+- The `[Script]` layer may set only `Meaning-Check: NEEDS-LLM`, and only the four rule-determinable flags `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`. A rule engine that affirmatively claims `PRESERVED` manufactures a false guarantee, which is worse than having no contract at all.
+- The `[LLM]` layer may set `PRESERVED` and any value in the `Risk-Flags` closed set, but `PRESERVED` always remains a proposal for the author to verify.
+- `Risk-Flags` is a closed set: `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, `overstatement`, `ambiguity`, `terminology-drift`, `invented-claim`. Do not invent new values.
+- A rewrite must never raise claim strength. When the strength changes, set `Risk-Flags: overstatement` and cite `references/writing/over-claim-guard.md`; do not build a new replacement table.
+- When the source meaning is genuinely unclear, set `ambiguity` and offer the conservative version — never silently pick the stronger reading.
+- `NEEDS-LLM` keeps the meaning it already has in `check_spec.py` (`PASS | FAIL | NEEDS-LLM | MODULE | MANUAL | SKIP`): this layer cannot decide, so an upper LLM or human review is required.
+
+### Edit Axes and the Asking Boundary
+
+- `--goal grammar|clarity|concision|coherence` is what this edit is for; `--strength minimal|moderate|restructure` is how deep it may go. The two axes are orthogonal: `--goal concision --strength minimal` and `--goal coherence --strength restructure` are both valid combinations, and `--goal` is not a severity ladder.
+- Strength semantics (identical across skills):
+
+| Value         | May change                                                  | Must not change                              |
+| ------------- | ----------------------------------------------------------- | -------------------------------------------- |
+| `minimal`     | Wording, punctuation, clear grammar errors                  | Sentence structure, paragraph order          |
+| `moderate`    | Above, plus splitting/merging sentences, reordering clauses | Paragraph order, adding or removing claims   |
+| `restructure` | Above, plus paragraph order and topic-sentence placement    | Adding or removing claims (red line, always) |
+
+- All three levels are bound by the core rule: none of them may add a claim, mechanism, citation, result, limitation, method, or authorial intent that is absent from the source.
+- The defaults are `--goal grammar` and `--strength minimal`, the smallest change that solves the problem.
+- This does not become a fixed questionnaire. The existing rule still holds: infer the module automatically, do not ask by default. Ask about the edit goal, edit strength, or authorial intent only when the answer would change this edit — for example when a sentence is ambiguous enough that two readings produce different rewrites.
+- `--tier` keeps its meaning: `deai` detection sensitivity (light reports fewer items, heavy reports more). It is never repurposed as an edit-strength control, and the two vocabularies deliberately do not overlap.
+
 ## Criteria by Request Type
 
 - Use `references` for “reference to a nonexistent figure/table,” “unreferenced figure/table,” “numbering gap,” or “missing figure/table caption” (cross-reference integrity, a frequent blind-review deduction). Problems in bibliography entries themselves still use `bibliography`.

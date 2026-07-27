@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-16"
+  last_updated: "2026-07-27"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -87,8 +87,12 @@ Not for: drafting a paper from scratch; literature research without a paper proj
 - Optional `--section SECTION` when the request is section-specific.
 - Optional bibliography path when the request targets references.
 - Optional venue/context when the user cares about IEEE, ACM, Springer, NeurIPS, or ICML conventions.
+- Optional edit axes for rewrite modules — two orthogonal axes, never a single ladder:
+  - `--goal grammar|clarity|concision|coherence` — what the edit is for (default `grammar`).
+  - `--strength minimal|moderate|restructure` — how far the edit may go (default `minimal`, the smallest change that solves the task).
+  - `--tier light|medium|heavy` is unrelated: it is `deai` detection sensitivity, never an edit-strength control.
 
-If arguments are missing, preserve the inferred module and ask only for the missing file path, section, bibliography path, or venue context.
+If arguments are missing, preserve the inferred module and ask only for the missing file path, section, bibliography path, or venue context. Ask about goal, strength, or author intent only when the answer would change this edit — never as a fixed questionnaire.
 
 ## Output Contract
 
@@ -96,6 +100,24 @@ If arguments are missing, preserve the inferred module and ask only for the miss
 - Report the exact command used and the exit code when a script fails.
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments unless the user explicitly asks for source edits.
 - Module-specific contracts for `literature` and `section-writing`: see `references/modules/routing-rules.md`.
+
+### Rewrite Contract
+
+Applies only to modules that emit concrete replacement text: `expression`, `grammar`, `sentences`, `translation`. Diagnostic-only modules keep the plain finding format; the full three-way scope split (contract / LLM-layer-only / excluded) is listed in `references/modules/routing-rules.md`.
+
+Append these four fields to every rewrite block:
+
+```latex
+% Changed:       <verifiable edit facts, or none>
+% Protected:     <protected tokens skipped on this line, or none>
+% Meaning-Check: <PRESERVED | NEEDS-LLM>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+```
+
+- `[Script]` layer: `Meaning-Check` is always `NEEDS-LLM`. A rule engine cannot judge meaning, so `[Script]` must never emit `Meaning-Check: PRESERVED`. It may set only the rule-determinable flags `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, and falls back to `not-assessed` when nothing else is determinable.
+- `[LLM]` layer: may set `Meaning-Check: PRESERVED` and any flag in the closed set, but `PRESERVED` is a proposal the author must still verify, never a verified fact.
+- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement`; the judgement criteria live in `references/evidence/over-claim-guard.md`, linked from each polish module doc.
+- `deai` emits behavioural instructions, not replacement text; a rewrite the LLM derives from them falls under the `[LLM]` layer.
 
 ## Workflow
 

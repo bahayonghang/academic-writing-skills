@@ -34,11 +34,19 @@ uv run python ../scripts/improve_expression.py main.typ --section methods
 
 **备选格式**（源码内注释）:
 ```typst
-// EXPRESSION（第23行）[Severity: Minor] [Priority: P2]: 提升学术语气
+// EXPRESSION（第23行）[Severity: Minor] [Priority: P2] [Script]: 提升学术语气
 // 原文：We use machine learning to get better results.
 // 修改后：We employ machine learning to achieve superior performance.
 // 理由：用学术替代词替换弱动词
+// Changed:       1 lexical substitution (get -> achieve)
+// Protected:     none
+// Meaning-Check: NEEDS-LLM
+// Risk-Flags:    lexical-substitution
 ```
+
+**改写契约**：本模块产出可直接替换原文的文本，适用改写契约。`[Script]` 层输出恒为 `Meaning-Check: NEEDS-LLM`，且只允许置规则可确定的标记（`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`）；只有 `[LLM]` 层可提出 `PRESERVED`，且仍是待作者核对的提案。字段定义与 `Risk-Flags` 闭集见 `references/skill-routing-notes.md`。
+
+**不得升高措辞强度**：把留有余地的表述换成更强的断言（`suggests` → `demonstrates`、`可能` → `能够`）是过度声称，不是语气提升。保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。
 
 参考：[STYLE_GUIDE.md](../references/STYLE_GUIDE.md)
 

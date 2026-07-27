@@ -24,7 +24,7 @@ metadata:
       structure,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-16"
+  last_updated: "2026-07-27"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -64,7 +64,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | `structure`    | Need chapter/section map or thesis skeleton overview                                                                                                                                                                                                                                                                                              | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                                 | `references/writing/structure-guide.md`                                                                    |
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                                                                                                                                                                                                                                             | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`                     | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                                                                                                                                                                                                                                                | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                               | `references/modules/template.md`                                                                           |
-| `bibliography` | GB/T 7714 or BibTeX validation（2026-07-01 起可加 `--standard gb7714-2025` 按新国标检查）                                                                                                                                                                                                                                                          | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
+| `bibliography` | GB/T 7714 or BibTeX validation（2026-07-01 起可加 `--standard gb7714-2025` 按新国标检查）                                                                                                                                                                                                                                                         | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
 | `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                                                                                                                                                                                                                                             | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`             | `references/modules/title.md`                                                                              |
 | `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                                                                                                                                                                                                                                                 | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`             | `references/modules/deai.md`                                                                               |
 | `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure; intro mainline checks (`--intro-mainline`); process-chapter mainline checks (`--process-chapter`); paper-stitching sweep (default) and chapter-intro bridging tiers (`--first-chapter` for single-chapter files) | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                                 | `references/modules/logic.md`                                                                              |
@@ -88,7 +88,11 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 - 论文入口文件，例如 `main.tex`（多文件工程自动解析 `\input`/`\include`）。
 - 可选：`--section SECTION`（英文键与中文章节名均可）、bibliography 路径、学校/模板上下文（`thuthesis`、`pkuthss` 等）。
-- 参数不完整时，保留已推断模块，只追问缺失项，不额外扩展问题。
+- 可选的编辑轴（仅改写类模块），两轴正交，不是同一条阶梯：
+  - `--goal grammar|clarity|concision|coherence` —— 这次编辑要解决什么（默认 `grammar`）。
+  - `--strength minimal|moderate|restructure` —— 允许改到多深（默认 `minimal`，即能解决问题的最小改动）。
+  - `--tier light|medium|heavy` 与二者无关：它是 `deai` 的检测灵敏度，绝不用作编辑幅度控制。
+- 参数不完整时，保留已推断模块，只追问缺失项，不额外扩展问题。编辑目标、编辑幅度、作者原意只在答案会改变本次编辑时才追问，不得变成固定问卷。
 
 ## Output Contract
 
@@ -96,6 +100,24 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 明确给出执行的命令；脚本失败必须报告退出码和关键 stderr。
 - “检查结果”和“建议改写”分开陈述；默认保留 `\cite{}`、`\ref{}`、`\label{}`、数学环境、参考文献键和模板宏命令。
 - `literature` 模块默认只给诊断与重写蓝图，用户明确要求才给段落级改写。
+
+### Rewrite Contract
+
+仅适用于产出可直接替换原文的具体文本的模块：`expression`。纯诊断模块保持原有挑错格式；契约适用范围三分法（纳入 / 仅 LLM 层 / 排除）逐项列在 `references/modules/routing-rules.md`。
+
+每个改写块追加以下四个字段（字段名保持英文标识符，说明文本用中文）：
+
+```latex
+% Changed:       <脚本可验证的变更事实，或 none>
+% Protected:     <本行内被识别并跳过的受保护 token，或 none>
+% Meaning-Check: <PRESERVED | NEEDS-LLM>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+```
+
+- `[Script]` 层：`Meaning-Check` 恒为 `NEEDS-LLM`。规则脚本没有语义判定能力，因此 `[Script]` 绝不得输出 `Meaning-Check: PRESERVED`。只允许置规则可确定的标记 `none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`；无其他可确定标记时兜底置 `not-assessed`。
+- `[LLM]` 层：可置 `Meaning-Check: PRESERVED` 与闭集内任一标记，但 `PRESERVED` 是待作者核对的**提案**，不是已验证的事实。
+- 改写不得升高措辞强度。强度发生变化时置 `Risk-Flags: overstatement`；判据见 `references/writing/over-claim-guard.md`，各润色模块文档均有指针。
+- `deai` 产出的是行为指令而非替换文本；LLM 依其指令产出的改写适用 `[LLM]` 层契约。
 
 ## Workflow
 

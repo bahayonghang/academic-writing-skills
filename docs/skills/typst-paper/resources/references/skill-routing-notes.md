@@ -15,6 +15,38 @@ Extended guidance moved verbatim from `SKILL.md`. Read when routing is ambiguous
 - Keep `pseudocode` for `algorithm-figure`, `algorithmic`, `lovelace`, caption, wrapper, and IEEE-like style-hook issues even when the user phrases them as formatting problems.
 - If a command fails, report the exact command and exit code before suggesting the next fallback; do not silently replace a failed script run with a generic prose review.
 
+## Rewrite contract scope
+
+The single test is: **does the module emit text that can directly replace the source?** If it only emits an instruction about how to change something, the rewrite happens on the LLM side and only the `[LLM]` layer applies. The three groups are listed explicitly — do not extend the contract to a module because it "looks like polishing".
+
+- **Contract applies (`[Script]` + `[LLM]` layers)**: `expression`, `grammar`, `sentences`, `translation`.
+- **`[LLM]` layer only** (no script, or the script emits instructions rather than replacement text): `adapt`, `deai`. `deai` output such as `-> Suggestion: vary sentence length` is a behavioural instruction; the rewrite the LLM derives from it carries the `[LLM]`-layer fields.
+- **Excluded — no contract block at all**: `compile`, `format`, `bibliography`, `tables`, `references`, `pseudocode`, `logic`, `literature`, `experiment`, `abstract`, `title`. These are diagnostic; adding the fields there is noise.
+
+### Layer rules
+
+- `[Script]` may emit `Meaning-Check: NEEDS-LLM` only, and may set only `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`. A rule engine that claims `PRESERVED` manufactures a false guarantee, which is worse than no contract at all.
+- `[LLM]` may emit `PRESERVED` plus the full `Risk-Flags` closed set, but `PRESERVED` stays a proposal for the author to verify.
+- `Risk-Flags` is a closed set: `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, `overstatement`, `ambiguity`, `terminology-drift`, `invented-claim`. Do not invent new values.
+- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement` and cite `references/OVER_CLAIM_GUARD.md` plus the reporting-verb ladder in `references/STYLE_GUIDE.md`.
+- When the source meaning is genuinely unclear, flag `ambiguity` and offer the conservative reading — never silently pick the stronger one.
+
+### Edit axes and asking boundary
+
+- `--goal grammar|clarity|concision|coherence` is what the edit is for; `--strength minimal|moderate|restructure` is how far it may go. They are orthogonal: `--goal concision --strength minimal` and `--goal coherence --strength restructure` are both valid. `--goal` is not a severity ladder.
+- Strength semantics, identical across skills:
+
+| Value         | May change                                                  | Must not change                              |
+| ------------- | ----------------------------------------------------------- | -------------------------------------------- |
+| `minimal`     | Wording, punctuation, clear grammar errors                  | Sentence structure, paragraph order          |
+| `moderate`    | Above, plus splitting/merging sentences, reordering clauses | Paragraph order, adding or removing claims   |
+| `restructure` | Above, plus paragraph order and topic-sentence placement    | Adding or removing claims (always forbidden) |
+
+- All three levels stay under the core rule: never add a claim, mechanism, citation, result, limitation, method, or authorial intent that is not in the source.
+- Defaults are `--goal grammar` and `--strength minimal` — the smallest change that solves the task.
+- This does not turn into a questionnaire. The existing rule still holds: infer the module, do not ask by default. Ask about goal, strength, or author intent only when the answer would change this edit — for example when a sentence is ambiguous enough that two readings produce different rewrites.
+- `--tier` keeps its existing meaning: `deai` detection sensitivity (light flags fewer items, heavy flags more). It is never reused as an edit-strength control, and the two vocabularies deliberately do not overlap.
+
 ## Triggering scenarios (full list)
 
 Use this skill when the user has an existing `.typ` paper project and wants help with:
