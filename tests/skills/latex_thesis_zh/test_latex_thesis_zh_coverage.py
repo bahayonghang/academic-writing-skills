@@ -110,6 +110,7 @@ SMOKE_COMMANDS = [
         "规范逐项终检报告",
     ),
     ("blind_review.py", ["main.tex", "--check"], {1}, "盲审匿名化检查报告"),
+    ("check_style_zh.py", ["main.tex"], {0}, "中文表达检查（expression）"),
 ]
 
 

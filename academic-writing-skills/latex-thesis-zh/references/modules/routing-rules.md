@@ -60,5 +60,11 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
 - 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。
+- 涉及“这段太口语，改学术一点”“句子太长太绕，帮我理顺”“搭配读着别扭”“中英标点混着用”“数值和单位怎么写”“概数用不用汉字”时走 `expression`：`check_style_zh.py` 跑九个 E-* 检查器（`E-COLLOQ`/`E-ABSOLUTE`/`E-COLLOC`/`E-INCOMP`/`E-PUNCT`/`E-NUMSPACE`/`E-UNITFONT`/`E-NUMSTYLE`/`E-LONGSENT`），规则真相源是 `references/writing/academic-style-zh.md`，数字与单位另见 `references/formatting/number-unit-guide-zh.md`。分档表与逐检查器排除条件见 `references/modules/expression.md`。五条边界（每条都有既有 owner，重造必冲突）：
+  - vs `abstract`：**人称（我们/本文）不归 `expression`**。第一人称走 `analyze_abstract.py` 的 T-VOICE，首句是否定位研究对象走 T-OPEN，两者维度不同。`check_style_zh.py` 不实现任何人称检查。
+  - vs `over-claim-guard`：`expression` 的 `E-ABSOLUTE` 只做**词汇层**替换建议（显然/必然/最好…）；论断强度分级仍归 `references/writing/over-claim-guard.md`，不重复实现。
+  - vs `spec-check` YS-36：`expression` 只做通用可判定的数字项（数值与单位间距、单位正斜体、概数/序数用字）；模板专属的完整数字规范终检归 YS-36（判定方式 `llm`）。定稿前逐项终检走 `spec-check`，两者不重复报告同一问题。
+  - vs `deai` D1：`expression` 的 `E-LONGSENT` 量的是**单句可读性长度**；`deai` D1（需 `--tier`）量的是**句长变异系数 CV 过低**＝机械均匀的 AI 痕迹。两者语义不同，不报同一条 finding。
+  - vs `logic`：段落顺序、论证结构、章节主线不在 `expression`，仍走 `logic`。
 - 涉及“对照学校规范逐项检查”“终检/定稿检查/毕业前格式自查”“规范符合性”时走 `spec-check`：先确认学校与学位（燕山大学用 `--template yanshan`，清华/北大/无专用模板分别用 `--template thuthesis|pkuthss|generic`，四份模板快照均带逐项清单）；模板未识别且无清单时，请用户提供学校名或规范文件（整理成 `--spec-file` 清单）。脚本报告中 NEEDS-LLM 项按 `references/modules/spec-check.md` 第 4 步逐项判读，MODULE 项执行对应模块命令，MANUAL 项以“打印前自查单”原样交付，不要替用户宣称版式已符合。
 - 涉及“盲审”“外审”“送审版本”“匿名版/隐名”“隐去姓名/致谢”时走 `blind-review`：`--check` 定位泄露点（能拿到姓名时加 `--author`/`--supervisor` 全文扫描）；生成盲审版先 `--generate --dry-run` 给用户确认计划再生成——只写 `_blind` 副本、原文件字节不变；副本中 `TODO-BLIND(R2)` 成果条目与姓名句由你按 `references/modules/blind-review.md` 给出 `[LLM]` 改写建议、用户确认后落入副本（署名次序是事实，不得推断）。只问格式合规仍走 `spec-check`。

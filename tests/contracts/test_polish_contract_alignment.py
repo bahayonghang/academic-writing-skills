@@ -174,10 +174,13 @@ def test_routing_docs_restrict_script_layer_to_determinable_flags() -> None:
 
 def test_routing_docs_list_an_explicit_exclusion_set() -> None:
     for skill, path in ROUTING_DOC.items():
+        # Anchor on the bolded list marker, not on the bare word: "排除" also
+        # appears in per-checker exclusion notes, which would drag unrelated
+        # backticked names into the set.
         excluded_lines = [
             line
             for line in _read(path).splitlines()
-            if ("Excluded" in line or "排除" in line) and "`" in line
+            if ("**Excluded" in line or "**排除" in line) and "`" in line
         ]
         assert excluded_lines, f"{skill}: no explicit exclusion list in the routing doc"
         modules = set()

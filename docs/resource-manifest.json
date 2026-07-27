@@ -931,6 +931,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/formatting/number-unit-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a3100c5fc7ad41991939f6f6f5bc2a5706e4e755073c006b57f48893a0cd5084",
+      "en": "docs/skills/latex-thesis-zh/resources/references/formatting/number-unit-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/number-unit-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/formatting/table-guide.md",
       "sourceLocale": "en",
       "sourceSha256": "b2f224b5f5a605353730266e7dcb363dcf21eafb1607002d9c9076887826519f",
@@ -1021,6 +1030,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/expression.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "1f00350f8b975e430d814081062da7c7eda1d86223376a9fc795bfd1555114fd",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/expression.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/expression.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/format.md",
       "sourceLocale": "zh",
       "sourceSha256": "5e1d76fed56d4db80130fd68c852a0ff9c6e5939928274ceaa2f36ef984d3990",
@@ -1059,7 +1077,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "a00aadd53fc455cc9f4fe87b3cf58af3321a7d7f0c7b8e4c0ff1688dff0fac06",
+      "sourceSha256": "7916cef06d9e5c902fd4ae770ab4132d2ede226ef9ec804fa6915e1dba2bc524",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
