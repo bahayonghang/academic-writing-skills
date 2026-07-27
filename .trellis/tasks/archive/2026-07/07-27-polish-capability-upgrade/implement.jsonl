@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "三把对齐锁的总纲：TIER1_HASH_GROUPS 要求 analyze_grammar/sentences/improve_expression/analyze_abstract 在 en+typst 整文件字节一致——这是 typst-paper 被强制纳入 C2 的唯一依据；另含 parsers ALIGNMENTS 与 deai strict/logic 双锁"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "跨子任务共用的工具链约定：测试路径常量从 tests.support.paths 取、zh/typst 副本走 importlib 按路径加载、SKILL.md 改动必跑 test_skill_contracts（ROUTER_ROW_RE）、evals.json 禁 Edit/Write、pytest 禁加 PYTHONIOENCODING"}
+{"file": ".trellis/tasks/07-27-polish-capability-upgrade/implement.md", "reason": "模块所有权矩阵与执行顺序：判定「是否纳入契约」的唯一标准是产出具体改写文本；deai 三副本因只出指令而不改——子任务开工前须确认自己的 owner 边界"}

@@ -13,12 +13,24 @@ uv run python -B scripts/translate_academic.py input_zh.txt --domain industrial-
 
 ## 原始脚本输出
 
-该脚本返回三个部分：
+该脚本返回四个部分：
 - 术语确认表
 - 翻译草稿
 - 不明确的注释可能需要手动确认
+- 一个 `### Contract` 块，携带与注释流模块相同的四个字段
 
-受保护的片段，例如`\cite{...}`, `\ref{...}`， 和`$...$`应在翻译草案中保留逐字保留。
+受保护的片段，例如 `\cite{...}`、`\ref{...}` 和 `$...$`，在翻译前被遮蔽、在草稿中逐字还原；数量报告在 `Protected` 里。
+
+```markdown
+### Contract
+- Changed: rule-based draft translation (2 glossary term(s) applied)
+- Protected: 3 LaTeX/math span(s) masked and restored verbatim
+- Meaning-Check: NEEDS-LLM
+- Risk-Flags: not-assessed
+- Envelope: goal=grammar strength=minimal
+```
+
+规则草稿永远不是成品译文：`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度（例如把留有余地的中文动词译成 `demonstrates`）同样属于过度声称——见 [over-claim-guard.md](../evidence/over-claim-guard.md)。字段定义见 [routing-rules.md](routing-rules.md)。
 
 ## 技能层响应
 

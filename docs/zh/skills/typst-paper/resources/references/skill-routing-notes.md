@@ -15,6 +15,38 @@
 - 保持`pseudocode`为了`algorithm-figure`, `algorithmic`, `lovelace`、标题、包装器和类似 IEEE 的样式挂钩问题，即使用户将其表述为格式问题。
 - 如果命令失败，请报告确切的命令和退出代码，然后再建议下一个回退；不要默默地用通用的散文评论替换失败的脚本运行。
 
+## 改写契约适用范围
+
+判定标准只有一条：**该模块是否产出可直接替换原文的文本？** 若它只产出关于如何修改的指令，则改写发生在 LLM 侧，只适用 `[LLM]` 层。三组逐项列出——不要因为某个模块"看起来像润色"就给它加契约。
+
+- **纳入契约（`[Script]` + `[LLM]` 两层）**：`expression`、`grammar`、`sentences`、`translation`。
+- **仅 `[LLM]` 层**（无脚本，或脚本只出指令不出替换文本）：`adapt`、`deai`。`deai` 的 `-> Suggestion: vary sentence length` 这类输出是行为指令；LLM 依此产出的改写带 `[LLM]` 层字段。
+- **排除——完全不加契约段**：`compile`、`format`、`bibliography`、`tables`、`references`、`pseudocode`、`logic`、`literature`、`experiment`、`abstract`、`title`。这些是纯诊断模块，加字段只是噪音。
+
+### 分层规则
+
+- `[Script]` 只能置 `Meaning-Check: NEEDS-LLM`，且只能置 `none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`。规则脚本若声称 `PRESERVED`，等于制造虚假保证，比没有契约更糟。
+- `[LLM]` 可置 `PRESERVED` 与 `Risk-Flags` 全闭集，但 `PRESERVED` 始终是待作者核对的提案。
+- `Risk-Flags` 是闭集：`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`、`overstatement`、`ambiguity`、`terminology-drift`、`invented-claim`。不得发明新取值。
+- 改写不得升高措辞强度。强度变化时置 `Risk-Flags: overstatement`，并引用 `references/OVER_CLAIM_GUARD.md` 与 `references/STYLE_GUIDE.md` 中的报告动词阶梯。
+- 原文含义确实不清时，置 `ambiguity` 并给出保守读法——绝不静默选择更强的那一种。
+
+### 编辑轴与追问边界
+
+- `--goal grammar|clarity|concision|coherence` 是这次编辑要解决什么；`--strength minimal|moderate|restructure` 是允许改到多深。两轴正交：`--goal concision --strength minimal` 与 `--goal coherence --strength restructure` 都合法。`--goal` 不是严重度阶梯。
+- 幅度语义（三方一致）：
+
+| 取值          | 允许改动                                | 不得改动                     |
+| ------------- | --------------------------------------- | ---------------------------- |
+| `minimal`     | 词汇、标点、明显语法错                  | 句子结构、段落顺序           |
+| `moderate`    | 上加：拆分/合并句子、语序调整            | 段落顺序、增删论断           |
+| `restructure` | 上加：段落顺序、话题句位置               | 增删论断（永远禁止）         |
+
+- 三档都受核心规则约束：绝不添加原文没有的论断、机制、引用、结果、局限、方法或作者意图。
+- 默认值为 `--goal grammar` 与 `--strength minimal`——能解决问题的最小改动。
+- 这不会变成固定问卷。既有规则不变：自动推断模块，不默认追问。编辑目标、幅度或作者原意只在答案会改变本次编辑时才追问——例如某句歧义到两种读法会产出不同改写时。
+- `--tier` 语义不变：`deai` 的检测灵敏度（light 报得少、heavy 报得多）。它绝不被挪用为编辑幅度控制，两套词汇刻意不重叠。
+
 ## 触发场​​景（完整列表）
 
 当用户已有 `.typ` 论文项目并需要以下帮助时，请使用此技能：

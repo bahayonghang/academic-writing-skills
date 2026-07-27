@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "TIER1_HASH_GROUPS 字节锁：本任务改的三个脚本必须 en/typst 整文件 sha256 一致，按成员级镜像会漏空白/顺序差异仍红——只能整文件复制且同 commit"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "检查器默认行为变化只允许「误报/假绿修复」例外且须 commit message 双声明——本任务把 make/very/kind of 降为候选属此类；另含 evals.json 写入方式与 pytest 编码禁令"}
+{"file": ".trellis/tasks/07-27-polish-contract-shared/design.md", "reason": "冻结契约：四字段名、Risk-Flags 闭集、[Script] 层 Meaning-Check 恒 NEEDS-LLM、--goal/--strength 参数名与默认值，本任务必须一字不差复用"}

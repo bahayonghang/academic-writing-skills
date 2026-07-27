@@ -24,7 +24,7 @@ metadata:
       structure,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-16"
+  last_updated: "2026-07-27"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -64,8 +64,9 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | `structure`    | Need chapter/section map or thesis skeleton overview                                                                                                                                                                                                                                                                                              | `uv run python $SKILL_DIR/scripts/map_structure.py main.tex`                                 | `references/writing/structure-guide.md`                                                                    |
 | `consistency`  | Terms, abbreviations, or naming drift across chapters                                                                                                                                                                                                                                                                                             | `uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms`                     | `references/modules/consistency.md`                                                                        |
 | `template`     | Need to identify or validate thesis class/template                                                                                                                                                                                                                                                                                                | `uv run python $SKILL_DIR/scripts/detect_template.py main.tex`                               | `references/modules/template.md`                                                                           |
-| `bibliography` | GB/T 7714 or BibTeX validation（2026-07-01 起可加 `--standard gb7714-2025` 按新国标检查）                                                                                                                                                                                                                                                          | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
+| `bibliography` | GB/T 7714 or BibTeX validation（2026-07-01 起可加 `--standard gb7714-2025` 按新国标检查）                                                                                                                                                                                                                                                         | `uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714`            | `references/modules/bibliography.md`                                                                       |
 | `title`        | Optimize Chinese thesis titles and chapter/section title architecture                                                                                                                                                                                                                                                                             | `uv run python $SKILL_DIR/scripts/optimize_title.py main.tex --check --headings`             | `references/modules/title.md`                                                                              |
+| `expression`   | 中文表达/语句级润色：口语化、绝对化词汇、搭配不当、成分残缺、中英标点混用、数值与单位写法、单句过长                                                                                                                                                                                                                                               | `uv run python $SKILL_DIR/scripts/check_style_zh.py main.tex`                                | `references/modules/expression.md`                                                                         |
 | `deai`         | Reduce AI-writing traces in visible Chinese prose                                                                                                                                                                                                                                                                                                 | `uv run python $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`             | `references/modules/deai.md`                                                                               |
 | `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, and cross-section closure; intro mainline checks (`--intro-mainline`); process-chapter mainline checks (`--process-chapter`); paper-stitching sweep (default) and chapter-intro bridging tiers (`--first-chapter` for single-chapter files) | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex`                                 | `references/modules/logic.md`                                                                              |
 | `literature`   | 文献综述像流水账、缺少比较分析、研究空白没有被自然推出；绪论引用数量/堆引/年份分布诊断（`--intro-citations`）                                                                                                                                                                                                                                     | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`          | `references/modules/literature.md`                                                                         |
@@ -79,16 +80,20 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 ## 路由规则
 
-- 自动推断模块，不默认追问“你想用哪个模块”。多目标请求按固定顺序串行执行：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `tables` / `abstract` / `conclusion`。
+- 自动推断模块，不默认追问“你想用哪个模块”。多目标请求按固定顺序串行执行：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `expression` / `deai` / `tables` / `abstract` / `conclusion`。
 - 多轮润色按“论证/逻辑 -> 句子结构 -> 词汇/排版”由粗到细，顺序不可颠倒（详见 `references/writing/writing-philosophy-zh.md`）。
-- 常见歧义速判：交叉引用/编号断档走 `references`（条目本身走 `bibliography`）；公式断行走 `format`（`\label`/`\eqref` 问题走 `references`，标题后直入公式走 `logic`）；标题架构串行 `structure` -> `title --headings`；章引言/本章小结/主线闭合走 `logic`；结论章内容/展望走 `conclusion`（结论格式——`\cite`/字数/模糊措辞——走 `spec-check`）；规范终检走 `spec-check`；盲审匿名走 `blind-review`。完整判据与各模块专用旗标（`--analyze`、`--tier`、`--motivation-thread`、`--spec-file`、`--generate --dry-run` 等）见 `references/modules/routing-rules.md`——执行前必读对应条目。
+- 常见歧义速判：交叉引用/编号断档走 `references`（条目本身走 `bibliography`）；公式断行走 `format`（`\label`/`\eqref` 问题走 `references`，标题后直入公式走 `logic`）；标题架构串行 `structure` -> `title --headings`；章引言/本章小结/主线闭合走 `logic`；结论章内容/展望走 `conclusion`（结论格式——`\cite`/字数/模糊措辞——走 `spec-check`）；规范终检走 `spec-check`；盲审匿名走 `blind-review`；口语化/绝对化词汇/搭配不当/标点混用/数值单位写法/单句过长走 `expression`（AI 痕迹与句长均匀度走 `deai`，人称走 `abstract`，论断强度走 over-claim-guard）。完整判据与各模块专用旗标（`--analyze`、`--tier`、`--motivation-thread`、`--spec-file`、`--generate --dry-run` 等）见 `references/modules/routing-rules.md`——执行前必读对应条目。
 - 脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不静默切换模块。
 
 ## Required Inputs
 
 - 论文入口文件，例如 `main.tex`（多文件工程自动解析 `\input`/`\include`）。
 - 可选：`--section SECTION`（英文键与中文章节名均可）、bibliography 路径、学校/模板上下文（`thuthesis`、`pkuthss` 等）。
-- 参数不完整时，保留已推断模块，只追问缺失项，不额外扩展问题。
+- 可选的编辑轴（仅改写类模块），两轴正交，不是同一条阶梯：
+  - `--goal grammar|clarity|concision|coherence` —— 这次编辑要解决什么（默认 `grammar`）。
+  - `--strength minimal|moderate|restructure` —— 允许改到多深（默认 `minimal`，即能解决问题的最小改动）。
+  - `--tier light|medium|heavy` 与二者无关：它是 `deai` 的检测灵敏度，绝不用作编辑幅度控制。
+- 参数不完整时，保留已推断模块，只追问缺失项，不额外扩展问题。编辑目标、编辑幅度、作者原意只在答案会改变本次编辑时才追问，不得变成固定问卷。
 
 ## Output Contract
 
@@ -96,6 +101,24 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - 明确给出执行的命令；脚本失败必须报告退出码和关键 stderr。
 - “检查结果”和“建议改写”分开陈述；默认保留 `\cite{}`、`\ref{}`、`\label{}`、数学环境、参考文献键和模板宏命令。
 - `literature` 模块默认只给诊断与重写蓝图，用户明确要求才给段落级改写。
+
+### Rewrite Contract
+
+仅适用于产出可直接替换原文的具体文本的模块：`expression`。纯诊断模块保持原有挑错格式；契约适用范围三分法（纳入 / 仅 LLM 层 / 排除）逐项列在 `references/modules/routing-rules.md`。
+
+每个改写块追加以下四个字段（字段名保持英文标识符，说明文本用中文）：
+
+```latex
+% Changed:       <脚本可验证的变更事实，或 none>
+% Protected:     <本行内被识别并跳过的受保护 token，或 none>
+% Meaning-Check: <PRESERVED | NEEDS-LLM>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+```
+
+- `[Script]` 层：`Meaning-Check` 恒为 `NEEDS-LLM`。规则脚本没有语义判定能力，因此 `[Script]` 绝不得输出 `Meaning-Check: PRESERVED`。只允许置规则可确定的标记 `none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`；无其他可确定标记时兜底置 `not-assessed`。
+- `[LLM]` 层：可置 `Meaning-Check: PRESERVED` 与闭集内任一标记，但 `PRESERVED` 是待作者核对的**提案**，不是已验证的事实。
+- 改写不得升高措辞强度。强度发生变化时置 `Risk-Flags: overstatement`；判据见 `references/writing/over-claim-guard.md`，各润色模块文档均有指针。
+- `deai` 产出的是行为指令而非替换文本；LLM 依其指令产出的改写适用 `[LLM]` 层契约。
 
 ## Workflow
 
@@ -127,6 +150,8 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `references/writing/process-chapter-guide-zh.md`: 第二章（过程分析章）专章——章式判别、工艺流程分析、难点推导链、总体框架图与“第 X 章”映射（推荐加强项）、绪论-第二章分工。
 - `references/writing/method-chapter-guide-zh.md`: 正文方法+实验章（第 3 章起）专章——章式判别、五段骨架、章引言承上分级（并列可不承上）、实验工业版细则、拼接感/草稿态清单、防误报红线。
 - `references/writing/conclusion-guide-zh.md`: 结论章（总结与展望）专章——扁平三段式结构、贡献条骨架、展望空话黑名单、结论≠摘要、CC-\* checker 映射表（配合 `conclusion` 模块）。
+- `references/writing/academic-style-zh.md`: 中文学术写作规范——口语化纠正、绝对化词汇、逻辑连接词、常见语病、标点、数字与单位（`expression` 模块的规则真相源）。
+- `references/formatting/number-unit-guide-zh.md`: 数字与单位国标细则（GB/T 15835、GB 3100 系列）与标准优先级声明（配合 `expression`）。
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/writing/tense-guide-zh.md`: 英文摘要时态判断级清单（配合 `deai`）。

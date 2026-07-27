@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "集成复审核对：三把锁是否全绿；ALIGNMENTS / TIER1_HASH_GROUPS 若有变更是否按测试提示文档化并双声明"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验收清单：SKILL.md 与 references 改动后 test_skill_contracts、test_docs_bilingual_resources 必跑；断言走 python API 而非渲染报告；默认行为变化须双声明"}
+{"file": ".trellis/tasks/07-27-polish-capability-upgrade/prd.md", "reason": "跨子验收对照：契约字段三方一致、轴命名无冲突、所有权无悬空、无伪回归项、just ci ≥1338 passed；并回读「规划期已纠正的错误」5 条确认无复发"}

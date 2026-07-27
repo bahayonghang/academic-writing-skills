@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "质检：ZH 测试是否按路径加载并有守卫断言；SKILL.md 改动后 test_skill_contracts 必跑；新脚本未被误加入 TIER1_HASH_GROUPS"}
+{"file": ".trellis/tasks/07-27-polish-zh-expression-module/design.md", "reason": "验收对照九个检查器契约：每个的输入区域/排除条件/档位是否落地；E-UNITFONT 是否只 report 不 fix；无人称检查器"}
+{"file": ".trellis/tasks/07-27-polish-capability-upgrade/prd.md", "reason": "验收对照父任务 AC：契约字段与 EN/Typst 一致、未越权改 EN/Typst 文件、无重复报告（YS-36 / deai D1 / over-claim 三处边界）"}

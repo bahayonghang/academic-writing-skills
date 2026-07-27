@@ -180,6 +180,16 @@
       "query": "学位论文下个月送外审，帮我检查 LaTeX 工程里还有哪些地方会暴露作者身份，成果那章按学校盲审通知改成只留署名次序、期刊名称和年份。",
       "should_trigger": true,
       "category": "blind-review"
+    },
+    {
+      "query": "我的硕士论文这几段太口语了，帮我改得学术一点，句子也太长太绕。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "学位论文里数值和单位的写法、概数用不用汉字，帮我按国标查一遍。",
+      "should_trigger": true,
+      "category": "edge"
     }
   ]
 }

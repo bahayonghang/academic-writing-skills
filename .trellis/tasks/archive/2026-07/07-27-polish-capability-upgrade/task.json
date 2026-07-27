@@ -1,0 +1,30 @@
+{
+  "id": "polish-capability-upgrade",
+  "name": "polish-capability-upgrade",
+  "title": "EN/ZH 润色能力升级",
+  "description": "对照 ref/academic-writing-polisher，补齐 latex-paper-en 与 latex-thesis-zh 在润色链路上的三类缺口：可审计的语义保全契约、EN 表达链路文档/脚本矛盾与脚本质量、ZH 缺失的句子/表达级润色模块。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-27",
+  "completedAt": "2026-07-28",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-27-polish-contract-shared",
+    "07-27-polish-en-expression-fix",
+    "07-27-polish-zh-expression-module"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

@@ -447,7 +447,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/expression.md",
       "sourceLocale": "en",
-      "sourceSha256": "c90f276733724392f3d965a0af0d757e5f7922cf167648735deb4154cfc9301d",
+      "sourceSha256": "da6e40060d9e01cb0cecfd9925bca31ae192ed03f0f6ef7fe2f16e8de78b28fd",
       "en": "docs/skills/latex-paper-en/resources/references/modules/expression.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/expression.md"
     },
@@ -465,7 +465,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/grammar.md",
       "sourceLocale": "en",
-      "sourceSha256": "6b4c7769eadcbfd26db55f0983b80d84eb11532ffe7e82bf3bacb2480b469721",
+      "sourceSha256": "8d944989a01ccb6cc028eada0190450757a5f04fab21d7ec2250723038f76e53",
       "en": "docs/skills/latex-paper-en/resources/references/modules/grammar.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/grammar.md"
     },
@@ -501,7 +501,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/routing-rules.md",
       "sourceLocale": "en",
-      "sourceSha256": "a94b01fdb19d06ac09d6f450b838028e4122c3e119cdbb60ef1fee1117e76b4c",
+      "sourceSha256": "3675b97748cf33f9d080dee748e5bb82a887d8d2d3cb5d3e758b9a5f15ad9f95",
       "en": "docs/skills/latex-paper-en/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/routing-rules.md"
     },
@@ -519,7 +519,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/sentences.md",
       "sourceLocale": "en",
-      "sourceSha256": "3372740a55126cd290589762ef3e9b0eca225447f2c300d9dece9a449393f972",
+      "sourceSha256": "0b0d710c0bad043d02b6c6f19d04aff85dccbc35f5b6c8a4d8c558e077b02fac",
       "en": "docs/skills/latex-paper-en/resources/references/modules/sentences.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/sentences.md"
     },
@@ -555,7 +555,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/translation.md",
       "sourceLocale": "en",
-      "sourceSha256": "9719073530258afc5e3542ecd7c701a7eea659c2de40ada1b429bb45e638c2ab",
+      "sourceSha256": "343ae803c5d5558a1724618abf6cc5c9751a9256f2540378ce94b8da6c29986b",
       "en": "docs/skills/latex-paper-en/resources/references/modules/translation.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/translation.md"
     },
@@ -630,6 +630,15 @@
       "sourceSha256": "b5e416708f08ff2c5d10dd10702f673c3c6f381fe934d0559fa61470e22a5ff2",
       "en": "docs/skills/latex-paper-en/resources/references/writing/common-errors.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/common-errors.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/protected-tokens.md",
+      "sourceLocale": "en",
+      "sourceSha256": "dd428a50114187fc9dbc240ce5dbf1491afa5b6fea5e19a37542b67bb7bea4de",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/protected-tokens.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/protected-tokens.md"
     },
     {
       "skill": "latex-paper-en",
@@ -922,6 +931,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/formatting/number-unit-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a3100c5fc7ad41991939f6f6f5bc2a5706e4e755073c006b57f48893a0cd5084",
+      "en": "docs/skills/latex-thesis-zh/resources/references/formatting/number-unit-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/number-unit-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/formatting/table-guide.md",
       "sourceLocale": "en",
       "sourceSha256": "b2f224b5f5a605353730266e7dcb363dcf21eafb1607002d9c9076887826519f",
@@ -1012,6 +1030,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/expression.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "1f00350f8b975e430d814081062da7c7eda1d86223376a9fc795bfd1555114fd",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/expression.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/expression.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/format.md",
       "sourceLocale": "zh",
       "sourceSha256": "5e1d76fed56d4db80130fd68c852a0ff9c6e5939928274ceaa2f36ef984d3990",
@@ -1050,7 +1077,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "405dce8cc8e5c613b13d0e69c4039805a61b43035ee78d9f168304378348fbb1",
+      "sourceSha256": "7916cef06d9e5c902fd4ae770ab4132d2ede226ef9ec804fa6915e1dba2bc524",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
@@ -1959,7 +1986,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/EXPRESSION.md",
       "sourceLocale": "zh",
-      "sourceSha256": "fcdbcd9b3d90d255f49ee9aa6ab9f399bf39bdc16c29a8b814857c322ec9b6c7",
+      "sourceSha256": "c608abba7a6789f0d68b769b4a383370188c846a470867615956828b3567a285",
       "en": "docs/skills/typst-paper/resources/references/modules/EXPRESSION.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/EXPRESSION.md"
     },
@@ -1977,7 +2004,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/GRAMMAR.md",
       "sourceLocale": "zh",
-      "sourceSha256": "4ce49a6484722d17b1c49800d64102a276310781016bcc6d4537580d821b98d3",
+      "sourceSha256": "953eef3076e64eb8078ba95f537a9f1073d4d4f65bd7ec4d56b13687d3086a5e",
       "en": "docs/skills/typst-paper/resources/references/modules/GRAMMAR.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/GRAMMAR.md"
     },
@@ -2022,7 +2049,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/SENTENCES.md",
       "sourceLocale": "zh",
-      "sourceSha256": "077f91e3c7e037dfd25f36c6617211d18b377ff95b9bdbb0ebe391cb05fe8a2f",
+      "sourceSha256": "f73b8e6bc221b4607eca95c2d3086c6e1ce926ca0bd31c3b7bf28db08f83c971",
       "en": "docs/skills/typst-paper/resources/references/modules/SENTENCES.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/SENTENCES.md"
     },
@@ -2049,7 +2076,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/TRANSLATION.md",
       "sourceLocale": "zh",
-      "sourceSha256": "7671042277ec05c120f4ba417a74031bf1f1fcd45a2b9b6bdad7118030e759b9",
+      "sourceSha256": "d2dea16a195cd3b810c4f4ca048df15a1624d128c31028af01e4b77c11f0ee1c",
       "en": "docs/skills/typst-paper/resources/references/modules/TRANSLATION.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/TRANSLATION.md"
     },
@@ -2083,6 +2110,15 @@
     {
       "skill": "typst-paper",
       "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/PROTECTED_TOKENS.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "5f4b2580786827f5712252c236e9181266e5eb9579f062050bca3703008ab1ab",
+      "en": "docs/skills/typst-paper/resources/references/PROTECTED_TOKENS.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/PROTECTED_TOKENS.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/REVIEWER_PERSPECTIVE.md",
       "sourceLocale": "en",
       "sourceSha256": "7ed43109b10fb000e904ace451e3ed669798807a71d3814402cd459b01448e04",
@@ -2094,7 +2130,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/skill-routing-notes.md",
       "sourceLocale": "en",
-      "sourceSha256": "59f3f5fc310b61e0b5890b65347f60a1ad3e0a033161a5282263214fff35fec0",
+      "sourceSha256": "158615c0589a60f54d122bfbbd061976330b9e5f0c9c59eaaaf3d502f4a4f277",
       "en": "docs/skills/typst-paper/resources/references/skill-routing-notes.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/skill-routing-notes.md"
     },
