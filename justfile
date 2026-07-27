@@ -31,6 +31,10 @@ help:
     @echo "  just docs              - 本地预览文档"
     @echo "  just doc-build         - 构建文档"
     @echo ""
+    @echo "📦 打包："
+    @echo "  just zip               - 打包每个 skill 为 zip 到 archive/"
+    @echo "  just clean-zip         - 清理 archive/ 下的 zip 文件"
+    @echo ""
     @echo "🧹 清理："
     @echo "  just clean             - 清理缓存文件"
     @echo ""
@@ -109,6 +113,18 @@ test:
 clean:
     @echo "🧹 清理缓存文件..."
     @uv run --extra dev python -c "import pathlib, shutil; roots = pathlib.Path('.'); [shutil.rmtree(p, ignore_errors=True) for name in ('__pycache__', '.pytest_cache', '.ruff_cache') for p in roots.rglob(name) if p.is_dir()]; [p.unlink(missing_ok=True) for p in roots.rglob('*.pyc')]"
+    @echo "✅ 清理完成！"
+
+# 打包每个 skill 子目录为 zip 到 archive/
+zip:
+    @echo "📦 打包 skills 到 archive/..."
+    @uv run --extra dev python -c "import pathlib, shutil; src = pathlib.Path('academic-writing-skills'); dst = pathlib.Path('archive'); dst.mkdir(exist_ok=True); [shutil.make_archive(str(dst / p.name), 'zip', root_dir=src, base_dir=p.name) for p in sorted(src.iterdir()) if p.is_dir() and (p / 'SKILL.md').exists()]; [print(f'  → {f.name}') for f in sorted(dst.glob('*.zip'))]"
+    @echo "✅ 打包完成！"
+
+# 清理 archive/ 下的 zip 文件
+clean-zip:
+    @echo "🧹 清理 archive/ 下的 zip 文件..."
+    @uv run --extra dev python -c "import pathlib; dst = pathlib.Path('archive'); zips = list(dst.glob('*.zip')) if dst.exists() else []; [p.unlink(missing_ok=True) for p in zips]; print(f'  → 已删除 {len(zips)} 个 zip 文件')"
     @echo "✅ 清理完成！"
 
 # 本地预览文档
