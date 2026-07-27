@@ -45,5 +45,19 @@ Identify professional domain terms:
 |compared to|Compared with.../In comparison to...|
 |In summary|In summary/In conclusion|
 
+**Step 5: Contract block**
+After `### Notes` the script appends a `### Contract` block, using the same field names as the comment-stream modules:
+
+```markdown
+### Contract
+- Changed: rule-based draft translation (2 glossary term(s) applied)
+- Protected: none — this copy does not mask Typst syntax; check `@cite`, `<label>`, and math spans by hand before applying
+- Meaning-Check: NEEDS-LLM
+- Risk-Flags: not-assessed
+- Envelope: goal=grammar strength=minimal
+```
+
+The Typst copy performs **no syntax masking** (a deliberate difference from the EN copy, not covered by the byte lock): a glossary substitution may land inside `@cite`, `<label>`, or a math block, so check before applying. A rule-based draft is never a finished translation — `Meaning-Check` stays `NEEDS-LLM`, and raising claim strength while translating is likewise an over-claim; criteria in [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md). Field definitions: [skill-routing-notes.md](../skill-routing-notes.md).
+
 Reference: [STYLE_GUIDE.md](../STYLE_GUIDE.md),[COMMON_ERRORS.md](../COMMON_ERRORS.md)
 

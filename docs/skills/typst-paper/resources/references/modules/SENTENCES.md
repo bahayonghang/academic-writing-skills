@@ -10,22 +10,25 @@ uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --max-words 50 --
 uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introduction
 ```
 
-> Available flags:`--section`、`--max-words`(default 50),`--max-clauses`(default 3).
-> No `--threshold`.
+> Available flags: `--section`, `--max-words` (default 50), `--max-clauses` (default 3),
+> `--goal` (default `grammar`), `--strength` (default `minimal`). There is no `--threshold`.
+
+`--goal` and `--strength` declare the edit envelope; see [skill-routing-notes.md](../skill-routing-notes.md). Splitting a sentence is a structural edit, so under `--strength minimal` the proposal is still shown but the rationale notes that applying it needs `moderate` or higher; `--goal coherence` routes to `logic`.
 
 **Trigger conditions**:
 
-- Sentence word count >`--max-words`(default 50) or number of clauses >`--max-clauses`(default 3)
-- Sentence segmentation and counting are based on English (segment according to `.!?` and count according to word length)
+- Sentence word count > `--max-words` (default 50) or number of clauses > `--max-clauses` (default 3)
+- Sentence segmentation and counting are based on English (split on `.!?`, length counted in words)
 
 **Output format**:
 
 ```typst
+// CONTRACT [Script]: goal=grammar strength=minimal
 // LONG SENTENCE (Line 45, 67 words, 5 clauses) [Severity: Minor] [Priority: P2] [Script]
 // Original: ...
 // Suggested: ...
-// Rationale: Sentence exceeds complexity threshold, split for readability.
-// Changed:       split proposal only; source not rewritten
+// Rationale: Sentence exceeds complexity threshold, split for readability. Applying the split needs --strength moderate or higher.
+// Changed:       none (split proposal only; source not rewritten)
 // Protected:     none
 // Meaning-Check: NEEDS-LLM
 // Risk-Flags:    not-assessed

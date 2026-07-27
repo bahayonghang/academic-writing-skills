@@ -11,20 +11,25 @@ uv run python -B scripts/analyze_grammar.py main.tex
 uv run python -B scripts/analyze_grammar.py main.tex --section introduction
 ```
 
+`--goal` (default `grammar`) and `--strength` (default `minimal`) declare the edit envelope; see [routing-rules.md](routing-rules.md). `--goal concision` routes to `sentences` and `--goal coherence` routes to `logic` — this module has no rules for either.
+
 ## Raw Script Output
 
 The script emits reviewer-style comment blocks such as:
 
 ```latex
+% CONTRACT [Script]: goal=grammar strength=minimal
 % GRAMMAR (Line 23) [Severity: Major] [Priority: P1] [Script]: Rule hit: \bwe propose method\b
 % Original: We propose method for time series forecasting.
-% Revised:  we propose a method for time series forecasting.
+% Revised:  We propose a method for time series forecasting.
 % Rationale: Grammar: Article missing before singular count noun.
-% Changed:       1 article insertion (propose method -> propose a method)
+% Changed:       1 rule-based correction (\bwe propose method\b)
 % Protected:     none
 % Meaning-Check: NEEDS-LLM
 % Risk-Flags:    none
 ```
+
+Rules match case-insensitively so acronyms elsewhere in the line (`BERT`) keep their shape, and the matched span keeps its own leading capitalization — an earlier version returned `we propose a method` for a sentence-initial match, which fixed one error by introducing another.
 
 ## Rewrite Contract
 

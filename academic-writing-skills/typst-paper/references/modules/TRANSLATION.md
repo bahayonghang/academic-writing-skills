@@ -45,5 +45,19 @@ uv run python ../scripts/translate_academic.py input_zh.txt --domain deep-learni
 | 与...相比 | Compared with... / In comparison to... |
 | 综上所述 | In summary / In conclusion |
 
-参考：[STYLE_GUIDE.md](../references/STYLE_GUIDE.md)、[COMMON_ERRORS.md](../references/COMMON_ERRORS.md)
+**步骤 5：契约块**
+脚本在 `### Notes` 之后追加 `### Contract`，字段名与注释流模块逐字一致：
+
+```markdown
+### Contract
+- Changed: rule-based draft translation (2 glossary term(s) applied)
+- Protected: none — this copy does not mask Typst syntax; check `@cite`, `<label>`, and math spans by hand before applying
+- Meaning-Check: NEEDS-LLM
+- Risk-Flags: not-assessed
+- Envelope: goal=grammar strength=minimal
+```
+
+Typst 副本**不做语法遮蔽**（与 EN 副本的差异，未纳入字节锁）：术语替换有可能碰到 `@cite`、`<label>` 或数学块，应用前必须人工核对。规则草稿永远不是成品译文，`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度同样属于过度声称，判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。字段定义见 [skill-routing-notes.md](../skill-routing-notes.md)。
+
+参考：[STYLE_GUIDE.md](../STYLE_GUIDE.md)、[COMMON_ERRORS.md](../COMMON_ERRORS.md)
 

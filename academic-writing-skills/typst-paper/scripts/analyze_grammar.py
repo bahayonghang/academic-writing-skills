@@ -26,13 +26,44 @@ except ImportError:
         read_text_robust = None
 
 
+GOAL_CHOICES = ("grammar", "clarity", "concision", "coherence")
+STRENGTH_CHOICES = ("minimal", "moderate", "restructure")
+
+# Goals this module has no rules for. Routed explicitly instead of returning an
+# empty result that reads like "nothing to fix".
+UNSUPPORTED_GOALS = {"concision": "sentences", "coherence": "logic"}
+
+
+def _match_case(source: str, replacement: str) -> str:
+    """Carry the source span's leading casing over to the replacement.
+
+    Rules match case-insensitively, so a sentence-initial "We propose method"
+    used to come back as "we propose a method" — the fix introduced a new error.
+    """
+    if not source or not replacement:
+        return replacement
+    if source[0].isupper():
+        return replacement[0].upper() + replacement[1:]
+    return replacement
+
+
+def _contract_lines(cp: str, changed: str, protected: str, risk_flags: str) -> list[str]:
+    return [
+        f"{cp} Changed:       {changed}",
+        f"{cp} Protected:     {protected}",
+        f"{cp} Meaning-Check: NEEDS-LLM",
+        f"{cp} Risk-Flags:    {risk_flags}",
+    ]
+
+
 # MVP rule set: 4 high-precision subject-verb / article rules. This is a
 # deliberately small, conservative set — not a general grammar engine.
 def _apply_rules(text: str) -> list[tuple[str, str, str]]:
     """Return list of (issue, revised, rationale).
 
     Substitutions run case-insensitively on the original text so unrelated
-    casing (e.g. acronyms like BERT) is preserved (E12).
+    casing (e.g. acronyms like BERT) is preserved (E12); the matched span keeps
+    its own leading capitalization via ``_match_case``.
     """
     findings: list[tuple[str, str, str]] = []
     rules = [
@@ -60,12 +91,22 @@ def _apply_rules(text: str) -> list[tuple[str, str, str]]:
 
     for pattern, replacement, rationale in rules:
         if re.search(pattern, text, re.IGNORECASE):
-            revised = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+            revised = re.sub(
+                pattern,
+                lambda match, target=replacement: _match_case(match.group(0), target),
+                text,
+                flags=re.IGNORECASE,
+            )
             findings.append((pattern, revised, rationale))
     return findings
 
 
-def analyze(file_path: Path, section: str | None = None) -> list[str]:
+def analyze(
+    file_path: Path,
+    section: str | None = None,
+    goal: str = "grammar",
+    strength: str = "minimal",
+) -> list[str]:
     parser = get_parser(file_path)
     doc = None
     warning_lines: list[str] = []
@@ -82,6 +123,19 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
     cp = parser.get_comment_prefix()
     if doc is not None:
         warning_lines = doc.warning_lines(cp)
+
+    header = [f"{cp} CONTRACT [Script]: goal={goal} strength={strength}"]
+
+    if goal in UNSUPPORTED_GOALS:
+        return (
+            warning_lines
+            + header
+            + [
+                f"{cp} GRAMMAR [Severity: Info] [Priority: P3] [Script]: "
+                f"This module has no {goal} rules; run the "
+                f"`{UNSUPPORTED_GOALS[goal]}` module instead."
+            ]
+        )
 
     selected_ranges: list[tuple[int, int]] = []
     if section:
@@ -113,30 +167,48 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
                 location = doc.lineref(line_no) if doc is not None else f"Line {line_no}"
                 output.extend(
                     [
-                        f"{cp} GRAMMAR ({location}) [Severity: Major] [Priority: P1]: "
-                        f"Rule hit: {pattern}",
+                        f"{cp} GRAMMAR ({location}) [Severity: Major] [Priority: P1] "
+                        f"[Script]: Rule hit: {pattern}",
                         f"{cp} Original: {visible}",
                         f"{cp} Revised:  {revised}",
                         f"{cp} Rationale: {rationale}",
+                        *_contract_lines(
+                            cp,
+                            f"1 rule-based correction ({pattern})",
+                            "none",
+                            "none",
+                        ),
                         "",
                     ]
                 )
     if not output:
         output.append(f"{cp} GRAMMAR: No rule-based issues detected in selected scope.")
-    return warning_lines + output
+    return warning_lines + header + output
 
 
 def main() -> int:
     cli = argparse.ArgumentParser(description="Grammar analysis for LaTeX/Typst files (MVP)")
     cli.add_argument("file", type=Path, help="Target .tex or .typ file")
     cli.add_argument("--section", help="Section name to analyze")
+    cli.add_argument(
+        "--goal",
+        choices=GOAL_CHOICES,
+        default="grammar",
+        help="Edit goal: what this pass is for (default: grammar)",
+    )
+    cli.add_argument(
+        "--strength",
+        choices=STRENGTH_CHOICES,
+        default="minimal",
+        help="Edit strength: how far the edit may go (default: minimal)",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
         print(f"[ERROR] File not found: {args.file}", file=sys.stderr)
         return 1
 
-    print("\n".join(analyze(args.file, args.section)))
+    print("\n".join(analyze(args.file, args.section, args.goal, args.strength)))
     return 0
 
 

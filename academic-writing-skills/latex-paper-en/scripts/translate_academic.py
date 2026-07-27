@@ -118,7 +118,16 @@ def _draft_translate(text: str, domain: str) -> tuple[str, list[str]]:
     return translated, notes
 
 
-def translate(input_arg: str, domain: str) -> str:
+GOAL_CHOICES = ("grammar", "clarity", "concision", "coherence")
+STRENGTH_CHOICES = ("minimal", "moderate", "restructure")
+
+
+def translate(
+    input_arg: str,
+    domain: str,
+    goal: str = "grammar",
+    strength: str = "minimal",
+) -> str:
     text = _load_source(input_arg)
     table = _build_term_table(text, domain)
     draft, notes = _draft_translate(text, domain)
@@ -144,6 +153,20 @@ def translate(input_arg: str, domain: str) -> str:
     else:
         lines.append("- No high-risk ambiguous terms detected by rule set.")
 
+    # Same four contract fields as the comment-stream modules, so one set of
+    # assertions covers both output shapes.
+    protected_count = len(PROTECTED_RE.findall(text))
+    lines.append("\n### Contract")
+    lines.append(f"- Changed: rule-based draft translation ({len(table)} glossary term(s) applied)")
+    lines.append(
+        f"- Protected: {protected_count} LaTeX/math span(s) masked and restored verbatim"
+        if protected_count
+        else "- Protected: none"
+    )
+    lines.append("- Meaning-Check: NEEDS-LLM")
+    lines.append("- Risk-Flags: not-assessed")
+    lines.append(f"- Envelope: goal={goal} strength={strength}")
+
     return "\n".join(lines)
 
 
@@ -157,9 +180,21 @@ def main() -> int:
         help="Domain terminology set",
     )
     cli.add_argument("--output", help="Output file path")
+    cli.add_argument(
+        "--goal",
+        choices=GOAL_CHOICES,
+        default="grammar",
+        help="Edit goal: what this pass is for (default: grammar)",
+    )
+    cli.add_argument(
+        "--strength",
+        choices=STRENGTH_CHOICES,
+        default="minimal",
+        help="Edit strength: how far the edit may go (default: minimal)",
+    )
     args = cli.parse_args()
 
-    result = translate(args.input, args.domain)
+    result = translate(args.input, args.domain, args.goal, args.strength)
     if args.output:
         Path(args.output).write_text(result, encoding="utf-8")
         print(f"[SUCCESS] Translation report written to: {args.output}")
