@@ -36,6 +36,20 @@ Use this shape when emitting a claim-evidence map:
 - A metric without a dataset, baseline, or unit of analysis should remain `observed`, not `strong`.
 - A section or appendix reference is useful only when the target section actually contains the promised method, proof, data, or limitation.
 
+## Defensive Speculative Explanations
+
+Treat a multi-mechanism explanation as `unsupported extrapolation` when it:
+
+- starts from an observation but names two or more specific mechanisms;
+- lacks a visible evidence anchor or discriminating test for at least one mechanism; and
+- ends with a caveat that the current data or comparison verify none of them.
+
+Hedges such as `may`, `could`, and `is consistent with` calibrate wording but do not create
+evidence. Preserve the observation, map every retained mechanism to its own anchor, and set
+the unsupported alternatives to `speculative` or `undetermined`. If no mechanism is
+supported, say that the mechanism remains undetermined and record the missing experiment or
+analysis; do not delete the caveat or strengthen the inference.
+
 ## Output Discipline
 
 - Preserve the author's original claim text when reporting problems.

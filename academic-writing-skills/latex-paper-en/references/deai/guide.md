@@ -171,10 +171,15 @@ script cannot catch them. Judge them by reading the whole draft, and tag any fin
 
 1. **Over-symmetric IMRAD** — every section padded to the same shape (introduction always 4 paragraphs; discussion always "recap + compare + implication + limitation"). Real papers are uneven: some sections short, some long. Signal: paragraph counts symmetric across sections.
 2. **Declarative scaffolding transitions** — "Having established X, we next turn to Y." / "With this in hand, we proceed to…". Real writing transitions implicitly: the next sentence enters the new topic without announcing it.
-3. **Stance-less discussion** — pros and cons each listed but none committed to. Real authors take a position ("we consider X more plausible than Y because…").
+3. **Stance-less discussion** — pros and cons each listed but none committed to. When evidence distinguishes the alternatives, state which is more plausible and why. When it does not, say that the mechanism remains undetermined instead of manufacturing a position.
 4. **Uniform paragraph length** — 80% of paragraphs are 5–7 sentences. Real cadence varies: a 3-sentence emphasis paragraph next to a 10-sentence argument.
+5. **Defensive speculative explanation** — a result is followed by two or more specific mechanisms without per-mechanism evidence or a discriminating test, then a terminal caveat says the present data do not verify any of them. `may`, `could`, or `is consistent with` calibrate wording; they do not supply evidence.
 
-**How to fix**: break the symmetry — merge thin paragraphs, split overloaded ones, delete announced transitions, and make the discussion commit to a view.
+**How to fix**: break the symmetry — merge thin paragraphs, split overloaded ones, and delete announced transitions. For candidate explanations, state the observation first and map each retained mechanism to a visible metric, figure, ablation, controlled comparison, citation, or discriminating test. Commit only when that evidence distinguishes the alternatives; otherwise state that the mechanism is undetermined and move testable alternatives to future work. Do not delete the caveat or strengthen an unsupported explanation merely to sound decisive.
+
+The script's `hedge` and `hedge_application` suggestions remain valid for
+over-confident wording and undemonstrated applications. Adding `results suggest` or
+`may / could` lowers claim strength; it never licenses unsupported mechanism stacking.
 
 ---
 
@@ -398,7 +403,9 @@ reduces MAE by 12\% on average.
 - ✅ "Future work will explore the attention mechanism's interpretability."
 
 **Guidelines**:
-- Explain mechanisms, not just outcomes
+- Explain mechanisms, not just outcomes, and tie each retained mechanism to visible evidence
+- Treat attribution words as prompts for `[LLM]` review, not proof that an explanation is supported
+- If the evidence cannot distinguish candidate mechanisms, state that directly instead of listing them and retracting them in a final caveat
 - Acknowledge failures and boundary conditions
 - State limitations honestly
 - Propose specific future work

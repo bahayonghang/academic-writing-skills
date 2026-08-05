@@ -526,6 +526,61 @@
           "description": "no detector-evasion promise"
         }
       ]
+    },
+    {
+      "id": 22,
+      "prompt": "Review the five labeled Discussion cases in the attached fixture for AI tone and claim-evidence calibration. Flag only the defensive speculative explanation, explain the per-mechanism evidence gap, and state why Cases B-E are legitimate boundaries. Do not invent evidence or make unsupported mechanisms more certain.",
+      "expected_output": "Route to deai with Discussion evidence review: identify Case A as a defensive speculative explanation, map each retained mechanism to evidence or a discriminating test, use undetermined when none is supported, and preserve the anchored hedge, evidenced alternatives, honest unknown, and controlled strong claim in Cases B-E.",
+      "files": [
+        "evals/fixtures/defensive_speculative_explanation.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "defensive speculative explanation",
+          "description": "target composite pattern named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(per-mechanism|evidence anchor|discriminating test)",
+          "description": "mechanisms require local evidence mapping"
+        },
+        {
+          "type": "regex",
+          "pattern": "(undetermined|cannot determine|mechanism remains unknown)",
+          "description": "unsupported attribution falls back to honest uncertainty"
+        },
+        {
+          "type": "contains",
+          "text": "Case B",
+          "description": "single anchored hedge remains a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case C",
+          "description": "evidenced alternatives remain a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case D",
+          "description": "honest unknown remains a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case E",
+          "description": "controlled strong claim remains a non-finding"
+        },
+        {
+          "type": "regex",
+          "pattern": "(controlled|ablation|earned|strong claim)",
+          "description": "evidence-earned strong wording is preserved"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "no unsupported significance evidence is invented"
+        }
+      ]
     }
   ]
 }

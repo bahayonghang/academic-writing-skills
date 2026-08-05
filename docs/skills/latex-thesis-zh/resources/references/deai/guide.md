@@ -215,10 +215,13 @@ Such traces are not in words or sentences, but in the document structure. The sc
 
 1. **Excessive symmetry of IMRAD**: Each section is filled in the same shape (always 4 paragraphs for the introduction, always "review + comparison + significance + limitations" for the discussion). Real papers are uneven—some sections are short, some are long. Signal: The number of segments is highly symmetrical.
 2. **Declarative transition preparation**: "After establishing X, we next move to Y." "With this, we continue...". The transition to real writing is implicit: the next sentence goes directly to the new topic without warning.
-3. **Positionless discussion**: List the pros and cons, but don’t choose a side. Real authors will make their position clear ("We think X is more credible than Y because...").
+3. **Positionless discussion**: List the pros and cons, but do not choose a side. When evidence distinguishes the alternatives, state which one is more credible and why. When it does not, explicitly say that the mechanism remains undetermined rather than forcing a position.
 4. **Uniform paragraph length**: 80% of paragraphs are 5-7 sentences. Real rhythm has its ups and downs—a 3-sentence emphasis paragraph right next to a 10-sentence argument paragraph.
+5. **Defensive speculative explanation**: An observation is followed by two or more specific mechanisms without local evidence or a discriminating test for each one, then a final caveat retracts all of them by saying the current data cannot verify them. `可能`, `或许`, and `与……一致` calibrate wording strength; they do not supply evidence.
 
-**How to fix**: Break symmetry – merge thin paragraphs, split overloaded paragraphs, remove declarative transitions, make discussions clear.
+**How to fix**: Break symmetry—merge thin paragraphs, split overloaded paragraphs, and remove declarative transitions. For candidate explanations, state the observation first and map each retained mechanism to a metric, figure, ablation, controlled comparison, citation, or discriminating test. Choose the more credible explanation only when evidence distinguishes it. When none is supported, state that the mechanism remains undetermined and move testable alternatives to future work. Do not delete limitations or strengthen an unverified inference merely to sound certain.
+
+The script's `hedge` and `hedge_application` suggestions remain valid for overconfident wording and undemonstrated applications. Adding “the results show” or “may/perhaps” only lowers the strength of a single claim; it does not license unsupported mechanism stacking.
 
 ---
 
@@ -438,7 +441,9 @@ MAE。相比最佳基线（Transformer），本文方法平均将 MAE
 - ✅ "Future work will explore the interpretability of attention mechanisms."
 
 **Guidelines**:
-- Explain the mechanism rather than restate the results
+- Explain the mechanism rather than restate the results, and bind each retained mechanism to visible evidence
+- Treat attribution words as prompts for `[LLM]` review, not proof that an explanation is supported
+- When evidence cannot distinguish candidate mechanisms, state that the cause is undetermined instead of listing and retracting them in a final caveat
 - Acknowledge failure and boundary conditions
 - Be honest about limitations
 - Propose specific future work

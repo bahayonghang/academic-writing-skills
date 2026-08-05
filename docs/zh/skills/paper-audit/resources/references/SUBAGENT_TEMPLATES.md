@@ -74,6 +74,7 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 数据和缺失的警告；对过度主张类型进行分类（因果/第一性/
 普遍性/效果大小/时间/应用/比较）并采取
 保守重写自`OVER_CLAIM_GUARD.md`
+- 将防御性推测解释视为无支持外推的一种子型：当两个或更多机制缺少逐机制证据或区分性检验，且段尾限制语统一撤回这些机制时，保留观察结果，并将无支持的机制标为 `speculative` 或 `undetermined`
 - 发出过度声明的结果`comment_type: claim_accuracy`和`allowed_wording`
 （有界重写）和`forbidden_wording`（过分的措辞）
 - 当声明引用特定表格或图形时，验证引用的工件
@@ -85,11 +86,10 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 存在（参见反向校准列表`OVER_CLAIM_GUARD.md`- 强的
 证据所获得的措辞不是发现）
 - 不要提出论文中未包含的证据
+- 不要把 `may`、`could` 或段尾限制语当作证据的替代品；不得为了显得果断而删除限制语或强化无支持的机制
 - 不要重复方法或符号通道已经提出的发现
 
-**输出限制**：最多8期；仅表面最强的主张证据
-差距。反复出现的薄弱措辞会因多个示例而归结为一个问题
-地点。
+**输出限制**：最多 8 条；只呈现最强的主张-证据缺口。先将中心主张或影响 gate 的主张排在局部措辞之前，再按严重度和证据缺口大小排序。防御性推测解释作为无支持外推 finding 参与竞争，不占用单独配额。将反复出现的薄弱措辞或机制堆叠合并为一条含多个示例位置的问题；当更强的主张-证据缺口填满通道时，省略只涉及 AI 语气的风格问题。
 
 ### 审查通道：notation_and_numeric_consistency
 

@@ -37,6 +37,16 @@ Before reducing AI tone, preserve the academic payload:
 
 Only then remove rhetorical scaffolds such as `not merely A, but B`, `essentially`, `the key is`, `The conclusion is:`, or vague `this/things/factors`. Keep a contrast when it names a real baseline, criterion, and evidence; otherwise state the claim directly. The module should not promise lower detector scores or replace venue AI-use disclosure.
 
+Treat defensive speculative explanations as `[LLM]` findings: when a paragraph stacks
+multiple mechanisms and then says the current data verify none of them, map each retained
+mechanism to a visible evidence anchor or discriminating test. If no mechanism is supported,
+state that it remains undetermined and move testable alternatives to future work. Do not
+delete the caveat or strengthen the inference merely to sound decisive.
+
+The script's `hedge` / `hedge_application` suggestions still correctly calibrate
+over-confident wording and undemonstrated applications. `results suggest` and
+`may / could` reduce claim strength; they do not replace per-mechanism evidence.
+
 ## Disclosure obligation (read before de-AI editing)
 
 This module improves readability; it does **not** remove a disclosure obligation.

@@ -1,0 +1,26 @@
+\section{Discussion Cases}
+
+\subsection{Case A: Unsupported mechanism stack}
+The intervention improved macro-F1 by 3.2 points. This gain may arise because the
+auxiliary loss smooths the optimization landscape, because the encoder learns more stable
+features, or because the decoder becomes better calibrated. The present comparison did not
+measure any of these mechanisms and cannot verify which, if any, produced the gain.
+
+\subsection{Case B: Single hedged explanation with local evidence}
+The lower error may reflect reduced prediction variance: across ten seeds, variance fell by
+18\%, and removing the ensemble restored the original variance.
+
+\subsection{Case C: Multiple hypotheses with evidence and a discriminator}
+Two mechanisms contributed to the improvement. Class-balanced augmentation increased
+rare-class recall by 6.1 points without changing calibration, whereas temperature scaling
+reduced expected calibration error from 0.082 to 0.041 without changing recall. Separate
+ablations distinguished the contribution of each mechanism.
+
+\subsection{Case D: Mechanism explicitly undetermined}
+The intervention improved macro-F1 by 3.2 points. The current design does not identify the
+mechanism responsible for this difference.
+
+\subsection{Case E: Strong claim earned by a controlled experiment}
+In the randomized ablation, disabling retrieval removed the full 3.2-point gain while all
+other components and seeds were held fixed. Within this benchmark, retrieval caused the
+observed improvement.

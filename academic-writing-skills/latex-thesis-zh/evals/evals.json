@@ -695,6 +695,61 @@
           "description": "correct modules"
         }
       ]
+    },
+    {
+      "id": 29,
+      "prompt": "请审阅附件中五个带标签的讨论段落，同时检查 AI 味和论断-证据校准。只标记防御性推测解释，说明逐机制证据缺口，并解释为什么样例 B-E 属于合理边界。不得发明证据，也不得把未证实机制改得更肯定。",
+      "expected_output": "路由到 deai 并结合讨论证据边界：把样例 A 识别为防御性推测解释，为保留的每项机制映射证据或区分性检验；没有支持时说明机制尚未确定；保留样例 B-E 中有锚点的合理限定、多假设逐项证据、诚实未知和受控实验支持的强论断。",
+      "files": [
+        "evals/fixtures/defensive_speculative_explanation.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "防御性推测解释",
+          "description": "命名目标组合模式"
+        },
+        {
+          "type": "regex",
+          "pattern": "(逐机制|证据锚点|区分性检验)",
+          "description": "要求机制与局部证据映射"
+        },
+        {
+          "type": "regex",
+          "pattern": "(机制尚未确定|无法确定|原因未定)",
+          "description": "无支持归因回退到诚实不确定性"
+        },
+        {
+          "type": "contains",
+          "text": "样例 B",
+          "description": "有局部证据的合理限定不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 C",
+          "description": "逐项有证据的多假设不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 D",
+          "description": "诚实承认未知不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 E",
+          "description": "受控实验支持的强论断不误报"
+        },
+        {
+          "type": "regex",
+          "pattern": "(受控|消融|证据允许|强论断)",
+          "description": "保留证据支持的强措辞"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "no unsupported significance evidence is invented"
+        }
+      ]
     }
   ]
 }

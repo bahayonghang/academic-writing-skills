@@ -64,7 +64,7 @@ compact claim-evidence map when helpful:
 
 ### B3: Discussion Depth — Attribution Over Repetition
 
-**Rule**: The Discussion section must go beyond restating numbers. It should explain *why* results occur using causal/attribution language. A discussion that merely echoes tables without interpretation is shallow.
+**Rule**: The Discussion section must go beyond restating numbers. It should explain *why* results occur without treating causal/attribution language as evidence by itself. A discussion that merely echoes tables is shallow; a discussion that stacks unsupported mechanisms is not deeper.
 
 **Detection heuristic** (script-automated):
 - Scan all visible lines in the `discussion` section
@@ -74,7 +74,14 @@ compact claim-evidence map when helpful:
 | Pattern | Verdict |
 |---------|---------|
 | "Model A achieves 95%. Model B achieves 90%." | Shallow repetition (flag) |
-| "Model A outperforms Model B, likely due to its ability to capture long-range dependencies." | Attribution present (pass) |
+| "Model A outperforms Model B, likely due to its ability to capture long-range dependencies." | Attribution cue only; `[LLM]` must verify the evidence anchor |
+
+**LLM evidence boundary**: For every retained mechanism, identify a visible metric, figure,
+ablation, controlled comparison, citation, or discriminating test. If two or more mechanisms
+are listed without per-mechanism support and a terminal caveat says the current data verify
+none of them, flag a defensive speculative explanation. State that the mechanism is
+undetermined when evidence cannot distinguish the alternatives; do not delete the caveat or
+make an unsupported inference more certain.
 
 ### B4: Results-Literature Echo
 
