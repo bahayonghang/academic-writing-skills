@@ -1053,3 +1053,25 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - None - task complete
+
+
+## Session 27: 强化防御性 AI 话术识别
+
+**Date**: 2026-08-05
+**Task**: 强化防御性 AI 话术识别
+**Branch**: `dev`
+
+### Summary
+
+为 EN/ZH/Typst 与 paper-audit 增加防御性推测解释的 LLM-only 判断、证据校准修复、双语资源同步与四组组合回归；全量 CI 1413 passed，provider-backed output eval 仍为 missing evidence。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c03e010` | (see git log) |
+| `dc18edf` | (see git log) |
+
+### Status
+
+[OK] **Completed**
