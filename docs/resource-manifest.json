@@ -312,7 +312,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/guide.md",
       "sourceLocale": "en",
-      "sourceSha256": "c0f3571a6b23974008cb0dfad5db4d624c57a8dd94c5ca27aade199a663b5453",
+      "sourceSha256": "401c9d3e6de8528c0c2a944dee4fc336f8ff6efbe34ae417d807da4f3b7010bb",
       "en": "docs/skills/latex-paper-en/resources/references/deai/guide.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/guide.md"
     },
@@ -429,7 +429,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "8c4257c7d312f7afaba5ae441e2eb360bb9b4c8c733679c7f4a8a8adc6b6d272",
+      "sourceSha256": "ad00b93b1d743982eecce3f99be1baf4f4749db7f198c7eaad0af9b31dc279fd",
       "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
     },
@@ -438,7 +438,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/experiment.md",
       "sourceLocale": "en",
-      "sourceSha256": "4d4cd606cb13ee716f0532ef5870de4fdc83272876a72007e24244cecee4c5ff",
+      "sourceSha256": "1116fe89f6e74293d398b545c2b4a7e0ec7862e2b0e40db521c9c5bbc248bf1b",
       "en": "docs/skills/latex-paper-en/resources/references/modules/experiment.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/experiment.md"
     },
@@ -888,7 +888,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "137f84eee4b7c7a5ebd30f40dd21f79a6cdb170e9d7b102cedd29e3794a3d8bd",
+      "sourceSha256": "7959b0c18fed5a2e0045f798f91ff97ef3a16e6068ac1323e73f8cf3ee881d76",
       "en": "docs/skills/latex-thesis-zh/resources/references/deai/guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/guide.md"
     },
@@ -1014,7 +1014,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "62f4931ea21ea83aef0cc762dd2e0abee2fdcbf3d4aeca5dc836df14e07bad0c",
+      "sourceSha256": "0789d38868faeeac59a4af978b8f48b10c6332645aa2c6f31d8c6e0fd2e4e39e",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
     },
@@ -1023,7 +1023,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/experiment.md",
       "sourceLocale": "zh",
-      "sourceSha256": "0c56c8d88a0ea41d53be69c5bb7803e21f0550e5f8647c8539231c9b87dd5e3d",
+      "sourceSha256": "76491a7afa5899519816de9473e2bc58dd80c0f174d1619d5f85d4c31c577588",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/experiment.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/experiment.md"
     },
@@ -1356,7 +1356,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/CLAIM_EVIDENCE_CONTRACT.md",
       "sourceLocale": "en",
-      "sourceSha256": "7d2d427314b76d99a21d40c9a235bc628df14486614ff38a0c2659d6785c0e31",
+      "sourceSha256": "74896825910ba02eecb8a559f8714c8f3cef58c85b13ef75698b17a8fccfd4e6",
       "en": "docs/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md"
     },
@@ -1446,7 +1446,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md",
       "sourceLocale": "en",
-      "sourceSha256": "c9b8a09cf0170082ac30f50001ab3ea42faafe7cb553e0e2b6b98f6c02d7508a",
+      "sourceSha256": "cd5fb4b763b738c85d786f297b94f7d72c13a933b3f8ce87b787cab98801edb5",
       "en": "docs/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md"
     },
@@ -1563,7 +1563,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "76713251e61ebb4723c12ad5de6d25c2a0f5c78ad26eb9f6f3aa341728fddbb8",
+      "sourceSha256": "3150b7b7fc1b4fc860b122be8d23d1560ea61b66e2f5631278c034d9d71b42a3",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1662,7 +1662,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/claims_evidence_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "f33a29308d3301bb5401f153adc5c8169ea849f22508fbed4d6a349be6a7d0b1",
+      "sourceSha256": "4b0f61217079df71ee43f6cff73859c5c5e7b0fa2b067c909cf2167dcc336fc3",
       "en": "docs/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md"
     },
@@ -1896,7 +1896,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/DEAI_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "5e1c36c488248bd5877b64c9377ad784f4bde2c09496bb6ea957e7de350b5be8",
+      "sourceSha256": "e5967e05b59143c20cbbed60c38b0edb5f54e5c363b20c95b9e65d5aa2aaf29e",
       "en": "docs/skills/typst-paper/resources/references/DEAI_GUIDE.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/DEAI_GUIDE.md"
     },
@@ -1968,7 +1968,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/DEAI.md",
       "sourceLocale": "zh",
-      "sourceSha256": "5fb953f61e35e963ad1e6d94ad4e7475b135b88629f0b20968c82bf9338a9507",
+      "sourceSha256": "95a9450ea15a4718372d13fbe455e3c5590a3468e9eef74a13df002f85e73349",
       "en": "docs/skills/typst-paper/resources/references/modules/DEAI.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/DEAI.md"
     },
@@ -1977,7 +1977,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/EXPERIMENT.md",
       "sourceLocale": "en",
-      "sourceSha256": "f36d64552b8b46a904e2de484e74635758dbbffe70eeef3b0f4ea8a52d141312",
+      "sourceSha256": "ade80de14b2609c210570724437652af564048453bf7f3a3fa590381ae76b698",
       "en": "docs/skills/typst-paper/resources/references/modules/EXPERIMENT.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/EXPERIMENT.md"
     },

@@ -41,6 +41,10 @@ Protect four types of content first, and then reduce the AI ​​flavor:
 
 The default output is diagnostics, risk summaries, or rewrite blueprints. Only when the user explicitly requests to rewrite the text, a prose proposal will be given; no promise should be made to lower the score of a certain detection platform.
 
+Listing several specific mechanisms and then declaring that the current data cannot verify them is a defensive speculative explanation that requires `[LLM]` judgment. State the observation first and bind each retained mechanism to visible evidence or a discriminating test. If none is supported, state that the mechanism remains undetermined and move testable alternatives to future work. Do not delete the caveat or strengthen the inference merely to sound certain.
+
+The script's `hedge` / `hedge_application` suggestions remain valid for overconfident wording and undemonstrated applications. `results suggest`, `may / could`, and `可能/或许` reduce the strength of a single claim; they do not replace per-mechanism evidence.
+
 **3. Text rewriting** (only visible text is changed):
 - Split long sentences (English >50 words, Chinese >50 words)
 - Adjust word order to match natural expression

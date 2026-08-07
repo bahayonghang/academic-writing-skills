@@ -40,7 +40,7 @@ When the task is to rewrite a degree-thesis experiment chapter or layer its disc
 
 ## B3: Discussion Depth - Attribution Rather Than Data Repetition
 
-**Rule**: A discussion section must not merely repeat experimental data. Use causal/attribution language to explain the *reasons* behind results. A discussion that repeats table numbers without interpretation is shallow.
+**Rule**: A discussion section must not merely repeat experimental data, but causal or attribution language is not evidence by itself. Repeating table values is shallow; stacking specific mechanisms without evidence for each one adds no explanatory depth either.
 
 **Detection heuristic** (automated by script):
 - Scan every visible line in the `discussion` section
@@ -50,7 +50,9 @@ When the task is to rewrite a degree-thesis experiment chapter or layer its disc
 | Pattern | Judgment |
 |------|------|
 | “Model A has 95% accuracy. Model B has 90% accuracy.” | Shallow repetition (flag) |
-| “Model A outperforms Model B, possibly because it captures long-range dependencies.” | Attribution analysis (pass) |
+| “Model A outperforms Model B, possibly because it captures long-range dependencies.” | Attribution cue only; `[LLM]` must verify the evidence anchor |
+
+**LLM evidence boundary**: Every retained mechanism must map to a visible metric, figure, ablation, controlled comparison, citation, or discriminating test. If two or more specific mechanisms are listed without support for each one and a final caveat says the current data cannot verify them, flag a defensive speculative explanation. When the evidence cannot distinguish them, state that the mechanism remains undetermined; do not remove the caveat or strengthen an unverified inference.
 
 ## B4: Result-Literature Backtracking
 

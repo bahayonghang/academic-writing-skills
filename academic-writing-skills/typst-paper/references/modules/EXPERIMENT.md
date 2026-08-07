@@ -47,7 +47,14 @@ Carefully read the provided **[Experimental Data or Text Draft]**. Extract key f
 
 ## B3: Discussion Depth — Attribution Over Repetition
 
-The Discussion must explain _why_ results occur, not just restate numbers. The script counts lines with attribution markers (`because|due to|mechanism|explains|stems from|driven by|suggests that|indicates that`). If ratio < 15% → Major/P1.
+The Discussion must explain _why_ results occur, not just restate numbers, but attribution language is not evidence by itself. The script counts lines with attribution markers (`because|due to|mechanism|explains|stems from|driven by|suggests that|indicates that`). If ratio < 15% → Major/P1.
+
+**LLM evidence boundary**: For every retained mechanism, identify a visible metric, figure,
+ablation, controlled comparison, citation, or discriminating test. If two or more mechanisms
+are listed without per-mechanism support and a terminal caveat says the current data verify
+none of them, flag a defensive speculative explanation. State that the mechanism is
+undetermined when evidence cannot distinguish the alternatives; do not delete the caveat or
+make an unsupported inference more certain.
 
 ## B4: Results-Literature Echo
 

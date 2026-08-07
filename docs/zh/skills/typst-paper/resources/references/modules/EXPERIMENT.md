@@ -47,7 +47,9 @@
 
 ## B3：讨论深度——归因优于重复
 
-讨论必须解释为什么会出现结果，而不仅仅是重述数字。该脚本对带有属性标记 (`because|due to|mechanism|explains|stems from|driven by|suggests that|indicates that`) 的行进行计数。如果比率 < 15% → 主要/P1。
+讨论必须解释为什么会出现结果，而不仅仅是重述数字，但归因语言本身并不是证据。该脚本对带有归因标记 (`because|due to|mechanism|explains|stems from|driven by|suggests that|indicates that`) 的行进行计数。如果比率 < 15% → Major/P1。
+
+**LLM 证据边界**：保留的每项机制都应对应可见指标、图表、消融、受控对比、引用或区分性检验。若连续列出两个及以上机制，却没有逐项支持，末尾又统一声明当前数据无法验证，应标记为防御性推测解释。证据不能区分时直接说明机制尚未确定；不得删掉限制语或增强无证据支持的推断。
 
 ## B4：结果-文学回声
 

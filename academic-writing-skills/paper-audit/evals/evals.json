@@ -253,6 +253,24 @@
         {"type": "regex", "pattern": "(claim_strength|unsupported|observed|supported|strong)", "description": "claim strength ladder applied"},
         {"type": "regex", "pattern": "(OVER_CLAIM_GUARD|over.?claim)", "description": "over-claim guard framing visible"}
       ]
+    },
+    {
+      "id": 23,
+      "prompt": "Run the claims_vs_evidence lane on the five labeled Discussion cases. Treat defensive mechanism stacking as unsupported extrapolation, explain which case belongs in the max-8 issue budget, and preserve the four evidence-calibrated boundaries. Give bounded wording without inventing evidence.",
+      "expected_output": "Emit one claim_accuracy finding for Case A as unsupported extrapolation, with per-mechanism evidence gaps, bounded allowed wording that says the mechanism is undetermined, and the overreaching mechanism stack as forbidden wording. Do not flag Cases B-E; keep the finding inside the existing max-8 lane quota.",
+      "files": ["evals/fixtures/defensive_speculative_explanation.tex"],
+      "assertions": [
+        {"type": "contains", "text": "unsupported extrapolation", "description": "pattern remains an existing claim-evidence subtype"},
+        {"type": "contains", "text": "claim_accuracy", "description": "finding uses the existing issue type"},
+        {"type": "regex", "pattern": "(per-mechanism|evidence anchor|discriminating test)", "description": "finding maps mechanisms to evidence gaps"},
+        {"type": "contains", "text": "Case B", "description": "single anchored hedge remains a non-finding"},
+        {"type": "contains", "text": "Case C", "description": "evidenced alternatives remain a non-finding"},
+        {"type": "contains", "text": "Case D", "description": "honest unknown remains a non-finding"},
+        {"type": "contains", "text": "Case E", "description": "controlled strong claim remains a non-finding"},
+        {"type": "regex", "pattern": "(allowed_wording|undetermined|cannot determine)", "description": "bounded repair preserves honest uncertainty"},
+        {"type": "regex", "pattern": "(max.?8|lane budget|existing quota)", "description": "finding competes inside the existing lane budget"},
+        {"type": "not_contains", "text": "p = 0.01", "description": "no unsupported significance evidence is invented"}
+      ]
     }
   ]
 }

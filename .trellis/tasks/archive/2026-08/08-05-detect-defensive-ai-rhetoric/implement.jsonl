@@ -1,0 +1,6 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"Discover repository-level contracts and required alignment tests before changing writing skills."}
+{"file":".trellis/spec/academic-writing-skills/polish-rewrite-contract.md","reason":"Apply the A/B/C decidability boundary; this semantic pattern must remain C-grade llm-only."}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"Follow repository test-loading and alignment conventions when adding contract coverage."}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"Synchronize every changed public source with both docs targets, manifest hashes, full resource checks, and docs build."}
+{"file":".trellis/tasks/08-05-detect-defensive-ai-rhetoric/research/current-gap-audit.md","reason":"Use the generalized behavior, keep/adapt/reject/invent decisions, repair table, and false-positive boundaries."}
+{"file":".trellis/tasks/08-05-detect-defensive-ai-rhetoric/research/review-verification.md","reason":"Apply verified CI constraints, exact source paths/locales, lane budget decision, eval identity rule, and rejected platform-only advice."}

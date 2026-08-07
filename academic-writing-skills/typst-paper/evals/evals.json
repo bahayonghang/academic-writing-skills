@@ -345,6 +345,66 @@
           "description": "no detector-evasion promise"
         }
       ]
+    },
+    {
+      "id": 15,
+      "prompt": "Review the five labeled Discussion cases in this Typst fixture for AI tone and claim-evidence calibration. Flag only the defensive speculative explanation, explain the per-mechanism evidence gap, and state why Cases B-E are legitimate boundaries. Preserve Typst syntax and do not invent evidence.",
+      "expected_output": "Route to deai with Typst Discussion evidence review: identify Case A as a defensive speculative explanation, require evidence anchors or discriminating tests for retained mechanisms, use undetermined when unsupported, and preserve the four evidence-calibrated boundary cases.",
+      "files": [
+        "evals/fixtures/defensive_speculative_explanation.typ"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "defensive speculative explanation",
+          "description": "target composite pattern named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(per-mechanism|evidence anchor|discriminating test)",
+          "description": "mechanisms require local evidence mapping"
+        },
+        {
+          "type": "regex",
+          "pattern": "(undetermined|cannot determine|mechanism remains unknown)",
+          "description": "unsupported attribution falls back to honest uncertainty"
+        },
+        {
+          "type": "contains",
+          "text": "Case B",
+          "description": "single anchored hedge remains a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case C",
+          "description": "evidenced alternatives remain a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case D",
+          "description": "honest unknown remains a non-finding"
+        },
+        {
+          "type": "contains",
+          "text": "Case E",
+          "description": "controlled strong claim remains a non-finding"
+        },
+        {
+          "type": "regex",
+          "pattern": "(controlled|ablation|earned|strong claim)",
+          "description": "evidence-earned strong wording is preserved"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Typst|\\.typ|syntax)",
+          "description": "Typst surface remains explicit"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "no unsupported significance evidence is invented"
+        }
+      ]
     }
   ]
 }

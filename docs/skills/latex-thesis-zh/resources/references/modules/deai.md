@@ -21,6 +21,16 @@ Before removing "AI flavor", extract four protected buckets:
 
 Only after these are clear should the module remove structure shells. The default output remains diagnostic findings, a risk summary, or a rewrite blueprint. Provide prose rewrites only when the user explicitly asks for them.
 
+Treat defensive speculative explanations as `[LLM]` findings: when a paragraph stacks
+multiple mechanisms and then says the current data verify none of them, map each retained
+mechanism to a visible evidence anchor or discriminating test. If no mechanism is supported,
+state that it remains undetermined and move testable alternatives to future work. Do not
+delete the caveat or strengthen the inference merely to sound decisive.
+
+The script's `hedge` / `hedge_application` suggestions still correctly calibrate
+over-confident wording and undemonstrated applications. `results suggest`, `may / could`,
+and `可能/或许` reduce claim strength; they do not replace per-mechanism evidence.
+
 ## High-Priority AI Patterns (Must Fix)
 
 | Pattern | Example | Fix |

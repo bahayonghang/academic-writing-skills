@@ -12,6 +12,7 @@
 | [paper-audit-boundary-contracts.md](./paper-audit-boundary-contracts.md) | paper-audit severity、ScholarEval 模块映射与外置 BibTeX 数据流契约                      | 修改 consolidation、ScholarEval 或 literature comparison 链路之前                       |
 | [cover-letter-contracts.md](./cover-letter-contracts.md)                 | cover-letter claim 位置、journal-fit 去重与警告 payload 契约                            | 修改 cover-letter claim/journal-fit/统一 CLI 数据流之前                                 |
 | [polish-rewrite-contract.md](./polish-rewrite-contract.md)               | 两层改写契约四字段、`--goal`/`--strength`/`--tier` 三轴、A/B/C 自动化分级、受保护 token | 改 EN/ZH/Typst 任一润色模块（expression/grammar/sentences/translation）或其契约字段之前 |
+| [defensive-ai-rhetoric-contract.md](./defensive-ai-rhetoric-contract.md) | 防御性推测解释的组合判据、证据校准修复、跨 surface eval 与 audit lane 预算              | 改 de-AI/experiment 的机制解释规则或 claims-vs-evidence lane 之前                        |
 
 ## 背景速览
 

@@ -28,6 +28,16 @@ hint at / point toward                      ← very weak signal or hypothesis
 
 Flag any claim whose verb sits above the rung its evidence can reach.
 
+## Hedging Is Not Evidence
+
+Moving down the certainty ladder is necessary when evidence is weak, but it does not make an
+unsupported explanation substantiated. A paragraph that lists multiple specific mechanisms
+with `may`, `could`, or `is consistent with` and then says the current data verify none of
+them is a defensive speculative explanation. Apply `CLAIM_EVIDENCE_CONTRACT.md` first:
+retain only mechanisms with visible anchors, or state that the mechanism is undetermined.
+Never remove the caveat or choose stronger wording merely to make the paragraph sound more
+decisive.
+
 ## Substitution tables (flag ❌ → suggest ✅)
 
 ### 1. Causal (correlation stated as causation — the most common over-claim)

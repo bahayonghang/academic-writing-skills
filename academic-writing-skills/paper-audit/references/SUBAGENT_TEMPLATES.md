@@ -74,6 +74,10 @@ actually present in the paper.
   data, and missing caveats; classify the over-claim type (causal / firstness /
   universality / effect-size / temporal / application / comparison) and take the
   conservative rewrite from `OVER_CLAIM_GUARD.md`
+- treat defensive speculative explanations as a subtype of unsupported
+  extrapolation: when two or more mechanisms lack per-mechanism evidence or a
+  discriminating test and a terminal caveat retracts all of them, preserve the
+  observation and mark unsupported mechanisms `speculative` or `undetermined`
 - emit over-claim findings as `comment_type: claim_accuracy` with `allowed_wording`
   (the bounded rewrite) and `forbidden_wording` (the overreaching phrasing)
 - when a claim cites a specific table or figure, verify the cited artifact
@@ -85,11 +89,17 @@ actually present in the paper.
   present (see the reverse-calibration list in `OVER_CLAIM_GUARD.md` — strong
   wording that the evidence earns is not a finding)
 - do not propose evidence the paper does not contain
+- do not treat `may`, `could`, or a terminal caveat as a substitute for evidence;
+  do not delete the caveat or strengthen an unsupported mechanism to sound decisive
 - do not duplicate findings already raised by the methodology or notation lane
 
 **Output limit**: max 8 issues; surface only the strongest claim-evidence
-gaps. Recurring weak phrasing collapses into one issue with multiple example
-locations.
+gaps. Rank central or gate-relevant claims before local wording, then severity
+and size of the evidence gap. A defensive speculative explanation competes as
+an unsupported-extrapolation finding, not as a separate quota. Recurring weak
+phrasing or mechanism stacking collapses into one issue with multiple example
+locations; omit style-only AI-tone findings when stronger claim-evidence gaps
+fill the lane.
 
 ### Lane: notation_and_numeric_consistency
 
