@@ -56,6 +56,47 @@ def test_deep_review_criteria_marks_specialized_agents_as_reference_playbooks() 
         assert "reference playbook" in matching_line
 
 
+def test_methodological_interface_guidance_is_wired_without_role_drift() -> None:
+    template = (REFERENCES / "SUBAGENT_TEMPLATES.md").read_text(encoding="utf-8")
+    critical = (AGENTS / "critical_reviewer_agent.md").read_text(encoding="utf-8")
+    criteria = (REFERENCES / "DEEP_REVIEW_CRITERIA.md").read_text(encoding="utf-8")
+    lane_guide = (REFERENCES / "REVIEW_LANE_GUIDE.md").read_text(encoding="utf-8")
+    skill = (PAPER_AUDIT / "SKILL.md").read_text(encoding="utf-8")
+
+    for token in (
+        "### Lane: section_methods - Methodological interface & argumentation completeness",
+        "current constraint",
+        "required capability",
+        "design choice",
+        "processing path",
+        "output object",
+        "downstream interface",
+        "upstream output",
+        "connection transform",
+        "downstream use",
+        "M-NONDIRECT",
+        "OVER_CLAIM_GUARD.md",
+        "notation_and_numeric_consistency",
+        r"\paragraph{核心结论概括}",
+        "latex-paper-en/references/writing/section-writing/method.md",
+    ):
+        assert token in template
+
+    for connection_type in (
+        "`continuation`",
+        "`elaboration`",
+        "`contrast`",
+        "`cause-effect`",
+        "`interface`",
+        "`residual-constraint`",
+    ):
+        assert connection_type in critical
+
+    assert "method-module adjacency" in criteria
+    assert "methodological interface and argumentation completeness" in lane_guide
+    assert "`--method-narrative --section` workflow outside the automatic audit chain" in skill
+
+
 def test_consensus_formula_consistent() -> None:
     synthesis = (AGENTS / "synthesis_agent.md").read_text(encoding="utf-8")
     editorial = (REFERENCES / "editorial_decision_standards.md").read_text(encoding="utf-8")

@@ -19,7 +19,7 @@ Use this file when running `deep-review`.
 13. **Theory contribution deficiency** — core concepts undefined or ambiguous, no substantive dialogue with existing theories, theoretical increment not identifiable (see A5-A7 in domain_reviewer_agent.md, reference playbook)
 14. **Qualitative methodology opacity** — sampling rationale missing, coding process undescribed, no saturation discussion, absent reflexivity in sensitive research (see B6-B10 in methodology_reviewer_agent.md, reference playbook)
 15. **Pseudo-innovation / straw man** — fabricated research gap, mischaracterized prior work, selective citation that hides overlap with existing methods (see prior_art_reviewer_agent.md)
-16. **Paragraph-level argument incoherence** — logical jumps between adjacent paragraphs, causal inversions, evidence that does not support the stated claim (see C5 in critical_reviewer_agent.md, reference playbook)
+16. **Paragraph-level argument incoherence** — logical jumps between adjacent paragraphs, causal inversions, evidence that does not support the stated claim (see C5 in critical_reviewer_agent.md, reference playbook). Within `Methods`, also check method-module adjacency for an explicit upstream output, connecting transform, downstream use, and residual constraint.
 
 ## Editor-in-Chief screening (gate mode)
 

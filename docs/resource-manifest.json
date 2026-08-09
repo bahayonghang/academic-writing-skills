@@ -1392,7 +1392,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/DEEP_REVIEW_CRITERIA.md",
       "sourceLocale": "en",
-      "sourceSha256": "e3635be31beb09567cabf64d71ba475c2cfd35901aac56222b02603718a787dd",
+      "sourceSha256": "a2a1534eab218dea40d834597fd3b399b3fdf0b3796b70c1652245d3f7e39b7a",
       "en": "docs/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/DEEP_REVIEW_CRITERIA.md"
     },
@@ -1527,7 +1527,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "e426bae4a9cc6e105717d061c6aa865794cd136d4b5a76324b3218eb2bd9bca8",
+      "sourceSha256": "ff519d652d8f779d82b523071597aec7633dc587555e317bc219a21eabce9b3b",
       "en": "docs/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md"
     },
@@ -1572,7 +1572,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "3150b7b7fc1b4fc860b122be8d23d1560ea61b66e2f5631278c034d9d71b42a3",
+      "sourceSha256": "d536814d9f6ff7f5ca546c30ddf7c729d2dd1385f95e6e0c3b9fd237e7008b57",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1725,7 +1725,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "d35064c6b51fbbf9e09d65f0b4e5facb099ca3fb74c1cea14037af1f7fb2658f",
+      "sourceSha256": "8ad80166b97f96a8405c6300c1cccf2ad91aec22e1aa24bede062e8303d42d55",
       "en": "docs/skills/paper-audit/resources/agents/critical_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/critical_reviewer_agent.md"
     },

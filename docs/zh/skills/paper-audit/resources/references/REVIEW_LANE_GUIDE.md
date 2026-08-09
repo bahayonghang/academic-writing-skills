@@ -7,7 +7,7 @@
 - `section_intro_related`
   - 检查框架、新颖性定位以及论文早期做出的承诺
 - `section_methods`
-  - 检查定义、假设、推导和方法细节
+  - 检查定义、假设、推导和方法细节；审查方法论接口与论证完整性时，加载 `section_methods` 焦点块（位于 `SUBAGENT_TEMPLATES.md`）
 - `section_results`
   - 检查度量计算、证据充分性和比较公平性
 - `section_discussion_conclusion`
