@@ -1097,3 +1097,39 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 29: 完成 EN 与 Typst 方法叙述升级
+
+**Date**: 2026-08-09
+**Task**: 完成 EN 与 Typst 方法叙述升级
+**Branch**: `dev`
+
+### Summary
+
+为 latex-paper-en 与 typst-paper 增加方法节 M-* 叙述检查、逐边接口契约和资源镜像，并修正 transition sequence 分类。
+
+### Main Changes
+
+- EN 与 Typst analyze_logic.py 支持 --section methods 的 M-* 候选检查并保持镜像一致
+- 同步方法节参考、SKILL 入口、资源 manifest 与中英文文档页
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5ef7460` | (see git log) |
+| `38056c4` | (see git log) |
+
+### Testing
+
+- [OK] just ci：1445 passed，ruff 通过，pyright 0 errors
+- [OK] 资源合同 256 项通过，just doc-build 与 git diff --check 通过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 实施 08-09-method-desc-audit-sync，将 paper-audit 接入第二次 methods 检查并同步审计契约
