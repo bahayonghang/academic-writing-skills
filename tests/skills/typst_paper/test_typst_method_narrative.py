@@ -229,6 +229,24 @@ Because the input remains noisy, the pipeline aligns it before prediction.
     assert "M-EQUATION" not in report
 
 
+def test_typst_related_work_group_headings_do_not_enter_method_scope(tmp_path: Path) -> None:
+    report = _run(
+        tmp_path,
+        """= Related Work
+*Graph methods.* This module is used to model pairwise relations.
+*Sequence methods.* This component aims to preserve temporal order.
+*Hybrid methods.* This stage serves to combine both representations.
+= Methods
+== Pipeline
+Because the input remains noisy, the pipeline aligns it before prediction.
+""",
+    )
+
+    assert "M-HEADING" not in report
+    assert "M-SEQWORD" not in report
+    assert "M-EQUATION" not in report
+
+
 def test_typst_sequence_transitions_have_one_runtime_source() -> None:
     assert analyze_logic.TRANSITIONS["sequence"] == {
         "next",

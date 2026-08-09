@@ -20,8 +20,8 @@ class AuditIssue:
 
     module: str  # e.g., "FORMAT", "GRAMMAR", "LOGIC"
     line: Optional[int]  # Line number (None if not applicable)
-    severity: str  # "Critical", "Major", "Minor"
-    priority: str  # "P0", "P1", "P2"
+    severity: str  # "Critical", "Major", "Minor", "Info"
+    priority: str  # "P0", "P1", "P2", "P3"
     message: str  # Issue description
     original: str = ""  # Original text (if applicable)
     revised: str = ""  # Suggested revision (if applicable)
@@ -1000,6 +1000,7 @@ def render_self_check_report(result: AuditResult, *, lang: str = "en") -> str:
         for severity, heading_key in [
             ("Major", "subsection.high_signal_quality_issues"),
             ("Minor", "subsection.additional_quality_improvements"),
+            ("Info", "subsection.informational_findings"),
         ]:
             sev_issues = [issue for issue in quality_improvements if issue.severity == severity]
             if not sev_issues:

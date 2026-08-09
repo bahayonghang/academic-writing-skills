@@ -128,9 +128,16 @@ def evaluate_from_audit(
     Returns:
         Dict mapping dimension names to scores (1-10 scale).
     """
+    # Info findings are candidate prompts for review, not scored defects.
+    scored_issues = [
+        issue
+        for issue in audit_issues
+        if str(issue.get("severity", "")).strip().casefold() != "info"
+    ]
+
     # Route each known audit module to exactly one script-evaluable dimension.
     by_dimension: dict[str, list[dict]] = {}
-    for issue in audit_issues:
+    for issue in scored_issues:
         module = str(issue.get("module", "")).upper()
         dimension = MODULE_DIMENSION_MAP.get(module)
         if dimension:
@@ -143,7 +150,7 @@ def evaluate_from_audit(
     scores["presentation"] = _deduct_score(10, by_dimension.get("presentation", []))
 
     # Reproducibility (partial) <- experiment + pseudocode issues
-    scores["reproducibility_partial"] = _check_reproducibility_signals(audit_issues)
+    scores["reproducibility_partial"] = _check_reproducibility_signals(scored_issues)
 
     # Literature Grounding (partial) <- from literature_compare.py
     scores["literature_grounding_partial"] = literature_grounding_score

@@ -495,6 +495,124 @@ This is clean text with no issues.
         assert "presubmission" in MODE_CHECKS["gate"]
         assert "presubmission" in MODE_CHECKS["re-audit"]
 
+    def test_parse_script_output_groups_structured_finding_block(self) -> None:
+        from audit import _parse_script_output
+
+        stdout = "\n".join(
+            [
+                "% METHOD-NARRATIVE (Line 12) [Severity: Minor] [Priority: P2]: "
+                "[Script] M-HEADING repeated announcement",
+                "% Current: three inline headings",
+                "% Suggested: make the interface explicit",
+                "% Rationale: headings do not replace reasoning",
+                "% Meaning-Check: NEEDS-LLM",
+                "",
+            ]
+        )
+
+        issues = _parse_script_output("logic", stdout)
+
+        assert len(issues) == 1
+        assert issues[0].line == 12
+        assert issues[0].severity == "Minor"
+        assert issues[0].priority == "P2"
+        assert "M-HEADING" in issues[0].message
+
+    def test_parse_script_output_recognizes_info_p3(self) -> None:
+        from audit import _parse_script_output
+
+        issues = _parse_script_output(
+            "logic",
+            "// METHOD-NARRATIVE (Line 7) [Severity: Info] [Priority: P3]: "
+            "[Script] M-SEQWORD sequence-only opening\n"
+            "// Current: Next, we describe the component.\n"
+            "// Meaning-Check: NEEDS-LLM\n",
+        )
+
+        assert len(issues) == 1
+        assert issues[0].severity == "Info"
+        assert issues[0].priority == "P3"
+
+    def test_self_check_report_keeps_info_p3_finding_visible(self) -> None:
+        result = AuditResult(
+            file_path="paper.tex",
+            language="en",
+            mode="quick-audit",
+            issues=[AuditIssue("LOGIC", 7, "Info", "P3", "M-SEQWORD candidate")],
+        )
+
+        report = render_self_check_report(result)
+
+        assert "### Informational Findings" in report
+        assert "[**Severity**: Info] [Priority: P3]: M-SEQWORD candidate" in report
+
+    def test_phase0_context_summarizes_and_lists_info_p3(self) -> None:
+        from audit import export_phase0_context
+
+        result = AuditResult(
+            file_path="paper.tex",
+            language="en",
+            mode="quick-audit",
+            issues=[AuditIssue("LOGIC", 7, "Info", "P3", "M-SEQWORD candidate")],
+        )
+
+        context = export_phase0_context(result)
+
+        assert "## Issue Summary (1 total)\n- Info: 1" in context
+        assert "| 1 | 7 | Info | P3 | M-SEQWORD candidate |" in context
+
+    def test_parse_script_output_keeps_unstructured_fallback(self) -> None:
+        from audit import _parse_script_output
+
+        issues = _parse_script_output(
+            "logic", "% Current: standalone diagnostic\nsecond bare issue\n"
+        )
+
+        assert [(issue.severity, issue.priority) for issue in issues] == [
+            ("Minor", "P2"),
+            ("Minor", "P2"),
+        ]
+
+    def test_parse_script_output_keeps_fallback_lines_in_mixed_output(self) -> None:
+        from audit import _parse_script_output
+
+        stdout = "\n".join(
+            [
+                "bare issue before finding",
+                "% METHOD-NARRATIVE (Line 12) [Severity: Minor] [Priority: P2]: "
+                "[Script] M-HEADING repeated announcement",
+                "% Current: three inline headings",
+                "% Meaning-Check: NEEDS-LLM",
+                "bare issue after finding",
+                "% Current: standalone diagnostic",
+            ]
+        )
+
+        issues = _parse_script_output("logic", stdout)
+
+        assert len(issues) == 4
+        assert issues[0].message == "issue before finding"
+        assert "M-HEADING repeated announcement" in issues[1].message
+        assert issues[2].message == "issue after finding"
+        assert issues[3].message == "standalone diagnostic"
+
+    @pytest.mark.parametrize("prefix", ["%", "//"])
+    def test_parse_script_output_ignores_method_edge_table(self, prefix: str) -> None:
+        from audit import _parse_script_output
+
+        stdout = "\n".join(
+            [
+                f"{prefix} M-EDGETABLE [Script] Method-module interface skeleton (not a finding)",
+                f"{prefix} Subsection list: Encoder -> Decoder",
+                f"{prefix} | Upstream subsection | Upstream output | Connection type | "
+                "Intermediate transform | Downstream use |",
+                f"{prefix} | Encoder |  |  |  |  |",
+                f"{prefix} [LLM] 待填写",
+            ]
+        )
+
+        assert _parse_script_output("logic", stdout) == []
+
     def test_run_audit_passes_cross_section_to_logic(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
@@ -518,8 +636,55 @@ This is clean text with no issues.
         result = audit.run_audit(str(tex), mode="self-check", lang="en")
         assert result is not None
         logic_calls = [args for name, args in calls if name == "analyze_logic.py"]
-        assert logic_calls
-        assert ["--cross-section"] in logic_calls
+        assert logic_calls.count(["--cross-section"]) == 1
+        assert logic_calls.count(["--section", "methods"]) == 1
+
+    @pytest.mark.parametrize(
+        ("suffix", "lang", "expected_methods_calls"),
+        [
+            (".tex", "zh", 0),
+            (".typ", "en", 1),
+            (".typ", "zh", 1),
+            (".pdf", "en", 0),
+            (".pdf", "zh", 0),
+        ],
+    )
+    def test_run_audit_scopes_methods_logic_call_to_supported_sources(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        suffix: str,
+        lang: str,
+        expected_methods_calls: int,
+    ) -> None:
+        import audit
+
+        paper = tmp_path / f"paper{suffix}"
+        paper.write_text("= Methods\nText.\n" if suffix == ".typ" else "paper", encoding="utf-8")
+        calls: list[tuple[str, list[str]]] = []
+
+        def fake_run(script_path, file_path, extra_args=None):
+            calls.append((Path(script_path).name, list(extra_args or [])))
+            return 0, "", ""
+
+        if suffix == ".pdf":
+
+            class _PdfParser:
+                @staticmethod
+                def extract_text_from_file(file_path: str) -> str:
+                    return "Methods. Text."
+
+            monkeypatch.setattr(audit, "get_parser", lambda *args, **kwargs: _PdfParser())
+
+        monkeypatch.setattr(audit, "_run_check_script", fake_run)
+        monkeypatch.setattr(audit, "_run_checklist", lambda *args, **kwargs: [])
+
+        result = audit.run_audit(str(paper), mode="self-check", lang=lang)
+
+        assert result is not None
+        logic_calls = [args for name, args in calls if name == "analyze_logic.py"]
+        assert logic_calls.count(["--cross-section"]) == 1
+        assert logic_calls.count(["--section", "methods"]) == expected_methods_calls
 
     def test_run_audit_schedules_experiment_and_deai(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -827,6 +992,38 @@ class TestScholarEval:
         scores = evaluate_from_audit(issues)
         # 10 - 2.5 - 1.25 = 6.25
         assert scores["soundness"] == 6.25
+
+    def test_info_issue_does_not_change_score(self) -> None:
+        from scholar_eval import evaluate_from_audit
+
+        scores = evaluate_from_audit(
+            [{"module": "LOGIC", "severity": "Info", "message": "M-SEQWORD candidate"}]
+        )
+
+        assert scores["soundness"] == 10.0
+
+    def test_info_issue_is_filtered_before_scholar_eval_deduction(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import scholar_eval
+
+        seen_issues: list[dict] = []
+
+        def spy_deduct(base: float, issues: list[dict]) -> float:
+            seen_issues.extend(issues)
+            return base
+
+        monkeypatch.setattr(scholar_eval, "_deduct_score", spy_deduct)
+        scholar_eval.evaluate_from_audit(
+            [
+                {"module": "LOGIC", "severity": "Info", "message": "candidate"},
+                {"module": "LOGIC", "severity": "Minor", "message": "defect"},
+            ]
+        )
+
+        assert seen_issues
+        assert all(issue["severity"] != "Info" for issue in seen_issues)
+        assert any(issue["severity"] == "Minor" for issue in seen_issues)
 
     def test_floor_at_one(self) -> None:
         from scholar_eval import evaluate_from_audit

@@ -1,0 +1,20 @@
+\documentclass{article}
+\begin{document}
+\section{Methods}
+\subsection{Encoding}
+Next, we describe the encoder component.
+\paragraph{Dynamic encoder}
+This module is used to extract a dynamic representation.
+\paragraph{Candidate generator}
+The component aims to generate candidate states.
+\paragraph{Candidate filter}
+The stage serves to retain candidate states.
+\begin{equation}
+z = f(x)
+\end{equation}
+The transform yields a latent state.
+The state enters the candidate generator.
+Training updates the encoder parameters.
+\subsection{Decoding}
+Because the candidate state remains uncalibrated, the decoder maps it to the final output.
+\end{document}
