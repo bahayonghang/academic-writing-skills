@@ -1,8 +1,8 @@
-{"file": ".trellis/tasks/08-09-method-description-upgrade/design.md", "reason": "M-* 判据唯一权威表（§2）与共享判定；子任务不得复述改写"}
-{"file": ".trellis/tasks/08-09-method-description-upgrade/research/user-spec-method-description.md", "reason": "用户《方法描述规范》原文，参考文件转写核对源（§9/§10 无损）"}
-{"file": ".trellis/tasks/08-09-method-description-upgrade/research/repo-recon.md", "reason": "机制事实与行号证据（audit 委托/解析、zh 章判别、契约锁、红线负例）"}
-{"file": ".trellis/tasks/08-09-method-description-upgrade/research/c1-handoff.md", "reason": "C1 已落地的 MN_ 符号、analyze 签名与验证证据快照"}
-{"file": ".trellis/tasks/08-09-method-description-upgrade/research/c2-handoff.md", "reason": "C2 方法节双调用形态、finding 块格式、MN_ 表面与验证证据"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/design.md", "reason": "M-* 判据唯一权威表（§2）与共享判定；子任务不得复述改写"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/research/user-spec-method-description.md", "reason": "用户《方法描述规范》原文，参考文件转写核对源（§9/§10 无损）"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/research/repo-recon.md", "reason": "机制事实与行号证据（audit 委托/解析、zh 章判别、契约锁、红线负例）"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/research/c1-handoff.md", "reason": "C1 已落地的 MN_ 符号、analyze 签名与验证证据快照"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/research/c2-handoff.md", "reason": "C2 方法节双调用形态、finding 块格式、MN_ 表面与验证证据"}
 {"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语资源契约：方向、manifest、--skill 自查与 doc-build 义务"}
 {"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "paper-audit 角色/车道边界契约（focus block 与 C5 增补必须合规）"}
 {"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试与工具链约定（基线断言调整须合规）"}
