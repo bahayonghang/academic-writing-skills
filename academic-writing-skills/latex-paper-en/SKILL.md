@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-27"
+  last_updated: "2026-08-09"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -142,6 +142,7 @@ Read only the file matching the active module.
 
 - `references/modules/`: per-module commands and decision notes; `routing-rules.md` (full routing/output/safety detail), `section-writing.md`, `caption.md`, `pseudocode.md`.
 - `references/writing/style-guide.md`: tone/style defaults; `references/writing/section-writing/`: per-section writing guides.
+- Method interfaces: load `references/writing/section-writing/method.md` for module flow, equation closure, or run-in headings in a Methods section.
 - `references/venues/catalog.md`: venue index — prefer `templates/<venue>.md` (`ieee`, `acm`, `neurips`, `icml`, `springer-lncs`) when a venue is named.
 - `references/citations/verification.md`: citation verification workflow.
 - `references/review/reviewer-perspective.md`: reviewer-style heuristics for figures and clarity.

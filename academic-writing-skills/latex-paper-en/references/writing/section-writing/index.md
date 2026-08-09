@@ -9,7 +9,7 @@ Load only the file for the active section:
 - `abstract.md`: abstract logic, contribution variants, and result-bound constraints.
 - `introduction.md`: task/application funnel, technical bottleneck, solution pipeline, and contribution closure.
 - `related-work.md`: topic design, comparison, limitation, gap, and current-work positioning.
-- `method.md`: method overview and module triad: motivation, design, technical advantage.
+- `method.md`: method-module interfaces, equation closure, heading discipline, and evidence tiers.
 - `experiments.md`: claim-to-experiment planning, baselines, ablations, discussion, tables, and limitations.
 - `conclusion.md`: solved problem, evidence recap, implication, limitation, and future work.
 - `flow.md`: paragraph clarity, topic sentence, reverse outline, transitions.
