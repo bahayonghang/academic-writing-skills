@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/08-09-method-description-upgrade/design.md", "reason": "M-* 判据唯一权威表（§2）与共享判定；子任务不得复述改写"}
+{"file": ".trellis/tasks/08-09-method-description-upgrade/research/user-spec-method-description.md", "reason": "用户《方法描述规范》原文，参考文件转写核对源（§9/§10 无损）"}
+{"file": ".trellis/tasks/08-09-method-description-upgrade/research/repo-recon.md", "reason": "机制事实与行号证据（audit 委托/解析、zh 章判别、契约锁、红线负例）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语资源契约：方向、manifest、--skill 自查与 doc-build 义务"}
+{"file": ".trellis/tasks/08-09-method-description-upgrade/research/external-sources.md", "reason": "参考文件引用来源（Gopen&Swan、MIT/IEEE/Nature/PLOS）与借鉴取舍"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "finding/改写输出契约（Risk-Flags、Meaning-Check 语义）"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试与工具链约定（fixture/断言/CI 口径）"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "参考文件措辞须符合防御性 AI 修辞契约"}
