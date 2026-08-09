@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 29
+- **Total Sessions**: 30
 - **Last Active**: 2026-08-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1135 | Active |
+| `journal-1.md` | ~1158 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 30 | 2026-08-09 | 完成方法描述升级集成与归档 | `91884b8`, `e6dee00`, `786e070` | `dev` |
 | 29 | 2026-08-09 | 完成 EN 与 Typst 方法叙述升级 | `5ef7460`, `38056c4` | `dev` |
 | 28 | 2026-08-09 | 完成 C1 中文方法叙述检查 | `9d1a382`, `50181ac` | `dev` |
 | 27 | 2026-08-05 | 强化防御性 AI 话术识别 | `c03e010`, `dc18edf` | `dev` |

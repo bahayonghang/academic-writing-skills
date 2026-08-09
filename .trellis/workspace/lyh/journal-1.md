@@ -1133,3 +1133,26 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 实施 08-09-method-desc-audit-sync，将 paper-audit 接入第二次 methods 检查并同步审计契约
+
+
+## Session 30: 完成方法描述升级集成与归档
+
+**Date**: 2026-08-09
+**Task**: 完成方法描述升级集成与归档
+**Branch**: `dev`
+
+### Summary
+
+完成 paper-audit 方法节双调用、块感知解析、Info/P3 零扣分、方法论接口审阅资源与跨技能契约；全量 CI、资源同步和文档构建通过。自动化证据仅覆盖合成病例、干净对照与合法标题负例，真实论文语料查准率和召回率仍为 UNVERIFIED。C3 与父任务均已归档；未触碰并行的 08-09-results-analysis-zh。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `91884b8` | (see git log) |
+| `e6dee00` | (see git log) |
+| `786e070` | (see git log) |
+
+### Status
+
+[OK] **Completed**
