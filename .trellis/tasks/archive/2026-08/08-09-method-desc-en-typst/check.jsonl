@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-09-method-description-upgrade/prd.md", "reason": "跨子任务验收标准与排除项"}
+{"file": ".trellis/tasks/08-09-method-description-upgrade/design.md", "reason": "M-* 判据唯一权威表（§2）与共享判定"}
+{"file": ".trellis/tasks/08-09-method-description-upgrade/research/repo-recon.md", "reason": "契约锁清单与审阅核验判定（§2.3-2.6、§3）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语页校验不在 just ci 内，须按此契约显式验证"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "核对 finding 与 Meaning-Check 输出契约"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对副本脚本测试加载、fixture 与 CI 约定"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "核对参考文件的证据校准与修辞边界"}
