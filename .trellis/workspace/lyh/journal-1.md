@@ -1075,3 +1075,25 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 28: 完成 C1 中文方法叙述检查
+
+**Date**: 2026-08-09
+**Task**: 完成 C1 中文方法叙述检查
+**Branch**: `dev`
+
+### Summary
+
+实现显式选章的方法叙述候选检查、M-EDGETABLE、方法描述参考与双语资源；独立检查修复路由、注释、公式边界和章标题规范化问题，最终 just ci 1424 passed。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9d1a382` | (see git log) |
+| `50181ac` | (see git log) |
+
+### Status
+
+[OK] **Completed**
