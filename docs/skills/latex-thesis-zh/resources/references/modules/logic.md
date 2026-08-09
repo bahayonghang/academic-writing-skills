@@ -93,6 +93,31 @@ checks. Common method-chapter headings such as “problem description/overall fr
 
 See [`../writing/process-chapter-guide-zh.md`](../writing/process-chapter-guide-zh.md) for writing rules and positive/negative examples.
 
+## Method Narrative Checks (`--method-narrative`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --method-narrative --section 〈章名〉
+```
+
+Run this branch when a method chapter contains multiple core modules or when reviewing module
+motivation, inputs and outputs, equation explanation, and adjacent interfaces. `--section` must select
+exactly one chapter per run. When it is absent, the script only lists candidate chapters and exits with
+status 2; it does not classify a method chapter automatically. Before interpreting a finding or
+rewriting prose, read
+[`../writing/method-description-guide-zh.md`](../writing/method-description-guide-zh.md) as the complete
+semantic contract for the six roles, edge-by-edge interfaces, and evidence levels.
+
+| Check | Script lane | Severity |
+| --- | --- | --- |
+| M-HEADING | Locates places where heading announcements may replace module transitions | Minor/P2 |
+| M-SEQWORD | Locates subsection openings that give layout order without a technical relationship | Info/P3 |
+| M-EQUATION | Locates numbered equations that may lack a symbol-gloss entry point afterward | Minor/P2 |
+| M-EDGETABLE | Emits a subsection list and edge-interface skeleton for LLM completion; not a finding | Unscored |
+
+All three findings are `[Script]` candidates with `Meaning-Check: NEEDS-LLM`. The script does not judge
+module motivation, design rationale, complete input/output, indirect dependencies, evidence strength,
+or final closure; review those items module by module through the method-description guide.
+
 ## Body-Chapter Stitching and Introduction Bridging (Default)
 
 - **P-PAPER (all chapters by default, no flag)**: report every occurrence of “源论文/小论文/N 篇论文” in visible prose (Minor/P2), without truncation. This is direct blind-review evidence of stitching; replace with “core problem/research content/this chapter.”

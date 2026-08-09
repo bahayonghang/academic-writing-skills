@@ -32,7 +32,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 | `bibliography` | BibTeX data or GB/T 7714 compliance needs checking; use `--standard gb7714-2025` for the standard effective from 2026-07-01 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | Thesis, chapter, or section titles need review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `deai` | Visible Chinese prose contains AI-writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | The introduction funnel, chapter handoffs, mainline, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex` |
+| `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | The literature review lists papers without synthesis or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `experiment` | Experiment language, evidence layers, or per-method-chapter completeness needs review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | Cross-references, captions, labels, or numbering are inconsistent | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
@@ -98,6 +98,7 @@ Run the smallest matching module. For multi-part requests, follow the order docu
 - [Introduction chapter guide](./resources/references/writing/introduction-guide-zh.md)
 - [Process chapter guide](./resources/references/writing/process-chapter-guide-zh.md)
 - [Method chapter guide](./resources/references/writing/method-chapter-guide-zh.md)
+- [Method module description and interfaces](./resources/references/writing/method-description-guide-zh.md)
 - [Conclusion chapter guide](./resources/references/writing/conclusion-guide-zh.md)
 - [Abstract structure](./resources/references/writing/abstract-structure.md)
 - [Structure guide](./resources/references/writing/structure-guide.md)

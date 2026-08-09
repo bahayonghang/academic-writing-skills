@@ -1059,7 +1059,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "3de5d3aa9b6d7293159d87ae1d255fada77cc059c08606407268cc246db1590d",
+      "sourceSha256": "e8a8f1a6e565fe25c7d2ea10dfbc8d263d85a65eba63912ad6ee2e1be7431f6a",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1170,6 +1170,15 @@
       "sourceSha256": "4847112a1db3e18a5b6042a0dbc2e1338e2a2173df02a869f5e47cc09a093326",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/method-description-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "babdc7002ecbf3a04ea90dcbad96d1e65316bfc66446949aa51bca042e5d7995",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/method-description-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/method-description-guide-zh.md"
     },
     {
       "skill": "latex-thesis-zh",

@@ -30,7 +30,7 @@
 | `bibliography` | 需要检查 BibTeX 数据或 GB/T 7714 合规性；2026-07-01 起实施的新国标使用 `--standard gb7714-2025` | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 需要审阅论文、章或节标题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `deai` | 中文可见正文存在 AI 写作痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | 绪论漏斗、章节承接、主线或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex` |
+| `logic` | 绪论漏斗、章节承接、主线、方法模块接口或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | 文献综述逐篇罗列，缺少综合比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `experiment` | 需要审阅实验表达、证据层次或逐方法章实验完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | 交叉引用、图表题、标签或编号不一致 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
@@ -95,6 +95,7 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.te
 - [绪论专章指南](./resources/references/writing/introduction-guide-zh.md)
 - [过程分析章指南](./resources/references/writing/process-chapter-guide-zh.md)
 - [方法章指南](./resources/references/writing/method-chapter-guide-zh.md)
+- [方法模块描述与接口](./resources/references/writing/method-description-guide-zh.md)
 - [结论章指南](./resources/references/writing/conclusion-guide-zh.md)
 - [摘要结构](./resources/references/writing/abstract-structure.md)
 - [结构指南](./resources/references/writing/structure-guide.md)
