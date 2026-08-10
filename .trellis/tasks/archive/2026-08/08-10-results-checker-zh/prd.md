@@ -56,10 +56,26 @@ fixture；Bash python 写入（JSON hook 陷阱）；Windows 重定向加 `PYTHO
 
 ## Acceptance Criteria
 
-- [ ] RA-* 正/反例与边界矩阵测试全绿；现有测试零回归。
-- [ ] 重复区间只报一次；`--section` 后缀族语义有测试锁定。
-- [ ] RA-CAUSAL 三档行为有测试证明（段级豁免 / 章级降档 / 无证据 Major）。
-- [ ] RA-STAGE 规范性语境排除有正反 fixture（含 spec 合规声明句不误报）。
-- [ ] SKILL.md / routing-rules.md / evals 同步完成，contracts 测试全绿。
-- [ ] 标定报告存在，RA-INTERLEAVE/RA-STAGE 去留有明确裁决记录。
-- [ ] `just ci` 全绿。
+- [x] RA-* 正/反例与边界矩阵测试全绿；现有测试零回归。
+- [x] 重复区间只报一次；`--section` 后缀族语义有测试锁定。
+- [x] RA-CAUSAL 三档行为有测试证明（段级豁免 / 章级降档 / 无证据 Major）。
+- [x] RA-STAGE 规范性语境排除有正反 fixture（含 spec 合规声明句不误报）。
+- [x] SKILL.md / routing-rules.md / evals 同步完成，contracts 测试全绿。
+- [x] 标定报告存在，RA-INTERLEAVE/RA-STAGE 去留有明确裁决记录。
+- [x] `just ci` 全绿。
+
+## Verification Evidence（2026-08-10）
+
+- Focused RA：`32 passed`；覆盖 result/discussion `_N` 后缀族、精确 `--section`、重叠
+  去重、RA-CAUSAL 三档与对象绑定提示、RA-STAGE 同物理行两句身份、十条防误报红线、
+  多文件 `源文件:行号`、默认/逐章回归和组合旗标。
+- 宽门：`tests/skills/latex_thesis_zh/ tests/contracts/` 为 `720 passed`。
+- CI：`just ci` 版本锁、Ruff、Pyright 与 pytest 全绿；pytest `1497 passed`，Pyright
+  `0 errors`。仓库既有 warning 不作为本任务效果证据。
+- 文档：单技能与全量 resource sync 均通过（257 manifest entries）；`just doc-build`
+  通过。公开脚本、SKILL、routing、guide 及英中资源均无已裁掉检查项名称。
+- 元数据：SKILL `version` 保持 `6.0.0`，仅将 `last_updated` 从 `2026-08-09` 更新为
+  `2026-08-10`；eval id 30 与 trigger query 均为数组尾部追加，防御性契约继续显式锁定
+  latex-thesis-zh eval id 29。
+- 标定证据：`research/calibration-report.md` 明确区分 PDF-TXT proxy 与 synthetic
+  contract evidence；真实 LaTeX 工程查准率/召回率仍为 **UNVERIFIED / missing evidence**。
