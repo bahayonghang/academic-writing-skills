@@ -1262,3 +1262,24 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 36: 集成学术去 AI 模式簇
+
+**Date**: 2026-08-10
+**Task**: 集成学术去 AI 模式簇
+**Branch**: `dev`
+
+### Summary
+
+将 writing-anti-ai 的可采纳增量改造成 EN/ZH/Typst 的七类 LLM-only 模式簇、显式改写门和 fidelity audit；补齐 A-H fixtures/evals、跨 surface 契约测试及 18 份双语资源，保持默认 checker、阈值与 audit lane 零扩张。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `34bbc2f` | (see git log) |
+
+### Status
+
+[OK] **Completed**
