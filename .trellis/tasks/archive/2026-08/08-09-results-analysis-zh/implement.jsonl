@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "仓库编码规范总索引（副本对齐锁/契约文档入口）"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 副本测试加载约定与 evals 工具约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "references 增删的双语文档 manifest 契约"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "experiment 机制解释规则的 llm-only 边界，RA-CAUSAL 分界依据"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/research/user-spec-results-analysis.md", "reason": "用户《实验结果分析规范》原文（需求唯一权威）"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/research/best-practices-web.md", "reason": "网络最佳实践调研与 keep/adapt/reject 判定"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "M-*/RA-* 分界基线契约（method-desc 树归档产物，实施前必读）"}
+{"file": "academic-writing-skills/latex-thesis-zh/references/writing/method-description-guide-zh.md", "reason": "已落地的四级主张证据表，五级证据阶梯的映射对象"}

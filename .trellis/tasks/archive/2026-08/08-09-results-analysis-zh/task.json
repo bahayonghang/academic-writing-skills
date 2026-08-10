@@ -1,0 +1,29 @@
+{
+  "id": "results-analysis-zh",
+  "name": "results-analysis-zh",
+  "title": "latex-thesis-zh 实验结果分析深度审查能力",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-09",
+  "completedAt": "2026-08-10",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-10-results-guide-zh",
+    "08-10-results-checker-zh"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
