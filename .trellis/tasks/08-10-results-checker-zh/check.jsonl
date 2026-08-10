@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试布局与 evals 约定核查"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "核查 RA-* 未新增 llm-only 域正则"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "核查未越 M-* 契约边界"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 路由改动合规核查"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/design.md", "reason": "实现与父判据一致性核查（含防误报红线十条）"}

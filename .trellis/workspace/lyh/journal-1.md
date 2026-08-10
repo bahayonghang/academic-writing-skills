@@ -1156,3 +1156,24 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 31: 完成结果分析写作指南与双语文档
+
+**Date**: 2026-08-10
+**Task**: 完成结果分析写作指南与双语文档
+**Branch**: `dev`
+
+### Summary
+
+新增 latex-thesis-zh 结果分析十一节指南、experiment RA 路由表、17 项无损映射与双语资源；质检修复英文残留及判据缺口，just ci、contracts、resource sync 和 docs build 全部通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8cd616a` | (see git log) |
+
+### Status
+
+[OK] **Completed**
