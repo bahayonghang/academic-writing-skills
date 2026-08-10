@@ -9,10 +9,20 @@ from pathlib import Path
 
 import pytest
 
-from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT, TESTS_ROOT
+from tests.support.paths import REPO_ROOT, SCRIPT_DIR_ZH, SKILLS_ROOT, TESTS_ROOT
 
 _SCRIPT = SCRIPT_DIR_ZH / "analyze_experiment.py"
 _FIXTURES = TESTS_ROOT / "skills" / "latex_thesis_zh" / "fixtures" / "results_analysis"
+_CALIBRATION_REPORT = (
+    REPO_ROOT
+    / ".trellis"
+    / "tasks"
+    / "archive"
+    / "2026-08"
+    / "08-10-results-checker-zh"
+    / "research"
+    / "calibration-report.md"
+)
 _SHARED_MODULE_NAMES = ("parsers", "tex_loader")
 
 
@@ -292,14 +302,7 @@ def test_removed_interleave_candidate_is_absent_from_runtime_and_public_routes()
     ):
         text = (SKILLS_ROOT / "latex-thesis-zh" / relative_path).read_text(encoding="utf-8")
         assert "RA-INTERLEAVE" not in text
-    calibration = (
-        SKILLS_ROOT.parent
-        / ".trellis"
-        / "tasks"
-        / "08-10-results-checker-zh"
-        / "research"
-        / "calibration-report.md"
-    ).read_text(encoding="utf-8")
+    calibration = _CALIBRATION_REPORT.read_text(encoding="utf-8")
     assert "RA-INTERLEAVE" in calibration and "删除" in calibration
     assert "UNVERIFIED / missing evidence" in calibration
 

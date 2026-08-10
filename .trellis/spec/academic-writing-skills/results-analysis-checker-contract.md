@@ -95,6 +95,8 @@ just ci
 - 十条防误报红线不得只由实现推断；聚合静默 fixture 要覆盖未被单项边界覆盖的红线。
 - evals 只追加、ID 唯一并绑定真实 fixture；防御性契约继续显式锁定 zh eval id 29。
 - SKILL、routing、guide 或双语资源变化必须跑 contracts、单技能 resource sync 和 docs build。
+- 产品回归测试若读取 Trellis 标定证据，必须指向已提交的 canonical archive 路径；
+  禁止依赖会被 `task.py archive` 移走的 `.trellis/tasks/<active-task>/` 路径。
 
 ## 7. Wrong vs Correct
 
@@ -116,4 +118,32 @@ if RA_COMPONENT_EVIDENCE_RE.search(local_visible):
 severity = "Minor" if chapter_has_evidence else "Major"
 interval["chapter_start"], interval["chapter_end"] = start, end
 interval["chapter_has_summary"] = owning_chapter_has_summary(start)
+```
+
+### Wrong: 归档前路径
+
+```python
+report = (
+    REPO_ROOT
+    / ".trellis"
+    / "tasks"
+    / "08-10-results-checker-zh"
+    / "research"
+    / "calibration-report.md"
+)
+```
+
+### Correct: 规范归档路径
+
+```python
+report = (
+    REPO_ROOT
+    / ".trellis"
+    / "tasks"
+    / "archive"
+    / "2026-08"
+    / "08-10-results-checker-zh"
+    / "research"
+    / "calibration-report.md"
+)
 ```
