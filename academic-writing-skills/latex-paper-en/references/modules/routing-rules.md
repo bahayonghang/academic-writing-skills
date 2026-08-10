@@ -18,6 +18,7 @@ Extended routing guidance for `latex-paper-en`. The SKILL.md keeps only the core
 ## Special flags and loading rules
 
 - For `section-writing`, load `references/modules/section-writing.md`, then exactly one active section guide from `references/writing/section-writing/` unless the user also asks for flow or self-review.
+- For `journal narrative`, `Nature-style`, `Results narrative`, `Discussion structure`, `full-paper argument`, or `期刊式` requests, load `references/writing/article-architecture.md`. Do not load it for ordinary grammar polishing or conference-abstract polishing without a journal-structure request.
 - For whole-paper motivation/red-thread questions ("does every introduction promise get tested and resolved?"), run `logic` with `--motivation-thread`; it appends a read-only Promise Map + Closure Map heuristic and leaves default `logic` output unchanged.
 - For graded de-AI / AIGC-dimension analysis, run `deai` with `--tier light|medium|heavy`; it scales thresholds, adds a D1 sentence-length check, and labels findings by dimension (D1-D5). Omitting `--tier` keeps the default output.
 

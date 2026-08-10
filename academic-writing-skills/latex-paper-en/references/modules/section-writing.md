@@ -37,6 +37,8 @@ Read only the active section guide plus optional flow/self-review support:
 | Paragraph flow question | `references/writing/section-writing/flow.md` |
 | Reviewer-facing claim check | `references/writing/section-writing/self-review.md` |
 
+For a full-paper argument, journal narrative, Results evidence ladder, or expanded Discussion structure, read `references/writing/article-architecture.md` instead of loading several section guides.
+
 Use `references/writing/section-writing/index.md` only when choosing among these files.
 
 ## Workflow

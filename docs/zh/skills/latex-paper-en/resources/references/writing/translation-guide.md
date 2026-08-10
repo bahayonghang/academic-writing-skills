@@ -24,6 +24,8 @@
   - [Step 2: Structure Mapping / 结构映射](#step-2-structure-mapping-结构映射)
   - [Step 3: Sentence Translation / 句子翻译](#step-3-sentence-translation-句子翻译)
   - [Step 4: Polish & Review / 润色审查](#step-4-polish-review-润色审查)
+  - [5.1 Translate Intent Before Syntax / 先分解意图](#51-translate-intent-before-syntax-先分解意图)
+  - [5.2 Structural Repairs / 结构级修复](#52-structural-repairs-结构级修复)
 - [6. Quick Reference Patterns / 快速参考模板](#6-quick-reference-patterns-快速参考模板)
   - [6.1 Proposing Method / 提出方法](#61-proposing-method-提出方法)
   - [6.2 Describing Results / 描述结果](#62-describing-results-描述结果)
@@ -267,6 +269,37 @@ In future work, we plan to extend ...
 3. 检查 Chinglish
 4. 检查学术语气
 ```
+
+### 5.1 Translate Intent Before Syntax / 先分解意图
+
+中文学术笔记常把背景、动机、方法和含义放进一个长句。翻译前先按意图拆分：
+
+| 意图单元 | 要回答的问题 |
+| --- | --- |
+| `claim` | 作者要主张什么？ |
+| `evidence` | 哪项数据、观察或文献支撑该主张？ |
+| `condition` | 该主张在哪些设置或前提下成立？ |
+| `comparison` | 与哪个基线、方法或既有认识比较？ |
+| `implication` | 结果改变了什么理解或实践？ |
+| `limitation` | 哪些边界、依赖或未知项仍然存在？ |
+
+操作步骤：
+
+1. 标出原句中已有的六类意图单元；缺失项只标缺口，不补写事实。
+2. 根据目标章节选择必要单元。例如，Results 先写观察与证据，Discussion 再展开含义。
+3. 按目标章节的英文论证顺序重排单元，而不是保留中文原句顺序。
+4. 翻译重排后的单元，并复核术语、限定条件、比较对象和主张强度。
+
+### 5.2 Structural Repairs / 结构级修复
+
+| 中文草稿模式 | 英文结构修复 |
+| --- | --- |
+| 先泛谈重要性，后说明研究对象 | 提前点名具体系统、对象或问题，再说明其重要性。 |
+| 先罗列方法，后说明研究缺口 | 先界定未解决的缺口，再把方法写成对该缺口的直接回应。 |
+
+对于“显著”但无基线、“首次/创新”但无范围、由相关性推断机制，以及把结果观察与意义解释混写等问题，不在此重复规则。使用
+[over-claim guard](../evidence/over-claim-guard.md)，并在 Results/Discussion 分工问题上参照
+`references/writing/section-writing/experiments.md`。
 
 ---
 

@@ -37,5 +37,7 @@ A rule-based draft is never a finished translation: `Meaning-Check` stays `NEEDS
 - Report the translated prose plus any ambiguity notes.
 - Do not edit or normalize LaTeX fragments unless the user explicitly asks.
 - If terminology is still ambiguous, surface the uncertainty instead of silently guessing.
+- For a Chinese long sentence that mixes claims, evidence, conditions, comparisons, implications, and limitations, use "5.1 Translate Intent Before Syntax" in [translation-guide.md](../writing/translation-guide.md).
+- For broad-importance openings or method lists that precede the research gap, use "5.2 Structural Repairs" in [translation-guide.md](../writing/translation-guide.md).
 
 Reference: [terminology.md](../writing/terminology.md), [translation-guide.md](../writing/translation-guide.md)

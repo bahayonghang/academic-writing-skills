@@ -37,5 +37,7 @@ uv run python -B scripts/translate_academic.py input_zh.txt --domain industrial-
 - 报告翻译的散文以及任何歧义注释。
 - 除非用户明确要求，否则不要编辑或标准化 LaTeX 片段。
 - 如果术语仍然含糊不清，请将不确定性暴露出来，而不是默默猜测。
+- 对于混合主张、证据、条件、比较、含义和限制的中文长句，使用 [translation-guide.md](../writing/translation-guide.md) 中的“5.1 Translate Intent Before Syntax”。
+- 对于先泛谈重要性或先列方法、后写研究缺口的结构，使用 [translation-guide.md](../writing/translation-guide.md) 中的“5.2 Structural Repairs”。
 
 参考：[terminology.md](../writing/terminology.md), [翻译指南.md](../writing/translation-guide.md)

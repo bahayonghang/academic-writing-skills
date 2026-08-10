@@ -17,6 +17,8 @@ Load only the file for the active section:
 
 Do not load the whole directory by default.
 
+For full-paper or journal-style architecture, use `../article-architecture.md` instead of loading multiple section guides.
+
 ## Relationship To Existing Modules
 
 - Use `section-writing` for drafting, rewrite plans, paragraph roles, and self-review.

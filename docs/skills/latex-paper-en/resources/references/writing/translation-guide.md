@@ -24,6 +24,8 @@
   - [Step 2: Structure Mapping / Structure Mapping](#step-2-structure-mapping-结构映射)
   - [Step 3: Sentence Translation / Sentence Translation](#step-3-sentence-translation-句子翻译)
   - [Step 4: Polish & Review / Polish review](#step-4-polish-review-润色审查)
+  - [5.1 Translate Intent Before Syntax / Decompose Intent First](#51-translate-intent-before-syntax-先分解意图)
+  - [5.2 Structural Repairs / Structural Repairs](#52-structural-repairs-结构级修复)
 - [6. Quick Reference Patterns / Quick Reference Templates](#6-quick-reference-patterns-快速参考模板)
   - [6.1 Proposing Method / Proposing method](#61-proposing-method-提出方法)
   - [6.2 Describing Results / Description results](#62-describing-results-描述结果)
@@ -267,6 +269,37 @@ In future work, we plan to extend ...
 3. 检查 Chinglish
 4. 检查学术语气
 ```
+
+### 5.1 Translate Intent Before Syntax / Decompose Intent First
+
+Chinese academic notes often combine background, motivation, method, and meaning in one long sentence. Before translating, separate the sentence by intent:
+
+| Intent unit | Question to answer |
+| --- | --- |
+| `claim` | What does the author want to claim? |
+| `evidence` | Which data, observation, or source supports the claim? |
+| `condition` | Under which setting or assumption does the claim hold? |
+| `comparison` | Which baseline, method, or prior understanding is the comparator? |
+| `implication` | What understanding or practice does the result change? |
+| `limitation` | Which boundaries, dependencies, or unknowns remain? |
+
+Procedure:
+
+1. Mark the six intent units that are present in the source sentence. Mark missing units as gaps; do not add facts.
+2. Select the units needed for the target section. For example, state the observation and evidence in Results, then develop the meaning in Discussion.
+3. Reorder the units for the target section's English argument instead of preserving the Chinese sentence order.
+4. Translate the reordered units, then check terminology, conditions, comparators, and claim strength.
+
+### 5.2 Structural Repairs / Structural Repairs
+
+| Chinese draft pattern | English structural repair |
+| --- | --- |
+| Broad importance appears before the research object | Name the specific system, object, or problem earlier, then explain its importance. |
+| A method list appears before the research gap | Define the unresolved gap first, then present the method as a direct response to it. |
+
+Do not duplicate rules here for "significant" claims without baselines, "first/innovative" claims without scope, mechanisms inferred from correlation, or observations mixed with interpretations. Use the
+[over-claim guard](../evidence/over-claim-guard.md), and consult
+`references/writing/section-writing/experiments.md` for the Results/Discussion division.
 
 ---
 

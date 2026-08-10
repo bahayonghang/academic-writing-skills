@@ -21,6 +21,7 @@ uv run python -B scripts/generate_table.py data.json --style booktabs
 - Table note format ("Note." or "注：")
 - Number precision consistency within columns
 - `booktabs` package loaded in preamble
+- Direction markers may use Unicode `↑`/`↓`, LaTeX commands such as `\uparrow`/`\downarrow`, or text such as "higher is better". This is a readability recommendation, not a mandatory format.
 
 **generate_table.py**: Converts structured data (CSV or JSON) into publication-ready table code:
 1. Markdown preview (stdout)

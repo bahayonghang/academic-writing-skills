@@ -501,7 +501,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/routing-rules.md",
       "sourceLocale": "en",
-      "sourceSha256": "3675b97748cf33f9d080dee748e5bb82a887d8d2d3cb5d3e758b9a5f15ad9f95",
+      "sourceSha256": "d12751b80ba5473075f26acd3b28ecc2eb7cc5b84a16718d4420fdc600618278",
       "en": "docs/skills/latex-paper-en/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/routing-rules.md"
     },
@@ -510,7 +510,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/section-writing.md",
       "sourceLocale": "en",
-      "sourceSha256": "a8e3d12a6c28e5c3556c04cfce4ad03fe0cadce605452c23fb8ff0442c2229ae",
+      "sourceSha256": "5d424533eecc1407119b67927aaa768c92d87b26f352dc1806d3161e5087e404",
       "en": "docs/skills/latex-paper-en/resources/references/modules/section-writing.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/section-writing.md"
     },
@@ -528,7 +528,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/tables.md",
       "sourceLocale": "en",
-      "sourceSha256": "f3fcb1b954a492659ba4d5ee7de5fe458e7bd1b88842cf8d5c0b9f079e3746c3",
+      "sourceSha256": "6b7296464aebd3eaf1a4ab6bd74ed4833573c8a971cd86205895f4b3c179c957",
       "en": "docs/skills/latex-paper-en/resources/references/modules/tables.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/tables.md"
     },
@@ -546,7 +546,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/title.md",
       "sourceLocale": "en",
-      "sourceSha256": "0f50d2af939426342ce677bfb140313e72ab490c97f091b7fe7e43b60ca2c3b2",
+      "sourceSha256": "93d98b5638c45ba9d4b0fc3cadcfa9d4a70c13aa32dd0eebad7f419ce179d5e1",
       "en": "docs/skills/latex-paper-en/resources/references/modules/title.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/title.md"
     },
@@ -555,7 +555,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/translation.md",
       "sourceLocale": "en",
-      "sourceSha256": "343ae803c5d5558a1724618abf6cc5c9751a9256f2540378ce94b8da6c29986b",
+      "sourceSha256": "edd8e3fbd242fb2791c16e17ef04a4f208d45f99ef3086b2ab8d6c6642493020",
       "en": "docs/skills/latex-paper-en/resources/references/modules/translation.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/translation.md"
     },
@@ -612,6 +612,15 @@
       "sourceSha256": "c412d07cfb146247c59d9cec76062e734af783db0ca238ecff7d2690b67be86a",
       "en": "docs/skills/latex-paper-en/resources/references/writing/abstract-structure.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/abstract-structure.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/article-architecture.md",
+      "sourceLocale": "en",
+      "sourceSha256": "9d72bb8f3c0d20fceb9a9938845609a693382d65135663a1cf69f798179ae251",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/article-architecture.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/article-architecture.md"
     },
     {
       "skill": "latex-paper-en",
@@ -681,7 +690,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/writing/section-writing/index.md",
       "sourceLocale": "en",
-      "sourceSha256": "817cba6ba9b8fc5549cdcf5b33a4bb175dba6f1a4f931d2337a5aa0d666ef308",
+      "sourceSha256": "8ebdce0aa5a4662d8238fc37193e28b99e225208b62be6d1d4056eb181fbaba6",
       "en": "docs/skills/latex-paper-en/resources/references/writing/section-writing/index.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/section-writing/index.md"
     },
@@ -744,7 +753,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/writing/translation-guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "b9c34eb5adf5a14854718669ed22de0876156329884d8342b217909e365876d9",
+      "sourceSha256": "1533ee53dab2335bfebc7eaf33af718ace5385eceba27a396b6df638c66cdef4",
       "en": "docs/skills/latex-paper-en/resources/references/writing/translation-guide.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/translation-guide.md"
     },
