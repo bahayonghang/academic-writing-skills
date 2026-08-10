@@ -14,6 +14,7 @@
 | [cover-letter-contracts.md](./cover-letter-contracts.md)                 | cover-letter claim 位置、journal-fit 去重与警告 payload 契约                            | 修改 cover-letter claim/journal-fit/统一 CLI 数据流之前                                 |
 | [polish-rewrite-contract.md](./polish-rewrite-contract.md)               | 两层改写契约四字段、`--goal`/`--strength`/`--tier` 三轴、A/B/C 自动化分级、受保护 token | 改 EN/ZH/Typst 任一润色模块（expression/grammar/sentences/translation）或其契约字段之前 |
 | [defensive-ai-rhetoric-contract.md](./defensive-ai-rhetoric-contract.md) | 防御性推测解释的组合判据、证据校准修复、跨 surface eval 与 audit lane 预算              | 改 de-AI/experiment 的机制解释规则或 claims-vs-evidence lane 之前                        |
+| [deai-pattern-cluster-contract.md](./deai-pattern-cluster-contract.md)   | 七类学术 de-AI 模式簇、正反例、跨契约去重、保真复核与作者样本边界                     | 改 EN/ZH/Typst de-AI 模式 reference、fixture、eval 或输出契约之前                        |
 | [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让与公开路由同步契约                       | 改 `--results-analysis`、RA-* 词表/判据、结果分析 fixture 或路由资源之前                 |
 
 ## 背景速览

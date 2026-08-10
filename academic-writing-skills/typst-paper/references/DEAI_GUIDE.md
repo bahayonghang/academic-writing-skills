@@ -78,6 +78,11 @@ Reducing AI tone is not detector evasion. Preserve the Typst paper before smooth
 
 Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` / `待补证`; do not invent citations, baselines, metrics, experiments, or conclusions.
 
+For claim-local bilingual review of unsupported analytical tails, promotional evaluation, vague
+attribution, indirect predication, synonym cycling, manufactured breadth, and empty outlook,
+progressively load [DEAI_PATTERN_CLUSTERS.md](DEAI_PATTERN_CLUSTERS.md). These `[LLM]` prompts
+do not identify AI authorship and must not become word-list or detector-score rules.
+
 ### Bilingual Structure-Shell Checks
 
 | Category | Common trigger | Academic fix |

@@ -41,6 +41,10 @@
 
 默认输出诊断、风险摘要或改写蓝图。只有用户明确要求改写正文时，才给 prose proposal；不得承诺降低某个检测平台分数。
 
+七类 evidence-aware H-* 模式与 `audit -> rewrite -> fidelity audit` 契约见
+[DEAI_PATTERN_CLUSTERS.md](../DEAI_PATTERN_CLUSTERS.md)。该文件只提供 claim-local
+`[LLM]` 审阅提示，不判断 AI 作者身份，也不生成检测分承诺。
+
 多个具体机制后再统一声明“当前数据无法验证”属于 `[LLM]` 判断的防御性推测解释。
 应先写观察结果，再把保留的每项机制绑定到可见证据或区分性检验；若均无支持，直接说明
 机制尚未确定，并将可检验的备选解释移入未来工作。不得为了显得肯定而删除限制语或增强推断。

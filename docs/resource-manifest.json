@@ -312,9 +312,18 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/guide.md",
       "sourceLocale": "en",
-      "sourceSha256": "401c9d3e6de8528c0c2a944dee4fc336f8ff6efbe34ae417d807da4f3b7010bb",
+      "sourceSha256": "d851e2f43985a711e0ff918c15c1d663069e94aa5dcb6fc33f07339468a1d7ca",
       "en": "docs/skills/latex-paper-en/resources/references/deai/guide.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/guide.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/deai/pattern-clusters.md",
+      "sourceLocale": "en",
+      "sourceSha256": "4dce144f992863a351f5770a3f5b71a5de86b60b8b5c41fb27a9f22091e1164c",
+      "en": "docs/skills/latex-paper-en/resources/references/deai/pattern-clusters.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/pattern-clusters.md"
     },
     {
       "skill": "latex-paper-en",
@@ -429,7 +438,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "ad00b93b1d743982eecce3f99be1baf4f4749db7f198c7eaad0af9b31dc279fd",
+      "sourceSha256": "c104ca07ebdd4a722ad32b277b80fc1467bfd066d646617ef996d3cf08950a6b",
       "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
     },
@@ -897,9 +906,18 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "7959b0c18fed5a2e0045f798f91ff97ef3a16e6068ac1323e73f8cf3ee881d76",
+      "sourceSha256": "9fa474a243bdfd895d43b26e294aa20e1650b8dd799a8ffd548c7e10b26e5846",
       "en": "docs/skills/latex-thesis-zh/resources/references/deai/guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/deai/pattern-clusters.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "62d7cb3dcd2e9536568f686e24ddb6dc55078766e880ce39b17e08022f237abc",
+      "en": "docs/skills/latex-thesis-zh/resources/references/deai/pattern-clusters.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/pattern-clusters.md"
     },
     {
       "skill": "latex-thesis-zh",
@@ -1023,7 +1041,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "0789d38868faeeac59a4af978b8f48b10c6332645aa2c6f31d8c6e0fd2e4e39e",
+      "sourceSha256": "35725ce677760857a056fcedfa760867bdff26bab9b1cdd149fce4c7033af747",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
     },
@@ -1923,9 +1941,18 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/DEAI_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "e5967e05b59143c20cbbed60c38b0edb5f54e5c363b20c95b9e65d5aa2aaf29e",
+      "sourceSha256": "563e867d54acf715a4497a45d5d1fefb1d91bc1069d49f4ac41e6f6a3970ce35",
       "en": "docs/skills/typst-paper/resources/references/DEAI_GUIDE.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/DEAI_GUIDE.md"
+    },
+    {
+      "skill": "typst-paper",
+      "kind": "references",
+      "source": "academic-writing-skills/typst-paper/references/DEAI_PATTERN_CLUSTERS.md",
+      "sourceLocale": "en",
+      "sourceSha256": "e2a56c34b850a61c4b71634667463824a68e5f1c9f6c4803ae93562183982b67",
+      "en": "docs/skills/typst-paper/resources/references/DEAI_PATTERN_CLUSTERS.md",
+      "zh": "docs/zh/skills/typst-paper/resources/references/DEAI_PATTERN_CLUSTERS.md"
     },
     {
       "skill": "typst-paper",
@@ -2004,7 +2031,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/modules/DEAI.md",
       "sourceLocale": "zh",
-      "sourceSha256": "95a9450ea15a4718372d13fbe455e3c5590a3468e9eef74a13df002f85e73349",
+      "sourceSha256": "3c4bc1f984470e86785bfe8112796c3f9f0a0b2ac3d0c72ad7c19f8ef5bf5627",
       "en": "docs/skills/typst-paper/resources/references/modules/DEAI.md",
       "zh": "docs/zh/skills/typst-paper/resources/references/modules/DEAI.md"
     },

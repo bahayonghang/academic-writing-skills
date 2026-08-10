@@ -41,6 +41,10 @@ Protect four types of content first, and then reduce the AI ​​flavor:
 
 The default output is diagnostics, risk summaries, or rewrite blueprints. Only when the user explicitly requests to rewrite the text, a prose proposal will be given; no promise should be made to lower the score of a certain detection platform.
 
+For the seven evidence-aware H-* pattern clusters and the `audit -> rewrite -> fidelity audit`
+contract, see [DEAI_PATTERN_CLUSTERS.md](../DEAI_PATTERN_CLUSTERS.md). It provides claim-local
+`[LLM]` review prompts only; it does not identify AI authorship or promise detector scores.
+
 Listing several specific mechanisms and then declaring that the current data cannot verify them is a defensive speculative explanation that requires `[LLM]` judgment. State the observation first and bind each retained mechanism to visible evidence or a discriminating test. If none is supported, state that the mechanism remains undetermined and move testable alternatives to future work. Do not delete the caveat or strengthen the inference merely to sound certain.
 
 The script's `hedge` / `hedge_application` suggestions remain valid for overconfident wording and undemonstrated applications. `results suggest`, `may / could`, and `可能/或许` reduce the strength of a single claim; they do not replace per-mechanism evidence.

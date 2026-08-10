@@ -21,6 +21,10 @@ Before removing "AI flavor", extract four protected buckets:
 
 Only after these are clear should the module remove structure shells. The default output remains diagnostic findings, a risk summary, or a rewrite blueprint. Provide prose rewrites only when the user explicitly asks for them.
 
+For the seven evidence-aware H-* pattern clusters and the `audit -> rewrite -> fidelity audit`
+contract, progressively load [`pattern-clusters.md`](../deai/pattern-clusters.md). These are
+claim-local `[LLM]` review prompts, not AI-authorship or detector-score rules.
+
 Treat defensive speculative explanations as `[LLM]` findings: when a paragraph stacks
 multiple mechanisms and then says the current data verify none of them, map each retained
 mechanism to a visible evidence anchor or discriminating test. If no mechanism is supported,

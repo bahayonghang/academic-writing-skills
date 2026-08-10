@@ -37,6 +37,10 @@ Before reducing AI tone, preserve the academic payload:
 
 Only then remove rhetorical scaffolds such as `not merely A, but B`, `essentially`, `the key is`, `The conclusion is:`, or vague `this/things/factors`. Keep a contrast when it names a real baseline, criterion, and evidence; otherwise state the claim directly. The module should not promise lower detector scores or replace venue AI-use disclosure.
 
+For the seven evidence-aware H-* pattern clusters and the `audit -> rewrite -> fidelity audit`
+contract, progressively load [pattern-clusters.md](../deai/pattern-clusters.md). These are
+claim-local `[LLM]` review prompts, not AI-authorship or detector-score rules.
+
 Treat defensive speculative explanations as `[LLM]` findings: when a paragraph stacks
 multiple mechanisms and then says the current data verify none of them, map each retained
 mechanism to a visible evidence anchor or discriminating test. If no mechanism is supported,

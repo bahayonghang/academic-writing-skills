@@ -83,6 +83,11 @@ Reducing the AI flavor is not about making the paper smoother, nor is it about b
 
 The default output is diagnostics, risk summaries, or rewrite blueprints. Only when the user explicitly requests to rewrite the text, give a partial prose proposal; write [to be supplemented] where new evidence is needed, and do not make up data, quotes or conclusions.
 
+For claim-local review of unsupported analytical tails, promotional evaluation, vague attribution,
+indirect predication, synonym cycling, manufactured breadth, and empty outlook, progressively load
+[pattern-clusters.md](pattern-clusters.md). These `[LLM]` prompts do not identify AI authorship and
+must not be converted into word-list or detector-score rules.
+
 ### Structural shell priority check
 
 | Categories | Common Triggers | Academic Fix |

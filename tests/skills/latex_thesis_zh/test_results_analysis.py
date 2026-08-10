@@ -393,9 +393,10 @@ def test_results_analysis_eval_is_append_only_and_binds_real_fixture() -> None:
 
     assert len(matches) == 1
     semantic_eval = matches[0]
-    assert semantic_eval is payload["evals"][-1]
     assert semantic_eval["files"] == ["evals/fixtures/results_analysis_boundary.tex"]
-    assert len({item["id"] for item in payload["evals"]}) == len(payload["evals"])
+    eval_ids = [item["id"] for item in payload["evals"]]
+    assert eval_ids == sorted(eval_ids)
+    assert len(set(eval_ids)) == len(eval_ids)
 
     fixture = (skill_root / semantic_eval["files"][0]).read_text(encoding="utf-8")
     for label in ("样例 A", "样例 B", "样例 C", "样例 D", "样例 E"):

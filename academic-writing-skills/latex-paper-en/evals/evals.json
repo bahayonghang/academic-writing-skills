@@ -581,6 +581,126 @@
           "description": "no unsupported significance evidence is invented"
         }
       ]
+    },
+    {
+      "id": 23,
+      "prompt": "Review the eight labeled pattern-cluster cases in the attached fixture and route to deai. Treat Case A as the combined H-ING, H-PROMO, H-ATTR, H-SCOPE, and H-OUTLOOK positive; Case B as H-PRED; and Case C as H-TERM. Explain why Case D, Case E, Case F, Case G, and Case H are evidence-sufficient boundaries. Default to findings or a blueprint. If replacement prose is explicitly requested, run a fidelity audit and report Changed:, Protected:, Meaning-Check:, and Risk-Flags:. Deduplicate H-OUTLOOK against defensive speculative explanation findings. Preserve LaTeX anchors and never infer AI authorship or invent evidence.",
+      "expected_output": "Route to deai; identify the seven claim-local H-* clusters only in Cases A-C; keep Cases D-H as non-findings because their metrics, citations, scope, technical relations, defined terminology, limitation, and future test earn the wording. Do not claim AI authorship. When prose is requested, use audit -> rewrite -> fidelity audit and return Changed:, Protected:, Meaning-Check:, and Risk-Flags: while preserving claims, Table references, citations, math, terminology, certainty, and scope. Merge a shared H-OUTLOOK/defensive-rhetoric root cause into one evidence-calibration finding and do not invent missing support.",
+      "files": [
+        "evals/fixtures/anti_ai_pattern_clusters.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "contains",
+          "text": "H-ING",
+          "description": "H-ING is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PROMO",
+          "description": "H-PROMO is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-ATTR",
+          "description": "H-ATTR is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PRED",
+          "description": "H-PRED is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-TERM",
+          "description": "H-TERM is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-SCOPE",
+          "description": "H-SCOPE is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-OUTLOOK",
+          "description": "H-OUTLOOK is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "Case A",
+          "description": "Case A boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case B",
+          "description": "Case B boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case C",
+          "description": "Case C boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case D",
+          "description": "Case D boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case E",
+          "description": "Case E boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case F",
+          "description": "Case F boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case G",
+          "description": "Case G boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "Case H",
+          "description": "Case H boundary is addressed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Changed:|Protected:|Meaning-Check:|Risk-Flags:)",
+          "description": "fidelity proposal fields are retained"
+        },
+        {
+          "type": "regex",
+          "pattern": "(fidelity audit|claim|citation|scope|certainty)",
+          "description": "academic payload is audited after an explicit rewrite"
+        },
+        {
+          "type": "regex",
+          "pattern": "(deduplicate|one finding|evidence calibration|primary)",
+          "description": "overlapping outlook and defensive findings are merged"
+        },
+        {
+          "type": "regex",
+          "pattern": "(LaTeX|\\\\ref|\\\\cite|math|anchor)",
+          "description": "LaTeX syntax and evidence anchors are protected"
+        },
+        {
+          "type": "not_contains",
+          "text": "AI-generated",
+          "description": "no AI-authorship classification is made"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "no unsupported evidence is invented"
+        }
+      ]
     }
   ]
 }
