@@ -190,6 +190,11 @@
       "query": "学位论文里数值和单位的写法、概数用不用汉字，帮我按国标查一遍。",
       "should_trigger": true,
       "category": "edge"
+    },
+    {
+      "query": "我的中文博士论文结果分析只会报数字和说曲线更贴合，还把完整模型的提升都归因到单个组件。请按证据阶梯检查这一章的分析深度。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
     }
   ]
 }

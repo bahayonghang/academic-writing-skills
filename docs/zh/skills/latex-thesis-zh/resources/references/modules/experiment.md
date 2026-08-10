@@ -130,7 +130,6 @@ uv run python scripts/analyze_experiment.py thesis.tex --results-analysis
 | RA-UNIVERSAL | 出现无让步或反转限定的全称优势断言 | Info/P3 |
 | RA-STAGE | 保真度语境中混用选定集/筛选后与生成样本/合成样本/原始候选名称 | Info/P3 |
 | RA-TRANSITION | 结果分析末段缺少下一节、后续实验或章间接口线索 | Info/P3 |
-| RA-INTERLEAVE | 单段数值句与归因句高频交错，形成流水账候选 | Info/P3（候选） |
 
 全部为启发式线索，判据、阈值、防误报边界与 `R-*` 映射见
 [`../writing/results-analysis-guide-zh.md`](../writing/results-analysis-guide-zh.md)。

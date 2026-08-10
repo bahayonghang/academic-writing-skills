@@ -368,7 +368,6 @@ scores:
 | RA-UNIVERSAL | A universal superiority claim has no concession or reversal marker in the same sentence | Info/P3 | User specification §3.3; source #3 |
 | RA-STAGE | After at least two fidelity metrics appear in the chapter window, selected-set/post-filtering and generated-sample/synthetic-sample/raw-candidate names occur in separate declarative sentences | Info/P3 | User specification §5.1 and §5.4 |
 | RA-TRANSITION | The final paragraph lacks a next-chapter, next-section, follow-up-experiment, or “therefore” interface cue | Info/P3 | User specification §2 and §5.6; sources #3 and #6 |
-| RA-INTERLEAVE | At least 6 sentences switch between numeric and attribution states at least 4 times | Info/P3 (candidate) | User specification §2; pending real-corpus calibration |
 
 False-positive boundaries: mathematical equivalence classes or transformations do not trigger RA-EQUIV;
 consistency predicates do not trigger RA-CAUSAL; a causal claim with nearby component evidence is not
@@ -379,9 +378,13 @@ silent when the chapter already has a summary subsection. Existing industrial-th
 missing significance tests, missing mean-plus-variance reports, and an expert-experience baseline in an
 optimization chapter cannot trigger an issue by themselves.
 
-RA-INTERLEAVE remains a candidate until real-corpus calibration. If it fails false-positive fixtures or
-real-thesis observation, remove the check; do not extrapolate stable real-corpus effectiveness. Synthetic
-examples prove only the contract and regression behavior, not real-world effectiveness.
+On 2026-08-10, five local PDF-extracted theses were calibrated read-only by second-level experiment
+section. A candidate for high-frequency alternation between numeric and attribution sentences fired four
+times; every hit was affected by pagination, table rows, or lost paragraph boundaries and did not provide
+a reviewable single-paragraph alternation. The candidate was therefore excluded from the runtime family.
+RA-STAGE produced no hit in the same corpus and remains an Info/P3 cue; this observation does not
+establish recall. Synthetic examples prove only the contract and regression behavior. Precision and recall
+remain UNVERIFIED / missing evidence.
 
 External sources:
 

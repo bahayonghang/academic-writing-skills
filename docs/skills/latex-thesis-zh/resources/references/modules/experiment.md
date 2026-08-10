@@ -133,7 +133,6 @@ review of figures, tables, experimental protocols, or method definitions.
 | RA-UNIVERSAL | Uses a universal superiority claim without a concession or ranking-reversal qualifier | Info/P3 |
 | RA-STAGE | Mixes selected-set/post-filtering naming with generated-sample/synthetic-sample/raw-candidate naming in a fidelity context | Info/P3 |
 | RA-TRANSITION | The final results-analysis paragraph lacks a next-section, follow-up-experiment, or chapter-interface cue | Info/P3 |
-| RA-INTERLEAVE | Numeric and attribution sentences alternate frequently within one paragraph, suggesting a running account | Info/P3 (candidate) |
 
 All entries are heuristic cues. For the `R-*` mapping, criteria, thresholds, and false-positive
 boundaries, see

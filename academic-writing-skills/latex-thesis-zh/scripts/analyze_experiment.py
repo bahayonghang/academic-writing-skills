@@ -122,6 +122,53 @@ ABLATION_RE = re.compile(r"消融|拆解|变体|去除.{0,6}模块|单独(?:使�
 METRIC_TERM_RE = re.compile(
     r"(?<![A-Za-z])(?:RMSE|sMAPE|MAPE|MAE|MSE|R2|R²|ISE|IAE|ITAE|FAR|FDR|IGD|HV|GD)(?![A-Za-z])"
 )
+
+# Results-analysis (RA-*) uses its own vocabulary and thresholds so the existing
+# E-METRIC behavior remains byte-for-byte independent from the opt-in family.
+RA_METRIC_TERM_RE = re.compile(
+    r"(?<![A-Za-z])(?:RMSE|sMAPE|MAPE|MAE|MSE|R2|R²|ISE|IAE|ITAE|FAR|FDR|IGD|HV|GD|"
+    r"KS|W1|MMD|SWD|C2ST|ACF|PSD|AUC)(?![A-Za-z])"
+)
+RA_FIDELITY_TERM_RE = re.compile(r"(?<![A-Za-z])(?:KS|W1|MMD|SWD|C2ST|ACF|PSD)(?![A-Za-z])")
+RA_EQUIV_ASSERT_RE = re.compile(r"统计(?:上)?等价|与[^，。！？]{0,8}等价")
+RA_EQUIV_MATH_RE = re.compile(r"等价(?:类|变换|形式|转换|于下式)")
+RA_EQUIV_EVIDENCE_RE = re.compile(r"等价检验|等效性检验|TOST|等价包络|等价界")
+RA_CAUSAL_RE = re.compile(
+    r"主要归因于|归功于|保证了|确保了|由[^，。！？]{1,12}(?:带来|贡献|驱动)|"
+    r"(?:提升|改善|增益)(?:完全|全部|均)?来自"
+)
+RA_CAUSAL_NOUN_RE = re.compile(r"归因分析|误差归因")
+RA_CONSISTENCY_RE = re.compile(r"与.{0,12}(?:一致|相符)|支持.{0,12}关联")
+RA_COMPONENT_EVIDENCE_RE = re.compile(
+    r"消融|拆解|变体|去除.{0,6}模块|单独(?:使用|验证)|组件记录|中间输出|"
+    r"逐项(?:移除|添加)|受控对比"
+)
+RA_COMPARE_CONTEXT_RE = re.compile(r"基线|对比方法|各(?:模型|方法)")
+RA_BEST_CLAIM_RE = re.compile(r"最优|最低|最高|优于")
+RA_SECOND_BEST_RE = re.compile(r"次优|第二|仅次于|次佳|最接近的(?:基线|方法)")
+RA_SHALLOW_RE = re.compile(
+    r"更(?:加)?贴合|更(?:加)?吻合|基本一致|基本吻合|箱体更小|"
+    r"曲线更(?:平滑|接近|贴近)|效果(?:更|较)好|明显(?:更|较)好"
+)
+RA_BOX_RE = re.compile(r"箱线|箱型|箱式")
+RA_DISTRIBUTION_RE = re.compile(r"中位数|四分位|上须|下须|离群|尾部|最大(?:绝对)?误差")
+RA_UNIVERSAL_RE = re.compile(
+    r"(?:在)?(?:所有|全部|各项|全体)(?:指标|子集|工况)(?:上|中)?(?:均|都|皆)?"
+    r"(?:优于|领先|最优)|全面(?:优于|领先)|一致优于"
+)
+RA_CONCESSION_RE = re.compile(r"除|但|然而|反转|并未")
+RA_STAGE_SELECTED_RE = re.compile(r"选定集|筛选后")
+RA_STAGE_GENERATED_RE = re.compile(r"生成样本|原始候选|合成样本")
+RA_STAGE_NORMATIVE_RE = re.compile(r"不得|不能|避免|不应|应统一|简称|外推|区别于|不同于|注意")
+RA_TRANSITION_RE = re.compile(
+    r"下一(?:章|节|小节)|后续(?:实验|章节)|第[0-9一二三四五六七八九]+章|"
+    r"[0-9]+\.[0-9]+\s*节|据此"
+)
+RA_SUMMARY_HEADING_RE = re.compile(r"\\(?:sub)*section\*?(?:\[[^]]*\])?\{[^}]*小结[^}]*\}")
+RA_SENTENCE_SPLIT_RE = re.compile(r"(?<=[。！？!?；;])\s*|\n+")
+RA_HEADING_LINE_RE = re.compile(
+    r"^\\(?:chapter|section|subsection|subsubsection|paragraph)\*?(?:\[[^]]*\])?\{"
+)
 EQUATION_ENV_RE = re.compile(r"\\begin\{(?:equation|align|eqnarray|gather|multline)\*?\}")
 METRIC_REUSE_RE = re.compile(r"[0-9]\.[0-9]\s*节")
 # E-REF / E-FIG: cross-reference probes on raw text (extract_visible_text blanks refs).
@@ -336,6 +383,434 @@ def _section_intervals(headings: list, ch_start: int, ch_end: int) -> list[dict]
     return intervals
 
 
+# ── Opt-in results-analysis checks (RA-* family) ──────────────
+
+
+def _visible_range(lines: list[str], start: int, end: int, parser) -> str:
+    prefix = parser.get_comment_prefix()
+    visible: list[str] = []
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(prefix) or RA_HEADING_LINE_RE.match(raw):
+            continue
+        text = parser.extract_visible_text(raw)
+        if text:
+            visible.append(text)
+    return "\n".join(visible)
+
+
+def _visible_line_count(lines: list[str], start: int, end: int, parser) -> int:
+    return len(_visible_range(lines, start, end, parser).splitlines())
+
+
+def _make_ra_interval(
+    lines: list[str],
+    parser,
+    *,
+    start: int,
+    end: int,
+    chapter_start: int,
+    chapter_end: int,
+    source: str,
+    key: str | None = None,
+    chapter_has_summary: bool = False,
+) -> dict:
+    return {
+        "start": start,
+        "end": end,
+        "chapter_start": chapter_start,
+        "chapter_end": chapter_end,
+        "source": source,
+        "key": key,
+        "chapter_has_summary": chapter_has_summary,
+        "visible_lines": _visible_line_count(lines, start, end, parser),
+    }
+
+
+def _collect_results_intervals(
+    lines: list[str], content: str, parser, section: str | None = None
+) -> list[dict]:
+    """Collect results/discussion intervals with chapter-context ownership."""
+    sections = parser.split_sections(content)
+    normalized = _normalize_section(section)
+    chapter_ranges = parser.chapter_ranges(content)
+
+    def owning_chapter_has_summary(start: int) -> bool:
+        for chapter in chapter_ranges:
+            if chapter["start"] <= start <= chapter["end"]:
+                chapter_raw = _range_raw(lines, chapter["start"], chapter["end"], parser)
+                return bool(RA_SUMMARY_HEADING_RE.search(chapter_raw))
+        return False
+
+    if normalized:
+        family = re.compile(rf"^{re.escape(normalized)}(?:_\d+)?$")
+        return [
+            _make_ra_interval(
+                lines,
+                parser,
+                start=start,
+                end=end,
+                chapter_start=start,
+                chapter_end=end,
+                source="global",
+                key=key,
+                chapter_has_summary=owning_chapter_has_summary(start),
+            )
+            for key, (start, end) in sections.items()
+            if family.fullmatch(key)
+        ]
+
+    headings = parser.extract_headings(content)
+    normalize_title = getattr(parser, "normalize_heading_title", None)
+    chapter_intervals: list[dict] = []
+    for chapter in chapter_ranges:
+        title = chapter["title"]
+        if callable(normalize_title):
+            title = normalize_title(title)
+        if NON_METHOD_CHAPTER_RE.search(str(title)):
+            continue
+        chapter_start = chapter["start"]
+        chapter_end = chapter["end"]
+        for candidate in _section_intervals(headings, chapter_start, chapter_end):
+            if not EXP_SEC_RE.search(candidate["title"]):
+                continue
+            chapter_intervals.append(
+                _make_ra_interval(
+                    lines,
+                    parser,
+                    start=candidate["start"],
+                    end=candidate["end"],
+                    chapter_start=chapter_start,
+                    chapter_end=chapter_end,
+                    source="chapter",
+                    chapter_has_summary=owning_chapter_has_summary(candidate["start"]),
+                )
+            )
+
+    global_family = re.compile(r"^(?:discussion|result)(?:_\d+)?$")
+    global_intervals = [
+        _make_ra_interval(
+            lines,
+            parser,
+            start=start,
+            end=end,
+            chapter_start=start,
+            chapter_end=end,
+            source="global",
+            key=key,
+            chapter_has_summary=owning_chapter_has_summary(start),
+        )
+        for key, (start, end) in sections.items()
+        if global_family.fullmatch(key)
+    ]
+
+    kept = list(chapter_intervals)
+    for candidate in global_intervals:
+        overlaps_chapter = any(
+            candidate["start"] <= item["end"] and item["start"] <= candidate["end"]
+            for item in chapter_intervals
+        )
+        if not overlaps_chapter:
+            kept.append(candidate)
+    return sorted(kept, key=lambda item: (item["start"], item["end"]))
+
+
+def _split_ra_paragraphs(lines: list[str], start: int, end: int, parser) -> list[dict]:
+    """Split prose into raw/visible paragraph triples without losing LaTeX refs."""
+    paragraphs: list[dict] = []
+    block: list[tuple[int, str]] = []
+    prefix = parser.get_comment_prefix()
+
+    def flush() -> None:
+        if not block:
+            return
+        visible = [parser.extract_visible_text(raw) for _line_no, raw in block]
+        visible_text = " ".join(part for part in visible if part).strip()
+        if visible_text:
+            paragraphs.append(
+                {
+                    "start_line": block[0][0],
+                    "raw_text": "\n".join(raw for _line_no, raw in block),
+                    "visible_text": visible_text,
+                }
+            )
+        block.clear()
+
+    for line_no in range(start, min(end, len(lines)) + 1):
+        raw = lines[line_no - 1]
+        stripped = raw.strip()
+        if not stripped:
+            flush()
+            continue
+        if stripped.startswith(prefix):
+            continue
+        if RA_HEADING_LINE_RE.match(stripped):
+            flush()
+            continue
+        block.append((line_no, raw))
+    flush()
+    return paragraphs
+
+
+def _ra_sentences(text: str) -> list[str]:
+    return [part.strip() for part in RA_SENTENCE_SPLIT_RE.split(text) if part.strip()]
+
+
+def _ra_finding(line_no: int, severity: str, priority: str, code: str, detail: str) -> list[str]:
+    message = f"[Script] {code}（启发式线索，须 LLM 按证据阶梯复核）：{detail}"
+    return [*_format_issue(line_no, severity, priority, message), ""]
+
+
+def _check_ra_equiv(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del interval, chapter_window_raw
+    if RA_EQUIV_EVIDENCE_RE.search(chapter_window_visible):
+        return []
+    out: list[str] = []
+    for paragraph in paragraphs:
+        unsupported = any(
+            RA_EQUIV_ASSERT_RE.search(sentence) and not RA_EQUIV_MATH_RE.search(sentence)
+            for sentence in _ra_sentences(paragraph["visible_text"])
+        )
+        if unsupported:
+            out.extend(
+                _ra_finding(
+                    paragraph["start_line"],
+                    "Major",
+                    "P1",
+                    "RA-EQUIV",
+                    "出现等价断言，但章级窗口未见等价检验、TOST 或等价界线索。",
+                )
+            )
+    return out
+
+
+def _check_ra_causal(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del interval, chapter_window_raw
+    out: list[str] = []
+    chapter_has_evidence = bool(RA_COMPONENT_EVIDENCE_RE.search(chapter_window_visible))
+    for index, paragraph in enumerate(paragraphs):
+        unsupported = any(
+            RA_CAUSAL_RE.search(sentence)
+            and not RA_CAUSAL_NOUN_RE.search(sentence)
+            and not RA_CONSISTENCY_RE.search(sentence)
+            for sentence in _ra_sentences(paragraph["visible_text"])
+        )
+        if not unsupported:
+            continue
+        local = " ".join(
+            item["visible_text"]
+            for item in paragraphs[max(0, index - 1) : min(len(paragraphs), index + 2)]
+        )
+        # Parent design §3.1: local evidence suppresses; chapter-only evidence downgrades.
+        if RA_COMPONENT_EVIDENCE_RE.search(local):
+            continue
+        # defensive-ai-rhetoric boundary: multi-mechanism + terminal caveat remains llm-only.
+        if chapter_has_evidence:
+            severity, priority = "Minor", "P2"
+            detail = "章内存在组件证据但未绑定到该论断对象，需核对证据与归因对象是否同指。"
+        else:
+            severity, priority = "Major", "P1"
+            detail = "因果谓词附近及章级窗口均未见消融、受控对比或组件记录线索。"
+        out.extend(_ra_finding(paragraph["start_line"], severity, priority, "RA-CAUSAL", detail))
+    return out
+
+
+def _check_ra_secondbest(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del chapter_window_raw, chapter_window_visible
+    if interval["visible_lines"] < 8 or not REF_TAB_RE.search(interval["raw_text"]):
+        return []
+    interval_visible = " ".join(paragraph["visible_text"] for paragraph in paragraphs)
+    if (
+        RA_COMPARE_CONTEXT_RE.search(interval_visible)
+        and RA_BEST_CLAIM_RE.search(interval_visible)
+        and not RA_SECOND_BEST_RE.search(interval_visible)
+    ):
+        return _ra_finding(
+            interval["start"],
+            "Minor",
+            "P2",
+            "RA-SECONDBEST",
+            "表格比较中出现最优断言，但未点名真实次优方法或最接近基线。",
+        )
+    return []
+
+
+def _check_ra_shallow(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del interval, chapter_window_raw, chapter_window_visible
+    out: list[str] = []
+    for paragraph in paragraphs:
+        raw = paragraph["raw_text"]
+        visible = paragraph["visible_text"]
+        if (
+            REF_FIG_RE.search(raw)
+            and RA_SHALLOW_RE.search(visible)
+            and not re.search(r"\d", visible)
+            and not RA_METRIC_TERM_RE.search(visible)
+        ):
+            out.extend(
+                _ra_finding(
+                    paragraph["start_line"],
+                    "Minor",
+                    "P2",
+                    "RA-SHALLOW",
+                    "图引用附近仅见贴合或效果描述，未见数字或指标定位。",
+                )
+            )
+    return out
+
+
+def _check_ra_distvocab(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del interval, chapter_window_raw, chapter_window_visible
+    out: list[str] = []
+    for index, paragraph in enumerate(paragraphs):
+        if not RA_BOX_RE.search(paragraph["visible_text"]):
+            continue
+        current_and_next = " ".join(
+            item["visible_text"] for item in paragraphs[index : min(index + 2, len(paragraphs))]
+        )
+        if not RA_DISTRIBUTION_RE.search(current_and_next):
+            out.extend(
+                _ra_finding(
+                    paragraph["start_line"],
+                    "Minor",
+                    "P2",
+                    "RA-DISTVOCAB",
+                    "箱线分析当前段及后一段未区分误差主体与尾部统计。",
+                )
+            )
+    return out
+
+
+def _check_ra_universal(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del interval, chapter_window_raw, chapter_window_visible
+    out: list[str] = []
+    for paragraph in paragraphs:
+        for sentence in _ra_sentences(paragraph["visible_text"]):
+            if RA_UNIVERSAL_RE.search(sentence) and not RA_CONCESSION_RE.search(sentence):
+                out.extend(
+                    _ra_finding(
+                        paragraph["start_line"],
+                        "Info",
+                        "P3",
+                        "RA-UNIVERSAL",
+                        "出现全称优势断言，需对照各指标和子集核对排序反转。",
+                    )
+                )
+                break
+    return out
+
+
+def _check_ra_stage(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del chapter_window_raw
+    if len(set(RA_FIDELITY_TERM_RE.findall(chapter_window_visible))) < 2:
+        return []
+    statements: list[tuple[int, int, str]] = []
+    for paragraph in paragraphs:
+        for sentence in _ra_sentences(paragraph["visible_text"]):
+            # Parent design §3.1: normative statements are compliance evidence, not mixed naming.
+            if not RA_STAGE_NORMATIVE_RE.search(sentence):
+                statements.append((len(statements), paragraph["start_line"], sentence))
+    selected = [
+        (statement_id, line_no, text)
+        for statement_id, line_no, text in statements
+        if RA_STAGE_SELECTED_RE.search(text)
+    ]
+    generated = [
+        (statement_id, line_no, text)
+        for statement_id, line_no, text in statements
+        if RA_STAGE_GENERATED_RE.search(text)
+    ]
+    if (
+        selected
+        and generated
+        and any(
+            selected_id != generated_id
+            for selected_id, _selected_line, _selected_text in selected
+            for generated_id, _generated_line, _generated_text in generated
+        )
+    ):
+        return _ra_finding(
+            min(selected[0][1], generated[0][1]),
+            "Info",
+            "P3",
+            "RA-STAGE",
+            "同一区间在不同陈述句中混用选定集与生成样本命名。",
+        )
+    return []
+
+
+def _check_ra_transition(
+    paragraphs: list[dict], interval: dict, chapter_window_raw: str, chapter_window_visible: str
+) -> list[str]:
+    del chapter_window_raw, chapter_window_visible
+    # Parent design §3.2 red line 9: summary presence is ownership metadata only;
+    # it must not widen a global/--section evidence window beyond the interval.
+    if not paragraphs or interval["chapter_has_summary"]:
+        return []
+    last = paragraphs[-1]
+    if not RA_TRANSITION_RE.search(last["visible_text"]):
+        return _ra_finding(
+            last["start_line"],
+            "Info",
+            "P3",
+            "RA-TRANSITION",
+            "结果分析末段未见本实验结论到下一章、下一节或后续实验的接口线索。",
+        )
+    return []
+
+
+RA_CHECKERS = (
+    _check_ra_equiv,
+    _check_ra_causal,
+    _check_ra_secondbest,
+    _check_ra_shallow,
+    _check_ra_distvocab,
+    _check_ra_universal,
+    _check_ra_stage,
+    _check_ra_transition,
+)
+
+
+def _check_results_analysis(
+    lines: list[str], content: str, parser, section: str | None = None
+) -> list[str]:
+    intervals = _collect_results_intervals(lines, content, parser, section)
+    if not intervals:
+        return _ra_finding(
+            1,
+            "Info",
+            "P3",
+            "RA-STRUCT",
+            "未检出结果分析区间；可用 --section 指定实际章节键后重试。",
+        )
+
+    out: list[str] = []
+    for interval in intervals:
+        interval["raw_text"] = _range_raw(lines, interval["start"], interval["end"], parser)
+        paragraphs = _split_ra_paragraphs(lines, interval["start"], interval["end"], parser)
+        chapter_raw = _range_raw(lines, interval["chapter_start"], interval["chapter_end"], parser)
+        chapter_visible = _visible_range(
+            lines, interval["chapter_start"], interval["chapter_end"], parser
+        )
+        for checker in RA_CHECKERS:
+            out.extend(checker(paragraphs, interval, chapter_raw, chapter_visible))
+    return out
+
+
 def _check_experiment_chapter(
     lines: list[str], parser, ch_start: int, ch_end: int, secs: list, exp_secs: list
 ) -> list[str]:
@@ -484,7 +959,12 @@ def _check_per_chapter(lines: list[str], content: str, parser) -> list[str]:
     return out
 
 
-def analyze(file_path: Path, section: str | None = None, per_chapter: bool = False) -> list[str]:
+def analyze(
+    file_path: Path,
+    section: str | None = None,
+    per_chapter: bool = False,
+    results_analysis: bool = False,
+) -> list[str]:
     """Review-mode analysis for experiment/discussion/conclusion sections."""
     global _DOC
     parser = get_parser(file_path)
@@ -497,10 +977,18 @@ def analyze(file_path: Path, section: str | None = None, per_chapter: bool = Fal
     warn_count = len(output)
 
     # R4b: per-method-chapter experiment checks (E-* family), gated behind the flag.
-    if per_chapter:
+    if per_chapter and not results_analysis:
         output.extend(_check_per_chapter(lines, doc.content, parser))
         if len(output) == warn_count:
             output.append("% EXPERIMENT: No per-chapter experiment issues detected.")
+        return output
+
+    if results_analysis:
+        if per_chapter:
+            output.extend(_check_per_chapter(lines, doc.content, parser))
+        output.extend(_check_results_analysis(lines, doc.content, parser, section))
+        if len(output) == warn_count:
+            output.append("% EXPERIMENT: No results-analysis issues detected.")
         return output
 
     normalized = _normalize_section(section)
@@ -556,6 +1044,11 @@ def main() -> int:
         "keep experiments inside each method chapter rather than a global discussion",
     )
     cli.add_argument(
+        "--results-analysis",
+        action="store_true",
+        help="Run opt-in RA-* heuristic cues over results-analysis intervals",
+    )
+    cli.add_argument(
         "--generate",
         action="store_true",
         help="Generate analysis prompt instead of reviewing",
@@ -567,7 +1060,16 @@ def main() -> int:
         print(generate_request(args.input))
         return 0
 
-    print("\n".join(analyze(path, args.section, per_chapter=args.per_chapter)))
+    print(
+        "\n".join(
+            analyze(
+                path,
+                args.section,
+                per_chapter=args.per_chapter,
+                results_analysis=args.results_analysis,
+            )
+        )
+    )
     return 0
 
 
