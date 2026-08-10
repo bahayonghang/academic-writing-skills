@@ -1,0 +1,9 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"Discover repository-level de-AI, alignment, testing, and documentation contracts before implementation."}
+{"file":".trellis/spec/academic-writing-skills/polish-rewrite-contract.md","reason":"Reuse the four-field rewrite contract, A/B/C decidability boundary, protected tokens, and --tier semantics."}
+{"file":".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md","reason":"Follow the established claim-local llm-only pattern, evidence mapping, repair boundaries, and missing-evidence rules."}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"Preserve copy-loading, eval JSON, alignment-test, and repository validation conventions."}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"Synchronize all public references with bilingual docs, manifest hashes, resource checks, and docs build."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/source-basis.md","reason":"Apply source authority limits, academic adaptation boundaries, and reject fabricated reference examples."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/prior-art-research.md","reason":"Use the qiaomu keep/adapt/reject decisions and avoid installing or copying generic humanizer skills."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/delta-matrix.md","reason":"Implement the W1-W22 decisions, seven H-* clusters, and F-* fidelity contract exactly."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/review-verification.md","reason":"Apply the adjudicated review fixes for Typst path guards, H-PRED/H-TERM positives, overlap deduplication, eval JSON writes, shell-neutral commands, and early polish checks."}
