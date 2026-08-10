@@ -1177,3 +1177,24 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 32: 完成结果分析 RA 检查器与真实语料标定
+
+**Date**: 2026-08-10
+**Task**: 完成结果分析 RA 检查器与真实语料标定
+**Branch**: `dev`
+
+### Summary
+
+新增 --results-analysis 双通道区间收集与八项 RA 启发式、32 条聚焦边界测试、路由和 evals；基于五篇 PDF-TXT 代理语料裁掉 RA-INTERLEAVE，保留 RA-STAGE 为 UNVERIFIED，并补齐结果分析检查器七段式维护契约。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `937327f` | (see git log) |
+
+### Status
+
+[OK] **Completed**

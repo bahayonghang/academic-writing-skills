@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 31
+- **Total Sessions**: 32
 - **Last Active**: 2026-08-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1179 | Active |
+| `journal-1.md` | ~1200 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 32 | 2026-08-10 | 完成结果分析 RA 检查器与真实语料标定 | `937327f` | `dev` |
 | 31 | 2026-08-10 | 完成结果分析写作指南与双语文档 | `8cd616a` | `dev` |
 | 30 | 2026-08-09 | 完成方法描述升级集成与归档 | `91884b8`, `e6dee00`, `786e070` | `dev` |
 | 29 | 2026-08-09 | 完成 EN 与 Typst 方法叙述升级 | `5ef7460`, `38056c4` | `dev` |
