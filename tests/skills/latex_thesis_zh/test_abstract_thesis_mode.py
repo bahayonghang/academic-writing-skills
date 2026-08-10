@@ -374,6 +374,22 @@ def test_bilingual_semantic_is_llm_lane(tmp_path: Path):
     assert c["source"] == "[LLM]" and not c["flagged"]
 
 
+def test_bilingual_nature_prompt_is_llm_lane(tmp_path: Path):
+    res = _analyze(tmp_path, _tex(BI_ZH, english=BI_EN), bilingual=True)
+    c = _bcheck(res, "B-NAT")
+    assert c["level"] == "Info" and c["source"] == "[LLM]"
+    assert not c["flagged"] and c["ref"] == "nature-writing N3"
+    assert "可能缺少领域背景" in c["message"]
+    assert "需结合摘要类型判断" in c["message"]
+    assert "可能需要收束范围" in c["message"]
+    assert "可能缺乏落地感" in c["message"]
+
+
+def test_bilingual_nature_prompt_requires_english_abstract(tmp_path: Path):
+    res = _analyze(tmp_path, _tex(BI_ZH), bilingual=True)
+    assert "B-NAT" not in {check["id"] for check in res["bilingual"]["checks"]}
+
+
 def test_no_bilingual_section_by_default(tmp_path: Path):
     res = _analyze(tmp_path, _tex(GOOD_ABSTRACT))
     assert res["bilingual"] is None
