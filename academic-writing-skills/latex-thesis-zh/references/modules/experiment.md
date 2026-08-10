@@ -112,6 +112,31 @@ B3/B4 的全局 `discussion`/`related` 节不存在，默认模式会输出一�
 
 ---
 
+# 结果分析深度检查 (--results-analysis)
+
+```bash
+uv run python scripts/analyze_experiment.py thesis.tex --results-analysis
+```
+
+该模式定位结果与讨论区间中的高风险写作线索，不替代图表、实验协议和方法定义的语义复核。
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| RA-EQUIV | 声称统计等价，但章级窗口无等价检验、TOST、等价包络或等价界线索 | Major/P1 |
+| RA-CAUSAL | 因果归因附近无组件证据；章内有证据但未局部绑定时降档 | Major/P1 或 Minor/P2 |
+| RA-SECONDBEST | 含表引用、对比语境和最优断言，但未点名真实次优对象 | Minor/P2 |
+| RA-SHALLOW | 图引用与浅层形态词同段出现，且无数字或指标词 | Minor/P2 |
+| RA-DISTVOCAB | 箱线分析未区分中位数/四分位主体与须线/离群尾部 | Minor/P2 |
+| RA-UNIVERSAL | 出现无让步或反转限定的全称优势断言 | Info/P3 |
+| RA-STAGE | 保真度语境中混用选定集/筛选后与生成样本/合成样本/原始候选名称 | Info/P3 |
+| RA-TRANSITION | 结果分析末段缺少下一节、后续实验或章间接口线索 | Info/P3 |
+| RA-INTERLEAVE | 单段数值句与归因句高频交错，形成流水账候选 | Info/P3（候选） |
+
+全部为启发式线索，判据、阈值、防误报边界与 `R-*` 映射见
+[`../writing/results-analysis-guide-zh.md`](../writing/results-analysis-guide-zh.md)。
+
+---
+
 # 结论完整性检查 (B5)
 
 **规则**：完整的结论必须包含三个要素：

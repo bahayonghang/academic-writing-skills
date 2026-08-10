@@ -1023,7 +1023,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/experiment.md",
       "sourceLocale": "zh",
-      "sourceSha256": "76491a7afa5899519816de9473e2bc58dd80c0f174d1619d5f85d4c31c577588",
+      "sourceSha256": "aeeb6e54b17bff52e88a221504b8412604066b3455adfd3bdbd35708d7c29f4c",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/experiment.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/experiment.md"
     },
@@ -1197,6 +1197,15 @@
       "sourceSha256": "58307758ce286728bcb658d070cfbd7b695f3fe007d63366c758d96482d3e004",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/process-chapter-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/process-chapter-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/results-analysis-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "dd5cd1a4d1def38933204db62a70b65428f082938f3c502096b5199b2f1f046c",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/results-analysis-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/results-analysis-guide-zh.md"
     },
     {
       "skill": "latex-thesis-zh",
