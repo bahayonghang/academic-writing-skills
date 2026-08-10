@@ -57,9 +57,42 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 ## Lane-specific focus blocks
 
-The blocks below extend the generic Cross-cutting lane template for each
-canonical lane in `REVIEW_LANE_GUIDE.md`. Inject the matching `Focus`, `DO`,
-`DON'T`, and `Output limit` directives into the dispatched prompt.
+The blocks below extend the generic Section or Cross-cutting lane template for
+each canonical lane in `REVIEW_LANE_GUIDE.md`. Inject the matching `Focus`,
+`DO`, `DON'T`, and any stated `Output limit` directives into the dispatched
+prompt.
+
+### Lane: section_methods - Methodological interface & argumentation completeness
+
+**Focus**: audit whether each method module has a closed argument and an
+explicit interface to its neighbors.
+
+When this lane covers module-level method narration, read
+`academic-writing-skills/latex-paper-en/references/writing/section-writing/method.md`;
+it is the authoritative source for the detailed method contract.
+
+**DO**:
+
+- check the six required roles: current constraint, required capability,
+  design choice, processing path, output object, and downstream interface
+- for each adjacent module pair, identify the upstream output, connection transform,
+  and downstream use
+- apply `M-NONDIRECT` when modules share an input or supervision path without
+  a direct data dependency, and require the paper to rule out the likely misread
+- flag a missing equation closure when purpose, symbol meaning, output
+  semantics, or downstream use is absent; keep this distinct from notation
+  contradictions
+- compare benefit claims with the evidence-strength ladder in
+  `OVER_CLAIM_GUARD.md`
+
+**DON'T**:
+
+- do not evaluate notation contradictions; route them to
+  `notation_and_numeric_consistency`
+- do not evaluate formatting or surface-language polish
+- do not flag Related Work grouping headings, Typst experiment-analysis
+  lead-ins, or `\paragraph{核心结论概括}` as method-interface findings
+- do not redefine severity definitions
 
 ### Lane: claims_vs_evidence
 

@@ -1,0 +1,20 @@
+\documentclass{article}
+\begin{document}
+\section{Methods}
+\subsection{Encoding}
+Because the raw input remains unaligned, the encoder constructs a shared representation.
+\paragraph{Dynamic encoder}
+Given the input sequence, the encoder extracts a dynamic representation.
+\paragraph{Candidate generator}
+The representation conditions generation of candidate states.
+\paragraph{Candidate filter}
+Remaining uncertainty determines which candidate states are retained.
+\begin{equation}
+z = f(x)
+\end{equation}
+where $x$ is the input and $z$ is the latent state.
+The state enters the candidate generator.
+Training updates the encoder parameters.
+\subsection{Decoding}
+Because the candidate state remains uncalibrated, the decoder maps it to the final output.
+\end{document}

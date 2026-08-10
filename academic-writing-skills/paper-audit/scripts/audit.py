@@ -461,19 +461,34 @@ def _parse_script_output(module_name: str, stdout: str) -> list[AuditIssue]:
     Tries to detect structured output (Severity/Priority format),
     falls back to treating each non-empty line as a Minor issue.
     """
-    issues = []
+    issues: list[AuditIssue] = []
     if not stdout.strip():
         return issues
 
     # Pattern for structured output: [Severity: X] [Priority: Y]
     structured_pattern = re.compile(
-        r"\[Severity:\s*(Critical|Major|Minor)\]\s*\[Priority:\s*(P[012])\]"
+        r"\[Severity:\s*(Critical|Major|Minor|Info)\]\s*\[Priority:\s*(P[0123])\]"
     )
     line_pattern = re.compile(r"\(Line\s+(\d+)\)")
+    continuation_pattern = re.compile(
+        r"^(?:%|//)\s*(?:Current|Suggested|Rationale|Meaning-Check)\b"
+    )
+    edge_table_pattern = re.compile(r"^(?:%|//)\s*M-EDGETABLE\b")
 
-    for line in stdout.strip().split("\n"):
+    # M-EDGETABLE is an LLM worksheet appended to method diagnostics, not a
+    # finding. Its marker owns the remainder of the output by contract.
+    output_lines: list[str] = []
+    for raw_line in stdout.strip().split("\n"):
+        if edge_table_pattern.match(raw_line.strip()):
+            break
+        output_lines.append(raw_line)
+
+    in_finding_block = False
+
+    for line in output_lines:
         line = line.strip()
-        if not line or line.startswith("#"):
+        if not line:
+            in_finding_block = False
             continue
 
         severity = "Minor"
@@ -485,6 +500,16 @@ def _parse_script_output(module_name: str, stdout: str) -> list[AuditIssue]:
         if sev_match:
             severity = sev_match.group(1)
             priority = sev_match.group(2)
+            in_finding_block = True
+        elif in_finding_block and continuation_pattern.match(line):
+            # These fields belong to the preceding structured finding. Other
+            # standalone lines retain the legacy Minor/P2 fallback, including
+            # when a script mixes structured and unstructured diagnostics.
+            continue
+        else:
+            in_finding_block = False
+            if line.startswith("#"):
+                continue
 
         line_match = line_pattern.search(line)
         if line_match:
@@ -2471,6 +2496,8 @@ def run_audit(
                 extra_args.extend(["--email", email])
 
         tasks.append((check_name, script, extra_args))
+        if check_name == "logic" and ((fmt == ".tex" and lang == "en") or fmt == ".typ"):
+            tasks.append((check_name, script, ["--section", "methods"]))
 
     # Run independent checks in parallel (up to 4 workers)
     with ThreadPoolExecutor(max_workers=4) as executor:
@@ -2629,7 +2656,7 @@ def export_phase0_context(result: AuditResult) -> str:
     for issue in result.issues:
         sev_counts[issue.severity] = sev_counts.get(issue.severity, 0) + 1
     lines.append(f"## Issue Summary ({len(result.issues)} total)")
-    for sev in ("Critical", "Major", "Minor"):
+    for sev in ("Critical", "Major", "Minor", "Info"):
         if sev in sev_counts:
             lines.append(f"- {sev}: {sev_counts[sev]}")
     lines.append("")

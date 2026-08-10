@@ -1,0 +1,30 @@
+{
+  "id": "method-description-upgrade",
+  "name": "method-description-upgrade",
+  "title": "方法描述模块升级：模块叙述契约与报幕反模式治理",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-09",
+  "completedAt": "2026-08-09",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-09-method-desc-zh",
+    "08-09-method-desc-en-typst",
+    "08-09-method-desc-audit-sync"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

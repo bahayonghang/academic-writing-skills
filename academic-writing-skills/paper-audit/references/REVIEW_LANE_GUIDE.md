@@ -7,7 +7,7 @@ Default `deep-review` lanes:
 - `section_intro_related`
   - check framing, novelty positioning, and promises made early in the paper
 - `section_methods`
-  - check definitions, assumptions, derivations, and method detail
+  - check definitions, assumptions, derivations, and method detail; for methodological interface and argumentation completeness, load the `section_methods` focus block in `SUBAGENT_TEMPLATES.md`
 - `section_results`
   - check metric computation, evidence sufficiency, and comparison fairness
 - `section_discussion_conclusion`

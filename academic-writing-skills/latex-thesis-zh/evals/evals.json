@@ -750,6 +750,41 @@
           "description": "no unsupported significance evidence is invented"
         }
       ]
+    },
+    {
+      "id": 30,
+      "prompt": "请审阅附件中的中文学位论文结果分析边界样例，运行 experiment 的 --results-analysis，只把 RA-* 作为启发式候选；按结果分析证据阶梯复核，说明统计等价、组件因果归因、阶段命名、局部最优和浅层图形描述各自为何命中或保持静默。不得把脚本未命中写成 R-* 已通过，也不得声明真实语料效果已验证。",
+      "expected_output": "路由到 experiment --results-analysis，并读取 results-analysis-guide-zh.md；报告 RA-EQUIV 与 RA-SHALLOW 候选，保留有局部消融证据的因果措辞、规范性阶段声明和局部最优边界；所有 RA-* 均标为须按证据阶梯复核的启发式线索，真实查准率和召回率保持 UNVERIFIED。",
+      "files": [
+        "evals/fixtures/results_analysis_boundary.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--results-analysis",
+          "description": "results-analysis flag is routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "RA-(EQUIV|CAUSAL|SHALLOW|STAGE|UNIVERSAL)",
+          "description": "RA heuristic family is named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(证据阶梯|results-analysis-guide-zh)",
+          "description": "authoritative results-analysis guide is used"
+        },
+        {
+          "type": "regex",
+          "pattern": "(启发式|须.*复核|UNVERIFIED)",
+          "description": "script output is not overstated as semantic validation"
+        },
+        {
+          "type": "not_contains",
+          "text": "R-* 已通过",
+          "description": "script silence is not presented as checklist pass"
+        }
+      ]
     }
   ]
 }

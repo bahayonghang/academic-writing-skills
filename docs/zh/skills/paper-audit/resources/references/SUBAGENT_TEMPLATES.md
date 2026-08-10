@@ -57,9 +57,31 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 ## 审查通道特定焦点块
 
-下面的块扩展了每个区域的通用横切审查通道模板
-规范审查通道`REVIEW_LANE_GUIDE.md`。注入匹配的`Focus`, `DO`,
-`DON'T`， 和`Output limit`指令进入调度提示。
+下列焦点块为 `REVIEW_LANE_GUIDE.md` 中的每个规范通道扩展通用分段或横切通道模板。
+将匹配的 `Focus`、`DO`、`DON'T` 以及其中明确的 `Output limit` 指令注入调度提示。
+
+### 通道：section_methods - 方法论接口与论证完整性
+
+**焦点**：审查每个方法模块的论证是否闭合，以及它与相邻模块的接口是否明确。
+
+当该通道审查模块级方法叙述时，读取
+`academic-writing-skills/latex-paper-en/references/writing/section-writing/method.md`；
+它是详细方法契约的权威来源。
+
+**做**：
+
+- 检查六个必答角色：当前约束、所需能力、设计选择、处理过程、输出对象和下游接口
+- 对每一对相邻模块，识别上游产出、连接变换和下游用途
+- 当模块共享输入或监督路径但不存在直接数据依赖时，应用 `M-NONDIRECT`，并要求论文主动排除可能的误读
+- 当公式缺少目的、符号含义、输出语义或下游用途时，报告公式闭环缺失；将其与符号矛盾区分开
+- 按 `OVER_CLAIM_GUARD.md` 的证据强度阶梯核对收益主张
+
+**不做**：
+
+- 不评估符号矛盾；将其交给 `notation_and_numeric_consistency`
+- 不评估格式或表层语言润色
+- 不把 Related Work 分组标题、Typst 实验分析 lead-in 或 `\paragraph{核心结论概括}` 报为方法接口问题
+- 不重新定义严重程度
 
 ### 审查通道：声明与证据
 

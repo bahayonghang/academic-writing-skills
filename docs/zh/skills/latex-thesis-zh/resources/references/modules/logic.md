@@ -86,6 +86,28 @@ Info（"若为方法+实验章式请走方法章规则"），不强套过程分�
 
 写作规范与正反例见 [`../writing/process-chapter-guide-zh.md`](../writing/process-chapter-guide-zh.md)。
 
+## Method Narrative Checks (`--method-narrative`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --method-narrative --section 〈章名〉
+```
+
+当方法章包含多个核心模块，或需要审阅模块动机、输入输出、公式解释和相邻接口时运行本分支。
+`--section` 每次必须显式选择一个章；缺失时脚本只列候选章并以退出码 2 结束，不自动判断方法章。
+解释 finding 或改写正文前，读取
+[`../writing/method-description-guide-zh.md`](../writing/method-description-guide-zh.md)，以其中的六角色、
+逐边接口和证据分级为完整语义契约。
+
+| Check | Script lane | Severity |
+| --- | --- | --- |
+| M-HEADING | 标出可能以标题报幕替代模块衔接的位置 | Minor/P2 |
+| M-SEQWORD | 标出只表达排版顺序、尚未说明技术关系的小节首句 | Info/P3 |
+| M-EQUATION | 标出编号公式后可能缺少符号释义入口的位置 | Minor/P2 |
+| M-EDGETABLE | 输出小节清单和逐边接口表骨架；由 LLM 填写，不是 finding | 不计 |
+
+三项 finding 都是 `[Script]` 候选且 `Meaning-Check: NEEDS-LLM`。脚本不判断模块动机、设计理由、
+完整输入输出、非直接依赖、证据强度或最终闭合；这些项目按方法描述指南逐模块复核。
+
 ## Body-Chapter Stitching & Intro Bridging (default)
 
 - **P-PAPER（默认全章，无需 flag）**：可见正文出现"源论文/小论文/N 篇论文"表述即报（Minor/P2），

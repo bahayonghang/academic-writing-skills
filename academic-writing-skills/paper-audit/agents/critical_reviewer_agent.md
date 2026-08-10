@@ -105,6 +105,13 @@ Analyze the logical flow at the paragraph level across the entire paper:
 4. **Flag causal inversions**: Identify paragraphs where effect is presented before cause, or conclusions appear before the supporting evidence.
 5. **Argument-evidence binding**: For each argumentative paragraph, check whether the evidence (citation, data, or reasoning) actually supports the stated claim. Flag paragraphs where the argument and evidence point in different directions.
 
+Within Methods, repeat the adjacency check at method-module subsection
+granularity. Classify each neighboring pair as `continuation`, `elaboration`,
+`contrast`, `cause-effect`, `interface`, or `residual-constraint`; for the last
+two, verify that the upstream output, connecting transform, downstream use,
+and any remaining constraint are explicit. Apply the C5 severity guidance
+below.
+
 **Severity guidance**:
 
 - Logical jump between sections (e.g., Methods to Results): usually acceptable (structural convention)

@@ -88,6 +88,7 @@ EN: dict[str, str] = {
     # ---- Sub-headings (### ...) ------------------------------------------
     "subsection.high_signal_quality_issues": "### High-Signal Quality Issues",
     "subsection.additional_quality_improvements": "### Additional Quality Improvements",
+    "subsection.informational_findings": "### Informational Findings",
     "subsection.priority_1": "### Priority 1 --- Must Address (Blocking)",
     "subsection.priority_2": "### Priority 2 --- Strongly Recommended",
     "subsection.priority_3": "### Priority 3 --- Optional Improvements",
@@ -333,6 +334,7 @@ ZH: dict[str, str] = {
     # ---- Sub-headings ----------------------------------------------------
     "subsection.high_signal_quality_issues": "### 高信号质量问题",
     "subsection.additional_quality_improvements": "### 其他质量改进",
+    "subsection.informational_findings": "### 信息提示",
     "subsection.priority_1": "### 优先级 1 --- 必须处理（阻断）",
     "subsection.priority_2": "### 优先级 2 --- 强烈建议",
     "subsection.priority_3": "### 优先级 3 --- 可选改进",

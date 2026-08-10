@@ -28,6 +28,7 @@ TRANSITIONS = {
     "addition": {"furthermore", "moreover", "in addition", "additionally"},
     "contrast": {"however", "nevertheless", "in contrast", "conversely"},
     "cause": {"therefore", "consequently", "as a result", "thus"},
+    "sequence": {"next", "then", "subsequently", "after that", "after this"},
 }
 
 
@@ -41,6 +42,312 @@ def _needs_method_justification(text: str) -> bool:
     if "we use" not in lowered and "we adopt" not in lowered:
         return False
     return not any(marker in lowered for marker in ["because", "due to", "to ", "for "])
+
+
+# Method-narrative criteria are locked by
+# tests/contracts/test_method_narrative_alignment.py.
+MN_HEADING_RUN = 3
+MN_HEADING_HITS = 2
+MN_EQUATION_LOOKAHEAD = 3
+MN_ANNOUNCE_RE = re.compile(
+    r"\b(?:This|The)\s+(?:module|component|stage|block)\s+"
+    r"(?:is used to|aims to|is responsible for|serves to)\b|"
+    r"\bWe\s+(?:now\s+)?(?:introduce|describe|present)\s+the\b.{0,40}"
+    r"\b(?:module|component)\b",
+    re.IGNORECASE,
+)
+_MN_SEQUENCE_ALTERNATION = "|".join(
+    re.escape(token)
+    for token in sorted(TRANSITIONS["sequence"], key=lambda token: (-len(token), token))
+)
+MN_SEQ_OPEN_RE = re.compile(
+    rf"^(?:{_MN_SEQUENCE_ALTERNATION}),?\s+(?:we|this section)\b", re.IGNORECASE
+)
+MN_CAUSE_EXEMPT_RE = re.compile(
+    r"\b(?:therefore|thus|however|to address|due to|because|since|remaining)\b",
+    re.IGNORECASE,
+)
+MN_EQ_GLOSS_RE = re.compile(r"\bwhere\b", re.IGNORECASE)
+
+_MN_NUMBERED_EQUATION_BEGIN_RE = re.compile(r"\\begin\{(?P<env>equation|align|gather)\}")
+_MN_ANY_EQUATION_BEGIN_RE = re.compile(r"\\begin\{(?:equation|align|gather)\*?\}")
+_MN_HEADING_COMMAND_RE = re.compile(
+    r"^\s*\\(?:section|subsection|subsubsection|paragraph)\*?"
+    r"(?:\[[^\]]*\])?\{"
+)
+
+
+def _mn_strip_latex_comment(raw: str) -> str:
+    return re.sub(r"(?<!\\)%.*", "", raw)
+
+
+def _mn_visible_text(raw: str, parser) -> str:
+    if parser.get_comment_prefix() == "%":
+        raw = _mn_strip_latex_comment(raw)
+    return parser.extract_visible_text(raw).strip()
+
+
+def _mn_after_heading(raw: str) -> str:
+    match = _MN_HEADING_COMMAND_RE.match(raw)
+    if not match:
+        return raw
+    depth = 1
+    for index in range(match.end(), len(raw)):
+        if raw[index] == "{":
+            depth += 1
+        elif raw[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return raw[index + 1 :]
+    return ""
+
+
+def _mn_first_sentence_after_heading(
+    lines: list[str], heading: dict, boundary: int, parser
+) -> tuple[int, str] | None:
+    parts: list[str] = []
+    first_line = heading["line"]
+    same_line = _mn_visible_text(_mn_after_heading(lines[first_line - 1]), parser)
+    if same_line:
+        parts.append(same_line)
+
+    for line_no in range(first_line + 1, min(boundary, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            if parts:
+                break
+            continue
+        uncommented = _mn_strip_latex_comment(raw)
+        if _MN_HEADING_COMMAND_RE.match(uncommented) or uncommented.startswith("\\begin{"):
+            break
+        visible = _mn_visible_text(uncommented, parser)
+        if not visible:
+            continue
+        if not parts:
+            first_line = line_no
+        parts.append(visible)
+        if re.search(r"[.!?]", visible):
+            break
+
+    if not parts:
+        return None
+    paragraph = " ".join(parts)
+    sentence = re.split(r"(?<=[.!?])(?:\s|$)", paragraph, maxsplit=1)[0].strip()
+    return first_line, sentence
+
+
+def _mn_finding(
+    line_no: int,
+    severity: str,
+    priority: str,
+    code: str,
+    message: str,
+    current: str,
+    suggested: str,
+    rationale: str,
+    doc: AssembledDocument,
+) -> list[str]:
+    return [
+        f"% METHOD-NARRATIVE ({doc.lineref(line_no)}) [Severity: {severity}] "
+        f"[Priority: {priority}]: [Script] {code} {message}",
+        f"% Current: {current}",
+        f"% Suggested: {suggested}",
+        f"% Rationale: {rationale}",
+        "% Meaning-Check: NEEDS-LLM",
+        "",
+    ]
+
+
+def _check_method_heading(
+    lines: list[str], headings: list[dict], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
+    scoped = [heading for heading in headings if start <= heading["line"] <= end]
+    run: list[tuple[dict, str, bool]] = []
+
+    def evaluate() -> list[str]:
+        hits = [item for item in run if item[2]]
+        if len(run) < MN_HEADING_RUN or len(hits) < MN_HEADING_HITS:
+            return []
+        first_heading, first_sentence, _hit = hits[0]
+        titles = ", ".join(item[0]["title"] for item in run)
+        return _mn_finding(
+            first_heading["line"],
+            "Minor",
+            "P2",
+            "M-HEADING",
+            f"{len(hits)} of {len(run)} consecutive run-in headings open with announcements.",
+            f"{first_heading['title']}: {first_sentence}",
+            "Keep headings for independent technical units; lead with the active constraint "
+            "and the upstream/downstream interface.",
+            f"The heading run ({titles}) lists responsibilities without establishing the "
+            "method interfaces.",
+            doc,
+        )
+
+    for index, heading in enumerate(scoped):
+        if heading["level"] <= 3:
+            finding = evaluate()
+            if finding:
+                return finding
+            run = []
+            continue
+        if heading.get("command") != "paragraph":
+            continue
+        boundary = scoped[index + 1]["line"] - 1 if index + 1 < len(scoped) else end
+        first = _mn_first_sentence_after_heading(lines, heading, boundary, parser)
+        sentence = first[1] if first else ""
+        run.append((heading, sentence, bool(MN_ANNOUNCE_RE.search(sentence))))
+
+    return evaluate()
+
+
+def _check_method_sequence(
+    lines: list[str], headings: list[dict], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
+    out: list[str] = []
+    scoped = [heading for heading in headings if start <= heading["line"] <= end]
+    for index, heading in enumerate(scoped):
+        if heading.get("command") not in {"subsection", "subsubsection"}:
+            continue
+        boundary = scoped[index + 1]["line"] - 1 if index + 1 < len(scoped) else end
+        first = _mn_first_sentence_after_heading(lines, heading, boundary, parser)
+        if first is None:
+            continue
+        line_no, sentence = first
+        if not MN_SEQ_OPEN_RE.search(sentence) or MN_CAUSE_EXEMPT_RE.search(sentence):
+            continue
+        out.extend(
+            _mn_finding(
+                line_no,
+                "Info",
+                "P3",
+                "M-SEQWORD",
+                f"Subsection '{heading['title']}' opens with sequence alone, without a "
+                "causal or constraint signal.",
+                sentence,
+                "Open with the upstream output, remaining constraint, or required capability.",
+                "Sequence words state document order but do not establish a technical relation.",
+                doc,
+            )
+        )
+    return out
+
+
+def _mn_equation_blocks(lines: list[str], start: int, end: int) -> list[tuple[int, int, str]]:
+    blocks: list[tuple[int, int, str]] = []
+    line_no = start
+    while line_no <= min(end, len(lines)):
+        raw = _mn_strip_latex_comment(lines[line_no - 1])
+        begin = _MN_NUMBERED_EQUATION_BEGIN_RE.search(raw)
+        if begin is None:
+            line_no += 1
+            continue
+        env = begin.group("env")
+        block_end = line_no
+        end_re = re.compile(rf"\\end\{{{env}\}}")
+        while block_end <= min(end, len(lines)) and not end_re.search(
+            _mn_strip_latex_comment(lines[block_end - 1])
+        ):
+            block_end += 1
+        block_end = min(block_end, end, len(lines))
+        blocks.append((line_no, block_end, env))
+        line_no = block_end + 1
+    return blocks
+
+
+def _mn_visible_between(lines: list[str], start: int, end: int, parser) -> bool:
+    return any(
+        _mn_visible_text(lines[line_no - 1].strip(), parser)
+        for line_no in range(start, min(end, len(lines)) + 1)
+        if lines[line_no - 1].strip()
+        and not lines[line_no - 1].strip().startswith(parser.get_comment_prefix())
+    )
+
+
+def _check_method_equations(
+    lines: list[str], start: int, end: int, parser, doc: AssembledDocument
+) -> list[str]:
+    blocks = _mn_equation_blocks(lines, start, end)
+    if not blocks:
+        return []
+
+    groups: list[list[tuple[int, int, str]]] = []
+    for block in blocks:
+        if not groups or _mn_visible_between(lines, groups[-1][-1][1] + 1, block[0] - 1, parser):
+            groups.append([block])
+        else:
+            groups[-1].append(block)
+
+    out: list[str] = []
+    for group in groups:
+        visible_after: list[str] = []
+        for line_no in range(group[-1][1] + 1, min(end, len(lines)) + 1):
+            raw = lines[line_no - 1].strip()
+            if not raw or raw.startswith(parser.get_comment_prefix()):
+                continue
+            uncommented = _mn_strip_latex_comment(raw)
+            if _MN_ANY_EQUATION_BEGIN_RE.search(uncommented) or _MN_HEADING_COMMAND_RE.match(
+                uncommented
+            ):
+                break
+            visible = _mn_visible_text(uncommented, parser)
+            if not visible:
+                continue
+            visible_after.append(visible)
+            if len(visible_after) == MN_EQUATION_LOOKAHEAD:
+                break
+        if any(MN_EQ_GLOSS_RE.search(text) for text in visible_after):
+            continue
+        first, last = group[0], group[-1]
+        envs = ", ".join(block[2] for block in group)
+        out.extend(
+            _mn_finding(
+                first[0],
+                "Minor",
+                "P2",
+                "M-EQUATION",
+                f"The numbered equation group ({envs}) has no 'where' gloss within "
+                f"{MN_EQUATION_LOOKAHEAD} non-empty visible lines.",
+                f"Equation range {doc.lineref(first[0], last[1])}",
+                "Explain new symbols and output semantics, then state the downstream use.",
+                "An equation needs purpose, symbol meaning, and a downstream interface to "
+                "close the argument.",
+                doc,
+            )
+        )
+    return out
+
+
+def _method_edge_table(headings: list[dict], start: int, end: int) -> list[str]:
+    titles = [
+        heading["title"]
+        for heading in headings
+        if start <= heading["line"] <= end
+        and heading.get("command") in {"subsection", "subsubsection"}
+    ]
+    title_list = " -> ".join(titles) if titles else "(no subsection/subsubsection detected)"
+    out = [
+        "% M-EDGETABLE [Script] Method-module interface skeleton (not a finding)",
+        f"% Subsection list: {title_list}",
+        "% | Upstream subsection | Upstream output | Connection type | "
+        "Intermediate transform | Downstream use |",
+        "% | --- | --- | --- | --- | --- |",
+    ]
+    out.extend(f"% | {title.replace('|', '/')} |  |  |  |  |" for title in titles[:-1])
+    out.append("% [LLM] 待填写")
+    return out
+
+
+def _check_method_narrative(
+    lines: list[str], headings: list[dict], scope: tuple[int, int], parser, doc: AssembledDocument
+) -> list[str]:
+    start, end = scope
+    out: list[str] = []
+    out.extend(_check_method_heading(lines, headings, start, end, parser, doc))
+    out.extend(_check_method_sequence(lines, headings, start, end, parser, doc))
+    out.extend(_check_method_equations(lines, start, end, parser, doc))
+    out.extend(_method_edge_table(headings, start, end))
+    return out
 
 
 # ── Literature review quality checks (A1, A3) ──────────────────
@@ -765,6 +1072,12 @@ def analyze(
             out.extend(_check_tri_section_alignment(content, lines, sections, parser))
         if motivation_thread and not section:
             out.extend(_check_motivation_thread(lines, sections, parser))
+
+        if section and any(key == "method" or key.startswith("method_") for key in matched):
+            headings = parser.extract_headings(content)
+            for key in matched:
+                if key == "method" or key.startswith("method_"):
+                    out.extend(_check_method_narrative(lines, headings, sections[key], parser, doc))
 
     if not out:
         out.append("% LOGIC/METHODOLOGY: No rule-based coherence issues detected.")

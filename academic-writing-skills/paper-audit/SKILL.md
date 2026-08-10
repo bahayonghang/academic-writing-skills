@@ -9,7 +9,7 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "6.0.0"
-  last_updated: "2026-07-16"
+  last_updated: "2026-08-09"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--scholar-eval] [--regression] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
@@ -65,6 +65,7 @@ root contains exactly four reader-facing files — `review_report.md`,
 - Be conservative with OCR noise, formatting quirks, and copy-editing trivia — flagging cosmetic noise inflates the report and buries the real issues.
 - Read like a careful reader before flagging — understand the author's intended meaning first so the issue captures a real misread, not a strawman.
 - For literature findings, judge whether the gap is evidence-backed and fairly positioned, and don't rewrite the prose inside `paper-audit` — keep prose rewrites in the format-specific writing skills.
+- For method-interface review in `section_methods`, load its focus block in `references/SUBAGENT_TEMPLATES.md`; that block points to the authoritative method contract. Phase 0 adds the Methods-section logic pass only for English `.tex` and for `.typ` inputs; Chinese thesis method narration remains an explicit `latex-thesis-zh` `--method-narrative --section` workflow outside the automatic audit chain.
 - For `PRESUBMISSION`, map CRITICAL / MAJOR / MINOR to Critical / Major / Minor script severities; only Critical or failed checklist items can fail `gate` — otherwise mechanical findings drown out the substantive ones (full matrix: `references/PRESUBMISSION_GUIDE.md`).
 - In PDF mode, do not guess source-only hygiene. Report text-proven items
   and note that LaTeX/Typst source checks were skipped.

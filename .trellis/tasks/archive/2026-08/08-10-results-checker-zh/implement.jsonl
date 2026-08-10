@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "仓库契约总索引"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 副本测试加载约定与 evals 工具约定"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "RA-CAUSAL 与 llm-only 判据的分界依据"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "M-*/RA-* 词表与作用区间分界"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 路由表改动前必读契约"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/design.md", "reason": "RA-* 判据与区间收集算法实现依据（§3）"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/research/user-spec-results-analysis.md", "reason": "正反例 fixture 语料参照"}

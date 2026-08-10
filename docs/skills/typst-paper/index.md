@@ -66,6 +66,7 @@ Typst academic paper assistant for existing `.typ` manuscripts in English or Chi
 - [De-AI Writing Guide for Typst Academic Papers](./resources/references/DEAI_GUIDE.md)
 - [Journal Name Abbreviations](./resources/references/JOURNAL_ABBREVIATIONS.md)
 - [Journal Adaptation Workflow](./resources/references/JOURNAL_ADAPTATION_WORKFLOW.md)
+- [Typst Method Section Adapter](./resources/references/METHOD_SECTION.md)
 - [Module: Abstract](./resources/references/modules/ABSTRACT.md)
 - [Module: Adapt](./resources/references/modules/ADAPT.md)
 - [Module: Bibliography](./resources/references/modules/BIBLIOGRAPHY.md)

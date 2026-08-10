@@ -57,6 +57,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 涉及“改写绪论/方法章节/实验讨论/总结与展望”“章节主线怎么写”“摘要、创新点、结论如何闭合”时，仍优先走现有模块，并补读 `references/writing/thesis-writing-guide.md`；不要新增英文会议论文式 `section-writing` 模块。
 - 涉及“第二章怎么写”“工艺流程分析”“总体框架图/技术路线图”“工艺→难点→框架章式”“过程分析章”时，走 `logic` 加 `--process-chapter`（默认查第 2 章，`--section` 可覆盖），并补读 `references/writing/process-chapter-guide-zh.md`：它对工业/过程背景第二章做 P-FLOW/P-DERIVE/P-FRAME/P-ORDER 主线检查，脚本先做双信号章式预判（须同时命中过程信号与框架信号），非过程分析章只出 Info 不强套。“第二章=方法+实验”流派不走该 flag，按下一条方法章条目处理。
 - 涉及“第三/四/五/六章方法章怎么写”“一章一方法+同章实验章式”“方法章骨架/五段结构”“实验部分不充分/像项目汇报（逐方法章）”“论文有小论文拼接感/源论文表述”“方法章草稿态残留/占位表格”时，走 `experiment` 加 `--per-chapter`（逐方法章查 E-DATA/E-ATTR/E-REF/E-FIG/E-METRIC/E-PARAM/E-ABL/E-ECHO）与 `logic`（默认扫 P-PAPER 拼接表述、单章文件配 `--first-chapter N`）、`format`（F-NOTE/F-PLACEHOLDER），并补读 `references/writing/method-chapter-guide-zh.md`：五段骨架、章引言承上分级（并列方法章可不承上）、实验工业版规范、防误报红线 12 条（无显著性检验/人工经验基线/教科书基础节均合法，不报）。
+- 涉及“结果分析太浅”“只报数字”“次优比较缺失”“图表描述未定位误差”“完整模型结果被归因到单个组件”“生成样本与筛选后选定集混用”时，走 `experiment --results-analysis`，并补读 `references/writing/results-analysis-guide-zh.md`。RA-* 只定位启发式候选，不能代替 `R-*` 人工与 LLM 清单。歧义速判：结果分析的事实组织和证据深度归本旗标；论断强度与证据阶梯的语义裁决读 `references/writing/over-claim-guard.md`；AI 痕迹与防御性推测解释走 `deai` 及其 `[LLM]` 组合判据。
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
 - 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。

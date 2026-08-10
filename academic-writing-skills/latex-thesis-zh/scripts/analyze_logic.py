@@ -1514,6 +1514,390 @@ def _check_intro_mainline(
     return out
 
 
+# ── 方法叙述检查（可选开关：--method-narrative）──────────────
+#
+# M-* 跨技能判据由 tests/contracts/test_method_narrative_alignment.py 锁定（C2 交付）。
+
+MN_HEADING_RUN = 3
+MN_HEADING_HITS = 2
+MN_EQUATION_LOOKAHEAD = 3
+MN_ANNOUNCE_RE_ZH = re.compile(r"(?:本|该)(?:模块|节|方法)?(?:主要)?(?:用于|负责|旨在|是为了)")
+MN_SEQ_OPEN_RE_ZH = re.compile(
+    r"^(?:接下来|然后|随后|在.{0,12}(?:之后|基础上))[，,]?\s*"
+    r"本(?:节|小节|部分)(?:将)?(?:介绍|给出|阐述)"
+)
+MN_CAUSE_EXEMPT_RE_ZH = re.compile(r"因此|由于|为(?:了)?(?:解决|克服|消除|获得)|仍|然而|但")
+MN_EQ_GLOSS_RE_ZH = re.compile(r"式中|其中")
+
+# 候选章仅用于缺少 --section 时列出选择，不参与作用域自动判定。与
+# analyze_experiment.py 的 EXP_SEC_RE / NON_METHOD_CHAPTER_RE 保持同源模式。
+MN_METHOD_TITLE_RE_ZH = re.compile(r"方法|原理|设计")
+MN_EXPERIMENT_SECTION_RE_ZH = re.compile(r"实验|案例研究|仿真验证|结果(?:及|与)?分析|应用验证")
+MN_NON_METHOD_CHAPTER_RE_ZH = re.compile(r"绪论|引言|结论|总结|展望|综述")
+MN_NUMBERED_EQUATION_BEGIN_RE = re.compile(r"\\begin\{(?P<env>equation|align|gather)\}")
+MN_ANY_EQUATION_BEGIN_RE = re.compile(r"\\begin\{(?:equation|align|gather)\*?\}")
+MN_HEADING_COMMAND_RE = re.compile(
+    r"^\s*\\(?:chapter|section|subsection|subsubsection|paragraph)\*?"
+    r"(?:\[[^\]]*\])?\{"
+)
+
+
+def _mn_strip_latex_comment(raw: str) -> str:
+    """移除非转义的 LaTeX 行内注释。"""
+    return re.sub(r"(?<!\\)%.*", "", raw)
+
+
+def _mn_visible_text(raw: str, parser) -> str:
+    """返回方法叙述检查可用的可见正文。"""
+    if parser.get_comment_prefix() == "%":
+        raw = _mn_strip_latex_comment(raw)
+    return parser.extract_visible_text(raw).strip()
+
+
+def _mn_after_heading(raw: str) -> str:
+    """返回标题命令同一行中右花括号之后的文本。"""
+    match = MN_HEADING_COMMAND_RE.match(raw)
+    if not match:
+        return raw
+    depth = 1
+    for index in range(match.end(), len(raw)):
+        if raw[index] == "{":
+            depth += 1
+        elif raw[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return raw[index + 1 :]
+    return ""
+
+
+def _mn_first_sentence_after_heading(
+    lines: list[str], heading: dict, boundary: int, parser
+) -> tuple[int, str] | None:
+    """提取标题后的首个自然段首句；结构元素不作为正文。"""
+    parts: list[str] = []
+    first_line = heading["line"]
+    same_line = _mn_visible_text(_mn_after_heading(lines[first_line - 1]), parser)
+    if same_line:
+        parts.append(same_line)
+
+    for line_no in range(first_line + 1, min(boundary, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if not raw or raw.startswith(parser.get_comment_prefix()):
+            if parts:
+                break
+            continue
+        if MN_HEADING_COMMAND_RE.match(raw) or any(
+            raw.startswith(command) for command in LEAD_STRUCTURAL_COMMANDS
+        ):
+            break
+        visible = _mn_visible_text(raw, parser)
+        if not visible:
+            continue
+        if not parts:
+            first_line = line_no
+        parts.append(visible)
+        if re.search(r"[。！？!?]", visible):
+            break
+
+    if not parts:
+        return None
+    paragraph = " ".join(parts)
+    sentence = re.split(r"(?<=[。！？!?])", paragraph, maxsplit=1)[0].strip()
+    return first_line, sentence
+
+
+def _mn_finding(
+    line_no: int,
+    severity: str,
+    priority: str,
+    code: str,
+    message: str,
+    current: str,
+    suggested: str,
+    rationale: str,
+) -> list[str]:
+    """生成块结构 finding；规则层语义状态恒为 NEEDS-LLM。"""
+    return [
+        f"% 方法叙述（{_zh_loc(line_no)}）[Severity: {severity}] [Priority: {priority}]: "
+        f"[Script] {code} {message}",
+        f"% Current: {current}",
+        f"% Suggested: {suggested}",
+        f"% Rationale: {rationale}",
+        "% Meaning-Check: NEEDS-LLM",
+        "",
+    ]
+
+
+def _mn_normalized_heading_title(title: str, parser) -> str:
+    normalize = getattr(parser, "normalize_heading_title", None)
+    return str(normalize(title)) if callable(normalize) else title
+
+
+def _method_narrative_candidates(content: str, parser) -> list[dict]:
+    """列出可能值得人工选择的方法章，不据此自动运行 M-*。"""
+    chapters = parser.chapter_ranges(content)
+    headings = parser.extract_headings(content)
+    candidates: list[dict] = []
+    for chapter in chapters:
+        title = _mn_normalized_heading_title(str(chapter["title"]), parser)
+        if MN_NON_METHOD_CHAPTER_RE_ZH.search(title):
+            continue
+        title_hit = MN_METHOD_TITLE_RE_ZH.search(title)
+        experiment_hit = any(
+            chapter["start"] < heading["line"] <= chapter["end"]
+            and heading["level"] > 1
+            and MN_EXPERIMENT_SECTION_RE_ZH.search(
+                _mn_normalized_heading_title(str(heading["title"]), parser)
+            )
+            for heading in headings
+        )
+        if title_hit or experiment_hit:
+            candidates.append(chapter)
+    return candidates
+
+
+def _method_narrative_candidate_report(content: str, parser) -> list[str]:
+    candidates = _method_narrative_candidates(content, parser)
+    out = [
+        "% ERROR [Severity: Critical] [Priority: P0]: "
+        "--method-narrative 必须配 --section 显式选择一个方法章。",
+        "% 候选方法章清单（仅供选择，不代表自动判定）：",
+    ]
+    if candidates:
+        out.extend(f"% - {_zh_loc(chapter['start'])}: {chapter['title']}" for chapter in candidates)
+    else:
+        out.append("% - （未发现候选章；请直接填写目标章标题或章号）")
+    out.append("% 用法：--method-narrative --section <章名>")
+    return out
+
+
+def _method_narrative_chapter_range(
+    content: str, parser, section: str
+) -> tuple[tuple[int, int] | None, list[str]]:
+    """按精确/包含标题、现有章节键或章号定位唯一目标章。"""
+    chapters = parser.chapter_ranges(content)
+    query = section.strip()
+    normalized_query = _mn_normalized_heading_title(query, parser)
+
+    def normalized_title(chapter: dict) -> str:
+        return _mn_normalized_heading_title(str(chapter["title"]), parser)
+
+    exact = [chapter for chapter in chapters if normalized_title(chapter) == normalized_query]
+    matches = exact or [
+        chapter
+        for chapter in chapters
+        if normalized_query and normalized_query in normalized_title(chapter)
+    ]
+
+    if not matches:
+        sections = parser.split_sections(content)
+        matched_keys, _available = resolve_section_keys(query, sections)
+        matches = [chapter for chapter in chapters if chapter.get("key") in matched_keys]
+
+    if not matches:
+        number = re.search(r"\d+", query)
+        if number:
+            index = int(number.group()) - 1
+            if 0 <= index < len(chapters):
+                matches = [chapters[index]]
+
+    if len(matches) == 1:
+        chapter = matches[0]
+        return (chapter["start"], chapter["end"]), []
+
+    available = "、".join(chapter["title"] for chapter in chapters) or "（未识别到章标题）"
+    reason = "目标章不唯一" if matches else "未找到目标章"
+    return None, [
+        f"% ERROR [Severity: Critical] [Priority: P0]: {reason}: {section}",
+        f"% 可用章标题: {available}",
+        "% 提示：--method-narrative 每次只检查一个章；请传入完整章标题或章号。",
+    ]
+
+
+def _check_method_heading(
+    lines: list[str], headings: list[dict], start: int, end: int, parser
+) -> list[str]:
+    """M-HEADING：检查同一小节内的行内标题报幕密度。"""
+    scoped = [heading for heading in headings if start <= heading["line"] <= end]
+    run: list[tuple[dict, str, bool]] = []
+
+    def evaluate() -> list[str]:
+        hits = [item for item in run if item[2]]
+        if len(run) < MN_HEADING_RUN or len(hits) < MN_HEADING_HITS:
+            return []
+        first_heading, first_sentence, _hit = hits[0]
+        titles = "、".join(item[0]["title"] for item in run)
+        return _mn_finding(
+            first_heading["line"],
+            "Minor",
+            "P2",
+            "M-HEADING",
+            f"连续 {len(run)} 个行内小标题中有 {len(hits)} 个报幕句。",
+            f"{first_heading['title']}：{first_sentence}",
+            "保留承担独立技术单元的标题，用当前约束、输入输出和相邻接口推进正文。",
+            f"标题组（{titles}）承担了职责罗列，尚不能替代模块间因果与接口衔接。",
+        )
+
+    for index, heading in enumerate(scoped):
+        if heading["level"] <= 3:
+            finding = evaluate()
+            if finding:
+                return finding
+            run = []
+            continue
+        if heading.get("command") != "paragraph":
+            continue
+        boundary = scoped[index + 1]["line"] - 1 if index + 1 < len(scoped) else end
+        first = _mn_first_sentence_after_heading(lines, heading, boundary, parser)
+        sentence = first[1] if first else ""
+        run.append((heading, sentence, bool(MN_ANNOUNCE_RE_ZH.search(sentence))))
+
+    return evaluate()
+
+
+def _check_method_sequence(
+    lines: list[str], headings: list[dict], start: int, end: int, parser
+) -> list[str]:
+    """M-SEQWORD：检查小节首句是否只有排版顺序而无技术关系。"""
+    out: list[str] = []
+    scoped = [heading for heading in headings if start <= heading["line"] <= end]
+    for index, heading in enumerate(scoped):
+        if heading.get("command") not in {"subsection", "subsubsection"}:
+            continue
+        boundary = scoped[index + 1]["line"] - 1 if index + 1 < len(scoped) else end
+        first = _mn_first_sentence_after_heading(lines, heading, boundary, parser)
+        if first is None:
+            continue
+        line_no, sentence = first
+        if not MN_SEQ_OPEN_RE_ZH.search(sentence) or MN_CAUSE_EXEMPT_RE_ZH.search(sentence):
+            continue
+        out.extend(
+            _mn_finding(
+                line_no,
+                "Info",
+                "P3",
+                "M-SEQWORD",
+                f"小节“{heading['title']}”以顺序词报幕，未见因果或约束信号。",
+                sentence,
+                "用上游产出、剩余约束或所需能力引出本小节。",
+                "顺序词只说明排版先后，不能说明模块之间的技术关系。",
+            )
+        )
+    return out
+
+
+def _mn_equation_blocks(lines: list[str], start: int, end: int) -> list[tuple[int, int, str]]:
+    blocks: list[tuple[int, int, str]] = []
+    line_no = start
+    while line_no <= min(end, len(lines)):
+        raw = _mn_strip_latex_comment(lines[line_no - 1])
+        begin = MN_NUMBERED_EQUATION_BEGIN_RE.search(raw)
+        if begin is None:
+            line_no += 1
+            continue
+        env = begin.group("env")
+        block_end = line_no
+        end_re = re.compile(rf"\\end\{{{env}\}}")
+        while block_end <= min(end, len(lines)) and not end_re.search(
+            _mn_strip_latex_comment(lines[block_end - 1])
+        ):
+            block_end += 1
+        block_end = min(block_end, end, len(lines))
+        blocks.append((line_no, block_end, env))
+        line_no = block_end + 1
+    return blocks
+
+
+def _mn_visible_between(lines: list[str], start: int, end: int, parser) -> bool:
+    return any(
+        _mn_visible_text(lines[line_no - 1].strip(), parser)
+        for line_no in range(start, min(end, len(lines)) + 1)
+        if lines[line_no - 1].strip()
+        and not lines[line_no - 1].strip().startswith(parser.get_comment_prefix())
+    )
+
+
+def _check_method_equations(lines: list[str], start: int, end: int, parser) -> list[str]:
+    """M-EQUATION：编号公式组后须在三个非空可见行内出现释义引导。"""
+    blocks = _mn_equation_blocks(lines, start, end)
+    if not blocks:
+        return []
+
+    groups: list[list[tuple[int, int, str]]] = []
+    for block in blocks:
+        if not groups or _mn_visible_between(lines, groups[-1][-1][1] + 1, block[0] - 1, parser):
+            groups.append([block])
+        else:
+            groups[-1].append(block)
+
+    out: list[str] = []
+    for group in groups:
+        visible_after: list[str] = []
+        for line_no in range(group[-1][1] + 1, min(end, len(lines)) + 1):
+            raw = lines[line_no - 1].strip()
+            if not raw or raw.startswith(parser.get_comment_prefix()):
+                continue
+            uncommented = _mn_strip_latex_comment(raw)
+            if MN_ANY_EQUATION_BEGIN_RE.search(uncommented) or MN_HEADING_COMMAND_RE.match(
+                uncommented
+            ):
+                break
+            visible = _mn_visible_text(raw, parser)
+            if not visible:
+                continue
+            visible_after.append(visible)
+            if len(visible_after) == MN_EQUATION_LOOKAHEAD:
+                break
+        if any(MN_EQ_GLOSS_RE_ZH.search(text) for text in visible_after):
+            continue
+        first, last = group[0], group[-1]
+        envs = "、".join(block[2] for block in group)
+        out.extend(
+            _mn_finding(
+                first[0],
+                "Minor",
+                "P2",
+                "M-EQUATION",
+                f"编号公式组（{envs}）结束后 {MN_EQUATION_LOOKAHEAD} 个非空可见行内未见“式中/其中”。",
+                f"公式范围 {_zh_loc(first[0], last[1])}",
+                "在公式后解释新符号和输出语义，并说明该输出的下游用途。",
+                "公式需要与目的、符号释义和后续数据流共同形成论证闭环。",
+            )
+        )
+    return out
+
+
+def _method_edge_table(headings: list[dict], start: int, end: int) -> list[str]:
+    titles = [
+        heading["title"]
+        for heading in headings
+        if start <= heading["line"] <= end
+        and heading.get("command") in {"subsection", "subsubsection"}
+    ]
+    title_list = " -> ".join(titles) if titles else "（未识别到 subsection/subsubsection）"
+    out = [
+        "% M-EDGETABLE [Script] 方法模块接口表骨架（非 finding）",
+        f"% 小节标题清单：{title_list}",
+        "% | 上游小节 | 上游产出 | 连接类型 | 中间变换 | 下游用途 |",
+        "% | --- | --- | --- | --- | --- |",
+    ]
+    out.extend(f"% | {title.replace('|', '/')} |  |  |  |  |" for title in titles[:-1])
+    out.append("% [LLM] 待填写")
+    return out
+
+
+def _check_method_narrative(
+    lines: list[str], headings: list[dict], scope: tuple[int, int], parser
+) -> list[str]:
+    start, end = scope
+    out: list[str] = []
+    out.extend(_check_method_heading(lines, headings, start, end, parser))
+    out.extend(_check_method_sequence(lines, headings, start, end, parser))
+    out.extend(_check_method_equations(lines, start, end, parser))
+    out.extend(_method_edge_table(headings, start, end))
+    return out
+
+
 # ── 过程分析章主线检查（--process-chapter：P-FLOW / P-DERIVE / P-FRAME / P-ORDER）──
 #
 # 面向工业/过程背景学位论文第 2 章“工艺流程分析 + 总体方法架构”章式的主线闭合检查，
@@ -1761,6 +2145,7 @@ def analyze(
     intro_mainline: bool = False,
     process_chapter: bool = False,
     first_chapter: int | None = None,
+    method_narrative: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -1772,19 +2157,27 @@ def analyze(
     comment_prefix = parser.get_comment_prefix()
     warn = doc.warning_lines(comment_prefix)
 
+    if method_narrative and not section:
+        return warn + _method_narrative_candidate_report(content, parser)
+
     matched_keys: list[str] = []
+    method_scope: tuple[int, int] | None = None
     if section:
         matched_keys, available = resolve_section_keys(section, sections)
+        if method_narrative:
+            method_scope, error = _method_narrative_chapter_range(content, parser, section)
+            if error:
+                return warn + error
         # --process-chapter 按章标题定位目标章，允许 --section 传入非已知章节键；
-        # 仅当既非已知章节键、又未启用 process_chapter 时才报“未找到章节”。
-        if not matched_keys and not process_chapter:
+        # 方法叙述检查同样按章标题定位；其它调用仍使用原有章节键语义。
+        if not matched_keys and not process_chapter and not method_narrative:
             avail = ", ".join(available) if available else "（本文档未识别出任何已知章节）"
             return warn + [
                 f"% ERROR [Severity: Critical] [Priority: P0]: 未找到章节: {section}",
                 f"% 可用章节: {avail}",
                 "% 提示：--section 同时接受英文键（introduction/related/...）与中文章节名（绪论/相关工作/...）。",
             ]
-        ranges = [sections[k] for k in matched_keys] if matched_keys else []
+        ranges = [method_scope] if method_scope else [sections[k] for k in matched_keys]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
 
@@ -1863,6 +2256,11 @@ def analyze(
     if process_chapter:
         out.extend(_check_process_chapter(content, lines, parser, section))
 
+    if method_narrative and method_scope is not None:
+        out.extend(
+            _check_method_narrative(lines, parser.extract_headings(content), method_scope, parser)
+        )
+
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -1895,6 +2293,11 @@ def main() -> int:
         help="运行过程分析章主线检查（工艺流程/难点推导/总体框架章式，默认第 2 章，--section 可指定）",
     )
     cli.add_argument(
+        "--method-narrative",
+        action="store_true",
+        help="运行方法模块叙述候选检查；须配 --section 显式选择一个章",
+    )
+    cli.add_argument(
         "--first-chapter",
         type=int,
         default=None,
@@ -1907,19 +2310,19 @@ def main() -> int:
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
         return 1
 
-    print(
-        "\n".join(
-            analyze(
-                args.file,
-                args.section,
-                args.cross_section,
-                args.motivation_thread,
-                args.intro_mainline,
-                args.process_chapter,
-                args.first_chapter,
-            )
-        )
+    report = analyze(
+        args.file,
+        args.section,
+        args.cross_section,
+        args.motivation_thread,
+        args.intro_mainline,
+        args.process_chapter,
+        args.first_chapter,
+        args.method_narrative,
     )
+    print("\n".join(report))
+    if args.method_narrative and any(line.startswith("% ERROR") for line in report):
+        return 2
     return 0
 
 

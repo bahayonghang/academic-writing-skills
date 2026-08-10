@@ -114,6 +114,32 @@ for writing rules and positive/negative examples.
 
 ---
 
+# Results-Analysis Depth Check (--results-analysis)
+
+```bash
+uv run python scripts/analyze_experiment.py thesis.tex --results-analysis
+```
+
+This mode locates high-risk writing cues in results and discussion scopes. It does not replace semantic
+review of figures, tables, experimental protocols, or method definitions.
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| RA-EQUIV | Claims statistical equivalence, but the chapter window has no equivalence test, TOST, equivalence envelope, or equivalence-bound cue | Major/P1 |
+| RA-CAUSAL | Causal attribution lacks nearby component evidence; downgrade when chapter-level evidence exists but is not locally bound | Major/P1 or Minor/P2 |
+| RA-SECONDBEST | Contains a table reference, comparison context, and best-result claim but does not name the true runner-up | Minor/P2 |
+| RA-SHALLOW | A figure reference and shallow shape description occur in one paragraph without a number or metric term | Minor/P2 |
+| RA-DISTVOCAB | Box-plot analysis does not separate the median/interquartile body from whisker/outlier tails | Minor/P2 |
+| RA-UNIVERSAL | Uses a universal superiority claim without a concession or ranking-reversal qualifier | Info/P3 |
+| RA-STAGE | Mixes selected-set/post-filtering naming with generated-sample/synthetic-sample/raw-candidate naming in a fidelity context | Info/P3 |
+| RA-TRANSITION | The final results-analysis paragraph lacks a next-section, follow-up-experiment, or chapter-interface cue | Info/P3 |
+
+All entries are heuristic cues. For the `R-*` mapping, criteria, thresholds, and false-positive
+boundaries, see
+[`../writing/results-analysis-guide-zh.md`](../writing/results-analysis-guide-zh.md).
+
+---
+
 # Conclusion Completeness Check (B5)
 
 **Rule**: A complete conclusion contains three elements:

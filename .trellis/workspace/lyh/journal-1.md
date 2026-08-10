@@ -1075,3 +1075,147 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 28: 完成 C1 中文方法叙述检查
+
+**Date**: 2026-08-09
+**Task**: 完成 C1 中文方法叙述检查
+**Branch**: `dev`
+
+### Summary
+
+实现显式选章的方法叙述候选检查、M-EDGETABLE、方法描述参考与双语资源；独立检查修复路由、注释、公式边界和章标题规范化问题，最终 just ci 1424 passed。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9d1a382` | (see git log) |
+| `50181ac` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 29: 完成 EN 与 Typst 方法叙述升级
+
+**Date**: 2026-08-09
+**Task**: 完成 EN 与 Typst 方法叙述升级
+**Branch**: `dev`
+
+### Summary
+
+为 latex-paper-en 与 typst-paper 增加方法节 M-* 叙述检查、逐边接口契约和资源镜像，并修正 transition sequence 分类。
+
+### Main Changes
+
+- EN 与 Typst analyze_logic.py 支持 --section methods 的 M-* 候选检查并保持镜像一致
+- 同步方法节参考、SKILL 入口、资源 manifest 与中英文文档页
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5ef7460` | (see git log) |
+| `38056c4` | (see git log) |
+
+### Testing
+
+- [OK] just ci：1445 passed，ruff 通过，pyright 0 errors
+- [OK] 资源合同 256 项通过，just doc-build 与 git diff --check 通过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 实施 08-09-method-desc-audit-sync，将 paper-audit 接入第二次 methods 检查并同步审计契约
+
+
+## Session 30: 完成方法描述升级集成与归档
+
+**Date**: 2026-08-09
+**Task**: 完成方法描述升级集成与归档
+**Branch**: `dev`
+
+### Summary
+
+完成 paper-audit 方法节双调用、块感知解析、Info/P3 零扣分、方法论接口审阅资源与跨技能契约；全量 CI、资源同步和文档构建通过。自动化证据仅覆盖合成病例、干净对照与合法标题负例，真实论文语料查准率和召回率仍为 UNVERIFIED。C3 与父任务均已归档；未触碰并行的 08-09-results-analysis-zh。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `91884b8` | (see git log) |
+| `e6dee00` | (see git log) |
+| `786e070` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 31: 完成结果分析写作指南与双语文档
+
+**Date**: 2026-08-10
+**Task**: 完成结果分析写作指南与双语文档
+**Branch**: `dev`
+
+### Summary
+
+新增 latex-thesis-zh 结果分析十一节指南、experiment RA 路由表、17 项无损映射与双语资源；质检修复英文残留及判据缺口，just ci、contracts、resource sync 和 docs build 全部通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8cd616a` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 32: 完成结果分析 RA 检查器与真实语料标定
+
+**Date**: 2026-08-10
+**Task**: 完成结果分析 RA 检查器与真实语料标定
+**Branch**: `dev`
+
+### Summary
+
+新增 --results-analysis 双通道区间收集与八项 RA 启发式、32 条聚焦边界测试、路由和 evals；基于五篇 PDF-TXT 代理语料裁掉 RA-INTERLEAVE，保留 RA-STAGE 为 UNVERIFIED，并补齐结果分析检查器七段式维护契约。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `937327f` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 33: 完成结果分析任务树跨子集成验收
+
+**Date**: 2026-08-10
+**Task**: 完成结果分析任务树跨子集成验收
+**Branch**: `dev`
+
+### Summary
+
+完成 guide、RA 检查器、路由、evals、双语资源与 17 项 R 映射的父级集成复核；修复子任务归档后标定测试路径并沉淀 canonical archive 契约，最终 just ci 1497 passed、资源同步和 docs build 通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ce980b5` | (see git log) |
+
+### Status
+
+[OK] **Completed**

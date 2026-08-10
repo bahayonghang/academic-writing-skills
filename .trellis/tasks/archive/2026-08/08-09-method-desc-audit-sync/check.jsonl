@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/prd.md", "reason": "跨子任务验收标准与排除项"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/design.md", "reason": "M-* 判据唯一权威表（§2）与 paper-audit 共享判定"}
+{"file": ".trellis/tasks/archive/2026-08/08-09-method-description-upgrade/research/repo-recon.md", "reason": "契约锁清单与审阅核验判定（§2.3-2.6、§3）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语页校验不在 just ci 内，须按此契约显式验证"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "验收时核对角色/车道边界未被破坏"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对解析、评分与集成测试的项目约定"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "核对审计侧证据校准与能力命名边界"}

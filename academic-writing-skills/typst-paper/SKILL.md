@@ -26,7 +26,7 @@ metadata:
       lovelace,
     ]
   version: "6.0.0"
-  last_updated: "2026-07-27"
+  last_updated: "2026-08-09"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -152,6 +152,7 @@ Rationale for each boundary: `references/skill-routing-notes.md`.
 - `references/skill-routing-notes.md`: full routing rules, trigger scenarios, safety rationale, auxiliary scripts (`deai_batch`, `online_bib_verify`).
 - `references/TYPST_SYNTAX.md`: Typst syntax reminders and pitfalls.
 - `references/STYLE_GUIDE.md`: paper-writing style baseline.
+- Method interfaces: load `references/METHOD_SECTION.md` for Typst method-module flow, labeled equation closure, or run-in headings.
 - `references/CITATION_VERIFICATION.md`: citation verification workflow.
 - `references/VENUES.md`: full venue catalog (treat as index; prefer `templates/<venue>.md` for IEEE / ACM / NeurIPS).
 - `templates/`: per-venue snapshots (`ieee.md`, `acm.md`, `neurips.md`) loaded on demand.

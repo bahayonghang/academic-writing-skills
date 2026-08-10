@@ -66,6 +66,7 @@
 - [Typst学术论文去AI写作指南](./resources/references/DEAI_GUIDE.md)
 - [期刊名称缩写](./resources/references/JOURNAL_ABBREVIATIONS.md)
 - [期刊改编工作流程](./resources/references/JOURNAL_ADAPTATION_WORKFLOW.md)
+- [Typst 方法部分适配](./resources/references/METHOD_SECTION.md)
 - [模块：摘要](./resources/references/modules/ABSTRACT.md)
 - [模块：适应](./resources/references/modules/ADAPT.md)
 - [模块：参考书目](./resources/references/modules/BIBLIOGRAPHY.md)

@@ -10,9 +10,11 @@
 | [spec-checklist-convention.md](./spec-checklist-convention.md)           | 逐项检查清单五列格式、CHECKERS 双向锁、TEMPLATE_THRESHOLDS 阈值来源规则                 | 改 templates/*.md 清单、check_spec.py 检查器、SKILL.md 路由表之前                       |
 | [docs-bilingual-resources.md](./docs-bilingual-resources.md)             | 技能公开资源到双语 VitePress 页面、manifest、侧栏和检查器的可执行契约                   | 增删 references/templates/examples/agents 或修改 docs 资源之前                          |
 | [paper-audit-boundary-contracts.md](./paper-audit-boundary-contracts.md) | paper-audit severity、ScholarEval 模块映射与外置 BibTeX 数据流契约                      | 修改 consolidation、ScholarEval 或 literature comparison 链路之前                       |
+| [method-narrative-contract.md](./method-narrative-contract.md)           | 三写作技能 M-* 判定、paper-audit 双调用、块解析、Info/P3 与报告层契约                 | 修改方法叙述检查、M-* 对齐面或 paper-audit methods 接线之前                              |
 | [cover-letter-contracts.md](./cover-letter-contracts.md)                 | cover-letter claim 位置、journal-fit 去重与警告 payload 契约                            | 修改 cover-letter claim/journal-fit/统一 CLI 数据流之前                                 |
 | [polish-rewrite-contract.md](./polish-rewrite-contract.md)               | 两层改写契约四字段、`--goal`/`--strength`/`--tier` 三轴、A/B/C 自动化分级、受保护 token | 改 EN/ZH/Typst 任一润色模块（expression/grammar/sentences/translation）或其契约字段之前 |
 | [defensive-ai-rhetoric-contract.md](./defensive-ai-rhetoric-contract.md) | 防御性推测解释的组合判据、证据校准修复、跨 surface eval 与 audit lane 预算              | 改 de-AI/experiment 的机制解释规则或 claims-vs-evidence lane 之前                        |
+| [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让与公开路由同步契约                       | 改 `--results-analysis`、RA-* 词表/判据、结果分析 fixture 或路由资源之前                 |
 
 ## 背景速览
 

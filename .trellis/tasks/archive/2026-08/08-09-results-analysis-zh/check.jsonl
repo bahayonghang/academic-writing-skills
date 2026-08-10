@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "检查时按索引核对涉及的契约文档"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试布局与 evals 约定核查依据"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语页面/manifest 完整性核查依据"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "核查 RA-* 未越界进入 llm-only 判据"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/research/user-spec-results-analysis.md", "reason": "核对 guide 判据与原文无损"}
+{"file": ".trellis/tasks/08-09-results-analysis-zh/research/best-practices-web.md", "reason": "keep/adapt/reject 判定与来源 URL 复核"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "核查 RA-* 未越 M-* 契约边界"}
