@@ -1219,3 +1219,24 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 34: 完成 nature-writing EN 增量整合
+
+**Date**: 2026-08-10
+**Task**: 完成 nature-writing EN 增量整合
+**Branch**: `dev`
+
+### Summary
+
+新增期刊式文章架构与渐进路由，补充意图翻译及标题表格指引，同步双语资源；just ci、doc-build、资源检查和独立复核通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a136e6db98a69189841c2b14cd493f1a78711680` | (see git log) |
+
+### Status
+
+[OK] **Completed**
