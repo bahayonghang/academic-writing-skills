@@ -1240,3 +1240,25 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 35: 完成 nature-writing 双语增量整合
+
+**Date**: 2026-08-10
+**Task**: 完成 nature-writing 双语增量整合
+**Branch**: `dev`
+
+### Summary
+
+按 EN→ZH→父终检 DAG 完成 nature-writing 差量整合；新增期刊式文章架构与 ZH B-NAT 提示，独立检查修复共享措辞，资源/文档/全量 CI 与 manifest 零漂移通过；provider 与真实论文效果保持 UNVERIFIED。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a136e6db98a69189841c2b14cd493f1a78711680` | (see git log) |
+| `db1424b2a0071a33ed24c65033a1e1d89d9daaaa` | (see git log) |
+
+### Status
+
+[OK] **Completed**
