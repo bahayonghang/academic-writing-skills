@@ -18,6 +18,7 @@
 ## 特殊标志和加载规则
 
 - 为了`section-writing`， 加载`references/modules/section-writing.md`，那么恰好有一个活动部分指南来自`references/writing/section-writing/`除非用户也要求流程或自我审查。
+- 对于 `journal narrative`、`Nature-style`、`Results narrative`、`Discussion structure`、`full-paper argument` 或 `期刊式` 请求，加载 `references/writing/article-architecture.md`。普通语法润色或不包含期刊结构要求的会议摘要润色不应加载该文件。
 - 对于整篇论文的动机/红线问题（“每个介绍承诺都得到测试和解决吗？”），运行`logic`和`--motivation-thread`;它附加一个只读的 Promise Map + Closure Map 启发式并保留默认值`logic`输出不变。
 - 对于分级 de-AI / AIGC 维度分析，运行`deai`和`--tier light|medium|heavy`;它缩放阈值，添加 D1 句子长度检查，并按维度 (D1-D5) 标记结果。省略`--tier`保留默认输出。
 

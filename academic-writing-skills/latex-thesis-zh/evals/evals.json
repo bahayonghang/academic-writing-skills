@@ -785,6 +785,126 @@
           "description": "script silence is not presented as checklist pass"
         }
       ]
+    },
+    {
+      "id": 31,
+      "prompt": "请审阅附件中的八个模式簇样例并路由到 deai：样例 A 应按 H-ING、H-PROMO、H-ATTR、H-SCOPE、H-OUTLOOK 组合命中，样例 B 命中 H-PRED，样例 C 命中 H-TERM；逐项解释样例 D、样例 E、样例 F、样例 G、样例 H 为何属于证据充分边界。默认只给 finding 或改写蓝图；只有明确要求正文改写时才做 fidelity audit，并返回 Changed:、Protected:、Meaning-Check:、Risk-Flags:。H-OUTLOOK 与防御性推测解释同根因时合并，保护 LaTeX 锚点，不判断 AI 作者身份，不补造证据。",
+      "expected_output": "路由到 deai，只在样例 A-C 识别七类 claim-local H-* 模式；样例 D-H 的指标、引用、范围、技术关系、显式术语定义、诚实局限和具体 future test 足以支持原文，应保持静默。不得判断 AI 作者身份。用户明确要求正文时，执行 audit -> rewrite -> fidelity audit，以 Changed:、Protected:、Meaning-Check:、Risk-Flags: 报告并保护 claim、表格引用、citation、公式、术语、certainty 与 scope。H-OUTLOOK 与 defensive-rhetoric 共用证据缺口时合并为一条 evidence-calibration finding，不得虚构缺失支持。",
+      "files": [
+        "evals/fixtures/anti_ai_pattern_clusters.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "contains",
+          "text": "H-ING",
+          "description": "H-ING is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PROMO",
+          "description": "H-PROMO is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-ATTR",
+          "description": "H-ATTR is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PRED",
+          "description": "H-PRED is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-TERM",
+          "description": "H-TERM is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-SCOPE",
+          "description": "H-SCOPE is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-OUTLOOK",
+          "description": "H-OUTLOOK is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "样例 A",
+          "description": "样例 A boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 B",
+          "description": "样例 B boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 C",
+          "description": "样例 C boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 D",
+          "description": "样例 D boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 E",
+          "description": "样例 E boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 F",
+          "description": "样例 F boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 G",
+          "description": "样例 G boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 H",
+          "description": "样例 H boundary is addressed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Changed:|Protected:|Meaning-Check:|Risk-Flags:)",
+          "description": "保留四字段 fidelity proposal"
+        },
+        {
+          "type": "regex",
+          "pattern": "(fidelity audit|主张|引用|范围|certainty|scope)",
+          "description": "明确改写后复核学术载荷"
+        },
+        {
+          "type": "regex",
+          "pattern": "(合并|一条 finding|evidence calibration|primary)",
+          "description": "合并 outlook 与 defensive 同根因 finding"
+        },
+        {
+          "type": "regex",
+          "pattern": "(LaTeX|\\\\ref|\\\\cite|公式|锚点)",
+          "description": "保护 LaTeX 语法与证据锚点"
+        },
+        {
+          "type": "not_contains",
+          "text": "AI 生成",
+          "description": "不进行 AI 作者身份判断"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "不补造统计证据"
+        }
+      ]
     }
   ]
 }

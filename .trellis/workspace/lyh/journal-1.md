@@ -1219,3 +1219,67 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 34: 完成 nature-writing EN 增量整合
+
+**Date**: 2026-08-10
+**Task**: 完成 nature-writing EN 增量整合
+**Branch**: `dev`
+
+### Summary
+
+新增期刊式文章架构与渐进路由，补充意图翻译及标题表格指引，同步双语资源；just ci、doc-build、资源检查和独立复核通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a136e6db98a69189841c2b14cd493f1a78711680` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 35: 完成 nature-writing 双语增量整合
+
+**Date**: 2026-08-10
+**Task**: 完成 nature-writing 双语增量整合
+**Branch**: `dev`
+
+### Summary
+
+按 EN→ZH→父终检 DAG 完成 nature-writing 差量整合；新增期刊式文章架构与 ZH B-NAT 提示，独立检查修复共享措辞，资源/文档/全量 CI 与 manifest 零漂移通过；provider 与真实论文效果保持 UNVERIFIED。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a136e6db98a69189841c2b14cd493f1a78711680` | (see git log) |
+| `db1424b2a0071a33ed24c65033a1e1d89d9daaaa` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 36: 集成学术去 AI 模式簇
+
+**Date**: 2026-08-10
+**Task**: 集成学术去 AI 模式簇
+**Branch**: `dev`
+
+### Summary
+
+将 writing-anti-ai 的可采纳增量改造成 EN/ZH/Typst 的七类 LLM-only 模式簇、显式改写门和 fidelity audit；补齐 A-H fixtures/evals、跨 surface 契约测试及 18 份双语资源，保持默认 checker、阈值与 audit lane 零扩张。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `34bbc2f` | (see git log) |
+
+### Status
+
+[OK] **Completed**

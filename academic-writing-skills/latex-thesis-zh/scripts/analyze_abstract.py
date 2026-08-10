@@ -1096,6 +1096,24 @@ class ThesisAbstractAnalyzer:
                 ref="★F1",
             )
         )
+        if found:
+            # B-NAT nature-writing N3: journal-style diagnostics stay in the LLM lane.
+            checks.append(
+                self._finding(
+                    "B-NAT",
+                    "Info",
+                    "[LLM]",
+                    flagged=False,
+                    message=(
+                        "期刊式摘要修辞候选提示（需 LLM 复核，非判定）：(1) 英文摘要开头即 "
+                        "'Here, we / In this paper, we' 且前面没有上下文句，可能缺少领域背景，"
+                        "需结合摘要类型判断；"
+                        "(2) 末句为宽泛前景承诺且无范围限定，可能需要收束范围；"
+                        "(3) 全文无数字、比较或具体测试，可能缺乏落地感"
+                    ),
+                    ref="nature-writing N3",
+                )
+            )
         return {"english_found": found, "checks": checks}
 
     @staticmethod

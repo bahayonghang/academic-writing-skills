@@ -37,6 +37,10 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 
 只有这样才能移除修辞支架，例如`not merely A, but B`, `essentially`, `the key is`, `The conclusion is:`，或模糊`this/things/factors`。在命名真实的基线、标准和证据时保持对比；否则直接声明声明。该模块不应承诺降低检测器分数或取代期刊或会议人工智能使用披露。
 
+七类 evidence-aware H-* 模式簇及 `audit -> rewrite -> fidelity audit` 契约见
+[pattern-clusters.md](../deai/pattern-clusters.md)。这些内容是 claim-local `[LLM]` 审阅提示，
+不是 AI 作者身份判断或检测器分数规则。
+
 将防御性推测解释作为 `[LLM]` finding 处理：当一个段落堆叠多个机制，随后又声明当前数据无法验证其中任何一项时，应把保留的每项机制映射到可见证据锚点或区分性检验。如果没有任何机制得到支持，直接说明机制尚未确定，并将可检验的备选解释移入未来工作。不得为了显得果断而删除限制语或强化推断。
 
 脚本的 `hedge` / `hedge_application` 建议仍能正确校准过度自信措辞和未演示应用。`results suggest` 和 `may / could` 只能降低论断强度，不能替代逐机制证据。

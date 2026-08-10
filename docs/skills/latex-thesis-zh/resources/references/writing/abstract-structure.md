@@ -151,6 +151,14 @@ When adding `--bilingual` to thesis mode, an additional comparison is made betwe
 | B-ENUM | The number of numbered working segments is the same | Warning | ★F1 |
 | B-LEN | English abstract is missing/too short | Warning | web A9 |
 | B-SEM | Sentence-by-sentence/element-by-element semantic correspondence ([LLM] lane, reported to control prompt words) | — | ★F1 |
+| B-NAT | Journal-style abstract rhetoric candidates: missing field context at the opening (check the abstract type before suggesting a change), no scope limit in the final sentence, or no number, comparison, or concrete test in the full abstract ([LLM], not a determination) | Info | nature-writing N3 (community-derived) |
+
+B-NAT adapts community-derived, Nature-leaning rhetorical heuristics from
+`ref/claude-scholar/skills/nature-writing`. The source provides no article or DOI list,
+sample-selection method, or citation to official Nature author guidance. Some abstract
+templates share a source lineage with `ref/Research-Paper-Writing-Skills` and are already
+covered by this repository's section-writing resources. B-NAT is only a candidate prompt,
+not an official Nature rule, venue-compliance determination, or hard script rule.
 
 Tense/Voice (★F2 English summary method sentences are usually present tense passive) **Not implemented here**: The deai module already has English summary area gated
 Tense detection ([tense-guide-zh.md](tense-guide-zh.md) + deai_check), `--bilingual` report endnote guide deai,

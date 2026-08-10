@@ -21,6 +21,7 @@ uv run python -B scripts/generate_table.py data.json --style booktabs
 - 表注格式（“注.”或“注：”）
 - 列内数字精度一致性
 - `booktabs` 包已加载到序言中
+- 方向标记可以使用 Unicode `↑`/`↓`、LaTeX 命令（如 `\uparrow`/`\downarrow`），或“越高越好”等文字说明。这是可读性建议，不是强制格式。
 
 **generate_table.py**：将结构化数据（CSV 或 JSON）转换为可发布的表代码：
 1. Markdown 预览（标准输出）

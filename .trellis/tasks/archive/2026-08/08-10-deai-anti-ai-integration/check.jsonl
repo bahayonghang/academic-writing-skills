@@ -1,0 +1,9 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"Verify the new cross-surface contract is discoverable and all existing repository obligations remain satisfied."}
+{"file":".trellis/spec/academic-writing-skills/polish-rewrite-contract.md","reason":"Check four-field values, llm-only classification, protected payload, and --tier compatibility."}
+{"file":".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md","reason":"Check claim-local evidence judgment, positive and negative boundaries, and UNVERIFIED provider evidence."}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"Check fixture loading, append-only eval formatting, script alignment, and full validation coverage."}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"Verify nine public sources, eighteen bilingual targets, manifest hashes, resource sync, and docs build."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/source-basis.md","reason":"Reject AI-authorship claims, fabricated facts, uncalibrated scores, and misleading source attribution."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/prior-art-research.md","reason":"Verify all keep/adapt/reject boundaries and the no-install/no-new-skill decision."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/delta-matrix.md","reason":"Audit every W1-W22 mapping, H-* boundary case, and F-* fidelity requirement against final changes."}
+{"file":".trellis/tasks/08-10-deai-anti-ai-integration/research/review-verification.md","reason":"Verify all accepted review corrections and the partially rejected shell/test premises against the final task implementation."}

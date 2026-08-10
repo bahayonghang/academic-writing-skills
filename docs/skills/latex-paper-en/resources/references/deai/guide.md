@@ -81,6 +81,11 @@ Reducing AI tone is not detector evasion. Preserve the paper before smoothing th
 
 Default output should be findings, a risk summary, or a rewrite blueprint. Give prose proposals only when the user asks for prose. Mark missing support as `[PENDING VERIFICATION]` or `needs evidence`; do not invent citations, baselines, metrics, experiments, or conclusions.
 
+For claim-local review of unsupported analytical tails, promotional evaluation, vague attribution,
+indirect predication, synonym cycling, manufactured breadth, and empty outlook, progressively load
+[pattern-clusters.md](pattern-clusters.md). These `[LLM]` prompts do not identify AI authorship and
+must not be converted into word-list or detector-score rules.
+
 ### Rhetorical Scaffold Checks
 
 | Category | Common trigger | Academic fix |

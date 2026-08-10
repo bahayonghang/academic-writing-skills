@@ -37,6 +37,8 @@
 |段落流问题| `references/writing/section-writing/flow.md` |
 |面向审稿人的声明检查| `references/writing/section-writing/self-review.md` |
 
+对于全文论证、期刊式叙事、Results 证据阶梯或扩展的 Discussion 结构，应读取 `references/writing/article-architecture.md`，而不是加载多个章节指南。
+
 仅当在这些文件中进行选择时才使用 `references/writing/section-writing/index.md`。
 
 ## 工作流程

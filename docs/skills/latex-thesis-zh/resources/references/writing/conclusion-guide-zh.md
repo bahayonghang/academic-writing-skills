@@ -61,6 +61,33 @@ Shows/verifies...**". There are many variations of the skeleton sentence pattern
 
 Contributions are organized by **technical contribution/chapter** (each = a method/model/chapter of work) and are not separately split according to summary points.
 
+## Two Limitation Types and Their Order of Presentation
+
+| Type | Definition | Typical boundary or evidence |
+| --- | --- | --- |
+| Scope limitation | Restricted by the current task setting but still competitive within the evaluated setting | Data regime, method assumptions, deployment context |
+| Technical defect | Underperforms a strong baseline on a key metric or causes an unacceptable trade-off | Baseline comparison, safety or effectiveness trade-off |
+
+Organize the limitation paragraph around scope boundaries first: identify the data regime,
+assumptions, or deployment context; then state which evaluated settings support the
+conclusion and which boundary future work needs to extend. This guidance controls the order
+of presentation. It is not a selective-disclosure rule.
+
+Adverse results that constitute technical defects must be stated accurately and must not be
+weakened, omitted, or reframed as scope limitations. In particular, preserve the evidence
+and applicable conditions when a key metric trails a strong baseline or a safety or
+effectiveness trade-off is unacceptable. See
+[`over-claim-guard.md`](over-claim-guard.md) for claim-evidence calibration. This section
+must not be used to conceal adverse results.
+
+Attribution: The distinction and ordering guidance in this section adapts N17 from
+`ref/claude-scholar/skills/nature-writing` `conclusion.md`, a set of community-derived,
+Nature-leaning rhetorical heuristics. The source provides no article or DOI list,
+sample-selection method, or citation to official Nature author guidance. Its abstract,
+introduction, and method templates that share a source lineage with
+`ref/Research-Paper-Writing-Skills` are already covered by this repository's existing
+section-writing resources; this section adopts only the N17 delta.
+
 ## Outlook Writing (CC-OUTLOOK-*)
 
 The outlook must be **specific technical research directions**, and counterexamples are empty talk. The following is a blacklist of empty words (vocabulary is documented to maintain rhythm alignment

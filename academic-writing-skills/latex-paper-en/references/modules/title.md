@@ -110,6 +110,18 @@ Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
 | IoT, 5G, GPS | Lab-specific abbreviations |
 | DNA, RNA, MRI | Non-standard method names |
 
+## Concrete Title Logic `[LLM]`
+
+For a concrete, searchable title, test this pattern:
+
+`system/object + capability/action + application/consequence`
+
+This is an LLM judgment, not a script rule. Prestige words such as `novel`, `advanced`,
+`powerful`, `green`, and `efficient` need concrete support from the rest of the title.
+Name the specific capability, measure, process, or application instead of treating the
+prestige word as evidence. Do not add these words to the script's deletion list: context
+decides whether a term is vague or part of a legitimate technical name.
+
 **Venue-Specific Adjustments**:
 
 **IEEE Transactions**:

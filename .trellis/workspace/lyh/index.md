@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 33
+- **Total Sessions**: 36
 - **Last Active**: 2026-08-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1221 | Active |
+| `journal-1.md` | ~1285 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,9 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 36 | 2026-08-10 | 集成学术去 AI 模式簇 | `34bbc2f` | `dev` |
+| 35 | 2026-08-10 | 完成 nature-writing 双语增量整合 | `a136e6db98a69189841c2b14cd493f1a78711680`, `db1424b2a0071a33ed24c65033a1e1d89d9daaaa` | `dev` |
+| 34 | 2026-08-10 | 完成 nature-writing EN 增量整合 | `a136e6db98a69189841c2b14cd493f1a78711680` | `dev` |
 | 33 | 2026-08-10 | 完成结果分析任务树跨子集成验收 | `ce980b5` | `dev` |
 | 32 | 2026-08-10 | 完成结果分析 RA 检查器与真实语料标定 | `937327f` | `dev` |
 | 31 | 2026-08-10 | 完成结果分析写作指南与双语文档 | `8cd616a` | `dev` |

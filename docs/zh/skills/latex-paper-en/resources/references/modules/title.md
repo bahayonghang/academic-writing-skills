@@ -110,6 +110,17 @@ Bad:  "An Improved LSTM Model Using Attention Mechanism for Prediction"
 |物联网、5G、GPS|实验室特定缩写|
 |DNA、RNA、核磁共振|非标准方法名称|
 
+## 具体标题逻辑 `[LLM]`
+
+对于具体且便于检索的标题，可检验以下模式：
+
+`system/object + capability/action + application/consequence`
+
+这是 LLM 判断，不是脚本规则。`novel`、`advanced`、`powerful`、`green` 和
+`efficient` 等声望词需要由标题其余部分的具体内容支撑。应写明具体能力、测量指标、
+过程或应用，而不是把声望词本身当作证据。不要将这些词加入脚本的删除列表：一个术语
+究竟含糊，还是合法技术名称的一部分，需要结合上下文判断。
+
 **具体期刊或会议调整**：
 
 **IEEE 交易**：

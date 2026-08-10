@@ -151,6 +151,12 @@ thesis 模式加 `--bilingual` 时额外比对英文 Abstract 与中文摘要：
 | B-ENUM | 编号工作段条数一致 | Warning | ★F1 |
 | B-LEN | 英文摘要缺失/过短 | Warning | web A9 |
 | B-SEM | 逐句/逐要素语义对应（[LLM] lane，报告给对照提示词） | — | ★F1 |
+| B-NAT | 期刊式摘要修辞候选：开头缺领域上下文（需结合摘要类型判断）、末句缺范围限定，或全文缺数字、比较或具体测试（[LLM]，非判定） | Info | nature-writing N3（社区归纳） |
+
+B-NAT 改造自 `ref/claude-scholar/skills/nature-writing` 的社区归纳 Nature-leaning 修辞
+启发式。该来源未提供文章或 DOI 清单、样本选择方法，也未引用 Nature 官方作者指南；部分摘要
+模板与 `ref/Research-Paper-Writing-Skills` 同源，已由本仓库既有章节写作资源吸收。B-NAT 只提供
+候选提示，不构成 Nature 官方规则、投稿合规判定或脚本硬规则。
 
 时态/语态（★F2 英摘方法句一般现在时被动）**不在此实现**：deai 模块已有英文摘要区域门控的
 时态检测（[tense-guide-zh.md](tense-guide-zh.md) + deai_check），`--bilingual` 报告尾注指路 deai，

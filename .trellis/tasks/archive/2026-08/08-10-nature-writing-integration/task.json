@@ -1,0 +1,29 @@
+{
+  "id": "nature-writing-integration",
+  "name": "nature-writing-integration",
+  "title": "nature-writing 写作技巧整合到 latex-paper-en 与 latex-thesis-zh",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-10",
+  "completedAt": "2026-08-10",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-10-nature-writing-en",
+    "08-10-nature-writing-zh"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
