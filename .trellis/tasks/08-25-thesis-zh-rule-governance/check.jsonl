@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-rule-governance/prd.md", "reason": "AC1-AC10 逐条核对"}
+{"file": ".trellis/tasks/08-25-thesis-zh-rule-governance/design.md", "reason": "复现记录是否先于指南修改；deai 字节不变"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "精确短语未入 throat_clearing 表"}
+{"file": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md", "reason": "test_results_analysis.py 内容断言同步"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "manifest 零漂移"}

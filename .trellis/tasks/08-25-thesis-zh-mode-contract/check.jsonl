@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-mode-contract/prd.md", "reason": "AC1-AC13 逐条核对"}
+{"file": ".trellis/tasks/08-25-thesis-zh-mode-contract/design.md", "reason": "显式 revise 未授权退出码 2；无 --output 时 stdout 非合同"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "NEEDS-LLM 与 strength/tier 不合并"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "manifest 与 openai.yaml 仍为公开资源"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "严格不变面：旧 analyzer CLI"}

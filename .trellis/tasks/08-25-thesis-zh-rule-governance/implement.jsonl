@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-rule-governance/prd.md", "reason": "R1-R5 / AC1-AC10，含 TPR-12 先复现再裁决"}
+{"file": ".trellis/tasks/08-25-thesis-zh-rule-governance/design.md", "reason": "TPR-12 复现记录：精确短语零 finding；改指南侧"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "V7 同族张力与 V8 因果门禁取证"}
+{"file": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md", "reason": "RA-* 与 results-analysis-guide 去重时的测试锁"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "over-claim-guard 不得进入 SKILL.md Reference Map"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "不得把 hedge 词面升级成新正则"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "writing 文档 manifest"}

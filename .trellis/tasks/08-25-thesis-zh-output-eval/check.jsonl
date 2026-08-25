@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-output-eval/prd.md", "reason": "AC1-AC11 逐条核对，形状测试不得代替执行证据"}
+{"file": ".trellis/tasks/08-25-thesis-zh-output-eval/design.md", "reason": "meta.json 字段与禁止预填 with_skill_output.text 作唯一 oracle"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "E1 按 V3 而非手册原文"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "evals.json python 写入与 case 数不减"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "manifest 零漂移"}

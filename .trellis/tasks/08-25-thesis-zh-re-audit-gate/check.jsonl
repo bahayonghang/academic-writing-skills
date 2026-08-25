@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-re-audit-gate/prd.md", "reason": "AC1-AC11 逐条核对，F1-F7 各一态"}
+{"file": ".trellis/tasks/08-25-thesis-zh-re-audit-gate/design.md", "reason": "stale_patch 不写源、不调用 thesis_workflow 写路径"}
+{"file": ".trellis/tasks/08-25-thesis-zh-semantic-artifacts/design.md", "reason": "root_cause_key 与 claim_strength owner"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "未引入 revision trajectory 与 round_scores"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "manifest 零漂移"}

@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-output-eval/prd.md", "reason": "R1-R7 / AC1-AC11，含 TPR-09 runner 与禁止自证"}
+{"file": ".trellis/tasks/08-25-thesis-zh-output-eval/design.md", "reason": "runner 合同、E1-E9 确定性断言表、禁止自证"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "C2 四键、project-native 口径、missing evidence"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "V9 与手册 E1 纠正"}
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/prd.md", "reason": "E1/E2 必须消费子任务 1 的阈值与两步选择器"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "evals 工具约定与 zh 测试加载"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "fixture 变更后的 manifest"}

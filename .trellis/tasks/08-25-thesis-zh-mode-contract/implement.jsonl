@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-mode-contract/prd.md", "reason": "R1-R8 / AC1-AC13，含 TPR-11 优先级与退出码"}
+{"file": ".trellis/tasks/08-25-thesis-zh-mode-contract/design.md", "reason": "destination 全表、stdout 仅 --output - 为契约产物"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "默认 dry-run 与 R14 NEEDS-LLM"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "V6 无正交 mode 的取证"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "[Script] Meaning-Check: NEEDS-LLM 与 strength/tier 三轴"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 测试加载"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "routing-rules 与 SKILL 变更后的 manifest"}
