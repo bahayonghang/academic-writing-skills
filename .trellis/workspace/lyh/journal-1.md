@@ -1283,3 +1283,37 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 37: latex-thesis-zh 质量闭环规划修订
+
+**Date**: 2026-08-26
+**Task**: latex-thesis-zh 质量闭环规划修订
+**Branch**: `dev`
+
+### Summary
+
+按审阅报告修订父任务与六个子任务规划产物，提交后归档。未开始实现。
+
+### Main Changes
+
+- 按 TPR-01 至 TPR-12 修订 PRD/design/implement/manifest
+- B1 含成果章；claim_snapshot；re-audit 有序转移表；E1-E9 合同表；mode destination 全表
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `da9308b` | (see git log) |
+
+### Testing
+
+- [OK] plan_precheck.py 七任务 blocking=0
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 若继续实现，从归档规划另开 in_progress 任务；勿把本次归档当作实现批准
