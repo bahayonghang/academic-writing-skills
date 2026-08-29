@@ -108,6 +108,21 @@ uv run python -B scripts/analyze_logic.py thesis.tex --method-narrative --sectio
 三项 finding 都是 `[Script]` 候选且 `Meaning-Check: NEEDS-LLM`。脚本不判断模块动机、设计理由、
 完整输入输出、非直接依赖、证据强度或最终闭合；这些项目按方法描述指南逐模块复核。
 
+## Paragraph Arc Checks (`--paragraph-arc`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-arc [--section introduction]
+```
+
+该附加分支检查 `P-ARC-LEAD`、`P-ARC-CLOSE`、`P-ARC-LINK` 和 `P-ARC-FLAT`。单项默认
+Info/P3；只有绪论/相关工作中连续 3 个合格段同时缺少 LEAD+CLOSE 时追加一条 Minor/P2
+汇总。标题导语、列表、受保护环境边界和专用章节豁免；LINK 只比较同一 prose segment 的
+原始相邻段。
+
+所有 finding 为 `[Script]` 观察并含 `Meaning-Check: NEEDS-LLM`，不输出改写文本。判据表、
+阈值边界、段落范式及与 AXES 的关系见
+[`../writing/paragraph-arc-zh.md`](../writing/paragraph-arc-zh.md)。
+
 ## Body-Chapter Stitching & Intro Bridging (default)
 
 - **P-PAPER（默认全章，无需 flag）**：可见正文出现"源论文/小论文/N 篇论文"表述即报（Minor/P2），

@@ -1,0 +1,36 @@
+{
+  "id": "thesis-zh-paragraph-arc",
+  "name": "thesis-zh-paragraph-arc",
+  "title": "latex-thesis-zh 段落弧线诊断 (C2)",
+  "description": "新增 P-ARC 段落弧线检查与章节类型门控；绪论/相关工作连续双缺升级",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-29",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-29-writing-rhythm-arc",
+  "relatedFiles": [
+    "academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py",
+    "academic-writing-skills/latex-thesis-zh/references/writing/",
+    "tests/skills/latex_thesis_zh/",
+    "tests/fixtures/paragraph_arc/"
+  ],
+  "notes": "C1 dependency pinned to dev commits 4b37ddf and 62f74a0; G1 confirmed N=3 and tau=0.0200 on 2026-08-29",
+  "meta": {
+    "dependency_commits": [
+      "4b37ddf",
+      "62f74a0"
+    ]
+  }
+}

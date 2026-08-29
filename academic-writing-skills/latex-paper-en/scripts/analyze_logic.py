@@ -9,6 +9,7 @@ literature review quality (A1/A3), cross-section logic chain (C3).
 import argparse
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 try:
@@ -791,6 +792,551 @@ def _thread_tokens(text: str) -> set[str]:
     return tokens
 
 
+# ── Paragraph-arc diagnostic (opt-in: --paragraph-arc) ─────────
+
+PARAGRAPH_ARC_TERMS_FILENAME = "paragraph-arc-terms.yaml"
+PARAGRAPH_ARC_MIN_WORDS = 40
+PARAGRAPH_ARC_LINK_THRESHOLD = 0.0200
+PARAGRAPH_ARC_DOUBLE_MISSING_RUN = 2
+PARAGRAPH_ARC_WORD_RE = re.compile(r"\b[A-Za-z][A-Za-z'-]*\b")
+
+DEFAULT_PARAGRAPH_ARC_TERMS: dict[str, tuple[str, ...]] = {
+    "judgment_predicates": (
+        r"\b(?:is|are|was|were|shows?|indicates?|demonstrates?|suggests?)\b",
+        r"\b(?:requires?|provides?|enables?|remains?|constitutes?)\b",
+    ),
+    "empty_transitions": (
+        r"^(?:Furthermore|Moreover|Additionally|However|Therefore|Thus),?\s*",
+        r"^(?:Next|Then),?\s*",
+    ),
+    "retrospective_patterns": (
+        r"\b(?:therefore|thus|hence|overall|taken together)\b",
+        r"\b(?:these|the) (?:results|findings|observations|analysis) "
+        r"(?:show|shows|indicate|indicates|demonstrate|demonstrates|suggest|suggests)\b",
+    ),
+    "prospective_patterns": (
+        r"\b(?:motivates?|provides?|establishes?|enables?|supports?)\b.{0,40}"
+        r"\b(?:next|following|subsequent|downstream|analysis|section|stage)\b",
+        r"\b(?:remains?|requires?|calls? for|needs?)\b",
+    ),
+    "explicit_link_patterns": (
+        r"^(?:However|Therefore|Thus|Moreover|Furthermore|Additionally|In contrast|"
+        r"By comparison)\b",
+        r"^(?:Building on this|Based on (?:this|these results)|In this context)\b",
+        r"^(?:This|These|Such|The preceding|The previous)\b",
+    ),
+}
+
+_ARC_TERM_KEYS = tuple(DEFAULT_PARAGRAPH_ARC_TERMS)
+_ARC_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?;])\s+")
+_ARC_BEGIN_ENV_RE = re.compile(r"\\begin\{([^}]+)\}")
+_ARC_END_ENV_RE = re.compile(r"\\end\{([^}]+)\}")
+_ARC_CITATION_RE = re.compile(r"\\cite\w*(?:\[[^\]]*\])?\{[^}]+\}")
+_ARC_PROTECTED_ENVS = {
+    "equation",
+    "align",
+    "alignat",
+    "flalign",
+    "gather",
+    "multline",
+    "eqnarray",
+    "displaymath",
+    "figure",
+    "table",
+    "tabular",
+    "tabularx",
+    "longtable",
+    "algorithm",
+    "algorithmic",
+    "itemize",
+    "enumerate",
+    "description",
+    "lstlisting",
+    "verbatim",
+    "minted",
+    "abstract",
+    "acknowledgment",
+    "acknowledgement",
+    "acknowledgments",
+    "acknowledgements",
+}
+_ARC_EXEMPT_SECTIONS = {
+    "abstract",
+    "conclusion",
+    "acknowledgment",
+    "appendix",
+}
+
+
+@dataclass(frozen=True)
+class ArcParagraph:
+    """Visible prose plus the ownership and adjacency needed by P-ARC."""
+
+    start: int
+    end: int
+    visible: str
+    raw: str
+    sentences: tuple[str, ...]
+    section: str | None
+    segment_id: int
+    in_item: bool
+    ends_with_env: bool
+
+
+def _load_paragraph_arc_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
+    """Load the public term table and fall back independently for each invalid field."""
+    terms = {key: tuple(values) for key, values in DEFAULT_PARAGRAPH_ARC_TERMS.items()}
+    yaml_path = script_dir.parent / "references" / "writing" / PARAGRAPH_ARC_TERMS_FILENAME
+    if not yaml_path.exists():
+        return terms
+    try:
+        import yaml
+    except ImportError:
+        return terms
+    try:
+        data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeError, yaml.YAMLError):
+        return terms
+    if not isinstance(data, dict):
+        return terms
+    for key in _ARC_TERM_KEYS:
+        configured = data.get(key)
+        if not (
+            isinstance(configured, list)
+            and configured
+            and all(isinstance(value, str) and value for value in configured)
+        ):
+            continue
+        try:
+            for pattern in configured:
+                re.compile(pattern)
+        except re.error:
+            continue
+        terms[key] = tuple(configured)
+    return terms
+
+
+def _arc_word_count(text: str) -> int:
+    return len(PARAGRAPH_ARC_WORD_RE.findall(text))
+
+
+def _arc_sentences(text: str) -> tuple[str, ...]:
+    return tuple(part.strip() for part in _ARC_SENTENCE_SPLIT_RE.split(text) if part.strip())
+
+
+def _arc_section_base(key: str | None) -> str | None:
+    return re.sub(r"_\d+$", "", key) if key is not None else None
+
+
+def _arc_special_ranges(content: str, parser) -> list[tuple[int, int, str]]:
+    headings = parser.extract_headings(content)
+    total = len(content.splitlines())
+    ranges: list[tuple[int, int, str]] = []
+    for index, heading in enumerate(headings):
+        title = heading["title"].strip().lower()
+        kind = None
+        if "acknowledg" in title:
+            kind = "acknowledgment"
+        elif title.startswith("appendix"):
+            kind = "appendix"
+        if kind is None:
+            continue
+        end = total
+        for following in headings[index + 1 :]:
+            if following["level"] <= heading["level"]:
+                end = following["line"] - 1
+                break
+        ranges.append((heading["line"], end, kind))
+    return ranges
+
+
+def _arc_section_at(
+    line_no: int,
+    sections: dict[str, tuple[int, int]],
+    special_ranges: list[tuple[int, int, str]],
+    chapter_ranges: list[dict],
+    appendix_start: int | None,
+) -> str | None:
+    for start, end, kind in special_ranges:
+        if start <= line_no <= end:
+            return kind
+    if appendix_start is not None and line_no >= appendix_start:
+        return "appendix"
+    for key, (start, end) in sections.items():
+        if start <= line_no <= end:
+            return _arc_section_base(key)
+    for chapter in chapter_ranges:
+        if int(chapter["start"]) <= line_no <= int(chapter["end"]):
+            key = chapter.get("key")
+            return _arc_section_base(key) if isinstance(key, str) else None
+    return None
+
+
+def _arc_env_name(value: str) -> str:
+    return value.rstrip("*")
+
+
+def _split_arc_paragraphs(
+    content: str,
+    parser,
+    sections: dict[str, tuple[int, int]],
+) -> list[ArcParagraph]:
+    """Split prose while retaining original adjacency and every structural hard boundary."""
+    lines = content.splitlines()
+    heading_lines = {heading["line"] for heading in parser.extract_headings(content)}
+    special_ranges = _arc_special_ranges(content, parser)
+    chapter_ranges = parser.chapter_ranges(content)
+    appendix_start = next(
+        (line_no for line_no, raw in enumerate(lines, 1) if raw.strip().startswith(r"\appendix")),
+        None,
+    )
+    paragraphs: list[ArcParagraph] = []
+    buffer: list[tuple[int, str, str]] = []
+    segment_id = 0
+    in_protected_env: str | None = None
+
+    def flush(*, ends_with_env: bool = False) -> None:
+        nonlocal buffer
+        if not buffer:
+            return
+        meaningful = [row for row in buffer if row[2] or r"\cite" in row[1]]
+        if not meaningful:
+            buffer = []
+            return
+        visible = " ".join(part for _line, _raw, part in meaningful if part).strip()
+        raw = " ".join(source for _line, source, _part in meaningful)
+        sentences = _arc_sentences(visible)
+        if visible and sentences:
+            paragraphs.append(
+                ArcParagraph(
+                    start=meaningful[0][0],
+                    end=meaningful[-1][0],
+                    visible=visible,
+                    raw=raw,
+                    sentences=sentences,
+                    section=_arc_section_at(
+                        meaningful[0][0],
+                        sections,
+                        special_ranges,
+                        chapter_ranges,
+                        appendix_start,
+                    ),
+                    segment_id=segment_id,
+                    in_item=any(source.lstrip().startswith(r"\item") for _, source, _ in buffer),
+                    ends_with_env=ends_with_env,
+                )
+            )
+        buffer = []
+
+    for line_no, source in enumerate(lines, 1):
+        stripped = re.sub(r"(?<!\\)%.*$", "", source).strip()
+        if in_protected_env is not None:
+            if (
+                (in_protected_env == "bracket-math" and r"\]" in stripped)
+                or (in_protected_env == "dollar-math" and "$$" in stripped)
+                or (
+                    in_protected_env not in {"bracket-math", "dollar-math"}
+                    and any(
+                        _arc_env_name(match.group(1)) == in_protected_env
+                        for match in _ARC_END_ENV_RE.finditer(stripped)
+                    )
+                )
+            ):
+                in_protected_env = None
+            continue
+
+        if line_no in heading_lines:
+            flush()
+            segment_id += 1
+            continue
+
+        if stripped.startswith(r"\appendix"):
+            flush()
+            segment_id += 1
+            continue
+
+        bracket_math = r"\[" in stripped
+        dollar_math = "$$" in stripped
+        if bracket_math or dollar_math:
+            flush(ends_with_env=True)
+            segment_id += 1
+            if bracket_math and r"\]" not in stripped:
+                in_protected_env = "bracket-math"
+            elif dollar_math and stripped.count("$$") < 2:
+                in_protected_env = "dollar-math"
+            continue
+
+        protected_begin = next(
+            (
+                _arc_env_name(match.group(1))
+                for match in _ARC_BEGIN_ENV_RE.finditer(stripped)
+                if _arc_env_name(match.group(1)) in _ARC_PROTECTED_ENVS
+            ),
+            None,
+        )
+        if protected_begin is not None:
+            flush(ends_with_env=True)
+            segment_id += 1
+            if not any(
+                _arc_env_name(match.group(1)) == protected_begin
+                for match in _ARC_END_ENV_RE.finditer(stripped)
+            ):
+                in_protected_env = protected_begin
+            continue
+
+        if not stripped or stripped == r"\par" or source.lstrip().startswith("%"):
+            flush()
+            continue
+
+        if stripped.startswith(r"\item"):
+            flush()
+            segment_id += 1
+            visible = parser.extract_visible_text(stripped).strip()
+            buffer.append((line_no, stripped, visible))
+            continue
+
+        visible = parser.extract_visible_text(stripped).strip()
+        buffer.append((line_no, stripped, visible))
+    flush()
+    return paragraphs
+
+
+def _arc_is_eligible(paragraph: ArcParagraph) -> bool:
+    return (
+        _arc_word_count(paragraph.visible) >= PARAGRAPH_ARC_MIN_WORDS
+        and paragraph.section not in _ARC_EXEMPT_SECTIONS
+        and not paragraph.in_item
+        and not paragraph.ends_with_env
+    )
+
+
+def _arc_matches_any(text: str, patterns: tuple[str, ...]) -> bool:
+    return any(re.search(pattern, text, re.IGNORECASE) for pattern in patterns)
+
+
+def _arc_lead_reason(paragraph: ArcParagraph, terms: dict[str, tuple[str, ...]]) -> str | None:
+    first = paragraph.sentences[0]
+    if _arc_word_count(first) < 8 and not _arc_matches_any(first, terms["judgment_predicates"]):
+        return "the first sentence has fewer than 8 visible words and no judgment predicate"
+    for pattern in terms["empty_transitions"]:
+        match = re.search(pattern, first, re.IGNORECASE)
+        if match and match.start() == 0:
+            remainder = first[match.end() :].lstrip(" ,:;.-")
+            if _arc_word_count(remainder) < 6:
+                return "an opening transition leaves fewer than 6 substantive visible words"
+    raw_sentences = _arc_sentences(paragraph.raw)
+    first_raw = raw_sentences[0] if raw_sentences else paragraph.raw
+    without_citations = _ARC_CITATION_RE.sub("", first_raw)
+    if r"\cite" in first_raw and _arc_word_count(without_citations) < 5:
+        return "the first sentence is mostly citations"
+    if not PARAGRAPH_ARC_WORD_RE.search(first):
+        return "the first sentence contains only numbers, units, or symbols"
+    return None
+
+
+def _arc_close_missing(paragraph: ArcParagraph, terms: dict[str, tuple[str, ...]]) -> bool:
+    last = paragraph.sentences[-1]
+    return not _arc_matches_any(
+        last,
+        terms["retrospective_patterns"] + terms["prospective_patterns"],
+    )
+
+
+def _arc_jaccard(left: str, right: str) -> float:
+    left_tokens = _thread_tokens(left)
+    right_tokens = _thread_tokens(right)
+    union = left_tokens | right_tokens
+    if not union:
+        return 0.0
+    return len(left_tokens & right_tokens) / len(union)
+
+
+def _arc_link_missing(
+    left: ArcParagraph,
+    right: ArcParagraph,
+    terms: dict[str, tuple[str, ...]],
+    threshold: float = PARAGRAPH_ARC_LINK_THRESHOLD,
+) -> tuple[bool, float | None]:
+    left_last = left.sentences[-1]
+    right_first = right.sentences[0]
+    if _arc_matches_any(right_first, terms["explicit_link_patterns"]):
+        return False, None
+    if _arc_word_count(left_last) < 8 or _arc_word_count(right_first) < 8:
+        return True, None
+    score = round(_arc_jaccard(left_last, right_first), 4)
+    return score < threshold, score
+
+
+def _arc_all_author_enumeration(paragraph: ArcParagraph) -> bool:
+    return bool(paragraph.sentences) and all(
+        AUTHOR_ENUM_EN.search(sentence) for sentence in paragraph.sentences
+    )
+
+
+def _arc_finding(
+    code: str,
+    start: int,
+    end: int,
+    message: str,
+    current: str,
+    suggested: str,
+    rationale: str,
+    doc: AssembledDocument,
+    *,
+    severity: str = "Info",
+    priority: str = "P3",
+) -> list[str]:
+    return [
+        f"% PARAGRAPH-ARC ({doc.lineref(start, end)}) [Severity: {severity}] "
+        f"[Priority: {priority}]: [Script] {code} {message}",
+        f"% Current: {current}",
+        f"% Suggested: {suggested}",
+        f"% Rationale: {rationale}",
+        "% Meaning-Check: NEEDS-LLM",
+        "",
+    ]
+
+
+def _check_paragraph_arc(
+    content: str,
+    parser,
+    sections: dict[str, tuple[int, int]],
+    ranges: list[tuple[int, int]],
+    doc: AssembledDocument,
+) -> list[str]:
+    terms = _load_paragraph_arc_terms(Path(__file__).resolve().parent)
+    paragraphs = _split_arc_paragraphs(content, parser, sections)
+    in_scope = [
+        paragraph
+        for paragraph in paragraphs
+        if any(start <= paragraph.start <= end for start, end in ranges)
+    ]
+    out: list[str] = []
+    states: dict[int, tuple[bool, bool]] = {}
+
+    for paragraph in in_scope:
+        if not _arc_is_eligible(paragraph):
+            continue
+        lead_reason = _arc_lead_reason(paragraph, terms)
+        close_missing = _arc_close_missing(paragraph, terms)
+        states[paragraph.start] = (lead_reason is not None, close_missing)
+        if lead_reason is not None:
+            out.extend(
+                _arc_finding(
+                    "P-ARC-LEAD",
+                    paragraph.start,
+                    paragraph.start,
+                    "the opening lacks a stable topic-lead form",
+                    f"First visible sentence at {doc.lineref(paragraph.start)}; {lead_reason}.",
+                    "Verify whether the paragraph should open with its claim, object, or question.",
+                    "This heuristic observes form and does not decide whether the claim is sound.",
+                    doc,
+                )
+            )
+        if close_missing:
+            out.extend(
+                _arc_finding(
+                    "P-ARC-CLOSE",
+                    paragraph.end,
+                    paragraph.end,
+                    "the closing lacks a retrospective or prospective signal",
+                    f"Last visible sentence at {doc.lineref(paragraph.end)}; no configured signal matched.",
+                    "Verify whether the paragraph should close its claim or open the next interface.",
+                    "This heuristic observes form and does not decide semantic completeness.",
+                    doc,
+                )
+            )
+        flat_reason = None
+        if len(paragraph.sentences) == 1:
+            flat_reason = "the paragraph contains one visible sentence"
+        elif paragraph.section != "related" and _arc_all_author_enumeration(paragraph):
+            flat_reason = "every sentence follows an author/year enumeration form"
+        if flat_reason is not None:
+            out.extend(
+                _arc_finding(
+                    "P-ARC-FLAT",
+                    paragraph.start,
+                    paragraph.end,
+                    "the paragraph has a flat expansion form",
+                    f"{flat_reason}.",
+                    "Verify whether comparison, decomposition, or explanation is needed.",
+                    "Related Work enumeration remains owned by A1; this finding does not judge quality.",
+                    doc,
+                )
+            )
+
+    for left, right in zip(in_scope, in_scope[1:], strict=False):
+        if (
+            left.segment_id != right.segment_id
+            or not _arc_is_eligible(left)
+            or not _arc_is_eligible(right)
+        ):
+            continue
+        missing, score = _arc_link_missing(left, right, terms)
+        if not missing:
+            continue
+        score_note = (
+            "an endpoint has fewer than 8 visible words, so only explicit links were checked"
+            if score is None
+            else f"four-decimal Jaccard={score:.4f} < {PARAGRAPH_ARC_LINK_THRESHOLD:.4f}"
+        )
+        out.extend(
+            _arc_finding(
+                "P-ARC-LINK",
+                left.end,
+                right.start,
+                "adjacent paragraphs lack a visible interface",
+                f"The endpoints are originally adjacent; {score_note}, and no explicit link matched.",
+                "Verify whether the interface needs a reference, progression, contrast, or cause.",
+                "Lexical overlap cannot replace semantic review; this finding is a navigation aid.",
+                doc,
+            )
+        )
+
+    run: list[ArcParagraph] = []
+
+    def flush_run() -> None:
+        nonlocal run
+        if len(run) >= PARAGRAPH_ARC_DOUBLE_MISSING_RUN:
+            out.extend(
+                _arc_finding(
+                    "P-ARC-LEAD+CLOSE",
+                    run[0].start,
+                    run[-1].end,
+                    f"{len(run)} consecutive paragraphs lack both lead and close forms",
+                    f"The run reaches provisional threshold N={PARAGRAPH_ARC_DOUBLE_MISSING_RUN}.",
+                    "Review the entry claim, expansion order, and closure of this paragraph group.",
+                    "Only Introduction/Related Work runs escalate; individual findings stay Info/P3.",
+                    doc,
+                    severity="Minor",
+                    priority="P2",
+                )
+            )
+        run = []
+
+    previous: ArcParagraph | None = None
+    for paragraph in in_scope:
+        state = states.get(paragraph.start)
+        adjacent = (
+            previous is not None
+            and previous.segment_id == paragraph.segment_id
+            and previous.section == paragraph.section
+        )
+        if (
+            state == (True, True)
+            and paragraph.section in {"introduction", "related"}
+            and (not run or adjacent)
+        ):
+            run.append(paragraph)
+        else:
+            flush_run()
+            if state == (True, True) and paragraph.section in {"introduction", "related"}:
+                run = [paragraph]
+        previous = paragraph
+    flush_run()
+    return out
+
+
 def _thread_best_match(
     promise_tokens: set[str], candidates: list[tuple[int, str]], min_overlap: int = 2
 ) -> tuple[int, int] | None:
@@ -990,6 +1536,7 @@ def analyze(
     section: str | None = None,
     cross_section: bool = False,
     motivation_thread: bool = False,
+    paragraph_arc: bool = False,
 ) -> list[str]:
     parser = get_parser(file_path)
     doc = assemble(file_path)
@@ -1079,6 +1626,10 @@ def analyze(
                 if key == "method" or key.startswith("method_"):
                     out.extend(_check_method_narrative(lines, headings, sections[key], parser, doc))
 
+    if paragraph_arc:
+        arc_ranges = ranges if section else [(1, len(lines))]
+        out.extend(_check_paragraph_arc(content, parser, sections, arc_ranges, doc))
+
     if not out:
         out.append("% LOGIC/METHODOLOGY: No rule-based coherence issues detected.")
 
@@ -1104,13 +1655,28 @@ def main() -> int:
         action="store_true",
         help="Run full-paper motivation red-thread diagnostic (promise map + closure map)",
     )
+    cli.add_argument(
+        "--paragraph-arc",
+        action="store_true",
+        help="Run paragraph-arc observations (lead, close, link, and expansion; opt-in)",
+    )
     args = cli.parse_args()
 
     if not args.file.exists():
         print(f"[ERROR] File not found: {args.file}", file=sys.stderr)
         return 1
 
-    print("\n".join(analyze(args.file, args.section, args.cross_section, args.motivation_thread)))
+    print(
+        "\n".join(
+            analyze(
+                args.file,
+                args.section,
+                args.cross_section,
+                args.motivation_thread,
+                args.paragraph_arc,
+            )
+        )
+    )
     return 0
 
 

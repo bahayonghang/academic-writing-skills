@@ -5,7 +5,11 @@ Default `deep-review` lanes:
 ## Section lanes
 
 - `section_intro_related`
-  - check framing, novelty positioning, and promises made early in the paper
+  - check framing, novelty positioning, and promises made early in the paper;
+    observe the same four paragraph-arc signals: `P-ARC-LEAD` (topic lead / opening),
+    `P-ARC-CLOSE` (wrap-up / closing), `P-ARC-LINK` (adjacent-paragraph interface),
+    and `P-ARC-FLAT` (body expansion); missing transition words alone are not a
+    logical break
 - `section_methods`
   - check definitions, assumptions, derivations, and method detail; for methodological interface and argumentation completeness, load the `section_methods` focus block in `SUBAGENT_TEMPLATES.md`
 - `section_results`

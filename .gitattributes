@@ -7,3 +7,10 @@
 # picking either side (task state lives in task.json, not index.md). See
 # .trellis/spec/cli/backend/directory-structure.md for details.
 .trellis/workspace/*/journal-*.md merge=union
+
+# Exact pre-change CLI snapshots intentionally retain their terminal blank line.
+# Disable text normalization so Windows checkouts stay byte-identical.
+tests/fixtures/paragraph_arc/baseline-before.txt -text -diff
+.trellis/tasks/**/08-29-thesis-zh-paragraph-arc/research/baseline-before.txt -text -diff
+tests/fixtures/paragraph_arc_en/baseline-before.txt -text -diff
+.trellis/tasks/**/08-29-paper-en-paragraph-arc/research/baseline-before.txt -text -diff

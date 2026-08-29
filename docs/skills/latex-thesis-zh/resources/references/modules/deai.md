@@ -35,6 +35,15 @@ The script's `hedge` / `hedge_application` suggestions still correctly calibrate
 over-confident wording and undemonstrated applications. `results suggest`, `may / could`,
 and `可能/或许` reduce claim strength; they do not replace per-mechanism evidence.
 
+## Chinese Density and Budget Semantics
+
+- Chinese `term_thresholds` use `threshold_unit: per_10k_chars`; documents below 3,000 visible
+  Chinese characters receive the configured fallback allowance instead of a noisy tiny denominator.
+- Counts and denominators share one visible-prose adapter that excludes comments, citations,
+  labels, math, figures, tables, and algorithms.
+- `throat_clearing` uses a document-wide budget calibrated at 2.6 hits per 10,000 visible Chinese
+  characters and reports only the excess occurrences.
+
 ## High-Priority AI Patterns (Must Fix)
 
 | Pattern | Example | Fix |

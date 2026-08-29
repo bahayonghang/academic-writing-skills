@@ -77,6 +77,21 @@ max_journal_lines: 2000
 # default_package: frontend
 
 #-------------------------------------------------------------------------------
+# Default workflow
+#-------------------------------------------------------------------------------
+# Team-shared default workflow for tasks that do not pin one. The id names a
+# variant file in `.trellis/workflows/<id>.md` (populate it with
+# `trellis workflow --save <id>`). This value is committed, so the whole team
+# shares the same default. A per-developer override lives in the gitignored
+# `.developer` file as a `workflow=<id>` line and takes precedence over this.
+#
+# Resolution precedence: per-task (task.json `workflow`) > personal
+# (`.developer` `workflow=`) > this `default_workflow` > global
+# `.trellis/workflow.md`.
+#
+# default_workflow: native
+
+#-------------------------------------------------------------------------------
 # Channel worker OOM guard
 #-------------------------------------------------------------------------------
 # Default safeguards for `trellis channel spawn` workers. The guard runs
@@ -144,6 +159,38 @@ channel:
 #   max_file_bytes: 32768        # per implement.jsonl / check.jsonl referenced file
 #   max_artifact_bytes: 65536    # per task artifact (prd.md / design.md / implement.md)
 #   max_total_bytes: 131072      # whole injected payload; overflow degrades to index lines
+
+#-------------------------------------------------------------------------------
+# Path-scoped spec injection
+#-------------------------------------------------------------------------------
+# When the agent touches a file (Read/Edit/Write/MultiEdit), spec .md files
+# under .trellis/spec/ whose frontmatter `paths:` globs match the touched path
+# are surfaced into the session right then. The first time a spec matches it is
+# injected in full; while its content is unchanged and the refresh window has
+# not elapsed it stays silent; once the window elapses a short `<spec-ticket>`
+# reminder is emitted to counter recency decay. Editing the spec itself — or a
+# SessionStart after /clear or /compact — re-injects the full text.
+# Oversized specs are truncated with a notice; once the per-event payload cap
+# is reached, remaining full bodies degrade to index lines (path + description)
+# instead of being inlined.
+#
+# Character values: the ceiling this budget respects is Claude Code's
+# documented 10,000-CHARACTER additionalContext limit, so the caps count
+# characters too (byte caps made CJK specs pay 3x for the same text).
+# `0` disables the corresponding limit.
+# The refresh window uses wall-clock seconds. `0` disables time-based reminders;
+# SessionStart resets after /clear or /compact still force a full re-injection.
+#
+# spec_injection:
+#   enabled: true                 # false disables injection entirely
+#   max_spec_chars: 9400          # per matched spec file
+#   max_total_chars: 9500         # whole per-event payload; overflow degrades to index lines
+#   refresh_window_seconds: 2700  # touches past this interval re-emit a ticket
+#   tools:                        # tool events that trigger injection
+#     - Read
+#     - Edit
+#     - Write
+#     - MultiEdit
 
 #-------------------------------------------------------------------------------
 # Per-turn prompt injection

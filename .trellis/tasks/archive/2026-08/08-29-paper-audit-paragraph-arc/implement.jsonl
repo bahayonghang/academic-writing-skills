@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "paper-audit severity、ScholarEval 模块映射与数据流契约；R3.1.3/R3.4 的不改权重、不新增脚本边界由它界定"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "paper-audit 双调用与报告层契约；段落弧线走文档+lane 而非脚本 trace 的先例"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "跨 surface eval 与 audit lane 预算约定；R3.2 改 lane guide 与 subagent 模板须遵守"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "quality_rubrics/REVIEW_LANE_GUIDE/SUBAGENT_TEMPLATES/agents 均为公开资源，改动须同步双语页面与 manifest"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "C2 已固化的 LEAD/CLOSE/LINK/FLAT 公共边界与证据限制"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-en-contract.md", "reason": "C3 synthetic-only 英文差异及真实 venue UNVERIFIED 边界"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "paper-audit 测试所有权与公开资源验证约定"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "源资源、双语 docs、manifest 与 contract 的跨层同步"}

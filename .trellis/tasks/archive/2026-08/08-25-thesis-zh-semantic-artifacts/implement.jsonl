@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-semantic-artifacts/prd.md", "reason": "R1-R7 / AC1-AC11，含 TPR-07 字段所有权"}
+{"file": ".trellis/tasks/08-25-thesis-zh-semantic-artifacts/design.md", "reason": "canonical schema、paper-audit 映射、claim_snapshot 只读快照"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "父任务 R10 schema 真源与禁止投稿评分"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "paper-audit 可适配面与不可移植项"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "severity/gate_blocker 边界，禁止 desk-reject 通道"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 脚本测试按路径加载"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "schema 与 workflow 文档的 manifest 重建"}

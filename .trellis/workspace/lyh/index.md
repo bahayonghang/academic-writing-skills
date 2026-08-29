@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 36
-- **Last Active**: 2026-08-10
+- **Total Sessions**: 38
+- **Last Active**: 2026-08-29
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1285 | Active |
+| `journal-1.md` | ~1344 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,8 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 38 | 2026-08-29 | 完成写作节奏与段落弧线任务集成 | `4b37ddf`, `af84e4a`, `e09675d`, `a56b74c`, `083e035` | `dev` |
+| 37 | 2026-08-26 | latex-thesis-zh 质量闭环规划修订 | `da9308b` | `dev` |
 | 36 | 2026-08-10 | 集成学术去 AI 模式簇 | `34bbc2f` | `dev` |
 | 35 | 2026-08-10 | 完成 nature-writing 双语增量整合 | `a136e6db98a69189841c2b14cd493f1a78711680`, `db1424b2a0071a33ed24c65033a1e1d89d9daaaa` | `dev` |
 | 34 | 2026-08-10 | 完成 nature-writing EN 增量整合 | `a136e6db98a69189841c2b14cd493f1a78711680` | `dev` |

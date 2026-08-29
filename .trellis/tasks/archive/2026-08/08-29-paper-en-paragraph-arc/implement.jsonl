@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "EN deai canonical 副本、三副本锁与公开资源入口"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "副本加载、私有语料边界与稳定 fixture 约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增/修改公开 references 必须同步双语 docs 与 manifest"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "C2 已固化的 segment、章节所有权、输出与基线契约，C3 仅按 design 记录 EN 差异"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "保持 term traces 为可读性启发式而非 AI 检测概率"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "先复用现有 corpus/token/arc 机制，避免平行口径"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "DEFAULT/YAML/runtime/tests/docs/manifest 跨层同步"}

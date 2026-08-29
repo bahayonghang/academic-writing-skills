@@ -85,6 +85,8 @@ tmp/
 ref/
 .agents/
 .codex/
+.cursor/
+
 
 review_results/
 

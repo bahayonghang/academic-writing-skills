@@ -1,0 +1,16 @@
+judgment_predicates:
+  - '\b(?:is|are|was|were|shows?|indicates?|demonstrates?|suggests?)\b'
+  - '\b(?:requires?|provides?|enables?|remains?|constitutes?)\b'
+empty_transitions:
+  - '^(?:Furthermore|Moreover|Additionally|However|Therefore|Thus),?\s*'
+  - '^(?:Next|Then),?\s*'
+retrospective_patterns:
+  - '\b(?:therefore|thus|hence|overall|taken together)\b'
+  - '\b(?:these|the) (?:results|findings|observations|analysis) (?:show|shows|indicate|indicates|demonstrate|demonstrates|suggest|suggests)\b'
+prospective_patterns:
+  - '\b(?:motivates?|provides?|establishes?|enables?|supports?)\b.{0,40}\b(?:next|following|subsequent|downstream|analysis|section|stage)\b'
+  - '\b(?:remains?|requires?|calls? for|needs?)\b'
+explicit_link_patterns:
+  - '^(?:However|Therefore|Thus|Moreover|Furthermore|Additionally|In contrast|By comparison)\b'
+  - '^(?:Building on this|Based on (?:this|these results)|In this context)\b'
+  - '^(?:This|These|Such|The preceding|The previous)\b'

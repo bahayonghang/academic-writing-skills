@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "V1-V4 改造前实跑输出、C1-C7 硬约束（含 C7 deai 可改成员详表与 path:line 锚点）"}
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/prd.md", "reason": "R1-R8 / AC1-AC15 实施对象"}
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/design.md", "reason": "两步选择器、B1 含成果章、锁定阈值公式、UTF-8 入口清单、兼容面拆分"}
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/implement.md", "reason": "S1-S7、dirt 冻结清单、Phase 3.4 提交"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "按技能副本脚本的测试加载约定、阈值与 evals 工具约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "改 references 后 manifest 与双语页面的可执行契约"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "三套对齐锁的背景速览与 bare import 解析规则"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "deai 模式与保真边界，避免把阈值公式改动扩到其它 checker"}

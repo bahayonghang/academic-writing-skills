@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/prd.md", "reason": "AC1-AC15 逐条核对"}
+{"file": ".trellis/tasks/08-25-thesis-zh-visible-prose-ir/design.md", "reason": "B1-B4 基线对照、两步选择器、阈值整数式、四套锁约束表"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "跨子任务验收标准（C1-C7）与 R11 兼容面"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "C7 deai 可改成员详表：验证未改被锁成员"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "manifest 与双语页面校验判定标准"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 测试加载不得落到 EN 副本"}

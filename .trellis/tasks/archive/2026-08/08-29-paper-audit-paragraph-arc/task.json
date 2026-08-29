@@ -1,0 +1,43 @@
+{
+  "id": "paper-audit-paragraph-arc",
+  "name": "paper-audit-paragraph-arc",
+  "title": "paper-audit 对应优化 (C4)",
+  "description": "把段落弧线纳入 clarity/presentation 审稿维度与 rubric",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-29",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-29-writing-rhythm-arc",
+  "relatedFiles": [
+    "academic-writing-skills/paper-audit/references/quality_rubrics.md",
+    "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
+    "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
+    "academic-writing-skills/paper-audit/references/REVIEWER_PSYCHOLOGY.md",
+    "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
+    "academic-writing-skills/paper-audit/agents/section_reviewer_agent.md",
+    "tests/skills/paper_audit/",
+    "tests/contracts/",
+    "docs/resource-manifest.json"
+  ],
+  "notes": "Dependencies pinned to C2 af84e4a/401ee53 and C3 e09675d/0bda6a1; target-venue applicability remains UNVERIFIED",
+  "meta": {
+    "dependency_commits": [
+      "af84e4a",
+      "401ee53",
+      "e09675d",
+      "0bda6a1"
+    ]
+  }
+}

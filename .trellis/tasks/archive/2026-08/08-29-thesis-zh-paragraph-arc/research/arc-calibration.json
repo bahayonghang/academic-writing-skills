@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "source_name": "chapter1.tex",
+  "source_sha256": "077748f01dafb2d010e7d3e7c914820b9fb9bebfb9faa0171f4a46468d61f158",
+  "source_committed": false,
+  "paragraphs": 42,
+  "eligible_paragraphs": 33,
+  "heading_leads_exempted": 9,
+  "lead_missing": 0,
+  "close_marker_hits": 7,
+  "close_marker_coverage": 0.2121,
+  "close_missing": 26,
+  "max_double_missing_run": 0,
+  "n_candidate": 3,
+  "link_threshold_calibration": {
+    "comparison": "round(jaccard, 4) < tau",
+    "empty_token_sets": 0.0,
+    "false_positive_budget": 2,
+    "positive_pairs": 11,
+    "negative_pairs": 8,
+    "tau_candidate": 0.02,
+    "positive_false_positives": 2,
+    "negatives_detected": 4
+  },
+  "implementation_g2": {
+    "implementation": "latex-thesis-zh/scripts/analyze_logic.py product helpers",
+    "threshold": 0.02,
+    "positive_pairs_evaluated": 11,
+    "positive_false_positives": 2,
+    "false_positive_budget": 2,
+    "budget_pass": true,
+    "false_positive_pairs": [
+      {
+        "pair": "53->55",
+        "left_hash": "0f81198336416b23",
+        "right_hash": "bafa9a24db330edf",
+        "jaccard": 0.0164
+      },
+      {
+        "pair": "55->57",
+        "left_hash": "f0fcd6b46bf70015",
+        "right_hash": "4d96a1686d2381c5",
+        "jaccard": 0.0167
+      }
+    ],
+    "full_chapter_link_findings": 6
+  },
+  "verification": {
+    "human_labels": "CONFIRMED_BY_AUTHOR_2026-08-29",
+    "single_chapter_representativeness": "UNVERIFIED",
+    "author_confirmation": "CONFIRMED_2026-08-29",
+    "g2_product_rerun": "PASS_2026-08-29"
+  }
+}

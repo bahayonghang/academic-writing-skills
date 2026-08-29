@@ -91,6 +91,34 @@ from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 
 ---
 
+## Convention: 私有标定语料不得成为 CI 的隐式前置条件
+
+**What**：阈值标定可以读取被 `.gitignore` 排除的论文全文或内部语料，但自动测试必须
+同时提交最小正文摘录 fixture 和可复算结果快照。常规 CI 只依赖已提交 fixture；本地存在
+完整语料时，再运行严格的全文复算并与快照逐字段比较。
+
+**Why**：直接在 pytest 中读取 `ref/` 等本地私有目录会在开发机上假绿，却在干净 clone
+中因文件缺失失败；把整篇论文提交进仓库又违反数据最小化。摘录锁 runtime 行为，结果
+快照锁标定数值，两者不能互相替代。
+
+**Tests Required**：标定类变更至少覆盖：(1) 已提交摘录通过真实 checker；(2) 已提交
+结果快照与 YAML 一致；(3) 私有完整语料存在时严格复算，不存在时使用带原因的
+`pytest.skip`，不得静默跳过或伪造全文结果。
+
+**Example**：
+
+```python
+private_files = sorted(private_corpus.glob("*.txt"))
+if len(private_files) != expected_count:
+    pytest.skip("private calibration corpus is not available")
+assert recompute(private_files) == checked_in_snapshot
+```
+
+**Validation**：至少在不提供私有语料的干净环境运行目标测试，确认只跳过全文严格复算，
+已提交摘录、结果快照与配置一致性测试仍然执行并通过。
+
+---
+
 ## Gotcha: evals.json 禁用 Edit/Write，走 Bash python 写入
 
 > **Warning**：PostToolUse 的 JSON 格式化 hook 会在 Edit/Write 后把 `academic-writing-skills/*/evals/evals.json` 的多行 `files: [...]` 数组压成单行，造成与改动无关的大面积重排。

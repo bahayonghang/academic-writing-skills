@@ -1,0 +1,39 @@
+{
+  "id": "paper-en-paragraph-arc",
+  "name": "paper-en-paragraph-arc",
+  "title": "latex-paper-en 对应优化 (C3)",
+  "description": "EN 侧 5000 词基线密度换算与英文段落 arc 诊断",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-29",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-29-writing-rhythm-arc",
+  "relatedFiles": [
+    "academic-writing-skills/latex-paper-en/scripts/deai_check.py",
+    "academic-writing-skills/latex-paper-en/scripts/analyze_logic.py",
+    "academic-writing-skills/latex-paper-en/references/",
+    "tests/skills/latex_paper_en/",
+    "tests/fixtures/paragraph_arc_en/"
+  ],
+  "notes": "Dependencies pinned to C1 4b37ddf/62f74a0 and C2 af84e4a/401ee53; EN corpus calibration remains UNVERIFIED",
+  "meta": {
+    "dependency_commits": [
+      "4b37ddf",
+      "62f74a0",
+      "af84e4a",
+      "401ee53"
+    ]
+  }
+}

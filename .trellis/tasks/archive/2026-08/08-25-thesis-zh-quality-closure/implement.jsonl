@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/prd.md", "reason": "R1-R15 / AC1-AC16 父任务终检与 ready 前置"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "V1-V9 已复现缺陷与 C1-C7 硬约束，禁止手册 E1 原文"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "三套对齐锁与 bare import 解析规则"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 脚本测试必须按路径加载"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "R6/C4 manifest 与双语页面契约"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "R10 schema 边界：禁止投稿评分与 desk-reject"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "R14 [Script] 层 Meaning-Check: NEEDS-LLM"}

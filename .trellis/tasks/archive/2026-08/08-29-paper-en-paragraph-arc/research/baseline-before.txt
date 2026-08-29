@@ -1,0 +1,5 @@
+% LOGIC (Line 4) [Severity: Major] [Priority: P1]: Potential logical jump between problem and solution
+% Current: Our method aligns the records before estimating the current quality state from the available observations.
+% Suggested: Add explicit transition (e.g., Therefore/Thus/To address this).
+% Rationale: Strengthens paragraph-level coherence.
+

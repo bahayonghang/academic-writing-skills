@@ -99,9 +99,13 @@ When literature search results are provided:
 
 Analyze the logical flow at the paragraph level across the entire paper:
 
+Observe the same four paragraph-arc signals: `P-ARC-LEAD` (topic lead / opening),
+`P-ARC-CLOSE` (wrap-up / closing), `P-ARC-LINK` (adjacent-paragraph interface),
+and `P-ARC-FLAT` (body expansion).
+
 1. **Topic sentence extraction**: Identify the central claim or topic of each paragraph (usually the first or second sentence).
 2. **Adjacency coherence check**: For each pair of adjacent paragraphs within the same section, verify there is a logical connection — either continuation, elaboration, contrast, or cause-effect.
-3. **Flag logical jumps**: Mark locations where the reader would ask "how did we get here?" — abrupt topic shifts without transition, unannounced changes of scope, or skipped reasoning steps.
+3. **Flag logical jumps**: Mark locations where the reader would ask "how did we get here?" because the relation is not recoverable from the propositions — abrupt topic shifts, unannounced changes of scope, or skipped reasoning steps. Missing transition words alone are not a logical break.
 4. **Flag causal inversions**: Identify paragraphs where effect is presented before cause, or conclusions appear before the supporting evidence.
 5. **Argument-evidence binding**: For each argumentative paragraph, check whether the evidence (citation, data, or reasoning) actually supports the stated claim. Flag paragraphs where the argument and evidence point in different directions.
 

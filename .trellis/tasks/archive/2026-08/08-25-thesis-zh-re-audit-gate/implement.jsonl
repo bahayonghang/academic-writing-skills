@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-25-thesis-zh-re-audit-gate/prd.md", "reason": "R1-R6 / AC1-AC11，含 TPR-08 五态与只读边界"}
+{"file": ".trellis/tasks/08-25-thesis-zh-re-audit-gate/design.md", "reason": "identity、有序转移表、F1-F7 gold"}
+{"file": ".trellis/tasks/08-25-thesis-zh-semantic-artifacts/prd.md", "reason": "消费同一 canonical finding 与 claim-evidence"}
+{"file": ".trellis/tasks/08-25-thesis-zh-mode-contract/prd.md", "reason": "写入 owner 是 revise mode，re-audit 不得写源"}
+{"file": ".trellis/tasks/08-25-thesis-zh-quality-closure/research/evidence-audit.md", "reason": "根因复审与 no_script_finding 不得升 pass"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "zh 测试加载"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "workflow 文档 manifest"}

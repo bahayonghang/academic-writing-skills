@@ -19,6 +19,17 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - 这`tense`类别 （`[Script]`低）标记方法/实验/结果中的现在时报告动词，门控到这些部分；参见[时态指南.md](tense-guide.md).
 - 这`overclaim`类别 （`[Script]`低）标记明确的因果/第一性/普遍性措辞；参见 [over-claim-guard.md](../evidence/over-claim-guard.md).
 
+## 密度与预算语义
+
+- 词项计数与分母共用同一可见正文适配器，排除注释、引用、标签、数学、图、表和算法。
+- 英文 `term_thresholds` 使用 `threshold_unit: per_10k_words`。每个旧绝对上限 `A` 换算为
+  每万可见词 `2A`，只在 5000 词基线保持 allowance 相等；其他长度有意按密度缩放。这是
+  基线换算，不是语料标定。未声明单位的自定义 YAML 仍保留旧绝对计数语义。
+- 少于 1500 个可见词时使用 1500 词 allowance。初始
+  `section_factors.organization=6.6` 借用中文标定值，在英文论文中仍为 **UNVERIFIED**。
+- `throat_clearing` 在全文收集段首命中，仅报告超出每万词 2.0、最低 allowance 为 1 的
+  全文预算命中。该值同样来自 5000 词基线换算，不是英文语料标定。
+
 ## 技能层响应
 
 - 将脚本输出视为分析，而不是默认重写论文的权限。

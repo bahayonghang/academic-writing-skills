@@ -7,6 +7,7 @@
 ```bash
 uv run python -B scripts/analyze_logic.py main.tex
 uv run python -B scripts/analyze_logic.py main.tex --section methods
+uv run python -B scripts/analyze_logic.py main.tex --paragraph-arc [--section introduction]
 ```
 
 **Focus Areas**:
@@ -76,6 +77,20 @@ uv run python -B scripts/analyze_logic.py main.tex --section methods
 3. **Evidence chain**: Every claim needs support (data, citation, or logic)
 4. **Explicit transitions**: Use signal words to show relationships
 5. **Justify, don't just describe**: Explain _why_, not just _what_
+
+## Paragraph-Arc Observations (`--paragraph-arc`)
+
+The optional branch adds `P-ARC-LEAD`, `P-ARC-CLOSE`, `P-ARC-LINK`, and `P-ARC-FLAT`
+observations without changing default `logic` output. It uses visible-prose paragraphs of at least
+40 English words, preserves original adjacency across headings and protected environments, and
+keeps every item at Info/P3. In Introduction and Related Work, two consecutive paragraphs missing
+both lead and close forms add a Minor/P2 group observation.
+
+These are morphological navigation aids, not semantic verdicts or rewrite proposals. Every block
+contains `[Script] P-ARC-*` and `Meaning-Check: NEEDS-LLM`. The provisional `N=2`,
+`tau=0.0200`, term patterns, and all real-paper precision/recall claims remain **UNVERIFIED**;
+only controlled synthetic fixtures have been reviewed. See
+[`../writing/paragraph-arc.md`](../writing/paragraph-arc.md).
 
 ---
 
