@@ -187,3 +187,24 @@ uv run python scripts/analyze_logic.py main.tex --motivation-thread
 2. 段落角色：背景、瓶颈、空白、方法、优势、证据、局限、展望。
 3. 证据映射：每条贡献或创新点对应的方法章节、实验结果或结论回应。
 4. 改写蓝图：只在用户明确要求时给段落级改写，且不新增引用、数据或实验结论。
+
+---
+
+## 段落弧线观察（可选开关：`--paragraph-arc`）
+
+当问题落在首句总领、末句收束、相邻段接口或单句/罗列段时，运行：
+
+```bash
+uv run python scripts/analyze_logic.py main.tex --paragraph-arc
+```
+
+| 代码 | 观察面 | 边界 |
+| --- | --- | --- |
+| `P-ARC-LEAD` | 首句总领形态 | 不判断论点是否成立 |
+| `P-ARC-CLOSE` | 末句回指或前瞻形态 | 未命中标记不等于段落不完整 |
+| `P-ARC-LINK` | 显式承接或端点词面重叠 | 不跨标题、公式、图表、算法或列表 |
+| `P-ARC-FLAT` | 单句或纯作者罗列 | 相关工作中的作者罗列仍由 A1 负责 |
+
+该分支默认关闭，finding 为 `[Script]` 观察并恒含 `Meaning-Check: NEEDS-LLM`。完整判据、
+段落范式、原创示例及 AXES 边界见
+[`paragraph-arc-zh.md`](paragraph-arc-zh.md)。

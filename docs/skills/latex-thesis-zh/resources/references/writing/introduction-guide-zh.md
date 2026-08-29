@@ -95,6 +95,19 @@ Requirement: one clear, testable sentence that can guide data collection and ver
 3. Organize the review around this thesis's innovations, clearly explaining the “shoulders of predecessors” to position the contribution;
 4. Describe progressive chapter relationships (how Chapter N output becomes Chapter N+1 input), not chapter titles one by one.
 
+## Introduction Paragraph-Arc Review
+
+After completing the six-part funnel and four-way closure, add
+`logic --paragraph-arc --section introduction` to inspect paragraph entries, exits, and adjacent
+interfaces. Individual findings are Info/P3. Only three consecutive eligible paragraphs that lack
+both a first-sentence lead and last-sentence close are summarized as Minor/P2. This upgrade prompts
+review of the group's argumentative entry and closure; it does not prove an argument error.
+
+See [`paragraph-arc-zh.md`](paragraph-arc-zh.md) for criteria, exemptions, paragraph patterns, and
+the AXES relationship. The thesis-organization section is `organization` and is excluded from
+paragraph-arc checking. A1 remains the owner of consecutive author enumeration in the literature
+review, avoiding duplicate `P-ARC-FLAT` output.
+
 ## Recommended Output Format
 
 ```latex
@@ -109,3 +122,4 @@ Requirement: one clear, testable sentence that can guide data collection and ver
 - [thesis-writing-guide.md](thesis-writing-guide.md): full-thesis mainline, chapter introductions, and chapter summaries.
 - [../modules/literature.md](../modules/literature.md): details of A1-A3 and B1-B5 checks.
 - [../modules/logic.md](../modules/logic.md): details of L-SCI/L-MAP/L-FUN/L-DOM checks.
+- [paragraph-arc-zh.md](paragraph-arc-zh.md): observation contract for paragraph openings, closes, adjacent interfaces, and internal development.

@@ -102,6 +102,17 @@ uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --intro-mainline
 3. 综述围绕本文创新点展开——把"前人肩膀"交代清楚，衬托本文贡献；
 4. 章节安排写"递进关系"（第 N 章的输出如何成为第 N+1 章的输入），不逐章复述标题。
 
+## 绪论段落弧线复核
+
+完成六节漏斗和四方闭合后，可追加 `logic --paragraph-arc --section introduction` 检查段落
+入口、出口与相邻接口。单项 finding 均为 Info/P3；只有连续 3 个合格段同时缺少首句总领
+与末句收束形态时才汇总为 Minor/P2。该升级只提示复核一组段落的论点入口和闭合，不证明
+论证错误。
+
+具体判据、豁免、段落范式和 AXES 关系见
+[`paragraph-arc-zh.md`](paragraph-arc-zh.md)。论文组织结构节属于 `organization`，不进入
+段落弧线检查；国内外研究现状中的连续作者罗列仍由 A1 负责，避免与 `P-ARC-FLAT` 双报。
+
 ## 输出建议格式
 
 ```latex
@@ -116,3 +127,4 @@ uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --intro-mainline
 - [thesis-writing-guide.md](thesis-writing-guide.md)：全文主线、章引言与本章小结。
 - [../modules/literature.md](../modules/literature.md)：A1~A3 与 B1~B5 检查项详解。
 - [../modules/logic.md](../modules/logic.md)：L-SCI/L-MAP/L-FUN/L-DOM 检查项详解。
+- [paragraph-arc-zh.md](paragraph-arc-zh.md)：段落首尾、相邻接口与段内展开的观察契约。

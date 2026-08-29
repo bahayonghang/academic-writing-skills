@@ -16,6 +16,7 @@
 | [defensive-ai-rhetoric-contract.md](./defensive-ai-rhetoric-contract.md) | 防御性推测解释的组合判据、证据校准修复、跨 surface eval 与 audit lane 预算              | 改 de-AI/experiment 的机制解释规则或 claims-vs-evidence lane 之前                        |
 | [deai-pattern-cluster-contract.md](./deai-pattern-cluster-contract.md)   | 七类学术 de-AI 模式簇、正反例、跨契约去重、保真复核与作者样本边界                     | 改 EN/ZH/Typst de-AI 模式 reference、fixture、eval 或输出契约之前                        |
 | [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让与公开路由同步契约                       | 改 `--results-analysis`、RA-* 词表/判据、结果分析 fixture 或路由资源之前                 |
+| [paragraph-arc-contract.md](./paragraph-arc-contract.md)                 | 中文学位论文 P-ARC 段落切分、章节所有权、阈值、报告与私有标定边界                    | 改 `--paragraph-arc`、P-ARC 判据、术语表、fixture、标定或公开资源之前                    |
 
 ## 背景速览
 

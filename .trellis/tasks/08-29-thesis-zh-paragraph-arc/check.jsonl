@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md", "reason": "AC6 判定：references 判据表与脚本检查分支一一对应，无只写不查条目"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "AC3 判定：默认 Info、升级条件与既有 M-* 严重度口径一致"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "AC7 的 references 与双语页面同步判定"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "AC4 基线比对测试的组织方式"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "AC2 豁免验收：四类豁免是否覆盖所有双报路径"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "C2 实现后的 P-ARC 可执行契约：章节所有权、硬边界、阈值、G2 与测试门禁"}

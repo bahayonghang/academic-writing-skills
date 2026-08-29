@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "source_name": "chapter1.tex",
+  "source_sha256": "077748f01dafb2d010e7d3e7c914820b9fb9bebfb9faa0171f4a46468d61f158",
+  "label_status": "CONFIRMED_BY_AUTHOR_2026-08-29",
+  "false_positive_budget": 2,
+  "positive_pairs": [
+    {"pair": "7->9", "basis": "problem-to-required-capability"},
+    {"pair": "9->11", "basis": "current-state-to-future-state"},
+    {"pair": "43->45", "basis": "model-to-closed-loop"},
+    {"pair": "51->53", "basis": "sampling-to-sparse-label"},
+    {"pair": "53->55", "basis": "adaptation-to-tail-sample"},
+    {"pair": "55->57", "basis": "general-soft-sensor-to-cement"},
+    {"pair": "73->75", "basis": "decision-gap-to-first-route"},
+    {"pair": "75->77", "basis": "parallel-route-marker"},
+    {"pair": "85->87", "basis": "deployment-to-feedback-loop"},
+    {"pair": "87->89", "basis": "deployment-gaps-to-two-chains"},
+    {"pair": "89->91", "basis": "chain-summary-marker"}
+  ],
+  "negative_pairs": [
+    {"pair": "7->73", "basis": "nonadjacent-topic-control"},
+    {"pair": "9->85", "basis": "nonadjacent-topic-control"},
+    {"pair": "43->77", "basis": "nonadjacent-topic-control"},
+    {"pair": "51->139", "basis": "nonadjacent-topic-control"},
+    {"pair": "55->89", "basis": "nonadjacent-topic-control"},
+    {"pair": "73->143", "basis": "nonadjacent-topic-control"},
+    {"pair": "75->151", "basis": "nonadjacent-topic-control"},
+    {"pair": "85->9", "basis": "reversed-topic-control"}
+  ]
+}

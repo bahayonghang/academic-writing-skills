@@ -187,3 +187,26 @@ When a user requests to "rewrite the introduction/method chapter/experimental di
 2. Paragraph roles: background, bottlenecks, gaps, methods, strengths, evidence, limitations, prospects.
 3. Evidence mapping: Each contribution or innovation point corresponds to the methods chapter, experimental results or conclusion response.
 4. Rewrite blueprint: Rewrite at the paragraph level only when the user explicitly requests it, and no new references, data or experimental conclusions will be added.
+
+---
+
+## Paragraph-Arc Observations (Optional Flag: `--paragraph-arc`)
+
+When the issue concerns a first-sentence lead, last-sentence close, adjacent-paragraph interface, or
+a one-sentence/enumeration paragraph, run:
+
+```bash
+uv run python scripts/analyze_logic.py main.tex --paragraph-arc
+```
+
+| Code | Observation surface | Boundary |
+| --- | --- | --- |
+| `P-ARC-LEAD` | First-sentence lead shape | Does not judge whether the point is valid |
+| `P-ARC-CLOSE` | Retrospective or prospective last-sentence shape | A missing marker does not imply an incomplete paragraph |
+| `P-ARC-LINK` | Explicit linkage or endpoint lexical overlap | Never crosses a heading, equation, figure, table, algorithm, or list |
+| `P-ARC-FLAT` | One sentence or pure author enumeration | A1 remains the owner of author enumeration in related work |
+
+This branch is off by default. Findings are `[Script]` observations and always carry
+`Meaning-Check: NEEDS-LLM`. See
+[`paragraph-arc-zh.md`](paragraph-arc-zh.md) for the complete criteria, paragraph patterns, original
+examples, and AXES boundary.

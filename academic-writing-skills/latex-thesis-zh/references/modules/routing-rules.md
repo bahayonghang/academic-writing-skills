@@ -48,6 +48,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 涉及“公式编号挤到下一行”“长公式是否应拆成两行”“公式超出版心/页边距”“相邻公式要不要同步拆行”时走 `format`，并补读 `references/formatting/formula-guide.md`；若问题是 `\label` / `\eqref` / 未定义引用，则走 `references`；若问题是标题后直接进入公式，则走 `logic`。
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
 - `logic` 默认全文档运行（含导语、主线、章引言、漏斗、三方对齐与 C3 绪论-结论闭合）；`--section` 只聚焦单章（接受英文键或中文名，如 `--section 绪论`），此时仅运行与该章相关的检查（如 related 的 A1/A3、introduction 的漏斗）。`--cross-section` 已并入默认行为，仅作兼容保留。
+- 涉及“段落首句没有总领”“段末缺少收束”“相邻段跳跃”“单句成段/段内纯罗列”时，走 `logic --paragraph-arc`，并补读 `references/writing/paragraph-arc-zh.md`。该 flag 默认关闭，只输出含 `Meaning-Check: NEEDS-LLM` 的 `[Script]` 观察；`--section` 可缩小章节作用域，`--first-chapter` 不参与段落弧线定位。`logic` 仍属于纯诊断模块，不增加改写契约。
 - `deai` 全文档分析用 `--analyze`（覆盖所有章节，含未命中关键词的正文章）；`--section` 针对单章快速检查，二者互补，不要只跑 `--section` 就下全文结论。
 - `deai` 在英文摘要区域会额外做时态检查：方法/结果句用现在时报告动词（如 `shows`/`presents`）发 `[Script]` LOW 痕迹，中文正文不检查；能识别 generic `\begin{abstract}`、thuthesis `\begin{abstract*}`、pkuthss `\begin{eabstract}`（跳过中文摘要环境）。判断级清单见 `references/writing/tense-guide-zh.md`。
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；只有明确要重构文献综述写法时才切到 `literature`。

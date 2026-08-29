@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md", "reason": "中文学位论文 RA-* 检查器的区间、证据窗口、误报避让与公开路由同步契约；P-ARC 是同一形态的新增检查器，按此先例落地"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "M-* 判定的 Info/P3 严重度与报告层契约；R2.2 的默认 Info 观察级沿用同一口径"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "analyze_logic.py 属 zh 专有脚本但仍受 conftest bare import 与副本约定影响"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "新增 fixture 与 P-ARC 回归测试的加载约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增 references/writing/paragraph-arc-zh.md 与 paragraph-arc-terms.yaml 须同步双语页面与 manifest"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "P-ARC 与 S1 导语、A1 文献罗列、E-* 章间承上存在双报风险，需按层边界排查"}

@@ -1086,7 +1086,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "e8a8f1a6e565fe25c7d2ea10dfbc8d263d85a65eba63912ad6ee2e1be7431f6a",
+      "sourceSha256": "59a1fad581c4c779f02d05131502d6338d4013dde1897594e09787997adc4cec",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1104,7 +1104,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "6e91edd6aae97077e35e63ef91dc58e605f89e32119781b812b8e6ef441c721a",
+      "sourceSha256": "ac829d89b872d6953dd3c5cf1a6be1cde695814c7da601efb823d99040e9375a",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
@@ -1176,7 +1176,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/introduction-guide-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "c853457e8c4dd0314cdfbe71f45458800e7206cd00837cc7a57706aa5bb0befa",
+      "sourceSha256": "08617432e83ffeca14a10fb1e4750e6562b0abbde1574cc48032aef7aa7fc8bb",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/introduction-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/introduction-guide-zh.md"
     },
@@ -1185,7 +1185,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/logic-coherence.md",
       "sourceLocale": "zh",
-      "sourceSha256": "61ad7180cbcb0e545dcf80235da104b6bc63884af308d2666d7638ede3e69bfb",
+      "sourceSha256": "5cde143d1adcf19906aa379790fa3ee6c2d66e90148cdeef8da06573236ef0b6",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/logic-coherence.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/logic-coherence.md"
     },
@@ -1215,6 +1215,24 @@
       "sourceSha256": "36bae2bbbc712a8595db0d45f3065ae2ad2215282fc33be0ec2a98aae40a09e0",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/paragraph-arc-terms.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "62f0d553c8ac583252674862afd69150ee78a2e4af9988bf9f088b6055114f8d",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-terms.yaml",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-terms.yaml"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/paragraph-arc-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0a1eec07052ecf4b5eb940b9de91c9c54a7f2c02951d425400a8707f2b5f4a08",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md"
     },
     {
       "skill": "latex-thesis-zh",

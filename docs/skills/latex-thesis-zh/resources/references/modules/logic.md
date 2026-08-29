@@ -118,6 +118,22 @@ All three findings are `[Script]` candidates with `Meaning-Check: NEEDS-LLM`. Th
 module motivation, design rationale, complete input/output, indirect dependencies, evidence strength,
 or final closure; review those items module by module through the method-description guide.
 
+## Paragraph Arc Checks (`--paragraph-arc`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-arc [--section introduction]
+```
+
+This additive branch checks `P-ARC-LEAD`, `P-ARC-CLOSE`, `P-ARC-LINK`, and `P-ARC-FLAT`. Individual
+findings default to Info/P3. Only three consecutive eligible paragraphs that lack LEAD+CLOSE in the
+introduction or related work add one Minor/P2 summary. Heading lead-ins, lists, protected-environment
+boundaries, and dedicated sections are exempt; LINK compares only originally adjacent paragraphs in
+one prose segment.
+
+Every finding is a `[Script]` observation with `Meaning-Check: NEEDS-LLM`; the script emits no rewrite
+text. See [`../writing/paragraph-arc-zh.md`](../writing/paragraph-arc-zh.md) for the criteria table,
+threshold boundary, paragraph patterns, and relationship to AXES.
+
 ## Body-Chapter Stitching and Introduction Bridging (Default)
 
 - **P-PAPER (all chapters by default, no flag)**: report every occurrence of “源论文/小论文/N 篇论文” in visible prose (Minor/P2), without truncation. This is direct blind-review evidence of stitching; replace with “core problem/research content/this chapter.”
