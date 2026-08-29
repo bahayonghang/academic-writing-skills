@@ -1084,11 +1084,12 @@ class ChineseAITraceChecker:
             count = 0
             first_line = 0
             first_section = "document"
-            pattern = (
-                re.compile(rf"\b{re.escape(configured_word)}\b", re.IGNORECASE)
-                if ascii_term
-                else None
-            )
+            sequence_terms = set(self.thresholds.get("sequence_terms", []))
+            pattern = None
+            if ascii_term:
+                suffix = r"(?![-‐‑‒–—][A-Za-z])" if configured_word in sequence_terms else ""
+                flags = 0 if configured_word in sequence_terms else re.IGNORECASE
+                pattern = re.compile(rf"\b{re.escape(configured_word)}\b{suffix}", flags)
             for line_no, section, text in visible_lines:
                 hits = len(pattern.findall(text)) if pattern else text.count(configured_word)
                 if hits and not count:

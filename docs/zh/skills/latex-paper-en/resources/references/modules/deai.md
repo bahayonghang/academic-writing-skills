@@ -22,9 +22,13 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 ## 密度与预算语义
 
 - 词项计数与分母共用同一可见正文适配器，排除注释、引用、标签、数学、图、表和算法。
-- 英文 `term_thresholds` 在 C3 语料标定前仍使用 `threshold_unit: per_document`；
-  未声明单位的自定义 YAML 也保留旧的绝对计数语义。
-- `throat_clearing` 在全文收集段首命中，仅报告超出唯一全文预算的命中。
+- 英文 `term_thresholds` 使用 `threshold_unit: per_10k_words`。每个旧绝对上限 `A` 换算为
+  每万可见词 `2A`，只在 5000 词基线保持 allowance 相等；其他长度有意按密度缩放。这是
+  基线换算，不是语料标定。未声明单位的自定义 YAML 仍保留旧绝对计数语义。
+- 少于 1500 个可见词时使用 1500 词 allowance。初始
+  `section_factors.organization=6.6` 借用中文标定值，在英文论文中仍为 **UNVERIFIED**。
+- `throat_clearing` 在全文收集段首命中，仅报告超出每万词 2.0、最低 allowance 为 1 的
+  全文预算命中。该值同样来自 5000 词基线换算，不是英文语料标定。
 
 ## 技能层响应
 

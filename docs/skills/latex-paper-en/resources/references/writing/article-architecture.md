@@ -23,6 +23,11 @@ Give the boundary the same status as the contribution and evidence. If a link is
 from the source, mark it as missing. Do not invent a claim, result, citation, mechanism, or
 scope condition to complete the chain.
 
+For paragraph-level navigation inside this chain, `logic --paragraph-arc` can surface missing lead,
+close, adjacent-interface, and expansion forms. It does not establish that an argument-chain link
+is semantically present or absent. See [`paragraph-arc.md`](paragraph-arc.md); the provisional
+English thresholds have synthetic-only evidence and remain **UNVERIFIED** on real papers.
+
 ## Journal-Style Abstract Moves
 
 For a journal-style abstract, consider this six-move sequence:

@@ -38,35 +38,35 @@ THRESHOLDS_FILENAME = "tone-thresholds.yaml"
 TENSE_SECTIONS = frozenset({"method", "experiment", "result"})
 
 DEFAULT_THRESHOLDS = {
-    "threshold_unit": "per_document",
+    "threshold_unit": "per_10k_words",
     "density_fallback": {"min_corpus": 1500},
     "term_thresholds": {
-        "significant": 5,
-        "comprehensive": 3,
-        "effective": 5,
-        "novel": 4,
-        "robust": 4,
-        "important": 5,
-        "various": 5,
-        "several": 5,
-        "numerous": 3,
-        "furthermore": 3,
-        "moreover": 3,
-        "notably": 3,
-        "remarkable": 3,
-        "remarkably": 3,
-        "obvious": 3,
-        "obviously": 3,
-        "clearly": 4,
+        "significant": 10,
+        "comprehensive": 6,
+        "effective": 10,
+        "novel": 8,
+        "robust": 8,
+        "important": 10,
+        "various": 10,
+        "several": 10,
+        "numerous": 6,
+        "furthermore": 6,
+        "moreover": 6,
+        "notably": 6,
+        "remarkable": 6,
+        "remarkably": 6,
+        "obvious": 6,
+        "obviously": 6,
+        "clearly": 8,
     },
-    "section_factors": {"organization": 1.0, "summary": 1.0, "default": 1.0},
-    "sequence_terms": ["first", "then", "finally"],
+    "section_factors": {"organization": 6.6, "summary": 1.0, "default": 1.0},
+    "sequence_terms": ["first", "second", "then", "finally", "next"],
     "burstiness": {
         "consecutive_paragraphs": 3,
         "opening_token_count": 2,
     },
     "throat_clearing": {
-        "budget_per_10k": 0.0,
+        "budget_per_10k": 2.0,
         "min_budget": 1,
         "patterns": [
             r"^In order to better\b",
@@ -140,7 +140,8 @@ def _load_thresholds(script_dir: Path) -> dict:
     the defaults are used and a one-line notice is printed to stderr (E3).
     """
     merged = {
-        k: (dict(v) if isinstance(v, dict) else list(v)) for k, v in DEFAULT_THRESHOLDS.items()
+        k: (dict(v) if isinstance(v, dict) else list(v) if isinstance(v, list) else v)
+        for k, v in DEFAULT_THRESHOLDS.items()
     }
     yaml_path = script_dir.parent / "references" / "deai" / THRESHOLDS_FILENAME
     if not yaml_path.exists():
@@ -939,11 +940,12 @@ class AITraceChecker:
             count = 0
             first_line = 0
             first_section = "document"
-            pattern = (
-                re.compile(rf"\b{re.escape(configured_word)}\b", re.IGNORECASE)
-                if ascii_term
-                else None
-            )
+            sequence_terms = set(self.thresholds.get("sequence_terms", []))
+            pattern = None
+            if ascii_term:
+                suffix = r"(?![-‐‑‒–—][A-Za-z])" if configured_word in sequence_terms else ""
+                flags = 0 if configured_word in sequence_terms else re.IGNORECASE
+                pattern = re.compile(rf"\b{re.escape(configured_word)}\b{suffix}", flags)
             for line_no, section, text in visible_lines:
                 hits = len(pattern.findall(text)) if pattern else text.count(configured_word)
                 if hits and not count:

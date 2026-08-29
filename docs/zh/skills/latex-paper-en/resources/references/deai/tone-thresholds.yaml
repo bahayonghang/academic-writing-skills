@@ -7,14 +7,16 @@
 # A user can override any field by editing this file; the script falls back to
 # the in-file defaults when this YAML is missing or unparseable.
 #
-# C1 keeps the existing English per-document limits until C3 calibrates them.
-# The runtime already supports density units; changing this field to
-# per_10k_words must happen together with the C3 numeric calibration.
+# C3 converts each legacy per-document cap A to 2A per 10,000 visible words.
+# This preserves the absolute allowance only at the 5,000-word baseline; other
+# lengths intentionally scale by density. This is not corpus calibration.
 
-threshold_unit: per_document
+threshold_unit: per_10k_words
 threshold_calibration:
-  source: "Existing English guard values retained provisionally"
-  method: "Per-document corpus calibration is scheduled in C3"
+  source: "Legacy English per-document guard values"
+  method: "5000-word baseline conversion (2A per 10k words), not corpus calibration"
+  corpus_required: "5-10 target-venue papers; currently unavailable"
+  validation_status: "UNVERIFIED beyond controlled fixtures"
   calibrated: "2026-08-29"
   review_due: "2027-02"
 
@@ -23,35 +25,40 @@ density_fallback:
   min_corpus: 1500
 
 term_thresholds:
-  # word -> max occurrences per document (case-insensitive, word boundary)
-  significant: 5
-  comprehensive: 3
-  effective: 5
-  novel: 4
-  robust: 4
-  important: 5
-  various: 5
-  several: 5
-  numerous: 3
-  furthermore: 3
-  moreover: 3
-  notably: 3
-  remarkable: 3
-  remarkably: 3
-  obvious: 3
-  obviously: 3
-  clearly: 4
+  # word -> max occurrences per 10,000 visible words
+  significant: 10
+  comprehensive: 6
+  effective: 10
+  novel: 8
+  robust: 8
+  important: 10
+  various: 10
+  several: 10
+  numerous: 6
+  furthermore: 6
+  moreover: 6
+  notably: 6
+  remarkable: 6
+  remarkably: 6
+  obvious: 6
+  obviously: 6
+  clearly: 8
 
 section_factors:
-  # English section-specific calibration is deferred to C3.
-  organization: 1.0
+  # Borrowed from the C1 Chinese calibration as an initial value; UNVERIFIED
+  # for English papers until a target-venue corpus is available.
+  organization: 6.6
   summary: 1.0
   default: 1.0
 
 sequence_terms:
+  # Lowercase standalone words only; uppercase/title-case forms and hyphenated
+  # compounds are excluded by the shared runtime matcher.
   - first
+  - second
   - then
   - finally
+  - next
 
 burstiness:
   # Trigger when N consecutive paragraphs start with the same opening tokens.
@@ -60,9 +67,9 @@ burstiness:
 
 throat_clearing:
   # Paragraph-leading boilerplate that adds no information.
-  # C1 keeps one provisional document-level allowance; C3 owns English corpus
-  # calibration. Only hits beyond the computed budget are reported.
-  budget_per_10k: 0.0
+  # The legacy document allowance 1 is converted to 2.0/10k at the same
+  # 5,000-word baseline. This is not corpus calibration.
+  budget_per_10k: 2.0
   min_budget: 1
   # Each entry is a regex; matched at the start of the first non-empty line
   # of a paragraph (case-insensitive).

@@ -186,12 +186,16 @@ def test_sequence_terms_receive_only_the_classified_section_allowance(tmp_path: 
     assert _term_traces(organization) == []
 
 
-def test_en_per_document_limits_stay_legacy_until_c3(tmp_path: Path) -> None:
+def test_en_limits_use_c3_density_conversion_with_short_document_fallback(
+    tmp_path: Path,
+) -> None:
     checker = _en_checker(tmp_path, "\\section{Introduction}\n" + "novel " * 5)
     traces = _term_traces(checker)
     novel = next(trace for trace in traces if trace["pattern"] == "term_threshold:novel")
-    assert "legacy cap 4" in novel["text"]
-    assert checker.thresholds["threshold_unit"] == "per_document"
+    assert "cap 8.0/10k words" in novel["text"]
+    assert "absolute allowance 2" in novel["text"]
+    assert "fallback" in novel["text"]
+    assert checker.thresholds["threshold_unit"] == "per_10k_words"
 
 
 def test_custom_yaml_without_unit_keeps_absolute_semantics_and_warns(

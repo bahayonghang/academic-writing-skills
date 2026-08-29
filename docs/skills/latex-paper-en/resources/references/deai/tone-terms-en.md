@@ -1,7 +1,7 @@
 # AI Tone Terms (English) — Reference
 
 This document lists the English vocabulary patterns most associated with
-AI-generated academic prose, with a recommended per-document occurrence
+AI-generated academic prose, with a provisional per-10,000-word occurrence
 budget. The companion file `tone-thresholds.yaml` is the authoritative
 source consumed by `deai_check.py`.
 
@@ -9,13 +9,17 @@ source consumed by `deai_check.py`.
 
 - `deai_check.py` reads `tone-thresholds.yaml` at startup.
 - Each word in `term_thresholds:` triggers a `[Script] LOW` trace once its
-  per-document count exceeds the listed value.
-- Counts are case-insensitive and word-boundary matched against visible prose
+  visible-word density exceeds the listed value.
+- Ordinary terms are case-insensitive and word-boundary matched against visible prose
   (citations, refs, math, comments, figures, tables, and algorithms are stripped first).
-- C1 exposes the shared density runtime, but this English table remains
-  `threshold_unit: per_document` until C3 calibrates per-10,000-word values.
-  A legacy custom YAML without `threshold_unit` also keeps absolute semantics
-  and emits an upgrade notice instead of silently changing the result.
+  Entries in `sequence_terms` are the exception: only lowercase standalone words count;
+  uppercase/title-case forms and hyphenated compounds are excluded.
+- C3 sets `threshold_unit: per_10k_words`. Each legacy absolute cap `A` was converted to `2A`
+  per 10,000 visible words, preserving the allowance only at the 5,000-word baseline. Other
+  lengths intentionally scale. This is a baseline conversion, not corpus calibration.
+- A corpus of 5-10 target-venue papers is still required. English density precision, transfer,
+  and the borrowed organization factor remain **UNVERIFIED**. A legacy custom YAML without
+  `threshold_unit` keeps absolute semantics and emits an upgrade notice.
 - Override by editing the YAML; this MD file is documentation only.
 
 ## Maintenance cadence (this list is a snapshot, not a final state)
@@ -37,23 +41,23 @@ as templated.
 
 | Word          | Threshold | Why it matters                                                   |
 | ------------- | --------- | ---------------------------------------------------------------- |
-| significant   | 5         | Often hides missing effect size or p-value                       |
-| comprehensive | 3         | Marketing language; rarely earned by a single study              |
-| effective     | 5         | Cheap claim without baseline comparison                          |
-| novel         | 4         | Reviewers discount the word unless the novelty is named          |
-| robust        | 4         | Needs the perturbation / noise level that justifies the claim    |
-| important     | 5         | Replace with what is at stake                                    |
-| various       | 5         | Vague quantifier; usually fixable with a number                  |
-| several       | 5         | Vague quantifier                                                 |
-| numerous      | 3         | Vague quantifier; almost always replaceable with a count         |
-| furthermore   | 3         | Padding connector; often signals a content-free addition         |
-| moreover      | 3         | Padding connector                                                |
-| notably       | 3         | "Notably" is rarely needed when the content is genuinely notable |
-| remarkable    | 3         | Editorial language; let the data carry the claim                 |
-| remarkably    | 3         | Same as above                                                    |
-| obvious       | 3         | Over-confident hedge                                             |
-| obviously     | 3         | Over-confident hedge                                             |
-| clearly       | 4         | Over-confident hedge                                             |
+| significant   | 10        | Often hides missing effect size or p-value                       |
+| comprehensive | 6         | Marketing language; rarely earned by a single study              |
+| effective     | 10        | Cheap claim without baseline comparison                          |
+| novel         | 8         | Reviewers discount the word unless the novelty is named          |
+| robust        | 8         | Needs the perturbation / noise level that justifies the claim    |
+| important     | 10        | Replace with what is at stake                                    |
+| various       | 10        | Vague quantifier; usually fixable with a number                  |
+| several       | 10        | Vague quantifier                                                 |
+| numerous      | 6         | Vague quantifier; almost always replaceable with a count         |
+| furthermore   | 6         | Padding connector; often signals a content-free addition         |
+| moreover      | 6         | Padding connector                                                |
+| notably       | 6         | "Notably" is rarely needed when the content is genuinely notable |
+| remarkable    | 6         | Editorial language; let the data carry the claim                 |
+| remarkably    | 6         | Same as above                                                    |
+| obvious       | 6         | Over-confident hedge                                             |
+| obviously     | 6         | Over-confident hedge                                             |
+| clearly       | 8         | Over-confident hedge                                             |
 
 ## Burstiness (paragraph opening repetition)
 
@@ -79,11 +83,10 @@ information. The default pattern set covers:
 - `As mentioned earlier ...`
 - Leading discourse markers: `Notably,`, `Furthermore,`, `Moreover,`, `In summary,`, `To summarize,`
 
-The current English configuration keeps one provisional document-level
-allowance (`min_budget: 1`) and reports only later hits, including the total
-hit count, budget, and global occurrence number. C3 owns English corpus
-calibration; C1 does not reinterpret the existing absolute term limits as
-density values.
+The English configuration uses 2.0 hits per 10,000 visible words with
+`min_budget: 1` and reports only later hits, including the total hit count,
+budget, and global occurrence number. The value preserves the legacy allowance
+only at 5,000 words and is not English-corpus calibration.
 
 ## Punctuation patterns
 

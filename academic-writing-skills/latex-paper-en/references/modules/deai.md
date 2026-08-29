@@ -23,10 +23,16 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 
 - Term counts and denominators share one visible-prose adapter that excludes comments,
   citations, labels, math, figures, tables, and algorithms.
-- English `term_thresholds` still use `threshold_unit: per_document` until the C3 corpus
-  calibration; custom YAML without a unit also keeps legacy absolute-count semantics.
+- English `term_thresholds` use `threshold_unit: per_10k_words`. Each legacy absolute cap `A` was
+  converted to `2A` per 10,000 visible words, which preserves allowance only at the 5,000-word
+  baseline; other lengths intentionally scale. This is a baseline conversion, not corpus
+  calibration. Custom YAML without a unit still keeps legacy absolute-count semantics.
+- Documents below 1,500 visible words use the 1,500-word allowance. The initial
+  `section_factors.organization=6.6` is borrowed from Chinese calibration and remains
+  **UNVERIFIED** for English papers.
 - `throat_clearing` collects paragraph-opening hits across the whole document and reports only
-  occurrences beyond the single document-wide budget.
+  occurrences beyond a 2.0-per-10,000-word budget with a minimum allowance of one. This value is
+  the same 5,000-word baseline conversion, not English-corpus calibration.
 
 ## Skill-Layer Response
 

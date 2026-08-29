@@ -7,6 +7,7 @@
 ```bash
 uv run python -B scripts/analyze_logic.py main.tex
 uv run python -B scripts/analyze_logic.py main.tex --section methods
+uv run python -B scripts/analyze_logic.py main.tex --paragraph-arc [--section introduction]
 ```
 
 **重点领域**：
@@ -76,6 +77,18 @@ uv run python -B scripts/analyze_logic.py main.tex --section methods
 3. **证据链**：每项主张都需要支持（数据、引文或逻辑）
 4. **显式转换**：使用信号词来显示关系
 5. **证明，而不仅仅是描述**：解释_为什么_，而不仅仅是_什么_
+
+## 段落弧线观察（`--paragraph-arc`）
+
+这一可选分支新增 `P-ARC-LEAD`、`P-ARC-CLOSE`、`P-ARC-LINK` 与 `P-ARC-FLAT`
+观察，不改变默认 `logic` 输出。它检查至少含 40 个英文可见词的段落，保留标题和受保护
+环境形成的原始邻接边界，并将各单项保持为 Info/P3。在 Introduction 与 Related Work 中，
+连续两个同时缺少 lead 和 close 形态的段落会追加一条 Minor/P2 组观察。
+
+这些是形态导航提示，不是语义结论或改写提案。每个块都包含 `[Script] P-ARC-*` 与
+`Meaning-Check: NEEDS-LLM`。临时值 `N=2`、`tau=0.0200`、术语 pattern 及所有真实论文
+查准率/召回率声明仍为 **UNVERIFIED**；目前只人工核读了受控合成 fixture。详见
+[`../writing/paragraph-arc.md`](../writing/paragraph-arc.md)。
 
 ---
 

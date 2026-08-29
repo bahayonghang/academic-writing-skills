@@ -12,3 +12,5 @@
 # Disable text normalization so Windows checkouts stay byte-identical.
 tests/fixtures/paragraph_arc/baseline-before.txt -text -diff
 .trellis/tasks/**/08-29-thesis-zh-paragraph-arc/research/baseline-before.txt -text -diff
+tests/fixtures/paragraph_arc_en/baseline-before.txt -text -diff
+.trellis/tasks/**/08-29-paper-en-paragraph-arc/research/baseline-before.txt -text -diff

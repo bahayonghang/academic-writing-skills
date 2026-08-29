@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "检查 canonical 同步方向、三副本锁与 spec 索引"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "检查测试加载、clean-clone 与证据边界"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "检查公开资源、翻译、manifest 与 docs build"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "检查 segment/ownership/输出/默认基线边界及 EN 差异是否显式"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "确认未把启发式痕迹扩张为 AI 检测结论"}
+{"file": ".trellis/tasks/08-29-paper-en-paragraph-arc/prd.md", "reason": "逐条验收 AC1-AC10 与 UNVERIFIED 声明"}

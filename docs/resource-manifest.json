@@ -330,7 +330,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/tone-terms-en.md",
       "sourceLocale": "en",
-      "sourceSha256": "42f4360559cceca51e7071b8d0bccabf7f1657d9a9e6013d82c4447ed7dfc52e",
+      "sourceSha256": "0ae4a78809189834ac0f7920262c3f53b3ff42e4f8542b472a8e23f579593d51",
       "en": "docs/skills/latex-paper-en/resources/references/deai/tone-terms-en.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-terms-en.md"
     },
@@ -339,7 +339,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/tone-thresholds.yaml",
       "sourceLocale": "neutral",
-      "sourceSha256": "d4cea59d351fffd4694d2cc9cdc37df7ca002154d3b56447bd58a7db4483a777",
+      "sourceSha256": "6ca30255a5870a30ab83fef5a42a588a82154106b08e498b8f20e1f7727f81e6",
       "en": "docs/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml"
     },
@@ -438,7 +438,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "ef7734c67a5004465b3c7593763db1c4e771b655822defc29e30d03585f5c71c",
+      "sourceSha256": "5af4bff955426a3894837f7566ea3522d2e105f9d0d5d7f57de4e5cd554006d7",
       "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
     },
@@ -492,7 +492,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/logic.md",
       "sourceLocale": "en",
-      "sourceSha256": "ba889aaa98533dc510e042b939531f96ab1a47c649b3e5f1691d221e333b34df",
+      "sourceSha256": "b9b048f0b7e80ae7b7f56b530b9472bdf56d16170660adc1a3941d22de2eb736",
       "en": "docs/skills/latex-paper-en/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/logic.md"
     },
@@ -510,7 +510,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/routing-rules.md",
       "sourceLocale": "en",
-      "sourceSha256": "d12751b80ba5473075f26acd3b28ecc2eb7cc5b84a16718d4420fdc600618278",
+      "sourceSha256": "066cbab9a90d6e7b09673a544c483230905d5c970123f0e28e8d68ea4b28d6ec",
       "en": "docs/skills/latex-paper-en/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/routing-rules.md"
     },
@@ -627,7 +627,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/writing/article-architecture.md",
       "sourceLocale": "en",
-      "sourceSha256": "9d72bb8f3c0d20fceb9a9938845609a693382d65135663a1cf69f798179ae251",
+      "sourceSha256": "6905db9b4d34fb286bf481cb903672aa884a305f4587a48dff3af19626f93f6a",
       "en": "docs/skills/latex-paper-en/resources/references/writing/article-architecture.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/article-architecture.md"
     },
@@ -648,6 +648,24 @@
       "sourceSha256": "b5e416708f08ff2c5d10dd10702f673c3c6f381fe934d0559fa61470e22a5ff2",
       "en": "docs/skills/latex-paper-en/resources/references/writing/common-errors.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/common-errors.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/paragraph-arc-terms.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "a66854b0c451ad0190e7c5dfa0bd815b01b23c68eff61ed8739bbaa8dd7e6855",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/paragraph-arc-terms.yaml",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/paragraph-arc-terms.yaml"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/paragraph-arc.md",
+      "sourceLocale": "en",
+      "sourceSha256": "0fef0bcf13c24bae7738cf0739543cbc5deb8a75aba9a660462ae15a217f9fa0",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/paragraph-arc.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/paragraph-arc.md"
     },
     {
       "skill": "latex-paper-en",

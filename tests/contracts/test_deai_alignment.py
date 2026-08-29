@@ -296,13 +296,12 @@ def test_teaching_notes_cover_same_dimensions(deai_modules: dict[str, ModuleType
 
 
 def test_term_thresholds_relationships(deai_modules: dict[str, ModuleType]) -> None:
-    """Typst's term table = EN's English terms + a curated subset of ZH's
-    Chinese terms; every shared entry must carry the same config."""
+    """Typst keeps legacy EN caps while EN stores their exact 5000-word conversion."""
     tables = {k: mod.DEFAULT_THRESHOLDS["term_thresholds"] for k, mod in deai_modules.items()}
     en, zh, typst = tables["en"], tables["zh"], tables["typst"]
     assert set(en) <= set(typst), "EN terms missing from Typst table"
     for term in en:
-        assert en[term] == typst[term], f"config drift for shared term {term!r}"
+        assert en[term] == 2 * typst[term], f"5000-word conversion drift for {term!r}"
     cjk_extras = set(typst) - set(en)
     assert cjk_extras <= set(zh), f"Typst CJK terms not sourced from ZH: {cjk_extras - set(zh)}"
     # C1 calibrates the ZH thesis table only. Typst keeps its pre-C1 absolute
@@ -323,17 +322,36 @@ def test_term_thresholds_relationships(deai_modules: dict[str, ModuleType]) -> N
     assert {term: typst[term] for term in cjk_extras} == expected_typst_cjk
 
 
-def test_threshold_units_preserve_unscaled_surfaces(
+def test_threshold_units_preserve_typst_and_convert_en(
     deai_modules: dict[str, ModuleType],
 ) -> None:
     assert deai_modules["zh"].DEFAULT_THRESHOLDS["threshold_unit"] == "per_10k_chars"
-    for key in ("en", "typst"):
-        mod = deai_modules[key]
-        assert mod.DEFAULT_THRESHOLDS["threshold_unit"] == "per_document"
-        scaled = mod._apply_tier(mod.DEFAULT_THRESHOLDS, "light")
-        assert isinstance(
-            scaled["term_thresholds"][next(iter(mod.DEFAULT_THRESHOLDS["term_thresholds"]))], int
-        )
+    en = deai_modules["en"]
+    typst = deai_modules["typst"]
+    assert en.DEFAULT_THRESHOLDS["threshold_unit"] == "per_10k_words"
+    assert typst.DEFAULT_THRESHOLDS["threshold_unit"] == "per_document"
+    en_scaled = en._apply_tier(en.DEFAULT_THRESHOLDS, "light")
+    typst_scaled = typst._apply_tier(typst.DEFAULT_THRESHOLDS, "light")
+    assert isinstance(en_scaled["term_thresholds"]["significant"], float)
+    assert isinstance(typst_scaled["term_thresholds"]["significant"], int)
+
+
+def test_sequence_term_boundary_contract_is_shared(
+    deai_modules: dict[str, ModuleType], tmp_path: Path
+) -> None:
+    for key, mod in deai_modules.items():
+        suffix = ".typ" if key == "typst" else ".tex"
+        source = tmp_path / f"{key}{suffix}"
+        source.write_text("first first-order FIRST First first–stage\n", encoding="utf-8")
+        checker = getattr(mod, CHECKER_CLASS[key])(source)
+        checker.thresholds["threshold_unit"] = "per_document"
+        checker.thresholds["term_thresholds"] = {"first": 0}
+        checker.thresholds["sequence_terms"] = ["first"]
+        checker._iter_visible_lines = lambda: [
+            (1, "introduction", "first first-order FIRST First first–stage")
+        ]
+        traces = checker._check_term_threshold()
+        assert len(traces) == 1 and "used 1 times" in traces[0]["text"]
 
 
 def test_throat_clearing_relationships(deai_modules: dict[str, ModuleType]) -> None:
