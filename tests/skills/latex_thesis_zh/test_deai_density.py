@@ -275,6 +275,8 @@ def test_live_calibration_reproduces_checked_in_summary_when_corpus_is_available
         REPO_ROOT
         / ".trellis"
         / "tasks"
+        / "archive"
+        / "2026-08"
         / "08-29-writing-rhythm-arc"
         / "research"
         / "calibrate_density.py"
@@ -286,6 +288,7 @@ def test_live_calibration_reproduces_checked_in_summary_when_corpus_is_available
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    module.THESIS_DIR = thesis_files[0].parent
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
         module.main()
