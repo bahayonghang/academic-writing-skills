@@ -1317,3 +1317,28 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 若继续实现，从归档规划另开 in_progress 任务；勿把本次归档当作实现批准
+
+
+## Session 38: 完成写作节奏与段落弧线任务集成
+
+**Date**: 2026-08-29
+**Task**: 完成写作节奏与段落弧线任务集成
+**Branch**: `dev`
+
+### Summary
+
+串行完成并归档 C1-C4 与父任务：落地中文密度预算、双语 P-ARC 诊断和 paper-audit Clarity 契约；修正父任务误报基线，保留英文真实语料、跨 venue 与审稿影响的 UNVERIFIED 边界。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4b37ddf` | (see git log) |
+| `af84e4a` | (see git log) |
+| `e09675d` | (see git log) |
+| `a56b74c` | (see git log) |
+| `083e035` | (see git log) |
+
+### Status
+
+[OK] **Completed**
