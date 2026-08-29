@@ -697,11 +697,12 @@ This is clean text with no issues.
             encoding="utf-8",
         )
 
-        calls: list[str] = []
+        calls: list[tuple[str, list[str]]] = []
 
         def fake_run(script_path, file_path, extra_args=None):
-            calls.append(Path(script_path).name)
-            if Path(script_path).name == "analyze_experiment.py":
+            name = Path(script_path).name
+            calls.append((name, list(extra_args or [])))
+            if name == "analyze_experiment.py":
                 return 0, "% EXPERIMENT (Line 1) [Severity: Major] [Priority: P1]: issue", ""
             return 0, "", ""
 
@@ -709,7 +710,10 @@ This is clean text with no issues.
         monkeypatch.setattr(audit, "_run_checklist", lambda *args, **kwargs: [])
 
         result = audit.run_audit(str(tex), mode="self-check", lang="en")
-        assert "analyze_experiment.py" in calls
+        assert any(name == "analyze_experiment.py" for name, _ in calls)
+        deai_calls = [args for name, args in calls if name == "deai_check.py"]
+        assert deai_calls
+        assert all("--analyze" not in args for args in deai_calls)
         assert any(issue.module == "EXPERIMENT" for issue in result.issues)
 
     def test_gate_presubmission_major_stays_advisory(

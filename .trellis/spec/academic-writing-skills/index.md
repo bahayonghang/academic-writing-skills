@@ -18,6 +18,7 @@
 | [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让与公开路由同步契约                       | 改 `--results-analysis`、RA-* 词表/判据、结果分析 fixture 或路由资源之前                 |
 | [paragraph-arc-contract.md](./paragraph-arc-contract.md)                 | 中文学位论文 P-ARC 段落切分、章节所有权、阈值、报告与私有标定边界                    | 改 `--paragraph-arc`、P-ARC 判据、术语表、fixture、标定或公开资源之前                    |
 | [paragraph-arc-en-contract.md](./paragraph-arc-en-contract.md)           | 英文论文 P-ARC 差异、5000 词密度换算、序列词边界与 synthetic-only 证据边界          | 改 EN `--paragraph-arc`、英文密度阈值或三副本序列词计数之前                              |
+| [paragraph-arc-audit-contract.md](./paragraph-arc-audit-contract.md)     | paper-audit Clarity 五档、lane/agent 四项观察、评分隔离与证据边界                    | 改审稿侧段落弧线 rubric、lane、agent、psychology 或对应双语资源之前                       |
 
 ## 背景速览
 

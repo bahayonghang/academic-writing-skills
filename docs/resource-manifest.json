@@ -1572,7 +1572,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/quality_rubrics.md",
       "sourceLocale": "en",
-      "sourceSha256": "378804bdb62c27df9549f2f077d8d7f478782fa1e20dfaabc32490f473b8f519",
+      "sourceSha256": "bba8d125a77fdbfbd7aa94a9f9f7a687fcc3303c05007d85b0fcddb2f3f91154",
       "en": "docs/skills/paper-audit/resources/references/quality_rubrics.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/quality_rubrics.md"
     },
@@ -1599,7 +1599,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "ff519d652d8f779d82b523071597aec7633dc587555e317bc219a21eabce9b3b",
+      "sourceSha256": "271d4b813de76b04e56c981d41a34417ca877dcea6a0db74552b969d37d0f38d",
       "en": "docs/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md"
     },
@@ -1608,7 +1608,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEWER_PSYCHOLOGY.md",
       "sourceLocale": "en",
-      "sourceSha256": "47c8fcebab15543790eda880aee54002aaecc652b0c92024bbb4af337a781d86",
+      "sourceSha256": "2e7580be6ec34aad4cbe18b754850a604aeaa4c3cd0d41673313ade54433c254",
       "en": "docs/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md"
     },
@@ -1644,7 +1644,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "d536814d9f6ff7f5ca546c30ddf7c729d2dd1385f95e6e0c3b9fd237e7008b57",
+      "sourceSha256": "458f99f9758c8fe3bf529ebc2f4c3cc5126737f46aea358f547478df0c04d6fc",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1797,7 +1797,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "8ad80166b97f96a8405c6300c1cccf2ad91aec22e1aa24bede062e8303d42d55",
+      "sourceSha256": "fc7456324f906791c7697e52a1a2b0c0e8787fd9991a76bce0ddb093b4653e35",
       "en": "docs/skills/paper-audit/resources/agents/critical_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/critical_reviewer_agent.md"
     },
@@ -1887,7 +1887,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/section_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "122950441de53c9b94ef01c3e909c427550f5765ff7cab8697c38a9fab163948",
+      "sourceSha256": "bd6cc1899aaf453d39da811e8bbabdb0cf7bffab8725b06320e080b83c4b3f6f",
       "en": "docs/skills/paper-audit/resources/agents/section_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/section_reviewer_agent.md"
     },

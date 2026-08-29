@@ -5,7 +5,10 @@
 ## 分段审查通道
 
 - `section_intro_related`
-  - 检查框架、新颖性定位以及论文早期做出的承诺
+  - 检查研究框架、新颖性定位以及论文前部作出的承诺；观察同一组四项段落弧线信号：
+    `P-ARC-LEAD`（段首主题引导）、`P-ARC-CLOSE`（段末收束）、
+    `P-ARC-LINK`（相邻段接口）和 `P-ARC-FLAT`（段内展开）；仅缺少显式过渡词
+    不等于逻辑断裂
 - `section_methods`
   - 检查定义、假设、推导和方法细节；审查方法论接口与论证完整性时，加载 `section_methods` 焦点块（位于 `SUBAGENT_TEMPLATES.md`）
 - `section_results`

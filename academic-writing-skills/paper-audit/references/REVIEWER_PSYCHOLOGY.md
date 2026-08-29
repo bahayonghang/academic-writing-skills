@@ -30,6 +30,25 @@ the author list, and the venue. Within 30 seconds: the **first sentence of the a
 (empty throat-clearing or a concrete gap?), the **last sentence of the abstract** (does the
 claim overreach?), and **Figure 1** (understandable at a glance?).
 
+## Paragraph-arc rereading heuristic (audit-only)
+
+Use paragraph-arc recoverability as an audit heuristic, not as an established
+universal model of reviewer behavior. During a skim, test whether an opening
+establishes the paragraph's expected claim, object, or question and whether the
+closing states the local conclusion or next direction. If those roles or the
+relation to an adjacent paragraph cannot be recovered from the prose, rereading
+may be required and may contribute to a negative clarity impression.
+
+Observe the same four paragraph-arc signals used by the writing skills:
+`P-ARC-LEAD` (topic lead / opening), `P-ARC-CLOSE` (wrap-up / closing),
+`P-ARC-LINK` (adjacent-paragraph interface), and `P-ARC-FLAT` (body expansion).
+Missing transition words alone are not evidence of a break.
+
+Evidence is deliberately bounded: C2 provides a local recomputation on one
+Chinese thesis chapter, while C3 provides only a controlled English fixture.
+Target-conference and target-journal applicability, cross-venue stability, and
+effects on actual reviewer scores remain **UNVERIFIED**.
+
 ## Where reviewers stop to doubt — ranked by how often it happens
 
 Order findings by this list. Higher = a reviewer is more likely to catch it and let it

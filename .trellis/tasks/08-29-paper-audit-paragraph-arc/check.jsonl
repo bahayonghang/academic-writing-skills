@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "AC2/AC5 判定：九维权重与 scoring_model.py diff 为空，severity 映射未变"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "AC3 判定：lane 与 subagent 模板表述一致，未越界吸收其他 reviewer 工作"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "AC7 的双语页面与 manifest 散列同步判定"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "AC4 四要素公共集合与形态边界比对基准"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-en-contract.md", "reason": "核对英文证据仍是 synthetic-only 且真实 venue 不升级"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对测试归属、SKILL 触碰边界与全量质量门"}

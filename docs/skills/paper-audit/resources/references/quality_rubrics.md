@@ -91,11 +91,11 @@ Base score: 10.0, deducted per issue (Critical -2.5, Major -1.25, Minor -0.5). F
 
 | Score Range | Level     | Behavioral Indicators                                                                         |
 | ----------- | --------- | --------------------------------------------------------------------------------------------- |
-| 9.0 - 10.0  | Excellent | Exceptionally well-written; perfectly organized; all notation consistent and well-defined     |
-| 7.0 - 8.9   | Good      | Clear writing; well-organized; minor notation or terminology inconsistencies                  |
-| 5.0 - 6.9   | Fair      | Generally clear but some sections confusing; organization could improve; several style issues |
-| 3.0 - 4.9   | Poor      | Frequently unclear; poor organization; inconsistent terminology hinders understanding         |
-| 1.0 - 2.9   | Failing   | Very difficult to understand; disorganized; pervasive writing problems                        |
+| 9.0 - 10.0  | Excellent | Exceptionally well-written; perfectly organized; all notation consistent and well-defined; nearly every body paragraph has an identifiable topic lead and closing direction, with adjacent-paragraph relations and body expansion recoverable from the prose |
+| 7.0 - 8.9   | Good      | Clear writing; well-organized; minor notation or terminology inconsistencies; most body paragraphs have identifiable leads and closings, with only isolated adjacent-paragraph interfaces or body expansions requiring rereading |
+| 5.0 - 6.9   | Fair      | Generally clear but some sections confusing; organization could improve; several style issues; several paragraphs have weak leads, closings, interfaces, or body expansion, so their role must be inferred from surrounding text |
+| 3.0 - 4.9   | Poor      | Frequently unclear; poor organization; inconsistent terminology hinders understanding; many paragraphs lack an identifiable lead or closing direction, and adjacent interfaces or body expansion repeatedly require rereading |
+| 1.0 - 2.9   | Failing   | Very difficult to understand; disorganized; pervasive writing problems; paragraph roles are usually not recoverable from leads or closings, while interfaces are obscure and body content is predominantly single-sentence or list-like |
 
 ### Presentation (Weight: 8%, Source: Script)
 

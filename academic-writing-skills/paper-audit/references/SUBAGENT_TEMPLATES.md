@@ -62,6 +62,31 @@ each canonical lane in `REVIEW_LANE_GUIDE.md`. Inject the matching `Focus`,
 `DO`, `DON'T`, and any stated `Output limit` directives into the dispatched
 prompt.
 
+### Lane: section_intro_related - Framing & paragraph-arc recoverability
+
+**Focus**: audit framing, novelty positioning, early promises, and whether the
+role of each Introduction or Related Work paragraph is recoverable from the
+prose.
+
+**DO**:
+
+- observe the same four paragraph-arc signals: `P-ARC-LEAD` (topic lead / opening),
+  `P-ARC-CLOSE` (wrap-up / closing), `P-ARC-LINK` (adjacent-paragraph interface),
+  and `P-ARC-FLAT` (body expansion)
+- identify the specific paragraph whose opening does not state its claim,
+  object, or question, or whose closing neither wraps up the point nor states
+  the next direction
+- verify an adjacent-paragraph relation from the propositions themselves, and
+  check whether a single-sentence or list-like body supplies enough evidence,
+  explanation, or comparison for its stated role
+
+**DON'T**:
+
+- do not treat missing transition words alone as a logical break; an explicit
+  transition is one possible interface signal, not a requirement
+- do not duplicate Related Work author/year catalog findings owned by A1
+- do not infer target-venue validity from these observation labels
+
 ### Lane: section_methods - Methodological interface & argumentation completeness
 
 **Focus**: audit whether each method module has a closed argument and an
