@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "三套对齐锁（parsers/deai/writing-modules）与 conftest 的 bare import 规则是本任务树全部改动的边界前提"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "按技能副本脚本的测试加载约定与阈值/evals 工具约定；四个子任务都要新增 fixture 与阈值配置"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "references/templates/examples 增删到双语 VitePress 页面与 manifest 的可执行契约；父任务 AC6 直接引用它"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration.md", "reason": "密度阈值标定的复算口径与数据来源，父任务 AC7 的判定依据"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration-raw.txt", "reason": "五篇参考论文的实测计数、密度与建议阈值原始输出，AC1/AC7 复算基线"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "改动跨 deai/logic/parsers/docs 四层与三个技能副本，需要按层边界排查遗漏"}

@@ -330,7 +330,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/tone-terms-en.md",
       "sourceLocale": "en",
-      "sourceSha256": "db74d2de4b63d5b3ad8fe017aec070b9bd37f8be32dddffd2999b72f4d2877eb",
+      "sourceSha256": "42f4360559cceca51e7071b8d0bccabf7f1657d9a9e6013d82c4447ed7dfc52e",
       "en": "docs/skills/latex-paper-en/resources/references/deai/tone-terms-en.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-terms-en.md"
     },
@@ -339,7 +339,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/deai/tone-thresholds.yaml",
       "sourceLocale": "neutral",
-      "sourceSha256": "acf1aaaeed3cf8e6641aed1797469baf43bc04571bef7f1f3247984df3c38ce8",
+      "sourceSha256": "d4cea59d351fffd4694d2cc9cdc37df7ca002154d3b56447bd58a7db4483a777",
       "en": "docs/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/deai/tone-thresholds.yaml"
     },
@@ -438,7 +438,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "c104ca07ebdd4a722ad32b277b80fc1467bfd066d646617ef996d3cf08950a6b",
+      "sourceSha256": "ef7734c67a5004465b3c7593763db1c4e771b655822defc29e30d03585f5c71c",
       "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
     },
@@ -924,7 +924,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/deai/tone-terms-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "83e2c4e71cb0a749f3830532b4f1815a97b983d3369186699e6983c78ba545a6",
+      "sourceSha256": "64b8f080c638ae208b127d863e9acf98c62ff463daa6522e43d2a9d97ad562c8",
       "en": "docs/skills/latex-thesis-zh/resources/references/deai/tone-terms-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/tone-terms-zh.md"
     },
@@ -933,7 +933,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/deai/tone-thresholds.yaml",
       "sourceLocale": "neutral",
-      "sourceSha256": "2c3a3f8db48a67066d5ecc49284322bce9ca16a85f383d873770304ca590d238",
+      "sourceSha256": "4db9c5e88b8d10d5be22f378e856b34afef8bb139290b58a7636c316c2bdb541",
       "en": "docs/skills/latex-thesis-zh/resources/references/deai/tone-thresholds.yaml",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/tone-thresholds.yaml"
     },
@@ -1041,7 +1041,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "35725ce677760857a056fcedfa760867bdff26bab9b1cdd149fce4c7033af747",
+      "sourceSha256": "eefbd7a4f3a66d04e2436623a50193204f265fa45b36305eebbaeef0b48fde7d",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
     },
@@ -1896,7 +1896,7 @@
       "kind": "references",
       "source": "academic-writing-skills/typst-paper/references/AI_TONE_THRESHOLDS.yaml",
       "sourceLocale": "neutral",
-      "sourceSha256": "06b0f1967249d162b2b1d72dbc8d6bce751fd16909e7d421f691f5d07d614cb1",
+      "sourceSha256": "a36ccc7c867c57c30f8b27f457092c4089d0a3678e53f9e1e9efd43e16cda720",
       "en": "docs/skills/typst-paper/resources/references/AI_TONE_THRESHOLDS.yaml",
       "zh": "docs/zh/skills/typst-paper/resources/references/AI_TONE_THRESHOLDS.yaml"
     },

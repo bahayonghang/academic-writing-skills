@@ -19,6 +19,15 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - The `tense` category (`[Script]` LOW) flags present-tense reporting verbs in Methods / Experiments / Results, gated to those sections; see [tense-guide.md](tense-guide.md).
 - The `overclaim` category (`[Script]` LOW) flags unambiguous causal / firstness / universality phrasing; see [over-claim-guard.md](../evidence/over-claim-guard.md).
 
+## Density and Budget Semantics
+
+- Term counts and denominators share one visible-prose adapter that excludes comments,
+  citations, labels, math, figures, tables, and algorithms.
+- English `term_thresholds` still use `threshold_unit: per_document` until the C3 corpus
+  calibration; custom YAML without a unit also keeps legacy absolute-count semantics.
+- `throat_clearing` collects paragraph-opening hits across the whole document and reports only
+  occurrences beyond the single document-wide budget.
+
 ## Skill-Layer Response
 
 - Treat the script output as analysis, not as permission to rewrite the paper by default.

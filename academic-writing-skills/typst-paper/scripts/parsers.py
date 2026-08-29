@@ -163,6 +163,8 @@ class TypstParser(DocumentParser):
     SECTION_PATTERNS = {
         "introduction": r"^=\s+(?:Introduction|INTRODUCTION|绪论|引言)",
         "related": r"^=\s+(?:Related\s+Work|RELATED\s+WORK|相关工作|文献综述)",
+        "organization": r"^=\s+.*(?:Paper\s+Organization|Roadmap|Outline|组织结构|结构安排|技术路线)",
+        "summary": r"^=\s+.*(?:(?:Chapter|Section)\s+Summary|本章小结)",
         "method": r"^=\s+.*(?:Method|Methodology|Approach|方法|原理|设计)",
         "experiment": r"^=\s+.*(?:Experiment|Evaluation|Implementation|实验|实现|测试)",
         "result": r"^=\s+.*(?:Result|Performance|结果|性能)",
@@ -179,6 +181,12 @@ class TypstParser(DocumentParser):
         ("related", 1, r"^related work|^related$|literature review|相关工作|文献综述"),
         ("contribution", 1, r"^contributions?$|^(?:创新点|主要贡献)$"),
         ("conclusion", 1, r"conclu|结论|总结"),
+        (
+            "organization",
+            3,
+            r"paper (?:is )?organized|roadmap|outline of this|组织结构|结构安排|内容安排|技术路线|论文结构",
+        ),
+        ("summary", 3, r"^(?:chapter|section) summary$|^本章小结$"),
         ("method", 1, r"method|methodolog|approach|proposed|framework|方法|原理|设计"),
         ("experiment", 1, r"experiment|evaluation|implementation|实验|实现|测试"),
         ("result", 1, r"result|performance|结果|性能"),

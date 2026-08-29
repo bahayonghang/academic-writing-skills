@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "deai 三副本 strict/logic 双层哈希锁与关系锁的规则；R1.6 要求不绕锁，改动先改 latex-paper-en"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "de-AI runtime references、fixtures、evals 与跨 surface contract test 的既有边界；本任务改 term_thresholds 与 throat_clearing 落在其适用范围"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "阈值与 evals 工具约定；本任务改 tone-thresholds.yaml 语义并新增密度回归测试"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "tone-terms-zh.md 与 tone-thresholds.yaml 属公开 references，改动须同步双语页面与 manifest"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration.md", "reason": "term_thresholds 密度值的标定口径与公式 max(2.0, P90x1.3)，S1.1 直接取用"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration-raw.txt", "reason": "全表建议阈值的原始输出，S1.1 填表来源"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "机制代码需在 en/zh/typst 三副本一致，避免各副本各写一份密度计算"}

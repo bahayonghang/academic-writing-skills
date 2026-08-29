@@ -11,7 +11,11 @@ source consumed by `deai_check.py`.
 - Each word in `term_thresholds:` triggers a `[Script] LOW` trace once its
   per-document count exceeds the listed value.
 - Counts are case-insensitive and word-boundary matched against visible prose
-  (citations, refs, math, comments are stripped first).
+  (citations, refs, math, comments, figures, tables, and algorithms are stripped first).
+- C1 exposes the shared density runtime, but this English table remains
+  `threshold_unit: per_document` until C3 calibrates per-10,000-word values.
+  A legacy custom YAML without `threshold_unit` also keeps absolute semantics
+  and emits an upgrade notice instead of silently changing the result.
 - Override by editing the YAML; this MD file is documentation only.
 
 ## Maintenance cadence (this list is a snapshot, not a final state)
@@ -22,7 +26,7 @@ their frequency drops, while new AI-preferred words keep emerging. Re-check this
 list roughly every 6 months against excess-vocabulary research and prune or add
 accordingly — do not treat it as frozen.
 
-- Last reviewed: 2026-06
+- Last reviewed: 2026-08-29; next review: 2027-02
 - Sources: Kobak et al., _Sci. Adv._ 2025; Geng & Trotta 2025
 
 ## High-frequency AI vocabulary
@@ -75,7 +79,11 @@ information. The default pattern set covers:
 - `As mentioned earlier ...`
 - Leading discourse markers: `Notably,`, `Furthermore,`, `Moreover,`, `In summary,`, `To summarize,`
 
-Each trigger is a single `[Script] LOW` trace pointing at the offending line.
+The current English configuration keeps one provisional document-level
+allowance (`min_budget: 1`) and reports only later hits, including the total
+hit count, budget, and global occurrence number. C3 owns English corpus
+calibration; C1 does not reinterpret the existing absolute term limits as
+density values.
 
 ## Punctuation patterns
 

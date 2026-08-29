@@ -11,6 +11,7 @@ Usage:
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -30,38 +31,47 @@ except ImportError:
 THRESHOLDS_FILENAME = "tone-thresholds.yaml"
 
 DEFAULT_THRESHOLDS = {
+    "threshold_unit": "per_10k_chars",
+    "density_fallback": {"min_corpus": 3000},
     "term_thresholds": {
-        "首先": 4,
-        "其次": 4,
-        "然而": 5,
-        "此外": 4,
-        "因此": 6,
-        "另外": 3,
-        "进而": 3,
-        "而且": 4,
-        "显然": 3,
-        "通常": 4,
-        "一般": 5,
-        "尤其": 3,
-        "显著": 5,
-        "全面": 3,
-        "深入": 3,
-        "大量": 3,
-        "众多": 3,
-        "重要": 5,
-        "关键": 5,
-        "核心": 4,
-        "基本": 4,
-        "主要": 5,
-        "最为": 3,
-        "极为": 3,
-        "尤为": 3,
+        "首先": 8.7,
+        "其次": 2.7,
+        "然后": 11.5,
+        "最后": 6.4,
+        "其一": 2.0,
+        "然而": 5.9,
+        "此外": 10.5,
+        "因此": 11.9,
+        "另外": 2.0,
+        "进而": 10.9,
+        "而且": 5.9,
+        "显然": 2.0,
+        "通常": 2.3,
+        "一般": 4.8,
+        "尤其": 2.0,
+        "显著": 9.5,
+        "全面": 2.3,
+        "深入": 2.2,
+        "大量": 4.5,
+        "众多": 2.0,
+        "重要": 9.8,
+        "关键": 19.0,
+        "核心": 2.0,
+        "基本": 4.0,
+        "主要": 15.4,
+        "最为": 2.0,
+        "极为": 2.0,
+        "尤为": 2.0,
     },
+    "section_factors": {"organization": 6.6, "summary": 2.5, "default": 1.0},
+    "sequence_terms": ["首先", "其次", "然后", "最后"],
     "burstiness": {
         "consecutive_paragraphs": 3,
         "opening_token_count": 4,
     },
     "throat_clearing": {
+        "budget_per_10k": 2.6,
+        "min_budget": 1,
         "patterns": [
             r"^综上所述",
             r"^总而言之",
@@ -155,11 +165,20 @@ def _load_thresholds(script_dir: Path) -> dict:
         data = yaml.safe_load(f) or {}
     if not isinstance(data, dict):
         raise ValueError(f"{THRESHOLDS_FILENAME} 顶层必须是映射")
+    configured_unit = data.get("threshold_unit")
+    legacy_terms = "term_thresholds" in data and configured_unit in (None, "per_document")
+    if legacy_terms and configured_unit is None:
+        print(
+            f"[deai] {THRESHOLDS_FILENAME} 缺少 threshold_unit；term_thresholds "
+            "继续使用旧的每篇绝对计数语义。添加 threshold_unit 后才启用密度上限。",
+            file=sys.stderr,
+        )
     for k, v in data.items():
         if k in merged and isinstance(merged[k], dict) and isinstance(v, dict):
             merged[k].update(v)
         else:
             merged[k] = v
+    merged["_legacy_term_thresholds"] = legacy_terms
     return merged
 
 
@@ -217,7 +236,10 @@ def _apply_tier(thresholds: dict, tier: str) -> dict:
         for k, v in thresholds.items()
     }
     for word, cap in scaled.get("term_thresholds", {}).items():
-        scaled["term_thresholds"][word] = max(1, int(round(cap * term_factor)))
+        if scaled.get("_legacy_term_thresholds") or scaled.get("threshold_unit") == "per_document":
+            scaled["term_thresholds"][word] = max(1, int(round(cap * term_factor)))
+        else:
+            scaled["term_thresholds"][word] = max(0.1, round(float(cap) * term_factor, 1))
     sentence_cfg = scaled.get("sentence_length", {})
     if "cv_threshold" in sentence_cfg:
         sentence_cfg["cv_threshold"] = round(sentence_cfg["cv_threshold"] * cv_factor, 3)
@@ -736,24 +758,45 @@ class ChineseAITraceChecker:
     def _check_throat_clearing(self, section_name: str) -> list[dict]:
         if not self._throat_clearing_re:
             return []
-        paragraphs = self._iter_section_paragraphs(section_name)
+        hits: list[tuple[int, str, str, str]] = []
+        seen_lines: set[int] = set()
+        for current_section in self.section_ranges:
+            for para in self._iter_section_paragraphs(current_section):
+                line_no, first_text = para[0]
+                if line_no in seen_lines:
+                    continue
+                for compiled in self._throat_clearing_re:
+                    if compiled.search(first_text):
+                        hits.append((line_no, current_section, first_text, compiled.pattern))
+                        seen_lines.add(line_no)
+                        break
+        hits.sort(key=lambda item: item[0])
+
+        cfg = self.thresholds.get("throat_clearing", {})
+        corpus = self._corpus_size(self._iter_visible_lines())
+        budget = max(
+            int(cfg.get("min_budget", 1)),
+            round(float(cfg.get("budget_per_10k", 0.0)) * corpus / 10000),
+        )
+        total_hits = len(hits)
         traces: list[dict] = []
-        for para in paragraphs:
-            line_no, first_text = para[0]
-            for compiled in self._throat_clearing_re:
-                if compiled.search(first_text):
-                    traces.append(
-                        {
-                            "line": line_no,
-                            "text": first_text[:160],
-                            "original": first_text,
-                            "pattern": f"throat_clearing:{compiled.pattern}",
-                            "category": "throat_clearing",
-                            "section": section_name,
-                            "suggestion_type": "throat_clearing",
-                        }
-                    )
-                    break
+        for ordinal, (line_no, current_section, first_text, pattern) in enumerate(hits, start=1):
+            if ordinal <= budget or current_section != section_name:
+                continue
+            traces.append(
+                {
+                    "line": line_no,
+                    "text": (
+                        f"throat-clearing 命中 {total_hits} / 预算 {budget} / "
+                        f"第 {ordinal} 处: {first_text[:120]}"
+                    ),
+                    "original": first_text,
+                    "pattern": f"throat_clearing:{pattern}",
+                    "category": "throat_clearing",
+                    "section": current_section,
+                    "suggestion_type": "throat_clearing",
+                }
+            )
         return traces
 
     # --- Checker: over-claim phrases (YAML-driven, [Script] LOW) -------------
@@ -868,52 +911,223 @@ class ChineseAITraceChecker:
     # --- Document-level visible-text helper --------------------------------
 
     def _iter_visible_lines(self) -> list[tuple[int, str, str]]:
+        """Return normalized visible prose with source line and section metadata."""
         out: list[tuple[int, str, str]] = []
         section_lookup: dict[int, str] = {}
         for name, (start, end) in self.section_ranges.items():
             for ln in range(start, min(end, len(self.lines)) + 1):
                 section_lookup.setdefault(ln, name)
-        for i, line in enumerate(self.lines, start=1):
+
+        skipped_environments = {
+            "equation",
+            "align",
+            "gather",
+            "multline",
+            "eqnarray",
+            "displaymath",
+            "figure",
+            "table",
+            "tabular",
+            "algorithm",
+            "algorithmic",
+            "lstlisting",
+            "verbatim",
+            "minted",
+        }
+        active_environment: str | None = None
+        typst_block_depth = 0
+        in_block_comment = False
+        display_delimiter: str | None = None
+
+        for i, raw_line in enumerate(self.lines, start=1):
+            line = raw_line
+            if in_block_comment:
+                if "*/" not in line:
+                    continue
+                line = line.split("*/", 1)[1]
+                in_block_comment = False
+            while "/*" in line:
+                before, after = line.split("/*", 1)
+                if "*/" not in after:
+                    line = before
+                    in_block_comment = True
+                    break
+                line = before + after.split("*/", 1)[1]
+
+            if self.comment_prefix == "%":
+                line = re.sub(r"(?<!\\)%.*$", "", line)
+            elif self.comment_prefix == "//":
+                line = line.split("//", 1)[0]
             stripped = line.strip()
-            if not stripped or stripped.startswith(self.comment_prefix):
+            if not stripped:
                 continue
+
+            if active_environment is not None:
+                if re.search(rf"\\end\{{{re.escape(active_environment)}\}}", stripped):
+                    active_environment = None
+                continue
+            begin_match = re.search(r"\\begin\{([^}]+)\}", stripped)
+            if begin_match:
+                environment = begin_match.group(1)
+                base_environment = environment.rstrip("*")
+                if base_environment in skipped_environments:
+                    if not re.search(rf"\\end\{{{re.escape(environment)}\}}", stripped):
+                        active_environment = environment
+                    continue
+
+            if typst_block_depth:
+                typst_block_depth += stripped.count("(") - stripped.count(")")
+                typst_block_depth = max(typst_block_depth, 0)
+                continue
+            typst_match = re.search(r"#(?:figure|table|algorithm)\s*\(", stripped)
+            if typst_match:
+                tail = stripped[typst_match.start() :]
+                typst_block_depth = max(tail.count("(") - tail.count(")"), 0)
+                continue
+
+            if display_delimiter is not None:
+                if display_delimiter in stripped:
+                    display_delimiter = None
+                continue
+            if r"\[" in stripped:
+                if r"\]" not in stripped:
+                    display_delimiter = r"\]"
+                continue
+            if stripped.count("$$"):
+                if stripped.count("$$") % 2:
+                    display_delimiter = "$$"
+                continue
+            if stripped == "$":
+                display_delimiter = "$"
+                continue
+
             visible = self.parser.extract_visible_text(stripped).strip()
             if not visible:
                 continue
             out.append((i, section_lookup.get(i, "document"), visible))
         return out
 
+    def _corpus_size(
+        self,
+        visible_lines: list[tuple[int, str, str]],
+        term: str | None = None,
+    ) -> int:
+        """Count the configured visible-prose unit for a document or term."""
+        text = " ".join(item[2] for item in visible_lines)
+        ascii_term = bool(
+            term and term.isascii() and term.replace("-", "").replace("'", "").isalpha()
+        )
+        if term is not None:
+            return (
+                len(re.findall(r"\b[A-Za-z][A-Za-z'-]*\b", text))
+                if ascii_term
+                else len(re.findall(r"[\u4e00-\u9fff]", text))
+            )
+        unit = self.thresholds.get("threshold_unit", "")
+        if unit == "per_10k_chars":
+            return len(re.findall(r"[\u4e00-\u9fff]", text))
+        if unit == "per_10k_words":
+            return len(re.findall(r"\b[A-Za-z][A-Za-z'-]*\b", text))
+        han_count = len(re.findall(r"[\u4e00-\u9fff]", text))
+        word_count = len(re.findall(r"\b[A-Za-z][A-Za-z'-]*\b", text))
+        return max(han_count, word_count)
+
+    def _density_cap(
+        self,
+        term: str,
+        density: float,
+        visible_lines: list[tuple[int, str, str]],
+    ) -> tuple[int, int, bool]:
+        """Return absolute allowance, observed corpus size, and fallback mode."""
+        corpus = self._corpus_size(visible_lines, term)
+        legacy = self.thresholds.get("_legacy_term_thresholds") or (
+            self.thresholds.get("threshold_unit") == "per_document"
+        )
+        if legacy:
+            return int(density), corpus, False
+
+        weighted_corpus = float(corpus)
+        sequence_terms = set(self.thresholds.get("sequence_terms", []))
+        if term in sequence_terms and corpus:
+            factors = self.thresholds.get("section_factors", {})
+            default_factor = float(factors.get("default", 1.0))
+            weighted_corpus = 0.0
+            for line in visible_lines:
+                section_type = re.sub(r"_\d+$", "", line[1])
+                factor = float(factors.get(section_type, default_factor))
+                weighted_corpus += self._corpus_size([line], term) * factor
+
+        min_corpus = int(self.thresholds.get("density_fallback", {}).get("min_corpus", 0))
+        fallback = bool(min_corpus and corpus < min_corpus)
+        if fallback:
+            average_factor = weighted_corpus / corpus if corpus else 1.0
+            weighted_corpus = min_corpus * average_factor
+        cap = math.ceil(float(density) * weighted_corpus / 10000)
+        return cap, corpus, fallback
+
     # --- Checker: term overuse（文档级 substring 计数） --------------------
 
     def _check_term_threshold(self) -> list[dict]:
-        term_caps: dict[str, int] = {
-            w: int(n) for w, n in self.thresholds["term_thresholds"].items()
+        term_densities = {
+            str(word): float(value)
+            for word, value in self.thresholds.get("term_thresholds", {}).items()
         }
-        if not term_caps:
+        if not term_densities:
             return []
         visible_lines = self._iter_visible_lines()
-        counts: dict[str, list] = {}
-        for line_no, section, text in visible_lines:
-            for w in term_caps:
-                hits = text.count(w)
-                if not hits:
-                    continue
-                if w not in counts:
-                    counts[w] = [0, line_no, section]
-                counts[w][0] += hits
         traces: list[dict] = []
-        for word, (count, first_line, section) in counts.items():
-            cap = term_caps[word]
+        for configured_word, density_cap in term_densities.items():
+            ascii_term = (
+                configured_word.isascii()
+                and configured_word.replace("-", "").replace("'", "").isalpha()
+            )
+            count = 0
+            first_line = 0
+            first_section = "document"
+            pattern = (
+                re.compile(rf"\b{re.escape(configured_word)}\b", re.IGNORECASE)
+                if ascii_term
+                else None
+            )
+            for line_no, section, text in visible_lines:
+                hits = len(pattern.findall(text)) if pattern else text.count(configured_word)
+                if hits and not count:
+                    first_line, first_section = line_no, section
+                count += hits
+            if not count:
+                continue
+            cap, corpus, fallback = self._density_cap(configured_word, density_cap, visible_lines)
             if count <= cap:
                 continue
+            legacy = self.thresholds.get("_legacy_term_thresholds") or (
+                self.thresholds.get("threshold_unit") == "per_document"
+            )
+            if legacy:
+                message = f"'{configured_word}' used {count} times (legacy cap {cap})"
+            else:
+                observed_density = count / corpus * 10000 if corpus else 0.0
+                unit = "words" if ascii_term else "chars"
+                fallback_note = ""
+                if fallback:
+                    min_corpus = int(
+                        self.thresholds.get("density_fallback", {}).get("min_corpus", 0)
+                    )
+                    fallback_note = (
+                        f"; fallback/短文档回退 allowance uses {min_corpus} visible {unit}"
+                    )
+                message = (
+                    f"'{configured_word}' used {count} times; density {observed_density:.1f}"
+                    f"/10k {unit} (cap {density_cap:.1f}/10k {unit}; "
+                    f"absolute allowance {cap}{fallback_note})"
+                )
             traces.append(
                 {
                     "line": first_line,
-                    "text": f"「{word}」全文出现 {count} 次（上限 {cap}）",
+                    "text": message,
                     "original": "",
-                    "pattern": f"term_threshold:{word}",
+                    "pattern": f"term_threshold:{configured_word}",
                     "category": "term_threshold",
-                    "section": section,
+                    "section": first_section,
                     "suggestion_type": "term_overuse",
                 }
             )

@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "AC6 判定：ALIGNMENTS/LOGIC_ALIGNMENTS 无新增豁免项，同步方向正确"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "确认新机制未越界改动七类模式簇的判定与 llm-only 分档"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "AC1-AC5 回归测试是否按副本加载约定编写"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "AC8 的 references 与双语页面同步判定"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration.md", "reason": "AC9 复算验证的口径"}

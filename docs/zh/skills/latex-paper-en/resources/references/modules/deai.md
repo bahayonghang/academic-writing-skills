@@ -19,6 +19,13 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - 这`tense`类别 （`[Script]`低）标记方法/实验/结果中的现在时报告动词，门控到这些部分；参见[时态指南.md](tense-guide.md).
 - 这`overclaim`类别 （`[Script]`低）标记明确的因果/第一性/普遍性措辞；参见 [over-claim-guard.md](../evidence/over-claim-guard.md).
 
+## 密度与预算语义
+
+- 词项计数与分母共用同一可见正文适配器，排除注释、引用、标签、数学、图、表和算法。
+- 英文 `term_thresholds` 在 C3 语料标定前仍使用 `threshold_unit: per_document`；
+  未声明单位的自定义 YAML 也保留旧的绝对计数语义。
+- `throat_clearing` 在全文收集段首命中，仅报告超出唯一全文预算的命中。
+
 ## 技能层响应
 
 - 将脚本输出视为分析，而不是默认重写论文的权限。

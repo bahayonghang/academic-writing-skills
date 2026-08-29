@@ -7,11 +7,23 @@
 # A user can override any field by editing this file; the script falls back to
 # the in-file defaults when this YAML is missing or unparseable.
 #
-# "Per doc" counts use the entire visible prose of the input file (after
-# parser.extract_visible_text strips citations, refs, math, and comments).
+# C1 keeps the existing English per-document limits until C3 calibrates them.
+# The runtime already supports density units; changing this field to
+# per_10k_words must happen together with the C3 numeric calibration.
+
+threshold_unit: per_document
+threshold_calibration:
+  source: "Existing English guard values retained provisionally"
+  method: "Per-document corpus calibration is scheduled in C3"
+  calibrated: "2026-08-29"
+  review_due: "2027-02"
+
+density_fallback:
+  # Below 1,500 visible words, use the allowance for a 1,500-word document.
+  min_corpus: 1500
 
 term_thresholds:
-  # word -> max allowed occurrences per document (case-insensitive, word boundary)
+  # word -> max occurrences per document (case-insensitive, word boundary)
   significant: 5
   comprehensive: 3
   effective: 5
@@ -30,6 +42,17 @@ term_thresholds:
   obviously: 3
   clearly: 4
 
+section_factors:
+  # English section-specific calibration is deferred to C3.
+  organization: 1.0
+  summary: 1.0
+  default: 1.0
+
+sequence_terms:
+  - first
+  - then
+  - finally
+
 burstiness:
   # Trigger when N consecutive paragraphs start with the same opening tokens.
   consecutive_paragraphs: 3
@@ -37,6 +60,10 @@ burstiness:
 
 throat_clearing:
   # Paragraph-leading boilerplate that adds no information.
+  # C1 keeps one provisional document-level allowance; C3 owns English corpus
+  # calibration. Only hits beyond the computed budget are reported.
+  budget_per_10k: 0.0
+  min_budget: 1
   # Each entry is a regex; matched at the start of the first non-empty line
   # of a paragraph (case-insensitive).
   patterns:

@@ -1,0 +1,31 @@
+{
+  "id": "writing-rhythm-arc",
+  "name": "writing-rhythm-arc",
+  "title": "写作节奏与段落弧线优化",
+  "description": "把 AI 味词表从绝对计数改为密度制并按章节类型放宽；新增段落弧线（首句总领-中段展开-末句收束-段间接口）诊断；覆盖 latex-thesis-zh / latex-paper-en / paper-audit 三技能",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-29",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-29-density-budget-contract",
+    "08-29-thesis-zh-paragraph-arc",
+    "08-29-paper-en-paragraph-arc",
+    "08-29-paper-audit-paragraph-arc"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

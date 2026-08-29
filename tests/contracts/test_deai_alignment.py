@@ -142,6 +142,10 @@ ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("TENSE_SECTIONS", ["en", "typst"]),
     # Checker internals shared verbatim across all three copies
     ("Checker._check_throat_clearing", ["en", "zh", "typst"]),
+    ("Checker._iter_visible_lines", ["en", "typst"]),
+    ("Checker._corpus_size", ["en", "typst"]),
+    ("Checker._density_cap", ["en", "typst"]),
+    ("Checker._check_term_threshold", ["en", "typst"]),
     ("Checker.calculate_density_score", ["en", "zh", "typst"]),
     # Shared verbatim by the EN family; ZH differs only in docstrings/comments
     # (locked below) or in section handling (_find_pattern_in_section,
@@ -160,6 +164,9 @@ LOGIC_ALIGNMENTS: list[tuple[str, list[str]]] = [
     ("Checker._check_overclaim", ["en", "zh", "typst"]),
     ("Checker._iter_section_paragraphs", ["en", "zh", "typst"]),
     ("Checker._iter_visible_lines", ["en", "zh", "typst"]),
+    ("Checker._corpus_size", ["en", "zh", "typst"]),
+    ("Checker._density_cap", ["en", "zh", "typst"]),
+    ("Checker._check_term_threshold", ["en", "zh", "typst"]),
     ("Checker._tense_false_positive", ["en", "zh", "typst"]),
     ("Checker._dim_tag", ["en", "zh", "typst"]),
 ]
@@ -298,8 +305,35 @@ def test_term_thresholds_relationships(deai_modules: dict[str, ModuleType]) -> N
         assert en[term] == typst[term], f"config drift for shared term {term!r}"
     cjk_extras = set(typst) - set(en)
     assert cjk_extras <= set(zh), f"Typst CJK terms not sourced from ZH: {cjk_extras - set(zh)}"
-    for term in cjk_extras:
-        assert zh[term] == typst[term], f"config drift for shared CJK term {term!r}"
+    # C1 calibrates the ZH thesis table only. Typst keeps its pre-C1 absolute
+    # limits under threshold_unit=per_document until a Typst corpus is measured.
+    expected_typst_cjk = {
+        "首先": 4,
+        "其次": 4,
+        "然而": 5,
+        "因此": 6,
+        "显然": 3,
+        "显著": 5,
+        "全面": 3,
+        "深入": 3,
+        "重要": 5,
+        "关键": 5,
+        "核心": 4,
+    }
+    assert {term: typst[term] for term in cjk_extras} == expected_typst_cjk
+
+
+def test_threshold_units_preserve_unscaled_surfaces(
+    deai_modules: dict[str, ModuleType],
+) -> None:
+    assert deai_modules["zh"].DEFAULT_THRESHOLDS["threshold_unit"] == "per_10k_chars"
+    for key in ("en", "typst"):
+        mod = deai_modules[key]
+        assert mod.DEFAULT_THRESHOLDS["threshold_unit"] == "per_document"
+        scaled = mod._apply_tier(mod.DEFAULT_THRESHOLDS, "light")
+        assert isinstance(
+            scaled["term_thresholds"][next(iter(mod.DEFAULT_THRESHOLDS["term_thresholds"]))], int
+        )
 
 
 def test_throat_clearing_relationships(deai_modules: dict[str, ModuleType]) -> None:

@@ -9,6 +9,16 @@
 #   含非 ASCII 字符时按 substring 直接计数。
 # - opening_token_count 单位是"段首字符数"（去前导空白），对中英文同样适用。
 
+threshold_unit: per_document
+threshold_calibration:
+  source: "C1 保留 Typst 既有阈值；未做 Typst 专项标定"
+  method: "C1 保留每篇绝对计数语义，仅接入密度 runtime"
+  calibrated: "2026-08-29"
+  review_due: "2027-02"
+
+density_fallback:
+  min_corpus: 1500
+
 term_thresholds:
   # English
   significant: 5
@@ -41,12 +51,29 @@ term_thresholds:
   关键: 5
   核心: 4
 
+section_factors:
+  organization: 1.0
+  summary: 1.0
+  default: 1.0
+
+sequence_terms:
+  - first
+  - then
+  - finally
+  - 首先
+  - 其次
+  - 然后
+  - 最后
+
 burstiness:
   consecutive_paragraphs: 3
   # 前 K 个字符相同视为同款段首；英文 "Furtherm" / 中文 "首先，我" 均可触发
   opening_token_count: 8
 
 throat_clearing:
+  # Typst 专项预算尚未标定；保留一次全文最低预算。
+  budget_per_10k: 0.0
+  min_budget: 1
   patterns:
     # English
     - "^In order to better\\b"

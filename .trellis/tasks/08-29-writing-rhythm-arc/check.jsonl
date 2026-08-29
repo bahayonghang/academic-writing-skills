@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "验收时确认三套对齐锁未被绕过、canonical=latex-paper-en 的同步方向未被反转"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "AC6 的双语页面与 manifest 散列同步判定标准"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "回归测试的加载约定与阈值配置校验方式"}
+{"file": ".trellis/tasks/08-29-writing-rhythm-arc/research/calibration.md", "reason": "AC7 要求按记录口径重跑 ref/thesis 得到与 yaml 一致的阈值"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "跨层验收：脚本、references、docs、contract 测试四处是否同步落地"}
