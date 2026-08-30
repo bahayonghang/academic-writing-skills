@@ -2,3 +2,4 @@
 {"file": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md", "reason": "审稿侧 lane/agent 四项观察与证据边界的既有契约形态"}
 {"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "severity、consolidation 与数据流边界"}
 {"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "改动 references 必须同步 manifest 与双语页面"}
+{"file": ".trellis/spec/academic-writing-skills/subsection-context-contract.md", "reason": "跨技能窗口与 S-CTX 语义的一致性检查真相源"}

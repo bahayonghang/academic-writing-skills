@@ -45,7 +45,12 @@ def build_subsection_units(assembled, parser) -> list[dict]
 | `.tex`，无 depth-3 | `"no_depth3_headings"` | 空 |
 | `.typ` / `.pdf` | `"unsupported_format"` | 空 |
 
-该字段写在 `section_index.json` 顶层（伴随字段）与 `subsection_index.json` 顶层两处，取值相同。
+该字段只写在新建 `subsection_index.json` 顶层；该文件是
+`{"subsection_index_status": <status>, "units": [...]}` envelope。
+
+`section_index.json` 继续保持既有 JSON 数组形态和逐项 schema，不增加 metadata sentinel，
+也不改为 `{sections: [...]}` envelope。该兼容性决定由用户在 2026-08-30 实施阶段确认：
+现有 `audit.py`、`build_claim_map.py`、报告器、测试与 agent 都直接把它当 `list[dict]` 消费。
 
 ## 2. 产物落点（TPR-08）
 
@@ -176,7 +181,8 @@ Guidance 段增一条：
 
 ## 8. 兼容性
 
-- `section_index.json` 只增一个顶层伴随字段，既有键与值不变。
+- `section_index.json` 的 JSON 数组形态、逐项字段与值全部不变；小节状态只存在于新的
+  `subsection_index.json` envelope。
 - 小节索引在独立文件，下游消费者不受影响。
 - 不新增 `audit.py` 的 mode 或必填参数。
 - 无窗口文件时，既有 lane 与 Mentor 路径行为不变。

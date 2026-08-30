@@ -28,8 +28,8 @@
 
 - 实现 `build_subsection_units`：全量 `extract_headings()`、全文档 `root_level` 与编号计数器、
   `*` 标题跳过、**无 depth-3 不回退**、排除区过滤、origin map 映射为源坐标。
-- 写 `artifacts/data/subsection_index.json`，`section_index.json` 增顶层
-  `subsection_index_status`。
+- 写 `artifacts/data/subsection_index.json` envelope，顶层包含
+  `subsection_index_status` 与 `units`；`section_index.json` 保持既有 JSON 数组形态不变。
 
 验证：新增 `tests/skills/paper_audit/test_subsection_index.py`，覆盖
 多文件编号序列等于期望序列（AC-B-01）、无关键词标题被收录（AC-B-02）、
@@ -107,26 +107,38 @@ uv run --extra dev python -m pytest tests/contracts/test_skill_contracts.py test
 ```bash
 FIX=academic-writing-skills/latex-thesis-zh/evals/fixtures/subsection-context/main.tex
 
-uv run --extra dev python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py \
-  "$FIX" --subsection-context > /tmp/zh_ctx.txt
-
 uv run --extra dev python academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py \
   "$FIX" --output-dir /tmp/review_out --overwrite
 # 上一条打印 "WORKSPACE: /tmp/review_out/<slug>"，slug 由 slugify(title or stem) 得到
 
 uv run --extra dev python - <<'PY'
-import json, pathlib, re, sys
+import json, pathlib, subprocess, sys
 ws = next(pathlib.Path("/tmp/review_out").iterdir())
 audit_ids = [u["subsection_id"] for u in
              json.loads((ws / "artifacts/data/subsection_index.json").read_text("utf-8"))["units"]]
-zh_ids = re.findall(r"小节窗口 (\d+(?:\.\d+)+)", pathlib.Path("/tmp/zh_ctx.txt").read_text("utf-8"))
-expected = ["2.1.1", "2.1.2", "2.1.3", "2.2.1"]   # 与 fixture 一起写死，S4(A) 产出
+expected = [
+    "1.1.1", "1.2.1", "1.2.2", "1.2.3", "1.3.1",
+    "1.4.1", "1.4.2", "1.4.3", "2.1.1",
+]
 assert audit_ids == expected, audit_ids
+
+script = "academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py"
+zh_ids = []
+for subsection_id in expected:
+    run = subprocess.run(
+        [sys.executable, script, str(pathlib.Path("academic-writing-skills/latex-thesis-zh/evals/fixtures/subsection-context/main.tex")),
+         "--emit-window", "--subsection", subsection_id],
+        check=True, capture_output=True, text=True, encoding="utf-8",
+    )
+    assert f"小节窗口 {subsection_id}" in run.stdout
+    zh_ids.append(subsection_id)
 assert zh_ids == expected, zh_ids
 PY
 ```
 
-期望序列常量由子任务 A 的 fixture 一并给出，两侧都断言等于它，
+zh 侧完整游标序列另由
+`tests/skills/latex_thesis_zh/test_subsection_context.py::test_committed_fixtures_lock_numbering_and_multifile_sources`
+直接断言等于同一常量；`--emit-window` 循环证明这些 ID 在公开 CLI 上可观察。两侧都断言等于它，
 **不只断言两侧相等**（防止两个空集合互等而误通过）。
 
 同一 fixture 上再断言窗口 `source_file` 指向 `chapters/*.tex`、行号为文件内行号（AC-P-04）。
