@@ -1,0 +1,29 @@
+{
+  "id": "subsection-context-polish",
+  "name": "subsection-context-polish",
+  "title": "小节级逻辑润色（三元上下文窗口）",
+  "description": "把逻辑优化与语言润色的分析单元下沉到 x.x.x 小节，并规定 prev/current/next 三元上下文窗口的共用语义契约；父任务持有契约与跨技能验收。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": "academic-writing-skills",
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-30",
+  "completedAt": "2026-08-30",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-30-subsection-cursor-zh",
+    "08-30-subsection-lane-audit"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
