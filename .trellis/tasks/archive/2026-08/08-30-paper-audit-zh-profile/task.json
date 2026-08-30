@@ -1,0 +1,29 @@
+{
+  "id": "paper-audit-zh-profile",
+  "name": "paper-audit-zh-profile",
+  "title": "paper-audit 中文学位论文审阅 profile 扩充",
+  "description": "在不拆分 skill 的前提下，沿 --venue thesis-zh 轴补齐 paper-audit 的中文学位论文审阅能力：修复 zh 检查调度缺陷、接通 latex-thesis-zh 专属检查器、补齐中文审阅准则文档与 agent。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-30",
+  "completedAt": "2026-08-31",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-30-zh-dispatch-wiring",
+    "08-30-zh-review-criteria"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

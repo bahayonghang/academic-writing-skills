@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "父任务 AC7/AC8 集成验收的判据来源：severity 映射、ScholarEval 模块映射与数据流契约在两个子任务合并后必须仍成立"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "AC5-4 的双语页面与 manifest 散列校验；C2 新增两份公开资源后父任务需复核 paper-audit 条目数 58→60"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "AC7 的 just ci 基线口径与按技能副本脚本的测试加载约定；父任务据此判断测试数是否回退"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "AC6 三处声明一致性（VENUE_CONFIGS / VENUE_RULES.md / CHECKLIST.md）的清单格式与双向锁约定"}
