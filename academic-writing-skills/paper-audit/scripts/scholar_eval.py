@@ -77,7 +77,30 @@ MODULE_DIMENSION_MAP: dict[str, str] = {
     "PRESUBMISSION": "presentation",
     "EXPERIMENT": "reproducibility",
     "PSEUDOCODE": "reproducibility",
+    "SPEC": "presentation",
+    "BLIND": "ethics",
+    "ABSTRACT": "clarity",
+    "CONCLUSION": "soundness",
+    "LITERATURE": "literature_grounding",
+    "TABLES": "presentation",
 }
+
+
+class UnmappedAuditModuleError(ValueError):
+    """Raised when an audit module is not in MODULE_DIMENSION_MAP."""
+
+
+def require_mapped_modules(modules: list[str] | tuple[str, ...] | set[str]) -> None:
+    """Fail closed when a checker module is missing from the score map."""
+    unknown = sorted(
+        {
+            str(module).upper()
+            for module in modules
+            if str(module).strip() and str(module).upper() not in MODULE_DIMENSION_MAP
+        }
+    )
+    if unknown:
+        raise UnmappedAuditModuleError(f"Unmapped audit modules: {unknown}")
 
 
 # --- Data Models ---

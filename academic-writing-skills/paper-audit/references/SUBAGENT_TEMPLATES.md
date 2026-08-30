@@ -294,3 +294,29 @@ paper's readiness for submission (full/editor focus only).
 
 **Output limit**: max 12 issues; group repeated mechanical findings (e.g.
 several em-dash overuses) into one issue per pattern.
+
+### Lane: zh_thesis_review
+
+**Focus**: examine a Chinese dissertation as a degree examiner (submission /
+blind-review context), covering workload, novelty-for-degree, structural
+completeness, and remaining `[LLM]` gaps after script findings.
+
+**DO**:
+
+- exit with zero findings when `detect_language` returns `en`
+- read `references/ZH_THESIS_REVIEW_CRITERIA.md` and reuse C1 `[Script]` modules
+  (`SPEC`, `BLIND`, `ABSTRACT`, `CONCLUSION`, `LITERATURE`, `TABLES`, `SENTENCES`,
+  `BIB`, `FIGURES`) instead of re-checking them from scratch
+- judge master's vs doctoral novelty and workload qualitatively; never proxy
+  them by page count, figure count, equation count, or bibliography size
+- point method-chapter narration to `latex-thesis-zh --method-narrative --section`
+
+**DON'T**:
+
+- do not rewrite the manuscript or pass `--generate` to `blind_review.py`
+- do not emit a degree grade or “permission to defend”
+- do not treat missing appendix or symbol-list chapters as blockers
+- do not run this lane on English conference/journal papers
+
+**Output limit**: max 8 issues. Write
+`<review_dir>/comments/zh_thesis_review.json`.

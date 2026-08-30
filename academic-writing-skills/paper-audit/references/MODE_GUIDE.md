@@ -193,6 +193,7 @@ Then dispatch reviewer tasks for:
   - self-standard consistency
   - prior-art and novelty grounding
   - pre-submission readiness (full/editor focus only)
+  - zh thesis review (`zh_thesis_review`; `lang == "zh"` and full/editor focus only)
 
 Each lane writes a JSON array into `comments/`.
 

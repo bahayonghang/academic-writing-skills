@@ -421,6 +421,7 @@ class TestAuditModule:
         from audit import ZH_EXTRA_CHECKS
 
         assert "consistency" in ZH_EXTRA_CHECKS
+        assert "gbt7714" not in ZH_EXTRA_CHECKS
 
     def test_resolve_script_english(self) -> None:
         from audit import _resolve_script

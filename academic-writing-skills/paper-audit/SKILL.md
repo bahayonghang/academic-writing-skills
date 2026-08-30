@@ -9,7 +9,7 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "6.0.0"
-  last_updated: "2026-08-30"
+  last_updated: "2026-08-31"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--scholar-eval] [--regression] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
@@ -196,7 +196,7 @@ over style commentary; issue bundle + roadmap over raw script dumps.
 All under `references/`:
 
 - Workflow & modes: `MODE_GUIDE.md` (per-mode phases, committee focus routing), `workflow-detail.md` (overwrite rules, render commands, gate/re-audit/polish presentation), `output-layout.md` (artifact map, report-language rules), `agent-roster.md` (full agent roster), `scripts-map.md` (full script roster)
-- Criteria & rules: `REVIEW_CRITERIA.md` (top-level scoring/mapping), `DEEP_REVIEW_CRITERIA.md` (16-part taxonomy, leniency rules), `CONSOLIDATION_RULES.md` (dedup/root-cause merge), `ISSUE_SCHEMA.md` (canonical JSON schema), `CLAIM_EVIDENCE_CONTRACT.md` (claim candidate / evidence anchor contract), `OVER_CLAIM_GUARD.md` (conservative-wording ladder + substitution tables), `DATA_AVAILABILITY_ADVISORY.md` (source-data / FAIR advisory boundary)
+- Criteria & rules: `REVIEW_CRITERIA.md` (top-level scoring/mapping), `DEEP_REVIEW_CRITERIA.md` (16-part taxonomy, leniency rules), `CONSOLIDATION_RULES.md` (dedup/root-cause merge), `ISSUE_SCHEMA.md` (canonical JSON schema), `CLAIM_EVIDENCE_CONTRACT.md` (claim candidate / evidence anchor contract), `OVER_CLAIM_GUARD.md` (conservative-wording ladder + substitution tables), `DATA_AVAILABILITY_ADVISORY.md` (source-data / FAIR advisory boundary), `ZH_THESIS_REVIEW_CRITERIA.md` (Chinese dissertation 15-row indicators)
 - Lanes & reviewers: `REVIEW_LANE_GUIDE.md` (section + cross-cutting lanes), `REVIEWER_PSYCHOLOGY.md` (reading path + suspicion-likelihood ranking), `SUBAGENT_TEMPLATES.md` (reviewer task templates)
 - Presubmission: `PRESUBMISSION_GUIDE.md` (mode-integration matrix), `PRE_SUBMISSION_RULES.md` (mechanical rules and term list)
 - Decisions & ops: `references/editorial_decision_standards.md` (cross-reviewer arbitration, decision matrix), `references/quality_rubrics.md` (five-dimension calibrated rubric), `QUICK_REFERENCE.md` (CLI cheat sheet), `TROUBLESHOOTING.md` (operational errors + review-quality failure paths F1-F8)
@@ -216,7 +216,9 @@ Full script roster with purposes: `references/scripts-map.md`.
 Deep-review dispatches 5 committee agents and 6+ lane agents, then uses
 `synthesis_agent.md`. Mode-specific agents include `editor_in_chief_agent.md`
 for `gate`, `revision_coach_agent.md` for `re-audit`, and
-`revision_suggestion_agent.md` after consolidation. Specialized reviewer
+`revision_suggestion_agent.md` after consolidation. Chinese dissertations
+(`lang == "zh"`, `--focus full|editor`) also dispatch
+`zh_thesis_reviewer_agent.md` on the `zh_thesis_review` lane. Specialized reviewer
 playbooks under `agents/` are reference material, not auto-dispatched. Full
 roster and activation details: `references/agent-roster.md`.
 

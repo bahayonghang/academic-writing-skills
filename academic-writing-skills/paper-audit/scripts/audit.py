@@ -11,6 +11,7 @@ import re
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 
 from detect_language import detect_language
@@ -59,8 +60,8 @@ def _read_source(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _load_bibliography_content(path: Path, content: str, fmt: str) -> str:
-    """Load external BibTeX sources referenced by a LaTeX or Typst paper."""
+def _resolve_bibliography_paths(path: Path, content: str, fmt: str) -> list[Path]:
+    """Resolve existing .bib paths from \\bibliography / \\addbibresource / bibliography()."""
     references: list[str] = []
     if fmt == ".tex":
         for match in re.finditer(r"\\bibliography\s*\{([^}]+)\}", content):
@@ -77,7 +78,7 @@ def _load_bibliography_content(path: Path, content: str, fmt: str) -> str:
             if match.group(1).strip().lower().endswith(".bib")
         )
 
-    loaded: list[str] = []
+    resolved_paths: list[Path] = []
     seen: set[Path] = set()
     for reference in references:
         bib_path = Path(reference)
@@ -89,6 +90,14 @@ def _load_bibliography_content(path: Path, content: str, fmt: str) -> str:
         if resolved in seen or not resolved.is_file():
             continue
         seen.add(resolved)
+        resolved_paths.append(resolved)
+    return resolved_paths
+
+
+def _load_bibliography_content(path: Path, content: str, fmt: str) -> str:
+    """Load external BibTeX sources referenced by a LaTeX or Typst paper."""
+    loaded: list[str] = []
+    for resolved in _resolve_bibliography_paths(path, content, fmt):
         try:
             loaded.append(_read_source(resolved))
         except (OSError, UnicodeError):
@@ -298,8 +307,15 @@ ROLE_TO_REVIEW_LANES: dict[str, set[str]] = {
 }
 
 # Additional checks for Chinese documents
-ZH_EXTRA_CHECKS: list[str] = ["consistency", "gbt7714"]
-
+ZH_EXTRA_CHECKS: list[str] = [
+    "consistency",
+    "spec",
+    "blind",
+    "abstract",
+    "conclusion",
+    "literature",
+    "tables",
+]
 # --- Venue Configuration ---
 
 VENUE_CONFIG: dict[str, dict] = {
@@ -360,9 +376,19 @@ VENUE_CONFIG: dict[str, dict] = {
         "checklist_section": "Chinese Thesis",
         "blind_review": False,
         "extra_checks": [
-            ("Bilingual abstract present", r"(?:\\begin\{abstract\}|摘\s*要)"),
-            ("Declaration of originality present", r"(?:原创性|独创性|声明)"),
-            ("Acknowledgments present", r"(?:致\s*谢|acknowledgment)"),
+            (
+                "Bilingual abstract present [TZ-EC-bilingual-abstract]",
+                r"(?:\\begin\{abstract\}|摘\s*要)",
+            ),
+            (
+                "Chinese and English keywords present [TZ-EC-bilingual-keywords]",
+                r"(?=[\s\S]*关键词)(?=[\s\S]*keywords)",
+            ),
+            (
+                "Declaration of originality present [TZ-EC-originality]",
+                r"(?:原创性|独创性|声明)",
+            ),
+            ("Acknowledgments present [TZ-EC-acknowledgments]", r"(?:致\s*谢|acknowledgment)"),
         ],
     },
 }
@@ -375,27 +401,78 @@ SCRIPTS_EN = SKILLS_ROOT / "latex-paper-en" / "scripts"
 SCRIPTS_ZH = SKILLS_ROOT / "latex-thesis-zh" / "scripts"
 SCRIPTS_TYPST = SKILLS_ROOT / "typst-paper" / "scripts"
 
+# Value is a script name = language override; None = suppressed (not "missing").
+LANG_SCRIPT_OVERRIDES: dict[str, dict[str, str | None]] = {
+    "zh": {
+        "sentences": "check_style_zh.py",
+        "grammar": None,
+        "pseudocode": None,
+    },
+}
+
+LANG_NEUTRAL_REUSE: dict[str, frozenset[str]] = {
+    "zh": frozenset({"figures"}),
+}
+
+ZH_ONLY_TEX_CHECKS: frozenset[str] = frozenset(
+    {"spec", "blind", "abstract", "conclusion", "literature", "tables"}
+)
+
+GATE_ELIGIBLE_ZH: frozenset[str] = frozenset({"spec", "blind"})
+
+PDF_SOURCE_CHECKS: frozenset[str] = (
+    frozenset({"format", "figures", "references", "citations"}) | ZH_ONLY_TEX_CHECKS
+)
+
+_SCRIPT_MAP: dict[str, str] = {
+    "format": "check_format.py",
+    "grammar": "analyze_grammar.py",
+    "logic": "analyze_logic.py",
+    "experiment": "analyze_experiment.py",
+    "sentences": "analyze_sentences.py",
+    "deai": "deai_check.py",
+    "citations": "check_citations.py",
+    "bib": "verify_bib.py",
+    "figures": "check_figures.py",
+    "pseudocode": "check_pseudocode.py",
+    "consistency": "check_consistency.py",
+    "references": "check_references.py",
+    "visual": "visual_check.py",
+    "presubmission": "pre_submission_check.py",
+    "spec": "check_spec.py",
+    "blind": "blind_review.py",
+    "abstract": "analyze_abstract.py",
+    "conclusion": "analyze_conclusion.py",
+    "literature": "analyze_literature.py",
+    "tables": "check_tables.py",
+}
+
+
+@dataclass(frozen=True)
+class ScriptResolution:
+    path: Path | None
+    origin: str
+    reason: str
+
+
+def _pdf_skip_checks(lang: str) -> frozenset[str]:
+    if lang == "zh":
+        return PDF_SOURCE_CHECKS | frozenset({"sentences"})
+    return PDF_SOURCE_CHECKS
+
 
 def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
     """Resolve the script path for a given check, language, and format."""
-    script_map: dict[str, str] = {
-        "format": "check_format.py",
-        "grammar": "analyze_grammar.py",
-        "logic": "analyze_logic.py",
-        "experiment": "analyze_experiment.py",
-        "sentences": "analyze_sentences.py",
-        "deai": "deai_check.py",
-        "citations": "check_citations.py",
-        "bib": "verify_bib.py",
-        "figures": "check_figures.py",
-        "pseudocode": "check_pseudocode.py",
-        "consistency": "check_consistency.py",
-        "references": "check_references.py",
-        "visual": "visual_check.py",
-        "presubmission": "pre_submission_check.py",
-    }
+    if fmt != ".typ":
+        overrides = LANG_SCRIPT_OVERRIDES.get(lang, {})
+        if check_name in overrides:
+            override = overrides[check_name]
+            if override is None:
+                return None
+            path = SCRIPTS_ZH / override
+            return path if path.exists() else None
 
-    script_name = script_map.get(check_name)
+    script_name = _SCRIPT_MAP.get(check_name)
     if not script_name:
         return None
 
@@ -411,12 +488,10 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
 
     # references: paper-audit has its own router version; fall through to others
     if check_name == "references":
-        # Prefer paper-audit's router version first
         path = SCRIPTS_AUDIT / script_name
         if path.exists():
             return path
 
-    # Choose script directory based on format and language
     if fmt == ".typ":
         candidates = [SCRIPTS_TYPST]
     elif lang == "zh":
@@ -430,6 +505,166 @@ def _resolve_script(check_name: str, lang: str, fmt: str) -> Path | None:
             return path
 
     return None
+
+
+def _classify_resolution(
+    check_name: str, lang: str, fmt: str, path: Path | None
+) -> tuple[str, str]:
+    if fmt != ".typ":
+        overrides = LANG_SCRIPT_OVERRIDES.get(lang, {})
+        if check_name in overrides:
+            if overrides[check_name] is None:
+                return "none", "suppressed"
+            if path is not None:
+                return "zh", "override"
+            return "none", "missing"
+    if path is None:
+        return "none", "missing"
+    parent = path.parent
+    if parent == SCRIPTS_AUDIT:
+        return "audit", "own"
+    if parent == SCRIPTS_ZH:
+        return "zh", "lang-native"
+    if parent == SCRIPTS_TYPST:
+        return "typst", "own"
+    if parent == SCRIPTS_EN:
+        if check_name in LANG_NEUTRAL_REUSE.get(lang, frozenset()):
+            return "en", "lang-neutral-reuse"
+        return "en", "lang-native"
+    return "none", "missing"
+
+
+def _resolve_check(check_name: str, lang: str, fmt: str) -> ScriptResolution:
+    if check_name == "visual" and fmt != ".pdf":
+        return ScriptResolution(None, "none", "format-exempt")
+    if fmt == ".typ" and check_name in ZH_ONLY_TEX_CHECKS:
+        return ScriptResolution(None, "none", "format-exempt")
+    if fmt == ".pdf" and check_name in _pdf_skip_checks(lang):
+        return ScriptResolution(None, "none", "format-skipped")
+    path = _resolve_script(check_name, lang, fmt)
+    origin, reason = _classify_resolution(check_name, lang, fmt, path)
+    return ScriptResolution(path, origin, reason)
+
+
+def _log_resolution(check_name: str, resolution: ScriptResolution, lang: str, fmt: str) -> None:
+    reason = resolution.reason
+    script_name = resolution.path.name if resolution.path is not None else ""
+    if reason in {"own", "lang-native", "override"}:
+        print(f"[audit] RUN {check_name}: {script_name} (origin={resolution.origin}, {reason})")
+    elif reason == "lang-neutral-reuse":
+        print(
+            f"[audit] RUN {check_name}: {script_name} "
+            f"(origin=en, lang-neutral reuse for lang={lang})"
+        )
+    elif reason == "suppressed":
+        print(f"[audit] SKIP {check_name}: suppressed for lang={lang} (language-specific)")
+    elif reason == "format-exempt":
+        print(f"[audit] SKIP {check_name}: not applicable to {fmt}")
+    elif reason == "format-skipped":
+        print(f"[audit] SKIP {check_name}: requires TeX source, {fmt} input")
+    else:
+        print(f"[audit] SKIP {check_name}: script not found")
+
+
+def _sentences_extra_args(script: Path) -> list[str]:
+    if script.name == "check_style_zh.py":
+        return ["--json"]
+    return ["--max-words", "60", "--max-clauses", "3"]
+
+
+def _blind_extra_args(content: str) -> list[str]:
+    extra = ["--check"]
+    author = re.search(r"\\(?:[ce]?author)\s*\{([^{}]+)\}", content)
+    if author and author.group(1).strip():
+        extra.extend(["--author", author.group(1).strip()])
+    supervisor = re.search(r"\\(?:[ce]?(?:supervisor|advisor|mentor))\s*\{([^{}]+)\}", content)
+    if supervisor and supervisor.group(1).strip():
+        extra.extend(["--supervisor", supervisor.group(1).strip()])
+    return extra
+
+
+def _promote_gate_blockers(check_name: str, issues: list[AuditIssue], gate_mode: bool) -> None:
+    if not gate_mode or check_name not in GATE_ELIGIBLE_ZH:
+        return
+    for issue in issues:
+        if issue.severity in {"Major", "Critical"}:
+            issue.severity = "Critical"
+            issue.priority = "P0"
+
+
+def _ingest_check_output(
+    check_name: str,
+    script: Path,
+    returncode: int,
+    stdout: str,
+    stderr: str,
+    *,
+    gate_mode: bool = False,
+) -> tuple[list[AuditIssue], str]:
+    """Turn a subprocess result into issues plus a log kind: issues|clean|error."""
+    from zh_check_adapters import ADAPTERS_BY_SCRIPT, AdapterParseError
+
+    adapter = ADAPTERS_BY_SCRIPT.get(script.name)
+    parsed: list[AuditIssue] = []
+    parseable = False
+    if adapter is not None:
+        if stdout.strip():
+            try:
+                parsed = adapter.parse(stdout)
+                parseable = True
+            except AdapterParseError:
+                parsed = []
+                parseable = False
+    elif stdout.strip():
+        parsed = _parse_script_output(check_name, stdout)
+        parseable = True
+
+    if returncode == -1:
+        return (
+            [
+                AuditIssue(
+                    module=check_name.upper(),
+                    line=None,
+                    severity="Minor",
+                    priority="P2",
+                    message=f"Check script failed: {stderr[:100]}",
+                )
+            ],
+            "error",
+        )
+
+    if parseable:
+        _promote_gate_blockers(check_name, parsed, gate_mode)
+        if returncode != 0:
+            parsed.append(
+                AuditIssue(
+                    module=check_name.upper(),
+                    line=None,
+                    severity="Minor",
+                    priority="P3",
+                    message=f"[Script] checker exited {returncode}",
+                )
+            )
+        if parsed:
+            return parsed, "issues"
+        if returncode == 0:
+            return [], "clean"
+
+    if returncode != 0:
+        detail = (stderr or stdout).strip().replace("\n", " ")[:200]
+        return (
+            [
+                AuditIssue(
+                    module=check_name.upper(),
+                    line=None,
+                    severity="Minor",
+                    priority="P2",
+                    message=f"Check script failed (exit {returncode}): {detail}",
+                )
+            ],
+            "error",
+        )
+    return [], "clean"
 
 
 def normalize_mode(mode: str) -> tuple[str, str | None]:
@@ -918,12 +1153,37 @@ def _fallback_cross_cutting_issues(claim_map: dict, section_texts: dict[str, str
             )
         )
 
+    if any(re.search(r"[一-鿿]", text) for text in section_texts.values()):
+        thesis_section, thesis_quote = _find_quote_in_sections(
+            section_texts,
+            ("abstract", "introduction", "conclusion"),
+            keywords=("摘要", "创新", "工作", "结论", "thesis", "dissertation"),
+        )
+        issues.append(
+            _make_fallback_issue(
+                title="中文学位论文评阅维度待复核",
+                quote=thesis_quote,
+                explanation=(
+                    "检测到中文正文。学位论文评阅应覆盖选题意义、工作量与创新性、"
+                    "结构完备性与盲审可识别信息；脚本未覆盖的维度由 zh_thesis_review lane 判断。"
+                ),
+                comment_type="missing_information",
+                severity="moderate",
+                source_section=thesis_section,
+                review_lane="zh_thesis_review",
+                related_sections=[thesis_section, "introduction", "conclusion"],
+            )
+        )
+
     return issues
 
 
-def _selected_lanes_for_focus(focus: str) -> set[str]:
+def _selected_lanes_for_focus(focus: str, lang: str | None = None) -> set[str]:
     """Return the allowed fallback lanes for the selected deep-review focus."""
-    return FOCUS_TO_ALLOWED_LANES.get(focus, FOCUS_TO_ALLOWED_LANES["full"])
+    lanes = set(FOCUS_TO_ALLOWED_LANES.get(focus, FOCUS_TO_ALLOWED_LANES["full"]))
+    if lang == "zh" and focus in {"full", "editor"}:
+        lanes.add("zh_thesis_review")
+    return lanes
 
 
 def _load_completed_lanes(review_dir: Path) -> set[str]:
@@ -962,6 +1222,7 @@ def _write_lane_outputs(
     *,
     focus: str = "full",
     resume: bool = False,
+    lang: str | None = None,
 ) -> list[dict]:
     """Create fallback lane outputs inside comments/ and return all raw issues."""
     layout = WorkspaceLayout(review_dir)
@@ -971,7 +1232,7 @@ def _write_lane_outputs(
 
     section_texts: dict[str, str] = {}
     raw_issues: list[dict] = []
-    allowed_lanes = _selected_lanes_for_focus(focus)
+    allowed_lanes = _selected_lanes_for_focus(focus, lang=lang)
     completed_lanes = _load_completed_lanes(review_dir) if resume else set()
 
     for section in section_index:
@@ -1755,7 +2016,9 @@ def run_deep_review(
         _mark_phase(workspace, "phase0_audit", "completed", enabled=resume_enabled)
 
         _mark_phase(workspace, "lanes", "in_progress", enabled=resume_enabled)
-        _write_lane_outputs(workspace, section_index, claim_map, focus=focus, resume=resume_enabled)
+        _write_lane_outputs(
+            workspace, section_index, claim_map, focus=focus, resume=resume_enabled, lang=lang
+        )
         _write_presubmission_lane_outputs(
             workspace, phase0_result, section_index, focus=focus, resume=resume_enabled
         )
@@ -2316,23 +2579,23 @@ def run_polish_precheck(
     expression_issues: list[dict] = []
     sent_script = _resolve_script("sentences", lang, fmt)
     if sent_script:
-        rc, stdout, _ = _run_check_script(
-            sent_script, str(path), ["--max-words", "60", "--max-clauses", "3"]
+        rc, stdout, stderr = _run_check_script(
+            sent_script, str(path), _sentences_extra_args(sent_script)
         )
-        if rc != -1 and stdout.strip():
-            for issue in _parse_script_output("sentences", stdout):
-                expression_issues.append(
-                    {
-                        "module": issue.module,
-                        "section": _find_section_for_line(issue.line, raw_sections),
-                        "line": issue.line,
-                        "severity": issue.severity,
-                        "priority": issue.priority,
-                        "message": issue.message,
-                        "original": issue.original,
-                        "revised": issue.revised,
-                    }
-                )
+        parsed, _kind = _ingest_check_output("sentences", sent_script, rc, stdout, stderr)
+        for issue in parsed:
+            expression_issues.append(
+                {
+                    "module": issue.module,
+                    "section": _find_section_for_line(issue.line, raw_sections),
+                    "line": issue.line,
+                    "severity": issue.severity,
+                    "priority": issue.priority,
+                    "message": issue.message,
+                    "original": issue.original,
+                    "revised": issue.revised,
+                }
+            )
 
     # Hard blockers = Critical severity
     blockers = [i for i in precheck_issues if i["severity"] == "Critical"]
@@ -2476,69 +2739,92 @@ def run_audit(
     if lang == "zh":
         checks.extend(ZH_EXTRA_CHECKS)
 
-    # Step 4: Build task list (filter inapplicable checks first)
     all_issues: list[AuditIssue] = []
-    tasks: list[tuple[str, Path, list[str]]] = []
+    tasks: list[tuple[str, Path, list[str], str]] = []
+    bib_paths = _resolve_bibliography_paths(path, content, fmt) if fmt in {".tex", ".typ"} else []
+    venue_key = (venue or "").lower().strip()
+    use_gb7714 = fmt == ".tex" and (lang == "zh" or venue_key == "thesis-zh")
+    gate_mode = canonical_mode == "gate"
 
     for check_name in checks:
         if check_name == "checklist":
-            continue  # Handled separately
-
-        script = _resolve_script(check_name, lang, fmt)
-        if script is None:
-            print(f"[audit] SKIP {check_name}: script not found")
             continue
 
-        # PDF files need special handling — some scripts expect .tex/.typ
-        if fmt == ".pdf" and check_name in ("format", "figures", "references", "citations"):
-            print(f"[audit] SKIP {check_name}: not applicable for PDF input")
+        if check_name == "bib" and not bib_paths:
+            print(f"[audit] SKIP bib: no .bib resolved from {path.name}")
             continue
 
-        # Visual check only applies to PDF input
-        if check_name == "visual" and fmt != ".pdf":
+        resolution = _resolve_check(check_name, lang, fmt)
+        _log_resolution(check_name, resolution, lang, fmt)
+        if resolution.path is None:
             continue
+        script = resolution.path
 
         extra_args: list[str] = []
+        input_path = str(path)
         if check_name == "logic":
             extra_args = ["--cross-section"]
-        if check_name == "sentences":
-            extra_args = ["--max-words", "60", "--max-clauses", "3"]
-        if check_name == "bib" and online:
-            extra_args.append("--online")
-            if email:
-                extra_args.extend(["--email", email])
+        elif check_name == "sentences":
+            extra_args = _sentences_extra_args(script)
+        elif check_name == "spec":
+            extra_args = ["--json"]
+            if bib_paths:
+                extra_args.extend(["--bib", str(bib_paths[0])])
+        elif check_name == "abstract":
+            extra_args = ["--json"]
+            if lang == "zh":
+                extra_args.append("--bilingual")
+        elif check_name in {"conclusion", "tables"}:
+            extra_args = ["--json"]
+        elif check_name == "blind":
+            extra_args = _blind_extra_args(content)
+        elif check_name == "literature":
+            if bib_paths:
+                extra_args.extend(["--bib", str(bib_paths[0])])
+        elif check_name == "bib":
+            if online:
+                extra_args.append("--online")
+                if email:
+                    extra_args.extend(["--email", email])
+            if use_gb7714:
+                extra_args.extend(["--standard", "gb7714"])
+            for bib in bib_paths:
+                tasks.append((check_name, script, list(extra_args), str(bib)))
+            continue
 
-        tasks.append((check_name, script, extra_args))
+        tasks.append((check_name, script, extra_args, input_path))
         if check_name == "logic" and ((fmt == ".tex" and lang == "en") or fmt == ".typ"):
-            tasks.append((check_name, script, ["--section", "methods"]))
+            tasks.append((check_name, script, ["--section", "methods"], input_path))
 
-    # Run independent checks in parallel (up to 4 workers)
     with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_check = {
-            executor.submit(_run_check_script, script, str(path), extra_args): check_name
-            for check_name, script, extra_args in tasks
+        future_to_task = {
+            executor.submit(_run_check_script, script, input_path, extra_args): (
+                check_name,
+                script,
+            )
+            for check_name, script, extra_args, input_path in tasks
         }
-        for future in as_completed(future_to_check):
-            check_name = future_to_check[future]
+        for future in as_completed(future_to_task):
+            check_name, script = future_to_task[future]
             try:
                 returncode, stdout, stderr = future.result()
             except Exception as exc:
                 returncode, stdout, stderr = -1, "", str(exc)
 
-            if returncode == -1:
-                print(f"[audit] ERROR {check_name}: {stderr}")
-                all_issues.append(
-                    AuditIssue(
-                        module=check_name.upper(),
-                        line=None,
-                        severity="Minor",
-                        priority="P2",
-                        message=f"Check script failed: {stderr[:100]}",
-                    )
+            issues, kind = _ingest_check_output(
+                check_name,
+                script,
+                returncode,
+                stdout,
+                stderr,
+                gate_mode=gate_mode,
+            )
+            all_issues.extend(issues)
+            if kind == "error":
+                print(
+                    f"[audit] ERROR {check_name}: {stderr or issues[0].message if issues else ''}"
                 )
-            elif stdout.strip():
-                issues = _parse_script_output(check_name, stdout)
-                all_issues.extend(issues)
+            elif kind == "issues":
                 print(f"[audit] {check_name}: {len(issues)} issues found")
             else:
                 print(f"[audit] {check_name}: clean")

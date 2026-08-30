@@ -590,7 +590,20 @@ class TestScholarEval9Dim:
             "PRESUBMISSION": "presentation",
             "EXPERIMENT": "reproducibility",
             "PSEUDOCODE": "reproducibility",
+            "SPEC": "presentation",
+            "BLIND": "ethics",
+            "ABSTRACT": "clarity",
+            "CONCLUSION": "soundness",
+            "LITERATURE": "literature_grounding",
+            "TABLES": "presentation",
         }
+
+    def test_unmapped_module_is_fail_closed(self) -> None:
+        from scholar_eval import UnmappedAuditModuleError, require_mapped_modules
+
+        require_mapped_modules(["LOGIC", "SPEC", "BLIND"])
+        with pytest.raises(UnmappedAuditModuleError, match="DOES_NOT_EXIST"):
+            require_mapped_modules(["LOGIC", "DOES_NOT_EXIST"])
 
     def test_reproducibility_signal_from_experiment_module(self) -> None:
         from scholar_eval import evaluate_from_audit
