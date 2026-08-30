@@ -267,3 +267,25 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 **输出限制**：最多 12 期；小组重复机械发现（例如
 多次使用破折号）到每个模式的一个问题中。
+
+### 通道：zh_thesis_review
+
+**焦点**：以学位论文评阅专家（送审/盲审语境）审阅中文学位论文，覆盖工作量、学位档创新性、结构完备性，以及脚本 finding 之后仍需 `[LLM]` 判断的缺口。
+
+**做**：
+
+- `detect_language` 返回 `en` 时退出且零 finding
+- 阅读 `references/ZH_THESIS_REVIEW_CRITERIA.md`，复用 C1 `[Script]` 模块（`SPEC`、`BLIND`、`ABSTRACT`、`CONCLUSION`、`LITERATURE`、`TABLES`、`SENTENCES`、`BIB`、`FIGURES`），不要从头重检
+- 定性判断硕士/博士创新与工作量；不得用页数、图表数、公式数、参考文献数代理
+- 方法章叙述指路 `latex-thesis-zh --method-narrative --section`
+
+**不**：
+
+- 不改写论文，也不传递 `--generate` 给 `blind_review.py`
+- 不产出评阅等级或“同意答辩”
+- 不把附录或符号表缺失当作阻断项
+- 不在英文会议/期刊论文上运行该通道
+
+**输出限制**：最多 8 个问题。写入
+`<review_dir>/comments/zh_thesis_review.json`。
+

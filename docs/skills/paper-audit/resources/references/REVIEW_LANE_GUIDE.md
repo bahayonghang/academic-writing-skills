@@ -33,6 +33,12 @@ Default `deep-review` lanes:
   positioning without duplicating paragraph-internal `P-ARC-*` findings. Follow the
   edit/evidence boundary in
   `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`.
+- `zh_thesis_review` — max 8 issues; enabled when `lang == "zh"` and
+  `deep-review --focus full|editor`. Persona is a Chinese thesis examiner
+  (submission / blind-review context), not a journal reviewer. Follow
+  `ZH_THESIS_REVIEW_CRITERIA.md`. Skip the lane and emit no findings on
+  non-Chinese input.
+
 
 Per-lane focus directives, DO/DON'T rules, and grouping conventions live in
 `SUBAGENT_TEMPLATES.md`. Output limits prevent LLM filler; recurring issues

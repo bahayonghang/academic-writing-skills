@@ -129,13 +129,16 @@
 
 ## 中文学位论文
 
-- [ ] 参考书目遵循GB/T 7714-2015标准
-- [ ] 中文摘要和英文摘要同时存在
-- [ ] 摘要双语一致性验证
-- [ ] 中文文本中使用的全角标点符号
-- [ ] 英文文本和公式中使用的半角标点符号
-- [ ] 大学模板合规性已验证
-- [ ] 包含原创性声明
-- [ ] 致谢部分呈现
-- [ ] 中英文关键词
-- [ ] 文献综述中无作者/年份枚举模式（A1-ZH：“张三（2019）提出...”连续模式）
+- [ ] [TZ-CL-bilingual-abstract] 中文摘要和英文摘要同时存在
+- [ ] [TZ-CL-bilingual-keywords] 中英文关键词
+- [ ] [TZ-CL-originality] 包含原创性声明
+- [ ] [TZ-CL-acknowledgments] 致谢部分呈现
+- [ ] [TZ-CL-gbt7714] 参考书目遵循GB/T 7714-2015标准
+- [ ] [TZ-CL-abstract-consistency] 摘要双语一致性验证
+- [ ] [TZ-CL-punctuation-zh] 中文文本中使用的全角标点符号
+- [ ] [TZ-CL-punctuation-en] 英文文本和公式中使用的半角标点符号
+- [ ] [TZ-CL-template] 大学模板合规性已验证
+- [ ] [TZ-CL-lit-enum] 文献综述中无作者/年份枚举模式（A1-ZH）
+- [ ] [TZ-CL-appendix-optional] 若学校要求则有附录（条件必备；模板可省，不进 extra_checks / gate）
+- [ ] [TZ-CL-symbols-optional] 若学校要求则有符号表（条件必备；燕山“可省”、北大“非必备章节”，不进 extra_checks / gate）
+

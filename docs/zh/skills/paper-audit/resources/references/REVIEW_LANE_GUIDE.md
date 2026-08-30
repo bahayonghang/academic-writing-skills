@@ -31,6 +31,11 @@
   `deep-review --focus logic|full` 下启用；检查跨小节交接与父节角色定位，
   不重复段内 `P-ARC-*` 发现。编辑/证据边界遵循
   `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`。
+- `zh_thesis_review`— 最多 8 个问题；在 `lang == "zh"` 且
+  `deep-review --focus full|editor` 时启用。角色是中文学位论文评阅专家
+  （送审/盲审语境），不是期刊审稿人。遵循 `ZH_THESIS_REVIEW_CRITERIA.md`。
+  非中文输入跳过该通道且不产出 finding。
+
 
 每审查通道焦点指令、DO/DON'T 规则和分组约定均存在
 `SUBAGENT_TEMPLATES.md`。输出限制阻止LLM填充；反复出现的问题

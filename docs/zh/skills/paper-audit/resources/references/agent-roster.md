@@ -18,6 +18,8 @@
 - `notation_consistency_reviewer_agent.md`
 - `evaluation_fairness_reviewer_agent.md`
 - `self_consistency_reviewer_agent.md`
+- `zh_thesis_reviewer_agent.md` — 中文学位论文评阅通道
+  （`zh_thesis_review`；仅 `lang == "zh"` 且 deep-review full/editor）
 - `prior_art_reviewer_agent.md`
 - `synthesis_agent.md`
 - `editor_in_chief_agent.md`— EIC 直接拒稿筛选器（用于`gate`模式）
