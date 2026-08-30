@@ -1384,3 +1384,38 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 41: paper-audit 中文学位论文审阅 profile
+
+**Date**: 2026-08-31
+**Task**: paper-audit 中文学位论文审阅 profile
+**Branch**: `dev`
+
+### Summary
+
+沿 venue/lang 轴补齐 paper-audit 的中文学位论文审阅：修复 zh 调度、接通专属检查器、新增准则文档与 zh_thesis_review lane。
+
+### Main Changes
+
+- 修复 gbt7714 死条目与 bib 输入，接通 spec/blind/abstract 等 zh 检查器
+- 新增 ZH_THESIS_REVIEW_CRITERIA、zh_thesis_reviewer_agent 与 thesis-zh TZ-EC/TZ-CL 覆盖关系
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a05ae79` | (see git log) |
+| `f74823b` | (see git log) |
+
+### Testing
+
+- [OK] just ci（1743 passed）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 中文伪代码检查本地化与 deep-review mode 传播另立任务
