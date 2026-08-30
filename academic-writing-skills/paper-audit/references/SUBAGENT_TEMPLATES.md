@@ -220,6 +220,37 @@ expects from prior work or competing methods.
 
 **Output limit**: max 6 issues; this lane is intentionally narrow.
 
+### Lane: subsection_context_polish
+
+**Focus**: inspect whether each depth-3 subsection receives the needed inbound
+context, hands off to the next subsection, and states its role in the numbered
+parent section.
+
+Read `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`
+before reviewing this lane.
+
+**DO**:
+
+- read `artifacts/data/subsection_index.json`, then open each selected
+  `artifacts/windows/<id>.json`
+- use every component's `source_file`, `source_start`, and `source_end` with
+  `Read(offset=source_start-1, limit=source_end-source_start+1)`; treat the
+  `editable` object and `read_only` list as the permission map
+- report only `S-CTX-IN`, `S-CTX-OUT`, or `S-CTX-ROLE` observations and include
+  both `subsection_id` and list-valued `context_sides` in every finding
+- emit `source_kind: "llm"`; use `severity: "minor"`, except a grouped
+  `S-CTX-IN+OUT` observation may use `severity: "moderate"`
+
+**DON'T**:
+
+- do not propose a replacement anchored to a component outside `editable`
+- do not copy manuscript prose into the window artifact or infer missing text
+- do not duplicate paragraph-internal `P-ARC-*`, style, citation, or claim-validity findings
+
+**Output limit**: max 10 issues. Keep `subsection_id` as one dotted-decimal string;
+for a grouped observation, anchor it to the first affected unit and enumerate any
+other affected IDs in the explanation.
+
 ### Lane: prior_art_and_novelty_grounding
 
 **Focus**: audit whether the paper's novelty claim is well-grounded in the

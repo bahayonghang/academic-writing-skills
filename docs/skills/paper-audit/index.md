@@ -26,7 +26,7 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents. It i
 | `quick-audit` | You want a fast script-backed readiness screen | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
 | `deep-review` | You need reviewer-style findings, workspace artifacts, and a revision roadmap | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus full` |
 | `gate` | You only care about hard submission blockers | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee` |
-| `polish` | You want precheck-only handoff before style editing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
+| `polish` | You want precheck-only handoff, including source-coordinate subsection windows when available, before style editing | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | You have a previous report and need regression comparison | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md` |
 
 Compatibility aliases: `self-check` -> `quick-audit`; `review` -> `deep-review`.

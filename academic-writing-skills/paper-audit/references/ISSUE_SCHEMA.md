@@ -12,6 +12,8 @@ Canonical schema for `deep-review` findings.
   "confidence": "high|medium|low|unverified",
   "source_kind": "script|llm",
   "source_section": "methods",
+  "subsection_id": "2.1.1",
+  "context_sides": ["current", "prev.tail"],
   "related_sections": ["results", "appendix"],
   "root_cause_key": "normalized-shared-key",
   "review_lane": "claims_vs_evidence",
@@ -52,6 +54,11 @@ Canonical schema for `deep-review` findings.
   with `quote_verified=false` to `confidence: unverified` so downstream
   consolidation and reporting can treat it as evidence-deficient rather than
   silently keeping the original confidence label.
+- `subsection_id` and `context_sides` are optional subsection-context fields.
+  Omit `subsection_id` when no depth-3 unit exists. `context_sides` is a list drawn
+  from `current`, `prev.tail`, `next.head`, and `parent_lead`; do not use the old
+  singular `context_side`. Every S-CTX issue uses `source_kind: "llm"` and
+  `severity: "minor"`; only a grouped `S-CTX-IN+OUT` issue uses `severity: "moderate"`.
 
 ## Optional Bundle Wrapping
 

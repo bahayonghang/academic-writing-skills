@@ -1,12 +1,13 @@
-# 中文学位论文小节上下文检查器契约
+# 小节上下文跨技能契约
 
 ## 1. Scope / Trigger
 
 修改 `latex-thesis-zh/scripts/analyze_logic.py` 的 `--subsection-context`、`--subsection`、
 `--emit-window`，小节编号、三元窗口、`S-CTX-*` 判据、术语 YAML、fixture 或公开资源时，
-必须遵守本文。面向写作者的语义说明以
+以及修改 `paper-audit` 的小节索引/窗口产物、`subsection_context_polish` lane、polish state、
+协议 mirror 或 ISSUE_SCHEMA 投影时，必须遵守本文。面向写作者的语义说明以
 `latex-thesis-zh/references/writing/subsection-context-zh.md` 为权威；本文锁定开发接口、
-编号父链、窗口 schema、验证错误与防回归门禁。
+编号父链、窗口 schema、跨技能投影、验证错误与防回归门禁。
 
 ## 2. Signatures
 
@@ -36,8 +37,20 @@ _check_subsection_context(
     terms: dict[str, tuple[str, ...]],
 ) -> list[str]
 
+build_subsection_units(
+    assembled: AssembledDocument,
+    parser,
+) -> list[SubsectionUnit]
+
+prepare_subsection_artifacts(
+    source: Path,
+    parser,
+    layout: WorkspaceLayout,
+) -> dict[str, object]
+
 SUBSECTION_CONTEXT_MIN_HAN = 20
 SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
+SUBSECTION_CONTEXT_MIN_VISIBLE = 60
 ```
 
 新参数必须追加在 `analyze()` 现有位置参数之后且默认关闭；未传新开关时，既有 fixture/flag
@@ -93,6 +106,25 @@ SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
 - `subsection-context-terms.yaml` 逐字段加载；文件缺失、字段缺失或字段类型非法时，只回退
   该字段到内置同值表。
 
+### 3.4 Paper-audit 产物与 lane 投影
+
+- 既有 `artifacts/data/section_index.json` 必须保持 JSON `list[dict]` 形态和逐项 schema；
+  不得改成 envelope，也不得插入 metadata sentinel。
+- 新 `artifacts/data/subsection_index.json` 是
+  `{"subsection_index_status": "ok|no_depth3_headings|unsupported_format", "units": [...]}`；
+  Typst/PDF 明确使用 `unsupported_format` 和空 `units`。
+- 每个单元的窗口写入 `artifacts/windows/<subsection_id>.json`。polish state 的
+  `subsection_windows.units[]` 必须投影 `subsection_id`、`window`、`source_file`、`editable`、
+  `read_only`，且后 3 项与实际窗口 JSON 完全一致。
+- 中文 eligibility 与 zh 产品相同；英文段使用可见字符数 `>= 60` 的等价投影。
+- `subsection_context_polish` 只能进入 `full` / `logic` focus 与 `logic` role；不得进入
+  `methodology` / `literature`，不得生成脚本 fallback issue。
+- S-CTX issue 的 `source_kind` 恒为 `llm`；单项 `severity=minor`，汇总项可为 `moderate`。
+  `subsection_id` 是一个点分字符串；汇总涉及的其余 ID 写入 explanation，不得把字段改成列表。
+- canonical 与 `paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md` mirror 的标记契约块
+  经空白规范化后必须完全相等。lane/template/agent/POLISH_GUIDE 只引用 mirror 路径，
+  不复制可编辑边界协议句。
+
 ## 4. Validation & Error Matrix
 
 | 条件 | 行为 |
@@ -104,6 +136,11 @@ SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
 | prev/next 无合格段 | 对应只读部件缺省并记录状态；抑制依赖该证据侧的 IN/OUT |
 | 第一/最后单元 | `boundary=first/last`；缺失方向的观察不产出 |
 | 窗口 index 越界（内部调用） | `_build_context_window` 抛 `IndexError` |
+| `.typ` / `.pdf` 输入 | `subsection_index_status=unsupported_format`、`units=[]`；既有 section 流程继续工作 |
+| paper-audit 无有效 depth-3 | `subsection_index_status=no_depth3_headings`、`units=[]`；不回退 depth-2 |
+| `section_index.json` 不再是 list | 兼容性合同失败；恢复原 writer，不迁移既有消费者 |
+| lane 无 LLM 参与 | 不产生 `comments/subsection_context_polish.json`；不得伪造 fallback issue |
+| protocol 未复制进 workspace | 自包含工作区合同失败；Mentor/reviewer 不得依赖仓库外隐式路径 |
 
 ## 5. Good / Base / Bad Cases
 
@@ -112,6 +149,11 @@ SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
 - Base：文档没有有效 depth-3，返回固定声明和空观察集，不把 depth-2 当小节。
 - Bad：编号章之后出现 `\chapter*`，仍沿用旧章计数给其子标题编号；这是被禁止的父链继承。
 - Bad：窗口正文或相邻小节完整内容进入报告；窗口只能输出坐标与状态。
+- Good：paper-audit 新增独立 subsection envelope/window，同时旧 section index 保持原数组，
+  polish state 只投影窗口 schema。
+- Base：Typst/PDF 或无 depth-3 时，小节 envelope 明确降级，既有 section 审阅继续可用。
+- Bad：为增加 `subsection_index_status` 把 `section_index.json` 改成对象，或向数组插入状态哨兵。
+- Bad：无 LLM 参与时为新 lane 生成脚本 issue，或让 grouped finding 的 `subsection_id` 变成数组。
 
 ## 6. Tests Required
 
@@ -123,6 +165,13 @@ SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
   干净反例，以及连续 2/3 单元升级边界。
 - 锁定术语文件缺失、字段缺失、字段非法三种逐字段回退。
 - 公开资源变化后运行单技能/全量 resource sync、双语 contract、docs build 与 `just ci`。
+- paper-audit 必须锁定 section list 兼容、subsection envelope、book/article/星号父链、无 depth-3、
+  Typst/PDF 降级、parent_lead、20/0.30/60 eligibility 和任意连续 20 字正文不泄露。
+- 跨技能测试必须让 A 产品游标与 B index 各自等于同一硬编码 ID 序列，并对每个 ID 运行
+  `--emit-window --subsection`；B 窗口对象还要与 A canonical 投影逐项相等。
+- lane 测试必须锁定 focus/role 矩阵、polish state 的完整投影、无 fallback issue、Schema required
+  集合不漂移、两个 SKILL 版本不 bump 以及全部消费者中 `S-CTX-DUP` 零命中。
+- bait fixture 的 LLM 行为核对只能记为 `manual + UNVERIFIED`；synthetic/当前模型结果不得外推。
 
 ## 7. Wrong vs Correct
 
@@ -147,11 +196,26 @@ if depth == 3 and not (root_numbered and parent_numbered):
     continue
 ```
 
+### Wrong: 为状态字段破坏旧索引
+
+```json
+{"subsection_index_status": "ok", "sections": []}
+```
+
+### Correct: 保持旧索引，新增独立 envelope
+
+```text
+section_index.json     -> [{"section_key": "introduction", ...}]
+subsection_index.json  -> {"subsection_index_status": "ok", "units": [...]}
+```
+
 质量门：
 
 ```powershell
 uv run --extra dev python -m pytest tests/skills/latex_thesis_zh/test_subsection_context.py -q
+uv run --extra dev python -m pytest tests/skills/paper_audit/test_subsection_index.py tests/skills/paper_audit/test_subsection_lane_wiring.py tests/contracts/test_subsection_context_contract.py -q
 uv run python -X utf8 docs/scripts/check_resource_sync.py --skill latex-thesis-zh
+uv run python -X utf8 docs/scripts/check_resource_sync.py --skill paper-audit
 uv run python -X utf8 docs/scripts/check_resource_sync.py
 just doc-build
 just ci

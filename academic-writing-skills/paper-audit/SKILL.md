@@ -9,7 +9,7 @@ metadata:
   category: academic-writing
   tags: [audit, deep-review, paper, pdf, latex, typst, chinese, english, reviewer, gate, re-audit]
   version: "6.0.0"
-  last_updated: "2026-08-09"
+  last_updated: "2026-08-30"
 argument-hint: "[paper.tex|paper.typ|paper.pdf] [--mode quick-audit|deep-review|gate|re-audit|polish] [--report-style deep-review|peer-review] [--focus full|editor|theory|literature|methodology|logic] [--venue VENUE] [--lang en|zh] [--previous-report PATH] [--literature-search] [--tavily-key KEY] [--s2-key KEY] [--scholar-eval] [--regression] [--overwrite-workspace] [--format md|json]"
 allowed-tools: Read, Glob, Grep, Bash(uv *), Task
 ---
@@ -66,6 +66,10 @@ root contains exactly four reader-facing files — `review_report.md`,
 - Read like a careful reader before flagging — understand the author's intended meaning first so the issue captures a real misread, not a strawman.
 - For literature findings, judge whether the gap is evidence-backed and fairly positioned, and don't rewrite the prose inside `paper-audit` — keep prose rewrites in the format-specific writing skills.
 - For method-interface review in `section_methods`, load its focus block in `references/SUBAGENT_TEMPLATES.md`; that block points to the authoritative method contract. Phase 0 adds the Methods-section logic pass only for English `.tex` and for `.typ` inputs; Chinese thesis method narration remains an explicit `latex-thesis-zh` `--method-narrative --section` workflow outside the automatic audit chain.
+- For cross-subsection handoff review, load the `subsection_context_polish` focus block
+  and `references/SUBSECTION_CONTEXT_PROTOCOL.md`. The lane is available to polish
+  orchestration and to deep-review `full`/`logic` focus only; its neighboring window
+  components are evidence, not additional rewrite targets.
 - For `PRESUBMISSION`, map CRITICAL / MAJOR / MINOR to Critical / Major / Minor script severities; only Critical or failed checklist items can fail `gate` — otherwise mechanical findings drown out the substantive ones (full matrix: `references/PRESUBMISSION_GUIDE.md`).
 - In PDF mode, do not guess source-only hygiene. Report text-proven items
   and note that LaTeX/Typst source checks were skipped.
@@ -86,6 +90,7 @@ root contains exactly four reader-facing files — `review_report.md`,
 | "review my paper", "simulate peer review", "harsh review", "deep review" | `deep-review` |
 | "is this ready to submit", "gate this submission", "blockers only" | `gate` |
 | "did I fix these issues", "re-audit", "compare against old review" | `re-audit` |
+| "polish cross-subsection handoffs with context" (`subsection_context_polish`) | `polish` |
 | "polish the writing, but only if safe" | `polish` |
 
 Legacy aliases (one compatibility cycle): `self-check` -> `quick-audit`,
@@ -137,7 +142,8 @@ Five phases (detail: `references/MODE_GUIDE.md`,
    literature, methodology, logic) and write `committee/consensus.md`.
 4. **Phase 3B section + cross-cutting lanes** — section, claims-vs-evidence,
    notation, evaluation fairness, self-consistency, prior-art, and
-   pre-submission readiness (full/editor focus only).
+   pre-submission readiness (full/editor focus only), plus subsection-context
+   handoffs for `full`/`logic` focus.
 5. **Consolidation** — `consolidate_review_findings.py`, `verify_quotes.py
    --write-back`, then render Markdown + HTML reports with `--lang $LANG`
    (exact commands in `references/workflow-detail.md`).
@@ -168,6 +174,8 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
 ```
 
 If blockers exist, stop and report them; polish only when the precheck is safe.
+When `subsection_windows.status == "ok"`, use its source-coordinate windows for
+per-subsection Mentor handoff; otherwise retain the section-level fallback.
 
 ## Output Contract
 

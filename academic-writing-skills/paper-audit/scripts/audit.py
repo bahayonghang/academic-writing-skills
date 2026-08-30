@@ -17,7 +17,7 @@ from detect_language import detect_language
 from i18n import normalize_lang
 from parsers import get_parser
 from paths import WorkspaceLayout
-from prepare_review_workspace import prepare_workspace
+from prepare_review_workspace import prepare_subsection_artifacts, prepare_workspace
 from report_generator import (
     AuditIssue,
     AuditResult,
@@ -234,6 +234,7 @@ FOCUS_TO_ALLOWED_LANES: dict[str, set[str]] = {
         "self_standard_consistency",
         "prior_art_and_novelty_grounding",
         "pre_submission_readiness",
+        "subsection_context_polish",
     },
     "editor": {
         "section_intro_related",
@@ -260,6 +261,7 @@ FOCUS_TO_ALLOWED_LANES: dict[str, set[str]] = {
         "section_discussion_conclusion",
         "self_standard_consistency",
         "claims_vs_evidence",
+        "subsection_context_polish",
     },
 }
 
@@ -287,7 +289,12 @@ ROLE_TO_REVIEW_LANES: dict[str, set[str]] = {
         "notation_and_numeric_consistency",
         "evaluation_fairness_and_reproducibility",
     },
-    "logic": {"section_discussion_conclusion", "self_standard_consistency", "claims_vs_evidence"},
+    "logic": {
+        "section_discussion_conclusion",
+        "self_standard_consistency",
+        "claims_vs_evidence",
+        "subsection_context_polish",
+    },
 }
 
 # Additional checks for Chinese documents
@@ -2329,6 +2336,11 @@ def run_polish_precheck(
 
     # Hard blockers = Critical severity
     blockers = [i for i in precheck_issues if i["severity"] == "Critical"]
+    subsection_windows = prepare_subsection_artifacts(
+        path,
+        parser,
+        WorkspaceLayout(path.parent / ".polish-state"),
+    )
 
     precheck_data = {
         "file_path": str(path),
@@ -2341,6 +2353,7 @@ def run_polish_precheck(
         "blockers": blockers,
         "non_imrad": non_imrad,
         "skip_logic": skip_logic,
+        "subsection_windows": subsection_windows,
         "generated_at": datetime.now().isoformat(),
     }
     _write_state_file(path, precheck_data)

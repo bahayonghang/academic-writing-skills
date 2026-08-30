@@ -64,6 +64,13 @@ Set ONLY when:
 - Removing limitations or negative results
 
 ### Context Window Management
-- Mentor receives ONLY the target section via Read(offset=start-1, limit=end-start+1)
-- For sections > 1200 words: orchestrator splits at subsection boundaries,
-  spawns two Mentor calls
+- When `subsection_windows.status == "ok"`, dispatch one Mentor call per depth-3
+  subsection using `artifacts/windows/<id>.json`.
+- Resolve every component through its `source_file`, `source_start`, and `source_end`
+  before calling `Read(offset=source_start-1, limit=source_end-source_start+1)`.
+- Apply the edit/evidence permissions defined in
+  `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`.
+- If one subsection exceeds 1200 words, split it at paragraph boundaries; both
+  halves keep the same previous/next context window.
+- When `subsection_windows.status != "ok"`, fall back to the existing section-level
+  split and target-section `Read` behavior.

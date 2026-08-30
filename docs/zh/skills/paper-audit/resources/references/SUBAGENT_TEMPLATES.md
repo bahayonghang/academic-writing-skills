@@ -195,6 +195,35 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 **输出限制**：最多 6 期；这条审查通道是故意狭窄的。
 
+### 审查通道：subsection_context_polish
+
+**重点**：检查每个 depth-3 小节是否承接了必要的上文、是否向下一小节完成交接，
+以及是否说明其在编号父节中的角色。
+
+审阅该通道前读取
+`academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`。
+
+**应该**：
+
+- 读取 `artifacts/data/subsection_index.json`，再打开每个选中单元的
+  `artifacts/windows/<id>.json`
+- 对每个部件使用其 `source_file`、`source_start` 与 `source_end`，调用
+  `Read(offset=source_start-1, limit=source_end-source_start+1)`；把
+  `editable` 对象与 `read_only` 列表作为权限映射
+- 只报告 `S-CTX-IN`、`S-CTX-OUT` 或 `S-CTX-ROLE` 观察，并在每条 finding 中包含
+  `subsection_id` 与列表类型的 `context_sides`
+- 输出 `source_kind: "llm"`；使用 `severity: "minor"`，只有汇总的
+  `S-CTX-IN+OUT` 观察可使用 `severity: "moderate"`
+
+**不应该**：
+
+- 不要提出锚定到 `editable` 之外部件的替换文本
+- 不要把论文正文复制到窗口产物，也不要推断缺失文本
+- 不要重复段内 `P-ARC-*`、风格、引用或主张有效性发现
+
+**输出限制**：最多 10 个问题。`subsection_id` 保持为一个点分十进制字符串；汇总观察锚定
+到首个受影响单元，并在 explanation 中列出其余受影响 ID。
+
 ### 审查通道：prior_art_and_novelty_grounding
 
 **重点**：审核论文的新颖性主张是否有充分依据

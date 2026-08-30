@@ -28,6 +28,11 @@ Default `deep-review` lanes:
 - `prior_art_and_novelty_grounding` — max 6 issues
 - `pre_submission_readiness` — max 12 issues (full/editor focus only;
   populated from high-signal `PRESUBMISSION` script findings)
+- `subsection_context_polish` — max 10 issues; enabled for `--mode polish` and
+  `deep-review --focus logic|full`; inspect cross-subsection handoffs and parent-role
+  positioning without duplicating paragraph-internal `P-ARC-*` findings. Follow the
+  edit/evidence boundary in
+  `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`.
 
 Per-lane focus directives, DO/DON'T rules, and grouping conventions live in
 `SUBAGENT_TEMPLATES.md`. Output limits prevent LLM filler; recurring issues

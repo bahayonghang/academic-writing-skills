@@ -11,6 +11,9 @@
 - 观察同一组四项段落弧线信号：`P-ARC-LEAD`（段首主题引导）、
   `P-ARC-CLOSE`（段末收束）、`P-ARC-LINK`（相邻段接口）和
   `P-ARC-FLAT`（段内展开）；仅缺少显式过渡词不等于逻辑断裂
+- 分配到 `subsection_context_polish` 时，读取源坐标窗口，并遵循
+  `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`
+  定义的权限
 
 ## 输出
 
