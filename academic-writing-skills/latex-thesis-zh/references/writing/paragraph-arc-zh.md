@@ -71,6 +71,8 @@ Minor/P2 汇总观察；单项 finding 不升级。
 AXES 描述单段内部的 Assertion、eXample、Explanation、Significance 四类角色；P-ARC 描述这些
 角色在可见文本中的入口、出口和相邻段接口。二者不是一一映射：
 
+跨标题的小节承接、交棒与父节角色由 `S-CTX-*` 负责；其合格段有意保留标题后的首段。
+
 | AXES 角色 | P-ARC 观察面 | 边界 |
 | --- | --- | --- |
 | Assertion | `P-ARC-LEAD` 提供首句复核入口 | 脚本不判断断言是否正确 |

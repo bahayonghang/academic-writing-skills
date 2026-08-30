@@ -1104,7 +1104,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "59a1fad581c4c779f02d05131502d6338d4013dde1897594e09787997adc4cec",
+      "sourceSha256": "0669100effcfc43c6df1cb9c2bc912c6dc7cee673d18cfdd4bebb24e2cddecb5",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1248,7 +1248,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/paragraph-arc-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "0a1eec07052ecf4b5eb940b9de91c9c54a7f2c02951d425400a8707f2b5f4a08",
+      "sourceSha256": "2001e2645b10be0740e2d64fd9a578cce89b131b8935c0a08a65292c4eb4f6a4",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md"
     },
@@ -1278,6 +1278,24 @@
       "sourceSha256": "2498db79bde61caa65327c40cdb48c8c972a4b610ae8eb339131437189a20916",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/structure-guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/structure-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/subsection-context-terms.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "4ebfb3eac0c27bdd6753ee32e7ae0ed85f4e432fbd7cb6a04795061acd3a2fb4",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/subsection-context-terms.yaml",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/subsection-context-terms.yaml"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/subsection-context-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "77b6c5a992b24d39bdedec6a7f5600e54b47b9f3b6f4de5df1feda6f52fa0488",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/subsection-context-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/subsection-context-zh.md"
     },
     {
       "skill": "latex-thesis-zh",

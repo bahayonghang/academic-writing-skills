@@ -134,6 +134,24 @@ Every finding is a `[Script]` observation with `Meaning-Check: NEEDS-LLM`; the s
 text. See [`../writing/paragraph-arc-zh.md`](../writing/paragraph-arc-zh.md) for the criteria table,
 threshold boundary, paragraph patterns, and relationship to AXES.
 
+## Subsection Context Checks (`--subsection-context`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --subsection-context [--subsection 2.1.1]
+uv run python -B scripts/analyze_logic.py thesis.tex --emit-window --subsection 2.1.1
+```
+
+This additive branch treats `depth == 3` headings as `x.x.x` subsection units and observes the
+three cross-heading interfaces `S-CTX-IN`, `S-CTX-OUT`, and `S-CTX-ROLE`. It never falls back to
+depth-2 when a document has no depth-3 heading. For documents split through `\include` or `\input`,
+the script assembles content first and then maps window coordinates back to real source files.
+
+The window prints only `current`, `prev.tail`, `next.head`, the optional `parent_lead`, and their
+source lines; it does not copy prose. Only `current` is editable, while every other part is evidence
+only. See [`../writing/subsection-context-zh.md`](../writing/subsection-context-zh.md) for the full
+criteria, eligibility rules, and protocol, and
+[`../writing/subsection-context-terms.yaml`](../writing/subsection-context-terms.yaml) for markers.
+
 ## Body-Chapter Stitching and Introduction Bridging (Default)
 
 - **P-PAPER (all chapters by default, no flag)**: report every occurrence of “源论文/小论文/N 篇论文” in visible prose (Minor/P2), without truncation. This is direct blind-review evidence of stitching; replace with “core problem/research content/this chapter.”
