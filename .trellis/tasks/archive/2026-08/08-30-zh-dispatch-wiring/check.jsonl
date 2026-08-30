@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "severity 映射与 ScholarEval 模块映射契约；R5.16 不改这两者、design §8 的 severity 映射由它界定"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "按技能副本脚本的测试加载约定；测试里取 zh 脚本须用 spec_from_file_location 而非 bare import"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "paper-audit 的 methods 双调用接线；audit.py:2512 的 logic --section methods 语言门控属该契约，R5.15 不动"}
