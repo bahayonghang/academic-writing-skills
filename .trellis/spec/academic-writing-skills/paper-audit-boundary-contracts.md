@@ -55,7 +55,7 @@ _load_bibliography_content(path: Path, content: str, fmt: str) -> str
 | CRITICAL plus `gate_blocker=false` | Normalize to `major`, force blocker true |
 | Unknown severity | Fall back to `moderate` |
 | `location` without `quote` | Preserve location as `source_section`; quote stays empty |
-| Unknown audit module | Ignore for script score; mapping guard test signals new modules |
+| Unknown audit module | Ignore for script score; `require_mapped_modules` fail-closed guard must catch unmapped names. New audit modules must enter `MODULE_DIMENSION_MAP` before they ship. |
 | Missing `.bib` path | Skip silently and continue with legacy paper content |
 | Nested BibTeX title braces | Return normalized title text |
 | Empty literature result set | Do not call comparison or assign a grounding score |

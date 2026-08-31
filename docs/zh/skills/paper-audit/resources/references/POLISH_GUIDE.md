@@ -64,6 +64,11 @@
 - 消除限制或负面结果
 
 ### 上下文窗口管理
-- Mentor 通过 Read(offset=start-1, limit=end-start+1) 仅接收目标部分
-- 对于> 1200字的部分：编排器在小节边界处分割，
-产生两次导师电话
+- 当 `subsection_windows.status == "ok"` 时，按 depth-3 小节分派 Mentor 调用，
+  使用 `artifacts/windows/<id>.json`。
+- 通过每个部件的 `source_file`、`source_start` 和 `source_end` 解析正文，
+  再调用 `Read(offset=source_start-1, limit=source_end-source_start+1)`。
+- 编辑/证据权限遵循
+  `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`。
+- 单个小节超过 1200 词时，在段落边界拆分；两半共享同一份上一/下一小节上下文窗口。
+- 当 `subsection_windows.status != "ok"` 时，回退到既有章节级切分与目标章节 `Read` 行为。

@@ -905,6 +905,41 @@
           "description": "不补造统计证据"
         }
       ]
+    },
+    {
+      "id": 32,
+      "prompt": "请检查这篇多文件中文学位论文各个 x.x.x 小节之间是否承接清楚，并给出 1.2.1 的上下文窗口供后续润色。",
+      "expected_output": "路由到 logic 模块，运行 --subsection-context，并用 --emit-window --subsection 1.2.1 只返回源坐标；说明 S-CTX-IN/OUT/ROLE 与 current 可改、邻接部件只读的边界。",
+      "files": [
+        "evals/fixtures/subsection-context/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--subsection-context",
+          "description": "routes to the subsection context checker"
+        },
+        {
+          "type": "contains",
+          "text": "--emit-window",
+          "description": "uses the coordinate-only context window"
+        },
+        {
+          "type": "regex",
+          "pattern": "S-CTX-(IN|OUT|ROLE)",
+          "description": "uses the subsection interface code family"
+        },
+        {
+          "type": "regex",
+          "pattern": "(current.*可改|prev\\.tail.*只读|next\\.head.*只读|parent_lead.*只读)",
+          "description": "preserves editable and read-only context boundaries"
+        },
+        {
+          "type": "not_contains",
+          "text": "自动改写上一小节",
+          "description": "does not authorize rewriting read-only neighbors"
+        }
+      ]
     }
   ]
 }

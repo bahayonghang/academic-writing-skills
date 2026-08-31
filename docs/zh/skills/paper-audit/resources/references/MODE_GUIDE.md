@@ -193,6 +193,8 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
   - 自我标准一致​​性
   - 现有技术和新颖性基础
   - 提交前准备（完全/仅限编辑重点）
+  - 中文学位论文评阅（`zh_thesis_review`；仅 `lang == "zh"` 且 full/editor 焦点）
+
 
 每个通道写入一个 JSON 数组到`comments/`.
 

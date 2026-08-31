@@ -81,6 +81,9 @@ Prefer a semantic relation over a mechanical connector at paragraph interfaces:
 AXES describes Assertion, eXample, Explanation, and Significance roles inside a paragraph. P-ARC
 describes their visible entry, exit, and adjacent-paragraph interfaces. They are not one-to-one:
 
+Cross-heading subsection inheritance, handoff, and parent-section roles belong to `S-CTX-*`; its
+eligibility rule intentionally keeps the first paragraph after a heading.
+
 | AXES role | P-ARC observation surface | Boundary |
 | --- | --- | --- |
 | Assertion | `P-ARC-LEAD` provides a first-sentence review entry | The script does not judge whether the assertion is correct |

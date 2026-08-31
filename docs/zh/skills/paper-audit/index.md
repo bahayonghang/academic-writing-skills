@@ -26,7 +26,7 @@
 | `quick-audit` | 快速脚本化就绪性筛查 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode quick-audit` |
 | `deep-review` | 需要审稿式问题清单、workspace 和修订路线图 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode deep-review --focus full` |
 | `gate` | 只关心硬性投稿 blocker | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode gate --venue ieee` |
-| `polish` | 润色前需要 precheck-only handoff | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
+| `polish` | 润色前需要 precheck-only handoff；存在 depth-3 小节时同时提供源坐标窗口 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode polish` |
 | `re-audit` | 有旧报告，需要做回归比较 | `uv run python academic-writing-skills/paper-audit/scripts/audit.py paper.tex --mode re-audit --previous-report report_v1.md` |
 
 兼容别名：`self-check` -> `quick-audit`；`review` -> `deep-review`。

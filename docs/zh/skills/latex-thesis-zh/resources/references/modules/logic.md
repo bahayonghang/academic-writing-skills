@@ -123,6 +123,22 @@ Info/P3；只有绪论/相关工作中连续 3 个合格段同时缺少 LEAD+CLO
 阈值边界、段落范式及与 AXES 的关系见
 [`../writing/paragraph-arc-zh.md`](../writing/paragraph-arc-zh.md)。
 
+## Subsection Context Checks (`--subsection-context`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --subsection-context [--subsection 2.1.1]
+uv run python -B scripts/analyze_logic.py thesis.tex --emit-window --subsection 2.1.1
+```
+
+该附加分支把 `depth == 3` 的标题作为 `x.x.x` 小节单元，观察 `S-CTX-IN`、
+`S-CTX-OUT` 与 `S-CTX-ROLE` 三类跨标题接口。没有 depth-3 标题时不回退到 depth-2。
+正文经 `\include` / `\input` 拆分时先装配，再把窗口坐标映射回真实源文件。
+
+窗口只输出 `current`、`prev.tail`、`next.head`、必要时的 `parent_lead` 及源行号，不复制正文；
+只有 `current` 可改，其余部件只作证据。完整判据、合格段规则和协议见
+[`../writing/subsection-context-zh.md`](../writing/subsection-context-zh.md)，词表见
+[`../writing/subsection-context-terms.yaml`](../writing/subsection-context-terms.yaml)。
+
 ## Body-Chapter Stitching & Intro Bridging (default)
 
 - **P-PAPER（默认全章，无需 flag）**：可见正文出现"源论文/小论文/N 篇论文"表述即报（Minor/P2），

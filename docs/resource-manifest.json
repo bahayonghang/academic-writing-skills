@@ -1104,7 +1104,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "59a1fad581c4c779f02d05131502d6338d4013dde1897594e09787997adc4cec",
+      "sourceSha256": "0669100effcfc43c6df1cb9c2bc912c6dc7cee673d18cfdd4bebb24e2cddecb5",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1248,7 +1248,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/paragraph-arc-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "0a1eec07052ecf4b5eb940b9de91c9c54a7f2c02951d425400a8707f2b5f4a08",
+      "sourceSha256": "2001e2645b10be0740e2d64fd9a578cce89b131b8935c0a08a65292c4eb4f6a4",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/paragraph-arc-zh.md"
     },
@@ -1278,6 +1278,24 @@
       "sourceSha256": "2498db79bde61caa65327c40cdb48c8c972a4b610ae8eb339131437189a20916",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/structure-guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/structure-guide.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/subsection-context-terms.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "4ebfb3eac0c27bdd6753ee32e7ae0ed85f4e432fbd7cb6a04795061acd3a2fb4",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/subsection-context-terms.yaml",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/subsection-context-terms.yaml"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/subsection-context-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "77b6c5a992b24d39bdedec6a7f5600e54b47b9f3b6f4de5df1feda6f52fa0488",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/subsection-context-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/subsection-context-zh.md"
     },
     {
       "skill": "latex-thesis-zh",
@@ -1401,7 +1419,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/agent-roster.md",
       "sourceLocale": "en",
-      "sourceSha256": "07cb57d092226e2c6c4e2df46f909bf45acd7e96a084df85446a44e67cab966c",
+      "sourceSha256": "8e3fd923d7f11306a7334620fa74d95fec3c6c26203bf6f5ed32f335b3ef7357",
       "en": "docs/skills/paper-audit/resources/references/agent-roster.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/agent-roster.md"
     },
@@ -1428,7 +1446,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/CHECKLIST.md",
       "sourceLocale": "en",
-      "sourceSha256": "17fc50b03196dd01de6076895fed6bd5334cd982d8acd08000c053e4accab119",
+      "sourceSha256": "039643b7554e949066929ce58a2e89a847fa68e52f51e38cb2abdf1a28cf9e2d",
       "en": "docs/skills/paper-audit/resources/references/CHECKLIST.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/CHECKLIST.md"
     },
@@ -1491,7 +1509,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/ISSUE_SCHEMA.md",
       "sourceLocale": "en",
-      "sourceSha256": "08b86c9716d0e89a6b62d0ad18572c70742f644125897bba08c25d31421d75d6",
+      "sourceSha256": "1dba805634d57efaff0487940c2958e66007bc75f164da2c2ddb0265adddfb01",
       "en": "docs/skills/paper-audit/resources/references/ISSUE_SCHEMA.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/ISSUE_SCHEMA.md"
     },
@@ -1509,7 +1527,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/MODE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "a5507db5d387aa3656ff9f1af8bcd8120e0bb17b19d284fe258cdbe483e0dadf",
+      "sourceSha256": "c8655f5d60c0349f88b0a7cc2313ec6d1dc461000f61a3c7449031b88dac949d",
       "en": "docs/skills/paper-audit/resources/references/MODE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/MODE_GUIDE.md"
     },
@@ -1536,7 +1554,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/POLISH_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "f2f26d0232c6f019d438d0d540c36e281190f21a231c324511311bbb256a243f",
+      "sourceSha256": "331c5fc2fa74027680de46083df406de27a87e53005c21a4b42cfc9b63fcfb6c",
       "en": "docs/skills/paper-audit/resources/references/POLISH_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/POLISH_GUIDE.md"
     },
@@ -1599,7 +1617,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "271d4b813de76b04e56c981d41a34417ca877dcea6a0db74552b969d37d0f38d",
+      "sourceSha256": "34a6da61cd352f6f6eedd0a1601a44b0e2550ee4f2985e5b8e1f634c51b3bb5c",
       "en": "docs/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md"
     },
@@ -1644,9 +1662,18 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "458f99f9758c8fe3bf529ebc2f4c3cc5126737f46aea358f547478df0c04d6fc",
+      "sourceSha256": "8e7f3c8477fa57ab3f38949de6f5287c1fd6d575a245f30cd336483e376863bf",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a7ed23f44da2cd228fd3c6249de4cc54a8e563b50caac06a0831ee8ae0f9d14e",
+      "en": "docs/skills/paper-audit/resources/references/SUBSECTION_CONTEXT_PROTOCOL.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/SUBSECTION_CONTEXT_PROTOCOL.md"
     },
     {
       "skill": "paper-audit",
@@ -1662,7 +1689,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/VENUE_RULES.md",
       "sourceLocale": "en",
-      "sourceSha256": "8b343a5461e8bd12762eb90501b374262e93287619b9b83c74c1349d1a963ee6",
+      "sourceSha256": "5f4893e2ebb3368824d2b9065d35eec9ccabb7ba24e1981f48f9bcdd5f8d0364",
       "en": "docs/skills/paper-audit/resources/references/VENUE_RULES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/VENUE_RULES.md"
     },
@@ -1887,7 +1914,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/section_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "bd6cc1899aaf453d39da811e8bbabdb0cf7bffab8725b06320e080b83c4b3f6f",
+      "sourceSha256": "5b728e968395a53c3979f07def835373981e12fc74433f984c0877afd582362d",
       "en": "docs/skills/paper-audit/resources/agents/section_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/section_reviewer_agent.md"
     },
@@ -2385,6 +2412,24 @@
       "sourceSha256": "2c4920096737a67aaa9c296e865dea27bae8e4add08c283bb74c37747a65228d",
       "en": "docs/skills/typst-paper/resources/examples/literature-review-rewrite.md",
       "zh": "docs/zh/skills/typst-paper/resources/examples/literature-review-rewrite.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md",
+      "sourceLocale": "zh",
+      "en": "docs/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
+      "sourceSha256": "ac22f4efeb7f4382a0217b28b16b421a69d993651f2b2a709b8cf5663261ef05"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md",
+      "sourceLocale": "zh",
+      "en": "docs/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
+      "sourceSha256": "92ca7bc004278066045ed0a59760030f480e0a20c9bb83be165884e5cba89381"
     }
   ]
 }

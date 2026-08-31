@@ -12,6 +12,8 @@
   "confidence": "high|medium|low|unverified",
   "source_kind": "script|llm",
   "source_section": "methods",
+  "subsection_id": "2.1.1",
+  "context_sides": ["current", "prev.tail"],
   "related_sections": ["results", "appendix"],
   "root_cause_key": "normalized-shared-key",
   "review_lane": "claims_vs_evidence",
@@ -52,6 +54,11 @@
 和`quote_verified=false`到`confidence: unverified`所以下游
 合并和报告可以将其视为证据不足，而不是
 默默地保留着最初的自信标签。
+- `subsection_id` 与 `context_sides` 是可选的小节上下文字段。
+  没有 depth-3 单元时省略 `subsection_id`。`context_sides` 是列表，取值来自
+  `current`、`prev.tail`、`next.head` 与 `parent_lead`；不要使用旧的单值
+  `context_side`。每条 S-CTX issue 使用 `source_kind: "llm"` 与
+  `severity: "minor"`；只有汇总的 `S-CTX-IN+OUT` issue 使用 `severity: "moderate"`。
 
 ## 可选的捆绑包装
 

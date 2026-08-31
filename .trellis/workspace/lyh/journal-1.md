@@ -1342,3 +1342,80 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 39: 完成 latex-thesis-zh 小节上下文诊断
+
+**Date**: 2026-08-30
+**Task**: 完成 latex-thesis-zh 小节上下文诊断
+**Branch**: `dev`
+
+### Summary
+
+实现 depth-3 小节游标、三元上下文窗口、S-CTX 三码、CLI、公开资源与回归测试；独立检查修复无编号父链继承和 parent_lead 坐标问题，最终 just ci 1656 项通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `73446e5` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 40: 小节上下文审阅通道与父子任务收尾
+
+**Date**: 2026-08-30
+**Task**: 小节上下文审阅通道与父子任务收尾
+**Branch**: `dev`
+
+### Summary
+
+完成 paper-audit 小节索引、只读上下文窗口与 subsection_context_polish 通道，验证跨技能契约和文档资源同步；归档 B 子任务及小节上下文父任务。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c575110` | (see git log) |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 41: paper-audit 中文学位论文审阅 profile
+
+**Date**: 2026-08-31
+**Task**: paper-audit 中文学位论文审阅 profile
+**Branch**: `dev`
+
+### Summary
+
+沿 venue/lang 轴补齐 paper-audit 的中文学位论文审阅：修复 zh 调度、接通专属检查器、新增准则文档与 zh_thesis_review lane。
+
+### Main Changes
+
+- 修复 gbt7714 死条目与 bib 输入，接通 spec/blind/abstract 等 zh 检查器
+- 新增 ZH_THESIS_REVIEW_CRITERIA、zh_thesis_reviewer_agent 与 thesis-zh TZ-EC/TZ-CL 覆盖关系
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a05ae79` | (see git log) |
+| `f74823b` | (see git log) |
+
+### Testing
+
+- [OK] just ci（1743 passed）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 中文伪代码检查本地化与 deep-review mode 传播另立任务

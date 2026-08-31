@@ -129,13 +129,16 @@ Consolidated checklists for paper audit across venues.
 
 ## Chinese Thesis Specific (中文学位论文)
 
-- [ ] Bibliography follows GB/T 7714-2015 standard
-- [ ] Chinese abstract and English abstract both present
-- [ ] Abstract bilingual consistency verified
-- [ ] Full-width punctuation used in Chinese text
-- [ ] Half-width punctuation used in English text and formulas
-- [ ] University template compliance verified
-- [ ] Declaration of originality included
-- [ ] Acknowledgments section present
-- [ ] Keywords in both Chinese and English
-- [ ] No author/year enumeration pattern in literature review (A1-ZH: "张三（2019）提出..." consecutive pattern)
+- [ ] [TZ-CL-bilingual-abstract] Chinese abstract and English abstract both present
+- [ ] [TZ-CL-bilingual-keywords] Keywords in both Chinese and English
+- [ ] [TZ-CL-originality] Declaration of originality included
+- [ ] [TZ-CL-acknowledgments] Acknowledgments section present
+- [ ] [TZ-CL-gbt7714] Bibliography follows GB/T 7714-2015 standard
+- [ ] [TZ-CL-abstract-consistency] Abstract bilingual consistency verified
+- [ ] [TZ-CL-punctuation-zh] Full-width punctuation used in Chinese text
+- [ ] [TZ-CL-punctuation-en] Half-width punctuation used in English text and formulas
+- [ ] [TZ-CL-template] University template compliance verified
+- [ ] [TZ-CL-lit-enum] No author/year enumeration pattern in literature review (A1-ZH)
+- [ ] [TZ-CL-appendix-optional] Appendix present if the school requires it (条件必备；模板可省，不进 extra_checks / gate)
+- [ ] [TZ-CL-symbols-optional] Symbol list present if the school requires it (条件必备；燕山“可省”、北大“非必备章节”，不进 extra_checks / gate)
+

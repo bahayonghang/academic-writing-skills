@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增 references/agents 必须同步 manifest 四字段、sourceSha256 与双语目标页面；R4.17-R4.19 由它界定"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "检查清单格式与 CHECKERS 双向锁；C4 的三处一致性测试参照该锁的语义标签锚定方式"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "ScholarEval 9 维权重与 severity 契约；design §1 的维度映射不得改权重、不得新建平行评分体系"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md", "reason": "审稿侧 lane/agent 新增的先例：rubric 与 lane 如何在不改评分链的前提下接入"}

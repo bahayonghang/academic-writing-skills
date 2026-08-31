@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 38
-- **Last Active**: 2026-08-29
+- **Total Sessions**: 41
+- **Last Active**: 2026-08-31
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1344 | Active |
+| `journal-1.md` | ~1421 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,9 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 41 | 2026-08-31 | paper-audit 中文学位论文审阅 profile | `a05ae79`, `f74823b` | `dev` |
+| 40 | 2026-08-30 | 小节上下文审阅通道与父子任务收尾 | `c575110` | `dev` |
+| 39 | 2026-08-30 | 完成 latex-thesis-zh 小节上下文诊断 | `73446e5` | `dev` |
 | 38 | 2026-08-29 | 完成写作节奏与段落弧线任务集成 | `4b37ddf`, `af84e4a`, `e09675d`, `a56b74c`, `083e035` | `dev` |
 | 37 | 2026-08-26 | latex-thesis-zh 质量闭环规划修订 | `da9308b` | `dev` |
 | 36 | 2026-08-10 | 集成学术去 AI 模式簇 | `34bbc2f` | `dev` |

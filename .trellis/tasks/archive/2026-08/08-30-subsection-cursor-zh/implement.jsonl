@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本、对齐锁与 sys.path 约定的总入口"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "S-CTX 复用 P-ARC 的段切分、合格段判定、阈值与标定边界"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "按技能副本的测试加载、evals 与阈值配置约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增 references 必须同步 manifest 与双语页面"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "改 SKILL.md 路由表前必读"}

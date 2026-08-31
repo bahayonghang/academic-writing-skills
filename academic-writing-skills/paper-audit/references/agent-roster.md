@@ -18,6 +18,8 @@ summary; this file is the authoritative roster.
 - `notation_consistency_reviewer_agent.md`
 - `evaluation_fairness_reviewer_agent.md`
 - `self_consistency_reviewer_agent.md`
+- `zh_thesis_reviewer_agent.md` — Chinese dissertation examiner lane
+  (`zh_thesis_review`; `lang == "zh"` and deep-review full/editor only)
 - `prior_art_reviewer_agent.md`
 - `synthesis_agent.md`
 - `editor_in_chief_agent.md` — EIC desk-reject screener (used in `gate` mode)

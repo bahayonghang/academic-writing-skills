@@ -16,11 +16,12 @@ Layout::
         ├── summary/    paper_summary.md, overall_assessment.txt,
         │               peer_review_report.md
         ├── data/       final_issues.json, all_comments.json, claim_map.json,
-        │               section_index.json, revision_suggestions.json,
+        │               section_index.json, subsection_index.json, revision_suggestions.json,
         │               revision_trajectory.md
         ├── meta/       metadata.json, checkpoint.json, phase0_context.md,
         │               full_text.md
         ├── sections/   section_key.md ...
+        ├── windows/    subsection context-window JSON files
         ├── comments/   lane JSON outputs
         ├── committee/  per-reviewer Markdown
         └── references/ minimal skill-references copy
@@ -97,6 +98,10 @@ class WorkspaceLayout:
         return self.data_dir / "section_index.json"
 
     @property
+    def subsection_index(self) -> Path:
+        return self.data_dir / "subsection_index.json"
+
+    @property
     def revision_suggestions_json(self) -> Path:
         return self.data_dir / "revision_suggestions.json"
 
@@ -133,6 +138,10 @@ class WorkspaceLayout:
         return self.artifacts / "sections"
 
     @property
+    def windows_dir(self) -> Path:
+        return self.artifacts / "windows"
+
+    @property
     def comments_dir(self) -> Path:
         return self.artifacts / "comments"
 
@@ -154,6 +163,7 @@ class WorkspaceLayout:
             self.data_dir,
             self.meta_dir,
             self.sections_dir,
+            self.windows_dir,
             self.comments_dir,
             self.committee_dir,
             self.references_dir,
@@ -163,6 +173,10 @@ class WorkspaceLayout:
     def section_file(self, file_name: str) -> Path:
         """Return ``sections/{file_name}`` (defensive: strips any path traversal)."""
         return self.sections_dir / Path(file_name).name
+
+    def window_file(self, subsection_id: str) -> Path:
+        """Return the JSON artifact path for one subsection context window."""
+        return self.windows_dir / f"{Path(subsection_id).name}.json"
 
     def comment_file(self, file_name: str) -> Path:
         return self.comments_dir / Path(file_name).name
@@ -185,8 +199,10 @@ class WorkspaceLayout:
                 self.full_text,
                 self.metadata,
                 self.section_index,
+                self.subsection_index,
                 self.claim_map,
                 self.paper_summary,
+                *sorted(self.windows_dir.glob("*.json")),
             )
         )
 

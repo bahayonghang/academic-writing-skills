@@ -195,6 +195,35 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 **输出限制**：最多 6 期；这条审查通道是故意狭窄的。
 
+### 审查通道：subsection_context_polish
+
+**重点**：检查每个 depth-3 小节是否承接了必要的上文、是否向下一小节完成交接，
+以及是否说明其在编号父节中的角色。
+
+审阅该通道前读取
+`academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`。
+
+**应该**：
+
+- 读取 `artifacts/data/subsection_index.json`，再打开每个选中单元的
+  `artifacts/windows/<id>.json`
+- 对每个部件使用其 `source_file`、`source_start` 与 `source_end`，调用
+  `Read(offset=source_start-1, limit=source_end-source_start+1)`；把
+  `editable` 对象与 `read_only` 列表作为权限映射
+- 只报告 `S-CTX-IN`、`S-CTX-OUT` 或 `S-CTX-ROLE` 观察，并在每条 finding 中包含
+  `subsection_id` 与列表类型的 `context_sides`
+- 输出 `source_kind: "llm"`；使用 `severity: "minor"`，只有汇总的
+  `S-CTX-IN+OUT` 观察可使用 `severity: "moderate"`
+
+**不应该**：
+
+- 不要提出锚定到 `editable` 之外部件的替换文本
+- 不要把论文正文复制到窗口产物，也不要推断缺失文本
+- 不要重复段内 `P-ARC-*`、风格、引用或主张有效性发现
+
+**输出限制**：最多 10 个问题。`subsection_id` 保持为一个点分十进制字符串；汇总观察锚定
+到首个受影响单元，并在 explanation 中列出其余受影响 ID。
+
 ### 审查通道：prior_art_and_novelty_grounding
 
 **重点**：审核论文的新颖性主张是否有充分依据
@@ -238,3 +267,25 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 
 **输出限制**：最多 12 期；小组重复机械发现（例如
 多次使用破折号）到每个模式的一个问题中。
+
+### 通道：zh_thesis_review
+
+**焦点**：以学位论文评阅专家（送审/盲审语境）审阅中文学位论文，覆盖工作量、学位档创新性、结构完备性，以及脚本 finding 之后仍需 `[LLM]` 判断的缺口。
+
+**做**：
+
+- `detect_language` 返回 `en` 时退出且零 finding
+- 阅读 `references/ZH_THESIS_REVIEW_CRITERIA.md`，复用 C1 `[Script]` 模块（`SPEC`、`BLIND`、`ABSTRACT`、`CONCLUSION`、`LITERATURE`、`TABLES`、`SENTENCES`、`BIB`、`FIGURES`），不要从头重检
+- 定性判断硕士/博士创新与工作量；不得用页数、图表数、公式数、参考文献数代理
+- 方法章叙述指路 `latex-thesis-zh --method-narrative --section`
+
+**不**：
+
+- 不改写论文，也不传递 `--generate` 给 `blind_review.py`
+- 不产出评阅等级或“同意答辩”
+- 不把附录或符号表缺失当作阻断项
+- 不在英文会议/期刊论文上运行该通道
+
+**输出限制**：最多 8 个问题。写入
+`<review_dir>/comments/zh_thesis_review.json`。
+

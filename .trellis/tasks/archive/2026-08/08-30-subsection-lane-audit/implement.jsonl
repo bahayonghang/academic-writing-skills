@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "副本脚本、对齐锁与 sys.path 约定的总入口"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md", "reason": "审稿侧 lane/agent 四项观察与证据边界的既有契约形态"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "severity、consolidation 与数据流边界"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "改动 references 必须同步 manifest 与双语页面"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "改 SKILL.md 路由表前必读"}
+{"file": ".trellis/spec/academic-writing-skills/subsection-context-contract.md", "reason": "A 已落地的 depth-3 游标、窗口 schema、编号父链与只读边界代码规范"}

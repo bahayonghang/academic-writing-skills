@@ -1041,6 +1041,16 @@ PARAGRAPH_ARC_TERMS_FILENAME = "paragraph-arc-terms.yaml"
 PARAGRAPH_ARC_MIN_HAN = 40
 PARAGRAPH_ARC_LINK_THRESHOLD = 0.0200
 PARAGRAPH_ARC_DOUBLE_MISSING_RUN = 3
+SUBSECTION_CONTEXT_TERMS_FILENAME = "subsection-context-terms.yaml"
+SUBSECTION_CONTEXT_MIN_HAN = 20
+SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
+SUBSECTION_CONTEXT_NO_DEPTH3 = "% 小节级：本文档无 depth-3 标题，未产出小节级观察。"
+
+DEFAULT_SUBSECTION_CONTEXT_TERMS: dict[str, tuple[str, ...]] = {
+    "inbound": ("在此基础上", "针对上述", "基于此", "前述", "上一小节", "承接"),
+    "outbound": ("为后续", "为下一", "提供输入", "由此可得", "综上"),
+    "locating": ("本节", "本小节", "下面", "以下"),
+}
 
 DEFAULT_PARAGRAPH_ARC_TERMS: dict[str, tuple[str, ...]] = {
     "judgment_predicates": ("是", "为", "作为", "属于", "意味着", "表明", "构成"),
@@ -1140,6 +1150,39 @@ class ArcParagraph:
     ends_with_env: bool
 
 
+@dataclass(frozen=True)
+class SubsectionUnit:
+    """A numbered depth-3 unit with both assembled and source coordinates."""
+
+    subsection_id: str
+    title: str
+    depth: int
+    parent_id: str
+    source_file: str
+    source_start: int
+    source_end: int
+    assembled_start: int
+    assembled_end: int
+    section_scope: str | None
+
+
+class _ContextWindow(dict[str, object]):
+    """Schema-shaped window with non-serialized evidence for script checks."""
+
+    evidence: dict[str, ArcParagraph]
+    parent_title: str
+
+    def __init__(
+        self,
+        payload: dict[str, object],
+        evidence: dict[str, ArcParagraph],
+        parent_title: str,
+    ) -> None:
+        super().__init__(payload)
+        self.evidence = evidence
+        self.parent_title = parent_title
+
+
 def _load_paragraph_arc_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
     """Load the public term table, falling back per key when YAML is absent or invalid."""
     terms = {key: tuple(values) for key, values in DEFAULT_PARAGRAPH_ARC_TERMS.items()}
@@ -1169,6 +1212,33 @@ def _load_paragraph_arc_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
                         re.compile(pattern)
                 except re.error:
                     continue
+            terms[key] = tuple(configured)
+    return terms
+
+
+def _load_subsection_context_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
+    """Load subsection markers, falling back independently for each field."""
+    terms = {key: tuple(values) for key, values in DEFAULT_SUBSECTION_CONTEXT_TERMS.items()}
+    yaml_path = script_dir.parent / "references" / "writing" / SUBSECTION_CONTEXT_TERMS_FILENAME
+    if not yaml_path.exists():
+        return terms
+    try:
+        import yaml
+    except ImportError:
+        return terms
+    try:
+        data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeError, yaml.YAMLError):
+        return terms
+    if not isinstance(data, dict):
+        return terms
+    for key in DEFAULT_SUBSECTION_CONTEXT_TERMS:
+        configured = data.get(key)
+        if (
+            isinstance(configured, list)
+            and configured
+            and all(isinstance(value, str) and value for value in configured)
+        ):
             terms[key] = tuple(configured)
     return terms
 
@@ -1231,6 +1301,145 @@ def _arc_section_at(
             key = chapter.get("key")
             return _arc_section_base(key) if isinstance(key, str) else None
     return None
+
+
+def _heading_is_starred(doc: AssembledDocument, heading: dict) -> bool:
+    """Recover the unnumbered marker omitted by ``extract_headings``."""
+    line_no = int(heading["line"])
+    if not 1 <= line_no <= len(doc.lines):
+        return False
+    command = re.escape(str(heading["command"]))
+    source = re.sub(r"(?<!\\)%.*$", "", doc.lines[line_no - 1])
+    return re.search(rf"\\{command}\*", source) is not None
+
+
+def _has_numbered_depth3(doc: AssembledDocument, parser) -> bool:
+    headings = parser.extract_headings(doc.content)
+    if not headings:
+        return False
+    root_level = min(int(heading["level"]) for heading in headings)
+    root_numbered = False
+    parent_numbered = False
+    for heading in headings:
+        depth = int(heading["level"]) - root_level + 1
+        if depth > 3:
+            continue
+        starred = _heading_is_starred(doc, heading)
+        if depth == 1:
+            root_numbered = not starred
+            parent_numbered = False
+        elif depth == 2:
+            parent_numbered = root_numbered and not starred
+        elif not starred and root_numbered and parent_numbered:
+            return True
+    return False
+
+
+def _source_span(
+    doc: AssembledDocument, assembled_start: int, assembled_end: int
+) -> tuple[str, int, int]:
+    """Project one assembled span onto the source file that owns its start."""
+    source_file, source_start = doc.origin(assembled_start)
+    source_end = source_start
+    for line_no in range(assembled_end, assembled_start - 1, -1):
+        end_file, end_line = doc.origin(line_no)
+        if end_file == source_file:
+            source_end = end_line
+            break
+    return source_file, source_start, source_end
+
+
+def _build_subsection_cursor(
+    doc: AssembledDocument,
+    parser,
+    sections: dict[str, tuple[int, int]],
+    first_chapter: int | None = None,
+) -> list[SubsectionUnit]:
+    """Build numbered depth-3 units without storing derived adjacency fields."""
+    headings = parser.extract_headings(doc.content)
+    if not headings:
+        return []
+    root_level = min(int(heading["level"]) for heading in headings)
+    if not _has_numbered_depth3(doc, parser):
+        return []
+
+    special_ranges = _arc_special_ranges(doc.content, parser)
+    chapter_ranges = parser.chapter_ranges(doc.content)
+    appendix_start = next(
+        (
+            line_no
+            for line_no, raw in enumerate(doc.lines, 1)
+            if raw.strip().startswith(r"\appendix")
+        ),
+        None,
+    )
+    counters = [first_chapter - 1 if first_chapter is not None else 0, 0, 0]
+    root_numbered = False
+    parent_numbered = False
+    units: list[SubsectionUnit] = []
+
+    for index, heading in enumerate(headings):
+        depth = int(heading["level"]) - root_level + 1
+        if depth > 3:
+            continue
+        if _heading_is_starred(doc, heading):
+            if depth == 1:
+                counters[1:] = [0, 0]
+                root_numbered = False
+                parent_numbered = False
+            elif depth == 2:
+                counters[2] = 0
+                parent_numbered = False
+            continue
+
+        counters[depth - 1] += 1
+        for deeper in range(depth, 3):
+            counters[deeper] = 0
+        if depth == 1:
+            root_numbered = True
+            parent_numbered = False
+            continue
+        if depth == 2:
+            parent_numbered = root_numbered
+            continue
+        if not root_numbered or not parent_numbered or counters[0] <= 0 or counters[1] <= 0:
+            continue
+
+        assembled_start = int(heading["line"])
+        assembled_end = len(doc.lines)
+        for following in headings[index + 1 :]:
+            following_depth = int(following["level"]) - root_level + 1
+            if following_depth <= 3:
+                assembled_end = int(following["line"]) - 1
+                break
+        assembled_end = max(assembled_start, assembled_end)
+        section_scope = _arc_section_at(
+            assembled_start,
+            sections,
+            special_ranges,
+            chapter_ranges,
+            appendix_start,
+        )
+        if section_scope in _ARC_EXEMPT_SECTIONS:
+            continue
+        subsection_id = ".".join(str(value) for value in counters)
+        parent_id = ".".join(str(value) for value in counters[:2])
+        source_file, source_start, source_end = _source_span(doc, assembled_start, assembled_end)
+        units.append(
+            SubsectionUnit(
+                subsection_id=subsection_id,
+                title=str(heading["title"]).strip(),
+                depth=depth,
+                parent_id=parent_id,
+                source_file=source_file,
+                source_start=source_start,
+                source_end=source_end,
+                assembled_start=assembled_start,
+                assembled_end=assembled_end,
+                section_scope=section_scope,
+            )
+        )
+    return units
 
 
 def _arc_env_name(value: str) -> str:
@@ -1379,6 +1588,184 @@ def _arc_is_eligible(paragraph: ArcParagraph) -> bool:
     )
 
 
+def _ctx_is_eligible(paragraph: ArcParagraph) -> bool:
+    visible = paragraph.visible
+    han = _arc_han_count(visible)
+    return (
+        han >= SUBSECTION_CONTEXT_MIN_HAN
+        and han / max(len(visible), 1) >= SUBSECTION_CONTEXT_MIN_HAN_RATIO
+        and paragraph.section not in _ARC_EXEMPT_SECTIONS
+        and not paragraph.in_item
+        and not paragraph.ends_with_env
+    )
+
+
+def _parent_context_for_unit(unit: SubsectionUnit) -> tuple[str, int, int] | None:
+    """Return the numbered parent title and its lead interval in assembled coordinates."""
+    if _DOC is None:
+        return None
+    parser = get_parser(_DOC.entry)
+    headings = parser.extract_headings(_DOC.content)
+    if not headings:
+        return None
+    root_level = min(int(heading["level"]) for heading in headings)
+    for index in range(len(headings) - 1, -1, -1):
+        heading = headings[index]
+        if int(heading["line"]) >= unit.assembled_start:
+            continue
+        depth = int(heading["level"]) - root_level + 1
+        if depth < 2:
+            break
+        if depth == 2 and not _heading_is_starred(_DOC, heading):
+            lead_end = unit.assembled_start - 1
+            for following in headings[index + 1 :]:
+                following_depth = int(following["level"]) - root_level + 1
+                if following_depth <= 3:
+                    lead_end = int(following["line"]) - 1
+                    break
+            return str(heading["title"]).strip(), int(heading["line"]), lead_end
+    return None
+
+
+def _context_part(
+    part: str,
+    subsection_id: str | None,
+    paragraph_start: int,
+    paragraph_end: int,
+) -> dict[str, object]:
+    if _DOC is None:
+        source_file, source_start, source_end = "", paragraph_start, paragraph_end
+    else:
+        source_file, source_start, source_end = _source_span(_DOC, paragraph_start, paragraph_end)
+    return {
+        "part": part,
+        "subsection_id": subsection_id,
+        "source_file": source_file,
+        "source_start": source_start,
+        "source_end": source_end,
+        "status": "ok",
+    }
+
+
+def _build_context_window(
+    units: list[SubsectionUnit],
+    index: int,
+    paragraphs: list[ArcParagraph],
+) -> dict[str, object]:
+    """Derive one schema-shaped window from the ordered depth-3 cursor."""
+    if not 0 <= index < len(units):
+        raise IndexError(index)
+    current = units[index]
+    previous = units[index - 1] if index > 0 else None
+    following = units[index + 1] if index + 1 < len(units) else None
+    same_prev = previous.parent_id == current.parent_id if previous is not None else None
+    same_next = following.parent_id == current.parent_id if following is not None else None
+    boundary = "first" if previous is None else "last" if following is None else ""
+    payload: dict[str, object] = {
+        "subsection_id": current.subsection_id,
+        "title": current.title,
+        "depth": current.depth,
+        "parent_id": current.parent_id,
+        "source_file": current.source_file,
+        "editable": {
+            "part": "current",
+            "source_start": current.source_start,
+            "source_end": current.source_end,
+            "status": "ok",
+        },
+        "read_only": [],
+        "same_parent": {"prev": same_prev, "next": same_next},
+        "boundary": boundary,
+        "prev_id": previous.subsection_id if previous is not None else None,
+        "next_id": following.subsection_id if following is not None else None,
+    }
+    read_only = payload["read_only"]
+    assert isinstance(read_only, list)
+    evidence: dict[str, ArcParagraph] = {}
+
+    current_paragraphs = [
+        paragraph
+        for paragraph in paragraphs
+        if current.assembled_start <= paragraph.start
+        and paragraph.end <= current.assembled_end
+        and _ctx_is_eligible(paragraph)
+    ]
+    if current_paragraphs:
+        payload["current_lead_status"] = "ok"
+        evidence["current_lead"] = current_paragraphs[0]
+        evidence["current_tail"] = current_paragraphs[-1]
+    else:
+        payload["current_lead_status"] = "no_eligible_paragraph"
+
+    if previous is None:
+        payload["prev_tail_status"] = "absent"
+    else:
+        previous_paragraphs = [
+            paragraph
+            for paragraph in paragraphs
+            if previous.assembled_start <= paragraph.start
+            and paragraph.end <= previous.assembled_end
+            and _ctx_is_eligible(paragraph)
+        ]
+        if previous_paragraphs:
+            payload["prev_tail_status"] = "ok"
+            tail = previous_paragraphs[-1]
+            evidence["prev_tail"] = tail
+            read_only.append(
+                _context_part("prev.tail", previous.subsection_id, tail.start, tail.end)
+            )
+        else:
+            payload["prev_tail_status"] = "no_eligible_paragraph"
+
+    if previous is not None and same_prev is False:
+        parent_context = _parent_context_for_unit(current)
+        parent_paragraphs = [
+            paragraph
+            for paragraph in paragraphs
+            if parent_context is not None
+            and parent_context[1] < paragraph.start
+            and paragraph.end <= parent_context[2]
+            and _ctx_is_eligible(paragraph)
+        ]
+        if parent_context is not None and parent_paragraphs:
+            payload["parent_lead_status"] = "ok"
+            evidence["parent_lead"] = parent_paragraphs[-1]
+            read_only.append(
+                _context_part(
+                    "parent_lead",
+                    None,
+                    parent_context[1],
+                    parent_paragraphs[-1].end,
+                )
+            )
+        else:
+            payload["parent_lead_status"] = "no_eligible_paragraph"
+
+    if following is None:
+        payload["next_head_status"] = "absent"
+    else:
+        following_paragraphs = [
+            paragraph
+            for paragraph in paragraphs
+            if following.assembled_start <= paragraph.start
+            and paragraph.end <= following.assembled_end
+            and _ctx_is_eligible(paragraph)
+        ]
+        if following_paragraphs:
+            payload["next_head_status"] = "ok"
+            head = following_paragraphs[0]
+            evidence["next_head"] = head
+            read_only.append(
+                _context_part("next.head", following.subsection_id, head.start, head.end)
+            )
+        else:
+            payload["next_head_status"] = "no_eligible_paragraph"
+
+    parent_context = _parent_context_for_unit(current)
+    parent_title = parent_context[0] if parent_context is not None else ""
+    return _ContextWindow(payload, evidence, parent_title)
+
+
 def _arc_lead_reason(paragraph: ArcParagraph, terms: dict[str, tuple[str, ...]]) -> str | None:
     first = paragraph.sentences[0]
     han = _arc_han_count(first)
@@ -1416,6 +1803,13 @@ def _arc_jaccard(left: str, right: str) -> float:
     return len(left_tokens & right_tokens) / len(union)
 
 
+def _endpoint_jaccard(left: str, right: str) -> float | None:
+    """Return the rounded endpoint score, or ``None`` for short endpoints."""
+    if _arc_han_count(left) < 15 or _arc_han_count(right) < 15:
+        return None
+    return round(_arc_jaccard(left, right), 4)
+
+
 def _arc_link_missing(
     left: ArcParagraph,
     right: ArcParagraph,
@@ -1426,9 +1820,9 @@ def _arc_link_missing(
     right_first = right.sentences[0]
     if any(marker in right_first for marker in terms["explicit_link_markers"]):
         return False, None
-    if _arc_han_count(left_last) < 15 or _arc_han_count(right_first) < 15:
+    score = _endpoint_jaccard(left_last, right_first)
+    if score is None:
         return True, None
-    score = round(_arc_jaccard(left_last, right_first), 4)
     return score < threshold, score
 
 
@@ -1592,6 +1986,195 @@ def _check_paragraph_arc(
                 run = [paragraph]
         previous = paragraph
     flush_run()
+    return out
+
+
+def _ctx_finding(
+    code: str,
+    start: int,
+    end: int,
+    message: str,
+    current: str,
+    question: str,
+    rationale: str,
+    context_sides: list[str],
+    *,
+    severity: str = "Info",
+    priority: str = "P3",
+) -> list[str]:
+    finding = _arc_finding(
+        code,
+        start,
+        end,
+        message,
+        current,
+        question,
+        rationale,
+        severity=severity,
+        priority=priority,
+    )
+    finding[0] = finding[0].replace("% 段落弧线", "% 小节接口", 1)
+    rendered_sides = ", ".join(f'"{side}"' for side in context_sides)
+    finding.insert(4, f"% context_sides: [{rendered_sides}]")
+    return finding
+
+
+def _check_subsection_context(
+    units: list[SubsectionUnit],
+    windows: list[dict[str, object]],
+    terms: dict[str, tuple[str, ...]],
+) -> list[str]:
+    """Emit the three opt-in cross-heading interface observations."""
+    out: list[str] = []
+    states: dict[str, set[str]] = {}
+    for unit, window in zip(units, windows, strict=True):
+        state: set[str] = set()
+        states[unit.subsection_id] = state
+        evidence = getattr(window, "evidence", {})
+        if not isinstance(evidence, dict):
+            continue
+        current_lead = evidence.get("current_lead")
+        current_tail = evidence.get("current_tail")
+        if not isinstance(current_lead, ArcParagraph) or not isinstance(current_tail, ArcParagraph):
+            continue
+
+        same_parent = window.get("same_parent")
+        same_prev = same_parent.get("prev") if isinstance(same_parent, dict) else None
+        if window.get("boundary") != "first":
+            evidence_key = "prev_tail"
+            context_side = "prev.tail"
+            if same_prev is False and isinstance(evidence.get("parent_lead"), ArcParagraph):
+                evidence_key = "parent_lead"
+                context_side = "parent_lead"
+            inbound_source = evidence.get(evidence_key)
+            current_first = current_lead.sentences[0]
+            if isinstance(inbound_source, ArcParagraph) and not any(
+                marker in current_first for marker in terms["inbound"]
+            ):
+                score = _endpoint_jaccard(inbound_source.sentences[-1], current_first)
+                if score is not None and score < PARAGRAPH_ARC_LINK_THRESHOLD:
+                    state.add("S-CTX-IN")
+                    out.extend(
+                        _ctx_finding(
+                            "S-CTX-IN",
+                            current_lead.start,
+                            current_lead.end,
+                            "小节入口未见可见承接接口",
+                            f"首句未命中承接标记；四位 Jaccard={score:.4f} "
+                            f"< {PARAGRAPH_ARC_LINK_THRESHOLD:.4f}。",
+                            "本小节是否需要承接上一小节的结论或产出？",
+                            "低词面重叠不能证明语义断裂，该观察只提供跨标题复核入口。",
+                            ["current", context_side],
+                        )
+                    )
+
+        next_head = evidence.get("next_head")
+        if window.get("boundary") != "last" and isinstance(next_head, ArcParagraph):
+            current_last = current_tail.sentences[-1]
+            next_first = next_head.sentences[0]
+            if not any(marker in current_last for marker in terms["outbound"]) and not any(
+                marker in next_first for marker in terms["inbound"]
+            ):
+                state.add("S-CTX-OUT")
+                out.extend(
+                    _ctx_finding(
+                        "S-CTX-OUT",
+                        current_tail.start,
+                        current_tail.end,
+                        "小节出口未见前瞻或收束接口",
+                        "末句未命中前瞻/收束标记，下一小节首句也未命中回指标记。",
+                        "本小节是否需要为下一小节交出输入或问题？",
+                        "该观察只检查跨标题的显式接口，不重复段内 P-ARC 责任。",
+                        ["current", "next.head"],
+                    )
+                )
+
+        parent_title = getattr(window, "parent_title", "")
+        located = any(marker in current_lead.visible for marker in terms["locating"])
+        title_overlap = bool(
+            isinstance(parent_title, str)
+            and parent_title
+            and (_thread_tokens(parent_title) & _thread_tokens(current_lead.visible))
+        )
+        if not located and not title_overlap:
+            state.add("S-CTX-ROLE")
+            out.extend(
+                _ctx_finding(
+                    "S-CTX-ROLE",
+                    current_lead.start,
+                    current_lead.end,
+                    "小节首段未见父节内角色定位",
+                    "首段未命中定位标记，且与父标题关键词无可见交集。",
+                    f"本小节在父节 {unit.parent_id} 中承担什么角色？",
+                    "词面信号只用于定位人工复核，不判断小节内容是否正确。",
+                    ["current"],
+                )
+            )
+
+    run: list[SubsectionUnit] = []
+
+    def flush_run() -> None:
+        nonlocal run
+        if len(run) >= PARAGRAPH_ARC_DOUBLE_MISSING_RUN:
+            out.extend(
+                _ctx_finding(
+                    "S-CTX-IN+OUT",
+                    run[0].assembled_start,
+                    run[-1].assembled_end,
+                    f"同一父节内连续{len(run)}个小节同时缺少进出接口",
+                    f"连续单元数达到升级阈值 N={PARAGRAPH_ARC_DOUBLE_MISSING_RUN}。",
+                    "这一组小节的输入、输出与展开顺序是否需要统一梳理？",
+                    "各单项观察仍保持 Info/P3；本条仅汇总连续缺口。",
+                    ["current"],
+                    severity="Minor",
+                    priority="P2",
+                )
+            )
+        run = []
+
+    for unit in units:
+        state = states.get(unit.subsection_id, set())
+        both_missing = {"S-CTX-IN", "S-CTX-OUT"}.issubset(state)
+        if both_missing and (not run or run[-1].parent_id == unit.parent_id):
+            run.append(unit)
+        else:
+            flush_run()
+            if both_missing:
+                run = [unit]
+    flush_run()
+    return out
+
+
+def _render_context_window(window: dict[str, object]) -> list[str]:
+    """Render source coordinates only; never copy prose into the report."""
+    subsection_id = str(window["subsection_id"])
+    title = str(window["title"])
+    source_file = str(window["source_file"])
+    editable = window["editable"]
+    assert isinstance(editable, dict)
+    out = [
+        f"% 小节窗口 {subsection_id}《{title}》",
+        f"% current    : {source_file} L{editable['source_start']}-L{editable['source_end']} "
+        "[可改]",
+    ]
+    read_only = window.get("read_only")
+    if not isinstance(read_only, list):
+        read_only = []
+    parts = {str(part["part"]): part for part in read_only if isinstance(part, dict)}
+    status_keys = (
+        ("prev.tail", "prev_tail_status"),
+        ("parent_lead", "parent_lead_status"),
+        ("next.head", "next_head_status"),
+    )
+    for part_name, status_key in status_keys:
+        part = parts.get(part_name)
+        if part is not None:
+            out.append(
+                f"% {part_name:<11}: {part['source_file']} "
+                f"L{part['source_start']}-L{part['source_end']} [只读]"
+            )
+        elif window.get(status_key) == "no_eligible_paragraph":
+            out.append(f"% {part_name:<11}: (无合格段) status=no_eligible_paragraph")
     return out
 
 
@@ -2708,6 +3291,9 @@ def analyze(
     first_chapter: int | None = None,
     method_narrative: bool = False,
     paragraph_arc: bool = False,
+    subsection_context: bool = False,
+    subsection: str | None = None,
+    emit_window: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -2742,6 +3328,19 @@ def analyze(
         ranges = [method_scope] if method_scope else [sections[k] for k in matched_keys]
     else:
         ranges = list(sections.values()) if sections else [(1, len(lines))]
+
+    if emit_window:
+        units = _build_subsection_cursor(doc, parser, sections, first_chapter)
+        if not _has_numbered_depth3(doc, parser):
+            return warn + [SUBSECTION_CONTEXT_NO_DEPTH3]
+        target_index = next(
+            (index for index, unit in enumerate(units) if unit.subsection_id == subsection),
+            None,
+        )
+        if target_index is None:
+            return warn + [f"% ERROR [Severity: Critical] [Priority: P0]: 未找到小节: {subsection}"]
+        paragraphs = _split_arc_paragraphs(content, parser, sections)
+        return warn + _render_context_window(_build_context_window(units, target_index, paragraphs))
 
     out: list[str] = list(warn)
     previous_visible = ""
@@ -2827,6 +3426,37 @@ def analyze(
         arc_ranges = ranges if section else [(1, len(lines))]
         out.extend(_check_paragraph_arc(content, parser, sections, arc_ranges))
 
+    if subsection_context:
+        units = _build_subsection_cursor(doc, parser, sections, first_chapter)
+        if not _has_numbered_depth3(doc, parser):
+            out.insert(len(warn), SUBSECTION_CONTEXT_NO_DEPTH3)
+        else:
+            paragraphs = _split_arc_paragraphs(content, parser, sections)
+            windows = [
+                _build_context_window(units, index, paragraphs) for index in range(len(units))
+            ]
+            selected = [
+                (unit, window)
+                for unit, window in zip(units, windows, strict=True)
+                if (subsection is None or unit.subsection_id == subsection)
+                and (
+                    not section
+                    or any(start <= unit.assembled_start <= end for start, end in ranges)
+                )
+            ]
+            if subsection is not None and not selected:
+                out.append(f"% ERROR [Severity: Critical] [Priority: P0]: 未找到小节: {subsection}")
+            elif selected:
+                selected_units = [unit for unit, _window in selected]
+                selected_windows = [window for _unit, window in selected]
+                out.extend(
+                    _check_subsection_context(
+                        selected_units,
+                        selected_windows,
+                        _load_subsection_context_terms(Path(__file__).resolve().parent),
+                    )
+                )
+
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -2875,7 +3505,21 @@ def main() -> int:
         action="store_true",
         help="运行段落弧线观察（首句总领/末句收束/段间接口/段内展开；默认关闭）",
     )
+    cli.add_argument(
+        "--subsection-context",
+        action="store_true",
+        help="运行小节级跨标题接口观察（承接/交棒/父节角色；默认关闭）",
+    )
+    cli.add_argument("--subsection", help="限定单个小节编号，如 2.1.1")
+    cli.add_argument(
+        "--emit-window",
+        action="store_true",
+        help="只打印指定小节的上下文部件与源坐标，不复制正文",
+    )
     args = cli.parse_args()
+
+    if args.emit_window and not args.subsection:
+        cli.error("--emit-window 必须与 --subsection 一起使用")
 
     if not args.file.exists():
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
@@ -2891,6 +3535,9 @@ def main() -> int:
         args.first_chapter,
         args.method_narrative,
         args.paragraph_arc,
+        args.subsection_context,
+        args.subsection,
+        args.emit_window,
     )
     print("\n".join(report))
     if args.method_narrative and any(line.startswith("% ERROR") for line in report):
