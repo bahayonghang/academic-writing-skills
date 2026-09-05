@@ -1,0 +1,10 @@
+# Keep generated local verification artifacts; track the reproducible source only.
+*.aux
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+*.pdf
+*.png

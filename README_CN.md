@@ -33,7 +33,7 @@ npx skills add bahayonghang/academic-writing-skills
 | [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md)               | 针对已有 LaTeX 论文生成、优化、对齐检查、投稿前检查或评估投稿信与期刊匹配度。                              | `.tex`，可选 `.md` 或 `.tex` 投稿信草稿 | `cover-letter/SKILL.md`        |
 | [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md)                 | 做审稿人式深度批评、投稿门控、阻塞项归类、修订路线图、期刊风格报告或修订后复审。                                | `.tex`、`.typ`、`.pdf`           | `paper-audit/SKILL.md`         |
 | [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md)           | 处理已有英文 LaTeX 会议或期刊论文：编译、格式、语法、逻辑、分节、引用、图表、伪代码、标题、翻译和去 AI 化润色。           | `.tex`                         | `latex-paper-en/SKILL.md`      |
-| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714 引用、高校模板、章节结构、术语、逻辑、摘要、标题、三线表和去 AI 化润色。 | `.tex`                         | `latex-thesis-zh/SKILL.md`     |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714、章节结构、双语题注和图表编译页版式，以及证据保真的摘要、小结、文献综合、工程应用章、结果分析、中文句间表达和去 AI 化润色。 | `.tex`                         | `latex-thesis-zh/SKILL.md`     |
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。           | `.typ`                         | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。           | `.bib`                         | `bib-search-citation/SKILL.md` |
 

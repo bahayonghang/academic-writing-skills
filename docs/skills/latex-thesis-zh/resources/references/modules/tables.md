@@ -17,7 +17,7 @@ uv run python -B scripts/generate_table.py data.json --style booktabs
 **check_tables.py**: Scans all `table` / `table*` environments in the document. Checks:
 - Three-line rule compliance (toprule / midrule / bottomrule only)
 - Vertical line presence in column spec
-- Caption position (must precede `\begin{tabular}`)
+- Caption position (a real `\caption` / `\bicaption` must precede `\begin{tabular}`)
 - Table note format ("Note." or "注：")
 - Number precision consistency within columns
 - `booktabs` package loaded in preamble
@@ -31,4 +31,8 @@ uv run python -B scripts/generate_table.py data.json --style booktabs
 Skill-layer response: convert script output into `% TABLES (Line N) [Severity] [Priority]: ...` findings.
 
 See also: [table-guide.md](../formatting/table-guide.md) for the full three-line table specification.
-For bilingual (icaption) figure/table caption wording, see [caption-guide.md](../formatting/caption-guide.md).
+The checker recognizes optional short titles and whitespace/newlines after `\caption` / `\bicaption`;
+comments and similar commands such as `\captionsetup` do not satisfy the caption check. It reports
+presence and position only, while long-table spacing, double scaling, and rendered-page acceptance
+remain review tasks described in the table guide.
+For bilingual (`\bicaption`) figure/table caption wording, see [caption-guide.md](../formatting/caption-guide.md).

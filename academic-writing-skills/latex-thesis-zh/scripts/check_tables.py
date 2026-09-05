@@ -21,6 +21,9 @@ except ImportError:
     from tex_loader import assemble
 
 
+CAPTION_RE = re.compile(r"\\(?:bi)?caption\b\s*(?:\[[^\]]*\]\s*)?\{")
+
+
 class TableChecker:
     """Validate LaTeX tables against the three-line (booktabs) standard."""
 
@@ -258,12 +261,14 @@ class TableChecker:
 
     def _check_caption_position(self, table: dict) -> None:
         """Check that caption appears before tabular environment."""
-        content = table["content"]
+        content = "\n".join(
+            re.sub(r"(?<!\\)%.*", "", line) for line in table["content"].splitlines()
+        )
 
         caption_pos = -1
         tabular_pos = -1
 
-        caption_match = re.search(r"\\caption", content)
+        caption_match = CAPTION_RE.search(content)
         tabular_match = re.search(r"\\begin\{tabular\*?\}", content)
 
         if caption_match:

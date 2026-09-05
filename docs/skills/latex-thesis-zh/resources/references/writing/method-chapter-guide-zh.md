@@ -1,4 +1,4 @@
-# Main text method + experimental chapter (from Chapter 3 onwards) Guide to writing special chapters
+# Main-Text Method + Experiment Chapter Guide
 
 Writing and diagnosis of the **text methods chapter** for a Chinese doctoral thesis in an industrial/process background. This refers specifically to "one chapter, one method +
 Experimental verification in the same chapter (hereinafter referred to as **Method Chapter**): From Chapter 3 to the conclusion, each chapter proposes a core method/model, and
@@ -21,13 +21,14 @@ uv run python $SKILL_DIR/scripts/check_format.py document.tex
 
 ## 1. Chapter judgment (judge first, then set rules)
 
-When facing a certain article starting from Chapter 3, first determine which category it belongs to. The criteria and rules are different and **cannot be mixed**:
+For any body chapter, first classify it from the task performed by the body. The criteria and rules are different and
+**cannot be mixed**. A chapter number helps locate content but cannot classify it by itself:
 
 | Chapter type | Decisive criteria | Typical positions | Which set of rules to follow |
 | --- | --- | --- | --- |
 | Methods chapter (this guide) | One chapter, one method/model + closed loop of experimental section in the same chapter | Chapter 3 to the conclusion | This guide + `analyze_experiment.py --per-chapter` |
 | Process Analysis Chapter | Process Flow Analysis + Full text method framework, does not contain independent methods | Usually Chapter 2 | [`process-chapter-guide-zh.md`](process-chapter-guide-zh.md) + `--process-chapter` |
-| Engineering Application Chapter | Requirements Analysis → System Architecture → On-site Online → Quantitative Benefits | Independent Chapter before Conclusion/Experimental Section at the End of the Method Chapter | This Guide (Four-state placement, see below) |
+| Engineering Application Chapter | Research artifact → operational constraint → system mechanism/operator task → graded validation | Independent chapter before the conclusion / integration chapter / final method-chapter experiment section | [`engineering-application-chapter-guide-zh.md`](engineering-application-chapter-guide-zh.md); do not run `--per-chapter` on an independent engineering chapter |
 
 **Criterion description**: The process analysis chapter (Chapter 2) and the method chapter (from Chapter 3 onwards) usually coexist. The criteria are routing rules,
 No full-text tags. The anchor point of the method chapter is "Chapter Title =〈Method Name/Abbreviation〉+〈Object〉+〈Task〉", and the abbreviation is in the chapter/section title,
@@ -41,6 +42,11 @@ Before the conclusion (Zinc Chapter 6, 1/5); ② The last chapter is the integra
 Method validity and project implementation can be verified in layers: the simulation section of the method chapter only verifies the method itself (history/simulation controlled object), and is actually online
 The data is centralized into application chapters. The control chapter "Use production data to fit NARX and then control it when the controlled object is controlled" is a common safety logic and is not a fraud.
 (Red line 11).
+
+For the argument chain, service and interface writing, and replay/shadow/pilot/production evidence boundaries of an
+independent engineering-application or system-implementation chapter, read
+[`engineering-application-chapter-guide-zh.md`](engineering-application-chapter-guide-zh.md). This guide keeps only
+the four valid placement states so that the detailed engineering-chapter rules have one owner.
 
 ## 2. Recommended skeleton and elastic caliber
 
@@ -143,8 +149,7 @@ More stable and more conducive to positioning the main line for blind review (se
 - **Template (5/5)**: Single paragraph "**Problem → Method → (Key) Number → Meaning**" (can string method points 'first...last',
   with core numbers). Length **1 paragraph, 150~350 words** Mainstream (numbered and bulleted retelling contributions belong to the minority, not the default form).
 - **Whether to end with a forward link such as "lays the foundation for Chapter X" is context-dependent**: the zinc thesis uses one in all sampled cases and names the target chapter, while the cement-firing, clinker, and solid-waste-incineration theses generally do not.
-  → **Treat the forward-link sentence only as an Info recommendation; its absence must not trigger a hard finding** (red line 2). An engineering-application chapter summary should close with quantified benefits
-  + Promotional value, no more starting.
+  → **Treat the forward-link sentence only as an Info recommendation; its absence must not trigger a hard finding** (red line 2). An engineering-application chapter summary should close with evidenced mechanisms, the current evidence boundary, and its contribution to the thesis. Quantified benefits and broader applicability may be stated only when the supplied evidence supports them.
 - **Conclusion ≠ Simple repetition of the summary of each chapter** (Tsinghua §4.6): "Conclusion/Summary and Outlook" of the full text comprehensively summarizes the contribution, limitations and future of the full text
   Direction; the summary of this chapter only summarizes the evidence in the chapter, and does not mechanically repeat the "Chapter X..." sentence pattern of each chapter.
 
@@ -252,6 +257,7 @@ Point to the specification section:
 - [process-chapter-guide-zh.md](process-chapter-guide-zh.md): Chapter 2 process analysis chapter format, point after identification.
 - [introduction-guide-zh.md](introduction-guide-zh.md): The six-section skeleton of the introduction (it is forbidden to repeat the summary of the chapter introduction).
 - [thesis-writing-guide.md](thesis-writing-guide.md): Main line of the full text, two-paragraph template for chapter introduction and single-paragraph template for chapter summary.
+- [engineering-application-chapter-guide-zh.md](engineering-application-chapter-guide-zh.md): Argument and evidence boundaries for an independent engineering-application or system-implementation chapter.
 - [structure-guide.md](structure-guide.md): The number of directly subordinate sections is flexible, and the chapter title is linked to the section title.
 - [../modules/logic.md](../modules/logic.md): P-PAPER generalization with `--first-chapter` description.
 - [../modules/experiment.md](../modules/experiment.md): `--per-chapter` Chapter-by-Chapter E-\* Checklist.

@@ -195,6 +195,56 @@
       "query": "我的中文博士论文结果分析只会报数字和说曲线更贴合，还把完整模型的提升都归因到单个组件。请按证据阶梯检查这一章的分析深度。",
       "should_trigger": true,
       "category": "writing-results-analysis"
+    },
+    {
+      "query": "中文博士论文摘要的一项工作含三个模块，帮我判断它们是真实串行依赖还是并行协作，引用和公式不要动。",
+      "should_trigger": true,
+      "category": "writing-abstract-components"
+    },
+    {
+      "query": "请按框架章、方法章和系统实现章的差异审阅三个本章小结，核对每个独立任务和证据范围。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
+      "query": "我的学位论文综述每句都有作者、方法、对象和结果，但读起来还是流水账，请按主题簇和代表文献重新组织。",
+      "should_trigger": true,
+      "category": "writing-literature-synthesis"
+    },
+    {
+      "query": "博士论文结果图隐藏了两个异常通道，表格还是冻结聚合，帮我核对展示范围和统计集合有没有混淆。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
+    },
+    {
+      "query": "中文硕士论文里两种方法的缺失率分母不同，也没有共同样本重算，请判断还能不能比较新排名。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
+    },
+    {
+      "query": "把这个运营仪表盘隐藏两个通道后重新计算销售排名，和论文写作无关。",
+      "should_trigger": false,
+      "category": "negative-unrelated-dashboard"
+    },
+    {
+      "query": "这是中文博士论文的独立工程应用章，技术栈和界面说明太像产品文档，请按架构约束、服务机制、操作者任务和验证层级审阅。",
+      "should_trigger": true,
+      "category": "writing-engineering-application"
+    },
+    {
+      "query": "请把这个生产后端服务的部署 README 和 REST API 文档写完整，没有论文或 LaTeX 项目。",
+      "should_trigger": false,
+      "category": "negative-overlap-software-readme"
+    },
+    {
+      "query": "我的中文博士论文正文总写成‘结果：……；原因：……；局限：……’，请按证据把句间逻辑改成完整中文学术句，引用和公式不要动。",
+      "should_trigger": true,
+      "category": "writing-punctuation-logic"
+    },
+    {
+      "query": "我的中文 LaTeX 博士论文有跨页双语续图，图目录出现重复条目，longtable 后还有一大块留白，请按现有模板和编译页帮我检查题注与版式。",
+      "should_trigger": true,
+      "category": "layout-caption-table"
     }
   ]
 }

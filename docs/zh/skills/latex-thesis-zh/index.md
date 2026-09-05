@@ -6,8 +6,9 @@
 ## 适用场景
 
 - 诊断 XeLaTeX、LuaLaTeX、latexmk、模板、版式、公式和 GB/T 7714 问题。
-- 映射章节结构，检查术语、缩略语、交叉引用、表格和标题架构。
-- 审阅绪论漏斗、文献综合、方法章、过程章、实验、摘要、结论和跨章节闭合。
+- 映射章节结构，检查术语、缩略语、交叉引用、双语题注、图表编译页版式和标题架构。
+- 审阅绪论漏斗、主题化文献综合、方法章、过程章、工程应用/系统实现章、分章型小结、摘要多组件关系、展示/统计口径和跨章节闭合。
+- 审阅中文语句表达，按证据梳理连续正文中的冒号、分号与句间逻辑。
 - 在保留学术主张与 LaTeX 语法的前提下降低 AI 写作痕迹。
 - 送审前执行学校规范逐项终检和盲审隐匿检查。
 
@@ -23,19 +24,20 @@
 | 模块 | 适用场景 | 主命令 |
 | --- | --- | --- |
 | `compile` | 论文构建失败或工具链不明确 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.tex` |
-| `format` | 需要检查版式、公式断行、草稿残留或占位表格行 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_format.py main.tex` |
+| `format` | 需要检查版式、公式断行、图表编译页、草稿残留或占位表格行 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_format.py main.tex` |
 | `structure` | 需要论文章节与小节地图 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/map_structure.py main.tex` |
 | `consistency` | 跨章节术语、缩略语或命名漂移 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py main.tex --terms` |
 | `template` | 论文 class 或学校模板不明确 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py main.tex` |
 | `bibliography` | 需要检查 BibTeX 数据或 GB/T 7714 合规性；2026-07-01 起实施的新国标使用 `--standard gb7714-2025` | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | 需要审阅论文、章或节标题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
+| `expression` | 中文语句存在口语、长句、标点混用或冒号/分号句间逻辑问题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_style_zh.py main.tex` |
 | `deai` | 中文可见正文存在 AI 写作痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | 绪论漏斗、章节承接、主线、方法模块接口或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
-| `literature` | 文献综述逐篇罗列，缺少综合比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
-| `experiment` | 需要审阅实验表达、证据层次或逐方法章实验完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
-| `references` | 交叉引用、图表题、标签或编号不一致 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
-| `tables` | 需要检查三线表、booktabs 结构或生成表格 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
-| `abstract` | 需要诊断摘要结构、字数或中英一致性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py main.tex` |
+| `logic` | 绪论漏斗、章节承接、主线、方法模块接口、工程应用章论证或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
+| `literature` | 文献综述缺少主题综合、代表文献归因、簇末比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
+| `experiment` | 需要审阅实验表达、证据层次、展示/统计口径或逐方法章实验完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
+| `references` | 交叉引用、`\caption` / `\bicaption`、标签或编号不一致 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
+| `tables` | 需要检查三线表、真实题注位置、booktabs 结构或生成表格 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
+| `abstract` | 需要诊断摘要结构、多组件关系、字数或中英一致性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py main.tex` |
 | `conclusion` | 结论缺少总结、创新、展望或数值一致性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_conclusion.py main.tex` |
 | `spec-check` | 定稿需要对照学校规范逐项检查 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_spec.py main.tex --template yanshan --degree doctor` |
 | `blind-review` | 需要检测个人信息或生成隐匿后的送审副本 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/blind_review.py main.tex --check` |
@@ -78,6 +80,7 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.te
 - [模板检测](./resources/references/modules/template.md)
 - [参考文献](./resources/references/modules/bibliography.md)
 - [标题](./resources/references/modules/title.md)
+- [中文表达](./resources/references/modules/expression.md)
 - [去 AI 审阅](./resources/references/modules/deai.md)
 - [文献综述](./resources/references/modules/literature.md)
 - [实验审阅](./resources/references/modules/experiment.md)
@@ -95,7 +98,9 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.te
 - [绪论专章指南](./resources/references/writing/introduction-guide-zh.md)
 - [过程分析章指南](./resources/references/writing/process-chapter-guide-zh.md)
 - [方法章指南](./resources/references/writing/method-chapter-guide-zh.md)
+- [工程应用/系统实现章指南](./resources/references/writing/engineering-application-chapter-guide-zh.md)
 - [方法模块描述与接口](./resources/references/writing/method-description-guide-zh.md)
+- [结果分析与证据口径指南](./resources/references/writing/results-analysis-guide-zh.md)
 - [结论章指南](./resources/references/writing/conclusion-guide-zh.md)
 - [摘要结构](./resources/references/writing/abstract-structure.md)
 - [结构指南](./resources/references/writing/structure-guide.md)

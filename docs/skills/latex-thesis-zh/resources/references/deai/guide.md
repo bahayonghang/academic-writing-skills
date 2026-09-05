@@ -99,6 +99,15 @@ must not be converted into word-list or detector-score rules.
 | Criteria-free comparison | More suitable, more similar, more natural, more advanced | Write down the comparison objects, task scenarios and evaluation criteria |
 | Starting with an imperative | Don’t rush, stop first, don’t reverse the order | Change to academic risks, research steps or observation conclusions |
 
+When continuous prose uses label-style colons or chains a whole paragraph with semicolons,
+progressively load
+[academic-style-zh.md §5.4](../writing/academic-style-zh.md#punctuation-prose).
+That section is the single rule source: establish the relationship already supported between facts
+before proposing complete-sentence prose, and do not invent causation when the material supports
+only parallel statements. A colon or semicolon alone is not an AI-trace finding and cannot establish
+authorship. Preserve legitimate introductions, definitions, complex parallel clauses, abstract
+overview sentences, keywords, formulas, code, URLs, quotations, citations, and template requirements.
+
 ---
 
 ## Common AI trace patterns and elimination methods

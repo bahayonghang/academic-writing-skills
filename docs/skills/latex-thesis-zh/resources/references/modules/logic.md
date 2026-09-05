@@ -2,7 +2,7 @@
 
 Purpose: Check logical coherence, introduction funnel, heading lead-ins, literature review quality, chapter mainline, and cross-section closure.
 
-For chapter-level rewrite planning, also read `../writing/thesis-writing-guide.md`. Keep `logic` as the diagnostic route, but use the guide to turn findings into a thesis-specific mainline plan.
+For chapter-level rewrite planning, also read `../writing/thesis-writing-guide.md`. Keep `logic` as the diagnostic route, but use the guide to turn findings into a thesis-specific mainline plan. For an engineering-application or system-implementation chapter, first classify it from the thesis context and body content, then read `../writing/engineering-application-chapter-guide-zh.md`.
 
 ## AXES Model (Paragraph-Level Coherence)
 
@@ -160,13 +160,21 @@ criteria, eligibility rules, and protocol, and
 
 ## Thesis Writing Mainline
 
-When the user asks how to rewrite introduction, method chapters, experiment discussion, or conclusion and outlook, map the section to:
+When the user asks how to rewrite an introduction, method chapter, engineering-application or system-implementation chapter, experiment discussion, or conclusion and outlook, map the section to:
 
 ```text
 研究背景 -> 技术瓶颈/研究空白 -> 科学问题 -> 本文方法/章节工作 -> 实验证据 -> 贡献闭合 -> 局限与展望
 ```
 
 Return paragraph roles and evidence status. Do not invent citations, experiments, or contribution claims.
+
+For an engineering-application chapter, use the existing `logic` route and the engineering guide to map
+`research artifact -> operational constraint -> design goal/system property -> evidenced mechanism -> validation evidence`.
+Chapter numbers and words such as “platform” are not sufficient classifiers: inspect the body before routing. Do not
+run method-chapter `--per-chapter` checks on the whole engineering chapter. Add the existing
+`experiment --results-analysis` route only when the user requests it or the chapter contains a quantitative results
+subsection that needs analysis. Missing APIs, formulas, metrics, deployment facts, or usability evidence remain
+`missing evidence`; no new script or checker is implied by this guidance.
 
 ## Transition Signals
 

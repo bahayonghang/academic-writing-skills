@@ -1,6 +1,8 @@
 # Three-Line Table Guide (GB/T Chinese Thesis)
 
-This guide defines the standard for professional academic tables in Chinese theses using the "three-line" (booktabs) convention, following GB/T 7714 and common university thesis requirements.
+This guide describes the common three-line (`booktabs`) convention for Chinese theses. The current
+university specification and the actual class remain authoritative for caption language, numbering, typeface,
+and exceptional table forms.
 
 ## Three-Line Table Standard
 
@@ -42,6 +44,11 @@ A three-line table has exactly three horizontal rules and **no vertical lines**:
 - **Label**: immediately after caption (`\label{tab:...}`)
 - **Table note**: below the table, starting with "注：" (Chinese) or "Note." (English)
 
+The checkers accept a real `\caption` or `\bicaption`, including whitespace, line breaks, and an optional
+short title after the command. A commented caption, `\captionsetup`, or a similarly named custom command does
+not satisfy caption presence. This syntactic check does not prove that the caption wording or rendered template
+format is correct. Use the caption form required by the actual class; do not replace every school's macro.
+
 ## Decimal Alignment
 
 Use the `siunitx` package `S` column type to align numbers by decimal point:
@@ -74,6 +81,31 @@ Place significance markers immediately after the value: `91.2***`.
 
 Precision must be consistent within each column.
 
+## Longtable Spacing
+
+Change long-table spacing only after a compiled page shows that `\LTpost` or related longtable glue is causing
+the local blank region. Apply the smallest local setting around the affected `longtable`, for example:
+
+```latex
+{
+  \setlength{\LTpost}{0pt}
+  \begin{longtable}{...}
+    ...
+  \end{longtable}
+}
+```
+
+Do not modify the global class or all long tables from one page-level symptom. Recompile and inspect the end of
+the table, the following paragraph, page breaks, repeated headers, and the adjacent page. If the blank space has
+a different owner, keep `\LTpost` unchanged.
+
+## Avoid Double Table Scaling
+
+When a table already uses fixed-width columns, first check whether `\resizebox`, an additional small-font command,
+or another outer scale is shrinking it a second time. Remove only the redundant layer that causes unreadable text;
+then check width overflow, column wrapping, rule alignment, and readability on the compiled page. A wide table does
+not by itself authorize scaling every table to `\textwidth` or changing the class.
+
 ## Bold Best Values
 
 In comparison tables, bold the best value in each column. Add direction indicators when ambiguous:
@@ -87,3 +119,9 @@ When submitting thesis with .docx:
 2. Select all -> Borders -> No Border
 3. Add top border, header bottom border, and table bottom border
 4. Result: three-line table matching booktabs aesthetic
+
+## Rendered Acceptance
+
+Use the existing `compile.py` wrapper with the thesis's real entry file and recipe. A passing script check or a
+generated PDF does not establish visual acceptance. Inspect the affected table and adjacent pages after compilation.
+If no rendered page was actually viewed, report the visual result as `missing evidence`.

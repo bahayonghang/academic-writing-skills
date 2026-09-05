@@ -45,6 +45,18 @@ Recommended process:
 4. Converge that limitation into one explicit research gap.
 5. Finally explain why this thesis enters at that point.
 
+## Three-Layer Interface Between Thematic Synthesis and Individual Attribution
+
+1. **Theme-cluster layer**: Define the cluster by research object, problem, or method assumption, then summarize shared findings and main disagreements. Do not open with an author-name queue.
+2. **Representative-study layer**: Expand one study selectively only when it supports a key difference, turn, or boundary. Check whether the author, method, object, and result roles are sufficient for this attribution. These roles check completeness when an individual study is discussed; they are not a fixed template for every sentence.
+3. **Cluster-end synthesis layer**: Compare applicability, trade-offs, or shared limitations, then connect to the next theme or research gap.
+
+Three consecutive sentences remain an author list even if each contains “author-method-object-result” when
+they lack thematic comparison and cluster-end synthesis. Conversely, one thematic synthesis sentence may
+group several citations and expand only the representative work needed for key evidence. If the source does
+not provide an author, result, or citation basis, mark `missing evidence`; do not guess from a citekey, title,
+or background knowledge.
+
 ## Degree-Thesis Adaptation
 
 The literature review's “entry point for this thesis” must serve the mainline of the entire degree
@@ -59,5 +71,6 @@ thesis, not only the contribution sentence of one conference paper. When needed,
 ## Boundaries
 
 - Do not add any citation absent from the original text.
+- Do not add, remove, or rewrite an existing citekey; list a missing author, method, object, or result only as evidence to obtain.
 - Do not rewrite an entire prose passage by default; provide diagnosis and a rewrite blueprint first.
 - If existing evidence cannot support a “research gap,” state that evidence is insufficient instead of inventing one.

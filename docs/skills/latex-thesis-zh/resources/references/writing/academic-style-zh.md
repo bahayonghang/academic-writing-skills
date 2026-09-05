@@ -22,6 +22,7 @@
   - [5.1 Chinese Punctuation](#51-中文标点)
   - [5.2 English Punctuation](#52-英文标点)
   - [5.3 Mixed-Language Rules](#53-混用规则)
+  - [5.4 Colons, Semicolons, and Inter-Sentence Logic in Prose](#punctuation-prose)
 - [6. Numbers and Units](#六数字与单位)
   - [6.1 Number Usage](#61-数字使用)
   - [6.2 Unit Standards](#62-单位规范)
@@ -120,6 +121,41 @@
 ### 5.3 Mixed-Language Rules
 - Use Chinese punctuation after English words in Chinese context
 - Use English punctuation when the entire parenthetical is English
+
+<a id="punctuation-prose"></a>
+
+### 5.4 Colons, Semicolons, and Inter-Sentence Logic in Prose
+
+Continuous Chinese thesis prose should use complete sentences by default. Avoid repeatedly using
+colon shells such as “label: content” or “the reason is: conclusion,” and do not chain an entire
+paragraph with semicolons as if it were a list. The rewrite should make existing relationships
+between propositions explicit instead of mechanically replacing punctuation. When the material
+supports only parallel facts, keep them parallel and do not invent causation, progression, or order.
+
+This judgment belongs to the `[LLM]` layer. Process it in this order:
+
+1. Protect data, citations, formulas, terms, qualifiers, and LaTeX commands, then extract the fact or
+   claim in each clause.
+2. Decide whether explicit evidence in the source supports a causal, progressive, contrastive,
+   conditional, or parallel relationship, and check claim strength against
+   [over-claim-guard.md](over-claim-guard.md). The mere presence of an experiment, ablation,
+   mechanism analysis, or source text does not prove causation. State the propositions in separate
+   complete sentences when the relationship is unclear.
+3. Remove label shells such as “result:”, “the reason is:”, and “limitation:”. Supply the research
+   object, method, or evidence as the subject. Prefer full stops between propositions, then use only
+   the connective wording justified by the established relationship.
+4. Recheck facts, claim strength, and scope. Do not simply replace colons or semicolons with commas,
+   and do not infer AI authorship from these marks alone.
+
+Retain a colon that genuinely introduces or defines material, a semicolon needed between complex
+parallel clauses, the abstract overview “主要研究工作如下：”, keyword separators, and punctuation
+required by formulas, code, URLs, quotations, citations, or the university template.
+
+| Scenario | Before | After |
+|------|--------|--------|
+| A component-removal comparison is available | 结果：表 4-2 显示误差下降；原因是：移除校正模块后误差回升；局限：仅完成离线验证。 | 表 4-2 显示误差下降。组件移除对照中，移除校正模块后误差回升，说明该模块与误差改善相关。该结论目前限于离线验证。 |
+| Only parallel facts are available | 数据集 A 包含 120 个样本；数据集 B 包含 118 个样本；因此模型 C 更稳定。 | 数据集 A 包含 120 个样本，数据集 B 包含 118 个样本。现有样本数不能证明模型 C 更稳定。 |
+| Legitimate introduction and complex parallel clauses | 主要研究工作如下：当输入完整时，系统执行联合估计；当输入缺失时，系统保留上一时刻状态。 | Keep the sentence; the colon introduces content and the semicolon separates conditional clauses that already contain commas. |
 
 ## 6. Numbers and Units
 

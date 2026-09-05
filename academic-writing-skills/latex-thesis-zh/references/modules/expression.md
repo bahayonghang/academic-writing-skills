@@ -1,6 +1,6 @@
 # Module: 中文表达检查（expression）
 
-**触发**：这段太口语、改学术一点、句子太长太绕、标点乱、搭配不当、数值单位写法
+**触发**：这段太口语、改学术一点、句子太长太绕、标点乱、冒号或分号堆叠、搭配不当、数值单位写法
 
 **规则真相源**：[academic-style-zh.md](../writing/academic-style-zh.md)；数字与单位另见 [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md)。
 
@@ -47,6 +47,11 @@ uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --max-chars 70 --
 **`E-INCOMP` 为什么不能是 A 档**：中文承前省略主语是合法且普遍的（「本文提出 X 方法。通过实验，验证了其有效性。」第二句省略「本文」在学位论文中完全可接受）。规则只能识别句式模式，无法判定是否真缺主语。
 
 **`E-PUNCT` 为什么不能是 A 档**：`academic-style-zh.md` §5.2/§5.3 自身就给了两条允许英文标点的例外。排除区可实现，但中英混排的复合括号等边界情况无法穷举。
+
+**连续正文中的冒号、分号与句间逻辑只走 `[LLM]`**：标签式冒号或整段分号串联的改写判据见
+[academic-style-zh.md §5.4](../writing/academic-style-zh.md#punctuation-prose)。
+本模块只处理语句级表达，须依据现有证据判断句间关系；段落顺序和论证结构仍归 `logic`。
+`E-PUNCT` 继续只报告 §5.3 的中英标点混用，不增加新的规则、阈值或检查码。
 
 **`E-UNITFONT` 的特殊性**：检出是确定的，但问题位于数学环境内，而「绝不修改数学环境」是红线一。因此它只报告、永不给替换文本，输出中明确写「需作者手动调整」。**分档依据是红线而非判定能力**——不要误当成可以升 A 档。
 

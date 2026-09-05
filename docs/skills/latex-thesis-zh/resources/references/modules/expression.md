@@ -1,6 +1,6 @@
 # Module: Chinese Expression Check (expression)
 
-**Trigger**: this passage is too colloquial, make it more academic, sentences too long and convoluted, punctuation is messy, wrong collocation, value/unit notation
+**Trigger**: this passage is too colloquial, make it more academic, sentences too long and convoluted, punctuation is messy, colon or semicolon piling, wrong collocation, value/unit notation
 
 **Rule source of truth**: [academic-style-zh.md](../writing/academic-style-zh.md); numbers and units are further covered by [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md).
 
@@ -47,6 +47,13 @@ Every cell already has an owner; rebuilding one guarantees a clash.
 **Why `E-INCOMP` cannot be tier A**: dropping a subject carried over from the previous sentence is legal and common in Chinese ("本文提出 X 方法。通过实验，验证了其有效性。" — omitting 本文 in the second sentence is entirely acceptable in a thesis). A rule can recognize the pattern but cannot decide whether the subject is genuinely missing.
 
 **Why `E-PUNCT` cannot be tier A**: `academic-style-zh.md` §5.2/§5.3 themselves grant two exemptions for English punctuation. The exempt regions are implementable, but edge cases such as mixed Chinese-English compound brackets cannot be enumerated.
+
+**Colons, semicolons, and inter-sentence logic in continuous prose are `[LLM]`-only**: see
+[academic-style-zh.md §5.4](../writing/academic-style-zh.md#punctuation-prose)
+for label-style colons and paragraph-long semicolon chains. This module handles sentence-level
+expression and must infer relationships only from available evidence; paragraph order and argument
+structure remain with `logic`. `E-PUNCT` still reports only the mixed-language punctuation covered
+by §5.3, with no new rule, threshold, or check code.
 
 **What makes `E-UNITFONT` special**: detection is reliable, but the problem lives inside a math environment, and "never modify math environments" is red line one. So it reports only and never offers replacement text, stating explicitly that the author must adjust it by hand. **The tier follows the red line, not the decision capability** — do not mistake it for something that can be promoted to A.
 

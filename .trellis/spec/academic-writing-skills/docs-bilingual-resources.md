@@ -50,6 +50,10 @@ uv run python docs/scripts/check_resource_sync.py --write-manifest --inventory-o
 inline code token 和表格形状；链接目标只能在两种语言中同步重写，并由 VitePress
 build 证明可解析。
 
+新增跨语言章节跳转不能直接猜测标题 slug：两语标题的自动锚点不同，build 成功也不证明
+fragment 存在。需要精确跳转时，给目标节一个两语一致的显式锚点并同步源/镜像，构建后
+核对目标 HTML 的 id 与新链接的 href；只验证本次新增导航，不扩展成全站规则或兼容别名。
+
 ## 4. Validation & Error Matrix
 
 | Condition | Required failure |

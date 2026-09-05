@@ -1,4 +1,4 @@
-# 正文方法+实验章（第 3 章起）写作专章指南
+# 正文方法+实验章写作专章指南
 
 面向工业/过程背景中文博士学位论文的**正文方法章**写作与诊断。此处特指"一章一方法 +
 同章实验验证"章式（下称**方法章**）：第 3 章起至结论前，每章提出一个核心方法/模型，并在
@@ -21,13 +21,14 @@ uv run python $SKILL_DIR/scripts/check_format.py document.tex
 
 ## 一、章式判别（先判别，再套规则）
 
-面对第 3 章起的某一正文章，先判断它属于哪一类，判据不同、规则不同，**不可混用**：
+面对任一正文章，先根据正文承担的任务判断它属于哪一类，判据不同、规则不同，**不可混用**。
+章号只能帮助定位，不能单独决定章型：
 
 | 章类型 | 决定性判据 | 典型位置 | 走哪套规则 |
 | --- | --- | --- | --- |
 | 方法章（本指南） | 一章一方法/模型 + 同章实验节闭环 | 第 3 章起至结论前 | 本指南 + `analyze_experiment.py --per-chapter` |
 | 过程分析章 | 工艺流程分析 + 全文方法框架，本身不含独立方法 | 通常第 2 章 | [`process-chapter-guide-zh.md`](process-chapter-guide-zh.md) + `--process-chapter` |
-| 工程应用章 | 需求分析 → 系统架构 → 现场上线 → 量化效益 | 结论前独立章 / 末方法章实验节 | 本指南（四态落位，见下） |
+| 工程应用章 | 研究工件 → 运行约束 → 系统机制/操作任务 → 分级验证 | 结论前独立章 / 集成章 / 末方法章实验节 | [`engineering-application-chapter-guide-zh.md`](engineering-application-chapter-guide-zh.md)；独立章不运行 `--per-chapter` |
 
 **判据说明**：过程分析章（第 2 章）与方法章（第 3 章起）通常并存，判别是为每一章路由规则、
 非贴全文标签。方法章锚点是"章标题 =〈方法名/缩写〉+〈对象〉+〈任务〉"，缩写在章/节标题、
@@ -41,6 +42,10 @@ uv run python $SKILL_DIR/scripts/check_format.py document.tex
 方法有效性与工程落地可分层验证：方法章仿真节只证方法本身（历史/仿真被控对象），真实上线
 数据集中到应用章。控制章"用生产数据拟合 NARX 当被控对象再控制它"是通行安全逻辑、不是造假
 （红线 11）。
+
+独立工程应用/系统实现章的论证链、服务与界面写法、回放/影子/试点/生产证据边界见
+[`engineering-application-chapter-guide-zh.md`](engineering-application-chapter-guide-zh.md)。本指南只保留
+工程验证的四态落位说明，避免复制工程章正文规则。
 
 ## 二、推荐骨架与弹性口径
 
@@ -147,8 +152,8 @@ X.6 本章小结
 - **模板（5/5）**：单段"**问题 → 方法 →（关键）数字 → 意义**"（可'首先……最后'串方法要点，
   带核心数字）。长度 **1 段、150~350 字**主流（编号列点复述贡献属少数派，非默认形态）。
 - **"为第 X 章奠基"式启下句是分歧点**：锌 5/5 必写（点名章号），烧成/熟料/固废焚烧基本不写
-  → **启下句只作 Info 推荐，不得作缺失即报的硬检查**（红线 2）。工程应用章小结收束到量化效益
-  + 推广价值，不再启下。
+  → **启下句只作 Info 推荐，不得作缺失即报的硬检查**（红线 2）。工程应用章小结收束到已证机制、
+  当前证据边界与对全文的贡献；量化效益和推广价值只在材料提供相应证据时写。
 - **结论 ≠ 各章小结简单重复**（清华§4.6）：全文"结论/总结与展望"综合全文贡献、局限与未来
   方向；本章小结只做章内证据收束，不机械重复每章"第 X 章……"句式。
 
@@ -258,6 +263,7 @@ X.6 本章小结
 - [process-chapter-guide-zh.md](process-chapter-guide-zh.md)：第二章过程分析章式，判别后指向。
 - [introduction-guide-zh.md](introduction-guide-zh.md)：绪论六节骨架（章引言禁重复其综述）。
 - [thesis-writing-guide.md](thesis-writing-guide.md)：全文主线、章引言两段模板与本章小结单段模板。
+- [engineering-application-chapter-guide-zh.md](engineering-application-chapter-guide-zh.md)：独立工程应用/系统实现章的论证与证据边界。
 - [structure-guide.md](structure-guide.md)：直属小节数量弹性口径、章标题与小节标题扣合。
 - [../modules/logic.md](../modules/logic.md)：P-PAPER 泛化与 `--first-chapter` 说明。
 - [../modules/experiment.md](../modules/experiment.md)：`--per-chapter` 逐章 E-\* 检查表。

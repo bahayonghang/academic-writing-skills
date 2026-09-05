@@ -1,0 +1,31 @@
+{
+  "id": "thesis-zh-practice-spec",
+  "name": "thesis-zh-practice-spec",
+  "title": "latex-thesis-zh 实践 spec 增量优化",
+  "description": "对照 28 份实践 spec 实施写作、工程应用章、图表题注与版式优化，并纳入用户追加的冒号分号约束；父任务负责集成证据。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-05",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-05-thesis-zh-evidence-writing",
+    "09-05-thesis-zh-engineering-chapter",
+    "09-05-thesis-zh-caption-layout",
+    "09-05-thesis-zh-punctuation-prose"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "2026-09-06 四子实施与30项AC验收完成，独立检查PASS；完整CI1756 passed/0 skip、资源及文档通过。父任务保持规划/集成容器状态；未提交或归档。详见research/implementation-evidence.md。",
+  "meta": {"implementation_status": "verified"}
+}

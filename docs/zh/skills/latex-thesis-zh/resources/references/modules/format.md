@@ -21,6 +21,17 @@ Purpose: Check thesis page layout, heading format, figure/table/equation numberi
 - 方程组、分段条件、成组约束用 `aligned` / `cases` 等结构。
 - 已经能正常放下、编号未被挤行、且没有推导/成组语义的公式，不要为视觉统一强行拆分。
 
+## Figure, Caption, and Table Layout
+
+图表题、续图和子题注先读 [`../formatting/caption-guide.md`](../formatting/caption-guide.md)；
+三线表、长表局部留白和表格二次缩放问题读
+[`../formatting/table-guide.md`](../formatting/table-guide.md)。具体做法取决于当前学校模板、宏包和编译结果，
+不把单一模板命令推广为通用要求。
+
+图像清晰度按像素尺寸和最终排版宽度估算有效 ppi，文件中的 DPI 元数据不能单独证明视觉质量。
+优先保留可编辑或矢量源，并同时核对图源、导出图和实际编译页。执行编译与页面验收时遵循
+[`compile.md`](compile.md) 的 wrapper 边界；没有实际页面检查时明确标为 `missing evidence`。
+
 ## Source Hygiene (源码卫生：F-MD / F-NOTE)
 
 `check_format.py` 默认输出内置两项源码卫生检查（无需额外 flag），仅定位提示、不改写：

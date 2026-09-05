@@ -109,6 +109,18 @@ Ph.D. abstracts will systematically misreport, for example, Results will have no
 
 Number of paragraphs = background paragraph (1~2) + working paragraph (number) + optional closing paragraph.
 
+### Multi-Component Relationships Within a Numbered Work Item
+
+When one numbered work item contains two or more components, verify their actual interfaces before
+choosing the narrative order:
+
+- **Serial dependency**: Use “current constraint -> earlier component's role/output -> remaining constraint -> later component's role -> evaluation object” only when the source states that the later component consumes the earlier output or continues from a specific constraint left by it. Serving the same evaluation object does not by itself prove a serial relationship.
+- **Parallel collaboration**: When components share an input, handle different objects, or merge only at the end, preserve the parallel relation and state each component's object and merge point; do not claim that “the later component repairs the earlier component.”
+
+Component names alone do not prove causality, gains, or ablation contributions. If the source does not
+provide an interface, role, or evaluation evidence, mark the information as missing; do not invent module
+functions, numbers, citations, or conclusions such as “produces an improvement.”
+
 ### Relationship with the five-factor model
 
 | Dimensions | Five-element model (`--model five`) | Dissertation skeleton (`--model thesis`, default) |
