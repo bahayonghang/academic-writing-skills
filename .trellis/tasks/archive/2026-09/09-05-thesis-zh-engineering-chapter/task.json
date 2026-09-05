@@ -3,7 +3,7 @@
   "name": "thesis-zh-engineering-chapter",
   "title": "工程实现与平台应用章写作适配",
   "description": "让已有中文 LaTeX 论文的工程实现/平台应用章获得按章型选择的学术写作指引。对应父任务 R3、R5、R6。",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": null,
   "scope": null,
   "package": null,
@@ -11,7 +11,7 @@
   "creator": "lyh",
   "assignee": "lyh",
   "createdAt": "2026-09-05",
-  "completedAt": null,
+  "completedAt": "2026-09-06",
   "branch": null,
   "base_branch": "main",
   "worktree_path": null,
@@ -22,5 +22,8 @@
   "parent": "09-05-thesis-zh-practice-spec",
   "relatedFiles": [],
   "notes": "2026-09-06 实施及本项AC通过，父任务独立检查PASS、完整CI1756 passed/0 skip；证据见research/output-evidence.md。未提交或归档，生命周期保持in_progress。",
-  "meta": {"implementation_status": "verified", "evidence": "research/output-evidence.md"}
+  "meta": {
+    "implementation_status": "verified",
+    "evidence": "research/output-evidence.md"
+  }
 }
