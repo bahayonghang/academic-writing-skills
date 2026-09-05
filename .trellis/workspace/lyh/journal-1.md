@@ -1419,3 +1419,38 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 中文伪代码检查本地化与 deep-review mode 传播另立任务
+
+
+## Session 42: 中文论文实践规范优化与任务归档
+
+**Date**: 2026-09-06
+**Task**: 中文论文实践规范优化与任务归档
+**Branch**: `dev`
+
+### Summary
+
+完成 latex-thesis-zh 四项实践优化及独立验收，按用户授权提交全部改动并归档父子五任务。
+
+### Main Changes
+
+- 补充证据保真、工程应用章和冒号分号写作规范，同步双语文档、评测与 Trellis spec。
+- 修复双语题注识别及注释误判，保留合成输出与六页版式验收证据。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `fb433f6` | (see git log) |
+
+### Testing
+
+- [OK] just ci 通过，1756 passed、0 skipped，Pyright 0 errors、75 条既有 warnings。
+- [OK] just doc-build、271 项资源同步、五任务递归预检及独立检查全部通过。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 本次任务已完成；真实论文模板与现场效果未验证。既有 compile.py --outdir PDF 查找问题留待单独授权处理。

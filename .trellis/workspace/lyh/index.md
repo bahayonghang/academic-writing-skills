@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 41
-- **Last Active**: 2026-08-31
+- **Total Sessions**: 42
+- **Last Active**: 2026-09-06
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1421 | Active |
+| `journal-1.md` | ~1456 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 42 | 2026-09-06 | 中文论文实践规范优化与任务归档 | `fb433f6` | `dev` |
 | 41 | 2026-08-31 | paper-audit 中文学位论文审阅 profile | `a05ae79`, `f74823b` | `dev` |
 | 40 | 2026-08-30 | 小节上下文审阅通道与父子任务收尾 | `c575110` | `dev` |
 | 39 | 2026-08-30 | 完成 latex-thesis-zh 小节上下文诊断 | `73446e5` | `dev` |
