@@ -1,0 +1,3 @@
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"硬约束表：test_paper_audit_synthesis.py:106-111 两条断言与 test_zh_thesis_lane_wiring.py:27 是本子任务的红线"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"manifest 与双语镜像一致性的验收依据"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-gating/implement.md","reason":"验证命令、审查门与回退点"}

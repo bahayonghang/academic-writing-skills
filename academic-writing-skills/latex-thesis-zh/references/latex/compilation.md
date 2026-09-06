@@ -1,5 +1,19 @@
 # LaTeX Compilation Guide
 
+## Skill Entry Point
+
+Within this skill, compile through the bundled wrapper with the thesis's actual entry file and detected recipe:
+
+```bash
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe latexmk
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe xelatex-bibtex
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe xelatex-biber
+```
+
+LuaLaTeX and its bibliography recipes are also supported. The raw commands below document compiler behavior;
+they do not authorize bypassing the wrapper, installing system packages, cleaning the original PDF, or enabling
+shell escape. Use the entry file, engine, bibliography backend, and output path established by the current project.
+
 ## Compiler Selection
 
 ### pdfLaTeX
@@ -54,20 +68,17 @@ $biber = 'biber %O %S';
 ```
 
 ### Missing Package
-```bash
-# TeX Live
-tlmgr install <package-name>
 
-# MiKTeX (auto-install on first use)
-# Or use MiKTeX Console
-```
+Report the missing package and the wrapper's exact exit code and log evidence. Do not install TeX Live or MiKTeX
+packages without explicit authorization.
 
 ### Bibliography Not Updating
 ```bash
-# Force rebuild
-latexmk -C main.tex  # Clean all
-latexmk -xelatex main.tex  # Rebuild
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe xelatex-bibtex
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe xelatex-biber
 ```
+
+Choose one matching recipe after inspecting the project; do not run both blindly and do not delete the original PDF.
 
 ## Watch Mode (Continuous Compilation)
 
@@ -78,6 +89,17 @@ latexmk -xelatex -pvc main.tex
 # With PDF viewer sync
 latexmk -xelatex -pvc -view=pdf main.tex
 ```
+
+## Rendered Layout Verification
+
+For a caption, continued figure, long table, table scaling, or image-clarity change, wrapper success is only the
+compilation gate. Inspect relevant `.aux` or list-of-figures/list-of-tables entries when numbering is involved, then
+render and actually view the changed page and adjacent pages. Check continuation numbering, caption order, clipping,
+overflow, blank regions, and text readability. Image DPI metadata or the existence of a PNG/PDF does not prove the
+effective ppi or final visual quality; effective ppi depends on pixel dimensions and final layout size.
+
+If compilation, rendering, or visual inspection was not performed, name the missing evidence. Do not add PDF
+compression, cleanup, system installation, or UI automation as a substitute.
 
 ## Cross-Platform Notes
 

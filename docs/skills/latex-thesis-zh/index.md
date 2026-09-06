@@ -7,9 +7,12 @@ checks without silently changing citations, labels, mathematics, or template mac
 ## Use It For
 
 - Diagnose XeLaTeX, LuaLaTeX, latexmk, template, layout, formula, and GB/T 7714 issues.
-- Map chapter structure and check terminology, abbreviations, references, tables, and headings.
-- Review the introduction funnel, literature synthesis, method and process chapters, experiments,
-  abstracts, conclusions, and cross-chapter closure.
+- Map chapter structure and check terminology, abbreviations, references, bilingual captions,
+  rendered figure/table layout, and headings.
+- Review the introduction funnel, thematic literature synthesis, method, process, and engineering-application
+  chapters, chapter-type summaries, multi-component abstracts, display/statistical scope, and cross-chapter closure.
+- Review Chinese sentence-level expression, including evidence-based treatment of colons, semicolons,
+  and inter-sentence logic in continuous prose.
 - Reduce AI-writing traces while preserving academic claims and LaTeX syntax.
 - Run school-specification and blind-review checks before submission.
 
@@ -25,19 +28,20 @@ checks without silently changing citations, labels, mathematics, or template mac
 | Module | Use when | Primary command |
 | --- | --- | --- |
 | `compile` | The thesis build fails or the toolchain is unclear | `uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.tex` |
-| `format` | Layout, formula wrapping, draft residue, or placeholder rows need checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_format.py main.tex` |
+| `format` | Layout, formula wrapping, rendered figures/tables, draft residue, or placeholder rows need checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_format.py main.tex` |
 | `structure` | You need a chapter and section map | `uv run python academic-writing-skills/latex-thesis-zh/scripts/map_structure.py main.tex` |
 | `consistency` | Terms, abbreviations, or names drift across chapters | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py main.tex --terms` |
 | `template` | The thesis class or school template is unclear | `uv run python academic-writing-skills/latex-thesis-zh/scripts/detect_template.py main.tex` |
 | `bibliography` | BibTeX data or GB/T 7714 compliance needs checking; use `--standard gb7714-2025` for the standard effective from 2026-07-01 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/verify_bib.py references.bib --standard gb7714` |
 | `title` | Thesis, chapter, or section titles need review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
+| `expression` | Chinese prose has colloquial wording, long sentences, mixed punctuation, or colon/semicolon logic issues | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_style_zh.py main.tex` |
 | `deai` | Visible Chinese prose contains AI-writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
-| `literature` | The literature review lists papers without synthesis or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
-| `experiment` | Experiment language, evidence layers, or per-method-chapter completeness needs review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
-| `references` | Cross-references, captions, labels, or numbering are inconsistent | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
-| `tables` | Three-line tables, booktabs structure, or table generation needs checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
-| `abstract` | Abstract structure, length, or Chinese-English consistency needs diagnosis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py main.tex` |
+| `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, engineering-application argument, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
+| `literature` | The review lacks thematic synthesis, selective attribution, cluster-end comparison, or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
+| `experiment` | Experiment language, evidence layers, display/statistical scope, or per-method-chapter completeness needs review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
+| `references` | Cross-references, `\caption` / `\bicaption`, labels, or numbering are inconsistent | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
+| `tables` | Three-line tables, real caption position, booktabs structure, or table generation needs checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
+| `abstract` | Abstract structure, multi-component relationships, length, or Chinese-English consistency needs diagnosis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_abstract.py main.tex` |
 | `conclusion` | The conclusion lacks summary, contributions, outlook, or numerical consistency | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_conclusion.py main.tex` |
 | `spec-check` | A final thesis must be checked item by item against a school specification | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_spec.py main.tex --template yanshan --degree doctor` |
 | `blind-review` | Personal information must be detected or removed in a review copy | `uv run python academic-writing-skills/latex-thesis-zh/scripts/blind_review.py main.tex --check` |
@@ -81,6 +85,7 @@ Run the smallest matching module. For multi-part requests, follow the order docu
 - [Template detection](./resources/references/modules/template.md)
 - [Bibliography](./resources/references/modules/bibliography.md)
 - [Title](./resources/references/modules/title.md)
+- [Chinese expression](./resources/references/modules/expression.md)
 - [De-AI review](./resources/references/modules/deai.md)
 - [Literature review](./resources/references/modules/literature.md)
 - [Experiment review](./resources/references/modules/experiment.md)
@@ -98,7 +103,9 @@ Run the smallest matching module. For multi-part requests, follow the order docu
 - [Introduction chapter guide](./resources/references/writing/introduction-guide-zh.md)
 - [Process chapter guide](./resources/references/writing/process-chapter-guide-zh.md)
 - [Method chapter guide](./resources/references/writing/method-chapter-guide-zh.md)
+- [Engineering-application and system-implementation chapter guide](./resources/references/writing/engineering-application-chapter-guide-zh.md)
 - [Method module description and interfaces](./resources/references/writing/method-description-guide-zh.md)
+- [Results-analysis and evidence-scope guide](./resources/references/writing/results-analysis-guide-zh.md)
 - [Conclusion chapter guide](./resources/references/writing/conclusion-guide-zh.md)
 - [Abstract structure](./resources/references/writing/abstract-structure.md)
 - [Structure guide](./resources/references/writing/structure-guide.md)

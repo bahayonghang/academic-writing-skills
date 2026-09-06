@@ -924,7 +924,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/deai/guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "9fa474a243bdfd895d43b26e294aa20e1650b8dd799a8ffd548c7e10b26e5846",
+      "sourceSha256": "ad9306a561e8032c57d9b40e52e9edc56018bad4a0d6f7f1515b4c40f7877124",
       "en": "docs/skills/latex-thesis-zh/resources/references/deai/guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/deai/guide.md"
     },
@@ -960,7 +960,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/formatting/caption-guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "4eae2ccfdc83b3ba2e197faba6c822afffee7c30cee2660c365bfabc510dda2d",
+      "sourceSha256": "af708cc677cea8805922c33a3218cf1d634136f6cb69a709cd9c042e1c15d98a",
       "en": "docs/skills/latex-thesis-zh/resources/references/formatting/caption-guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/caption-guide.md"
     },
@@ -987,7 +987,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/formatting/table-guide.md",
       "sourceLocale": "en",
-      "sourceSha256": "b2f224b5f5a605353730266e7dcb363dcf21eafb1607002d9c9076887826519f",
+      "sourceSha256": "ea0e9f854835f7d291bcfceec21819111cd015cd5799439abf563742bde32872",
       "en": "docs/skills/latex-thesis-zh/resources/references/formatting/table-guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/formatting/table-guide.md"
     },
@@ -996,7 +996,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/latex/compilation.md",
       "sourceLocale": "en",
-      "sourceSha256": "7a29285802b16c33046f0fb48b7e637207aafc43eb93f252c88499a5a5017b55",
+      "sourceSha256": "d4809f0eca99526af2e3322575cedd8e7de9b8b3a2245946b573a930ca069d43",
       "en": "docs/skills/latex-thesis-zh/resources/references/latex/compilation.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/latex/compilation.md"
     },
@@ -1032,7 +1032,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/compile.md",
       "sourceLocale": "en",
-      "sourceSha256": "9b788c04004e4e193ba4ce95bc7e7ab46e5dabc0b147b5304441ddbc23a86360",
+      "sourceSha256": "6fba9cab7e3a455e3d06ecececd915c3ea3d852f2e397ada94d754a176dd5ab8",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/compile.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/compile.md"
     },
@@ -1077,7 +1077,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/expression.md",
       "sourceLocale": "zh",
-      "sourceSha256": "1f00350f8b975e430d814081062da7c7eda1d86223376a9fc795bfd1555114fd",
+      "sourceSha256": "25c30d088172ce70e543efee3657d11cb43a66cf6db0b6ee6e4de75a74cdf60b",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/expression.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/expression.md"
     },
@@ -1086,7 +1086,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/format.md",
       "sourceLocale": "zh",
-      "sourceSha256": "5e1d76fed56d4db80130fd68c852a0ff9c6e5939928274ceaa2f36ef984d3990",
+      "sourceSha256": "d8f7eeba6261cebe70dd8d05e16ea83776324373e76f8f2e82e8c9b6c5edcb80",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/format.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/format.md"
     },
@@ -1095,7 +1095,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/literature.md",
       "sourceLocale": "zh",
-      "sourceSha256": "4f35892c88fcbcb723c94f16fa86f031c01a45f8d6598be04a91693eaeeee5d3",
+      "sourceSha256": "241eb8c417acaa21ce89d86ab8d76afacb4197f02fbf82a55e45dd69c850249d",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/literature.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/literature.md"
     },
@@ -1104,7 +1104,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "0669100effcfc43c6df1cb9c2bc912c6dc7cee673d18cfdd4bebb24e2cddecb5",
+      "sourceSha256": "f324bd02d06e850d7e1945aa95c2a7162e36ae63fa65aef49a4124d9a931cda4",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1113,7 +1113,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/references.md",
       "sourceLocale": "zh",
-      "sourceSha256": "a877d5a8bcfbc212ca16525df6dea75b87ebfa1c4ea043ad372b483f8d101c30",
+      "sourceSha256": "86b0228816d679999f3f55c1ad9c9ebd7db1cda9c4ae8596db16bb15c8470e29",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/references.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/references.md"
     },
@@ -1122,7 +1122,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "ac829d89b872d6953dd3c5cf1a6be1cde695814c7da601efb823d99040e9375a",
+      "sourceSha256": "9802f68b8eaae259ec399aedfb63f7c3b496fa5f0989a263fc10970dea4b42e3",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
@@ -1140,7 +1140,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/tables.md",
       "sourceLocale": "en",
-      "sourceSha256": "4aee8435af0cbf7751cac1a53c83f732a851f034410523dae8c576df5ff9f941",
+      "sourceSha256": "5d0e4271092d09227c2886fef1ed8060d0d612e47fdb20114c62fd09b7d2250a",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/tables.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/tables.md"
     },
@@ -1167,7 +1167,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/abstract-structure.md",
       "sourceLocale": "zh",
-      "sourceSha256": "e19938e3ad6343c4a809d2fb2eaeb1b7338d7dc01d0f20907ddbbee989794852",
+      "sourceSha256": "a22c2fcb141b2ed34e97b50f05cb7dfc2666966a7bdcadf1053286670f0d389e",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md"
     },
@@ -1176,7 +1176,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/academic-style-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "7e20863afd23e5ead2da13ac652e6180334cf923ee588a031c713da4f8407538",
+      "sourceSha256": "4b00ac669ae7cadea92db05192551038a65cb645f461fb4834d1282966ed649a",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/academic-style-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/academic-style-zh.md"
     },
@@ -1188,6 +1188,15 @@
       "sourceSha256": "0502d7cf4a51a35bee1c7f66d1a39dca5c7a175240389ee707597b5fdad05d20",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/conclusion-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/conclusion-guide-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/engineering-application-chapter-guide-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "38a50bf7aad011278246656edf28cd340dcccdfcb5f9a86d5bbbe21c80381277",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/engineering-application-chapter-guide-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/engineering-application-chapter-guide-zh.md"
     },
     {
       "skill": "latex-thesis-zh",
@@ -1212,7 +1221,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/method-chapter-guide-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "4847112a1db3e18a5b6042a0dbc2e1338e2a2173df02a869f5e47cc09a093326",
+      "sourceSha256": "ab8a0f70e751491148830aff8c479698690216864ad218dceb76ed82ab349d09",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/method-chapter-guide-zh.md"
     },
@@ -1266,7 +1275,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/results-analysis-guide-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "35f993da8e1de90872412e8259851a9b53b5e87234b8e98b1a572ca4f9378783",
+      "sourceSha256": "02b61bcac90247b7839ed12d52b480fb9194c9db8f546c8c86a03158a708c025",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/results-analysis-guide-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/results-analysis-guide-zh.md"
     },
@@ -1311,7 +1320,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/thesis-writing-guide.md",
       "sourceLocale": "zh",
-      "sourceSha256": "5828fd923a02f2b132e5c0b06566aa1e7f0bc67099a2abfdfa1bdb9a993acfba",
+      "sourceSha256": "60b46889d6df6256f4e696c84c34ad28682a4d6d4df55d8741fed3b414520147",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/thesis-writing-guide.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/thesis-writing-guide.md"
     },
@@ -1392,7 +1401,7 @@
       "kind": "examples",
       "source": "academic-writing-skills/latex-thesis-zh/examples/literature-review-rewrite.md",
       "sourceLocale": "zh",
-      "sourceSha256": "c598fb5aad265ce226b8ffeb33aadfc1b9aaedbcdbe1b7b14ed708c696015373",
+      "sourceSha256": "bb4f4028b78d7a10f92079434ada1e13b0fb683ceeeb55839e7b5d0b4022b6fd",
       "en": "docs/skills/latex-thesis-zh/resources/examples/literature-review-rewrite.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/literature-review-rewrite.md"
     },
@@ -1527,7 +1536,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/MODE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "c8655f5d60c0349f88b0a7cc2313ec6d1dc461000f61a3c7449031b88dac949d",
+      "sourceSha256": "2e773b6f75198a03a9d9360e9c7b6a2f17b4b4fb4a226b4873b2638beb968ffc",
       "en": "docs/skills/paper-audit/resources/references/MODE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/MODE_GUIDE.md"
     },
@@ -1536,7 +1545,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/output-layout.md",
       "sourceLocale": "en",
-      "sourceSha256": "06af45374c12f2abc6618f3fea90a29247b6e92fb8369c188190e26feb28f16d",
+      "sourceSha256": "98e2b7c3e6e28162c79be0f43c8c623cb9ff651d2b5a1770adda2bbb8b41a39f",
       "en": "docs/skills/paper-audit/resources/references/output-layout.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/output-layout.md"
     },
@@ -1698,9 +1707,18 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/workflow-detail.md",
       "sourceLocale": "en",
-      "sourceSha256": "f247cea3490191dbd62ca0acd9ea7e60e5c75102a4a9355e52feeb967d36659b",
+      "sourceSha256": "77aa69e56e93f69a29164f65458f9cac24ab331e20b78b1ade88a6dc118b9eb5",
       "en": "docs/skills/paper-audit/resources/references/workflow-detail.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/workflow-detail.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "references",
+      "source": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ac22f4efeb7f4382a0217b28b16b421a69d993651f2b2a709b8cf5663261ef05",
+      "en": "docs/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
+      "zh": "docs/zh/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md"
     },
     {
       "skill": "paper-audit",
@@ -1935,6 +1953,15 @@
       "sourceSha256": "6a6534674c4fede9b2e2af883086a11f9868c6608e956eeb6120226222c5dc1b",
       "en": "docs/skills/paper-audit/resources/agents/synthesis_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/synthesis_agent.md"
+    },
+    {
+      "skill": "paper-audit",
+      "kind": "agents",
+      "source": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "92ca7bc004278066045ed0a59760030f480e0a20c9bb83be165884e5cba89381",
+      "en": "docs/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
+      "zh": "docs/zh/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md"
     },
     {
       "skill": "typst-paper",
@@ -2412,24 +2439,6 @@
       "sourceSha256": "2c4920096737a67aaa9c296e865dea27bae8e4add08c283bb74c37747a65228d",
       "en": "docs/skills/typst-paper/resources/examples/literature-review-rewrite.md",
       "zh": "docs/zh/skills/typst-paper/resources/examples/literature-review-rewrite.md"
-    },
-    {
-      "skill": "paper-audit",
-      "kind": "references",
-      "source": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md",
-      "sourceLocale": "zh",
-      "en": "docs/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
-      "zh": "docs/zh/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
-      "sourceSha256": "ac22f4efeb7f4382a0217b28b16b421a69d993651f2b2a709b8cf5663261ef05"
-    },
-    {
-      "skill": "paper-audit",
-      "kind": "agents",
-      "source": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md",
-      "sourceLocale": "zh",
-      "en": "docs/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
-      "zh": "docs/zh/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
-      "sourceSha256": "92ca7bc004278066045ed0a59760030f480e0a20c9bb83be165884e5cba89381"
     }
   ]
 }

@@ -20,7 +20,11 @@ Read next:
   Recommendation; otherwise default to `deep-review`.
 - Infer output language from the request first, then fall back to the paper
   language when the request is ambiguous.
-- For `re-audit`, require `--previous-report PATH`. If it is missing, stop
+- For `re-audit`, require `--previous-report PATH`. When it is missing, first
+  look for candidates in the paper's directory and the current working
+  directory using the `*audit_report*` / `*review_report*` /
+  `*final_issues*.json` patterns. With exactly one candidate, state the
+  resolved path and continue. With zero or more than one candidate, stop
   immediately and ask only for that path instead of running a fresh audit.
 - State the locked mode, report style, focus, language, and venue (if known)
   before running commands when any of them were inferred rather than explicitly
@@ -28,31 +32,68 @@ Read next:
 
 ### Auto-Detection at Intake
 
-Surface these conditions to the user as a prompt; never auto-switch modes
-without confirmation. The goal is to catch obvious mode mismatches before
-running a wrong workflow.
+Never auto-switch modes without confirmation. The goal is to catch obvious
+mode mismatches before running a wrong workflow — not to re-ask a question the
+user already answered.
+
+Gate every detection below on how the mode was set:
+
+- **Mode stated by the user**: the user already made this decision. Report the
+  detected signal as a one-sentence statement and run the stated mode. Do not
+  offer a mode choice. The only exception is a material conflict (defined
+  below).
+- **Mode inferred by you**: no decision has been made yet, so ask.
+- **Material conflict, either way**: ask.
+
+A detection is a material conflict only when acting on the stated mode would
+change the review scope or change the result:
+
+- **Scope**: sections must be added or dropped, or a new comparison baseline
+  enters the review (a previous report the user asked to compare against, a
+  reviewer letter).
+- **Result**: the `gate` PASS/FAIL verdict changes, or an issue's severity
+  changes.
+- **Delivery level**: the stated mode cannot run at the delivery level the user
+  also stated — for example `deep-review` at `T3`. Say which mode and which
+  level collide, then offer the degraded modes and their capability gap. See
+  the `Delivery Boundary` section of `SKILL.md`.
+
+A stale artifact that this run will not read is not a material conflict.
+Example — the user asks for `quick-audit` and `audit_report_2026-08.md` sits
+next to the paper: the old report is not an input to `quick-audit`, so scope
+and result are unchanged. State "found `audit_report_2026-08.md` next to the
+paper; running `quick-audit` as requested" and continue. Counter-example — the
+user asks for `quick-audit` and a reviewer letter is present: the letter adds
+review scope, so ask.
 
 - **Previous report present**: if a file named `*audit_report*`,
   `*review_report*`, `*final_issues*.json`, or matching `--previous-report`
   semantics is present in the paper's directory or the current working
-  directory, ask whether the user wants `re-audit` mode.
+  directory, ask whether the user wants `re-audit` mode. If the user already
+  stated the mode, name the file in one sentence and keep that mode.
 - **Revision markers in the paper**: if the source contains
   `\latextrackchanges`, `changes` package macros, `track-changes`,
   `changeBars`, `\added{`, `\deleted{`, `\replaced{`, `<changes>`, or a
   `Revision History` section, ask whether this is a revised submission and
-  whether `re-audit` is intended.
+  whether `re-audit` is intended. If the user already stated the mode, report
+  the markers in one sentence and keep that mode.
 - **Polish mode on a long paper**: if mode is `polish` but the paper exceeds
   30 pages or 25k words, ask whether `deep-review` is more appropriate before
-  proceeding.
+  proceeding. If the user stated `polish` explicitly, report the length in one
+  sentence and keep `polish`.
 - **Reviewer letter detected**: if the input or working directory contains a
   reviewer-letter-shaped file (markers: `Reviewer 1`, `R1:`, `审稿人 1`,
   `Editor's Comments`, `Decision Letter`), dispatch
   `agents/revision_coach_agent.md` first to parse it into a structured
-  roadmap, then feed the roadmap into `re-audit`.
+  roadmap, then feed the roadmap into `re-audit`. A reviewer letter always
+  adds review scope, so this is a material conflict: ask even when the user
+  stated a different mode.
 
 Always present the detected signal in plain language ("found
-`final_issues.old.json` next to the paper — this looks like a re-audit") and
-let the user confirm or decline.
+`final_issues.old.json` next to the paper — this looks like a re-audit").
+When the user stated the mode and there is no material conflict, that sentence
+is the whole response to the signal — continue without a confirmation step.
+Otherwise, let the user confirm or decline.
 
 ## Presentation Surface
 

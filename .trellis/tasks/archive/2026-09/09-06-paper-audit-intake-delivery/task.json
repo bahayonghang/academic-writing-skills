@@ -1,0 +1,30 @@
+{
+  "id": "paper-audit-intake-delivery",
+  "name": "paper-audit-intake-delivery",
+  "title": "paper-audit 意图门控与交付形态治理",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-06",
+  "completedAt": "2026-09-06",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-06-paper-audit-intake-gating",
+    "09-06-paper-audit-delivery-tiers",
+    "09-06-paper-audit-intake-delivery-verify"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

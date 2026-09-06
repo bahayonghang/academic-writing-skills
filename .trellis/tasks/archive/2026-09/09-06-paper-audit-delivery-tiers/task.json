@@ -1,0 +1,28 @@
+{
+  "id": "paper-audit-delivery-tiers",
+  "name": "paper-audit-delivery-tiers",
+  "title": "交付形态分级与不落盘审查路径",
+  "description": "区分不得改论文/不得写仓库/完全不得落盘三级权限，为对话交付提供不依赖工作区的审查路径，明确输出目录避免无必要覆盖",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-06",
+  "completedAt": "2026-09-06",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-06-paper-audit-intake-delivery",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "implementation_status": "verified"
+  }
+}

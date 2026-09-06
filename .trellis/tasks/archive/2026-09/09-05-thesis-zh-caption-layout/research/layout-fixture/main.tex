@@ -1,0 +1,86 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[a4paper,textwidth=145mm,textheight=160mm]{geometry}
+\usepackage{graphicx,booktabs,longtable,caption,bicaption,subcaption}
+\captionsetup[bi-second]{name=Figure}
+\begin{document}
+\section*{合成版式验证：目录与交叉引用}
+本文件只使用已安装的通用宏包，不代表任何学校模板。
+图~\ref{fig:synthetic} 在下一页起跨两页展示，第二部分仍使用同一编号。
+普通双语表为表~\ref{tab:bilingual}，跨页长表为表~\ref{tab:long}。
+\listoffigures
+\listoftables
+\clearpage
+\section*{续图第一部分}
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}{0.44\linewidth}
+    \centering\fbox{\rule{0pt}{30mm}\rule{48mm}{0pt}}
+    \caption{采集接口}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.44\linewidth}
+    \centering\fbox{\rule{0pt}{30mm}\rule{48mm}{0pt}}
+    \caption{状态显示}
+  \end{subfigure}
+  \bicaption[合成接口示意]{合成接口示意}{Synthetic Interface Diagram}
+  \label{fig:synthetic}
+\end{figure}
+子图标签采用该合成示例选定的单语形式，主图给出双语标题。
+\clearpage
+\section*{续图第二部分}
+\begin{figure}[htbp]
+  \ContinuedFloat
+  \centering
+  \fbox{\rule{0pt}{35mm}\rule{105mm}{0pt}}
+  \bicaption[]{合成接口示意（续）}[]{Synthetic Interface Diagram (Continued)}
+\end{figure}
+此页检查续图编号、双语标题和目录条目；不应新增一个图号。
+\clearpage
+\section*{表格与长表}
+\begin{table}[htbp]
+  \centering
+  \captionsetup[bi-second]{name=Table}
+  \bicaption [合成比较] {合成比较表} [Synthetic Comparison] {Synthetic Comparison Table}
+  \label{tab:bilingual}
+  \begin{tabular}{p{35mm}p{75mm}}
+    \toprule
+    条目 & 已有证据 \\
+    \midrule
+    固定列宽 & 直接排版，不再叠加缩放与小字号。 \\
+    验证范围 & 只检查此合成文件的字体、题注、编号和分页。 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\begingroup
+\setlength{\LTpost}{6pt}
+\begin{longtable}{p{25mm}p{85mm}}
+\caption{合成长表}\label{tab:long}\\
+\toprule 编号 & 检查条目 \\\midrule
+\endfirsthead
+\caption[]{合成长表（续）}\\
+\toprule 编号 & 检查条目 \\\midrule
+\endhead
+\midrule \multicolumn{2}{r}{接下页}\\
+\endfoot
+\bottomrule
+\endlastfoot
+01 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+02 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+03 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+04 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+05 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+06 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+07 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+08 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+09 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+10 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+11 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+12 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+13 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+14 & 合成检查条目，核对续页表头与内容宽度。\\[7mm]
+\end{longtable}
+\endgroup
+长表后紧接正文：局部间距设置只用于这个合成示例，不能证明真实模板存在拉伸问题。
+\clearpage
+\section*{后续页面}
+后续正文正常开始，图~\ref{fig:synthetic} 与表~\ref{tab:bilingual} 的引用仍正确。
+\end{document}

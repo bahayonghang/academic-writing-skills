@@ -82,6 +82,66 @@ root contains exactly four reader-facing files — `review_report.md`,
   requested external verification/search or confirmed that sending title,
   abstract, citation metadata, or queries to third-party APIs is acceptable.
 
+## Delivery Boundary
+
+Three write levels, each adding to the one before it. The user selects a level
+in one sentence; do not re-confirm it at every phase. `T1` is the default.
+
+| Level | User says | Newly forbidden | Still allowed |
+|---|---|---|---|
+| `T1` | nothing (default), "don't edit my paper" | editing the `.tex` / `.typ` / `.pdf` source | building a workspace, writing reports and artifacts anywhere |
+| `T2` | "don't write into the repo" | writing any file inside the paper repository or this repository | writing to a user-named directory outside those trees |
+| `T3` | "don't leave any files", "conversation only" | writing a file anywhere | returning findings in the conversation only |
+
+Mode availability per level, with default flags. `quick-audit`, `gate`,
+`re-audit`, and `polish` were measured on 2026-09-06 by running each in a
+directory holding only the paper file and comparing the listing before and
+after; every run finished and printed its report on stdout, so "writes
+nothing" means the run completed and left no file. `deep-review` was not run —
+its row comes from reading `scripts/audit.py` and
+`scripts/prepare_review_workspace.py`.
+
+Two writes are independent of the mode. `--output PATH` / `-o PATH` writes the
+report to a file, so it breaks `T3` whatever the mode — at `T3` do not pass it
+and do not redirect stdout. Separately, `audit.py` launches each check script
+as a subprocess without `-B`, so Python writes `__pycache__/` into this
+repository's `scripts/` directories; the parent's `-B` does not propagate. Set
+`PYTHONDONTWRITEBYTECODE=1` in the environment at `T2` and `T3`.
+
+- `quick-audit`, `gate`: write no report or workspace file. Available at all
+  three levels, subject to the bytecode note above.
+- `re-audit`: `audit.py --mode re-audit` writes nothing, but the second
+  documented command `diff_review_issues.py` may write `revision_trajectory.md`
+  — it does so unless you pass `--no-trajectory`, and only when at least one
+  issue bundle carries a numeric round score. Its default target follows the
+  current bundle, so it can land inside either repository. Available at `T1`;
+  at `T2` and `T3` pass `--no-trajectory` or skip that command.
+- `polish`: writes `.polish-state/` **next to the paper file**, not in the
+  current working directory. Available at `T1`; at `T2` only when the paper
+  itself sits outside both repositories.
+- `deep-review`: writes the review workspace. Available at `T1`. At `T2` use
+  the two-step path: run `prepare_review_workspace.py --output-dir <parent
+  directory outside both repositories>`, then pass the path it prints as
+  `WORKSPACE:` to `audit.py --review-dir`. That printed path is a slug
+  subdirectory of `--output-dir`, not `--output-dir` itself. The all-in-one
+  `audit.py --mode deep-review` path has no `--output-dir` and always writes
+  under `./review_results` relative to the current working directory, so it is
+  `T1` only.
+
+At `T3`, do not create `review_results`, do not create `.polish-state`, and do
+not write a report file. Name every script that could not run, and split them:
+the ones whose absence removes review evidence are `missing evidence`, while
+the report renderers only failed to produce an output file — `T3` forbids that
+file by design, so do not call it missing evidence. The two lists are in
+`references/workflow-detail.md`.
+
+Never present a conversation-level reading as a completed script check. A
+finding is `[Script]` only when its script actually ran in this session;
+anything you reached by reading the text yourself is `[LLM]`. The checkers
+inside `quick-audit` and `gate` do run at `T3`, so their findings stay
+`[Script]`. An evidence-losing script that could not run yields `missing
+evidence`, never a finding.
+
 ## Mode Selection
 
 | Requested intent | Mode |
@@ -132,8 +192,11 @@ Five phases (detail: `references/MODE_GUIDE.md`,
 `references/workflow-detail.md`):
 
 1. **Workspace prep** — `scripts/prepare_review_workspace.py <paper>
-   --output-dir ./review_results`; if the workspace exists, ask before
-   overwriting (`--overwrite` / `--overwrite-workspace`).
+   --output-dir ./review_results`; state the resolved target directory before
+   running, because `./review_results` is relative to the current working
+   directory; if the workspace exists, ask before overwriting (`--overwrite`
+   here; the all-in-one `audit.py --mode deep-review` path uses
+   `--overwrite-workspace` instead).
 2. **Phase 0 automated audit**:
    ```bash
    uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...

@@ -90,6 +90,16 @@
       "query": "Set up a Docker container for my deep learning experiments.",
       "should_trigger": false,
       "category": "negative-unrelated"
+    },
+    {
+      "query": "Run a quick audit on paper.tex — there is an old audit_report_2026-08.md in the folder, just ignore it.",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Review this manuscript like a reviewer, but do not leave any files on disk.",
+      "should_trigger": true,
+      "category": "edge"
     }
   ]
 }

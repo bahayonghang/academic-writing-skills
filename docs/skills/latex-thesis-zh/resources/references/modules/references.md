@@ -9,7 +9,7 @@ multi-file thesis project (\input/\include are resolved automatically).
 | --------------------------- | ------------- | ----------------------------------------------------- |
 | Undefined reference         | Critical / P0 | `\ref{x}` has no matching `\label{x}` definition, a frequent blind-review deduction |
 | Unreferenced label          | Minor / P2    | A `fig:`/`tab:`/`eq:` label is never referenced in the body |
-| Missing caption             | Major / P1    | A figure/table environment has a label but no `\caption` |
+| Missing caption             | Major / P1    | A figure/table environment has a label but no `\caption` / `\bicaption` |
 | Reference before definition | Minor / P2    | In the same file, `\ref` appears before `\label` |
 | Numbering gap               | Minor / P2    | Numeric label suffixes skip a value, such as fig:a1 and fig:a3 without fig:a2 |
 
@@ -26,5 +26,8 @@ Supports `\ref` / `\eqref` / `\autoref` / `\cref` / `\Cref` / `\pageref` /
 ## Notes
 
 - Multi-file parsing follows `\input{}` / `\include{}` automatically and safely handles cycles.
-- Labels/references on comment lines are ignored.
+- Labels/references/captions on comment lines are ignored; similar commands such as `\fakecaption` and `\captionsetup` do not count as captions.
+- Caption presence recognizes optional short titles and whitespace or line breaks after `\caption` / `\bicaption`. It checks only whether a real caption command exists, not caption content or rendered template layout.
 - Cross-file ordering is not checked because it is not meaningful; reference-before-definition is checked only within one file.
+
+See [caption-guide.md](../formatting/caption-guide.md) for caption wording, continued figures, subfigures, and compiled-page acceptance.

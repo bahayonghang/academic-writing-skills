@@ -35,7 +35,7 @@ REF_RE = re.compile(
     r"\\(?:ref|eqref|autoref|cref|Cref|pageref)\{([^}]+)\}"
     r"|\\hyperref\[([^\]]+)\]\{[^}]*\}"
 )
-CAPTION_RE = re.compile(r"\\caption(?:\[[^\]]*\])?\{")
+CAPTION_RE = re.compile(r"\\(?:bi)?caption\b\s*(?:\[[^\]]*\]\s*)?\{")
 FIGURE_ENV_RE = re.compile(r"\\begin\{(figure|table)\*?\}")
 FIGURE_ENV_END_RE = re.compile(r"\\end\{(figure|table)\*?\}")
 COMMENT_PREFIX = "%"
@@ -195,7 +195,7 @@ class ReferenceChecker:
     def check_caption_presence(self, labels: list[LabelInfo]) -> None:
         """
         Check that figure/table environments containing \\label{fig:*} or \\label{tab:*}
-        also contain a \\caption. Severity: Major, P1.
+        also contain a \\caption or \\bicaption. Severity: Major, P1.
         """
         # Build list of (start_line, end_line, env_type) from self.lines
         envs: list[tuple[int, int, str]] = []
@@ -224,7 +224,7 @@ class ReferenceChecker:
             if enclosing is None:
                 continue
             start, end, env_type = enclosing
-            env_text = "\n".join(self.lines[start - 1 : end])
+            env_text = "\n".join(self._strip_comment(line) for line in self.lines[start - 1 : end])
             if not CAPTION_RE.search(env_text):
                 self._add_issue(
                     line=lbl.line,

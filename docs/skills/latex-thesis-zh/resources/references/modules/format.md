@@ -21,6 +21,19 @@ Core judgments:
 - Use structures such as `aligned` / `cases` for equation systems, piecewise conditions, or grouped constraints.
 - Do not force a split merely for visual uniformity when the formula fits, the number remains on its line, and no derivation/grouping semantics require a split.
 
+## Figure, Caption, and Table Layout
+
+For captions, continued figures, and subcaptions, first read
+[`../formatting/caption-guide.md`](../formatting/caption-guide.md). For three-line tables, local
+long-table spacing, and double table scaling, read
+[`../formatting/table-guide.md`](../formatting/table-guide.md). The correct action depends on the
+current university template, packages, and compiled result; do not generalize one template's command.
+
+Estimate effective image ppi from pixel dimensions and final layout width. DPI metadata alone does
+not prove visual quality. Prefer editable or vector source, and inspect the source, exported image,
+and actual compiled page together. Follow the wrapper boundary in [`compile.md`](compile.md) for
+compilation and page acceptance; when no page was actually inspected, report `missing evidence`.
+
 ## Source Hygiene (F-MD / F-NOTE)
 
 `check_format.py` emits three built-in source-hygiene checks by default without an extra flag. They only locate and report issues; they do not rewrite:

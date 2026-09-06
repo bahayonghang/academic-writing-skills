@@ -1,0 +1,10 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"当前仓库所有权与副本锁"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"公开资源双语同步"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"ZH加载与eval形状约定"}
+{"file":".trellis/tasks/09-05-thesis-zh-practice-spec/research/spec-transfer-analysis.md","reason":"本轮最终采纳清单与已复现缺陷"}
+{"file":".trellis/spec/academic-writing-skills/polish-rewrite-contract.md","reason":"改写保真与真实输出分层"}
+{"file":".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md","reason":"禁止删除真实限定以提升确定性"}
+{"file":".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md","reason":"RA保持启发式固定家族"}
+{"file":".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md","reason":"用户追加标点规则的LLM-only与保真边界"}
+{"file":".trellis/tasks/09-05-thesis-zh-practice-spec/research/writing-evidence.md","reason":"九份写作源逐项证据"}
+{"file":".trellis/tasks/09-05-thesis-zh-practice-spec/research/engineering-evidence.md","reason":"七份工程/实验源逐项证据，候选以父设计裁决"}

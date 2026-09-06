@@ -35,6 +35,23 @@ Fix the following objects before writing:
 5. The inputs, structures, losses, and training protocols already defined for each model.
 6. The experiment type that can or cannot distinguish the complete setting from an individual component.
 
+### Check Display Scope Against the Statistical Set
+
+Figure layout and statistical aggregation are different actions. Before rewriting, answer these questions in
+plain language:
+
+- Which channels, samples, or assets are actually displayed, which are hidden or removed, and why were they excluded?
+- Which channels, samples, and batches underlie the table and prose metrics? Are aggregate results frozen and reused, or recalculated on a new set?
+- At each layer, what are the numerator, denominator, unit, and exclusion reason for missingness? Have channel, sample, and time-point missingness been collapsed into one percentage?
+- Were all methods recalculated on the same valid set, metric definition, and protocol? If not, which comparisons remain invalid?
+
+Hiding a curve, removing a displayed channel, or changing layout affects display scope only. It does not
+automatically change a frozen mean, error, significance result, effect size, or ranking. Recalculating each
+method on its own remaining samples is also not a common-sample comparison. When the shared set or
+denominator is unknown, retain an “incomparable/not recalculated” state and state what recalculation evidence
+is needed; do not perform the recalculation for the user. These are natural-language evidence questions and
+do not add `R-*` / `RA-*` check codes, a field schema, or mandatory persistent records.
+
 Local theses may guide paragraph organization only. They are not sources for the current thesis's
 numbers, mechanisms, or academic claims. Limit conclusions to the actual data block, test protocol, and
 evaluation object; do not rewrite offline validation as field deployment.

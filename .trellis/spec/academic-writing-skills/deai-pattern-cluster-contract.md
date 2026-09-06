@@ -76,3 +76,13 @@ Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized |
 学术证据保全要求重构。不得称为官方规范、AI 检测器或 detector-evasion 方法。静态 fixture
 和 contract test 只证明契约存在；未执行 provider-backed eval、作者盲评或真实论文评估时，
 效果必须标为 `missing evidence / UNVERIFIED`。
+
+## Convention: 中文正文的冒号/分号建议归属表达指南
+
+`latex-thesis-zh/references/writing/academic-style-zh.md` §5.4 是这项写作建议的唯一规则源；
+expression 与 deai 只按需引用。它处理标签壳、分号堆叠与句间关系，不新增 H-*、E-*、D1
+判据或数量阈值，不以标点判断 AI 作者身份。段落论证仍归 logic，论断强度仍归 over-claim-guard。
+必要引出、复杂并列、模板规定及数学/引用/代码/URL 等受保护内容保持。
+
+验证需同时观察过度用法的实际改写、仅并列事实不补因果、合理标点与源码保留三个分支；
+`evals.json` 的字符串/正则断言只检查语料，不替代实际响应的保真审阅。

@@ -3,6 +3,16 @@
 Full workspace layout for `deep-review`. `SKILL.md` keeps the four-file
 summary; this file is the authoritative artifact map.
 
+Everything below is written only when the delivery level permits it. State the
+resolved target directory before writing — `--output-dir ./review_results` is
+relative to the current working directory, so name the path it expands to. The
+workspace itself is a slug subdirectory of that path, printed as `WORKSPACE:`.
+Overwrite protection keys on the workspace, not on the `--output-dir` parent:
+when the workspace already exists, follow the overwrite confirmation in
+`references/workflow-detail.md`; never overwrite silently. At delivery level
+`T3` none of these files are produced; see the no-write path in
+`references/workflow-detail.md`.
+
 ## Workspace root (reader-facing, exactly four files)
 
 - `review_report.md` — the primary deep-review report

@@ -81,7 +81,11 @@ For each chapter from Chapter 2 to the conclusion, it is **recommended** to writ
 
 For each chapter from Chapter 2 to the conclusion, the "Chapter Summary" at the end of the chapter should echo the beginning and end of the chapter introduction: the chapter introduction is responsible for explaining "why this chapter was written", and the chapter summary is responsible for explaining "what this chapter solved, how to prove it, and what support it has for the whole article." It is not an abbreviation for the final "summary and outlook", nor is it a restatement of the section titles.
 
-**Length**: The default is written as **1 natural paragraph**. Unless the school template, the instructor requires it, or the user explicitly requires the points to be listed, it will not be broken into multiple short paragraphs or lists. In an engineering degree thesis, "first, second, then, and last" can be used to connect stages of work, but these connectives should serve the same continuous paragraph.
+**Length**: The default is **1 natural paragraph**. Follow a university template, supervisor, or explicit
+user request that requires multiple paragraphs or a list; do not turn one paragraph, a fixed length, or a
+fixed number of values into universal rules. Use sequence words only for a process with a real temporal or
+execution order. Do not force parallel modules, method interfaces, or independent evaluation tasks into a
+“first-second-finally” sequence.
 
 **Single segment character sequence**:
 
@@ -90,6 +94,19 @@ For each chapter from Chapter 2 to the conclusion, the "Chapter Summary" at the 
 3. **Process/Evidence**: Condensed description of key steps, experimental objects, cases, indicators or verification paths.
 4. **Results/Value**: Only write conclusions that can be supported by the evidence in the original text; when there is lack of data, it is marked as insufficient evidence, and the results will not be reconstructed.
 5. **Main Line Support**: Concluding with this chapter’s supporting role in subsequent chapters, overall contribution, or full-text scientific issues.
+
+**Apply the five roles by chapter type**:
+
+| Chapter type | Work/method focus | Process/evidence focus | Legitimate boundary |
+| --- | --- | --- | --- |
+| Framework/process chapter | Relate the object, constraints, problem derivation, and overall framework | Process analysis, framework coverage, or mapping to later chapters; quantitative metrics are optional | Do not invent RMSE, significance, or application effects merely to fill a “result” slot |
+| Method chapter | Use modules or functions as subjects and state inputs, outputs, and interfaces; serial or parallel relations follow source facts | Cover every independent evaluation objective; do not omit a secondary task in a joint-task chapter | Do not replace real interfaces with sequence words or infer one component's contribution from the complete setting |
+| System/engineering chapter | Organize around operating constraints, system mechanisms, or operator tasks instead of repeating components and screens | Distinguish offline, observational, pilot, or operational evidence while retaining environment and scope limits | Use process words only for a real deployment sequence; do not upgrade observations to closed-loop benefits |
+
+List every independent task in the chapter and its evidence status before compressing the summary. A task
+with only a method description may be summarized as “constructed/designed...,” but cannot become
+“evaluation shows....” Mark missing evidence as `missing evidence`; do not omit that task or borrow another
+task's conclusion merely because another task has results.
 
 **Applicable templates**:
 
@@ -105,6 +122,9 @@ For each chapter from Chapter 2 to the conclusion, the "Chapter Summary" at the 
 | Write three paragraphs in a row: "This chapter will introduce... first. This chapter will introduce... next. This chapter will introduce... at the end." | Overly scattered (should be compressed into a natural paragraph to avoid catalog-style retelling) |
 | List with items "1. Completed... 2. Completed... 3. Completed..." | Non-default form (change to continuous paragraphs unless required by template/instructor) |
 | "The method proposed in this chapter reaches the international leading level and fills the domestic gap." However, there is no corresponding evidence in the text | The evidence is out of bounds (should be deleted or changed to a verifiable statement) |
+| A framework chapter contains only process analysis and mapping to later chapters, with no metrics | It may legitimately close on framework coverage and mainline support; do not require invented values |
+| A method chapter has independent prediction and diagnosis tasks, but the summary reports only prediction | Incomplete task coverage (add the diagnosis work and its actual evidence status) |
+| A system chapter follows a real “connect-observe-fallback” order, but the material proves only short-term observation | Preserve the sequence; stop the claim at short-term observation and do not assert production closed-loop benefits |
 
 > Boundary: The final "Conclusion/Summary and Outlook" should integrate the contributions, limitations and future directions of the full text; the summary of this chapter only summarizes the evidence in the chapter, and does not mechanically repeat the "Chapter X..." sentence structure of each chapter.
 
