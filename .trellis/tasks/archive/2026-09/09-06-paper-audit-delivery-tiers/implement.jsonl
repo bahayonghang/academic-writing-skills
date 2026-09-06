@@ -1,0 +1,6 @@
+{"file":"academic-writing-skills/paper-audit/SKILL.md","reason":"第61行现有一级边界、第134行 Phase 1 输出目录、第63行 provenance 规则"}
+{"file":"academic-writing-skills/paper-audit/references/workflow-detail.md","reason":"第6-12行覆盖确认保留项；第14-21行 consolidation 命令序列是 missing evidence 清单来源"}
+{"file":"academic-writing-skills/paper-audit/references/output-layout.md","reason":"落盘产物权威清单，补目标目录陈述要求"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"缺陷2与缺陷3取证；audit.py:2704 与 1961-1968 的静态证据及其未实跑状态"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"manifest 散列与 en/zh 镜像的可执行契约"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/design.md","reason":"父设计的三级边界与单写者顺序"}
