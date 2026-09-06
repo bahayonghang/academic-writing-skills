@@ -1,0 +1,9 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"本仓库副本所有权与共享面锁的总入口"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"references 改动到 manifest 散列与 en/zh 双语页面的可执行契约"}
+{"file":".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md","reason":"paper-audit 既有边界契约，避免门控改动越界到 severity 或数据流"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"evals 与阈值工具约定，verify 子任务新增用例时遵循"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"三处缺陷的逐行取证、硬约束表与保留项清单"}
+{"file":"academic-writing-skills/paper-audit/SKILL.md","reason":"交付形态三级与 Phase 1 输出目录的改动目标"}
+{"file":"academic-writing-skills/paper-audit/references/MODE_GUIDE.md","reason":"Auto-Detection at Intake 条件化的改动目标"}
+{"file":"academic-writing-skills/paper-audit/references/workflow-detail.md","reason":"覆盖确认保留项与不落盘路径新增节的改动目标"}
+{"file":"academic-writing-skills/paper-audit/references/output-layout.md","reason":"落盘产物清单与目标目录明确化"}

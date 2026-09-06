@@ -1,0 +1,4 @@
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"硬约束表列出所有必须复跑的测试与检查器及其行号"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"manifest 散列与 en/zh 镜像一致性的验收依据"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"evals 形状与测试加载约定"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/implement.md","reason":"集成检查命令与风险回退点"}
