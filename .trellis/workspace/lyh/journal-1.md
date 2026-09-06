@@ -1454,3 +1454,42 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 本次任务已完成；真实论文模板与现场效果未验证。既有 compile.py --outdir PDF 查找问题留待单独授权处理。
+
+
+## Session 43: paper-audit 意图门控与交付形态分级：集成验收与归档
+
+**Date**: 2026-09-06
+**Task**: paper-audit 意图门控与交付形态分级：集成验收与归档
+**Branch**: `dev`
+
+### Summary
+
+承接上一会话因用量上限中断的集成验收：跑完全量检查、补齐两份缺失的规划产物、逐项核对父子任务验收标准，随后提交并归档四个任务。
+
+### Main Changes
+
+- 补齐上个会话漏写的 eval runner 核实记录（确认否定断言类型为 not_contains，仓库内无断言执行器）与三档证据交付说明（6 项 missing evidence）。
+- 回退英文 docs 索引页被格式化 hook 注入的表格填充对齐——它曾是 docs/ 下唯一不用紧凑分隔符的页面；现与中文页恢复对称，各 18 行纯新增。
+- 记录一处验收偏离：父任务 AC7 原要求把 T3 下不可用脚本统一标 missing evidence，被对抗核查 F4 否决（渲染器不算证据缺失），实现改为两组拆分。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `22fd07e` | (see git log) |
+
+### Testing
+
+- [OK] just ci 通过（1756 passed），在回退表格噪声后的最终工作树上复跑。
+- [OK] check_resource_sync 通过（271 资源）；just doc-build 通过。
+- [OK] 核实 AC10：改动仅 12 个 md + 3 个 json，零脚本，frontmatter 的 allowed-tools 与依赖均未动。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- deep-review 落盘行为至今只有静态读码证据，需实跑补验。
+- eval 断言需在 skill-creator 侧真实执行才算验证，本仓库 just ci 只保证形状契约。
+- 论文仓库部署副本 thesis/.agents/skills/paper-audit/ 未同步，待用户自行重装。
