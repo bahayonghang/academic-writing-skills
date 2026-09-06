@@ -1,0 +1,4 @@
+{"file":"academic-writing-skills/paper-audit/references/MODE_GUIDE.md","reason":"唯一改动目标；第24-26行 re-audit 前置、第30-56行 Auto-Detection at Intake"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"manifest 散列与 en/zh 镜像的可执行契约"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"缺陷1的逐行取证、四条检测的现有动作表、硬约束与保留项"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/design.md","reason":"父设计定义的实质冲突判据与单写者边界"}

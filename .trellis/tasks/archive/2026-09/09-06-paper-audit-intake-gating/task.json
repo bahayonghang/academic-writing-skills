@@ -1,0 +1,28 @@
+{
+  "id": "paper-audit-intake-gating",
+  "name": "paper-audit-intake-gating",
+  "title": "意图门控：显式模式不再复问",
+  "description": "收窄 MODE_GUIDE.md Auto-Detection at Intake：用户已显式指定模式时不复问，旧报告与修订标记降为上下文，仅实质冲突提问",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-06",
+  "completedAt": "2026-09-06",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-06-paper-audit-intake-delivery",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "implementation_status": "verified"
+  }
+}
