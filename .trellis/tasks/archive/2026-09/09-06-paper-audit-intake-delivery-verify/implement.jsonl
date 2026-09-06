@@ -1,0 +1,7 @@
+{"file":"academic-writing-skills/paper-audit/evals/trigger_eval.json","reason":"结构 {skill_name, queries:[{query,should_trigger,category}]}，新增门控与交付形态 query"}
+{"file":"academic-writing-skills/paper-audit/evals/evals.json","reason":"结构 {skill_name, evals:[{id,prompt,expected_output,files,assertions}]}；必须用 Bash python 写入，避免 JSON hook 压平数组"}
+{"file":"docs/skills/paper-audit/index.md","reason":"第12/27/45/52/63/155行把 workspace 写成 deep-review 固有产物，需补三级交付说明"}
+{"file":"docs/zh/skills/paper-audit/index.md","reason":"中文对应页，同位置同步"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"现有 eval 结构、evals.json 的 JSON hook 陷阱、双语手写页现状"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"evals 与阈值工具的仓库约定"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/design.md","reason":"父设计的证据分层与单写者边界"}

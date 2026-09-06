@@ -1,0 +1,4 @@
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery/research/codex-findings.md","reason":"硬约束表与现有 eval 结构，集成阶段逐项复核"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"evals 形状与测试加载约定"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"双语页面同步依据；index.md 不在 manifest 中这一事实需在此确认"}
+{"file":".trellis/tasks/09-06-paper-audit-intake-delivery-verify/implement.md","reason":"集成检查命令、evals.json 写入方式与审查门"}
