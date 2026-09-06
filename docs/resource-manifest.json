@@ -1536,7 +1536,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/MODE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "c8655f5d60c0349f88b0a7cc2313ec6d1dc461000f61a3c7449031b88dac949d",
+      "sourceSha256": "2e773b6f75198a03a9d9360e9c7b6a2f17b4b4fb4a226b4873b2638beb968ffc",
       "en": "docs/skills/paper-audit/resources/references/MODE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/MODE_GUIDE.md"
     },
@@ -1545,7 +1545,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/output-layout.md",
       "sourceLocale": "en",
-      "sourceSha256": "06af45374c12f2abc6618f3fea90a29247b6e92fb8369c188190e26feb28f16d",
+      "sourceSha256": "98e2b7c3e6e28162c79be0f43c8c623cb9ff651d2b5a1770adda2bbb8b41a39f",
       "en": "docs/skills/paper-audit/resources/references/output-layout.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/output-layout.md"
     },
@@ -1707,7 +1707,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/workflow-detail.md",
       "sourceLocale": "en",
-      "sourceSha256": "f247cea3490191dbd62ca0acd9ea7e60e5c75102a4a9355e52feeb967d36659b",
+      "sourceSha256": "77aa69e56e93f69a29164f65458f9cac24ab331e20b78b1ade88a6dc118b9eb5",
       "en": "docs/skills/paper-audit/resources/references/workflow-detail.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/workflow-detail.md"
     },

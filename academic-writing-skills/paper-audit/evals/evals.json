@@ -271,6 +271,29 @@
         {"type": "regex", "pattern": "(max.?8|lane budget|existing quota)", "description": "finding competes inside the existing lane budget"},
         {"type": "not_contains", "text": "p = 0.01", "description": "no unsupported significance evidence is invented"}
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "Run a quick audit on paper.tex for a NeurIPS submission. An audit_report_2026-08.md from a previous round sits next to the paper; I only want the quick audit this time.",
+      "expected_output": "Report the detected old report as a one-sentence statement and run quick-audit as asked. Do not offer a mode choice: a stale report this run will not read changes neither the review scope nor the result.",
+      "files": ["evals/fixtures/quick_audit_fixture.tex"],
+      "assertions": [
+        {"type": "contains", "text": "quick-audit", "description": "runs the mode the user stated"},
+        {"type": "contains", "text": "audit_report_2026-08", "description": "names the detected signal in plain language"},
+        {"type": "not_contains", "text": "Do you want", "description": "no mode choice offered when the user already stated the mode"}
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "Review paper.tex like a serious reviewer, but do not leave any files on disk anywhere.",
+      "expected_output": "Recognize delivery level T3. Do not create review_results or .polish-state and do not write a report file. State that deep-review is unavailable at T3, offer quick-audit or gate with the capability gap, and name the scripts that could not run - the evidence-losing ones as missing evidence, the two renderers as not produced.",
+      "files": ["evals/fixtures/quick_audit_fixture.tex"],
+      "assertions": [
+        {"type": "not_contains", "text": "review_results", "description": "no workspace is created at delivery level T3"},
+        {"type": "contains", "text": "missing evidence", "description": "unavailable evidence-losing scripts are declared, not silently skipped"},
+        {"type": "regex", "pattern": "(verify_quotes|consolidate_review_findings)", "description": "the unavailable scripts are named, not summarized"},
+        {"type": "contains", "text": "PYTHONDONTWRITEBYTECODE", "description": "bytecode caches suppressed so the run really leaves no file"}
+      ]
     }
   ]
 }

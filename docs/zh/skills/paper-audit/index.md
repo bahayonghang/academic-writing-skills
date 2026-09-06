@@ -74,6 +74,24 @@ deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后�
 
 报告语言由 `--lang en|zh` 控制。标题、标签和表头会切换语言；issue quote、source tag 和结构化字段值保持原文。
 
+## 交付级别
+
+审计能写多少，与跑哪个模式是两个独立决定。用一句话声明级别，该级别在整轮运行中保持不变。
+
+| 级别 | 你的说法 | 新增禁止 |
+| --- | --- | --- |
+| `T1`（默认） | 不说，或"别改我的论文" | 修改 `.tex` / `.typ` / `.pdf` 源文件 |
+| `T2` | "别写进仓库" | 在论文仓库或本仓库内写任何文件 |
+| `T3` | "别留下任何文件" | 在任何位置写文件 |
+
+`quick-audit` 与 `gate` 不写报告或工作区文件，因此三级都能跑。`polish` 会在论文文件旁写 `.polish-state/`，`deep-review` 会写审查工作区，两者在 `T3` 下都不可用。`re-audit` 本身不落盘，但后续的 `diff_review_issues.py` 在不加 `--no-trajectory` 时可能写出 `revision_trajectory.md`。在 `T2` 下，`polish` 要求论文本身位于两个仓库之外，`deep-review` 要求走显式指定 `--output-dir` 的两步路径。
+
+有两处写入与模式无关。`--output` / `-o` 会写出报告文件：`T3` 下一律不传，`T2` 下只允许目标位于两个仓库之外。检查子进程会把 `__pycache__/` 写进本技能的 `scripts/` 目录，因此 `T2` 与 `T3` 下都要设置 `PYTHONDONTWRITEBYTECODE=1`。
+
+在 `T3` 下，技能会逐项点名未能运行的脚本。缺席会丢失审查证据的脚本报为 `missing evidence`；两个报告渲染器报为"未产出"，因为 `T3` 本就禁止那个输出文件。对话级的阅读结论绝不冒充已完成的脚本检查。
+
+完整规则见技能入口的 `Delivery Boundary` 一节，以及 [workflow-detail.md](resources/references/workflow-detail.md)。
+
 ## 公开资源
 
 ### 参考资料

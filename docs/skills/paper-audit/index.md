@@ -74,6 +74,24 @@ Supporting artifacts live under `artifacts/`:
 
 The report language is controlled by `--lang en|zh`. Headings and labels switch language; issue quotes, source tags, and structured field values stay faithful to the source.
 
+## Delivery Levels
+
+How much the audit may write is a separate decision from which mode runs. State the level in one sentence and it holds for the whole run.
+
+| Level | You say | Newly forbidden |
+| --- | --- | --- |
+| `T1` (default) | nothing, or "don't edit my paper" | editing the `.tex` / `.typ` / `.pdf` source |
+| `T2` | "don't write into the repo" | writing any file inside the paper repository or this repository |
+| `T3` | "don't leave any files" | writing a file anywhere |
+
+`quick-audit` and `gate` write no report or workspace file, so they run at every level. `polish` writes `.polish-state/` next to the paper file, and `deep-review` writes the review workspace, so neither runs at `T3`. `re-audit` itself writes nothing, but the follow-up `diff_review_issues.py` may write `revision_trajectory.md` unless you pass `--no-trajectory`. At `T2`, `polish` needs the paper itself to sit outside both repositories, and `deep-review` needs the two-step path with an explicit `--output-dir`.
+
+Two writes are independent of the mode. `--output` / `-o` writes a report file: never pass it at `T3`, and at `T2` only with a target outside both repositories. The check subprocesses write `__pycache__/` into the skill's `scripts/` directories, so set `PYTHONDONTWRITEBYTECODE=1` at `T2` and `T3`.
+
+At `T3` the skill names every script that could not run. Scripts whose absence removes review evidence are reported as `missing evidence`; the two report renderers are reported as not produced, because `T3` forbids that output file by design. A conversation-level reading is never presented as a completed script check.
+
+Full rules: the `Delivery Boundary` section of the skill entry point, and [workflow-detail.md](resources/references/workflow-detail.md).
+
 ## Public Resources
 
 ### References

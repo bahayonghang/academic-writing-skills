@@ -11,6 +11,68 @@ the existing artifacts can be discarded; for the all-in-one
 `audit.py --mode deep-review` path, use `--overwrite-workspace` after the same
 confirmation.
 
+## No-write review path (delivery level `T3`)
+
+`SKILL.md` defines the three delivery levels. This section covers `T3`, where
+nothing may be written to disk.
+
+Write behavior for `quick-audit`, `gate`, `re-audit`, and `polish` was measured
+on 2026-09-06 by running each in a directory holding only the paper file and
+comparing the listing before and after. Every run finished and printed its
+report on stdout, so "nothing" below means the run completed and left no file —
+not that it failed to start. The `deep-review` row was not measured; it comes
+from reading `scripts/audit.py` and `scripts/prepare_review_workspace.py`:
+
+| Mode          | Writes                                                                                                        | `T3`                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `quick-audit` | nothing                                                                                                       | available                                    |
+| `gate`        | nothing                                                                                                       | available                                    |
+| `re-audit`    | nothing from `audit.py`; `diff_review_issues.py` may write `revision_trajectory.md` beside the current bundle | `T1` plain; `T2`/`T3` need `--no-trajectory` |
+| `polish`      | `.polish-state/` next to the paper file                                                                       | unavailable                                  |
+| `deep-review` | the review workspace                                                                                          | unavailable                                  |
+
+`polish` also fails delivery level `T2` whenever the paper sits inside a
+repository, because it writes beside the paper rather than in the current
+working directory.
+
+At `T3`, run `quick-audit` or `gate` and read the report from stdout. Do not
+redirect stdout to a file, and do not pass `--output` / `-o` — that flag writes
+a report file in every mode, not only in the ones listed as writing.
+
+Set `PYTHONDONTWRITEBYTECODE=1` in the environment before the run. The table
+above counts report and workspace files only. `audit.py` starts each check
+script as a subprocess without `-B`, and `-B` on the parent does not propagate,
+so without that variable Python writes `__pycache__/` into the skill's own
+`scripts/` directories — a write inside this repository, which `T2` forbids,
+and a write at all, which `T3` forbids.
+
+`deep-review` cannot be degraded into `T3` — offer `quick-audit` or `gate`
+instead and state what is lost: no committee multi-perspective pass, no
+section or cross-cutting lanes, no consolidation dedup or root-cause merge, no
+quote verification.
+
+Name the scripts that could not run. Keep the two groups apart — conflating
+them tells the reader that review evidence is missing when only an output file
+is missing.
+
+Scripts whose absence removes review evidence — mark each `missing evidence`:
+
+- `prepare_review_workspace.py` — section index and paper summary
+- `build_claim_map.py` — headline claims and claim candidates
+- `consolidate_review_findings.py` — dedup and root-cause merge
+- `verify_quotes.py` — quote verification against the source
+
+Renderers whose absence removes only the written report, which `T3` forbids by
+design — report them as not produced, not as `missing evidence`:
+
+- `render_deep_review_report.py` — Markdown report render
+- `render_html_report.py` — HTML report render
+
+Do not describe any of these as completed by another means, and do not tag
+anything `[Script]` on their behalf. The checkers that `quick-audit` and `gate`
+do run at `T3` still produce genuine `[Script]` findings; only the
+evidence-losing scripts in the first list above are `missing evidence`.
+
 ## Consolidation command sequence (deep-review Phase 4/5)
 
 ```bash

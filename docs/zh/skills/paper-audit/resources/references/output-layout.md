@@ -3,6 +3,14 @@
 完整的工作空间布局`deep-review`. `SKILL.md`保留四个文件
 概括;该文件是权威的工件图。
 
+下面所有内容只在交付级别允许写入时才产出。写入前先陈述解析出的目标目录——
+`--output-dir ./review_results` 是相对于当前工作目录的，因此要念出它展开后的
+实际路径。工作区本身是该路径下的一个 slug 子目录，以 `WORKSPACE:` 打印出来。
+覆盖保护判定的是工作区，不是 `--output-dir` 父目录：工作区已存在时，按
+`references/workflow-detail.md` 中的覆盖确认处理；不得静默覆盖。在交付级别
+`T3` 下，以下文件一个都不产出；参见 `references/workflow-detail.md` 中的
+不落盘路径。
+
 ## 工作区根目录（面向读者，正好四个文件）
 
 - `review_report.md`— 初步深度审查报告
