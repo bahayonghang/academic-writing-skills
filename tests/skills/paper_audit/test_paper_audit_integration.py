@@ -12,10 +12,93 @@ and are hash-locked by ``test_parsers_alignment.py``):
 
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 from paths import WorkspaceLayout
+
+from tests.support.paths import SCRIPT_DIR_AUDIT
+
+# UTF-8 bytes for these characters are not a valid GBK sequence (em dash 0xE2
+# 0x80 0x94). A locale-encoded Windows pipe then returns stdout=None.
+UNICODE_STDOUT = "方法——结果：精度提升 8%。"
+UNICODE_STDERR = "检查失败：编码边界—管道"
+
+_DRIVER_SOURCE = """\
+import json
+import sys
+from pathlib import Path
+
+from audit import _run_check_script
+
+rc, stdout, stderr = _run_check_script(Path(sys.argv[1]), sys.argv[2])
+Path(sys.argv[3]).write_text(
+    json.dumps(
+        {
+            "rc": rc,
+            "out": stdout,
+            "err": stderr,
+            "out_is_str": isinstance(stdout, str),
+            "err_is_str": isinstance(stderr, str),
+        },
+        ensure_ascii=False,
+    ),
+    encoding="utf-8",
+)
+"""
+
+
+def _write_unicode_checker(tmp_path: Path, *, returncode: int = 0, hang: bool = False) -> Path:
+    if hang:
+        script = tmp_path / "hang_checker.py"
+        script.write_text("import time\ntime.sleep(3600)\n", encoding="utf-8")
+        return script
+    script = tmp_path / f"unicode_checker_{returncode}.py"
+    lines = [
+        "import sys",
+        f"print({UNICODE_STDOUT!r})",
+    ]
+    if returncode != 0:
+        lines.append(f"print({UNICODE_STDERR!r}, file=sys.stderr)")
+    lines.append(f"raise SystemExit({returncode})")
+    script.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return script
+
+
+def _run_nested_stream_utf8(tmp_path: Path, checker: Path, paper: Path) -> dict:
+    """Call shipped _run_check_script in a PYTHONUTF8=0 / stream-UTF-8 parent."""
+    driver = tmp_path / "run_check_script_driver.py"
+    driver.write_text(_DRIVER_SOURCE, encoding="utf-8")
+    result_path = tmp_path / "run_check_script_result.json"
+    env = dict(os.environ)
+    env["PYTHONUTF8"] = "0"
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    extra_path = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        str(SCRIPT_DIR_AUDIT) + os.pathsep + extra_path if extra_path else str(SCRIPT_DIR_AUDIT)
+    )
+    completed = subprocess.run(
+        [sys.executable, "-B", str(driver), str(checker), str(paper), str(result_path)],
+        capture_output=True,
+        timeout=30,
+        env=env,
+        cwd=str(tmp_path),
+    )
+    if not result_path.is_file():
+        stderr = completed.stderr.decode("utf-8", errors="replace")
+        stdout = completed.stdout.decode("utf-8", errors="replace")
+        raise AssertionError(
+            "nested _run_check_script driver wrote no result "
+            f"(exit={completed.returncode}): {stderr or stdout}"
+        )
+    payload: dict = json.loads(result_path.read_text(encoding="utf-8"))
+    return payload
+
 
 MULTI_SECTION_PAPER = "\n".join(
     [
@@ -100,3 +183,79 @@ def test_read_source_decodes_non_utf8_with_warning(
 
     captured = capsys.readouterr()
     assert "not UTF-8" in captured.err
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32",
+    reason="Windows stream-only UTF-8 vs GBK subprocess pipe",
+)
+@pytest.mark.parametrize("returncode", [0, 3])
+def test_run_check_script_windows_stream_utf8_keeps_unicode(
+    tmp_path: Path, returncode: int
+) -> None:
+    """Shipped _run_check_script must keep Chinese across a GBK parent pipe."""
+    from audit import _run_check_script
+
+    assert callable(_run_check_script)
+
+    paper = tmp_path / "paper.tex"
+    paper.write_text("% dummy\n", encoding="utf-8")
+    checker = _write_unicode_checker(tmp_path, returncode=returncode)
+    payload = _run_nested_stream_utf8(tmp_path, checker, paper)
+
+    assert payload["out_is_str"] is True
+    assert isinstance(payload["out"], str)
+    assert UNICODE_STDOUT in payload["out"]
+    assert payload["rc"] == returncode
+    if returncode != 0:
+        assert payload["err_is_str"] is True
+        assert isinstance(payload["err"], str)
+        assert UNICODE_STDERR in payload["err"]
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="non-Windows Unicode protocol path")
+@pytest.mark.parametrize("returncode", [0, 3])
+def test_run_check_script_unicode_protocol_non_windows(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, returncode: int
+) -> None:
+    """Non-Windows path: import shipped _run_check_script and keep Unicode."""
+    monkeypatch.setenv("PYTHONIOENCODING", "utf-8")
+    from audit import _run_check_script
+
+    paper = tmp_path / "paper.tex"
+    paper.write_text("% dummy\n", encoding="utf-8")
+    checker = _write_unicode_checker(tmp_path, returncode=returncode)
+    rc, stdout, stderr = _run_check_script(checker, str(paper))
+
+    assert isinstance(stdout, str)
+    assert UNICODE_STDOUT in stdout
+    assert rc == returncode
+    if returncode != 0:
+        assert isinstance(stderr, str)
+        assert UNICODE_STDERR in stderr
+
+
+def test_run_check_script_timeout_returns_minus_one(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """TimeoutExpired from a real child still maps to returncode -1."""
+    import audit
+    from audit import _run_check_script
+
+    paper = tmp_path / "paper.tex"
+    paper.write_text("% dummy\n", encoding="utf-8")
+    checker = _write_unicode_checker(tmp_path, hang=True)
+
+    real_run = audit.subprocess.run
+
+    def run_with_short_timeout(*args, **kwargs):
+        kwargs = dict(kwargs)
+        if kwargs.get("timeout") == 120:
+            kwargs["timeout"] = 1
+        return real_run(*args, **kwargs)
+
+    monkeypatch.setattr(audit.subprocess, "run", run_with_short_timeout)
+    rc, stdout, stderr = _run_check_script(checker, str(paper))
+    assert rc == -1
+    assert stdout == ""
+    assert stderr == "Script timed out after 120 seconds"

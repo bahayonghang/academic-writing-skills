@@ -7,6 +7,7 @@ Supports quick-audit, deep-review, gate, polish, and re-audit workflows.
 import argparse
 import contextlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -682,11 +683,15 @@ def _run_check_script(
     if extra_args:
         cmd.extend(extra_args)
 
+    env = dict(os.environ)
+    env["PYTHONIOENCODING"] = "utf-8"
+
     try:
         result = subprocess.run(
             cmd,
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            env=env,
             timeout=120,
             cwd=str(script_path.parent),
         )
