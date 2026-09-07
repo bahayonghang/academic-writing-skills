@@ -44,6 +44,22 @@ deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后�
 - `re-audit` 需要 `--previous-report`。
 - 继续或渲染已有 workspace 时提供 `--review-dir`。
 
+## 安装布局
+
+维护本开发仓库，与把本技能安装进论文项目，是两条路径。
+
+完整的 `.tex` / `.typ` 脚本检查需要与 `paper-audit/` 同级的写作技能目录：
+
+- `latex-paper-en/scripts`
+- `latex-thesis-zh/scripts`
+- `typst-paper/scripts`
+
+推荐完整集合：在同一父目录下作为同级目录安装全部六个技能。见[安装](/zh/installation#paper-audit-layout)。
+
+仅复制 `paper-audit` 时为**覆盖受限**。缺失的同级脚本会被跳过。现有 exit 与 gate 语义保持不变。已记录的单独安装边界：missing=8，exit 0。
+
+不要把同级技能的 scripts 复制进 `paper-audit/`。`npx skills add` 安装器、符号链接布局、五套工具运行时在出现已捕获的真实运行之前均保持 **UNVERIFIED**。
+
 ## 脚本入口
 
 | 脚本 | 用途 |

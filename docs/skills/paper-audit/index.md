@@ -44,6 +44,29 @@ not auto-dispatched; see the [agent roster](./resources/references/agent-roster.
 - `--previous-report` for `re-audit`.
 - `--review-dir` when continuing or rendering an existing review workspace.
 
+## Install Layout
+
+Maintaining the development repository and installing this skill into a
+manuscript project are different paths.
+
+Full `.tex` / `.typ` script-backed checks need sibling writing-skill directories
+next to `paper-audit/`:
+
+- `latex-paper-en/scripts`
+- `latex-thesis-zh/scripts`
+- `typst-paper/scripts`
+
+Recommended full collection: copy or install all six skill directories as
+siblings under one parent. See [Installation](/installation#paper-audit-layout).
+
+A single `paper-audit` copy is **limited coverage**. Missing sibling scripts are
+skipped. The existing exit and gate behavior is unchanged. Recorded standalone
+boundary: missing=8, exit 0.
+
+Do not copy sibling scripts into `paper-audit/`. The `npx skills add` installer,
+symlink layout, and five-tool runtime stay **UNVERIFIED** until a captured real
+run exists.
+
 ## Script Entry Points
 
 | Script | Purpose |

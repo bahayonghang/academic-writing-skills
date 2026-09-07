@@ -194,6 +194,10 @@ function buildSidebar(prefix: string): SidebarItem[] {
           link: `${isZh ? "/zh" : ""}/installation`,
         },
         {
+          text: isZh ? "工具接入" : "Harnesses",
+          link: `${isZh ? "/zh" : ""}/harnesses`,
+        },
+        {
           text: isZh ? "快速开始" : "Quick Start",
           link: `${isZh ? "/zh" : ""}/quick-start`,
         },
@@ -301,6 +305,7 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Installation", link: "/installation" },
+      { text: "Harnesses", link: "/harnesses" },
       { text: "Skills", link: "/skills/" },
       { text: "Cover Letter", link: "/skills/cover-letter/" },
       { text: "Usage", link: "/usage" },
@@ -366,6 +371,7 @@ export default defineConfig({
         nav: [
           { text: "首页", link: "/zh/" },
           { text: "安装", link: "/zh/installation" },
+          { text: "工具接入", link: "/zh/harnesses" },
           { text: "技能", link: "/zh/skills/" },
           { text: "投稿信", link: "/zh/skills/cover-letter/" },
           { text: "使用", link: "/zh/usage" },

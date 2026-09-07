@@ -33,6 +33,15 @@ see `references/PRESUBMISSION_GUIDE.md`.
 needs `pymupdf4llm`); both are optional and lazily imported — a `.pdf` input
 without them fails with a clear install hint.
 
+**Install layout**: Full `.tex`/`.typ` script-backed checks resolve sibling
+writing skills from the parent of this skill directory (`latex-paper-en/scripts`,
+`latex-thesis-zh/scripts`, `typst-paper/scripts`). Recommended: keep all six
+skill directories as siblings (`cover-letter`, `paper-audit`, `latex-paper-en`,
+`latex-thesis-zh`, `typst-paper`, `bib-search-citation`). A single `paper-audit`
+copy is **limited coverage**: missing sibling scripts are skipped and the
+existing exit/gate behavior is unchanged (recorded standalone boundary:
+missing=8, exit 0). Do not copy sibling scripts into `paper-audit/`.
+
 ## What This Skill Produces
 
 - `quick-audit`: fast submission-readiness screen with script-backed findings, incl. `PRESUBMISSION`
