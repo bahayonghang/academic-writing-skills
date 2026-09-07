@@ -1,0 +1,32 @@
+{
+  "id": "harness-validation-closeout",
+  "name": "harness-validation-closeout",
+  "title": "五工具验收与批准经验回写",
+  "description": "执行分层验收、整理适用工具和批准经验，未实测能力保持 UNVERIFIED",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-07",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-07-five-harness-evergreen-audit",
+  "relatedFiles": [
+    ".trellis/spec/academic-writing-skills/harness-workflow-contract.md",
+    ".trellis/spec/academic-writing-skills/index.md",
+    ".trellis/tasks/09-07-five-harness-evergreen-audit/research/closeout-ledger.md",
+    "docs/harnesses.md",
+    "docs/zh/harnesses.md"
+  ],
+  "notes": "",
+  "meta": {}
+}
