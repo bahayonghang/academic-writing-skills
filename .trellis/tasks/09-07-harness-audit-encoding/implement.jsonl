@@ -1,0 +1,5 @@
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"本子任务相关项目契约"}
+{"file":".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md","reason":"本子任务相关项目契约"}
+{"file":".trellis/tasks/09-07-five-harness-evergreen-audit/research/test-baseline.md","reason":"本轮真实门禁与证据边界"}
+{"file":".trellis/tasks/09-07-five-harness-evergreen-audit/research/runtime-findings.md","reason":"Windows编码与安装布局的实际复现"}
+{"file":".trellis/tasks/09-07-five-harness-evergreen-audit/design.md","reason":"父任务文件所有权与工具边界"}
