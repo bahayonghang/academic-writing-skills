@@ -15,6 +15,21 @@ Reference document for the Synthesis Agent. Defines consensus classification, ar
 
 For example, majority is 2/3 when N=3 and 3/5 or 4/5 when N=5.
 
+### Execution-mode reading of CONSENSUS
+
+The label names, N/N and `floor(N/2)+1` thresholds, JSON field names,
+and score cutoffs do not change.
+
+- `native delegated`: N is the count of independent child-agent lane
+  outputs that actually ran. CONSENSUS is agreement among those
+  independent outputs.
+- `sequential single-agent`: N is the count of review perspectives
+  completed in this session by one agent. CONSENSUS is
+  cross-perspective consistency in this session. It is not
+  independent-reviewer consensus evidence.
+
+Do not relabel sequential agreement as an independent panel.
+
 ### Matching Criteria
 
 Two findings are considered "the same issue" when:

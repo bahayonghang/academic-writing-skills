@@ -68,6 +68,10 @@ uv run python academic-writing-skills/latex-thesis-zh/scripts/compile.py main.te
 - 分开陈述检查结果和建议改写；不虚构引用、数据、论断、基金或致谢。
 - 盲审结果只写入 `*_blind` 副本，原始源码保持不变。
 
+## 跨工具执行
+
+frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平台的强制权限列表。把读、搜索、执行、委派映射到当前会话已有的能力。若无原生委派，在同一代理内顺序完成相同检查并如实说明。学术判断和最终验收由强模型负责。低成本模型只处理已批准且有明确文件与测试边界的工作。
+
 ## 公开资源
 
 ### 模块参考

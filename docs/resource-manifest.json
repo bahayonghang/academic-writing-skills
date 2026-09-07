@@ -1500,7 +1500,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/editorial_decision_standards.md",
       "sourceLocale": "en",
-      "sourceSha256": "90153f40a6eddd15e755d09ad5d7023eeb9a613eab829f61af77fdda640d7d82",
+      "sourceSha256": "a8ab7712c4a92b47404561ea4174d6af67430dc15f02ebd9f0221f63c6cdaa92",
       "en": "docs/skills/paper-audit/resources/references/editorial_decision_standards.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/editorial_decision_standards.md"
     },
@@ -1671,7 +1671,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "8e7f3c8477fa57ab3f38949de6f5287c1fd6d575a245f30cd336483e376863bf",
+      "sourceSha256": "cf6002c3ade88fc43577e7e881ef4677d8ac8a255841ecd076422283bb2d74eb",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1707,7 +1707,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/workflow-detail.md",
       "sourceLocale": "en",
-      "sourceSha256": "77aa69e56e93f69a29164f65458f9cac24ab331e20b78b1ade88a6dc118b9eb5",
+      "sourceSha256": "9ba35db989f615f9c79d93707d5f6e761702c5811640bd7ea94177c130f4f686",
       "en": "docs/skills/paper-audit/resources/references/workflow-detail.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/workflow-detail.md"
     },
@@ -1950,7 +1950,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/synthesis_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "6a6534674c4fede9b2e2af883086a11f9868c6608e956eeb6120226222c5dc1b",
+      "sourceSha256": "2c7a5f44c940d9e214391f3f7923c2db6fa1014903af1fe8a338d3249c937f1b",
       "en": "docs/skills/paper-audit/resources/agents/synthesis_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/synthesis_agent.md"
     },

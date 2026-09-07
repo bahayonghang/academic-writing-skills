@@ -52,6 +52,10 @@ Typst academic paper assistant for existing `.typ` manuscripts in English or Chi
 - Source-preserving suggestions that keep `@cite`, labels, math, and Typst structure intact by default.
 - Module-level findings that can feed later audit or submission workflows.
 
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory permission list on other platforms. Map read, search, exec, and delegate onto this session's available capabilities. If this session has no native delegate, run the same checks sequentially in one agent and say so. Keep academic judgment and final acceptance on a strong model. Cheap-model work stays inside an approved file and test boundary.
+
 ## Public Resources
 
 ### References

@@ -129,6 +129,14 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 4. Run the corresponding script with `uv run python ...`.
 5. Return findings as `% Module (L##) [Severity] [Priority]: ...`. Report exact command and exit code on failure.
 
+## 跨工具执行
+
+frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平台的强制权限列表。把本技能的读 / 搜索 / 执行 / 委派需求映射到当前会话已有的能力。脚本与语义契约不依赖 `Read`、`Glob`、`Grep`、`Bash` 或 `Task` 这些字面名称。
+
+当前会话若有原生委派，仅在本工具确实生成了独立子代理时使用。若无原生委派，则在同一代理内顺序完成相同检查，并如实说明。不得声称本会话未提供的能力。
+
+根因分析、学术判断、严重度和最终验收由强模型负责。低成本模型只处理已批准且有明确文件与测试边界的工作。出现新接口、越出批准目录、学术结论变化或失败原因超出计划时，立即升级。
+
 ## Safety Boundaries
 
 - 不伪造引用、基金、致谢或学术论断；`\cite{}`、`\ref{}`、`\label{}`、数学环境、参考文献键与模板宏默认不动，除非用户显式同意。

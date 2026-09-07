@@ -73,6 +73,33 @@ anything `[Script]` on their behalf. The checkers that `quick-audit` and `gate`
 do run at `T3` still produce genuine `[Script]` findings; only the
 evidence-losing scripts in the first list above are `missing evidence`.
 
+## Committee and lane execution (deep-review Phase 3)
+
+Lane contracts stay the same in both execution modes: exclusive file
+scope, the inputs listed in `SUBAGENT_TEMPLATES.md`, JSON comments under
+`comments/<lane_name>.json`, and `[Script]` / `[LLM]` provenance.
+
+- `native delegated`: use only when the current tool actually spawned
+  independent child agents. Give each child an exclusive lane or
+  committee scope and run those exclusive scopes in parallel.
+- `sequential single-agent`: when this session has no native delegate,
+  run the same review perspectives in one agent, in the order given in
+  `MODE_GUIDE.md`. Keep the same file outputs. This is not an
+  independent panel.
+
+The report body and `overall_assessment.txt` MUST state exactly one of
+`native delegated` or `sequential single-agent`. Sequential output MUST
+NOT say `independent panel`. `CONSENSUS` labels still apply to
+cross-perspective agreement; in sequential mode they are not evidence of
+independent-reviewer consensus.
+
+If no reviewer perspective actually ran (deterministic script fallback
+only), say that in the report. Do not claim that other models or
+reviewer agents were called. Script findings stay `[Script]`.
+
+Five-tool live delegation remains UNVERIFIED until a captured real run
+exists.
+
 ## Consolidation command sequence (deep-review Phase 4/5)
 
 ```bash

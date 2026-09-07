@@ -22,7 +22,7 @@ Turn lane outputs plus Phase 0 audit evidence into:
 
 ## Cross-Reviewer Quantification
 
-Apply panel-relative thresholds defined in `references/editorial_decision_standards.md`.
+Apply lane-relative thresholds defined in `references/editorial_decision_standards.md`.
 
 | Quantifier | Definition                                                   | Use case                                         |
 | ---------- | ------------------------------------------------------------ | ------------------------------------------------ |
@@ -30,11 +30,17 @@ Apply panel-relative thresholds defined in `references/editorial_decision_standa
 | `majority` | for N >= 3 lanes, fires when >= `floor(N/2)+1` lanes agree    | simple-majority consensus signal                 |
 | `all`      | predicate holds for every reviewer/lane                      | hard-gate signals (e.g. desk-reject convergence) |
 
-Consensus labels follow `editorial_decision_standards.md`:
+Consensus labels follow `editorial_decision_standards.md`. Field names
+and thresholds do not change.
 
 - `[CONSENSUS-ALL]` — every lane reports the same issue
 - `[CONSENSUS-MAJORITY]` — at least `floor(N/2)+1` of N lanes agree
 - `[SPLIT]` — lanes diverge; trigger Arbitration
+
+After `native delegated` execution, those labels mean agreement across
+independent child outputs. After `sequential single-agent` execution, the
+same labels mean cross-perspective agreement inside this session. They are
+not independent-reviewer consensus evidence.
 
 ## Three-Step Synthesis Protocol
 
@@ -86,6 +92,9 @@ Emit `revision_suggestions.md` grouped by priority. Cite the consensus label per
 - do NOT soften severity post-hoc to balance the priority distribution
 - do NOT drop singleton gate-blocker findings unless explicitly downgraded by Arbitration Priority 1
 - do NOT re-interpret lane outputs beyond consolidating duplicates
+- do NOT describe `sequential single-agent` output as an independent panel
+- do NOT claim other models or reviewer agents were called when only
+  scripts ran
 
 ## Required Inputs
 
@@ -102,6 +111,12 @@ Emit `revision_suggestions.md` grouped by priority. Cite the consensus label per
 ## Output discipline
 
 - `overall_assessment.txt` should be short, calibrated, and name the top 2-3 concerns
+- `overall_assessment.txt` and the report Overall Assessment MUST state
+  exactly one execution mode: `native delegated` or `sequential single-agent`
+- do not write `independent panel` in `sequential single-agent` output
+- if only Phase 0 scripts ran and no reviewer perspective executed, state
+  that the run is a deterministic script fallback; do not claim that other
+  models or reviewer agents were called
 - if any explanation contains a `frame_lock_alert` advisory,
   `overall_assessment.txt` must name that lane and state that its confidence was downgraded
 - `revision_suggestions.md` should group actions by priority and cite consensus labels
