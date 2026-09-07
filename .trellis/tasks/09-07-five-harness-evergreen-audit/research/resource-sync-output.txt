@@ -1,0 +1,1 @@
+resource contract passed: all resources (271 manifest entries)

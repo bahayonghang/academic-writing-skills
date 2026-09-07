@@ -1,0 +1,47 @@
+checkout-default: exit=0, RUN=11, missing=0
+checkout-stream-utf8: exit=1, RUN=11, missing=0
+y", line 1044, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\lyh\scoop\persist\uv\python\versions\cpython-3.13-windows-x86_64-none\Lib\threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lyh\scoop\persist\uv\python\versions\cpython-3.13-windows-x86_64-none\Lib\subprocess.py", line 1615, in _readerthread
+    buffer.append(fh.read())
+                  ~~~~~~~^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x99 in position 288: illegal multibyte sequence
+Traceback (most recent call last):
+  File "D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py", line 3578, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py", line 3511, in main
+    result = run_audit(
+        file_path=args.file,
+    ...<17 lines>...
+        overwrite_workspace=getattr(args, "overwrite_workspace", False),
+    )
+  File "D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py", line 2814, in run_audit
+    issues, kind = _ingest_check_output(
+                   ~~~~~~~~~~~~~~~~~~~~^
+        check_name,
+        ^^^^^^^^^^^
+    ...<4 lines>...
+        gate_mode=gate_mode,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py", line 618, in _ingest_check_output
+    elif stdout.strip():
+         ^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strip'
+
+checkout-utf8-mode: exit=0, RUN=11, missing=0
+standalone-utf8-mode: exit=0, RUN=3, missing=8
+[audit] SKIP format: script not found
+[audit] SKIP grammar: script not found
+[audit] SKIP logic: script not found
+[audit] SKIP experiment: script not found
+[audit] SKIP sentences: script not found
+[audit] SKIP deai: script not found
+[audit] SKIP figures: script not found
+[audit] SKIP pseudocode: script not found
