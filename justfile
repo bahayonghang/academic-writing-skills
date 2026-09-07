@@ -106,7 +106,7 @@ typecheck:
 # 运行测试
 test:
     @echo "  → 运行单元测试..."
-    @uv run --extra dev python -c "import pathlib, subprocess, sys; paths = ['tests', *(str(p) for p in pathlib.Path('academic-writing-skills').glob('*/tests') if p.is_dir())]; raise SystemExit(subprocess.call([sys.executable, '-m', 'pytest', *paths]))"
+    @uv run --extra dev python -m pytest
     @echo "  ✓ 测试通过"
 
 # 清理缓存文件

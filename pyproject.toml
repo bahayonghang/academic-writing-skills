@@ -85,7 +85,7 @@ reportOperatorIssue = "warning"
 reportGeneralTypeIssues = "warning"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "academic-writing-skills"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
