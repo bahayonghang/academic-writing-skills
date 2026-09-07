@@ -81,7 +81,7 @@ is the only discovery source. `just test` is `uv run --extra dev python -m pytes
 items). C2 aligned default collect with `just test` at 1756, including those 42.
 
 **Applicable tools**: all five when maintainers run gates. Hosted matrix is
-written in `.github/workflows/ci.yml` (PR/push, Windows/Ubuntu, Python 3.10/3.13,
+written in `.github/workflows/ci.yml` (pull_request only, Windows/Ubuntu, Python 3.10/3.13,
 no `continue-on-error`). Hosted same-SHA matrix stays **UNVERIFIED** until a
 GitHub Actions run on the current SHA exists.
 
