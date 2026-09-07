@@ -52,15 +52,21 @@ platform enforces it.
 
 ## Evidence status {#evidence}
 
+This round closes **static rules and isolation-script delivery**. This round
+does not close **five-platform runtime verification**. Unrun runtime stays
+**UNVERIFIED**.
+
 | Check | Status on 2026-09-07 |
 | --- | --- |
 | `grok inspect` on the current working copy | Verified discovery of root `Agents.md` / `Claude.md` and project Trellis skills/agents. Claude-compatible hooks were disabled. The grok inspect row is not a fresh-clone check. Fresh-clone discovery stays **UNVERIFIED**. |
+| Isolation CLI (`paper-audit` sibling vs standalone) | Verified locally. Full sibling layout: missing=0, RUN=11. Standalone: missing=8, RUN=3 (limited coverage). This row is not a five-tool runtime pass. |
 | Claude Code new session `/context` | UNVERIFIED |
 | Codex new session `AGENTS.md` chain, skills, agents, hooks | UNVERIFIED |
 | Kimi Code project `AGENTS.md`, skills, agents, delegation | UNVERIFIED |
 | OMP interactive `AGENTS.md`, `skill://`, `.omp` agents, Trellis extension | UNVERIFIED |
 | `npx skills add` copy or symlink layout on the five tools | UNVERIFIED |
 | Five-tool runtime (fresh session, delegation, hooks trust) | UNVERIFIED |
+| Hosted GitHub Actions Windows/Ubuntu × Python 3.10/3.13 on the current SHA | UNVERIFIED |
 
 Local CLI versions recorded on 2026-09-07: Claude Code 2.1.263, Codex 0.153.4,
 Grok Build 1.0.22, Kimi Code 0.41.0, OMP (Oh My Pi) 18.1.12. Those versions

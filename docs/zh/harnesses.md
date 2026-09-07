@@ -38,15 +38,19 @@
 
 ## 证据状态 {#evidence}
 
+本轮关闭的是**静态规则与隔离脚本交付**。本轮不关闭**五平台运行验证完成**。未运行的运行时项保持 **UNVERIFIED**。
+
 | 检查 | 2026-09-07 状态 |
 | --- | --- |
 | 当前 working copy 上的 `grok inspect` | 已验证发现根目录 `Agents.md` / `Claude.md` 以及项目 Trellis skills/agents。当时 Claude 兼容 hooks 处于禁用。该项覆盖当前 working copy 发现。新 clone 检查保持 UNVERIFIED。 |
+| 隔离 CLI（`paper-audit` 同级完整布局 vs 单技能） | 本机已验证。完整同级布局：missing=0，RUN=11。仅 paper-audit：missing=8，RUN=3（受限覆盖）。该行不是五套工具运行时通过。 |
 | Claude Code 新会话 `/context` | UNVERIFIED |
 | Codex 新会话 `AGENTS.md` 链、skills、agents、hooks | UNVERIFIED |
 | Kimi Code 项目 `AGENTS.md`、skills、agents、委派 | UNVERIFIED |
 | OMP 交互会话 `AGENTS.md`、`skill://`、`.omp` agents、Trellis extension | UNVERIFIED |
 | 五套工具上的 `npx skills add` 复制或符号链接布局 | UNVERIFIED |
 | 五套工具运行时（新会话、委派、hooks 信任） | UNVERIFIED |
+| 当前 SHA 上的 hosted GitHub Actions（Windows/Ubuntu × Python 3.10/3.13） | UNVERIFIED |
 
 2026-09-07 记录的本机 CLI 版本：Claude Code 2.1.263、Codex 0.153.4、Grok Build 1.0.22、Kimi Code 0.41.0、OMP（Oh My Pi）18.1.12。这些版本描述研究用机器。本仓库五套工具运行时保持 UNVERIFIED。
 
