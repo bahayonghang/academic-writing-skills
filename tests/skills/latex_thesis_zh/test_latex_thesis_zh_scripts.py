@@ -539,11 +539,17 @@ class TestCompileZh:
             "\\documentclass{ctexbook}\\begin{document}你好\\end{document}", encoding="utf-8"
         )
 
+        env = dict(os.environ)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
         result = subprocess.run(
             [sys.executable, "-B", str(_ZH_DIR / "compile.py"), str(tex), "--shell-escape"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             check=False,
+            env=env,
         )
 
         assert result.returncode == 1

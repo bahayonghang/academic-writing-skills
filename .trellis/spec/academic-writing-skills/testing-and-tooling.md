@@ -156,6 +156,14 @@ assert recompute(private_files) == checked_in_snapshot
 `result.stdout` 变 None）。该环境变量只用于**重定向 JSON 输出到文件**的场景
 （见 yanshan 任务记录），跑 pytest 一律不要加。
 
+**补充**：子进程跑含中文 argparse 的 `--help`（或 `compile.py` 的中文错误输出）时，
+必须给**子进程**设 `PYTHONIOENCODING=utf-8`，父进程 `subprocess.run` 用
+`encoding="utf-8"`（可加 `errors="replace"`）。这与
+`tests/skills/latex_thesis_zh/test_latex_thesis_zh_coverage.py::_run` 同源。
+GitHub-hosted Windows runner 默认 cp1252，漏掉这对协议会在
+`argparse.print_help()` 处出现 `UnicodeEncodeError`，而 Ubuntu 与中文 Windows
+（cp936）不会暴露。不要把 `PYTHONIOENCODING` 设到 pytest 进程上来“顺带”修。
+
 **补充**：latex-thesis-zh 的 `evals/evals.json` 是 CRLF + `json.dumps(indent=2,
 ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
 Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
