@@ -48,6 +48,18 @@ just ci
 uv run --extra dev python docs/scripts/check_resource_sync.py
 ```
 
+把六个 catalog 技能安装进本 clone（或其他项目）的 agent 技能目录，使用本地安装器。这是面向本仓库 clone 的维护者辅助命令。它不替代 `npx skills add`，也不验证 `npx` 安装器、符号链接布局或五套工具运行时发现。
+
+```bash
+just skills-install
+just skills-install latex-paper-en paper-audit
+just -- skills-install --list
+just -- skills-install --agent cursor --copy -y
+just -- skills-install --dest path/to/manuscript --all
+```
+
+`just` 会把以 `-` 开头的参数当成自己的 flag，因此 GNU 风格选项需写成 `just -- skills-install ...`。目标目录为 `.claude/skills`、`.cursor/skills`、`.agents/skills`、`.grok/skills`、`.kimi-code/skills`、`.omp/skills`。Windows 默认 copy，其他平台默认 symlink。这些目录在本开发仓库中被 gitignore。
+
 ## 路径 2：把技能安装进论文项目
 
 使用 `npx skills` 安装单个技能或完整集合：

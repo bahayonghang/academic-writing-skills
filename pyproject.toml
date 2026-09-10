@@ -71,7 +71,7 @@ ignore = [
 known-first-party = ["academic-writing-skills"]
 
 [tool.pyright]
-include = ["academic-writing-skills", "tests"]
+include = ["academic-writing-skills", "tests", "scripts"]
 exclude = ["**/__pycache__", "**/node_modules", ".venv", "docs"]
 pythonVersion = "3.10"
 typeCheckingMode = "basic"

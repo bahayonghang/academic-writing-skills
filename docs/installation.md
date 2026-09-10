@@ -58,6 +58,25 @@ Docs resource gate (not part of `just ci`):
 uv run --extra dev python docs/scripts/check_resource_sync.py
 ```
 
+Install the six catalog skills into this clone's (or another project's) agent
+skill directories with the local installer. This is a maintainer helper for a
+clone of this repository. It does not replace `npx skills add`, and it does
+not verify the `npx` installer, symlink layout, or five-tool runtime discovery.
+
+```bash
+just skills-install
+just skills-install latex-paper-en paper-audit
+just -- skills-install --list
+just -- skills-install --agent cursor --copy -y
+just -- skills-install --dest path/to/manuscript --all
+```
+
+`just` treats leading hyphens as its own flags, so GNU-style options need
+`just -- skills-install ...`. Targets are `.claude/skills`, `.cursor/skills`,
+`.agents/skills`, `.grok/skills`, `.kimi-code/skills`, and `.omp/skills`.
+Windows defaults to copy; other platforms default to symlink. Those directories
+are gitignored in this development repository.
+
 ## Path 2: Install Skills Into A Manuscript Project
 
 Use `npx skills` for a single skill or the full collection:

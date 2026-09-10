@@ -30,6 +30,7 @@ Maintaining this development repository and installing skills into a paper proje
 Use `uv` for Python workflows and `just` as the main task runner.
 
 - `just install`: install runtime and dev dependencies with `uv sync --extra dev`.
+- `just skills-install`: copy or symlink catalog skills into the current project's agent skill directories. Interactive by default, or pass skill names. GNU-style flags need `just -- skills-install ...`.
 - `just check-versions`: run `tests/contracts/test_skill_versions.py`.
 - `just lint`: run `ruff format --check` and `ruff check`.
 - `just typecheck`: run `pyright`.
