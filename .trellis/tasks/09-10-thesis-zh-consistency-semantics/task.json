@@ -1,0 +1,31 @@
+{
+  "id": "thesis-zh-consistency-semantics",
+  "name": "thesis-zh-consistency-semantics",
+  "title": "修正术语与缩写一致性误诊",
+  "description": "移除错误等价术语组，按实际阅读顺序检查缩写定义，并保护合理逐章重定义",
+  "status": "in_progress",
+  "dev_type": "backend",
+  "scope": "latex-thesis-zh",
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-10",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-10-thesis-zh-spec-gap-optimization",
+  "relatedFiles": [],
+  "notes": "实施与验证完成；最终证据见父任务 research/integration-validation.md。保留 in_progress，待后续授权提交与归档。",
+  "meta": {
+    "planning_only": false,
+    "implementation_authorized": true,
+    "implementation_complete": true,
+    "planning_head": "dd9f1e2"
+  }
+}

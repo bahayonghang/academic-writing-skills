@@ -1,0 +1,31 @@
+{
+  "id": "thesis-zh-guidance-fidelity",
+  "name": "thesis-zh-guidance-fidelity",
+  "title": "统一中文论文指南与证据保真示例",
+  "description": "消除旧指南的固定体裁要求与无证据推断，补现有 logic 的逆向提纲示例及定向输出评估",
+  "status": "in_progress",
+  "dev_type": "backend",
+  "scope": "latex-thesis-zh",
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-10",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-10-thesis-zh-spec-gap-optimization",
+  "relatedFiles": [],
+  "notes": "实施与验证完成；最终证据见父任务 research/integration-validation.md。保留 in_progress，待后续授权提交与归档。",
+  "meta": {
+    "planning_only": false,
+    "implementation_authorized": true,
+    "implementation_complete": true,
+    "planning_head": "dd9f1e2"
+  }
+}

@@ -6,12 +6,21 @@ For chapter-level rewrite planning, also read `../writing/thesis-writing-guide.m
 
 ## AXES Model (Paragraph-Level Coherence)
 
+The supplied input is only “The attention model achieved 95% accuracy on test set T,” with no
+comparison baseline or component trial. AXES checks argument roles; it does not require turning an
+observation into an improvement or mechanism claim:
+
 | Component | Role | Example |
 |-----------|------|---------|
-| **A**ssertion | Clear topic sentence | “The attention mechanism improves sequence modeling.” |
-| **X**ample | Supporting evidence/data | “In the experiment, the attention mechanism achieved 95% accuracy.” |
-| **E**xplanation | Why evidence supports claim | “The improvement comes from its ability to capture long-range dependencies.” |
-| **S**ignificance | Connection to broader argument | “This finding supports the architectural design used in this thesis.” |
+| **A**ssertion | Clear topic sentence | “This paragraph reports the attention model's predictive performance on test set T.” |
+| **X**ample | Supporting evidence/data | “The model's accuracy on test set T was 95%.” |
+| **E**xplanation | Why evidence supports claim | The value supports only this accuracy observation, not an improvement magnitude or a long-range dependency mechanism |
+| **S**ignificance | Connection to broader argument | Relate the record to the chapter's evaluation question; if the chapter goal is absent, identify the gap instead of inventing an architectural justification |
+
+Use the [results analysis guide](../writing/results-analysis-guide-zh.md) to assess comparisons,
+component contributions, and causal qualification. For locating the relationships between paragraph
+topics and chapter goals, and between evidence and paragraph topics, see the
+[reverse-outline example](../../examples/logic-and-experiment.md). A local check does not require a whole-thesis ledger.
 
 ## Heading Lead-In Check (S1)
 

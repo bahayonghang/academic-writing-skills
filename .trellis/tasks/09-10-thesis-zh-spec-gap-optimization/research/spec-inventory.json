@@ -1,0 +1,296 @@
+{
+  "observed_at": "2026-09-10",
+  "head": "dd9f1e2",
+  "files": [
+    {
+      "path": ".trellis/spec/academic-writing-skills/cover-letter-contracts.md",
+      "lines": 70,
+      "sha256": "76b9080aea2e254709007223fd4bcd82915c893d9e21005320024bdc70456e21"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md",
+      "lines": 88,
+      "sha256": "a96b128ccdce18fe50ee31f09e1758cb0945b3809a5d108d3a96da15c49c31ca"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md",
+      "lines": 84,
+      "sha256": "4d0dca18101499bb6ee1be63c8d6a29be29f879952bbae0dddab2d9ce60dc2ae"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md",
+      "lines": 110,
+      "sha256": "7dcfd868152d85d5b1830613757cb0cfcc8f0b2d48ba74286003f3a85020745e"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md",
+      "lines": 257,
+      "sha256": "7605d91354c21082a34bff21f4d41268f99bc573c7127ee188fd43c9f9acb5d0"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/index.md",
+      "lines": 29,
+      "sha256": "017938d6ec56f293b998fccfa4a647ea469c57b9717e5431e0c5f6a17d0d7bfc"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/method-narrative-contract.md",
+      "lines": 173,
+      "sha256": "409d3536a0b91d040501cedf76192ed8ba97e1e21a7f8a03049f8e97ebe6a0ed"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md",
+      "lines": 103,
+      "sha256": "cecc158c76f889ad7a9549605063b5e9befca0cd9fa421f0a2f150be4b7e634b"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md",
+      "lines": 94,
+      "sha256": "55eed9c41ec425e89914a53065c48f3ecb1da20bc1762d1cbd9cd27f360c4ff8"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md",
+      "lines": 79,
+      "sha256": "f6a9d5ddaa9eb0c0f94e3c93eb169d57b651105b2d6c85926da840049504460f"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/paragraph-arc-en-contract.md",
+      "lines": 64,
+      "sha256": "28df54d1e782097da4dbd7cd3e979c5416b91e40f658cc77d6ee07188cb6ef9e"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md",
+      "lines": 94,
+      "sha256": "b565edf542a088b1ad55312c30263209d10eafe1df22e5dd1338c2d9fbc34e5b"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md",
+      "lines": 149,
+      "sha256": "f1fd3dc12405c8c8942c6d550ad7be61ff278a27e50e092e5f45987ab71c00a7"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md",
+      "lines": 53,
+      "sha256": "153b76b0ee73861cd12b4e84d901d438f23639cda51bebf8ee83a0e2795028d3"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/subsection-context-contract.md",
+      "lines": 223,
+      "sha256": "c036655e2cf776184e66925920c6bffc81db8cea3f53f34baadb024c3f62bc50"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/testing-and-tooling.md",
+      "lines": 282,
+      "sha256": "75e4a5749d7b96cc3995a01acefc651b6d27584b5195528ff01dc6c1e5febc58"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/database-guidelines.md",
+      "lines": 32,
+      "sha256": "3f42287114ba172af3f4cc42a9771ce9841681e6ddf2315eea0018832de19d12"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/directory-structure.md",
+      "lines": 37,
+      "sha256": "45b6a8ac6862a22b230afb8d6075f23978f5001db79b7e325acf0926acfde0f0"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/error-handling.md",
+      "lines": 35,
+      "sha256": "038665b9c92962951ab527b8c7f11e1a97cec2209f799ef0f9d513b0da1c23de"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/index.md",
+      "lines": 39,
+      "sha256": "b62c526e7fabebcf10030eb7f79b5f4754e60b09d77be8af71685918b15bfdfa"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/logging-guidelines.md",
+      "lines": 32,
+      "sha256": "de09e17ee3f28c1a87d5804321819281ad4334496bfbe8683d467082865c18ac"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/backend/quality-guidelines.md",
+      "lines": 33,
+      "sha256": "b923008260a7504ecf81f9beae486d23d510a2efcf53f854933f45adc7895d58"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/component-guidelines.md",
+      "lines": 32,
+      "sha256": "a0bbf540a254c84dbeca1f1cc7380c290a0159bb02823d747c3066d1fc894c30"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/directory-structure.md",
+      "lines": 35,
+      "sha256": "10bff01a11e9f6dedfb9512c7efbacd3bae5ab77bbd625c7c475de09a9ce16cd"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/hook-guidelines.md",
+      "lines": 31,
+      "sha256": "58dcefe4d37e4b03610aa829b473fca0f27440bf4d3410b86a207dd9000595b0"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/index.md",
+      "lines": 39,
+      "sha256": "2c9591d7447c4608fdb7f28e9cd4972d59ba5d4b40caa59231a4784d99a12bb1"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/quality-guidelines.md",
+      "lines": 29,
+      "sha256": "f2d5fbc7836b91ee675968e0b6303a9e4329186d2875d0aac7ff25248b64aafb"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/state-management.md",
+      "lines": 30,
+      "sha256": "10c0e8b8e2b29f5ab83ca312b7f3cdc1e2d5f79a65a5dca33387ee065ea66649"
+    },
+    {
+      "path": ".trellis/spec/claude-scholar/frontend/type-safety.md",
+      "lines": 29,
+      "sha256": "5e6723f03cc9c1ed5ea2a57ff238f39a469f8bb4e58266ec5180e5b880811bd8"
+    },
+    {
+      "path": ".trellis/spec/guides/code-reuse-thinking-guide.md",
+      "lines": 223,
+      "sha256": "21044b97ba03682be2f3a6496ff75ac475211878d065f54823bc784dc6f6d961"
+    },
+    {
+      "path": ".trellis/spec/guides/cross-layer-thinking-guide.md",
+      "lines": 259,
+      "sha256": "bf7cfe3c7adce394fae08030e436b85ff2f07d7fa3ea5f79ef09da51924dce6e"
+    },
+    {
+      "path": ".trellis/spec/guides/index.md",
+      "lines": 97,
+      "sha256": "5e87f7ee825c0d53b2066fda879d692c7618de0e3d8ce4506270725b2e1059ef"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/database-guidelines.md",
+      "lines": 36,
+      "sha256": "aec192d01a2a6d578f2034a4638817330c240ea3e77e9cf2251e1a53d25a1711"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/directory-structure.md",
+      "lines": 37,
+      "sha256": "f5ca02968310f340f03218e66beb28535d29fbb38e7da68106667f0cba1c866b"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/error-handling.md",
+      "lines": 36,
+      "sha256": "442a85ca736dd464b5ffce2ffca37e77b73e884e890704a89341911b8f956ba9"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/index.md",
+      "lines": 41,
+      "sha256": "696d6ffb076319bcda489d2659e5a95c4e1cac4971e1cf04cee48aef9f0da512"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/logging-guidelines.md",
+      "lines": 27,
+      "sha256": "dfccf940329151f5c16da05260208847b6c4cc5aabff6faa53de604f6449c716"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/backend/quality-guidelines.md",
+      "lines": 34,
+      "sha256": "618bbc49c46009f4c4197cd92e727afbc043a390ba9fa42b702a5efac93965c2"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/component-guidelines.md",
+      "lines": 32,
+      "sha256": "f28de8c8d0cf381759b2d55fc201c49d061806380ebd05c4ccb1ae34541d8dc4"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/directory-structure.md",
+      "lines": 32,
+      "sha256": "68a298ea2876397e041a691f7b9e7455bd21e8047945ed482c90515d67539e8f"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/hook-guidelines.md",
+      "lines": 26,
+      "sha256": "06718a7b0e377f833899ab5bd3b9aee7491d68438035317a067322f1aabca959"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/index.md",
+      "lines": 40,
+      "sha256": "bda503aba2105464782f9523d93189702bb95556fbf10fda8f29a23d061a6e8a"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/quality-guidelines.md",
+      "lines": 27,
+      "sha256": "2d01d79cdaf43da2e6bb54ede14847ba63c5c439d95433db607cdbbed38653f0"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/state-management.md",
+      "lines": 28,
+      "sha256": "83a1997f398aa1eba3208ac4695c4d68411209880f101e8062d4d52908254913"
+    },
+    {
+      "path": ".trellis/spec/PaperSpine/frontend/type-safety.md",
+      "lines": 29,
+      "sha256": "4ffa1cff83bd45e309483f790dc5eed7725cf32d83d449accedaa6182689a8b8"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/database-guidelines.md",
+      "lines": 34,
+      "sha256": "be89efb30d54e2dc38851df482ed46520c3b9238afe7d3416690d4779a3ce8e7"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/directory-structure.md",
+      "lines": 29,
+      "sha256": "8fa09a05a13716565e57b891983d46ef68211f459fc5538f4a8016fcf91c1493"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/error-handling.md",
+      "lines": 33,
+      "sha256": "d6eb1557c84d7cbea6fdb96b2aa6f7054ebd626c32947be1813a5714c981c25f"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/index.md",
+      "lines": 40,
+      "sha256": "fc277aa0ab2fa1f3340d264c148ce7618f85175a65f8c352164836154a01c622"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/logging-guidelines.md",
+      "lines": 26,
+      "sha256": "999be3634f2be60c01d9628d0574a9a791d58fb740dd8b736b6d114d6dc975ad"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/backend/quality-guidelines.md",
+      "lines": 36,
+      "sha256": "30476b49ae3d8076e227ca4918b978d68b627e5d18c889bce34098b082bbd5ca"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/component-guidelines.md",
+      "lines": 22,
+      "sha256": "937a1bc9f9411d91ae0856b9a1825bc217b2121087fa287fbc310102b0ad20ec"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/directory-structure.md",
+      "lines": 28,
+      "sha256": "162db6a6dc6675b6a6b7f0281e56a92a8c7a20ff85c45550eb675653beddb19f"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/hook-guidelines.md",
+      "lines": 22,
+      "sha256": "a2294fb23850282ce5c7e2794b242a3a23018264329bde7638452f7823d6d087"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/index.md",
+      "lines": 38,
+      "sha256": "e8e9c3c1d503a29d064516b2d4aae9cfe38316ef8e37d65f284890af67f28746"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/quality-guidelines.md",
+      "lines": 36,
+      "sha256": "975284f1940bb35acd8dd39ade2f2f8bbf1f058ee04d08bcaa7ab854ceb10002"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/state-management.md",
+      "lines": 25,
+      "sha256": "fdcc5dd6912cde20597d998e6d54e8a1b414877f72e2ff2d5367e0048de64a23"
+    },
+    {
+      "path": ".trellis/spec/Research-Paper-Writing-Skills/frontend/type-safety.md",
+      "lines": 29,
+      "sha256": "6859ad089d600f3ed14ad9fcf4e996e69ba055fd885543c5f5f6581cc6ba8e22"
+    }
+  ]
+}

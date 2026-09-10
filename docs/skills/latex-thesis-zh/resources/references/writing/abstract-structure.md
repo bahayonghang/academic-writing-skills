@@ -1,6 +1,6 @@
 # Abstract Structure Guide
 
-An effective academic abstract contains five structural elements that together tell a complete research story. This guide defines each element, how to detect it, and what makes it strong or weak.
+The five-element model below is a fallback for short conference/journal abstracts, not a required five-sentence formula for a Chinese degree thesis. Start with the user's current requirements and school template; the thesis model later in this guide is the default for this skill.
 
 ## Five-Element Model
 
@@ -42,7 +42,7 @@ An effective academic abstract contains five structural elements that together t
 
 **Detection markers (ZH)**: "results show", "reach", "better than", "accuracy", "improve", "reduce", "find", "significant", numbers
 
-**Quality criteria**: Must contain at least one quantitative finding (number, percentage, ratio, or comparative statement with magnitude). A results section without numbers is classified as VAGUE.
+**Quality criteria**: In the five-model heuristic, results without a quantitative finding may be classified as VAGUE. This is a diagnostic signal, not permission to invent a number, comparison, or experiment. A supported theoretical result or a qualitative thesis conclusion must retain its actual evidence form.
 
 ### 5. Conclusion / Significance
 
@@ -61,25 +61,25 @@ An effective academic abstract contains five structural elements that together t
 | Missing background | Jumps straight to "We propose..." | Add 1 sentence on the problem context |
 | Vague objective | "We study deep learning for NLP" | Specify: "We investigate whether... improves..." |
 | No methods | Describes results without explaining how | Add the core technique and data source |
-| Data-free results | "Our method performs well" | Add a key metric: "achieves 94.2% F1" |
-| Echo conclusion | Restates results verbatim | Add implication: "enabling real-time..." |
+| Data-free results | "Our method performs well" | Report a metric only if the input supplies it; otherwise identify missing evidence |
+| Echo conclusion | Restates results verbatim | Explain the supported contribution within its scope; do not invent an application |
 
 ## Word Count Guidelines
 
+These are five-model writing references for short abstracts, not verified venue limits or school requirements.
+
 | Context | Language | Range |
 |---------|----------|-------|
-| Default (no venue specified) | English | 150–250 words |
-| Default (no venue specified) | Chinese | 200–300 characters |
-| IEEE conference | English | 150–200 words |
-| ACM conference | English | 150–250 words |
-| NeurIPS/ICML | English | ≤ 200 words (strict) |
-| Chinese thesis (GB/T) | Chinese | 300–500 characters |
+| Short abstract reference (five model only) | English | 150–250 words |
+| Short abstract reference (five model only) | Chinese | 200–300 characters |
 
-Venue-specific limits override defaults. Check catalog.md for exact requirements.
+Use the supplied target requirements for length decisions. Do not apply these ranges to a doctoral abstract or attribute a generic thesis length to GB/T without a source.
 
 ## Diagnostic Output Format
 
 The analyzer outputs a per-element diagnosis:
+
+In five-model output, an invitation to add metrics means to locate existing evidence, not to create results. Reassess such findings against the selected thesis type before proposing any change.
 
 ```
 Background:  ✅ PRESENT  — "Despite growing interest in X, the impact of Y remains unclear."
@@ -131,6 +131,10 @@ functions, numbers, citations, or conclusions such as “produces an improvement
 | Word Count | EN 150~250 words / ZH 200~300 words | Alignment check_spec Yanshan Constant: PhD 900~1200 words / Master 500~650 words |
 
 The word count threshold is switched by `--degree {doctor,master}` (default doctor), and `--max-chars` can override the upper bound.
+
+These are current script defaults, not universal school requirements; the school requirements supplied by
+the user take priority. Review against the actual template, abstract type, and available material. Do not
+add experiments, GPU details, or quantitative results to satisfy a default length or numeric prompt.
 
 ### T-* Grading rule table
 

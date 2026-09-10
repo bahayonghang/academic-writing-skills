@@ -1,0 +1,65 @@
+Initial Win CP for (console input, console output, system): (CP65001, CP65001, CP936)
+I changed them all to CP936
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 27 Dec. 2024. Version 4.86a.
+Latexmk: making output directory 'C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\external output'
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'xelatex'...
+Rule 'xelatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'xelatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'xelatex'
+------------
+------------
+Running 'xelatex -no-shell-escape -no-pdf -interaction=nonstopmode -file-line-error -synctex=1 -recorder -output-directory="C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output"  "C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/compiler-xelatex-absolute/main.tex"'
+------------
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)
+entering extended mode
+
+(c:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/compiler-xelatex-absolute/
+main.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(c:/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(c:/texlive/2025/texmf-dist/tex/latex/base/size10.clo))
+(c:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def)
+(C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.aux)
+[1]
+(C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.aux) 
+)
+Output written on C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external 
+output/main.xdv (1 page, 796 bytes).
+SyncTeX written on C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.synctex.gz.
+
+Transcript written on C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/exter
+nal output/main.log.
+Latexmk: Getting log file 'C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.log'
+Latexmk: Examining 'C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.fls'
+Latexmk: Examining 'C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.log'
+Latexmk: Log file says output to 'C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.xdv'
+Latexmk: applying rule 'xdvipdfmx'...
+Rule 'xdvipdfmx':  Reasons for rerun
+Changed files or newly in use/created:
+  C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.xdv
+Category 'changed_source_rules':
+  xelatex
+Category 'no_dest':
+  xdvipdfmx
+
+------------
+Run number 1 of rule 'xdvipdfmx'
+------------
+------------
+Running 'xdvipdfmx -E -o "C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.pdf"  "C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.xdv"'
+------------
+Latexmk: All targets (C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.xdv C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/external output/main.pdf) are up-to-date
+
+[INFO] Compiling main.tex with xelatex
+[INFO] Working directory: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\compiler-xelatex-absolute
+
+[SUCCESS] PDF generated: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\external output\main.pdf

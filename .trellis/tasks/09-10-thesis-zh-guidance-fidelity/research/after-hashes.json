@@ -1,0 +1,22 @@
+[
+  {
+    "source": "references/writing/writing-philosophy-zh.md",
+    "sha256_utf8_lf": "7bbc20de20a3d561d2ad11ae5eb5ee6345a67efa3b90cecb50725c9d7c2e0b34"
+  },
+  {
+    "source": "references/writing/over-claim-guard.md",
+    "sha256_utf8_lf": "6f5dd094037753ff6bbdfc3216d9a91fe5f3c6f1d7c3e4472ddff2c98cefc985"
+  },
+  {
+    "source": "references/writing/abstract-structure.md",
+    "sha256_utf8_lf": "0f94c7c20342feee66f6af1d24e741eacf4a88006136f07151b91e694212fe91"
+  },
+  {
+    "source": "references/modules/logic.md",
+    "sha256_utf8_lf": "0899e88c55e68f0aa6294475db7689829907ef13b9760926cb37b8597ea7871c"
+  },
+  {
+    "source": "examples/logic-and-experiment.md",
+    "sha256_utf8_lf": "45efbb34f196756a5b260de9b0b4129a1dd1c67da5de396c4597364a2324485b"
+  }
+]

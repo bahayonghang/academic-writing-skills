@@ -1,0 +1,441 @@
+{
+  "repo_root": "D:/Documents/Code/Agents/academic-writing-skills",
+  "review_scope": {
+    "mode": "task-tree",
+    "root": "09-10-thesis-zh-spec-gap-optimization",
+    "task_count": 4,
+    "members": [
+      {
+        "name": "09-10-thesis-zh-spec-gap-optimization",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-spec-gap-optimization",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-10-thesis-zh-guidance-fidelity",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-guidance-fidelity",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-10-thesis-zh-consistency-semantics",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-consistency-semantics",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-10-thesis-zh-compile-outdir",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-compile-outdir",
+        "location": "active",
+        "status": "planning"
+      }
+    ],
+    "edges": [
+      {
+        "parent": "09-10-thesis-zh-spec-gap-optimization",
+        "child": "09-10-thesis-zh-guidance-fidelity"
+      },
+      {
+        "parent": "09-10-thesis-zh-spec-gap-optimization",
+        "child": "09-10-thesis-zh-consistency-semantics"
+      },
+      {
+        "parent": "09-10-thesis-zh-spec-gap-optimization",
+        "child": "09-10-thesis-zh-compile-outdir"
+      }
+    ],
+    "legacy_fallback_tasks": []
+  },
+  "tasks": [
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-spec-gap-optimization",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 0,
+        "by_status": {},
+        "entries": []
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R6"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 1
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 1
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R5"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC6",
+            "requirements": [
+              "R6"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-10-thesis-zh-spec-gap-optimization",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-guidance-fidelity",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 3,
+        "by_status": {
+          "resolved": 3
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 8,
+            "citation": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md:64",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md",
+            "file_lines": 144
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 10,
+            "citation": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md:11",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
+            "file_lines": 180
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 12,
+            "citation": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md:121",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md",
+            "file_lines": 131
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC6",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 3
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-10-thesis-zh-guidance-fidelity",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-consistency-semantics",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 2,
+        "by_status": {
+          "resolved": 2
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 8,
+            "citation": "academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py:58",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/scripts/check_consistency.py",
+            "file_lines": 445
+          },
+          {
+            "artifact": "design.md",
+            "artifact_line": 5,
+            "citation": "academic-writing-skills/latex-thesis-zh/scripts/tex_loader.py:171",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/scripts/tex_loader.py",
+            "file_lines": 239
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1",
+              "R4"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R2",
+              "R4"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 6
+          },
+          {
+            "id": "AC6",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 1
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-10-thesis-zh-consistency-semantics",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-thesis-zh-compile-outdir",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 1,
+        "by_status": {
+          "resolved": 1
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 8,
+            "citation": "academic-writing-skills/latex-thesis-zh/scripts/compile.py:278",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/latex-thesis-zh/scripts/compile.py",
+            "file_lines": 468
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC6",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-10-thesis-zh-compile-outdir",
+      "location": "active"
+    }
+  ],
+  "reviews_git": {
+    "path": ".trellis/reviews/09-10-thesis-zh-spec-gap-optimization.md",
+    "state": "ignored"
+  },
+  "blocking": []
+}

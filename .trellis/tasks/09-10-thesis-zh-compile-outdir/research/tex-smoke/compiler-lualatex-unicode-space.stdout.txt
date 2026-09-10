@@ -1,0 +1,51 @@
+Initial Win CP for (console input, console output, system): (CP65001, CP65001, CP936)
+I changed them all to CP936
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 27 Dec. 2024. Version 4.86a.
+Latexmk: making output directory 'C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\compiler-lualatex-unicode-space\\xb9\xb9\xbd\xa8 Ŀ¼'
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'lualatex'...
+Rule 'lualatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'lualatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'lualatex'
+------------
+------------
+Running 'lualatex -no-shell-escape  -interaction=nonstopmode -file-line-error -synctex=1 -recorder -output-directory="\xb9\xb9\xbd\xa8 Ŀ¼"  "C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/compiler-lualatex-unicode-space/main.tex"'
+------------
+This is LuaHBTeX, Version 1.21.0 (TeX Live 2025) 
+
+(c:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/compiler-lualatex-unicode-
+space/main.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+ (c:/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(c:/texlive/2025/texmf-dist/tex/latex/base/size10.clo))
+(c:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-luatex.def)
+("./构建 目录/main.aux")
+[1{c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+("./构建 目录/main.aux"))
+ 406 words of node memory still in use:
+   3 hlist, 1 vlist, 1 rule, 2 glue, 3 kern, 1 glyph, 4 attribute, 48 glue_spec
+, 4 attribute_list, 1 write nodes
+   avail lists: 2:22,3:4,4:1,5:26,6:2,7:114,9:18,11:6
+<c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf>
+Output written on main.pdf (1 page, 4584 bytes).
+
+SyncTeX written on main.synctex.gz.
+Transcript written on main.log.
+Latexmk: Getting log file '\xb9\xb9\xbd\xa8 Ŀ¼/main.log'
+Latexmk: Examining '\xb9\xb9\xbd\xa8 Ŀ¼/main.fls'
+Latexmk: Examining '\xb9\xb9\xbd\xa8 Ŀ¼/main.log'
+Latexmk: Log file says output to 'main.pdf'
+Latexmk: All targets (\xb9\xb9\xbd\xa8 Ŀ¼/main.pdf) are up-to-date
+
+[INFO] Compiling main.tex with lualatex
+[INFO] Working directory: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\compiler-lualatex-unicode-space
+
+[SUCCESS] PDF generated: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\compiler-lualatex-unicode-space\构建 目录\main.pdf

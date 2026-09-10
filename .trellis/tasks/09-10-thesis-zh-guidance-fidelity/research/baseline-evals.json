@@ -1,0 +1,1440 @@
+{
+  "skill_name": "latex-thesis-zh",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我定位这个中文学位论文 main.tex 为什么 XeLaTeX 一直编译失败，并判断是不是 thuthesis 模板。",
+      "expected_output": "先识别模板，再走 compile 模块，返回模板结论和编译排障建议。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(template|compile|模板|编译)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(thuthesis|pkuthss|ctexbook)",
+          "description": "template detection attempted"
+        },
+        {
+          "type": "regex",
+          "pattern": "[\\u4e00-\\u9fff]{5,}",
+          "description": "Chinese output present"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请梳理这篇硕士论文的章节结构，并检查术语和缩略语是否前后统一。",
+      "expected_output": "路由到 structure 和 consistency 模块，并给出结构概览与一致性问题。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(structure|consistency|结构|一致)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(术语|缩略|abbreviat)",
+          "description": "terminology consistency checked"
+        },
+        {
+          "type": "regex",
+          "pattern": "[\\u4e00-\\u9fff]{5,}",
+          "description": "Chinese output present"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "按 GB/T 7714 帮我检查参考文献，再看看绪论是不是有明显 AI 腔。",
+      "expected_output": "路由到 bibliography 和 deai 模块，分别输出格式问题和去 AI 化建议。",
+      "files": [
+        "evals/fixtures/thesis-project/references.bib",
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "fixture_thesis_d",
+          "description": "names the @phdthesis entry missing school"
+        },
+        {
+          "type": "regex",
+          "pattern": "(school|urldate|institution)",
+          "description": "reports the concrete missing GB/T 7714 fields"
+        },
+        {
+          "type": "regex",
+          "pattern": "近年来",
+          "description": "flags the planted template expression in the intro"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "请检查 related work 的逻辑链条，尤其是有没有只按作者年份罗列文献、以及有没有把研究空白推导出来。",
+      "expected_output": "路由到 logic 模块，指出文献综述的罗列式写法、研究空白缺失或跨章节闭合问题，但不改引用和公式。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(罗列|enumeration)",
+          "description": "author/year listing pattern reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "chapters/related\\.tex",
+          "description": "finding located in the include source file"
+        },
+        {
+          "type": "regex",
+          "pattern": "(研究空白|gap)",
+          "description": "missing gap derivation reported"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我看看实验章节和论文标题：实验写法是否像学位论文而不是项目汇报，标题是否过于空泛。",
+      "expected_output": "同时覆盖 title 和 experiment 两类问题，返回标题建议以及实验章节在论证深度、结果讨论和结论闭合上的审阅意见。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(title|experiment|标题|实验)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(建议|修改|优化)",
+          "description": "actionable suggestions present"
+        },
+        {
+          "type": "regex",
+          "pattern": "[\\u4e00-\\u9fff]{5,}",
+          "description": "Chinese output present"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "请检查这篇中文学位论文是不是每一章、每一节、甚至四级标题后都写了导语；我担心很多地方标题后直接开始列点和公式。",
+      "expected_output": "路由到 logic 模块，检查标题后是否缺少导语段落，重点标出直接进入列表、图表、公式或下一级标题的地方。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "缺少导语段落",
+          "description": "missing lead-in reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "chapters/intro\\.tex",
+          "description": "located in chapters/intro.tex"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "帮我看看章节衔接是不是太生硬，尤其是小节标题下面经常只有一句短话就马上开始表格和条目，这样像不像大论文规范问题？",
+      "expected_output": "识别为 logic/structure 相关问题，指出导语缺失或导语过短的标题层级，并说明这是中文学位论文的结构与逻辑衔接问题。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(logic|structure|逻辑|结构)",
+          "description": "correct modules routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(导语|衔接|过渡)",
+          "description": "transition quality assessed"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "请检查绪论是不是像剥洋葱一样，从研究背景、技术瓶颈、前人不足再落到本文方法；我担心现在直接跳到了本文工作。",
+      "expected_output": "路由到 logic 模块，指出绪论漏斗链是否缺少技术瓶颈或前人不足推导，并保留引用与公式。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(从背景直接跳到本文方案|缺少技术瓶颈)",
+          "description": "funnel break reported"
+        },
+        {
+          "type": "contains",
+          "text": "绪论",
+          "description": "introduction targeted"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "请检查摘要、创新点和结论是不是三胞胎：核心问题、方法、结果和增量贡献有没有对齐。",
+      "expected_output": "路由到 logic 模块，检查摘要、创新点/主要贡献、结论之间的三方一致性，并指出缺项或错位。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(跨章节逻辑链可能不完整|错位)",
+          "description": "closure/alignment issue reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "(结论|conclusion)",
+          "description": "conclusion named in finding"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "帮我看看这几章是不是在围绕同一个科学问题递进展开，还是只是把几个工作并排罗列出来。",
+      "expected_output": "路由到 logic 模块，给出章节主线关系的判断，重点标出缺少'基于上一章……本章进一步……'桥接的章节。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(章节主线|桥接|承上)",
+          "description": "mainline bridging assessed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(方法|本章)",
+          "description": "method chapters discussed"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "请检查讨论部分是不是大锅炖，是否缺少机理解释、与前人比较、局限性和启示这些分层内容。",
+      "expected_output": "路由到 experiment 模块，报告讨论部分是否缺少分层结构，而不是只重复表格和数值。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(Conclusion lacks|局限|limitation)",
+          "description": "conclusion completeness gap reported"
+        },
+        {
+          "type": "contains",
+          "text": "EXPERIMENT",
+          "description": "experiment module marker present"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "我的文献综述太像按作者年份点名了。请保留原有引用，只给我一个“共识-分歧-局限-空白-本文切入点”的重写蓝图。",
+      "expected_output": "路由到 literature 模块，指出罗列式写法或比较分析不足，并给出不新增引用的重写蓝图。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "literature",
+          "description": "literature module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(共识|分歧|局限|空白|切入点)",
+          "description": "rewrite blueprint present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "帮我把绪论改成从研究背景、技术瓶颈、科学问题到本文贡献逐步收束的写作方案，不要新增引用。",
+      "expected_output": "路由到 logic 模块并补读学位论文写作主线指南，给出绪论漏斗、段落角色和证据状态，不新增引用。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(研究背景|技术瓶颈|科学问题|贡献|漏斗)",
+          "description": "intro thesis funnel present"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "检查方法章节是不是每个模块都写清楚了动机、设计和技术优势，并说明这些内容如何被实验验证。",
+      "expected_output": "路由到 logic 模块，围绕学位论文方法章节主线输出模块动机、设计、技术优势和实验验证映射。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(动机|设计|技术优势|实验验证)",
+          "description": "method triad and evidence closure present"
+        },
+        {
+          "type": "regex",
+          "pattern": "[\\u4e00-\\u9fff]{5,}",
+          "description": "Chinese output present"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "帮我重构实验讨论部分：不要只重复表格，要包含有效性、消融、机理解释、文献回溯、局限和启示。",
+      "expected_output": "路由到 experiment 模块，按学位论文实验讨论分层给出结构建议，并标记缺少证据的结论。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "experiment",
+          "description": "experiment module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(有效性|消融|机理|文献回溯|局限|启示)",
+          "description": "discussion layering present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(needs evidence|证据不足|缺少证据)",
+          "description": "evidence gaps marked"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "检查摘要、创新点和总结与展望是否闭合：每条贡献有没有结果证据、局限边界和未来方向。",
+      "expected_output": "路由到 logic 或 abstract 模块，检查摘要、创新点、结论的三方闭合，并给出贡献-证据-局限映射。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(logic|abstract|摘要)",
+          "description": "closure route selected"
+        },
+        {
+          "type": "regex",
+          "pattern": "(创新点|总结与展望|闭合|贡献|证据|局限)",
+          "description": "three-way closure assessed"
+        },
+        {
+          "type": "regex",
+          "pattern": "[\\u4e00-\\u9fff]{5,}",
+          "description": "Chinese output present"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "请把绪论写成背景 -> 技术瓶颈 -> 科学问题 -> 本文贡献 -> 章节安排的漏斗，不要直接跳到方法细节，也不要新增引用。",
+      "expected_output": "路由到 logic 模块，给出绪论漏斗、段落角色和证据状态，突出背景到科学问题再到贡献的收束关系。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(背景|技术瓶颈|科学问题|本文贡献|章节安排|漏斗)",
+          "description": "intro funnel present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(证据|闭合|贡献)",
+          "description": "closure and evidence framing present"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "我的文献综述还是按作者年份罗列。请按主题分组，写出每组的共识、分歧、局限和空白，再给出本文切入点的过渡句。",
+      "expected_output": "路由到 literature 模块，返回主题化分组、比较分析和研究空白推导，而不是单纯的参考文献列表。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "literature",
+          "description": "literature module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(共识|分歧|局限|空白|切入点)",
+          "description": "literature synthesis present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(主题|分组|比较)",
+          "description": "theme-based organization present"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "请重写实验与讨论部分，让它按有效性、消融、机理解释、与前人比较、局限和启示分层展开，不要只重复表格里的数字。",
+      "expected_output": "路由到 experiment 模块，给出分层叙事和取证式讨论，而不是只做结果复述。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "experiment",
+          "description": "experiment module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(有效性|消融|机理|比较|局限|启示)",
+          "description": "discussion layering present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(分层|证据|启示)",
+          "description": "layered explanation present"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "当前论文的大章节小标题数目太多，请限制到最多 5 节；同时检查大标题是否体现对象、问题、方法，小标题是否和上面的大标题扣上。",
+      "expected_output": "路由到 title/structure 相关检查，报告直属小节超过 5 个、章标题缺少对象-问题-方法要素，以及小节标题未扣合章标题的问题，并给出合并和改名建议。",
+      "files": [
+        "evals/fixtures/heading-architecture/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "TITLE-ARCH",
+          "description": "heading architecture diagnostics present"
+        },
+        {
+          "type": "regex",
+          "pattern": "(直属小节过多|最多 5 个)",
+          "description": "max-five direct sections rule checked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(缺少对象|缺少问题|对象-问题-方法)",
+          "description": "object-problem-method chapter title rule checked"
+        },
+        {
+          "type": "contains",
+          "text": "小节标题未扣合章标题",
+          "description": "child title anchoring checked"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "图中第一个公式因为太长，公式编号已经被挤到第二行；第二个公式能正常放下。请判断中文学位论文里第一个公式是否可以拆成两行，以及第二个公式要不要动。",
+      "expected_output": "路由到 format/公式排版相关检查，指出第一个公式因编号被挤到下一行属于宽度失败，可以受控拆行；第二个公式能正常放下且没有推导或方程组语义，不应为了视觉统一强行拆分。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(format|公式排版|公式编号|断行)",
+          "description": "formula layout handled through formatting route"
+        },
+        {
+          "type": "regex",
+          "pattern": "(编号.*(挤到|下一行|第二行)|宽度|版心|页边距)",
+          "description": "equation number displacement or width failure identified"
+        },
+        {
+          "type": "regex",
+          "pattern": "(第二个公式|相邻公式).*(不(用|应|需要).*动|保持|不.*拆)",
+          "description": "second fitting formula left unchanged"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "第四章本章小结现在被写成了三段，像把各节标题重新列了一遍。请按燕山大学工学博士论文那种写法，改成一个自然段，概括本章问题、方法、关键验证和对全文主线的支撑，不要新增数据和引用。",
+      "expected_output": "路由到 logic 模块并补读学位论文写作主线指南，明确本章小结默认单段收束，按问题/目标、工作/方法、过程/证据、结果价值和全文主线支撑组织，不新增数据、结论或引用。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "chapter summary uses logic route"
+        },
+        {
+          "type": "contains",
+          "text": "本章小结",
+          "description": "chapter summary target named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(单段|一个自然段|一段)",
+          "description": "single-paragraph default stated"
+        },
+        {
+          "type": "regex",
+          "pattern": "(问题|目标).*(方法|工作).*(证据|验证).*(支撑|主线)",
+          "description": "summary components covered in order"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "这段绪论 AI 味很重：很多句子都是“不是 A，而是 B”“真正的问题在于”“我的结论是：”。请降低 AI 味，但不要打乱学术逻辑、引用、公式和证据边界。",
+      "expected_output": "路由到 deai 模块，先提取问题-方法-证据-结论-边界，再诊断二元对比壳、伪洞察标记和讲义式冒号；默认给重写蓝图，不新增引用、数据或结论。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(二元对比|结构壳|伪洞察|讲义式冒号)",
+          "description": "renhua-inspired shell categories diagnosed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(证据|引用|公式|边界|不新增)",
+          "description": "academic preservation contract stated"
+        },
+        {
+          "type": "not_contains",
+          "text": "保证通过检测",
+          "description": "no detector-evasion promise"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "我的博士论文绪论被导师批了：引用不到 80 篇而且都是老文献，同一个团队的论文全堆在一个括号里；国内外研究现状没有图表总结；表里的科学问题都是“状态重叠”这种词组。帮我诊断第一章。",
+      "expected_output": "路由 literature --intro-citations（引用数量、堆引、同作者扎堆、--bib 年份分布、缺演进图/对比表）与 logic --intro-mainline（科学问题三要素、四方闭合、首段漏斗、国内外分述）；只诊断并从用户 .bib 补检候选，不编造文献。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--intro-citations",
+          "description": "intro citation diagnostics routed"
+        },
+        {
+          "type": "contains",
+          "text": "--intro-mainline",
+          "description": "intro mainline checks routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(对象.{0,6}问题.{0,6}方法|三要素)",
+          "description": "science-problem triad guidance surfaced"
+        },
+        {
+          "type": "regex",
+          "pattern": "(演进|时间线|对比(矩阵|表格?))",
+          "description": "visual summary of research status suggested"
+        },
+        {
+          "type": "not_contains",
+          "text": "为你生成参考文献",
+          "description": "no fabricated bibliography entries"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "我的博士论文第二章写的是工艺流程分析和整篇论文的总体方法框架，帮我检查主线闭合、框架图和后续章节映射对不对。",
+      "expected_output": "识别为过程分析章式，路由到 logic 模块并补读第二章专章指南，用 analyze_logic.py --process-chapter 检查工艺流程图引用、难点推导链、总体框架图与后续各章映射的主线闭合，不改引用和公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "logic module routed"
+        },
+        {
+          "type": "contains",
+          "text": "--process-chapter",
+          "description": "process-chapter mainline flag routed"
+        },
+        {
+          "type": "contains",
+          "text": "process-chapter-guide-zh",
+          "description": "reads the second-chapter process-analysis guide"
+        },
+        {
+          "type": "regex",
+          "pattern": "(工艺|流程|总体框架|框架图|章节映射|第 ?X ?章)",
+          "description": "process-analysis mainline and framework-map concepts surfaced"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "我的第二章不是工艺流程分析章，而是直接写方法推导和实验验证，请不要套用过程分析章那套工艺流程图/框架图检查。",
+      "expected_output": "识别为方法+实验章式而非过程分析章，不套用 --process-chapter 的过程分析章检查（不跑或仅给章式提示），改按学位论文方法章三问（动机/设计/技术优势）与 experiment 模块的讨论分层规则处理。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(方法章|方法推导|实验验证|experiment)",
+          "description": "method-derivation / experiment chapter recognized"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,6}(套用|适用)|按方法章|方法章规则|章式)",
+          "description": "does not force process-analysis-chapter checks; routes by chapter form"
+        },
+        {
+          "type": "regex",
+          "pattern": "(动机|设计|技术优势|讨论分层|三问)",
+          "description": "method-chapter three-questions or experiment discussion layering applied"
+        },
+        {
+          "type": "not_contains",
+          "text": "\\cite{fabricated",
+          "description": "no fabricated citations"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "我的博士论文第三到第六章是一章一个方法加同章实验（工业过程建模预测），帮我检查每一章的实验部分写得够不够、方法章骨架规范不规范。",
+      "expected_output": "识别为正文方法+实验章式，补读 method-chapter-guide-zh.md，走 experiment --per-chapter 逐方法章检查数据描述/归因分析/图表引用/框架图/参数/消融（E-DATA~E-ECHO），并说明无显著性检验、人工经验基线、教科书基础节均属工业论文合法惯例不报错；不改引用和公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--per-chapter",
+          "description": "per-chapter experiment flag routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(method-chapter|方法章|逐.?章|每一?章)",
+          "description": "method-chapter guide / per-chapter recognized"
+        },
+        {
+          "type": "regex",
+          "pattern": "(实验|数据|消融|归因|框架图)",
+          "description": "experiment completeness dimensions"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "我的大论文是几篇英文小论文拼的，正文里好几处写了“源论文”“小论文”，还有“待验证”“暂以占位”这种草稿话和一行全是---的空表格，帮我把这些定稿前该清理的都找出来。",
+      "expected_output": "走 logic（默认全章扫 P-PAPER，逐处报告“源论文/小论文/N篇论文”拼接表述）与 format（F-NOTE 草稿态对冲词、F-PLACEHOLDER 占位符表格行），对照 method-chapter-guide-zh.md 拼接感/草稿态清单给出改写；只定位提示不改写正文、不动引用公式。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(P-PAPER|源论文|小论文|拼接)",
+          "description": "paper-stitching sweep routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(F-NOTE|F-PLACEHOLDER|草稿|占位)",
+          "description": "draft-note / placeholder checks routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(logic|format)",
+          "description": "correct modules"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "请审阅附件中五个带标签的讨论段落，同时检查 AI 味和论断-证据校准。只标记防御性推测解释，说明逐机制证据缺口，并解释为什么样例 B-E 属于合理边界。不得发明证据，也不得把未证实机制改得更肯定。",
+      "expected_output": "路由到 deai 并结合讨论证据边界：把样例 A 识别为防御性推测解释，为保留的每项机制映射证据或区分性检验；没有支持时说明机制尚未确定；保留样例 B-E 中有锚点的合理限定、多假设逐项证据、诚实未知和受控实验支持的强论断。",
+      "files": [
+        "evals/fixtures/defensive_speculative_explanation.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "防御性推测解释",
+          "description": "命名目标组合模式"
+        },
+        {
+          "type": "regex",
+          "pattern": "(逐机制|证据锚点|区分性检验)",
+          "description": "要求机制与局部证据映射"
+        },
+        {
+          "type": "regex",
+          "pattern": "(机制尚未确定|无法确定|原因未定)",
+          "description": "无支持归因回退到诚实不确定性"
+        },
+        {
+          "type": "contains",
+          "text": "样例 B",
+          "description": "有局部证据的合理限定不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 C",
+          "description": "逐项有证据的多假设不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 D",
+          "description": "诚实承认未知不误报"
+        },
+        {
+          "type": "contains",
+          "text": "样例 E",
+          "description": "受控实验支持的强论断不误报"
+        },
+        {
+          "type": "regex",
+          "pattern": "(受控|消融|证据允许|强论断)",
+          "description": "保留证据支持的强措辞"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "no unsupported significance evidence is invented"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "请审阅附件中的中文学位论文结果分析边界样例，运行 experiment 的 --results-analysis，只把 RA-* 作为启发式候选；按结果分析证据阶梯复核，说明统计等价、组件因果归因、阶段命名、局部最优和浅层图形描述各自为何命中或保持静默。不得把脚本未命中写成 R-* 已通过，也不得声明真实语料效果已验证。",
+      "expected_output": "路由到 experiment --results-analysis，并读取 results-analysis-guide-zh.md；报告 RA-EQUIV 与 RA-SHALLOW 候选，保留有局部消融证据的因果措辞、规范性阶段声明和局部最优边界；所有 RA-* 均标为须按证据阶梯复核的启发式线索，真实查准率和召回率保持 UNVERIFIED。",
+      "files": [
+        "evals/fixtures/results_analysis_boundary.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--results-analysis",
+          "description": "results-analysis flag is routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "RA-(EQUIV|CAUSAL|SHALLOW|STAGE|UNIVERSAL)",
+          "description": "RA heuristic family is named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(证据阶梯|results-analysis-guide-zh)",
+          "description": "authoritative results-analysis guide is used"
+        },
+        {
+          "type": "regex",
+          "pattern": "(启发式|须.*复核|UNVERIFIED)",
+          "description": "script output is not overstated as semantic validation"
+        },
+        {
+          "type": "not_contains",
+          "text": "R-* 已通过",
+          "description": "script silence is not presented as checklist pass"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "请审阅附件中的八个模式簇样例并路由到 deai：样例 A 应按 H-ING、H-PROMO、H-ATTR、H-SCOPE、H-OUTLOOK 组合命中，样例 B 命中 H-PRED，样例 C 命中 H-TERM；逐项解释样例 D、样例 E、样例 F、样例 G、样例 H 为何属于证据充分边界。默认只给 finding 或改写蓝图；只有明确要求正文改写时才做 fidelity audit，并返回 Changed:、Protected:、Meaning-Check:、Risk-Flags:。H-OUTLOOK 与防御性推测解释同根因时合并，保护 LaTeX 锚点，不判断 AI 作者身份，不补造证据。",
+      "expected_output": "路由到 deai，只在样例 A-C 识别七类 claim-local H-* 模式；样例 D-H 的指标、引用、范围、技术关系、显式术语定义、诚实局限和具体 future test 足以支持原文，应保持静默。不得判断 AI 作者身份。用户明确要求正文时，执行 audit -> rewrite -> fidelity audit，以 Changed:、Protected:、Meaning-Check:、Risk-Flags: 报告并保护 claim、表格引用、citation、公式、术语、certainty 与 scope。H-OUTLOOK 与 defensive-rhetoric 共用证据缺口时合并为一条 evidence-calibration finding，不得虚构缺失支持。",
+      "files": [
+        "evals/fixtures/anti_ai_pattern_clusters.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "deai",
+          "description": "deai module routed"
+        },
+        {
+          "type": "contains",
+          "text": "H-ING",
+          "description": "H-ING is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PROMO",
+          "description": "H-PROMO is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-ATTR",
+          "description": "H-ATTR is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-PRED",
+          "description": "H-PRED is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-TERM",
+          "description": "H-TERM is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-SCOPE",
+          "description": "H-SCOPE is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "H-OUTLOOK",
+          "description": "H-OUTLOOK is classified explicitly"
+        },
+        {
+          "type": "contains",
+          "text": "样例 A",
+          "description": "样例 A boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 B",
+          "description": "样例 B boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 C",
+          "description": "样例 C boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 D",
+          "description": "样例 D boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 E",
+          "description": "样例 E boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 F",
+          "description": "样例 F boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 G",
+          "description": "样例 G boundary is addressed"
+        },
+        {
+          "type": "contains",
+          "text": "样例 H",
+          "description": "样例 H boundary is addressed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Changed:|Protected:|Meaning-Check:|Risk-Flags:)",
+          "description": "保留四字段 fidelity proposal"
+        },
+        {
+          "type": "regex",
+          "pattern": "(fidelity audit|主张|引用|范围|certainty|scope)",
+          "description": "明确改写后复核学术载荷"
+        },
+        {
+          "type": "regex",
+          "pattern": "(合并|一条 finding|evidence calibration|primary)",
+          "description": "合并 outlook 与 defensive 同根因 finding"
+        },
+        {
+          "type": "regex",
+          "pattern": "(LaTeX|\\\\ref|\\\\cite|公式|锚点)",
+          "description": "保护 LaTeX 语法与证据锚点"
+        },
+        {
+          "type": "not_contains",
+          "text": "AI 生成",
+          "description": "不进行 AI 作者身份判断"
+        },
+        {
+          "type": "not_contains",
+          "text": "p = 0.01",
+          "description": "不补造统计证据"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "请检查这篇多文件中文学位论文各个 x.x.x 小节之间是否承接清楚，并给出 1.2.1 的上下文窗口供后续润色。",
+      "expected_output": "路由到 logic 模块，运行 --subsection-context，并用 --emit-window --subsection 1.2.1 只返回源坐标；说明 S-CTX-IN/OUT/ROLE 与 current 可改、邻接部件只读的边界。",
+      "files": [
+        "evals/fixtures/subsection-context/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--subsection-context",
+          "description": "routes to the subsection context checker"
+        },
+        {
+          "type": "contains",
+          "text": "--emit-window",
+          "description": "uses the coordinate-only context window"
+        },
+        {
+          "type": "regex",
+          "pattern": "S-CTX-(IN|OUT|ROLE)",
+          "description": "uses the subsection interface code family"
+        },
+        {
+          "type": "regex",
+          "pattern": "(current.*可改|prev\\.tail.*只读|next\\.head.*只读|parent_lead.*只读)",
+          "description": "preserves editable and read-only context boundaries"
+        },
+        {
+          "type": "not_contains",
+          "text": "自动改写上一小节",
+          "description": "does not authorize rewriting read-only neighbors"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "请重组中文博士论文摘要的第（2）项工作。已知组件 A 先从输入 $x_t$ 生成表示 $z_t$，组件 B 只接收 $z_t$ 并生成预测；原文没有消融、提升幅度或“B 修复 A”的证据。允许调整句序和接口表述，必须保留 \\cite{source_a}、\\label{abs:serial}、$x_t$、$z_t$，禁止补造模块作用、数值或因果结论。",
+      "expected_output": "路由到 abstract 并读取 abstract-structure.md，识别为有来源-去向证据的串行依赖，按当前约束、A 的真实输出、B 的真实输入和验证对象组织；保留全部 LaTeX token，并明确没有消融或增益证据，不能声称 B 修复 A。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "abstract",
+          "description": "abstract guidance is routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(串行|依赖).*(输出|输入|接口)",
+          "description": "serial relation is tied to the documented interface"
+        },
+        {
+          "type": "regex",
+          "pattern": "(\\\\cite\\{source_a\\}|\\\\label\\{abs:serial\\}|\\$x_t\\$|\\$z_t\\$)",
+          "description": "protected LaTeX tokens remain visible"
+        },
+        {
+          "type": "regex",
+          "pattern": "(没有|缺少|不得|不能).*(消融|增益|修复|因果)",
+          "description": "unsupported contribution is refused"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "请审阅中文学位论文摘要的第（3）项工作：模块 A 与模块 B 读取同一输入并分别输出特征，模块 C 只在末端融合两路特征；材料没有说明 B 依赖 A。允许压缩并列句，必须保留 \\ref{fig:parallel} 与公式 $h=[h_A;h_B]$，禁止写成“B 解决 A 的剩余问题”或补造消融结果。",
+      "expected_output": "路由到 abstract，保留 A/B 并行和 C 末端融合的真实关系，以共同输入、各自输出和汇合点组织，不强编串行因果；保留引用与公式，未提供的消融结论标为 missing evidence。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(并行|共同输入|分别输出).*(融合|汇合)",
+          "description": "parallel relation and merge point are preserved"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,8}串行|不.{0,8}依赖|不能.*解决 A|不得.*剩余问题)",
+          "description": "no artificial serial dependency"
+        },
+        {
+          "type": "regex",
+          "pattern": "(\\\\ref\\{fig:parallel\\}|h_A|h_B)",
+          "description": "protected reference and formula symbols remain visible"
+        },
+        {
+          "type": "contains",
+          "text": "missing evidence",
+          "description": "missing ablation evidence is explicit"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "请分别给出三个中文博士论文章末小结蓝图。事实一：框架章只完成流程约束分析和后续章节映射，没有定量指标。事实二：方法章同时有预测与诊断两个独立任务，预测有离线误差结果，诊断只有方法设计、尚无验证。事实三：系统章按接入、短期影子观察、触发回退的真实顺序记录运行，未证明生产闭环收益。允许压缩为默认单段；若模板要求多段也应保留。禁止补数字、遗漏副任务或把观察升级为部署成效。",
+      "expected_output": "按框架/过程章、方法章、系统/工程章分别落实问题、工作、证据、价值和主线支撑；框架章允许无指标，方法章覆盖预测和诊断并把诊断验证标为 missing evidence，系统章可用真实时序但结论止于短期影子观察；说明单段是默认而非硬规则。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(框架|过程).*(无.{0,6}(指标|数值)|流程|章节映射)",
+          "description": "framework chapter can close without invented metrics"
+        },
+        {
+          "type": "regex",
+          "pattern": "预测.*诊断|诊断.*预测",
+          "description": "both independent method tasks are covered"
+        },
+        {
+          "type": "regex",
+          "pattern": "(诊断|验证).*(missing evidence|证据不足|尚无验证)",
+          "description": "missing secondary-task evidence is explicit"
+        },
+        {
+          "type": "regex",
+          "pattern": "(影子观察|短期观察).*(不.{0,8}(生产|闭环)|未证明)",
+          "description": "system evidence is not upgraded"
+        },
+        {
+          "type": "regex",
+          "pattern": "(单段.*默认|模板.*多段|不是硬规则)",
+          "description": "paragraph count remains conditional"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "这段中文学位论文综述连续三句分别写了作者、方法、对象和结果，并保留 \\cite{ref_a}、\\cite{ref_b}、\\cite{ref_c}，但没有句间比较或簇末结论。请诊断并给重构蓝图；允许调整主题顺序，禁止增删 citekey、猜作者身份或补造结果。",
+      "expected_output": "路由到 literature；即使四要素齐全仍识别为作者流水账，按主题簇、选择性代表文献归因、簇末比较重构；保留三个 citekey，缺失信息只标 missing evidence。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "literature",
+          "description": "literature module is routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(四要素|作者.*方法.*对象.*结果).*(流水账|罗列)",
+          "description": "complete individual sentences can still form a list"
+        },
+        {
+          "type": "regex",
+          "pattern": "主题簇.*代表文献.*(簇末|比较|综合)",
+          "description": "three-layer reconstruction interface is used"
+        },
+        {
+          "type": "regex",
+          "pattern": "(ref_a|ref_b|ref_c)",
+          "description": "existing citekeys remain visible"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,6}(猜|编造)|missing evidence)",
+          "description": "missing attribution facts are not invented"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "请审阅一个已按主题组织的中文博士论文综述段：首句综合 \\cite{ref_a,ref_b,ref_c} 的共同对象，中间只展开与关键分歧有关的研究 B，末句比较适用范围并连接下一主题。输入没有研究 B 的作者姓名。允许指出待补证据，禁止要求每句都套作者—方法—对象—结果或根据 ref_b 猜作者。",
+      "expected_output": "路由到 literature，认可主题簇—代表归因—簇末综合结构；四要素只核对被展开的研究 B，不强制每句齐全；作者缺失标为 missing evidence，citekey 保持不变。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(主题簇|共同对象).*(代表|研究 B).*(簇末|适用范围|下一主题)",
+          "description": "thematic positive structure is recognized"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,8}(每句|固定模板)|选择性|只.*单篇)",
+          "description": "four roles are not imposed sentence by sentence"
+        },
+        {
+          "type": "regex",
+          "pattern": "(作者.*missing evidence|作者.*待补|不.{0,6}猜.*ref_b)",
+          "description": "missing author is handled without guessing"
+        },
+        {
+          "type": "contains",
+          "text": "ref_a,ref_b,ref_c",
+          "description": "pooled citation key list is preserved"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "中文学位论文结果图为了排版隐藏通道 ch-07 和 ch-09，表 4-2 仍使用原 12 个通道的冻结聚合，材料没有重算日志。请把结论写得更有优势，但必须保留 \\ref{tab:frozen}、12、ch-07、ch-09；不允许重算数据或声称均值、显著性、效果量、排名发生变化。",
+      "expected_output": "路由到 experiment --results-analysis；明确显示范围变为 10 个通道，而表格仍是 12 通道冻结聚合且未重算；拒绝升级指标或排名结论，列出若要比较所需的共同集合重算证据并保留受保护 token。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "--results-analysis",
+          "description": "results-analysis guidance is routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(展示|显示).*(10|隐藏).*(冻结聚合|12).*(未重算|没有重算)",
+          "description": "display scope is separated from frozen aggregation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不能|不得|拒绝).*(均值|显著性|效果量|排名)",
+          "description": "metric and ranking upgrade is refused"
+        },
+        {
+          "type": "regex",
+          "pattern": "(\\\\ref\\{tab:frozen\\}|ch-07|ch-09|12)",
+          "description": "protected table reference and scope tokens remain visible"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "请比较中文博士论文中两种方法的新排名：方法 A 缺失 3/120 个样本，方法 B 缺失 5/118 个样本；只给出了各自剩余样本上的指标，没有共同样本映射、缺失原因或统一重算记录。允许说明现状和补证步骤，必须保留 3/120、5/118，禁止把两个百分比直接比较成方法优劣或代用户重算。",
+      "expected_output": "路由到 experiment --results-analysis；逐方法说明缺失分子、分母和未知原因，指出各自剩余集合不等于共同集合，因此新排名不可比较；建议取得共同样本映射并按同一协议重算，但不代用户计算或补造排名。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "3/120.*5/118|5/118.*3/120",
+          "description": "both missingness numerators and denominators are preserved"
+        },
+        {
+          "type": "regex",
+          "pattern": "(分子|缺失).*(分母|120|118).*(原因|未知)",
+          "description": "layered missingness identity and cause are checked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(共同样本|共同集合).*(不可比较|不能.*排名|尚未重算)",
+          "description": "ranking remains incomparable without common samples"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,6}(代.*重算|直接比较)|需要.*统一重算)",
+          "description": "the response requests evidence without recalculating for the user"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "这是一篇中文博士论文的独立工程应用章，目前主要罗列前端框架、数据库和三个界面截图。已知事实只有：前章模型的输出文件可被平台导入；历史数据回放完成过一次；系统做过短期影子观察但没有接管实际决策。材料没有 API、状态机、公式、接口时延、现场时长、硬件故障记录、业务指标或用户研究。请按学术章节审阅架构、服务、界面和验证叙事，保持 \\ref{fig:ui}、\\label{sec:platform}，不得补造事实。",
+      "expected_output": "确认论文工程应用章，路由到 logic 并读取 engineering-application-chapter-guide-zh.md；至少建立一条来源工件—运行约束—设计目标/系统属性—可证机制—验证证据链，把界面改按操作者任务与决策作用组织；明确历史回放与短期影子观察只支持对应层级，不升级为试点、生产闭环、业务收益或人工可用性，并把缺失 API、公式、指标等标为 missing evidence。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "logic",
+          "description": "uses the existing logic route"
+        },
+        {
+          "type": "contains",
+          "text": "engineering-application-chapter-guide-zh.md",
+          "description": "loads the engineering chapter guide"
+        },
+        {
+          "type": "regex",
+          "pattern": "(来源工件|前章模型).*(运行约束|约束).*(设计目标|系统属性).*(机制).*(证据)",
+          "description": "builds a traceable engineering argument chain"
+        },
+        {
+          "type": "regex",
+          "pattern": "(界面|截图).*(操作者任务|操作任务|决策作用)",
+          "description": "maps UI inventory to an operator task"
+        },
+        {
+          "type": "regex",
+          "pattern": "(历史回放|离线回放).*(影子观察).*(不.{0,10}(试点|生产|闭环)|未证明)",
+          "description": "keeps replay and shadow evidence below pilot or production claims"
+        },
+        {
+          "type": "regex",
+          "pattern": "(API|公式|指标|人工可用性).*(missing evidence|缺少证据|未验证)",
+          "description": "marks unsupported mechanism and outcome facts explicitly"
+        },
+        {
+          "type": "regex",
+          "pattern": "(\\\\ref\\{fig:ui\\}|\\\\label\\{sec:platform\\})",
+          "description": "preserves supplied LaTeX anchors"
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "请润色中文学位论文系统实现章的失败处理段。设计记录和回放日志只证明：队列占用超过限定容量时，服务进入只读模式；必须由操作者复核后才能恢复。日志没有覆盖并发故障、硬件故障、长期运行或生产闭环。请写得积极一些，但必须保留触发条件、只读回退和人工复核边界，不能添加接口、数值或绝对安全承诺。",
+      "expected_output": "路由到 logic 与工程应用章指南；把队列容量触发、只读模式、人工复核和恢复条件写成可追溯的失败—回退链，说明证据只来自该回放日志；保留未覆盖故障与长期运行限制，拒绝改写为所有情况下绝对安全，缺少的生产/硬件证据标为 missing evidence。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(队列.*限定容量|限定容量.*队列).*(只读模式|只读回退).*(操作者|人工复核)",
+          "description": "preserves the documented failure and fallback chain"
+        },
+        {
+          "type": "regex",
+          "pattern": "(回放日志|回放).*(只证明|证据范围|覆盖)",
+          "description": "ties the mechanism claim to its actual evidence"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不.{0,10}绝对安全|不能.*所有情况|拒绝.*绝对安全)",
+          "description": "does not turn a bounded fallback into an absolute guarantee"
+        },
+        {
+          "type": "regex",
+          "pattern": "(并发|硬件|长期运行|生产闭环).*(missing evidence|未覆盖|未验证)",
+          "description": "keeps uncovered failures and deployment evidence explicit"
+        },
+        {
+          "type": "not_contains",
+          "text": "确保任何故障下都安全",
+          "description": "does not invent an absolute safety guarantee"
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "prompt": "请比较两个都标成“第六章”的中文博士论文章纲并分别路由。A 章提出一种新算法，含数据集、对比方法、消融和同章结果分析；B 章把前章模型接入平台，正文是架构、服务职责、操作者查看结果的任务和一次历史回放，没有定量结果小节。请说明各自应读的指南和运行入口，不要只凭章号判断，也不要为 B 章补造实验或接口。",
+      "expected_output": "先按正文内容判定：A 是一章一方法并同章实验的方法章，读取 method-chapter-guide-zh.md，走 experiment --per-chapter 与 logic；B 是工程应用/系统实现章，读取 engineering-application-chapter-guide-zh.md，只走既有 logic，不对整章运行 --per-chapter。B 没有定量结果小节且用户未请求结果分析，因此不追加 --results-analysis；历史回放不升级为现场或闭环证据。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "A.{0,20}(方法章|一章一方法).*(--per-chapter)",
+          "description": "keeps a true method chapter on the per-chapter route"
+        },
+        {
+          "type": "contains",
+          "text": "method-chapter-guide-zh.md",
+          "description": "loads the method chapter guide for outline A"
+        },
+        {
+          "type": "regex",
+          "pattern": "B.{0,30}(工程应用|系统实现).*(logic)",
+          "description": "routes the engineering outline through logic"
+        },
+        {
+          "type": "contains",
+          "text": "engineering-application-chapter-guide-zh.md",
+          "description": "loads the engineering chapter guide for outline B"
+        },
+        {
+          "type": "regex",
+          "pattern": "(章号|第六章).*(不能|不足以|不应).*(判断|路由|章型)",
+          "description": "does not classify from chapter number alone"
+        },
+        {
+          "type": "regex",
+          "pattern": "B.{0,80}(不.{0,12}--per-chapter|不运行.*--per-chapter)",
+          "description": "does not apply method checks to the engineering chapter"
+        },
+        {
+          "type": "regex",
+          "pattern": "(没有定量结果小节|未请求结果分析).*(不追加|不运行).*--results-analysis",
+          "description": "reuses results analysis only when needed"
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "prompt": "请按中文学位论文语句级表达规则改写这段连续正文：‘结果：表\\ref{tab:ablation}显示误差由0.28降至0.21；原因是：同一设置下唯一变化为移除校正模块，误差回升至0.27；局限：目前仅有离线数据。’保留\\ref{tab:ablation}、0.28、0.21、0.27和离线范围。不要把冒号、分号简单换成逗号，也不要把组件移除对照升级成绝对因果证明。请给出[LLM]改写及Changed、Protected、Meaning-Check、Risk-Flags。",
+      "expected_output": "路由到 expression，并读取 academic-style-zh.md §5.4；把标签式冒号和分号串联改成完整句，以表格观察和组件移除对照为主语，只写校正模块与误差改善相关或对照支持其贡献，不声称已证明绝对因果；保留三个数值、引用和离线边界，并给出四个改写契约字段。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "academic-style-zh.md",
+          "description": "loads the single punctuation-logic rule source"
+        },
+        {
+          "type": "regex",
+          "pattern": "(\\\\ref\\{tab:ablation\\}).*0\\.28.*0\\.21.*(移除|组件).*0\\.27",
+          "description": "preserves the table anchor, values, and component-removal observation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(相关|支持.*贡献|组件移除对照).*(离线|范围)|离线.*(相关|支持.*贡献|组件移除对照)",
+          "description": "uses bounded evidence language and keeps offline scope"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不能|未|不应).*(证明|推出|升级).*(绝对因果|因果)",
+          "description": "does not overstate the comparison as causal proof"
+        },
+        {
+          "type": "regex",
+          "pattern": "Changed:[\\s\\S]*Protected:[\\s\\S]*Meaning-Check:[\\s\\S]*Risk-Flags:",
+          "description": "returns the four rewrite-contract fields"
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "prompt": "请改写中文博士论文中的连续正文：‘数据：数据集A包含120个样本；数据集B包含118个样本；结果：模型C在A上的MAE为0.18，在B上的MAE为0.21；结论：因此A导致模型C更稳定。’材料只有这些并列事实，没有配对样本、重复实验或因果设计。保留A、B、120、118、MAE、0.18、0.21；允许删除无证据结论，禁止补造因果、递进或实验条件。请给出[LLM]改写及四个改写契约字段。",
+      "expected_output": "路由到 expression 与 academic-style-zh.md §5.4；用完整句分别陈述两个数据集规模和各自MAE，明确这些结果不能证明A导致稳定性变化或跨数据集优劣，不虚构连接关系；保留全部术语和数值，并给出Changed、Protected、Meaning-Check、Risk-Flags。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "A.*120.*B.*118|B.*118.*A.*120",
+          "description": "preserves both parallel dataset facts"
+        },
+        {
+          "type": "regex",
+          "pattern": "MAE.*0\\.18.*0\\.21|0\\.18.*0\\.21.*MAE",
+          "description": "preserves both reported metrics"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不能|不足以|无法).*(因果|导致|更稳定|优劣)",
+          "description": "refuses to invent a relationship from parallel facts"
+        },
+        {
+          "type": "regex",
+          "pattern": "Changed:[\\s\\S]*Protected:[\\s\\S]*Meaning-Check:[\\s\\S]*Risk-Flags:",
+          "description": "returns the four rewrite-contract fields"
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "prompt": "请审阅以下中文学位论文片段中的冒号和分号，只局部改写真正的标签壳：‘主要研究工作如下：当输入完整时，系统执行联合估计；当输入缺失时，系统保留上一时刻状态。关键词：状态估计；缺失数据；鲁棒性。融合向量为$h=[h_A;h_B]$。配置示例为`mode: safe; retry: 2`，说明见https://example.org/a:b。文献\\cite{std}给出定义：状态保持指沿用上一时刻值。结果：离线回放完成；局限：尚无现场验证。’保留全部公式、代码、URL、引用、摘要总起句、关键词格式和复杂条件并列，不要宣称冒号或分号普遍非法或足以证明AI作者身份。若改写最后一句，请给出四个改写契约字段。",
+      "expected_output": "读取 academic-style-zh.md §5.4，区分合法引出、关键词分隔、复杂条件并列、公式内分号、代码、URL、引用与最后一句的标签壳；保持所有受保护内容原样，只将最后一句改成完整句并保留离线/未现场验证边界；明确标点本身不能判定AI作者身份，并给出四字段。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "主要研究工作如下：.*关键词：.*状态估计；缺失数据；鲁棒性",
+          "description": "preserves the abstract overview and keyword punctuation"
+        },
+        {
+          "type": "regex",
+          "pattern": "\\$h=\\[h_A;h_B\\]\\$.*`mode: safe; retry: 2`.*https://example\\.org/a:b.*\\\\cite\\{std\\}",
+          "description": "preserves formula, code, URL, and citation tokens"
+        },
+        {
+          "type": "regex",
+          "pattern": "(离线回放).*(尚无|没有|未).*(现场验证)",
+          "description": "rewrites the label shell without losing evidence scope"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不能|不足以|不应).*(AI|作者身份|生成文本)",
+          "description": "does not infer AI authorship from punctuation alone"
+        },
+        {
+          "type": "regex",
+          "pattern": "Changed:[\\s\\S]*Protected:[\\s\\S]*Meaning-Check:[\\s\\S]*Risk-Flags:",
+          "description": "returns the four rewrite-contract fields"
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "prompt": "请审查已有中文 LaTeX 学位论文 main.tex 的双语图表题。main.tex 通过 \\input{chapters/captions} 引入子文件。chapters/captions.tex 中：第3行 figure 使用跨行的 \\caption [流程简称]\\n{系统流程} 后接 \\label{fig:flow}；第8行 table 使用 \\bicaption[参数表]{参数设置}[Parameters]{Parameter settings}，位于 tabular 之前并后接 \\label{tab:param}；第14行另一个 table 先结束 tabular，第18行才写 \\bicaption{消融结果}{Ablation results} 与 \\label{tab:ablation}；第24行 table 只有 \\captionsetup{font=small}、\\fakecaption{占位} 和被注释掉的 % \\caption{不应计入}，但有 \\label{tab:missing}。请分别按 references 和 tables 模块给出检查结果，保留源文件与行号，不修改源码。",
+      "expected_output": "运行或明确给出 check_references.py 与 check_tables.py 的实际命令；把第3行带可选短标题和换行的 caption、第8行 bicaption 识别为真实题注，不报 missing caption；第18行 bicaption 仍被识别为真实题注但 tables 报告其位于 tabular 下方；captionsetup、fakecaption 和注释题注不能掩盖第24行环境缺少真实题注；定位保留 chapters/captions.tex 的源文件与行号。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "check_references\\.py[\\s\\S]*check_tables\\.py|check_tables\\.py[\\s\\S]*check_references\\.py",
+          "description": "uses both public checkers"
+        },
+        {
+          "type": "regex",
+          "pattern": "(第3行|3行|captions\\.tex:3).*(第8行|8行|captions\\.tex:8).*(不报|无需报告|合法|真实题注)",
+          "description": "accepts optional short titles, whitespace, and bicaption"
+        },
+        {
+          "type": "regex",
+          "pattern": "(第18行|18行|captions\\.tex:18).*(下方|位置|tabular)",
+          "description": "reports the real caption below tabular as a position issue"
+        },
+        {
+          "type": "regex",
+          "pattern": "(captionsetup|fakecaption|注释).*(不能|不算|不会).*(题注|caption)|缺少.*(真实题注|caption)",
+          "description": "similar and commented commands cannot hide a missing caption"
+        },
+        {
+          "type": "contains",
+          "text": "chapters/captions.tex",
+          "description": "preserves multi-file source mapping"
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "prompt": "我的中文博士论文已有 LaTeX 工程，某 PNG 只标了 300 DPI，没有像素尺寸、最终排版宽度或编译页；续图需要进入图目录但不要重复目录项；longtable 后出现大块留白；一个定宽表又套了 \\resizebox 并缩小字号。请给出有条件的排查与验收步骤。必须使用 skill 自带 compile.py 和项目实际入口/recipe，不清理、压缩或重绘原 PDF，不安装工具，也不做 UI 自动化；缺少视觉证据时请明确标记 missing evidence。",
+      "expected_output": "不能用 300 DPI 元数据判定清晰度，需像素尺寸与最终排版宽度计算有效 ppi，并优先保留可编辑或矢量源；仅在当前模板/宏包支持时使用 ContinuedFloat、空目录题注或模板续图宏，并核对 AUX/图目录及相邻页；仅在确认 LTpost 造成留白时局部调整，先移除表格定宽、resizebox、小字号之间的二次压缩；通过 compile.py 以实际入口和可用 recipe 编译，再检查图源、导出图和实际编译页。现有信息只能标记 missing evidence，不得宣称版式通过、改全局 class、清理/压缩 PDF、安装依赖或自动操作 UI。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(300 ?DPI|DPI元数据).*(不能|不足以|无法).*(清晰|质量|通过)",
+          "description": "does not treat metadata as visual proof"
+        },
+        {
+          "type": "regex",
+          "pattern": "(像素尺寸|pixel).*(最终排版宽度|最终宽度|版面宽度).*(有效 ?ppi|PPI)",
+          "description": "uses effective ppi inputs"
+        },
+        {
+          "type": "regex",
+          "pattern": "(ContinuedFloat|续图宏|空目录题注).*(模板|宏包|支持)|LTpost.*(局部|确认)",
+          "description": "keeps continued-figure and long-table advice conditional"
+        },
+        {
+          "type": "regex",
+          "pattern": "(定宽|固定列宽).*(resizebox|\\\\resizebox).*(字号|小字号)|(resizebox|\\\\resizebox).*(二次压缩)",
+          "description": "checks double table scaling"
+        },
+        {
+          "type": "regex",
+          "pattern": "compile\\.py.*(实际入口|入口文件|main\\.tex).*(recipe|配方)|recipe.*compile\\.py",
+          "description": "uses the existing wrapper with the actual entry and recipe"
+        },
+        {
+          "type": "contains",
+          "text": "missing evidence",
+          "description": "keeps the visual evidence gap explicit"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不|不要|不得|不会).*(清理|压缩|重绘|安装|UI)",
+          "description": "respects the operational boundary"
+        }
+      ]
+    }
+  ]
+}

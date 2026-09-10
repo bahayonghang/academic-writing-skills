@@ -265,6 +265,7 @@ class TestCheckConsistency:
         result = checker.check_terms()
         assert result["status"] == "WARNING"
         assert len(result["inconsistencies"]) >= 1
+        assert "NEEDS-LLM" in result["inconsistencies"][0]["suggestion"]
 
     def test_no_inconsistency_when_consistent(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
@@ -311,6 +312,9 @@ class TestCheckConsistency:
         )
         result = checker.check_terms()
         assert result["status"] == "WARNING"
+
+        assert result["inconsistencies"][0]["group"] == ["自编码器", "自动编码器"]
+        assert "统一使用 '" not in result["inconsistencies"][0]["suggestion"]
 
 
 # ── optimize_title.py ──────────────────────────────────────────
@@ -511,7 +515,18 @@ class TestCompileZh:
         compiler = compile_zh.LaTeXCompiler(str(tex))
         assert compiler.compiler == "xelatex"
 
-    def test_recipe_selection(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    @pytest.mark.parametrize(
+        "recipe",
+        [
+            "xelatex",
+            "lualatex",
+            "xelatex-bibtex",
+            "xelatex-biber",
+            "lualatex-bibtex",
+            "lualatex-biber",
+        ],
+    )
+    def test_recipe_selection(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, recipe):
         tex = tmp_path / "main.tex"
         tex.write_text(
             "\\documentclass{article}\\begin{document}x\\end{document}", encoding="utf-8"
@@ -522,16 +537,16 @@ class TestCompileZh:
 
         def fake_run(cmd, cwd=None, capture_output=False):
             calls.append(cmd)
-            return SimpleNamespace(returncode=0)
+            return SimpleNamespace(returncode=2 if cmd[0] in ("bibtex", "biber") else 0)
 
         monkeypatch.setattr(compile_zh.shutil, "which", lambda _: "/usr/bin/fake")
         monkeypatch.setattr(compile_zh.subprocess, "run", fake_run)
 
-        compiler = compile_zh.LaTeXCompiler(str(tex), recipe="xelatex-biber")
+        compiler = compile_zh.LaTeXCompiler(str(tex), recipe=recipe)
         code = compiler.compile()
         assert code == 0
-        assert compiler.recipe == "xelatex-biber"
-        assert any("biber" in str(cmd) for cmd in calls)
+        assert compiler.recipe == recipe
+        assert [cmd[0] for cmd in calls] == compile_zh.LaTeXCompiler.RECIPES[recipe]
 
     def test_shell_escape_requires_trusted_source(self, tmp_path: Path):
         tex = tmp_path / "main.tex"

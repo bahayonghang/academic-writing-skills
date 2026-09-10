@@ -17,6 +17,28 @@ bibliography recipe are not universal defaults. The raw compiler commands below 
 an instruction to bypass the wrapper. Do not clean an existing PDF, install a missing package, or enable
 `--shell-escape` as an automatic recovery step.
 
+## Output Directory and Success
+
+```bash
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe latexmk --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler lualatex --outdir "build output"
+```
+
+Without `--outdir`, the target PDF is beside the source entry. A relative output directory is resolved against
+the source entry's directory, not the caller's working directory; absolute directories retain their location.
+Paths containing spaces or Chinese characters are passed as one argument. The reported PDF uses the same
+resolved directory as the latexmk command.
+
+The default latexmk path, `--recipe latexmk`, and explicit `--compiler` support `--outdir`. Manual recipes
+(`xelatex`, `lualatex`, and their `-bibtex` / `-biber` variants) reject this combination before running a tool.
+Choose a supported latexmk path explicitly; the wrapper does not silently replace a selected recipe.
+
+A normally completed latexmk run succeeds only with exit code 0 and the target PDF present. A stale PDF in the
+source directory cannot replace a missing output-directory PDF. An existing target that latexmk considers up to
+date remains valid; this check does not prove freshness or layout. Explicit compiler runs without `--outdir`
+also fail if the PDF is missing. Manual recipes without `--outdir` keep their existing bibliography-warning
+behavior. Watch interruption and shell-escape trust requirements are unchanged.
+
 ## Compiler Selection
 
 | Compiler | Best For | Command |

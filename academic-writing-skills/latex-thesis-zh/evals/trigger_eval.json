@@ -245,6 +245,11 @@
       "query": "我的中文 LaTeX 博士论文有跨页双语续图，图目录出现重复条目，longtable 后还有一大块留白，请按现有模板和编译页帮我检查题注与版式。",
       "should_trigger": true,
       "category": "layout-caption-table"
+    },
+    {
+      "query": "请给中文博士论文这一小节做逆向提纲，逐段核对段主题、章目标和证据，指出该保留、收窄或移位的位置，先不要改正文。",
+      "should_trigger": true,
+      "category": "writing-reverse-outline"
     }
   ]
 }

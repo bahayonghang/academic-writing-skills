@@ -1,0 +1,6 @@
+{"file":".trellis/spec/academic-writing-skills/index.md","reason":"当前本库规范索引及引用范围"}
+{"file":".trellis/spec/academic-writing-skills/testing-and-tooling.md","reason":"ZH加载、真实回归、编码与默认误报/假绿边界"}
+{"file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md","reason":"源资源/双语/manifest与构建门禁"}
+{"file":".trellis/tasks/09-10-thesis-zh-spec-gap-optimization/research/gap-analysis.md","reason":"G1-G6的当前源码证据与反证"}
+{"file":".trellis/spec/academic-writing-skills/harness-workflow-contract.md","reason":"命令执行与真实运行证据区别"}
+{"file":".trellis/tasks/archive/2026-09/09-05-thesis-zh-practice-spec/research/implementation-check.md","reason":"旧任务真实outdir问题与排除边界"}

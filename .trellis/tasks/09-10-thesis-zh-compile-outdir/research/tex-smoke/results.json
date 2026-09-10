@@ -1,0 +1,170 @@
+{
+  "kind": "isolated_real_wrapper",
+  "isolated": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc",
+  "versions": {
+    "latexmk": {
+      "executable": "C:\\texlive\\2025\\bin\\windows\\latexmk.EXE",
+      "exit": 0,
+      "stdout": "Initial Win CP for (console input, console output, system): (CP65001, CP65001, CP936)\r\nI changed them all to CP936\r\nLatexmk, John Collins, 27 Dec. 2024. Version 4.86a\r\n",
+      "stderr": "perl: warning: Setting locale failed.\r\nperl: warning: Please check that your locale settings:\r\n\tLC_ALL = \"C.UTF-8\",\r\n\tLC_CTYPE = \"C\",\r\n\tLC_NUMERIC = \"C\",\r\n\tLC_COLLATE = \"C\",\r\n\tLC_TIME = (unset),\r\n\tLC_MONETARY = (unset),\r\n\tLANG = \"C.UTF-8\"\r\n    are supported and installed on your system.\r\nperl: warning: Falling back to the system default locale (\"English_United States.1252\").\r\nReverting Windows console CPs to (in,out) = (65001,65001)\r\n"
+    },
+    "xelatex": {
+      "executable": "C:\\texlive\\2025\\bin\\windows\\xelatex.EXE",
+      "exit": 0,
+      "stdout": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)\r\nkpathsea version 6.4.1\r\nCopyright 2025 SIL International, Jonathan Kew and Khaled Hosny.\r\nThere is NO warranty.  Redistribution of this software is\r\ncovered by the terms of both the XeTeX copyright and\r\nthe Lesser GNU General Public License.\r\nFor more information about these matters, see the file\r\nnamed COPYING and the XeTeX source.\r\nPrimary author of XeTeX: Jonathan Kew.\r\nCompiled with ICU version 76.1; using 76.1\r\nCompiled with zlib version 1.3.1; using 1.3.1\r\nCompiled with FreeType2 version 2.13.3; using 2.13.3\r\nCompiled with Graphite2 version 1.3.14; using 1.3.14\r\nCompiled with HarfBuzz version 10.2.0; using 10.2.0\r\nCompiled with libpng version 1.6.46; using 1.6.46\r\nCompiled with pplib version v2.2\r\nCompiled with fontconfig version 2.15.0; using 2.15.0\r\n",
+      "stderr": ""
+    },
+    "lualatex": {
+      "executable": "C:\\texlive\\2025\\bin\\windows\\lualatex.EXE",
+      "exit": 0,
+      "stdout": "This is LuaHBTeX, Version 1.21.0 (TeX Live 2025)\r\nDevelopment id: 7667\r\n\r\nExecute  'luahbtex --credits'  for credits and version details.\r\n\r\nThere is NO warranty. Redistribution of this software is covered by\r\nthe terms of the GNU General Public License, version 2 or (at your option)\r\nany later version. For more information about these matters, see the file\r\nnamed COPYING and the LuaTeX source.\r\n\r\nLuaTeX is Copyright 2025 Taco Hoekwater and the LuaTeX Team.\r\n\r\n",
+      "stderr": ""
+    }
+  },
+  "runs": [
+    {
+      "name": "recipe-relative",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\recipe-relative\\main.tex",
+        "--recipe",
+        "latexmk",
+        "--outdir",
+        "build"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\recipe-relative\\build\\main.pdf",
+      "target_exists": true,
+      "target_size": 4245,
+      "mtime_before": null,
+      "mtime_after": 1789044562893248300,
+      "source_pdf_exists": false,
+      "stdout": "tex-smoke/recipe-relative.stdout.txt",
+      "stderr": "tex-smoke/recipe-relative.stderr.txt"
+    },
+    {
+      "name": "compiler-xelatex-absolute",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\compiler-xelatex-absolute\\main.tex",
+        "--compiler",
+        "xelatex",
+        "--outdir",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\external output"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\external output\\main.pdf",
+      "target_exists": true,
+      "target_size": 4246,
+      "mtime_before": null,
+      "mtime_after": 1789044565369340400,
+      "source_pdf_exists": false,
+      "stdout": "tex-smoke/compiler-xelatex-absolute.stdout.txt",
+      "stderr": "tex-smoke/compiler-xelatex-absolute.stderr.txt"
+    },
+    {
+      "name": "compiler-lualatex-unicode-space",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\compiler-lualatex-unicode-space\\main.tex",
+        "--compiler",
+        "lualatex",
+        "--outdir",
+        "构建 目录"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\compiler-lualatex-unicode-space\\构建 目录\\main.pdf",
+      "target_exists": true,
+      "target_size": 4584,
+      "mtime_before": null,
+      "mtime_after": 1789044567277586600,
+      "source_pdf_exists": false,
+      "stdout": "tex-smoke/compiler-lualatex-unicode-space.stdout.txt",
+      "stderr": "tex-smoke/compiler-lualatex-unicode-space.stderr.txt"
+    },
+    {
+      "name": "default-relative",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\default-relative\\main.tex",
+        "--outdir",
+        "build"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\default-relative\\build\\main.pdf",
+      "target_exists": true,
+      "target_size": 4246,
+      "mtime_before": null,
+      "mtime_after": 1789044569896526000,
+      "source_pdf_exists": false,
+      "stdout": "tex-smoke/default-relative.stdout.txt",
+      "stderr": "tex-smoke/default-relative.stderr.txt"
+    },
+    {
+      "name": "default-no-outdir",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\default-no-outdir\\main.tex"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\default-no-outdir\\main.pdf",
+      "target_exists": true,
+      "target_size": 4249,
+      "mtime_before": null,
+      "mtime_after": 1789044572258650500,
+      "source_pdf_exists": true,
+      "stdout": "tex-smoke/default-no-outdir.stdout.txt",
+      "stderr": "tex-smoke/default-no-outdir.stderr.txt"
+    },
+    {
+      "name": "recipe-up-to-date",
+      "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+        "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\recipe-relative\\main.tex",
+        "--recipe",
+        "latexmk",
+        "--outdir",
+        "build"
+      ],
+      "exit": 0,
+      "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-wrapper-m7q0chtc\\recipe-relative\\build\\main.pdf",
+      "target_exists": true,
+      "target_size": 4245,
+      "mtime_before": 1789044562893248300,
+      "mtime_after": 1789044562893248300,
+      "source_pdf_exists": false,
+      "stdout": "tex-smoke/recipe-up-to-date.stdout.txt",
+      "stderr": "tex-smoke/recipe-up-to-date.stderr.txt"
+    }
+  ]
+}

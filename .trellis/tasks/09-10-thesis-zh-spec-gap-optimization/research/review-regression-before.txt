@@ -1,0 +1,220 @@
+......FFFFFF                                                             [100%]
+================================== FAILURES ===================================
+________ test_manual_outdir_rejected_before_subprocess[False-xelatex] _________
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be6/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F57BB050>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F57BE250>
+recipe = 'xelatex', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] xelatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+________ test_manual_outdir_rejected_before_subprocess[False-lualatex] ________
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be7/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F58727B0>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F57BE140>
+recipe = 'lualatex', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] lualatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+_____ test_manual_outdir_rejected_before_subprocess[False-xelatex-bibtex] _____
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be8/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F5871E50>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F57BA250>
+recipe = 'xelatex-bibtex', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] xelatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+_____ test_manual_outdir_rejected_before_subprocess[False-xelatex-biber] ______
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be9/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F6101EF0>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F57B9450>
+recipe = 'xelatex-biber', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] xelatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+____ test_manual_outdir_rejected_before_subprocess[False-lualatex-bibtex] _____
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be10/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F6101710>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F5870F50>
+recipe = 'lualatex-bibtex', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] lualatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+_____ test_manual_outdir_rejected_before_subprocess[False-lualatex-biber] _____
+
+tex_file = WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh/pytest-204/test_manual_outdir_rejected_be11/source/main.tex')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F3F615D3D0>
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F3F58718B0>
+recipe = 'lualatex-biber', tools_available = False
+
+    @pytest.mark.parametrize("recipe", MANUAL_RECIPES)
+    @pytest.mark.parametrize("tools_available", [True, False])
+    def test_manual_outdir_rejected_before_subprocess(
+        tex_file, monkeypatch, capsys, recipe, tools_available
+    ):
+        calls = []
+        monkeypatch.setattr(
+            compile_zh.shutil, "which", lambda _: "/fake/tool" if tools_available else None
+        )
+        monkeypatch.setattr(
+            compile_zh.subprocess,
+            "run",
+            lambda *args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0),
+        )
+        tex_file.with_suffix(".pdf").write_bytes(b"%PDF-1.4\nold source output\n")
+        monkeypatch.setattr(
+            sys, "argv", ["compile.py", str(tex_file), "--recipe", recipe, "--outdir", "build"]
+        )
+        with pytest.raises(SystemExit) as exit_info:
+            compile_zh.main()
+        assert exit_info.value.code == 1
+        assert calls == []
+        output = capsys.readouterr().out
+        assert "[ERROR]" in output
+>       assert "--outdir" in output
+E       AssertionError: assert '--outdir' in '[ERROR] lualatex not found. Install TeX Live or MiKTeX.\n'
+
+tests\skills\latex_thesis_zh\test_compile_outdir.py:171: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-xelatex]
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-lualatex]
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-xelatex-bibtex]
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-xelatex-biber]
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-lualatex-bibtex]
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[False-lualatex-biber]
+6 failed, 6 passed, 77 deselected in 1.02s

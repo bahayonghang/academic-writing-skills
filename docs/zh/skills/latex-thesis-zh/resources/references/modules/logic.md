@@ -6,12 +6,19 @@ For chapter-level rewrite planning, also read `../writing/thesis-writing-guide.m
 
 ## AXES Model (Paragraph-Level Coherence)
 
+给定输入仅为“注意力模型在测试集 T 上的准确率为95%”，没有比较基线或组件试验。
+AXES 用来检查论证角色，不要求把一个观察补成提升或机制结论：
+
 | Component | Role | Example |
 |-----------|------|---------|
-| **A**ssertion | Clear topic sentence | "注意力机制能够提升序列建模效果。" |
-| **X**ample | Supporting evidence/data | "实验中，注意力机制达到95%准确率。" |
-| **E**xplanation | Why evidence supports claim | "这一提升源于其捕获长程依赖的能力。" |
-| **S**ignificance | Connection to broader argument | "这一发现为本文架构设计提供了依据。" |
+| **A**ssertion | Clear topic sentence | "本段报告注意力模型在测试集 T 上的预测表现。" |
+| **X**ample | Supporting evidence/data | "该模型在测试集 T 上的准确率为95%。" |
+| **E**xplanation | Why evidence supports claim | 该值只支持本次准确率观察，不能单独推导改进幅度或长程依赖机制 |
+| **S**ignificance | Connection to broader argument | 将该记录关联到本章的评测问题；没有章目标时先标明缺失，不补造架构合理性 |
+
+比较、组件贡献与因果资格按[结果分析指南](../writing/results-analysis-guide-zh.md)判断。
+需要定位段主题与章目标、证据与段主题的关系时，参考
+[逆向提纲示例](../../examples/logic-and-experiment.md)，不要求每次局部检查生成全篇台账。
 
 ## Heading Lead-In Check (S1)
 

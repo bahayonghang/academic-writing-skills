@@ -1,0 +1,13 @@
+{
+  "kind": "in_memory_and_mock",
+  "observations": {
+    "only_requested_output": {
+      "exit": 1,
+      "stdout": "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: <repo>\\nonexistent-fixture\n\n[STEP 1/1] Running latexmk-xelatex...\n\n[ERROR] PDF not found: <repo>\\nonexistent-fixture\\main.pdf\n"
+    },
+    "stale_source_pdf": {
+      "exit": 0,
+      "stdout": "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: <repo>\\nonexistent-fixture\n\n[STEP 1/1] Running latexmk-xelatex...\n\n[SUCCESS] PDF generated: <repo>\\nonexistent-fixture\\main.pdf\n"
+    }
+  }
+}
