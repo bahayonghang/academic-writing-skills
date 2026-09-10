@@ -489,6 +489,7 @@ def _assert_module_router_commands_match_script_help(skill_name: str) -> None:
 
     env = dict(os.environ)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env["PYTHONIOENCODING"] = "utf-8"
 
     for module_name, command in rows:
         tokens = shlex.split(command)
@@ -500,6 +501,8 @@ def _assert_module_router_commands_match_script_help(skill_name: str) -> None:
             [sys.executable, "-B", str(script_path), "--help"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             check=False,
             env=env,
         )

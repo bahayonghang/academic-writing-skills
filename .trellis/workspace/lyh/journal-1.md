@@ -1493,3 +1493,39 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 - deep-review 落盘行为至今只有静态读码证据，需实跑补验。
 - eval 断言需在 skill-creator 侧真实执行才算验证，本仓库 just ci 只保证形状契约。
 - 论文仓库部署副本 thesis/.agents/skills/paper-audit/ 未同步，待用户自行重装。
+
+
+## Session 44: 中文论文技能父子任务实施验收与归档
+
+**Date**: 2026-09-10
+**Task**: 中文论文技能父子任务实施验收与归档
+**Branch**: `dev`
+
+### Summary
+
+完成指南保真、一致性语义、编译输出目录三个子任务及父任务集成验收，按用户后续明确授权定向本地提交并归档四任务。保留三份原有无关改动；新 paper-audit 中文学位论文审查优化将另建规划任务。
+
+### Main Changes
+
+- 写作建议尊重学校和体裁证据；缩略语按入口顺序检查；编译成功须满足目标 PDF 和退出码。
+- 同步双语镜像、271 项资源清单和两份维护 spec，归档完整独立审阅证据。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4e47e8e` | (see git log) |
+
+### Testing
+
+- [OK] just ci: 1908 passed / 2 skipped；Pyright 0 errors / 75 baseline warnings。
+- [OK] 资源门禁、docs build、六组真实 TeX 场景及审阅修复后 smoke 通过。
+- [OK] 真实论文质量、五宿主运行、provider benchmark 和学校模板视觉 UNVERIFIED。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 创建 paper-audit 中文大论文审查优化任务，使用 qiaomu-meta-skill 调研和规划，待新计划审阅后再进入实施。

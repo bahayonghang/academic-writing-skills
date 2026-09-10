@@ -14,6 +14,37 @@ LuaLaTeX and its bibliography recipes are also supported. The raw commands below
 they do not authorize bypassing the wrapper, installing system packages, cleaning the original PDF, or enabling
 shell escape. Use the entry file, engine, bibliography backend, and output path established by the current project.
 
+## Output Path Contract
+
+```bash
+uv run python $SKILL_DIR/scripts/compile.py main.tex --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe latexmk --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler xelatex --outdir "build output"
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler lualatex --outdir build
+```
+
+The source entry's parent directory is the working directory. Without `--outdir`, the expected PDF is the source
+entry with its extension replaced by `.pdf`. Relative output directories resolve against that parent directory;
+absolute directories are normalized without changing their location. Spaces and Chinese characters remain in one
+command argument. The same resolved output path drives both latexmk arguments and the final PDF check/report.
+
+The default path and explicit `--compiler` use latexmk, as does `--recipe latexmk`. All support `--outdir`.
+Manual `xelatex` / `lualatex` recipes and their `-bibtex` / `-biber` variants do not support output-directory
+coordination: with `--outdir` they return 1 before any TeX or bibliography process, with a supported-path hint.
+They are never silently converted to a different recipe. Without `--outdir`, manual recipes retain their
+existing behavior, including continuing after nonzero BibTeX/Biber warnings.
+
+For normally completed latexmk runs, a nonzero process result is returned even if a PDF exists. Exit code 0
+requires a PDF at the expected path; a missing target returns 1, and a source-directory PDF cannot substitute
+for an output-directory target. This also fixes the former false success for explicit compiler runs with no PDF,
+including runs without `--outdir`. A target already considered up to date by latexmk is a valid success: the
+wrapper does not force rebuilding, compare timestamps, or prove content/visual correctness. Watch interruption
+handling is unchanged.
+
+The wrapper derives this path from the source filename and `--outdir`; it does not infer output overrides from
+`.latexmkrc`, `jobname`, or `auxdir`. Pass the intended directory explicitly. Supporting custom naming or manual
+bibliography output paths requires a separate change.
+
 ## Compiler Selection
 
 ### pdfLaTeX
@@ -50,8 +81,7 @@ $xelatex = 'xelatex -interaction=nonstopmode -no-shell-escape %O %S';
 $bibtex_use = 2;
 $biber = 'biber %O %S';
 
-# Output directory (optional)
-# $out_dir = 'build';
+# Set the output directory through wrapper --outdir build.
 
 # Clean extensions
 @generated_exts = (@generated_exts, 'synctex.gz', 'nav', 'snm', 'vrb');

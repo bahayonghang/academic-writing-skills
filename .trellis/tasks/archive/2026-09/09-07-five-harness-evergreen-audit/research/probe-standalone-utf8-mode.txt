@@ -1,0 +1,88 @@
+[audit] File: sample_paper.tex | Format: .tex | Language: en | Mode: quick-audit
+[audit] SKIP format: script not found
+[audit] SKIP grammar: script not found
+[audit] SKIP logic: script not found
+[audit] SKIP experiment: script not found
+[audit] SKIP sentences: script not found
+[audit] SKIP deai: script not found
+[audit] RUN citations: check_citations.py (origin=audit, own)
+[audit] SKIP bib: no .bib resolved from sample_paper.tex
+[audit] SKIP figures: script not found
+[audit] SKIP pseudocode: script not found
+[audit] RUN references: check_references.py (origin=audit, own)
+[audit] SKIP visual: not applicable to .tex
+[audit] RUN presubmission: pre_submission_check.py (origin=audit, own)
+[audit] citations: 1 issues found
+[audit] references: clean
+[audit] presubmission: 1 issues found
+
+{
+  "file": "D:\\Documents\\Code\\Agents\\academic-writing-skills\\tests\\fixtures\\paper_audit\\sample_paper.tex",
+  "language": "en",
+  "mode": "quick-audit",
+  "mode_alias_used": null,
+  "venue": "",
+  "generated_at": "2026-09-07T23:43:36.359473",
+  "scores": {
+    "quality": 5.0,
+    "clarity": 5.25,
+    "significance": 6.0,
+    "originality": 6.0,
+    "overall": 5.48
+  },
+  "verdict": "score.accept",
+  "issues": [
+    {
+      "module": "CITATIONS",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No citation stacking issues found.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "PRESUBMISSION",
+      "line": null,
+      "severity": "Major",
+      "priority": "P1",
+      "message": "[A1] Abstract five-element check is incomplete; missing background, method, conclusion, quantitative results.",
+      "original": "",
+      "revised": ""
+    }
+  ],
+  "checklist": [
+    {
+      "description": "No placeholder text (TODO, FIXME, XXX)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "All figures referenced in text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "All tables referenced in text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Anonymous submission (blind review check)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Consistent math notation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Acronyms defined on first use",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}
+
+STDERR:

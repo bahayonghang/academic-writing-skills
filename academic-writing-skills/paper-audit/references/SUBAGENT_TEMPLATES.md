@@ -1,6 +1,25 @@
 # Reviewer Lane Templates
 
-Use these templates when dispatching `deep-review` lane tasks.
+Use these templates when running `deep-review` lane tasks.
+
+## Execution mode
+
+These templates define inputs, read-only file scope, output path, and
+provenance. They do not require a tool named `Task`.
+
+- Inputs: the `Read:` list in the template, plus the matching Focus /
+  DO / DON'T block.
+- File scope: read only the listed files under `<review_dir>` and the
+  named reference files. Do not edit the paper source.
+- Output: write the JSON array to `<review_dir>/comments/<lane_name>.json`
+  (or the path in the lane's Output limit). Keep `[Script]` vs `[LLM]`
+  provenance on each finding.
+- `native delegated`: spawn one child per exclusive lane only when the
+  current tool actually created independent children. Parallelize those
+  exclusive scopes.
+- `sequential single-agent`: if this session has no native delegate, run
+  the same templates in one agent, one lane after another. Keep the same
+  outputs. Do not describe that run as an independent panel.
 
 ## Section lane
 

@@ -169,6 +169,11 @@ class LaTeXCompiler:
         if self.shell_escape:
             print("[WARNING] Shell escape enabled. Only use with trusted sources.")
 
+    def _output_pdf(self, outdir: Optional[str]) -> Path:
+        """Resolve the output path relative to the source entry's directory."""
+        output_dir = (self.work_dir / outdir).resolve() if outdir else self.work_dir
+        return output_dir / self.tex_file.with_suffix(".pdf").name
+
     def compile(
         self, watch: bool = False, biber: bool = False, outdir: Optional[str] = None
     ) -> int:
@@ -178,24 +183,21 @@ class LaTeXCompiler:
         Args:
             watch: Enable continuous compilation mode
             biber: Use biber instead of bibtex
-            outdir: Output directory for generated files
+            outdir: Output directory, relative to the source directory unless absolute
 
         Returns:
             Exit code (0 for success)
         """
-        # Check tools
+        # Validate recipe/output combinations before checking tool availability.
         if self.recipe:
-            ok, msg = self._check_tools_for_recipe()
-        else:
-            ok, msg = self._check_tools_for_compiler()
+            return self._compile_with_recipe(outdir)
+
+        ok, msg = self._check_tools_for_compiler()
         if not ok:
             print(f"[ERROR] {msg}")
             return 1
 
-        # If recipe is specified, use recipe-based compilation
-        if self.recipe:
-            return self._compile_with_recipe(outdir)
-
+        pdf_file = self._output_pdf(outdir)
         print(f"[INFO] Compiling {self.tex_file.name} with {self.compiler}")
         print(f"[INFO] Working directory: {self.work_dir}")
         self._maybe_warn_shell_escape()
@@ -224,6 +226,9 @@ class LaTeXCompiler:
             cmd.append("-pvc")
             print("[INFO] Watch mode enabled. Press Ctrl+C to stop.")
 
+        if outdir:
+            cmd.append(f"-outdir={pdf_file.parent}")
+
         # Add input file
         cmd.append(str(self.tex_file))
 
@@ -234,12 +239,14 @@ class LaTeXCompiler:
                 cwd=self.work_dir,
                 capture_output=False,
             )
-            if result.returncode == 0:
-                pdf_file = self.tex_file.with_suffix(".pdf")
-                print(f"\n[SUCCESS] PDF generated: {pdf_file}")
-            else:
+            if result.returncode != 0:
                 print(f"\n[ERROR] Compilation failed with exit code {result.returncode}")
-            return result.returncode
+                return result.returncode
+            if not pdf_file.exists():
+                print(f"\n[ERROR] PDF not found: {pdf_file}")
+                return 1
+            print(f"\n[SUCCESS] PDF generated: {pdf_file}")
+            return 0
 
         except KeyboardInterrupt:
             print("\n[INFO] Compilation stopped by user")
@@ -256,6 +263,19 @@ class LaTeXCompiler:
             return 1
 
         steps = self.RECIPES[self.recipe]
+        if outdir and any(not step.startswith("latexmk-") for step in steps):
+            print(
+                f"[ERROR] --outdir is not supported with manual recipe {self.recipe}. "
+                "Use --recipe latexmk or --compiler xelatex/lualatex."
+            )
+            return 1
+
+        ok, msg = self._check_tools_for_recipe()
+        if not ok:
+            print(f"[ERROR] {msg}")
+            return 1
+
+        pdf_file = self._output_pdf(outdir)
         print(f"[INFO] Using recipe: {self.recipe}")
         print(f"[INFO] Steps: {' -> '.join(steps)}")
         print(f"[INFO] Working directory: {self.work_dir}")
@@ -275,9 +295,6 @@ class LaTeXCompiler:
                     "-synctex=1",
                     "-file-line-error",
                 ]
-                if outdir:
-                    cmd.append(f"-outdir={outdir}")
-                cmd.append(str(self.tex_file))
             elif step == "latexmk-lualatex":
                 cmd = [
                     "latexmk",
@@ -287,9 +304,6 @@ class LaTeXCompiler:
                     "-synctex=1",
                     "-file-line-error",
                 ]
-                if outdir:
-                    cmd.append(f"-outdir={outdir}")
-                cmd.append(str(self.tex_file))
             elif step in ("xelatex", "lualatex"):
                 cmd = [
                     step,
@@ -305,6 +319,11 @@ class LaTeXCompiler:
             else:
                 print(f"[ERROR] Unknown step: {step}")
                 return 1
+
+            if step.startswith("latexmk-"):
+                if outdir:
+                    cmd.append(f"-outdir={pdf_file.parent}")
+                cmd.append(str(self.tex_file))
 
             try:
                 result = subprocess.run(
@@ -327,7 +346,6 @@ class LaTeXCompiler:
                 print(f"[ERROR] {e}")
                 return 1
 
-        pdf_file = self.tex_file.with_suffix(".pdf")
         if pdf_file.exists():
             print(f"\n[SUCCESS] PDF generated: {pdf_file}")
             return 0
@@ -423,7 +441,9 @@ Examples:
     )
     parser.add_argument("--clean", action="store_true", help="清理辅助文件")
     parser.add_argument("--clean-all", action="store_true", help="清理所有生成文件 (含 PDF)")
-    parser.add_argument("--outdir", "-o", help="输出目录 (仅 latexmk 配置支持)")
+    parser.add_argument(
+        "--outdir", "-o", help="输出目录 (相对源文件目录；支持 latexmk recipe 或 --compiler)"
+    )
 
     args = parser.parse_args()
 

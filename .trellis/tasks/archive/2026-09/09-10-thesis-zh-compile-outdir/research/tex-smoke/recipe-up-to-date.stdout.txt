@@ -1,0 +1,15 @@
+Initial Win CP for (console input, console output, system): (CP65001, CP65001, CP936)
+I changed them all to CP936
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 27 Dec. 2024. Version 4.86a.
+Latexmk: Nothing to do for 'C:/Users/lyh/AppData/Local/Temp/c3-wrapper-m7q0chtc/recipe-relative/main.tex'.
+Latexmk: All targets (build/main.xdv build/main.pdf) are up-to-date
+
+[INFO] Using recipe: latexmk
+[INFO] Steps: latexmk-xelatex
+[INFO] Working directory: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\recipe-relative
+
+[STEP 1/1] Running latexmk-xelatex...
+
+[SUCCESS] PDF generated: C:\Users\lyh\AppData\Local\Temp\c3-wrapper-m7q0chtc\recipe-relative\build\main.pdf

@@ -1,0 +1,62 @@
+Initial Win CP for (console input, console output, system): (CP65001, CP65001, CP936)
+I changed them all to CP936
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 27 Dec. 2024. Version 4.86a.
+Latexmk: making output directory 'C:\Users\lyh\AppData\Local\Temp\c3-review-wrapper-8gfqw79k\build'
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'xelatex'...
+Rule 'xelatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'xelatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'xelatex'
+------------
+------------
+Running 'xelatex -no-shell-escape -no-pdf -interaction=nonstopmode -synctex=1 -file-line-error -recorder -output-directory="build"  "C:/Users/lyh/AppData/Local/Temp/c3-review-wrapper-8gfqw79k/main.tex"'
+------------
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)
+entering extended mode
+(c:/Users/lyh/AppData/Local/Temp/c3-review-wrapper-8gfqw79k/main.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(c:/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(c:/texlive/2025/texmf-dist/tex/latex/base/size10.clo))
+(c:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def)
+(build/main.aux)
+[1] (build/main.aux) )
+Output written on build/main.xdv (1 page, 736 bytes).
+SyncTeX written on build/main.synctex.gz.
+
+Transcript written on build/main.log.
+Latexmk: Getting log file 'build/main.log'
+Latexmk: Examining 'build/main.fls'
+Latexmk: Examining 'build/main.log'
+Latexmk: Log file says output to 'build/main.xdv'
+Latexmk: applying rule 'xdvipdfmx'...
+Rule 'xdvipdfmx':  Reasons for rerun
+Changed files or newly in use/created:
+  build/main.xdv
+Category 'changed_source_rules':
+  xelatex
+Category 'no_dest':
+  xdvipdfmx
+
+------------
+Run number 1 of rule 'xdvipdfmx'
+------------
+------------
+Running 'xdvipdfmx -E -o "build/main.pdf"  "build/main.xdv"'
+------------
+Latexmk: All targets (build/main.xdv build/main.pdf) are up-to-date
+
+[INFO] Using recipe: latexmk
+[INFO] Steps: latexmk-xelatex
+[INFO] Working directory: C:\Users\lyh\AppData\Local\Temp\c3-review-wrapper-8gfqw79k
+
+[STEP 1/1] Running latexmk-xelatex...
+
+[SUCCESS] PDF generated: C:\Users\lyh\AppData\Local\Temp\c3-review-wrapper-8gfqw79k\build\main.pdf

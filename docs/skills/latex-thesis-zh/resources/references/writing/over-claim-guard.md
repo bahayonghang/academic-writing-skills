@@ -10,11 +10,13 @@ is easier than revising after questioning.
 This file governs **how strong the wording should be once evidence strength is known**: which verb or
 qualifier keeps the sentence within the evidence. First determine whether figures/tables/metrics/citations
 actually support the claim, then use this file to choose wording. Substance takes priority when it conflicts with wording.
+The five-level evidence ladder in the [results analysis guide](results-analysis-guide-zh.md) governs result-evidence qualification.
+The alternatives below are not automatic substitutions: each also needs source evidence, rather than an invented association, influence, or statistical result.
 
 ## Certainty Ladder (Strong to Weak)
 
 ```
-证明 / 表明（强）                 ← 干预实验（消融/受控对比）
+证明 / 表明（强）                 ← 对应主张已通过实质证据审查，且限定适用范围
   ↓
 揭示 / 发现 / 识别出               ← 强效应，多方法或可复现
   ↓
@@ -41,17 +43,24 @@ Match the rung to the evidence; do not climb above what the data can reach.
 | 证明了 | 表明 / 提供了……的证据 |
 | 造成了 | 伴随出现 / 与……同时出现 |
 
-Use causal wording only for controlled interventions (ablation, randomized grouping, A/B comparison),
-instrumental-variable designs, or reproduction of an established mechanism. Otherwise use correlational wording.
+Labels such as “ablation,” “randomized control,” or “A/B” do not establish causal qualification. An ablation
+with different training budgets is confounded, so its difference cannot be attributed to the component.
+Controlled component removal can support a component contribution without identifying its mechanism.
+Use the results analysis guide to assess discriminating evidence for causal attribution. Report observations
+when that is all the evidence supports, and acknowledge an undetermined mechanism rather than substituting an unsupported “association.”
 
 ### 2. First/Unique Claims (Reviewers Will Search Immediately)
 
 | ❌ Over-Claim | ✅ Conservative Wording |
 |---|---|
-| 首次 / 第一个 | 据我们所知，首次 / 最早的工作之一 |
+| 首次 / 第一个 | Without a search, remove the priority claim or mark it for verification; describe the work actually done |
 | 新颖的（自我标榜） | Directly state what is new; delete the “novel” label |
 | 前所未有的 | 显著的 / 值得注意的 |
 | 此前未知的 | 此前研究不充分的 |
+
+“To our knowledge” cannot replace a search, and “one of the earliest” is still a priority claim. Discuss
+scoped novelty only when the search scope, date, and comparison with related work support it; a hedge
+cannot preserve an unverified “first.”
 
 ### 3. Universality (One Scenario Cannot Support Every Scenario)
 
@@ -69,9 +78,10 @@ instrumental-variable designs, or reproduction of an established mechanism. Othe
 | 大幅提升 | 误差降低了 X% |
 | 显著的效应 | β = X.XX（95% CI：…） |
 | 明显改善 | 从 X 提升到 Y（p = …） |
-| 高度显著 | p < 1 × 10⁻¹⁰ |
+| 高度显著 | Report the actual test's p-value, not an illustrative statistic |
 | 鲁棒 / 稳健 | 在 N 次独立运行中一致 / 在[扰动]下稳定 |
 
+Fill X, Y, N, and statistical placeholders only from existing records; otherwise mark missing evidence without inventing numbers.
 If the number already tells the story, remove the adjective and let the number speak.
 
 ### 5. Time/Inference Order (Inferring Historical Causality from Contemporary Data)
@@ -104,7 +114,7 @@ If the number already tells the story, remove the adjective and let the number s
 | Trap | Safe Alternative |
 |---|---|
 | “本文结果证明了 X。”（X 是因果） | “本文结果与 X 一致。” |
-| “这是首个……的工作。” | “据我们所知，是最早……的工作之一。” |
+| “这是首个……的工作。” | Without a search, remove “first” and describe the work done; priority remains unverified |
 | “X 在 Y 中起关键作用。” | “X 与 Y 有关 / 可能对 Y 有贡献。” |
 | “这些发现对……具有重要意义。” | “这些发现为进一步研究……提供了基础。” |
 | “X 是 Y 的关键驱动因素。” | “X 与 Y 相关。” |
@@ -114,15 +124,15 @@ If the number already tells the story, remove the adjective and let the number s
 
 Weak evidence requires caution, but cautious wording for strong evidence becomes timid. Use strong wording when:
 
-- a controlled intervention (ablation / randomized control / A-B) yields a causal result -> use “证明”;
+- discriminating evidence supports a specific causal claim -> retain the supported strong conclusion with its protocol, objects, and scope;
 - multiple methods/datasets/random seeds reproduce the result -> use “稳健” and state the evidence;
 - an established mechanism is reproduced -> “确认 / 验证” is appropriate;
 - a large effect has strong statistics -> use strong wording **with the number**.
 
 ## Self-Check After Each Paragraph
 
-- [ ] Used “首次/新颖”? Was the literature actually searched? If not, add “据我们所知”
-- [ ] Used “导致/驱动/决定”? Is there an intervention? If not, change to “与……相关”
+- [ ] Used “首次/新颖”? Without a search, remove the priority claim or mark it for verification, rather than just adding “据我们所知”
+- [ ] Used “导致/驱动/决定”? Check the actual design and evidence against the results analysis guide, not merely an intervention or ablation label
 - [ ] Used “所有/总是/普遍”? Is the scope limited to the actual study?
 - [ ] Used “显著/大幅/明显”? Is a number attached?
 - [ ] Listed an application not demonstrated here? Add “可能/或许”

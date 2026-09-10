@@ -1,0 +1,304 @@
+[audit] File: sample_paper.tex | Format: .tex | Language: en | Mode: quick-audit
+[audit] RUN format: check_format.py (origin=en, lang-native)
+[audit] RUN grammar: analyze_grammar.py (origin=en, lang-native)
+[audit] RUN logic: analyze_logic.py (origin=en, lang-native)
+[audit] RUN experiment: analyze_experiment.py (origin=en, lang-native)
+[audit] RUN sentences: analyze_sentences.py (origin=en, lang-native)
+[audit] RUN deai: deai_check.py (origin=en, lang-native)
+[audit] RUN citations: check_citations.py (origin=audit, own)
+[audit] SKIP bib: no .bib resolved from sample_paper.tex
+[audit] RUN figures: check_figures.py (origin=en, lang-native)
+[audit] RUN pseudocode: check_pseudocode.py (origin=en, lang-native)
+[audit] RUN references: check_references.py (origin=audit, own)
+[audit] SKIP visual: not applicable to .tex
+[audit] RUN presubmission: pre_submission_check.py (origin=audit, own)
+[audit] grammar: 2 issues found
+[audit] logic: clean
+[audit] logic: 1 issues found
+[audit] experiment: 7 issues found
+[audit] sentences: 2 issues found
+[audit] deai: 1 issues found
+[audit] citations: 1 issues found
+[audit] figures: 3 issues found
+[audit] pseudocode: clean
+[audit] references: clean
+[audit] presubmission: 1 issues found
+[audit] format: 7 issues found
+
+{
+  "file": "D:\\Documents\\Code\\Agents\\academic-writing-skills\\tests\\fixtures\\paper_audit\\sample_paper.tex",
+  "language": "en",
+  "mode": "quick-audit",
+  "mode_alias_used": null,
+  "venue": "",
+  "generated_at": "2026-09-07T23:43:35.421097",
+  "scores": {
+    "quality": 2.0,
+    "clarity": 1.5,
+    "significance": 3.0,
+    "originality": 5.75,
+    "overall": 2.8
+  },
+  "verdict": "score.borderline_reject",
+  "issues": [
+    {
+      "module": "GRAMMAR",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "[Script]: goal=grammar strength=minimal",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "GRAMMAR",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No rule-based issues detected in selected scope.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "LOGIC",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "/METHODOLOGY: No rule-based coherence issues detected.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 11,
+      "severity": "Major",
+      "priority": "P1",
+      "message": "Comparison claim names only generic baselines; cite or name the exact comparator.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 10,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No ablation or component-level evidence is mentioned; verify that contribution attribution is covered.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 10,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No statistical significance, variance, or confidence information is mentioned.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 10,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No efficiency comparison is mentioned; verify whether runtime, memory, or parameter cost should be reported.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 14,
+      "severity": "Major",
+      "priority": "P1",
+      "message": "Conclusion lacks limitations or future work discussion.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 14,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "Conclusion lacks implications or broader impact statement.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "EXPERIMENT",
+      "line": 14,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "Conclusion lacks explicit summary of core findings.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "SENTENCES",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "[Script]: goal=grammar strength=minimal",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "SENTENCES",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "SENTENCE: No sentences exceeded configured thresholds.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "DEAI",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "Use --analyze for full analysis",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "CITATIONS",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "No citation stacking issues found.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FIGURES",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "figures in D:\\Documents\\Code\\Agents\\academic-writing-skills\\tests\\fixtures\\paper_audit\\sample_paper.tex...",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FIGURES",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "0 figures.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FIGURES",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "All figures passed check.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "PRESUBMISSION",
+      "line": null,
+      "severity": "Major",
+      "priority": "P1",
+      "message": "[A1] Abstract five-element check is incomplete; missing background, method, conclusion, quantitative results.",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "============================================================",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "Format Check Report",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "============================================================",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "D:\\Documents\\Code\\Agents\\academic-writing-skills\\tests\\fixtures\\paper_audit\\sample_paper.tex",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "PASS",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "Found 0 issues",
+      "original": "",
+      "revised": ""
+    },
+    {
+      "module": "FORMAT",
+      "line": null,
+      "severity": "Minor",
+      "priority": "P2",
+      "message": "============================================================",
+      "original": "",
+      "revised": ""
+    }
+  ],
+  "checklist": [
+    {
+      "description": "No placeholder text (TODO, FIXME, XXX)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "All figures referenced in text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "All tables referenced in text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Anonymous submission (blind review check)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Consistent math notation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "description": "Acronyms defined on first use",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}
+
+STDERR:

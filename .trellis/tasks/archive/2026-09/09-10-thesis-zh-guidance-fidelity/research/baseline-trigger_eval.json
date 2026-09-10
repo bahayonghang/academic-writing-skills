@@ -1,0 +1,250 @@
+{
+  "skill_name": "latex-thesis-zh",
+  "queries": [
+    {
+      "query": "检查我的硕士学位论文，看 GB/T 7714 参考文献格式有没有问题。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "我的博士论文用的是 thuthesis 模板，章节结构有点乱，帮我梳理一下。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "中文学位论文里的术语前后不一致，跑一下一致性检查。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "帮我重新组织硕士论文第二章的文献综述，给出 research gap。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "审一下我的中文摘要结构，看是不是缺了背景/方法/结果/结论某一块。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "pkuthss 模板 XeLaTeX 编译卡住了，看看是不是 bib 出了问题。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "我的硕士论文段落都太长了，帮我做去 AI 化的轻润色。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "实验章节的描述太啰嗦，能不能帮我精简一下表达。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "帮我优化博士论文标题，让它更聚焦贡献。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "三线表格式不对，正文也没引用 Table 标号，帮我检查全文。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "帮我把绪论改成背景、技术瓶颈、科学问题、本文贡献逐步收束的学位论文写作方案。",
+      "should_trigger": true,
+      "category": "writing-mainline"
+    },
+    {
+      "query": "检查方法章节是否每个模块都有动机、设计和技术优势，并和实验验证闭合。",
+      "should_trigger": true,
+      "category": "writing-mainline"
+    },
+    {
+      "query": "第四章本章小结写成了好几段，帮我按中文工学博士论文写法压成一个自然段，概括本章问题、方法、验证和对全文主线的支撑。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
+      "query": "我的硕士论文每章末尾的章节小结太像目录复述了，请检查是不是应该改成单段收束式写法。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
+      "query": "Proofread my IEEE conference paper written in English LaTeX.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
+    },
+    {
+      "query": "Fix my Typst thesis compile error and check Hayagriva bibliography.",
+      "should_trigger": false,
+      "category": "negative-overlap-typst"
+    },
+    {
+      "query": "审稿一下这篇中文论文，给出主要/次要问题清单。",
+      "should_trigger": false,
+      "category": "negative-overlap-audit"
+    },
+    {
+      "query": "搜一下我的 BibTeX 文献库里张文 2023 年关于 Mamba 的论文。",
+      "should_trigger": false,
+      "category": "negative-overlap-bib"
+    },
+    {
+      "query": "帮我写一篇关于工业 AI 异常检测的综述初稿。",
+      "should_trigger": false,
+      "category": "negative-overlap-research"
+    },
+    {
+      "query": "帮我把这段 Python 代码翻译成 Java。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "帮我订一张明天去上海的高铁票。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "帮我把中文学位论文的绪论改成背景、技术瓶颈、科学问题、本文贡献和章节安排的漏斗式写法，引用先别动。",
+      "should_trigger": true,
+      "category": "writing-intro-funnel"
+    },
+    {
+      "query": "我这段文献综述还是按作者年份排队，帮我按主题分组并写出共识、分歧、局限、空白和本文切入点。",
+      "should_trigger": true,
+      "category": "writing-literature-synthesis"
+    },
+    {
+      "query": "请把方法章节的写作主线梳理成动机、设计、技术优势和与上一章的递进关系。",
+      "should_trigger": true,
+      "category": "writing-method-mainline"
+    },
+    {
+      "query": "帮我检查摘要、创新点和结论是不是闭合：问题、方法、结果、贡献和局限有没有对应。",
+      "should_trigger": true,
+      "category": "writing-closure"
+    },
+    {
+      "query": "我的中文博士论文目录里大标题和小标题都不对：每章小节太多，想限制到最多5节，并检查章标题有没有体现对象、问题、方法，小节标题有没有扣住上面的章标题。",
+      "should_trigger": true,
+      "category": "heading-architecture"
+    },
+    {
+      "query": "Please rewrite the introduction of my IEEE paper in English and keep the LaTeX commands intact.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
+    },
+    {
+      "query": "把这篇论文转成 Typst，然后顺手检查 Hayagriva 文献库有没有错。",
+      "should_trigger": false,
+      "category": "negative-overlap-typst"
+    },
+    {
+      "query": "帮我审一下这篇中文论文，列主要问题和次要问题，不用改正文。",
+      "should_trigger": false,
+      "category": "negative-overlap-audit"
+    },
+    {
+      "query": "我只是想搜一下 GB/T 7714 的参考文献来源，不需要改写任何章节。",
+      "should_trigger": false,
+      "category": "negative-overlap-bib"
+    },
+    {
+      "query": "Please make the H2/H3 headings in my English NeurIPS paper more concise; it is not a Chinese thesis project.",
+      "should_trigger": false,
+      "category": "negative-overlap-en"
+    },
+    {
+      "query": "Please shorten the chapter summary of my English dissertation draft in Word; there is no LaTeX project.",
+      "should_trigger": false,
+      "category": "negative-overlap-docx"
+    },
+    {
+      "query": "我是燕山大学的博士生，论文定稿了，帮我对照2024版撰写规范逐项终检一遍",
+      "should_trigger": true,
+      "category": "spec-check"
+    },
+    {
+      "query": "毕业论文提交前想按学校撰写规范做一次逐项格式自查，检查字数、关键词个数和参考文献数量够不够",
+      "should_trigger": true,
+      "category": "spec-check"
+    },
+    {
+      "query": "帮我生成盲审版论文，隐去我和导师的名字、致谢这些个人信息，原文件不要动。",
+      "should_trigger": true,
+      "category": "blind-review"
+    },
+    {
+      "query": "学位论文下个月送外审，帮我检查 LaTeX 工程里还有哪些地方会暴露作者身份，成果那章按学校盲审通知改成只留署名次序、期刊名称和年份。",
+      "should_trigger": true,
+      "category": "blind-review"
+    },
+    {
+      "query": "我的硕士论文这几段太口语了，帮我改得学术一点，句子也太长太绕。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "学位论文里数值和单位的写法、概数用不用汉字，帮我按国标查一遍。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "我的中文博士论文结果分析只会报数字和说曲线更贴合，还把完整模型的提升都归因到单个组件。请按证据阶梯检查这一章的分析深度。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
+    },
+    {
+      "query": "中文博士论文摘要的一项工作含三个模块，帮我判断它们是真实串行依赖还是并行协作，引用和公式不要动。",
+      "should_trigger": true,
+      "category": "writing-abstract-components"
+    },
+    {
+      "query": "请按框架章、方法章和系统实现章的差异审阅三个本章小结，核对每个独立任务和证据范围。",
+      "should_trigger": true,
+      "category": "writing-chapter-summary"
+    },
+    {
+      "query": "我的学位论文综述每句都有作者、方法、对象和结果，但读起来还是流水账，请按主题簇和代表文献重新组织。",
+      "should_trigger": true,
+      "category": "writing-literature-synthesis"
+    },
+    {
+      "query": "博士论文结果图隐藏了两个异常通道，表格还是冻结聚合，帮我核对展示范围和统计集合有没有混淆。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
+    },
+    {
+      "query": "中文硕士论文里两种方法的缺失率分母不同，也没有共同样本重算，请判断还能不能比较新排名。",
+      "should_trigger": true,
+      "category": "writing-results-analysis"
+    },
+    {
+      "query": "把这个运营仪表盘隐藏两个通道后重新计算销售排名，和论文写作无关。",
+      "should_trigger": false,
+      "category": "negative-unrelated-dashboard"
+    },
+    {
+      "query": "这是中文博士论文的独立工程应用章，技术栈和界面说明太像产品文档，请按架构约束、服务机制、操作者任务和验证层级审阅。",
+      "should_trigger": true,
+      "category": "writing-engineering-application"
+    },
+    {
+      "query": "请把这个生产后端服务的部署 README 和 REST API 文档写完整，没有论文或 LaTeX 项目。",
+      "should_trigger": false,
+      "category": "negative-overlap-software-readme"
+    },
+    {
+      "query": "我的中文博士论文正文总写成‘结果：……；原因：……；局限：……’，请按证据把句间逻辑改成完整中文学术句，引用和公式不要动。",
+      "should_trigger": true,
+      "category": "writing-punctuation-logic"
+    },
+    {
+      "query": "我的中文 LaTeX 博士论文有跨页双语续图，图目录出现重复条目，longtable 后还有一大块留白，请按现有模板和编译页帮我检查题注与版式。",
+      "should_trigger": true,
+      "category": "layout-caption-table"
+    }
+  ]
+}

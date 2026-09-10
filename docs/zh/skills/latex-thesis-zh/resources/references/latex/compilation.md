@@ -14,6 +14,33 @@ uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe xelatex-biber
 安装系统宏包、清理原 PDF 或启用 shell escape。入口文件、引擎、文献后端和输出路径均以
 当前项目实际信息为准。
 
+## 输出路径契约
+
+```bash
+uv run python $SKILL_DIR/scripts/compile.py main.tex --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe latexmk --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler xelatex --outdir "build output"
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler lualatex --outdir build
+```
+
+源入口文件的父目录是工作目录。未指定 `--outdir` 时，预期 PDF 由源入口扩展名替换为 `.pdf`
+得到。相对输出目录以该父目录为基准解析；绝对目录规范化后保持原位置。空格和中文字符保留
+在一个命令参数内。同一个解析后的输出路径用于 latexmk 传参以及最终 PDF 检查和报告。
+
+默认路径、显式 `--compiler` 和 `--recipe latexmk` 都使用 latexmk，均支持 `--outdir`。
+手动 `xelatex` / `lualatex` recipe 及其 `-bibtex` / `-biber` 变体尚不支持输出目录协同：
+与 `--outdir` 同用时，在执行任何 TeX 或文献进程前返回 1，并提示受支持的路径。
+wrapper 不会静默改用其他 recipe。未指定 `--outdir` 时，手动 recipe 保留既有行为，包括
+在 BibTeX/Biber 返回非 0 警告后继续执行。
+
+正常结束的 latexmk 运行会保留进程非 0 返回值，即使 PDF 已存在。退出码 0 要求预期路径中
+存在 PDF；目标缺失时返回 1，源目录 PDF 不能替代输出目录目标。这也修复了显式 compiler
+在没有 PDF 时的旧假成功，包括未指定 `--outdir` 的情况。latexmk 认定无需更新的已有目标
+仍是合法成功：wrapper 不强制重建、不比较时间戳，也不证明内容或视觉正确。watch 中断处理不变。
+
+wrapper 仅根据源文件名和 `--outdir` 推导此路径，不从 `.latexmkrc`、`jobname` 或 `auxdir`
+推断输出覆盖。请显式传入预期目录。自定义命名或手动文献后端输出路径的支持需要另行修改。
+
 ## 编译器选择
 
 ### pdfLaTeX
@@ -50,8 +77,7 @@ $xelatex = 'xelatex -interaction=nonstopmode -no-shell-escape %O %S';
 $bibtex_use = 2;
 $biber = 'biber %O %S';
 
-# Output directory (optional)
-# $out_dir = 'build';
+# Set the output directory through wrapper --outdir build.
 
 # Clean extensions
 @generated_exts = (@generated_exts, 'synctex.gz', 'nav', 'snm', 'vrb');

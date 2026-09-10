@@ -16,6 +16,26 @@ wrapper 也支持 LuaLaTeX recipe。选择前先识别项目；`main.tex`、XeLa
 recipe 都不是通用默认值。下文的原始编译命令用于说明工具选择，不表示可以绕过 wrapper。
 不要把清理现有 PDF、安装缺失宏包或启用 `--shell-escape` 作为自动恢复步骤。
 
+## 输出目录与成功判据
+
+```bash
+uv run python $SKILL_DIR/scripts/compile.py main.tex --recipe latexmk --outdir build
+uv run python $SKILL_DIR/scripts/compile.py main.tex --compiler lualatex --outdir "build output"
+```
+
+未指定 `--outdir` 时，目标 PDF 位于源入口文件旁。相对输出目录以源入口所在目录为基准，
+不以调用者当前目录为基准；绝对目录保持其位置。包含空格或中文的路径作为单个参数传入。
+报告中的 PDF 与 latexmk 命令使用同一个解析后的目录。
+
+默认 latexmk 路径、`--recipe latexmk` 和显式 `--compiler` 均支持 `--outdir`。手动 recipe
+（`xelatex`、`lualatex` 及其 `-bibtex` / `-biber` 变体）会在执行工具前拒绝此组合。
+需要显式选择受支持的 latexmk 路径；wrapper 不会静默替换已选 recipe。
+
+正常结束的 latexmk 运行仅在退出码为 0 且目标 PDF 存在时成功。源目录旧 PDF 不能替代输出目录
+中缺失的 PDF。latexmk 认定无需重建的已有目标仍然有效；此检查不证明新鲜度或版式正确。
+即使未指定 `--outdir`，显式 compiler 在 PDF 缺失时也会失败。未指定 `--outdir` 的手动 recipe
+保留既有文献后端警告后继续的行为。watch 中断和 shell-escape 信任要求不变。
+
 ## 编译器选择
 
 | 编译器 | 最适合 | 命令 |

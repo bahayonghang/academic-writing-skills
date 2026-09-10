@@ -13,12 +13,13 @@ import re
 import sys
 from collections import defaultdict
 from pathlib import Path
+from typing import NamedTuple
 
 try:
-    from tex_loader import iter_files, read_text_robust
+    from tex_loader import AssembledDocument, assemble, iter_files, read_text_robust
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
-    from tex_loader import iter_files, read_text_robust
+    from tex_loader import AssembledDocument, assemble, iter_files, read_text_robust
 
 
 ABBREV_STOPWORDS = frozenset(
@@ -50,15 +51,21 @@ ABBREV_STOPWORDS = frozenset(
 ABBREV_MIN_USES = 2
 
 
+class _Definition(NamedTuple):
+    full_name: str
+    start: int
+    position: int
+    bounded: bool
+
+
 class ConsistencyChecker:
     """Check terminology and abbreviation consistency across thesis files."""
 
-    # Built-in example term groups (common CS/AI terms)
+    # Surface-form candidates, not proof that concepts are interchangeable.
     DEFAULT_TERM_GROUPS_ZH = [
-        ["深度学习", "深度神经网络", "深层学习"],
-        ["机器学习", "机器智能"],
+        ["深度学习", "深层学习"],
         ["卷积神经网络", "卷积网络", "CNN"],
-        ["循环神经网络", "递归神经网络", "RNN"],
+        ["循环神经网络", "RNN"],
         ["长短期记忆", "LSTM"],
         ["生成对抗网络", "GAN"],
         ["自然语言处理", "NLP"],
@@ -67,7 +74,6 @@ class ConsistencyChecker:
     ]
 
     DEFAULT_TERM_GROUPS_EN = [
-        ["deep learning", "deep neural network"],
         ["machine learning", "ML"],
         ["convolutional neural network", "CNN"],
         ["recurrent neural network", "RNN"],
@@ -76,9 +82,22 @@ class ConsistencyChecker:
         ["natural language processing", "NLP"],
     ]
 
-    def __init__(self, tex_files: list[str], custom_terms_file: str | None = None):
+    def __init__(
+        self,
+        tex_files: list[str],
+        custom_terms_file: str | None = None,
+        *,
+        entry_file: str | None = None,
+    ):
         self.tex_files = [Path(f).resolve() for f in tex_files]
+        self.entry_file = Path(entry_file).resolve() if entry_file else None
         self.content_cache: dict[Path, str] = {}
+        self._documents: list[AssembledDocument] | None = None
+        self.coverage_note = (
+            "按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。"
+            if self.entry_file
+            else "文件内顺序已检查，跨文件顺序未验证（无主入口）。"
+        )
         self.term_groups_zh = list(self.DEFAULT_TERM_GROUPS_ZH)
         self.term_groups_en = list(self.DEFAULT_TERM_GROUPS_EN)
         if custom_terms_file:
@@ -108,9 +127,39 @@ class ConsistencyChecker:
                 if warning:
                     print(f"[WARNING] {warning}", file=sys.stderr)
                 self.content_cache[tex_file] = content
-            except Exception:
-                self.content_cache[tex_file] = ""
+            except OSError as exc:
+                print(f"[WARNING] Cannot read {tex_file}: {exc}", file=sys.stderr)
+                raise
         return self.content_cache[tex_file]
+
+    def _get_documents(self) -> list[AssembledDocument]:
+        """One ordered document per trusted entry, otherwise independent files."""
+        if self._documents is None:
+            if self.entry_file:
+                document = assemble(self.entry_file)
+                self._documents = [document]
+                for warning in document.warning_lines("[WARNING]"):
+                    print(warning, file=sys.stderr)
+            else:
+                documents = []
+                for tex_file in self.tex_files:
+                    content = self._load_content(tex_file)
+                    documents.append(
+                        AssembledDocument(
+                            entry=tex_file,
+                            content=content,
+                            origins=[
+                                (str(tex_file), line) for line in range(1, content.count("\n") + 2)
+                            ],
+                        )
+                    )
+                self._documents = documents
+            print(f"[INFO] {self.coverage_note}", file=sys.stderr)
+        return self._documents
+
+    @staticmethod
+    def _origin(document: AssembledDocument, position: int) -> tuple[str, int]:
+        return document.origin(document.content.count("\n", 0, position) + 1)
 
     # 注释与"伪命中"载体（\cite 键、标签、文件路径参数）在术语统计前抹除。
     _SANITIZE_RES = [
@@ -127,7 +176,7 @@ class ConsistencyChecker:
         """Blank out comments / citation keys / file paths, preserving offsets
         so line numbers computed against the sanitized text stay valid."""
         for pattern in cls._SANITIZE_RES:
-            content = pattern.sub(lambda m: " " * len(m.group()), content)
+            content = pattern.sub(lambda m: re.sub(r"[^\r\n]", " ", m.group()), content)
         return content
 
     @staticmethod
@@ -135,52 +184,49 @@ class ConsistencyChecker:
         """全大写 ASCII 词视为缩写（CNN/RNN/NLP...），其余为全称变体。"""
         return bool(re.fullmatch(r"[A-Z][A-Z0-9-]+", term))
 
-    def _find_abbrev_definitions(self) -> dict[str, tuple[int, int]]:
-        """缩写定义位置：全称（缩写）模式 → {缩写: (文件序号, 行号)}（取最早）。"""
-        definition_pattern = r"[^（(\s]{2,}[（(]([A-Z]{2,})[）)]"
-        definitions: dict[str, tuple[int, int]] = {}
-        for idx, tex_file in enumerate(self.tex_files):
-            content = self._sanitize(self._load_content(tex_file))
-            for match in re.finditer(definition_pattern, content):
-                abbrev = match.group(1)
-                line_num = content[: match.start()].count("\n") + 1
-                pos = (idx, line_num)
-                if abbrev not in definitions or pos < definitions[abbrev]:
-                    definitions[abbrev] = pos
+    @staticmethod
+    def _find_abbrev_definitions(content: str) -> dict[str, list[_Definition]]:
+        """Collect bounded, same-line visible name fragments, never semantic names."""
+        definitions: dict[str, list[_Definition]] = defaultdict(list)
+        for match in re.finditer(r"[（(][ \t]*([A-Z]{2,})[ \t]*[）)]", content):
+            line_start = content.rfind("\n", 0, match.start()) + 1
+            window_start = max(line_start, match.start() - 120)
+            prefix = content[window_start : match.start()]
+            # A name fragment cannot consume preceding sentences or LaTeX structure.
+            boundaries = list(re.finditer(r"[。.!！?？;；,，:：（）(){}\\\r]", prefix))
+            fragment_start = boundaries[-1].end() if boundaries else 0
+            fragment = prefix[fragment_start:]
+            full_name = fragment.strip()
+            start = window_start + fragment_start + len(fragment) - len(fragment.lstrip())
+            bounded = bool(full_name) and (window_start == line_start or bool(boundaries))
+            definitions[match.group(1)].append(
+                _Definition(full_name, start, match.start(1), bounded)
+            )
         return definitions
 
     def check_terms(self) -> dict:
         """Check term consistency across files.
 
-        国标惯例"首次全称（缩写），后文用缩写"不是不一致——只报告真正的漂移：
-        (a) 同义全称变体混用（深度神经网络 vs 深层学习）；
-        (b) 缩写已定义后正文仍大量使用全称。
-        缩写未定义就使用由 check_abbreviations 的 undefined 检查负责（不重复报告）。
+        分组共现只产生待复核候选，频率不决定规范名。正常全称/缩写切换
+        最多给可选风格提示；未定义或先用后定义由 check_abbreviations 负责。
         """
-        # term -> [(file_idx, file_name, line)]
-        term_occurrences: dict[str, list[tuple[int, str, int]]] = defaultdict(list)
+        # term -> [(document scope, character offset)]
+        term_occurrences: dict[str, list[tuple[int, int]]] = defaultdict(list)
+        all_groups = self.term_groups_zh + self.term_groups_en
+        all_terms = dict.fromkeys(term for group in all_groups for term in group)
+        definitions = []
+        for idx, document in enumerate(self._get_documents()):
+            content = self._sanitize(document.content)
+            definitions.append(self._find_abbrev_definitions(content))
+            for term in all_terms:
+                pattern = re.escape(term)
+                if self._is_abbrev(term):
+                    pattern = rf"(?<![A-Za-z0-9_]){pattern}(?![A-Za-z0-9_])"
+                for match in re.finditer(pattern, content, re.IGNORECASE):
+                    term_occurrences[term].append((idx, match.start()))
 
-        for idx, tex_file in enumerate(self.tex_files):
-            content = self._sanitize(self._load_content(tex_file))
-            if not content:
-                continue
-
-            all_groups = self.term_groups_zh + self.term_groups_en
-
-            for group in all_groups:
-                for term in group:
-                    pattern = re.escape(term)
-                    if self._is_abbrev(term):
-                        pattern = rf"\b{pattern}\b"
-                    for match in re.finditer(pattern, content, re.IGNORECASE):
-                        line_num = content[: match.start()].count("\n") + 1
-                        term_occurrences[term].append((idx, str(tex_file.name), line_num))
-
-        definitions = self._find_abbrev_definitions()
         inconsistencies = []
         checked_groups: set[frozenset] = set()
-
-        all_groups = self.term_groups_zh + self.term_groups_en
 
         for group in all_groups:
             group_set = frozenset(group)
@@ -197,37 +243,40 @@ class ConsistencyChecker:
                 if term_occurrences[term]
             }
 
-            # (a) 同义全称变体混用
+            # (a) Group membership and counts are observations, not semantic proof.
             if len(found_full) > 1:
-                most_common = max(found_full.items(), key=lambda x: x[1])
                 inconsistencies.append(
                     {
                         "type": "variant_mix",
                         "group": list(found_full.keys()),
                         "counts": found_full,
-                        "suggestion": f"同义全称混用，建议统一使用 '{most_common[0]}'",
+                        "suggestion": "NEEDS-LLM：同组表面形式共现，请核对是否指同一概念；"
+                        "仅在语义相同且无切换理由时统一，频次和分组顺序不决定规范名。",
                     }
                 )
 
-            # (b) 缩写已定义后，正文仍大量使用全称
+            # (b) Optional style observation; exclude all expansion/reintroduction spans.
             for abbrev in abbrevs:
-                if abbrev not in definitions or not found_full:
-                    continue
-                def_pos = definitions[abbrev]
-                late_uses = [
-                    occ
-                    for term in found_full
-                    for occ in term_occurrences[term]
-                    if (occ[0], occ[2]) > def_pos
-                ]
+                late_uses = []
+                for term in found_full:
+                    for idx, position in term_occurrences[term]:
+                        defs = definitions[idx].get(abbrev, [])
+                        if (
+                            defs
+                            and defs[0].bounded
+                            and position > defs[0].position
+                            and not any(d.start <= position <= d.position for d in defs)
+                        ):
+                            late_uses.append((idx, position))
                 if len(late_uses) >= 3:
                     inconsistencies.append(
                         {
                             "type": "full_after_abbrev",
                             "group": [*found_full.keys(), abbrev],
                             "counts": {**found_full, abbrev: len(term_occurrences[abbrev])},
-                            "suggestion": f"'{abbrev}' 已定义但其后全称仍出现 {len(late_uses)} 次："
-                            f"首次出现用全称（{abbrev}），后文统一用缩写",
+                            "suggestion": f"可选风格候选：'{abbrev}' 定义后全称出现 "
+                            f"{len(late_uses)} 次；全称与缩写可因语境合法切换，"
+                            "NEEDS-LLM：结合可读性判断是否调整，不要求全部改为缩写。",
                         }
                     )
 
@@ -238,62 +287,75 @@ class ConsistencyChecker:
         }
 
     def check_abbreviations(self) -> dict:
-        """Check abbreviation definitions and usage."""
-        # Pattern for abbreviation definition: 全称（缩写）or 全称 (abbreviation)
-        definition_pattern = r"([^（(]+)[（(]([A-Z]{2,})[）)]"
-
+        """Check first-use order within each trusted document scope."""
         definitions: dict[str, list[tuple[str, str, int]]] = defaultdict(list)
         usages: dict[str, list[tuple[str, int]]] = defaultdict(list)
-
-        for tex_file in self.tex_files:
-            content = self._sanitize(self._load_content(tex_file))
-            if not content:
-                continue
-
-            # Find definitions
-            for match in re.finditer(definition_pattern, content):
-                full_name = match.group(1).strip()
-                abbrev = match.group(2)
-                line_num = content[: match.start()].count("\n") + 1
-                definitions[abbrev].append((full_name, str(tex_file.name), line_num))
-
-            # Find standalone abbreviation usages
-            # Look for uppercase sequences that might be abbreviations
-            abbrev_pattern = r"\b([A-Z]{2,})\b"
-            for match in re.finditer(abbrev_pattern, content):
-                abbrev = match.group(1)
-                # Skip common non-abbreviation uppercase
-                if abbrev in ABBREV_STOPWORDS:
-                    continue
-                line_num = content[: match.start()].count("\n") + 1
-                usages[abbrev].append((str(tex_file.name), line_num))
-
-        # Find issues
         issues = []
 
-        # Abbreviations used but not defined
-        for abbrev, usage_list in usages.items():
-            if abbrev not in definitions and len(usage_list) >= ABBREV_MIN_USES:
-                first_usage = usage_list[0]
-                issues.append(
-                    {
-                        "type": "undefined",
-                        "abbreviation": abbrev,
-                        "first_usage": first_usage,
-                        "usage_count": len(usage_list),
-                        "message": f"'{abbrev}' used but not defined (first at {first_usage[0]}:{first_usage[1]})",
-                    }
-                )
+        for document in self._get_documents():
+            content = self._sanitize(document.content)
+            local_definitions = self._find_abbrev_definitions(content)
+            definition_positions = {
+                d.position for items in local_definitions.values() for d in items
+            }
+            local_usages: dict[str, list[int]] = defaultdict(list)
+            for match in re.finditer(r"(?<![A-Za-z0-9_])([A-Z]{2,})(?![A-Za-z0-9_])", content):
+                abbrev = match.group(1)
+                if abbrev in ABBREV_STOPWORDS or match.start() in definition_positions:
+                    continue
+                local_usages[abbrev].append(match.start())
+                usages[abbrev].append(self._origin(document, match.start()))
 
-        # Abbreviations defined multiple times
+            for abbrev, positions in local_usages.items():
+                defs = local_definitions.get(abbrev, [])
+                late_definition = bool(defs) and positions[0] < defs[0].position
+                if late_definition or (not defs and len(positions) >= ABBREV_MIN_USES):
+                    first_usage = self._origin(document, positions[0])
+                    reason = "used but not defined in checked scope"
+                    if late_definition:
+                        source, line = self._origin(document, defs[0].position)
+                        reason = f"used before its first definition at {source}:{line}"
+                    issues.append(
+                        {
+                            "type": "undefined",
+                            "abbreviation": abbrev,
+                            "first_usage": first_usage,
+                            "usage_count": len(positions),
+                            "message": f"'{abbrev}' {reason} "
+                            f"(first at {first_usage[0]}:{first_usage[1]})",
+                        }
+                    )
+
+            for abbrev, defs in local_definitions.items():
+                for definition in defs:
+                    source, line = self._origin(document, definition.position)
+                    if definition.bounded:
+                        definitions[abbrev].append((definition.full_name, source, line))
+                    elif abbrev not in ABBREV_STOPWORDS:
+                        issues.append(
+                            {
+                                "type": "undefined",
+                                "abbreviation": abbrev,
+                                "first_usage": (source, line),
+                                "usage_count": len(local_usages[abbrev]),
+                                "message": f"NEEDS-LLM：'{abbrev}' 在 {source}:{line} "
+                                "的括号前缺少可靠全称边界，请人工核对定义。",
+                            }
+                        )
+
+        # Literal repeated expansions are legal, including across chapters.
         for abbrev, def_list in definitions.items():
-            if len(def_list) > 1:
+            if len({name for name, _, _ in def_list}) > 1:
+                locations = "; ".join(
+                    f"{source}:{line} ({name})" for name, source, line in def_list
+                )
                 issues.append(
                     {
                         "type": "multiple_definitions",
                         "abbreviation": abbrev,
                         "definitions": def_list,
-                        "message": f"'{abbrev}' defined {len(def_list)} times",
+                        "message": f"NEEDS-LLM：'{abbrev}' 的可见全称候选片段不同：{locations}；"
+                        "请核对语义是否等价（含中英文释义），不自动认定冲突。",
                     }
                 )
 
@@ -310,13 +372,16 @@ class ConsistencyChecker:
         lines.append("=" * 60)
         lines.append("Consistency Check Report / 一致性检查报告")
         lines.append("=" * 60)
+        lines.append(self.coverage_note)
+        for document in self._get_documents():
+            lines.extend(document.warning_lines("[WARNING]"))
 
         # Term consistency
         lines.append("\n[1] Term Consistency / 术语一致性")
         lines.append("-" * 40)
 
         if terms_result["inconsistencies"]:
-            lines.append(f"Status: ⚠️ {len(terms_result['inconsistencies'])} inconsistencies found")
+            lines.append(f"Status: ⚠️ {len(terms_result['inconsistencies'])} candidates found")
             for inc in terms_result["inconsistencies"]:
                 lines.append(f"\n  Group: {', '.join(inc['group'])}")
                 for term, count in inc["counts"].items():
@@ -334,7 +399,7 @@ class ConsistencyChecker:
             for issue in abbrev_result["issues"]:
                 lines.append(f"\n  [{issue['type']}] {issue['message']}")
         else:
-            lines.append("Status: ✅ All abbreviations properly defined")
+            lines.append("Status: ✅ No abbreviation issues found within checked scope")
 
         lines.append("\n" + "=" * 60)
         return "\n".join(lines)
@@ -394,7 +459,13 @@ def main():
     print(f"[INFO] Checking {len(tex_files)} files...")
 
     # Run checks
-    checker = ConsistencyChecker(tex_files, custom_terms_file=args.custom_terms)
+    checker = ConsistencyChecker(
+        tex_files,
+        custom_terms_file=args.custom_terms,
+        entry_file=(
+            args.tex_file if not args.all_files and Path(args.tex_file).is_file() else None
+        ),
+    )
 
     if args.terms:
         result = checker.check_terms()

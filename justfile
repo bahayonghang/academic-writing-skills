@@ -15,6 +15,7 @@ help:
     @echo ""
     @echo "🔧 开发环境："
     @echo "  just install           - 安装开发依赖"
+    @echo "  just skills-install    - 将 catalog skills 安装到当前项目 agent 目录"
     @echo ""
     @echo "🔍 代码质量检查："
     @echo "  just lint              - 运行格式和代码检查"
@@ -39,6 +40,11 @@ help:
     @echo "  just clean             - 清理缓存文件"
     @echo ""
     @echo "════════════════════════════════════════════════════════════════"
+
+# 将 catalog skills 安装到当前项目的 agent skills 目录。
+# GNU 风格选项需写成: just -- skills-install --copy -y
+skills-install *args:
+    @uv run --extra dev python scripts/skills_install.py {{args}}
 
 # 安装开发依赖
 install:
@@ -106,7 +112,7 @@ typecheck:
 # 运行测试
 test:
     @echo "  → 运行单元测试..."
-    @uv run --extra dev python -c "import pathlib, subprocess, sys; paths = ['tests', *(str(p) for p in pathlib.Path('academic-writing-skills').glob('*/tests') if p.is_dir())]; raise SystemExit(subprocess.call([sys.executable, '-m', 'pytest', *paths]))"
+    @uv run --extra dev python -m pytest
     @echo "  ✓ 测试通过"
 
 # 清理缓存文件

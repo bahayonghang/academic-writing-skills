@@ -1,0 +1,35 @@
+{
+  "id": "thesis-zh-spec-gap-optimization",
+  "name": "thesis-zh-spec-gap-optimization",
+  "title": "中文论文技能最新 spec 差距分析与优化",
+  "description": "实施全量spec审阅确认的三个中文论文技能优化子任务并完成集成验证",
+  "status": "completed",
+  "dev_type": "backend",
+  "scope": "latex-thesis-zh",
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-10",
+  "completedAt": "2026-09-10",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-10-thesis-zh-guidance-fidelity",
+    "09-10-thesis-zh-consistency-semantics",
+    "09-10-thesis-zh-compile-outdir"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "实施与验证完成；最终证据见 research/integration-validation.md。用户于 2026-09-10 后续明确授权本地提交、父子任务归档及 journal 收口。",
+  "meta": {
+    "planning_only": false,
+    "implementation_authorized": true,
+    "implementation_complete": true,
+    "planning_head": "dd9f1e2"
+  }
+}

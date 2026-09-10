@@ -156,6 +156,14 @@ assert recompute(private_files) == checked_in_snapshot
 `result.stdout` 变 None）。该环境变量只用于**重定向 JSON 输出到文件**的场景
 （见 yanshan 任务记录），跑 pytest 一律不要加。
 
+**补充**：子进程跑含中文 argparse 的 `--help`（或 `compile.py` 的中文错误输出）时，
+必须给**子进程**设 `PYTHONIOENCODING=utf-8`，父进程 `subprocess.run` 用
+`encoding="utf-8"`（可加 `errors="replace"`）。这与
+`tests/skills/latex_thesis_zh/test_latex_thesis_zh_coverage.py::_run` 同源。
+GitHub-hosted Windows runner 默认 cp1252，漏掉这对协议会在
+`argparse.print_help()` 处出现 `UnicodeEncodeError`，而 Ubuntu 与中文 Windows
+（cp936）不会暴露。不要把 `PYTHONIOENCODING` 设到 pytest 进程上来“顺带”修。
+
 **补充**：latex-thesis-zh 的 `evals/evals.json` 是 CRLF + `json.dumps(indent=2,
 ensure_ascii=False)` 的 canonical round-trip（typst 同构但 LF）；追加条目走
 Bash python 读-改-写全量 dump 即可得到纯增量 diff（07-10 任务实测 +35/-0）。
@@ -272,3 +280,99 @@ ZH 的 `check_references.py` 与 `check_tables.py` 分别拥有题注存在性�
 测试运行完整公开 checker，并核对原文件/行号。不得只测私有帮助函数或根据编译成功推断
 checker 已支持该宏；反向也不能由 checker 通过宣称页面排版通过。两脚本以外的宏展开、
 长表解析或其他技能副本不随此误报修复扩张。
+
+---
+
+## Convention: 中文论文编译命令与产物必须共用输出目录
+
+**Scope / Signatures**：维护 ZH `LaTeXCompiler.compile(watch=False, biber=False,
+outdir=None)` 或 `compile.py --outdir` 时，保留公开说明
+`latex-thesis-zh/references/modules/compile.md` 与 `references/latex/compilation.md`
+的路径合同；不扩展其他技能、watch、clean 或任意 latexmkrc/jobname/auxdir。
+
+**Contract**：相对 outdir 以源入口父目录 `work_dir` 为基准，绝对目录直接解析。
+命令的 `-outdir` 和 PDF 检查/报告使用同一次计算结果。正常完成的 latexmk 路径
+（默认/显式 recipe 与显式 compiler，含无 outdir）以进程 exit 0 且目标 PDF 存在为成功。
+
+| 条件 | 必须行为 |
+| --- | --- |
+| exit 0，目标 PDF 存在 | 返回 0，报告目标路径；无需重建的已有目标也是合法成功 |
+| exit 0，目标缺失，源目录有旧 PDF | 返回 1；旧文件不能替代指定目标 |
+| latexmk 非 0，即使目标存在 | 保留进程失败码，不报告成功 |
+| 手动单次/多步 recipe 加 outdir | 任何 subprocess 前拒绝，提示 latexmk 或显式 compiler 路径 |
+| 手动 recipe 无 outdir | 保留既有流程，包括 BibTeX/Biber 非 0 警告后继续 |
+
+不支持组合的检查还须先于工具发现：即使缺少 TeX，也应先说明 manual recipe + outdir
+不受支持并给可用路径，不能提示安装工具后仍无法执行。对六种手动配方同时测工具存在与缺失。
+
+**Good/Base/Bad**：相对 `build` 与绝对目录定位一致为 Good；无 outdir 的有效编译
+保持原行为为 Base；命令写 build 却查源码目录 PDF 为 Bad。不要以 mtime 相同要求重建，
+也不要把 PDF 存在当作排版或论文内容验收。
+
+**Tests Required**：`tests/skills/latex_thesis_zh/test_compile_outdir.py` 调用真实 ZH
+wrapper，Mock 仅替代外部进程/工具发现；覆盖相对/绝对/中文空格目录、三种进程/产物
+状态及手动组合零 subprocess 拒绝。配合既有 scripts/coverage 回归保留 shell-escape
+与有效手动 recipe。已有 TeX 时在新隔离目录通过 wrapper 做真实 smoke，分别记录命令、
+工具版本、退出码、PDF 路径/大小；Mock 与真实构建证据分开。
+
+**Wrong → Correct**：`tex_file.with_suffix('.pdf')` 无条件查源码目录 → 根据 outdir
+计算目标并同时用于传参和检查。默认输出变化属于误报/假绿修复，后续提交正文需明确声明。
+
+---
+
+## Convention: 术语候选与缩写首次顺序分开判断
+
+**Scope / Signatures**：维护 ZH `ConsistencyChecker(tex_files, custom_terms_file=None,
+*, entry_file=None)`、`check_terms()`、`check_abbreviations()` 及 CLI 时适用。
+`entry_file` 仅为内部 API 参数，不新增 CLI 旗标；公开边界由
+`academic-writing-skills/latex-thesis-zh/references/modules/consistency.md` 拥有。
+
+**Contract**：内置术语组的表面形式共现只给 `NEEDS-LLM` 候选；频次或分组顺序不能
+决定规范名。显式 custom-terms 分组能力保留，不推断用户未授权的概念等价。
+`full_after_abbrev` 若保留，只是可选风格提示，不能要求全部全称改为缩写。
+
+有真实入口时复用既有 `tex_loader.assemble`，在一次装配结果上按字符位置比较首用与
+定义，并以 `origin` 回指源文件和行；不能按文件排序或每章重置“首次”。目录、
+`--all-files` 和无入口 list API 仅检查各文件内部顺序，报告明确跨文件顺序未验证。
+缺失 include、编码或读取问题必须可见，不能以空文本宣称全文检查通过。
+
+| 条件 | 必须行为 |
+| --- | --- |
+| 同一行或 include 前的有效使用早于定义 | 报告首用位置与后置定义位置 |
+| 全文已定义，后章直接复用或同义重引 | 不要求每章定义，不按定义次数断言冲突 |
+| 同一缩写出现不同可见释义 | 给出源位置和人工复核候选，不替作者判定中英文不等价 |
+| 括号前没有可靠全称边界 | 标明 `NEEDS-LLM`，不猜完整术语 |
+| 中文紧邻 `CNN`，或 ASCII 标识符 `xCNN` / `CNN2` / `CNN_layer` | 前者可为有效缩写使用，后者不截取内部 `CNN` |
+
+**Good/Base/Bad**：合法 `卷积神经网络（CNN）` 后跨章复用为 Good；无入口时如实报告
+文件内覆盖为 Base；深度学习/深度神经网络共现被按词频统一为 Bad。定义采集只看同一
+物理行的有界片段，不能吞进前一章标题；正常全称/缩写切换不等于语义冲突。
+
+**Tests Required**：`tests/skills/latex_thesis_zh/test_consistency_semantics.py` 必须
+按路径加载真实 ZH 副本并测试 API/CLI，覆盖上述正反例、主文件 include 前后顺序、
+注释/引用键、停用词、一次性缩写、同名不同目录来源及 loader 警告。
+配合 checker_precision/scripts 存量回归，保留结果字典与退出码协议。
+
+**Wrong → Correct**：见到任何定义就放过此前使用 → 在可信阅读范围按字符先后判断；
+用 Unicode `\b` 漏掉中文紧邻缩写 → 使用 ASCII 标识符边界并保护嵌入标识符反例。
+不得为此改写共享 loader/parser 或增加语言别名表；默认误报/假绿变化需在后续提交声明。
+
+---
+
+## Convention: 教学示例也必须接受证据保真复核
+
+旧 `writing-philosophy-zh.md`、`over-claim-guard.md`、`abstract-structure.md` 和
+logic 示例不能绕过现行详细规则。维护这些资源时，结果主张回指
+`results-analysis-guide-zh.md` 的证据阶梯，摘要与章型回指各自专用指南；
+不要在旧表中另设通用强制篇幅、逐篇综述格式或因果资格捷径。
+规则仍由技能内公开 references 拥有，不把维护者 spec 作为论文项目运行依赖。
+
+`tests/contracts/test_thesis_zh_guidance_fidelity.py` 只锁本次冲突、合成 fixture 与
+历史 eval/trigger 前缀保留，不能代替实际回答质量证据。影响证据推断的改动需以相同
+输入保存修改前后原始响应，采样只接收请求、输入和相应版本必要规则，隔离预期断言及
+上一轮答案；独立核读数字、范围/确定性、实体、保护载荷与授权范围。
+失败时修规则并复测受影响场景，不改原始回答伪造通过。
+
+Good：已给证据的结论与合法主题综合保留；Bad：凭示例补出未知数字或为固定句式
+拆改引用。逆向提纲等经验先落在现有示例，不增加语义扫描器或固定产物台账。
+本地代理核读、静态合同和真实论文/人工评估分别报告，不由单次样例推断总体质量提升。

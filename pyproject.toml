@@ -1,7 +1,7 @@
 [project]
 name = "academic-writing-skills"
 version = "6.0.0"
-description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers (Recommended platforms: Claude Code, Codex, Antigravity)"
+description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers. Academic Use Only — Not for commercial use. Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi). Tool names in this description are not runtime verification."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["Pillow>=12.1.0", "PyYAML>=6.0.2", "Jinja2>=3.1.0"]
@@ -21,7 +21,6 @@ classifiers = [
     "Intended Audience :: Education",
     "Topic :: Text Processing :: Markup :: LaTeX",
     "Topic :: Scientific/Engineering",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -72,7 +71,7 @@ ignore = [
 known-first-party = ["academic-writing-skills"]
 
 [tool.pyright]
-include = ["academic-writing-skills", "tests"]
+include = ["academic-writing-skills", "tests", "scripts"]
 exclude = ["**/__pycache__", "**/node_modules", ".venv", "docs"]
 pythonVersion = "3.10"
 typeCheckingMode = "basic"
@@ -86,7 +85,7 @@ reportOperatorIssue = "warning"
 reportGeneralTypeIssues = "warning"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "academic-writing-skills"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

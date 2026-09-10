@@ -1,0 +1,1246 @@
+{
+  "date": "2026-09-10",
+  "boundary": "Synthetic local CLI/API probes; no LLM reviewer, network, TeX compiler, or real thesis run.",
+  "source_hashes": {
+    "academic-writing-skills\\paper-audit\\scripts\\audit.py": "72ad368b8b9894e9249062c061dbff5b274ee921e5c66c4bf3c6f27a34e350f8",
+    "academic-writing-skills\\paper-audit\\scripts\\zh_check_adapters.py": "8af2cdb59cc0e6024e7da898a994482d746ac1153b0cfba7b18137cbdcce3077",
+    "academic-writing-skills\\paper-audit\\scripts\\prepare_review_workspace.py": "8ba6e674bc5dd4d30a52f9725f7890d8ffaa8bb08c34f79eec83b084ed2058c3",
+    "academic-writing-skills\\paper-audit\\scripts\\consolidate_review_findings.py": "482b43b122ca35d031c941ea5bd81df82aca49c6ae518100d8998a4897d1fa0a",
+    "academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py": "f0338208fed68bf9d7ef8fbfb5cbadf2d26ceacfb90645d348f4fad0f7010f1e"
+  },
+  "cases": {
+    "clean": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\clean.tex"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ✅ No abbreviation issues found within checked scope\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\clean.tex",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {\n      \"卷积神经网络\": 1,\n      \"CNN\": 3\n    },\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {\n      \"CNN\": 1\n    },\n    \"usages\": {\n      \"CNN\": 2\n    },\n    \"issues\": [],\n    \"status\": \"PASS\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No abbreviation issues found within checked scope",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 5.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\clean.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:25.684545\n\n## Issue Summary (10 total)\n- Minor: 10\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ✅ No abbreviation issues found within checked scope |\n| 10 | — | Minor | P2 | ============================================================ |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "late_definition": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\late_definition.tex"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ⚠️ 1 issues found\n\n  [undefined] 'CNN' used before its first definition at late_definition.tex:4 (first at late_definition.tex:4)\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\late_definition.tex",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {\n      \"卷积神经网络\": 1,\n      \"CNN\": 2\n    },\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {\n      \"CNN\": 1\n    },\n    \"usages\": {\n      \"CNN\": 1\n    },\n    \"issues\": [\n      {\n        \"type\": \"undefined\",\n        \"abbreviation\": \"CNN\",\n        \"first_usage\": [\n          \"late_definition.tex\",\n          4\n        ],\n        \"usage_count\": 1,\n        \"message\": \"'CNN' used before its first definition at late_definition.tex:4 (first at late_definition.tex:4)\"\n      }\n    ],\n    \"status\": \"WARNING\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "⚠️ 1 issues found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "'CNN' used before its first definition at late_definition.tex:4 (first at late_definition.tex:4)",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P3",
+          "message": "[Script] checker exited 1",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 4.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\late_definition.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:25.878778\n\n## Issue Summary (12 total)\n- Minor: 12\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ⚠️ 1 issues found |\n| 10 | — | Minor | P2 | 'CNN' used before its first definition at late_definition.tex:4 (first at late_definition.tex:4) |\n| 11 | — | Minor | P2 | ============================================================ |\n| 12 | — | Minor | P3 | [Script] checker exited 1 |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "equivalent_expansions": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\equivalent_expansions.tex"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ⚠️ 1 issues found\n\n  [multiple_definitions] NEEDS-LLM：'CNN' 的可见全称候选片段不同：equivalent_expansions.tex:4 (卷积神经网络); equivalent_expansions.tex:6 (convolutional neural network)；请核对语义是否等价（含中英文释义），不自动认定冲突。\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\equivalent_expansions.tex",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {\n      \"卷积神经网络\": 1,\n      \"CNN\": 2,\n      \"convolutional neural network\": 1\n    },\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {\n      \"CNN\": 2\n    },\n    \"usages\": {},\n    \"issues\": [\n      {\n        \"type\": \"multiple_definitions\",\n        \"abbreviation\": \"CNN\",\n        \"definitions\": [\n          [\n            \"卷积神经网络\",\n            \"equivalent_expansions.tex\",\n            4\n          ],\n          [\n            \"convolutional neural network\",\n            \"equivalent_expansions.tex\",\n            6\n          ]\n        ],\n        \"message\": \"NEEDS-LLM：'CNN' 的可见全称候选片段不同：equivalent_expansions.tex:4 (卷积神经网络); equivalent_expansions.tex:6 (convolutional neural network)；请核对语义是否等价（含中英文释义），不自动认定冲突。\"\n      }\n    ],\n    \"status\": \"WARNING\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "⚠️ 1 issues found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "NEEDS-LLM：'CNN' 的可见全称候选片段不同：equivalent_expansions.tex:4 (卷积神经网络); equivalent_expansions.tex:6 (convolutional neural network)；请核对语义是否等价（含中英文释义），不自动认定冲突。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P3",
+          "message": "[Script] checker exited 1",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 4.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\equivalent_expansions.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:26.066808\n\n## Issue Summary (12 total)\n- Minor: 12\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ⚠️ 1 issues found |\n| 10 | — | Minor | P2 | NEEDS-LLM：'CNN' 的可见全称候选片段不同：equivalent_expansions.tex:4 (卷积神经网络); equivalent_expansions.tex:6 (convolutional neural network)；请核对语义是否等价（含中英文释义），不自动认定冲突。 |\n| 11 | — | Minor | P2 | ============================================================ |\n| 12 | — | Minor | P3 | [Script] checker exited 1 |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "missing_include": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\missing_include.tex"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n[WARNING] WARN: 未找到 include 文件: missing_chapter（missing_include.tex:5）\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ✅ No abbreviation issues found within checked scope\n\n============================================================\n",
+        "stderr": "[WARNING] WARN: 未找到 include 文件: missing_chapter（missing_include.tex:5）\n[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\missing_include.tex",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {},\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {},\n    \"usages\": {},\n    \"issues\": [],\n    \"status\": \"PASS\"\n  }\n}\n",
+        "stderr": "[WARNING] WARN: 未找到 include 文件: missing_chapter（missing_include.tex:5）\n[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "WARN: 未找到 include 文件: missing_chapter（missing_include.tex:5）",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No abbreviation issues found within checked scope",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 4.5,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\missing_include.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:26.283763\n\n## Issue Summary (11 total)\n- Minor: 11\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | WARN: 未找到 include 文件: missing_chapter（missing_include.tex:5） |\n| 7 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 8 | — | Minor | P2 | ✅ No inconsistencies found |\n| 9 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 10 | — | Minor | P2 | ✅ No abbreviation issues found within checked scope |\n| 11 | — | Minor | P2 | ============================================================ |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "multi_file": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\multi_file.tex"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 3 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ⚠️ 1 issues found\n\n  [undefined] 'CNN' used before its first definition at method.tex:2 (first at introduction.tex:2)\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\multi_file.tex",
+          "--json"
+        ],
+        "returncode": 1,
+        "stdout": "[INFO] Checking 3 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {\n      \"卷积神经网络\": 1,\n      \"CNN\": 2\n    },\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {\n      \"CNN\": 1\n    },\n    \"usages\": {\n      \"CNN\": 1\n    },\n    \"issues\": [\n      {\n        \"type\": \"undefined\",\n        \"abbreviation\": \"CNN\",\n        \"first_usage\": [\n          \"introduction.tex\",\n          2\n        ],\n        \"usage_count\": 1,\n        \"message\": \"'CNN' used before its first definition at method.tex:2 (first at introduction.tex:2)\"\n      }\n    ],\n    \"status\": \"WARNING\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 3 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "⚠️ 1 issues found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "'CNN' used before its first definition at method.tex:2 (first at introduction.tex:2)",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P3",
+          "message": "[Script] checker exited 1",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 4.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\multi_file.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:26.490697\n\n## Issue Summary (12 total)\n- Minor: 12\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 3 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ⚠️ 1 issues found |\n| 10 | — | Minor | P2 | 'CNN' used before its first definition at method.tex:2 (first at introduction.tex:2) |\n| 11 | — | Minor | P2 | ============================================================ |\n| 12 | — | Minor | P3 | [Script] checker exited 1 |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "legal_synthesis": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\legal_synthesis.tex"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ✅ No abbreviation issues found within checked scope\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\legal_synthesis.tex",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {},\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {},\n    \"usages\": {},\n    \"issues\": [],\n    \"status\": \"PASS\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No abbreviation issues found within checked scope",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 5.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\legal_synthesis.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:26.681427\n\n## Issue Summary (10 total)\n- Minor: 10\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ✅ No abbreviation issues found within checked scope |\n| 10 | — | Minor | P2 | ============================================================ |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    },
+    "distinct_concepts": {
+      "raw_consistency": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\distinct_concepts.tex"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n============================================================\nConsistency Check Report / 一致性检查报告\n============================================================\n按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n\n[1] Term Consistency / 术语一致性\n----------------------------------------\nStatus: ✅ No inconsistencies found\n\n[2] Abbreviation Check / 缩略语检查\n----------------------------------------\nStatus: ✅ No abbreviation issues found within checked scope\n\n============================================================\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "raw_consistency_json": {
+        "command": [
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\check_consistency.py",
+          "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\distinct_concepts.tex",
+          "--json"
+        ],
+        "returncode": 0,
+        "stdout": "[INFO] Checking 1 files...\n{\n  \"terms\": {\n    \"term_occurrences\": {},\n    \"inconsistencies\": [],\n    \"status\": \"PASS\"\n  },\n  \"abbreviations\": {\n    \"definitions\": {},\n    \"usages\": {},\n    \"issues\": [],\n    \"status\": \"PASS\"\n  }\n}\n",
+        "stderr": "[INFO] 按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\n"
+      },
+      "ingest_kind": "issues",
+      "ingested_issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Checking 1 files...",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Check Report / 一致性检查报告",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "include 图检查装配全文顺序；覆盖范围受 loader 警告限制。",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Term Consistency / 术语一致性",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No inconsistencies found",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "Abbreviation Check / 缩略语检查",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "✅ No abbreviation issues found within checked scope",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        },
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Minor",
+          "priority": "P2",
+          "message": "============================================================",
+          "original": "",
+          "revised": "",
+          "rationale": ""
+        }
+      ],
+      "consistency_only_score": {
+        "soundness": 10,
+        "clarity": 5.0,
+        "presentation": 10,
+        "reproducibility_partial": 10,
+        "literature_grounding_partial": null
+      },
+      "acronym_checklist": [
+        {
+          "description": "Acronyms defined on first use",
+          "passed": true,
+          "details": ""
+        }
+      ],
+      "phase0_context": "# Phase 0: Automated Audit Results\n\n**File**: `D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\distinct_concepts.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:26.868456\n\n## Issue Summary (10 total)\n- Minor: 10\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Minor | P2 | Checking 1 files... |\n| 2 | — | Minor | P2 | ============================================================ |\n| 3 | — | Minor | P2 | Check Report / 一致性检查报告 |\n| 4 | — | Minor | P2 | ============================================================ |\n| 5 | — | Minor | P2 | include 图检查装配全文顺序；覆盖范围受 loader 警告限制。 |\n| 6 | — | Minor | P2 | Term Consistency / 术语一致性 |\n| 7 | — | Minor | P2 | ✅ No inconsistencies found |\n| 8 | — | Minor | P2 | Abbreviation Check / 缩略语检查 |\n| 9 | — | Minor | P2 | ✅ No abbreviation issues found within checked scope |\n| 10 | — | Minor | P2 | ============================================================ |\n\n## Pre-Submission Checklist\n\n- [x] No placeholder text (TODO, FIXME, XXX)\n- [x] All figures referenced in text\n- [x] All tables referenced in text\n- [x] Anonymous submission (blind review check)\n- [x] Consistent math notation\n- [x] Acronyms defined on first use\n"
+    }
+  },
+  "info_scoring": {
+    "issue": {
+      "module": "CONSISTENCY",
+      "line": null,
+      "severity": "Info",
+      "priority": "P3",
+      "message": "[Script] NEEDS-LLM 合成观察",
+      "original": "",
+      "revised": "",
+      "rationale": ""
+    },
+    "legacy_empty": {
+      "quality": 6.0,
+      "clarity": 6.0,
+      "significance": 6.0,
+      "originality": 6.0,
+      "overall": 6.0
+    },
+    "legacy_info": {
+      "quality": 6.0,
+      "clarity": 5.75,
+      "significance": 6.0,
+      "originality": 6.0,
+      "overall": 5.92
+    },
+    "scholar_info": {
+      "soundness": 10,
+      "clarity": 10,
+      "presentation": 10,
+      "reproducibility_partial": 10,
+      "literature_grounding_partial": null
+    },
+    "json_report": {
+      "file": "synthetic.tex",
+      "language": "zh",
+      "mode": "quick-audit",
+      "mode_alias_used": null,
+      "venue": "",
+      "generated_at": "2026-09-10T21:49:25.487924",
+      "scores": {
+        "quality": 6.0,
+        "clarity": 5.75,
+        "significance": 6.0,
+        "originality": 6.0,
+        "overall": 5.92
+      },
+      "verdict": "score.strong_accept",
+      "issues": [
+        {
+          "module": "CONSISTENCY",
+          "line": null,
+          "severity": "Info",
+          "priority": "P3",
+          "message": "[Script] NEEDS-LLM 合成观察",
+          "original": "",
+          "revised": ""
+        }
+      ],
+      "checklist": []
+    },
+    "quick_info_visible": true,
+    "deep_info_visible": true,
+    "gate_info_visible": true,
+    "phase0": "# Phase 0: Automated Audit Results\n\n**File**: `synthetic.tex` | **Language**: zh | **Mode**: quick-audit\n**Generated**: 2026-09-10T21:49:25.488085\n\n## Issue Summary (1 total)\n- Info: 1\n\n## Issues by Module\n\n### CONSISTENCY\n\n| # | Line | Severity | Priority | Issue |\n|---|------|----------|----------|-------|\n| 1 | — | Info | P3 | [Script] NEEDS-LLM 合成观察 |\n",
+    "presubmission_promoted": []
+  },
+  "fixtures": {
+    "clean": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{绪论}\n卷积神经网络（CNN）用于识别。本文使用CNN，后续仍使用CNN。\n\\end{document}\n",
+    "late_definition": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{绪论}\n采用CNN得到结果，卷积神经网络（CNN）用于识别。\n\\end{document}\n",
+    "equivalent_expansions": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{绪论}\n卷积神经网络（CNN）用于识别。\n\\chapter{模型}\nconvolutional neural network (CNN)用于分类。\n\\end{document}\n",
+    "missing_include": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{绪论}\n本文研究一种方法。\n\\input{missing_chapter}\n\\end{document}\n",
+    "multi_file": "\\documentclass{ctexbook}\n\\begin{document}\n\\input{introduction}\n\\input{method}\n\\end{document}\n",
+    "legal_synthesis": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{相关工作}\n现有研究通常通过约束输入表示改善小样本识别，相关工作共同支持这一技术路线\\cite{a,b,c}。本文比较其适用条件，并保留样本边界。\n\\end{document}\n",
+    "distinct_concepts": "\\documentclass{ctexbook}\n\\begin{document}\n\\chapter{绪论}\n数据处理包含数据预处理。算法嵌入模型，系统调用模型。训练数据和测试数据保持不同用途。\n\\end{document}\n",
+    "introduction.tex": "\\chapter{绪论}\n采用CNN得到结果。此处首次使用缩略语。\n",
+    "method.tex": "\\chapter{模型}\n卷积神经网络（CNN）用于识别。独有标记：模型章完整证据。\n"
+  },
+  "complete_quick_audit": {
+    "command": [
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+      "-B",
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\paper-audit\\scripts\\audit.py",
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\clean.tex",
+      "--mode",
+      "quick-audit",
+      "--lang",
+      "zh",
+      "--format",
+      "json"
+    ],
+    "returncode": 1,
+    "stdout": "[audit] File: clean.tex | Format: .tex | Language: zh | Mode: quick-audit\n[audit] RUN format: check_format.py (origin=zh, lang-native)\n[audit] SKIP grammar: suppressed for lang=zh (language-specific)\n[audit] RUN logic: analyze_logic.py (origin=zh, lang-native)\n[audit] RUN experiment: analyze_experiment.py (origin=zh, lang-native)\n[audit] RUN sentences: check_style_zh.py (origin=zh, override)\n[audit] RUN deai: deai_check.py (origin=zh, lang-native)\n[audit] RUN citations: check_citations.py (origin=audit, own)\n[audit] SKIP bib: no .bib resolved from clean.tex\n[audit] RUN figures: check_figures.py (origin=en, lang-neutral reuse for lang=zh)\n[audit] SKIP pseudocode: suppressed for lang=zh (language-specific)\n[audit] RUN references: check_references.py (origin=audit, own)\n[audit] SKIP visual: not applicable to .tex\n[audit] RUN presubmission: pre_submission_check.py (origin=audit, own)\n[audit] RUN consistency: check_consistency.py (origin=zh, lang-native)\n[audit] RUN spec: check_spec.py (origin=zh, lang-native)\n[audit] RUN blind: blind_review.py (origin=zh, lang-native)\n[audit] RUN abstract: analyze_abstract.py (origin=zh, lang-native)\n[audit] RUN conclusion: analyze_conclusion.py (origin=zh, lang-native)\n[audit] RUN literature: analyze_literature.py (origin=zh, lang-native)\n[audit] RUN tables: check_tables.py (origin=zh, lang-native)\n[audit] experiment: 1 issues found\n[audit] sentences: clean\n[audit] logic: 4 issues found\n[audit] citations: 1 issues found\n[audit] deai: 1 issues found\n[audit] figures: 3 issues found\n[audit] references: clean\n[audit] presubmission: 1 issues found\n[audit] consistency: 10 issues found\n[audit] ERROR spec: [ERROR] 清单文件不存在: D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\templates\\ctexbook.md\n当前带逐项清单的模板: generic, pkuthss, thuthesis, yanshan\n\n[audit] blind: clean\n[audit] abstract: 2 issues found\n[audit] conclusion: clean\n[audit] literature: 1 issues found\n[audit] format: 8 issues found\n[audit] tables: clean\n\n{\n  \"file\": \"D:\\\\Documents\\\\Code\\\\Agents\\\\academic-writing-skills\\\\.trellis\\\\tasks\\\\09-10-paper-audit-zh-thesis-fidelity\\\\research\\\\probe-work-t373tcm0\\\\clean.tex\",\n  \"language\": \"zh\",\n  \"mode\": \"quick-audit\",\n  \"mode_alias_used\": null,\n  \"venue\": \"\",\n  \"generated_at\": \"2026-09-10T21:49:27.573353\",\n  \"scores\": {\n    \"quality\": 3.25,\n    \"clarity\": 1.0,\n    \"significance\": 4.25,\n    \"originality\": 5.75,\n    \"overall\": 3.28\n  },\n  \"verdict\": \"score.borderline_reject\",\n  \"issues\": [\n    {\n      \"module\": \"EXPERIMENT\",\n      \"line\": 1,\n      \"severity\": \"Info\",\n      \"priority\": \"P3\",\n      \"message\": \"[Script] 结构提示：未检出独立的讨论章或综述章，B3（讨论深度）/B4（文献回溯）在此结构下难以生效；若为“一章一方法 + 同章实验”章式，请改用 --per-chapter 逐方法章检查。\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"LOGIC\",\n      \"line\": null,\n      \"severity\": \"Major\",\n      \"priority\": \"P1\",\n      \"message\": \"（第4行）: 方法选择缺乏论证\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"LOGIC\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"卷积神经网络（CNN）用于识别。本文使用CNN，后续仍使用CNN。\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"LOGIC\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"：添加选择理由（如效率/准确率/可复现性）。\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"LOGIC\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"：方法选择应说明为何采用该方案。\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CITATIONS\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"No citation stacking issues found.\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"DEAI\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"使用 --analyze 进行完整文档分析\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FIGURES\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"figures in D:\\\\Documents\\\\Code\\\\Agents\\\\academic-writing-skills\\\\.trellis\\\\tasks\\\\09-10-paper-audit-zh-thesis-fidelity\\\\research\\\\probe-work-t373tcm0\\\\clean.tex...\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FIGURES\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"0 figures.\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FIGURES\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"All figures passed check.\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"PRESUBMISSION\",\n      \"line\": null,\n      \"severity\": \"Major\",\n      \"priority\": \"P1\",\n      \"message\": \"[A0] Abstract was not detected; submission packages need a visible abstract.\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Checking 1 files...\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Check Report / 一致性检查报告\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"include 图检查装配全文顺序；覆盖范围受 loader 警告限制。\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Term Consistency / 术语一致性\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"✅ No inconsistencies found\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Abbreviation Check / 缩略语检查\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"✅ No abbreviation issues found within checked scope\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"CONSISTENCY\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"SPEC\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Check script failed (exit 2): [ERROR] 清单文件不存在: D:\\\\Documents\\\\Code\\\\Agents\\\\academic-writing-skills\\\\academic-writing-skills\\\\latex-thesis-zh\\\\templates\\\\ctexbook.md 当前带逐项清单的模板: generic, pkuthss, thuthesis, yanshan\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"ABSTRACT\",\n      \"line\": null,\n      \"severity\": \"Major\",\n      \"priority\": \"P1\",\n      \"message\": \"[Script] No abstract found in document.\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"ABSTRACT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P3\",\n      \"message\": \"[Script] checker exited 1\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"LITERATURE\",\n      \"line\": null,\n      \"severity\": \"Critical\",\n      \"priority\": \"P0\",\n      \"message\": \"[Script] % ERROR : 未找到章节: related\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Format Check Report (Chinese Thesis)\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"D:\\\\Documents\\\\Code\\\\Agents\\\\academic-writing-skills\\\\.trellis\\\\tasks\\\\09-10-paper-audit-zh-thesis-fidelity\\\\research\\\\probe-work-t373tcm0\\\\clean.tex\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"PASS\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Available\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"Issues: 0\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    },\n    {\n      \"module\": \"FORMAT\",\n      \"line\": null,\n      \"severity\": \"Minor\",\n      \"priority\": \"P2\",\n      \"message\": \"============================================================\",\n      \"original\": \"\",\n      \"revised\": \"\"\n    }\n  ],\n  \"checklist\": [\n    {\n      \"description\": \"No placeholder text (TODO, FIXME, XXX)\",\n      \"passed\": true,\n      \"details\": \"\"\n    },\n    {\n      \"description\": \"All figures referenced in text\",\n      \"passed\": true,\n      \"details\": \"\"\n    },\n    {\n      \"description\": \"All tables referenced in text\",\n      \"passed\": true,\n      \"details\": \"\"\n    },\n    {\n      \"description\": \"Anonymous submission (blind review check)\",\n      \"passed\": true,\n      \"details\": \"\"\n    },\n    {\n      \"description\": \"Consistent math notation\",\n      \"passed\": true,\n      \"details\": \"\"\n    },\n    {\n      \"description\": \"Acronyms defined on first use\",\n      \"passed\": true,\n      \"details\": \"\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  "legal_synthesis_literature": {
+    "command": [
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+      "-B",
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\analyze_literature.py",
+      "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\legal_synthesis.tex"
+    ],
+    "returncode": 0,
+    "stdout": "% 文献综述（第3-6行）[Severity: Major] [Priority: P1]: 相关工作末尾未发现明确的研究空白推导。\n% 建议：在结尾指出尚未解决的限制、边界条件或被忽略的情形，再引出本文切入点。\n% 理由：研究空白应从既有文献的共识与不足中自然推出，而不是直接跳到本文工作。\n\n% 文献综述重写蓝图：共识 -> 分歧 -> 局限 -> 空白 -> 本文切入点\n% 建议改写链条：先概括多篇文献的共同结论，再指出方法分歧或 trade-off，随后提炼仍未解决的限制，最后再连接到本文贡献。\n",
+    "stderr": ""
+  },
+  "workspace": {
+    "prepare_stdout": "",
+    "full_text": "ctexbook\n\ndocument\n\nintroduction\n\nmethod\n\ndocument",
+    "section_index": [],
+    "references": [
+      "CHECKLIST.md",
+      "CLAIM_EVIDENCE_CONTRACT.md",
+      "CONSOLIDATION_RULES.md",
+      "DATA_AVAILABILITY_ADVISORY.md",
+      "DEEP_REVIEW_CRITERIA.md",
+      "ISSUE_SCHEMA.md",
+      "PRE_SUBMISSION_RULES.md",
+      "QUALITATIVE_STANDARDS.md",
+      "REVIEW_LANE_GUIDE.md",
+      "SUBSECTION_CONTEXT_PROTOCOL.md"
+    ],
+    "legacy_input_paths_exist": {
+      "paper_summary.md": false,
+      "claim_map.json": false,
+      "sections": false,
+      "references": false
+    },
+    "documented_output_seen_by_consumer": 0,
+    "canonical_output_seen_by_consumer": 1,
+    "consolidation_cli": {
+      "command": [
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\paper-audit\\scripts\\consolidate_review_findings.py",
+        "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.trellis\\tasks\\09-10-paper-audit-zh-thesis-fidelity\\research\\probe-work-t373tcm0\\reviews\\multi-file"
+      ],
+      "returncode": 0,
+      "stdout": "- MINOR: 合成评论路径探针\n",
+      "stderr": ""
+    },
+    "cli_final_issues": [
+      {
+        "title": "合成评论路径探针",
+        "quote": "本文研究一种方法",
+        "explanation": "仅用于验证评论路径被真实合并入口消费。",
+        "comment_type": "missing_information",
+        "severity": "minor",
+        "confidence": "medium",
+        "source_kind": "llm",
+        "source_section": "introduction",
+        "related_sections": [
+          "introduction"
+        ],
+        "root_cause_key": "issue",
+        "review_lane": "zh_thesis_review",
+        "gate_blocker": false,
+        "quote_verified": null,
+        "source_file": "zh_thesis_review.json"
+      }
+    ]
+  },
+  "temporary_directory_removed": true
+}

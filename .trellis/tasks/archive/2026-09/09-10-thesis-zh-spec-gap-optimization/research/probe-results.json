@@ -1,0 +1,81 @@
+{
+  "kind": "in_memory_and_mock",
+  "observations": {
+    "different_concepts": {
+      "input": "深度学习是一类研究方法。深度神经网络是该领域使用的模型。",
+      "actual": {
+        "term_occurrences": {
+          "深度学习": 1,
+          "深度神经网络": 1
+        },
+        "inconsistencies": [
+          {
+            "type": "variant_mix",
+            "group": [
+              "深度学习",
+              "深度神经网络"
+            ],
+            "counts": {
+              "深度学习": 1,
+              "深度神经网络": 1
+            },
+            "suggestion": "同义全称混用，建议统一使用 '深度学习'"
+          }
+        ],
+        "status": "WARNING"
+      }
+    },
+    "defined_late": {
+      "input": "CNN 用于第一阶段。\nCNN 用于第二阶段。\n卷积神经网络（CNN）用于分类。",
+      "actual": {
+        "definitions": {
+          "CNN": 1
+        },
+        "usages": {
+          "CNN": 3
+        },
+        "issues": [],
+        "status": "PASS"
+      }
+    },
+    "per_chapter": {
+      "input": "\\chapter{方法一}\n卷积神经网络（CNN）用于分类。\n\\chapter{方法二}\n卷积神经网络（CNN）用于编码。",
+      "actual": {
+        "definitions": {
+          "CNN": 2
+        },
+        "usages": {
+          "CNN": 2
+        },
+        "issues": [
+          {
+            "type": "multiple_definitions",
+            "abbreviation": "CNN",
+            "definitions": [
+              [
+                "\\chapter{方法一}\n卷积神经网络",
+                "per_chapter.tex",
+                1
+              ],
+              [
+                "用于分类。\n\\chapter{方法二}\n卷积神经网络",
+                "per_chapter.tex",
+                2
+              ]
+            ],
+            "message": "'CNN' defined 2 times"
+          }
+        ],
+        "status": "WARNING"
+      }
+    },
+    "only_requested_output": {
+      "exit": 1,
+      "stdout": "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: <repo>\\nonexistent-fixture\n\n[STEP 1/1] Running latexmk-xelatex...\n\n[ERROR] PDF not found: <repo>\\nonexistent-fixture\\main.pdf\n"
+    },
+    "stale_source_pdf": {
+      "exit": 0,
+      "stdout": "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: <repo>\\nonexistent-fixture\n\n[STEP 1/1] Running latexmk-xelatex...\n\n[SUCCESS] PDF generated: <repo>\\nonexistent-fixture\\main.pdf\n"
+    }
+  }
+}

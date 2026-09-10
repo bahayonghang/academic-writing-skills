@@ -33,6 +33,15 @@ see `references/PRESUBMISSION_GUIDE.md`.
 needs `pymupdf4llm`); both are optional and lazily imported — a `.pdf` input
 without them fails with a clear install hint.
 
+**Install layout**: Full `.tex`/`.typ` script-backed checks resolve sibling
+writing skills from the parent of this skill directory (`latex-paper-en/scripts`,
+`latex-thesis-zh/scripts`, `typst-paper/scripts`). Recommended: keep all six
+skill directories as siblings (`cover-letter`, `paper-audit`, `latex-paper-en`,
+`latex-thesis-zh`, `typst-paper`, `bib-search-citation`). A single `paper-audit`
+copy is **limited coverage**: missing sibling scripts are skipped and the
+existing exit/gate behavior is unchanged (recorded standalone boundary:
+missing=8, exit 0). Do not copy sibling scripts into `paper-audit/`.
+
 ## What This Skill Produces
 
 - `quick-audit`: fast submission-readiness screen with script-backed findings, incl. `PRESUBMISSION`
@@ -201,12 +210,16 @@ Five phases (detail: `references/MODE_GUIDE.md`,
    ```bash
    uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode deep-review ...
    ```
-3. **Phase 3A committee** — dispatch 5 committee agents (editor, theory,
+3. **Phase 3A committee** — run 5 committee perspectives (editor, theory,
    literature, methodology, logic) and write `committee/consensus.md`.
+   Native delegated children with exclusive scopes only when this session
+   actually spawned them; otherwise sequential in one agent
+   (`references/workflow-detail.md`).
 4. **Phase 3B section + cross-cutting lanes** — section, claims-vs-evidence,
    notation, evaluation fairness, self-consistency, prior-art, and
    pre-submission readiness (full/editor focus only), plus subsection-context
-   handoffs for `full`/`logic` focus.
+   handoffs for `full`/`logic` focus. Same native-vs-sequential rule as
+   Phase 3A.
 5. **Consolidation** — `consolidate_review_findings.py`, `verify_quotes.py
    --write-back`, then render Markdown + HTML reports with `--lang $LANG`
    (exact commands in `references/workflow-detail.md`).
@@ -239,6 +252,39 @@ uv run python -B "$SKILL_DIR/scripts/audit.py" <paper> --mode polish ...
 If blockers exist, stop and report them; polish only when the precheck is safe.
 When `subsection_windows.status == "ok"`, use its source-coordinate windows for
 per-subsection Mentor handoff; otherwise retain the section-level fallback.
+
+## Portable Execution
+
+Frontmatter `allowed-tools` (`Read`, `Glob`, `Grep`, `Bash`, `Task`) is
+Claude-compatible metadata. It is not a mandatory permission list on other
+platforms. Map read / search / exec / delegate onto this session's available
+capabilities. Script and semantic contracts do not depend on those literal
+tool names.
+
+For deep-review committee and lane work:
+
+- Inputs, exclusive file scope, JSON outputs, and `[Script]` / `[LLM]`
+  provenance stay as specified in `references/SUBAGENT_TEMPLATES.md` and
+  `references/workflow-detail.md`.
+- **native delegated**: parallel exclusive scopes only when this session
+  actually spawned independent children.
+- **sequential single-agent**: if this session has no native delegate, run
+  the same perspectives sequentially in one agent. This is not an
+  independent panel.
+- `review_report.md` and `overall_assessment.txt` MUST state
+  `native delegated` or `sequential single-agent`. Sequential output MUST
+  NOT say `independent panel`.
+- `CONSENSUS` after sequential execution means cross-perspective agreement
+  in this session, not independent-reviewer consensus evidence.
+- Deterministic script fallback must not claim that other models or
+  reviewer agents were called.
+
+Keep root-cause analysis, academic judgment, severity, permission
+boundaries, and final acceptance on a strong model. Cheap-model work stays
+inside an approved file and test boundary. Escalate when a new interface
+appears, the change crosses unapproved directories, an academic conclusion
+changes, or a failure falls outside the plan. Five-tool live delegation
+stays UNVERIFIED until a captured real run exists.
 
 ## Output Contract
 
@@ -276,11 +322,14 @@ Full script roster with purposes: `references/scripts-map.md`.
 
 ## Reviewer Lanes
 
-Deep-review dispatches 5 committee agents and 6+ lane agents, then uses
-`synthesis_agent.md`. Mode-specific agents include `editor_in_chief_agent.md`
-for `gate`, `revision_coach_agent.md` for `re-audit`, and
-`revision_suggestion_agent.md` after consolidation. Chinese dissertations
-(`lang == "zh"`, `--focus full|editor`) also dispatch
+Deep-review runs 5 committee perspectives and 6+ lane perspectives, then uses
+`synthesis_agent.md`. Native delegated children are used only when this
+session actually spawned them; otherwise the same perspectives run
+sequentially in one agent. The report and `overall_assessment.txt` must
+state `native delegated` or `sequential single-agent`. Mode-specific agents
+include `editor_in_chief_agent.md` for `gate`, `revision_coach_agent.md` for
+`re-audit`, and `revision_suggestion_agent.md` after consolidation. Chinese
+dissertations (`lang == "zh"`, `--focus full|editor`) also run
 `zh_thesis_reviewer_agent.md` on the `zh_thesis_review` lane. Specialized reviewer
 playbooks under `agents/` are reference material, not auto-dispatched. Full
 roster and activation details: `references/agent-roster.md`.

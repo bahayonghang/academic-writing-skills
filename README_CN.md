@@ -11,8 +11,12 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型：**Claude Opus 4.6/fable5 · GPT 5.6 Sol Max/Xhigh · Gemini 3.1 PRO**  
+> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**  
 > 推荐平台：**Claude Code · Codex**
+>
+> 适用工具：Claude Code、Codex、Grok Build、Kimi Code、OMP（Oh My Pi）。
+>
+> 列出工具名称不等于完成运行验收。未运行的五工具运行时验证保持 UNVERIFIED。
 
 ## 安装
 
@@ -22,7 +26,7 @@
 npx skills add bahayonghang/academic-writing-skills
 ```
 
-然后在你的论文项目中打开 Claude Code 或 Codex，用自然语言描述任务即可。
+然后在你的论文项目中打开适用工具，用自然语言描述任务即可。
 根目录 README 只负责帮你选 skill；具体用法以各目录的 `SKILL.md` 和文档站为准。
 
 ## 选择技能
@@ -89,7 +93,7 @@ npx skills add bahayonghang/academic-writing-skills
 - TeX Live 或 MiKTeX，并包含 `latexmk` 与 `chktex`
 - 中文 LaTeX 文档需要 XeLaTeX 与 CJK 字体
 - Typst 工作流需要 Typst CLI
-- PDF 审查工作流需要 `pdfplumber`
+- PDF 审查工作流需要 `pymupdf`（PyMuPDF）；增强提取路径还需要可选的 `pymupdf4llm`（二者均为惰性导入）
 - 只有本地构建文档站时才需要 Node.js、npm 或 `just`
 
 ## 仓库结构

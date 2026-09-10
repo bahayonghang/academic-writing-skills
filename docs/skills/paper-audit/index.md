@@ -31,10 +31,13 @@ Deep-review-first academic paper audit for LaTeX, Typst, and PDF documents. It i
 
 Compatibility aliases: `self-check` -> `quick-audit`; `review` -> `deep-review`.
 
-Deep-review dispatches five committee agents and six or more lane agents, then uses
-`synthesis_agent.md`. Mode-specific agents cover `gate`, `re-audit`, and post-consolidation
-revision suggestions. Specialized reviewer playbooks under `agents/` are reference material,
-not auto-dispatched; see the [agent roster](./resources/references/agent-roster.md).
+Deep-review runs five committee perspectives and six or more lane perspectives, then uses
+`synthesis_agent.md`. Native delegated children are used only when this session actually
+spawned them; otherwise the same perspectives run sequentially in one agent. The report and
+`overall_assessment.txt` must state `native delegated` or `sequential single-agent`.
+Mode-specific agents cover `gate`, `re-audit`, and post-consolidation revision suggestions.
+Specialized reviewer playbooks under `agents/` are reference material, not auto-dispatched;
+see the [agent roster](./resources/references/agent-roster.md).
 
 ## Minimum Inputs
 
@@ -43,6 +46,41 @@ not auto-dispatched; see the [agent roster](./resources/references/agent-roster.
 - Optional `--focus full|editor|theory|literature|methodology|logic` for deep-review.
 - `--previous-report` for `re-audit`.
 - `--review-dir` when continuing or rendering an existing review workspace.
+
+## Install Layout
+
+Maintaining the development repository and installing this skill into a
+manuscript project are different paths.
+
+Full `.tex` / `.typ` script-backed checks need sibling writing-skill directories
+next to `paper-audit/`:
+
+- `latex-paper-en/scripts`
+- `latex-thesis-zh/scripts`
+- `typst-paper/scripts`
+
+Recommended full collection: copy or install all six skill directories as
+siblings under one parent. See [Installation](/installation#paper-audit-layout).
+
+A single `paper-audit` copy is **limited coverage**. Missing sibling scripts are
+skipped. The existing exit and gate behavior is unchanged. Recorded standalone
+boundary: missing=8, exit 0.
+
+Do not copy sibling scripts into `paper-audit/`. The `npx skills add` installer,
+symlink layout, and five-tool runtime stay **UNVERIFIED** until a captured real
+run exists.
+
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
+permission list on other platforms. Map read, search, exec, and delegate onto
+this session's available capabilities. For deep-review lanes, `review_report.md`
+and `overall_assessment.txt` must state `native delegated` or
+`sequential single-agent`. Sequential output must not say `independent panel`.
+`CONSENSUS` in sequential mode is cross-perspective agreement in this session,
+not independent-reviewer consensus evidence. Keep academic judgment and final
+acceptance on a strong model. Cheap-model work stays inside an approved file
+and test boundary. Five-tool live delegation stays **UNVERIFIED**.
 
 ## Script Entry Points
 

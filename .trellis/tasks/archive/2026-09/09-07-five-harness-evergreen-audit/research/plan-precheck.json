@@ -1,0 +1,698 @@
+{
+  "repo_root": "D:/Documents/Code/Agents/academic-writing-skills",
+  "review_scope": {
+    "mode": "task-tree",
+    "root": "09-07-five-harness-evergreen-audit",
+    "task_count": 7,
+    "members": [
+      {
+        "name": "09-07-five-harness-evergreen-audit",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-five-harness-evergreen-audit",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-project-contract",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-project-contract",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-ci-gates",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-ci-gates",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-onboarding",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-onboarding",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-skill-portability",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-skill-portability",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-validation-closeout",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-validation-closeout",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-audit-encoding",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-audit-encoding",
+        "location": "active",
+        "status": "planning"
+      }
+    ],
+    "edges": [
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-project-contract"
+      },
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-ci-gates"
+      },
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-onboarding"
+      },
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-skill-portability"
+      },
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-validation-closeout"
+      },
+      {
+        "parent": "09-07-five-harness-evergreen-audit",
+        "child": "09-07-harness-audit-encoding"
+      }
+    ],
+    "legacy_fallback_tasks": []
+  },
+  "tasks": [
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-five-harness-evergreen-audit",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 1,
+        "by_status": {
+          "resolved": 1
+        },
+        "entries": [
+          {
+            "artifact": "implement.md",
+            "artifact_line": 48,
+            "citation": "README_CN.md:14",
+            "status": "resolved",
+            "resolved_path": "README_CN.md",
+            "file_lines": 142
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1",
+              "R6"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2",
+              "R3"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R5",
+              "R7"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R6",
+              "R7"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC6",
+            "requirements": [
+              "R5",
+              "R7"
+            ],
+            "clause_hint": 1
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-five-harness-evergreen-audit",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-project-contract",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 8,
+        "by_status": {
+          "resolved": 8
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "CLAUDE.md:7",
+            "status": "resolved",
+            "resolved_path": "CLAUDE.md",
+            "file_lines": 108
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "pyproject.toml:3",
+            "status": "resolved",
+            "resolved_path": "pyproject.toml",
+            "file_lines": 92
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README.md:158",
+            "status": "resolved",
+            "resolved_path": "README.md",
+            "file_lines": 158
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README_CN.md:142",
+            "status": "resolved",
+            "resolved_path": "README_CN.md",
+            "file_lines": 142
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README.md:106",
+            "status": "resolved",
+            "resolved_path": "README.md",
+            "file_lines": 158
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README_CN.md:92",
+            "status": "resolved",
+            "resolved_path": "README_CN.md",
+            "file_lines": 142
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "pdf_parser.py:81",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/pdf_parser.py",
+            "file_lines": 321
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "AGENTS.md:15-21",
+            "status": "resolved",
+            "resolved_path": "AGENTS.md",
+            "file_lines": 48
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1",
+              "R6"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R7"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R1",
+              "R5"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R6"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-project-contract",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-ci-gates",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 1,
+        "by_status": {
+          "resolved": 1
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "deploy.yml:3-6",
+            "status": "resolved",
+            "resolved_path": ".github/workflows/deploy.yml",
+            "file_lines": 62
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R2",
+          "R3",
+          "R5"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R2",
+              "R5"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R3",
+              "R5"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3",
+              "R5"
+            ],
+            "clause_hint": 1
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-ci-gates",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-onboarding",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 0,
+        "by_status": {},
+        "entries": []
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R3",
+          "R5",
+          "R6"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1",
+              "R6"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R1",
+              "R6"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3",
+              "R5"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R5",
+              "R6"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-onboarding",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-skill-portability",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 0,
+        "by_status": {},
+        "entries": []
+      },
+      "identifiers": {
+        "requirements": [
+          "R4",
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R6"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R6",
+              "R7"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R4",
+              "R5"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R5",
+              "R7"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-skill-portability",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-validation-closeout",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 0,
+        "by_status": {},
+        "entries": []
+      },
+      "identifiers": {
+        "requirements": [
+          "R2",
+          "R4",
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R2",
+              "R5"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2",
+              "R6"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R7"
+            ],
+            "clause_hint": 1
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4",
+              "R5",
+              "R6"
+            ],
+            "clause_hint": 3
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-validation-closeout",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-07-harness-audit-encoding",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 1,
+        "by_status": {
+          "resolved": 1
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "audit.py:686-692",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/audit.py",
+            "file_lines": 3578
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R7"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R3",
+              "R5"
+            ],
+            "clause_hint": 1
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2",
+              "R3"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R2",
+              "R5"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4",
+              "R7"
+            ],
+            "clause_hint": 3
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-audit-encoding",
+      "location": "active"
+    }
+  ],
+  "reviews_git": {
+    "path": ".trellis/reviews/09-07-five-harness-evergreen-audit.md",
+    "state": "ignored"
+  },
+  "blocking": []
+}

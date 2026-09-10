@@ -52,6 +52,10 @@ generation. `preview_bib_search.py` only renders existing JSON.
 - Optional LaTeX and Typst citation snippets.
 - Additive `meta.recency` and per-result `claim_support` with explicit caveats.
 
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory permission list on other platforms. Map read, search, exec, and delegate onto this session's available capabilities. If this session has no native delegate, run the same checks sequentially in one agent and say so. Keep academic judgment and final acceptance on a strong model. Cheap-model work stays inside an approved file and test boundary.
+
 ## Public Resources
 
 ### References

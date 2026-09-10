@@ -1,0 +1,23 @@
+{
+  "kind": "isolated_real_wrapper_after_review_fix",
+  "start_utc": "2026-09-10T13:02:38.962575+00:00",
+  "end_utc": "2026-09-10T13:02:41.352389+00:00",
+  "command": [
+    "D:\\Documents\\Code\\Agents\\academic-writing-skills\\.venv\\Scripts\\python.exe",
+    "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\latex-thesis-zh\\scripts\\compile.py",
+    "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-review-wrapper-8gfqw79k\\main.tex",
+    "--recipe",
+    "latexmk",
+    "--outdir",
+    "build"
+  ],
+  "cwd": "D:\\Documents\\Code\\Agents\\academic-writing-skills",
+  "wrapper_sha256_bytes": "f8bd4f96650797dfb3d252afa5744616b48357fd64bcd112b75403954a8d518d",
+  "exit": 0,
+  "target_pdf": "C:\\Users\\lyh\\AppData\\Local\\Temp\\c3-review-wrapper-8gfqw79k\\build\\main.pdf",
+  "target_exists": true,
+  "target_bytes": 4178,
+  "source_pdf_exists": false,
+  "stdout": "review-tex-smoke.stdout.txt",
+  "stderr": "review-tex-smoke.stderr.txt"
+}

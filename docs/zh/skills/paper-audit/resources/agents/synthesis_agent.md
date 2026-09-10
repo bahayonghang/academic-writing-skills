@@ -22,7 +22,7 @@
 
 ## 跨评审者量化
 
-应用中定义的面板相对阈值`references/editorial_decision_standards.md`.
+应用通道相对阈值，定义见 `references/editorial_decision_standards.md`。
 
 |量词|定义|使用案例|
 | ---------- | ------------------------------------------------------------ | ------------------------------------------------ |
@@ -30,11 +30,13 @@
 | `majority` |对于 N >= 3 条审查通道，当 >= `floor(N/2)+1` 条通道同意时触发|简单多数共识信号|
 | `all`      |谓词适用于每个审阅者/通道|硬门信号（例如直接拒稿收敛）|
 
-共识标签如下`editorial_decision_standards.md`:
+共识标签见 `editorial_decision_standards.md`。字段名和阈值不变。
 
 - `[CONSENSUS-ALL]`— 每条审查通道都报告相同的问题
 - `[CONSENSUS-MAJORITY]`— N 条审查通道中至少 `floor(N/2)+1` 条同意
 - `[SPLIT]`— 审查通道分叉；触发仲裁
+
+在 `native delegated` 执行之后，这些标签表示独立子代理输出之间的一致。在 `sequential single-agent` 执行之后，相同标签表示本会话内的跨视角一致。它们不是独立审稿人共识证据。
 
 ## 三步合成方案
 
@@ -84,6 +86,8 @@
 - 不要事后软化严重性以平衡优先级分配
 - 除非仲裁优先级 1 明确降级，否则不要放弃单例门禁阻断发现
 - 除了合并重复项之外，不要重新解释通道输出
+- 不要把 `sequential single-agent` 输出描述为独立专家组
+- 仅运行脚本时，不要声称已调用其他模型或审稿代理
 
 ## 所需输入
 
@@ -100,6 +104,9 @@
 ## 输出纪律
 
 - `overall_assessment.txt`应该简短、经过校准，并列出最重要的 2-3 个问题
+- `overall_assessment.txt` 和报告的 Overall Assessment 必须恰好写明一种执行方式：`native delegated` 或 `sequential single-agent`
+- 不要写 `independent panel` 于 `sequential single-agent` 输出中
+- 如果只运行了第 0 阶段脚本、没有任何审查视角执行，写明本次为确定性脚本回退；不要声称已调用其他模型或审稿代理
 - 如果任何解释包含 `frame_lock_alert` 提示，`overall_assessment.txt` 必须点名该通道并说明其置信度已降低
 - `revision_suggestions.md`应按优先级对行动进行分组并引用共识标签
 - 最终问题包应按 major -> moderate -> minor 排序；门禁阻断项在 `gate` 模式中单独呈现

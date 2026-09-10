@@ -64,6 +64,20 @@ stdout，因此下表的"无"表示运行完成且未留下文件——不是没
 `quick-audit` 与 `gate` 在 `T3` 下确实运行的检查器仍然产出真实的 `[Script]`
 发现；只有上面第一组会丢失证据的脚本属于 `missing evidence`。
 
+## 委员会与通道执行（deep-review 第 3 阶段）
+
+两种执行方式下，通道契约相同：独占文件范围、`SUBAGENT_TEMPLATES.md` 列出的输入、
+`comments/<lane_name>.json` 下的 JSON 评论，以及 `[Script]` / `[LLM]` 出处。
+
+- `native delegated`：仅当当前工具确实生成了独立子代理时使用。给每个子代理独占的通道或委员会范围，并在这些独占范围上并行。
+- `sequential single-agent`：当前会话没有原生委派时，按 `MODE_GUIDE.md` 给出的顺序，在同一代理内完成相同审查视角。保留相同文件输出。这不是独立专家组。
+
+报告正文和 `overall_assessment.txt` 必须恰好写明 `native delegated` 或 `sequential single-agent` 之一。顺序执行的输出不得写 `independent panel`。`CONSENSUS` 标签仍用于跨视角一致；在顺序模式下，它不是独立审稿人共识证据。
+
+如果没有任何审查视角实际执行（仅确定性脚本回退），在报告中写明。不得声称已调用其他模型或审稿代理。脚本发现仍标 `[Script]`。
+
+五套工具的真实委派运行在出现已捕获的真实运行之前保持 UNVERIFIED。
+
 ## 整合命令序列（深入审查第 4/5 阶段）
 
 ```bash

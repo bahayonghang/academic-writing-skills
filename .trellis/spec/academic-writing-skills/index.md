@@ -6,7 +6,8 @@
 
 | 文档                                                                     | 内容                                                                                    | 何时读                                                                                  |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [testing-and-tooling.md](./testing-and-tooling.md)                       | 按技能副本脚本的测试加载约定、BibTeX 扫描器维护、阈值与 evals 工具约定                  | 给 zh/typst 副本写测试、改 BibTeX 扫描或 evals/阈值配置之前                             |
+| [testing-and-tooling.md](./testing-and-tooling.md)                       | 按技能副本测试加载、BibTeX 扫描、术语/缩写语义边界、编译 outdir、指南保真与 evals 约定 | 给 zh/typst 副本写测试，改一致性检查、编译产物判断、指南示例或 evals/阈值配置之前        |
+| [harness-workflow-contract.md](./harness-workflow-contract.md)           | 五工具证据分层、checker UTF-8 子进程协议、单一 pytest 入口、同级安装 vs 受限覆盖、portable read/search/exec/delegate、原生委派 vs sequential single-agent、项目 spec 回写位置 | 改 AGENTS/CLAUDE 加载链、pytest 发现、`_run_check_script` 编码、paper-audit 安装布局、跨工具委派说明，或填写五工具证据台账之前 |
 | [spec-checklist-convention.md](./spec-checklist-convention.md)           | 逐项检查清单五列格式、CHECKERS 双向锁、TEMPLATE_THRESHOLDS 阈值来源规则                 | 改 templates/*.md 清单、check_spec.py 检查器、SKILL.md 路由表之前                       |
 | [docs-bilingual-resources.md](./docs-bilingual-resources.md)             | 技能公开资源到双语 VitePress 页面、manifest、侧栏和检查器的可执行契约                   | 增删 references/templates/examples/agents 或修改 docs 资源之前                          |
 | [paper-audit-boundary-contracts.md](./paper-audit-boundary-contracts.md) | paper-audit severity、ScholarEval 模块映射与外置 BibTeX 数据流契约                      | 修改 consolidation、ScholarEval 或 literature comparison 链路之前                       |

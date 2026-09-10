@@ -1,0 +1,452 @@
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   assert 1 == 0
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:113: assert 1 == 0
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   assert 0 == 1
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:113: assert 0 == 1
+
+E   assert 0 == 1
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:113: assert 0 == 1
+
+E   assert 0 == 1
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:113: assert 0 == 1
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert 'PDF not found: C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_compile_output_contract_m9\\external\\build\\main.pdf' in '[INFO] Using recipe: late...
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:120: AssertionError: assert 'PDF not found: C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\...
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=build'] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   assert 0 == 1
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:113: assert 0 == 1
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ernal\\build']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert ['-outdir=���� Ŀ¼'] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:111: AssertionError: assert [] == ['-outdir=C:\...ource\\���� Ŀ¼']
+
+E   assert 1 == 0
++  where 1 = SystemExit(1).code
++    where SystemExit(1) = <ExceptionInfo SystemExit(1) tblen=2>.value
+
+[ERROR] assert '-outdir=C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret0\\source\\build' in ['latexmk', '-xelatex', '-pdfxe', '-xelatex=xelatex -no-s...
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:143: assert 1 == 0
+
+E   assert 1 == 0
++  where 1 = SystemExit(1).code
++    where SystemExit(1) = <ExceptionInfo SystemExit(1) tblen=2>.value
+
+[ERROR] assert '-outdir=C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret1\\source\\build' in ['latexmk', '-xelatex', '-xelatex=xelatex -no-shell-escap...
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:143: assert 1 == 0
+
+E   assert 1 == 0
++  where 1 = SystemExit(1).code
++    where SystemExit(1) = <ExceptionInfo SystemExit(1) tblen=2>.value
+
+[ERROR] assert '-outdir=C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret2\\source\\build' in ['latexmk', '-xelatex', '-pdfxe', '-xelatex=xelatex -no-s...
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:143: assert 1 == 0
+
+E   assert 1 == 0
++  where 1 = SystemExit(1).code
++    where SystemExit(1) = <ExceptionInfo SystemExit(1) tblen=2>.value
+
+[ERROR] assert '-outdir=C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret3\\source\\build' in ['latexmk', '-lualatex', '-pdflua', '-lualatex=lualatex -...
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:143: assert 1 == 0
+
+E   assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret4\\source\\build\\main.pdf' in "[INFO] Compiling main.tex with xelatex\n[INFO] Working dir...
++  where 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret4\\source\\build\\main.pdf' = str(WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh...
++  and   "[INFO] Compiling main.tex with xelatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh...-xelatex', '-pdfxe', '-xelatex=xelatex -no-shell-escape %O %S', '-i...
++    where CaptureResult(out="[INFO] Compiling main.tex with xelatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\T..., '-pdfxe', '-xelatex=xelatex -no-shell-escape %O %S', '-interact...
++      where readouterr = <_pytest.capture.CaptureFixture object at 0x00000225DDDDB850>.readouterr
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:144: assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_ou...
+
+E   assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret5\\source\\build\\main.pdf' in "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelate...
++  where 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret5\\source\\build\\main.pdf' = str(WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh...
++  and   "[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local...atex', '-xelatex=xelatex -no-shell-escape %O %S', '-interaction=non...
++    where CaptureResult(out="[INFO] Using recipe: latexmk\n[INFO] Steps: latexmk-xelatex\n[INFO] Working directory: C:\\Users\\l...xelatex=xelatex -no-shell-escape %O %S', '-interaction=nonstopmod...
++      where readouterr = <_pytest.capture.CaptureFixture object at 0x00000225DDDD88D0>.readouterr
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:144: assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_ou...
+
+E   assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret6\\source\\build\\main.pdf' in "[INFO] Compiling main.tex with xelatex\n[INFO] Working dir...
++  where 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret6\\source\\build\\main.pdf' = str(WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh...
++  and   "[INFO] Compiling main.tex with xelatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh...-xelatex', '-pdfxe', '-xelatex=xelatex -no-shell-escape %O %S', '-i...
++    where CaptureResult(out="[INFO] Compiling main.tex with xelatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\T..., '-pdfxe', '-xelatex=xelatex -no-shell-escape %O %S', '-interact...
++      where readouterr = <_pytest.capture.CaptureFixture object at 0x00000225DDDDA350>.readouterr
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:144: assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_ou...
+
+E   assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret7\\source\\build\\main.pdf' in "[INFO] Compiling main.tex with lualatex\n[INFO] Working di...
++  where 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_outdir_and_ret7\\source\\build\\main.pdf' = str(WindowsPath('C:/Users/lyh/AppData/Local/Temp/pytest-of-lyh...
++  and   "[INFO] Compiling main.tex with lualatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-ly...latex', '-pdflua', '-lualatex=lualatex -no-shell-escape %O %S', '-i...
++    where CaptureResult(out="[INFO] Compiling main.tex with lualatex\n[INFO] Working directory: C:\\Users\\lyh\\AppData\\Local\\...-pdflua', '-lualatex=lualatex -no-shell-escape %O %S', '-interact...
++      where readouterr = <_pytest.capture.CaptureFixture object at 0x00000225DDDDB150>.readouterr
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:144: assert 'C:\\Users\\lyh\\AppData\\Local\\Temp\\pytest-of-lyh\\pytest-196\\test_cli_passes_ou...
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   assert 0 == 1
++  where 0 = SystemExit(0).code
++    where SystemExit(0) = <ExceptionInfo SystemExit(0) tblen=2>.value
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:162: assert 0 == 1
+
+E   AssertionError: assert 1 == 0
++  where 1 = compile(outdir='build')
++    where compile = <zh_compile_outdir.LaTeXCompiler object at 0x00000225DBE8F380>.compile
+
+[ERROR] PDF not found: C:\Users\lyh\AppData\Local\Temp\pytest-of-lyh\pytest-196\test_outdir_preserves_engine_s0\source\main.pdf
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:188: AssertionError: assert 1 == 0
+
+E   AssertionError: assert 1 == 0
++  where 1 = compile(outdir='build')
++    where compile = <zh_compile_outdir.LaTeXCompiler object at 0x00000225DBE8CDE0>.compile
+
+[WARNING] Shell escape enabled. Only use with trusted sources.
+
+[ERROR] PDF not found: C:\Users\lyh\AppData\Local\Temp\pytest-of-lyh\pytest-196\test_outdir_preserves_engine_s2\source\main.pdf
+
+D:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_compile_outdir.py:188: AssertionError: assert 1 == 0
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-relative-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-relative-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-relative-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-relative-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-absolute-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-absolute-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-absolute-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-absolute-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-unicode-space-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-unicode-space-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-unicode-space-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[target-unicode-space-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-none-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-none-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-none-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-relative-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-relative-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-relative-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-relative-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-absolute-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-absolute-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-absolute-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-absolute-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-unicode-space-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-unicode-space-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-unicode-space-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[missing-unicode-space-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-relative-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-relative-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-relative-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-relative-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-absolute-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-absolute-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-absolute-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-unicode-space-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-unicode-space-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-unicode-space-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[nonzero-target-unicode-space-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-relative-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-relative-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-relative-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-relative-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-absolute-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-absolute-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-absolute-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-absolute-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-unicode-space-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-unicode-space-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-unicode-space-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_compile_output_contract[source-only-unicode-space-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[True-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[True-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[True-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[True-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[False-default]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[False-recipe-latexmk]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[False-compiler-xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_cli_passes_outdir_and_returns_wrapper_result[False-compiler-lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[xelatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[lualatex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[xelatex-bibtex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[xelatex-biber]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[lualatex-bibtex]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_manual_outdir_rejected_before_subprocess[lualatex-biber]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_outdir_preserves_engine_shell_mode[False-options0]
+
+FAILED tests/skills/latex_thesis_zh/test_compile_outdir.py::test_outdir_preserves_engine_shell_mode[True-options0]
+
+66 failed, 17 passed in 5.36s
+[full output: "$HOME/AppData/Local/rtk/tee/1789044292_uv.log"]

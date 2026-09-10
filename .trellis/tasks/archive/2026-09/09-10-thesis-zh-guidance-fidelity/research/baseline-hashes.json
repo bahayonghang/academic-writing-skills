@@ -1,0 +1,36 @@
+[
+  {
+    "source": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md",
+    "sha256_bytes": "ed0aaca33640cd27262020b68deaf45c5e32e14ca936f1c4dfac3d50314ff932"
+  },
+  {
+    "source": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md",
+    "sha256_bytes": "ecf6b5a29f413c6b941a3d0aa33ef50587194631f6b59125cb2a6d66bb871d18"
+  },
+  {
+    "source": "academic-writing-skills/latex-thesis-zh/references/writing/abstract-structure.md",
+    "sha256_bytes": "0204a27158dc13841601715bab3cd5e6272c89a91a54d2b94ccb4f8ec6b0cb5c"
+  },
+  {
+    "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
+    "sha256_bytes": "8ea877606d2f54fa9257e4125fed5f45e98d09778014a50b7f3eede6b3fe55a6"
+  },
+  {
+    "source": "academic-writing-skills/latex-thesis-zh/examples/logic-and-experiment.md",
+    "sha256_bytes": "5dd857520d1a0ff6c67ab1ab7123ff45341a63078821de52b183bae7f4d07fc8"
+  },
+  {
+    "source": "evals/fixtures/guidance_fidelity.tex",
+    "sha256_utf8_lf": "4959ec3c0aa9b64848970194b3ec2efe135c045940bb6dae2040cde97344b269"
+  },
+  {
+    "source": "evals/evals.json",
+    "count": 47,
+    "canonical_sha256": "75b2a0bcbd22894c16f9b13c1d5e661e35229f73189e6f5298ee353574d52823"
+  },
+  {
+    "source": "evals/trigger_eval.json",
+    "count": 49,
+    "canonical_sha256": "3c4fbce369f0b690bfc4a4ab5f32299f94f377daf8a4a65bb59106563b73a573"
+  }
+]

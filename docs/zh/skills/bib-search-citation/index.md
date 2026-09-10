@@ -52,6 +52,10 @@ uv run python -B academic-writing-skills/bib-search-citation/scripts/preview_bib
 - 可选的 LaTeX 和 Typst 引用片段。
 - 附加 `meta.recency` 和逐条 `claim_support`，并明确给出限制说明。
 
+## 跨工具执行
+
+frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平台的强制权限列表。把读、搜索、执行、委派映射到当前会话已有的能力。若无原生委派，在同一代理内顺序完成相同检查并如实说明。学术判断和最终验收由强模型负责。低成本模型只处理已批准且有明确文件与测试边界的工作。
+
 ## 公开资源
 
 ### 参考资料

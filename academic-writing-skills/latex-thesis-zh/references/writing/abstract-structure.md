@@ -1,6 +1,6 @@
 # Abstract Structure Guide
 
-An effective academic abstract contains five structural elements that together tell a complete research story. This guide defines each element, how to detect it, and what makes it strong or weak.
+The five-element model below is a fallback for short conference/journal abstracts, not a required five-sentence formula for a Chinese degree thesis. Start with the user's current requirements and school template; the thesis model later in this guide is the default for this skill.
 
 ## Five-Element Model
 
@@ -42,7 +42,7 @@ An effective academic abstract contains five structural elements that together t
 
 **Detection markers (ZH)**: "结果表明", "达到", "优于", "准确率", "提高", "降低", "发现", "显著", numbers
 
-**Quality criteria**: Must contain at least one quantitative finding (number, percentage, ratio, or comparative statement with magnitude). A results section without numbers is classified as VAGUE.
+**Quality criteria**: In the five-model heuristic, results without a quantitative finding may be classified as VAGUE. This is a diagnostic signal, not permission to invent a number, comparison, or experiment. A supported theoretical result or a qualitative thesis conclusion must retain its actual evidence form.
 
 ### 5. Conclusion / Significance
 
@@ -61,25 +61,25 @@ An effective academic abstract contains five structural elements that together t
 | Missing background | Jumps straight to "We propose..." | Add 1 sentence on the problem context |
 | Vague objective | "We study deep learning for NLP" | Specify: "We investigate whether... improves..." |
 | No methods | Describes results without explaining how | Add the core technique and data source |
-| Data-free results | "Our method performs well" | Add a key metric: "achieves 94.2% F1" |
-| Echo conclusion | Restates results verbatim | Add implication: "enabling real-time..." |
+| Data-free results | "Our method performs well" | Report a metric only if the input supplies it; otherwise identify missing evidence |
+| Echo conclusion | Restates results verbatim | Explain the supported contribution within its scope; do not invent an application |
 
 ## Word Count Guidelines
 
+These are five-model writing references for short abstracts, not verified venue limits or school requirements.
+
 | Context | Language | Range |
 |---------|----------|-------|
-| Default (no venue specified) | English | 150–250 words |
-| Default (no venue specified) | Chinese | 200–300 characters |
-| IEEE conference | English | 150–200 words |
-| ACM conference | English | 150–250 words |
-| NeurIPS/ICML | English | ≤ 200 words (strict) |
-| Chinese thesis (GB/T) | Chinese | 300–500 characters |
+| Short abstract reference (five model only) | English | 150–250 words |
+| Short abstract reference (five model only) | Chinese | 200–300 characters |
 
-Venue-specific limits override defaults. Check catalog.md for exact requirements.
+Use the supplied target requirements for length decisions. Do not apply these ranges to a doctoral abstract or attribute a generic thesis length to GB/T without a source.
 
 ## Diagnostic Output Format
 
 The analyzer outputs a per-element diagnosis:
+
+In five-model output, an invitation to add metrics means to locate existing evidence, not to create results. Reassess such findings against the selected thesis type before proposing any change.
 
 ```
 Background:  ✅ PRESENT  — "Despite growing interest in X, the impact of Y remains unclear."
@@ -129,6 +129,9 @@ Conclusion:  ⚠️ VAGUE    — Restates results without implications → Add p
 | 字数 | EN 150~250 词 / ZH 200~300 字 | 对齐 check_spec 燕山常量：博士 900~1200 字 / 硕士 500~650 字 |
 
 字数阈值由 `--degree {doctor,master}` 切换（默认 doctor），`--max-chars` 可覆盖上界。
+
+这些是当前脚本默认值，不是所有学校的统一规范；用户给定的学校要求优先。核读时按实际
+模板、摘要类型和已有材料判断，不为了满足默认长度或数值提示补写实验、GPU 或定量结果。
 
 ### T-* 分级规律表
 

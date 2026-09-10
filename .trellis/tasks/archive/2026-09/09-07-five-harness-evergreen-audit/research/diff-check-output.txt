@@ -1,0 +1,4 @@
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README_CN.md', LF will be replaced by CRLF the next time Git touches it
+README_CN.md:14: trailing whitespace.
++> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**  

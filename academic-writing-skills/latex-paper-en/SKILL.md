@@ -126,6 +126,14 @@ Append these four fields to every rewrite block:
 3. For multiple compatible concerns, run in routing order and group output by module.
 4. Summarize issues, fixes, and blockers in LaTeX-friendly comments; switch modules for new concerns instead of overloading one run.
 
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory permission list on other platforms. Map this skill's read / search / exec / delegate needs onto the current session's available capabilities. Script and semantic contracts do not depend on the literal names `Read`, `Glob`, `Grep`, `Bash`, or `Task`.
+
+If this session has a native delegate, use it only for work that the current tool actually spawned as an independent child. If this session has no native delegate, run the same checks sequentially in one agent and say so. Do not claim a capability this session did not provide.
+
+Keep root-cause analysis, academic judgment, severity, and final acceptance on a strong model. Cheap-model work stays inside an approved file and test boundary. Escalate when a new interface appears, the change crosses unapproved directories, an academic conclusion changes, or a failure falls outside the plan.
+
 ## Safety Boundaries
 
 - Never invent citations, metrics, baselines, or experimental results.

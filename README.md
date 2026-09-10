@@ -16,10 +16,14 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6/fable5 · GPT 5.6 Sol Max/Xhigh · Gemini 3.1 PRO**
+> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**
 >
 >
 > Recommended platforms: **Claude Code · Codex**
+>
+> Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi).
+>
+> Naming a tool here is not a runtime verification. Unrun five-tool runtime stays UNVERIFIED.
 
 ## Install
 
@@ -29,7 +33,7 @@ Install the repository with skills:
 npx skills add bahayonghang/academic-writing-skills
 ```
 
-Then open Claude Code or Codex in your manuscript project and ask for the task in
+Then open an applicable tool in your manuscript project and ask for the task in
 natural language. The root README is only a routing guide; the authoritative
 usage details live in each `SKILL.md` file and in the docs site.
 
@@ -103,7 +107,7 @@ Example finding shape:
 - TeX Live or MiKTeX with `latexmk` and `chktex` for LaTeX workflows
 - XeLaTeX plus CJK fonts for Chinese LaTeX documents
 - Typst CLI for Typst workflows
-- `pdfplumber` for PDF-oriented audit workflows
+- `pymupdf` (PyMuPDF) for PDF audit workflows; optional `pymupdf4llm` for enhanced extraction (both lazily imported)
 - Node.js and npm or `just` only when building the docs site locally
 
 ## Repository Layout

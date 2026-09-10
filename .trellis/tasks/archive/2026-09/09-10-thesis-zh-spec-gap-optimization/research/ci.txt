@@ -1,0 +1,340 @@
+════════════════════════════════════════════════════════════════
+  🚀 开始执行 CI 流程
+════════════════════════════════════════════════════════════════
+
+🔢 步骤 1/4: 校验 skills 版本与 pyproject 一致...
+  → 校验 skills 版本与 pyproject.toml 对齐...
+.                                                                        [100%]
+1 passed in 0.07s
+  ✓ 版本一致性检查通过
+
+🔍 步骤 2/4: Ruff 代码检查...
+  → 检查代码格式...
+206 files already formatted
+  → 检查代码规范...
+All checks passed!
+  ✓ Lint 检查通过
+
+🔍 步骤 3/4: Pyright 类型检查...
+  → 运行 Pyright 类型检查...
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\compile.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\compile.py:139:17 - warning: No overloads for "get" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\compile.py:139:34 - warning: Argument of type "str | None" cannot be assigned to parameter "key" of type "str" in function "get"
+    Type "str | None" is not assignable to type "str"
+      "None" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:175:23 - warning: Cannot access attribute "update" for class "list[Unknown]"
+    Attribute "update" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:233:56 - warning: Cannot access attribute "items" for class "list[Unknown]"
+    Attribute "items" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:240:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:240:9 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "key" of type "slice[Any, Any, Any]" in function "__setitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:240:46 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:240:46 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:243:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:243:9 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "key" of type "SupportsIndex" in function "__setitem__"
+    "Literal['max_em_dashes_per_doc']" is incompatible with protocol "SupportsIndex"
+      "__index__" is not present (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:244:26 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\deai_check.py:244:26 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['max_em_dashes_per_doc']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\generate_table.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\generate_table.py:52:13 - warning: Argument of type "dict[Unknown, Unknown]" cannot be assigned to parameter "value" of type "str" in function "__setitem__"
+    "dict[Unknown, Unknown]" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:148:35 - warning: Cannot access attribute "extend" for class "object"
+    Attribute "extend" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:150:17 - warning: Operator "+=" not supported for types "object" and "Literal[1]"
+    Operator "+" not supported for types "object" and "Literal[1]" (reportOperatorIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:154:31 - warning: Cannot access attribute "extend" for class "object"
+    Attribute "extend" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:158:47 - warning: Cannot access attribute "append" for class "object"
+    Attribute "append" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:167:55 - warning: Argument of type "object" cannot be assigned to parameter "issues" of type "list[dict[Unknown, Unknown]]" in function "_check_gb7714_recommended"
+    "object" is not assignable to "list[dict[Unknown, Unknown]]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:173:31 - warning: Cannot access attribute "extend" for class "object"
+    Attribute "extend" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:194:47 - warning: Cannot access attribute "append" for class "object"
+    Attribute "append" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:203:43 - warning: Cannot access attribute "append" for class "object"
+    Attribute "append" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:212:43 - warning: Cannot access attribute "append" for class "object"
+    Attribute "append" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-paper-en\scripts\verify_bib.py:224:69 - warning: "object" is not iterable
+    "__iter__" method not defined (reportGeneralTypeIssues)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\compile.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\compile.py:134:17 - warning: No overloads for "get" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\compile.py:134:34 - warning: Argument of type "str | None" cannot be assigned to parameter "key" of type "str" in function "get"
+    Type "str | None" is not assignable to type "str"
+      "None" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:178:23 - warning: Cannot access attribute "update" for class "list[Unknown]"
+    Attribute "update" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:181:5 - warning: Argument of type "bool" cannot be assigned to parameter "value" of type "dict[Unknown, Unknown] | list[Unknown]" in function "__setitem__"
+    Type "bool" is not assignable to type "dict[Unknown, Unknown] | list[Unknown]"
+      "bool" is not assignable to "dict[Unknown, Unknown]"
+      "bool" is not assignable to "list[Unknown]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:238:56 - warning: Cannot access attribute "items" for class "list[Unknown]"
+    Attribute "items" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:245:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:245:9 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "key" of type "slice[Any, Any, Any]" in function "__setitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:245:46 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:245:46 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:248:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:248:9 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "key" of type "SupportsIndex" in function "__setitem__"
+    "Literal['max_em_dashes_per_doc']" is incompatible with protocol "SupportsIndex"
+      "__index__" is not present (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:249:26 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\deai_check.py:249:26 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['max_em_dashes_per_doc']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\generate_table.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\generate_table.py:52:13 - warning: Argument of type "dict[Unknown, Unknown]" cannot be assigned to parameter "value" of type "str" in function "__setitem__"
+    "dict[Unknown, Unknown]" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\optimize_title.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\scripts\optimize_title.py:428:85 - warning: Expression of type "None" cannot be assigned to parameter of type "list[tuple[str, str]]"
+    "None" is not assignable to "list[tuple[str, str]]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py:2731:22 - warning: Cannot access attribute "extract_text_from_file" for class "DocumentParser"
+    Attribute "extract_text_from_file" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\audit.py:3004:52 - warning: Argument of type "object" cannot be assigned to parameter "context" of type "LiteratureContext" in function "render_literature_summary"
+    "object" is not assignable to "LiteratureContext" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\pre_submission_check.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\pre_submission_check.py:144:23 - warning: Cannot access attribute "extract_text_from_file" for class "DocumentParser"
+    Attribute "extract_text_from_file" is unknown (reportAttributeAccessIssue)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\prepare_review_workspace.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\prepare_review_workspace.py:870:26 - warning: Cannot access attribute "extract_text_from_file" for class "DocumentParser"
+    Attribute "extract_text_from_file" is unknown (reportAttributeAccessIssue)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py:79:28 - warning: Cannot access attribute "get" for class "list[dict[Unknown, Unknown]]"
+    Attribute "get" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py:79:56 - warning: Cannot access attribute "get" for class "list[dict[Unknown, Unknown]]"
+    Attribute "get" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py:80:27 - warning: Cannot access attribute "get" for class "list[dict[Unknown, Unknown]]"
+    Attribute "get" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py:82:31 - warning: Cannot access attribute "get" for class "list[dict[Unknown, Unknown]]"
+    Attribute "get" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\render_deep_review_report.py:86:23 - warning: Argument of type "list[dict[Unknown, Unknown]] | dict[Unknown, Unknown]" cannot be assigned to parameter "section_index" of type "list[dict[Unknown, Unknown]]" in function "__init__"
+    Type "list[dict[Unknown, Unknown]] | dict[Unknown, Unknown]" is not assignable to type "list[dict[Unknown, Unknown]]"
+      "dict[Unknown, Unknown]" is not assignable to "list[dict[Unknown, Unknown]]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\report_generator.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\report_generator.py:1593:59 - warning: Argument of type "object" cannot be assigned to parameter "result" of type "ScholarEvalResult" in function "render_scholar_eval_report"
+    "object" is not assignable to "ScholarEvalResult" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\paper-audit\scripts\report_generator.py:1617:62 - warning: Argument of type "object" cannot be assigned to parameter "context" of type "LiteratureContext" in function "render_literature_summary"
+    "object" is not assignable to "LiteratureContext" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\check_format.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\check_format.py:59:74 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:182:23 - warning: Cannot access attribute "update" for class "list[Unknown]"
+    Attribute "update" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:185:5 - warning: Argument of type "bool" cannot be assigned to parameter "value" of type "dict[Unknown, Unknown] | list[Unknown]" in function "__setitem__"
+    Type "bool" is not assignable to type "dict[Unknown, Unknown] | list[Unknown]"
+      "bool" is not assignable to "dict[Unknown, Unknown]"
+      "bool" is not assignable to "list[Unknown]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:244:56 - warning: Cannot access attribute "items" for class "list[Unknown]"
+    Attribute "items" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:251:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:251:9 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "key" of type "slice[Any, Any, Any]" in function "__setitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:251:46 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:251:46 - warning: Argument of type "Literal['cv_threshold']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['cv_threshold']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:254:9 - warning: No overloads for "__setitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:254:9 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "key" of type "SupportsIndex" in function "__setitem__"
+    "Literal['max_em_dashes_per_doc']" is incompatible with protocol "SupportsIndex"
+      "__index__" is not present (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:255:26 - warning: No overloads for "__getitem__" match the provided arguments (reportCallIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\deai_check.py:255:26 - warning: Argument of type "Literal['max_em_dashes_per_doc']" cannot be assigned to parameter "s" of type "slice[Any, Any, Any]" in function "__getitem__"
+    "Literal['max_em_dashes_per_doc']" is not assignable to "slice[Any, Any, Any]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\generate_table.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\generate_table.py:47:13 - warning: Argument of type "dict[Unknown, Unknown]" cannot be assigned to parameter "value" of type "str" in function "__setitem__"
+    "dict[Unknown, Unknown]" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\optimize_title.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\optimize_title.py:158:41 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\optimize_title.py:158:60 - warning: Expected class but received "(iterable: Iterable[object], /) -> bool" (reportGeneralTypeIssues)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\optimize_title.py:349:44 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\optimize_title.py:376:71 - warning: Expression of type "None" cannot be assigned to parameter of type "list[tuple[str, str]]"
+    "None" is not assignable to "list[tuple[str, str]]" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\verify_bib.py
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\verify_bib.py:68:25 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\verify_bib.py:69:22 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\verify_bib.py:71:22 - warning: Expression of type "None" cannot be assigned to parameter of type "str"
+    "None" is not assignable to "str" (reportArgumentType)
+  d:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\typst-paper\scripts\verify_bib.py:458:15 - warning: Argument of type "Any | None" cannot be assigned to parameter "email" of type "str" in function "__init__"
+    Type "Any | None" is not assignable to type "str"
+      "None" is not assignable to "str" (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_paper_en\test_latex_paper_en_audit.py
+  d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_paper_en\test_latex_paper_en_audit.py:225:38 - warning: Cannot assign to attribute "OnlineBibVerifier" for class "ModuleType"
+    Attribute "OnlineBibVerifier" is unknown (reportAttributeAccessIssue)
+d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_paper_en\test_latex_paper_en_scripts.py
+  d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_paper_en\test_latex_paper_en_scripts.py:231:24 - warning: Argument of type "str | None" cannot be assigned to parameter "args" of type "StrPath" in function "__new__"
+    Type "str | None" is not assignable to type "StrPath"
+      Type "None" is not assignable to type "StrPath"
+        "None" is not assignable to "str"
+        "None" is incompatible with protocol "PathLike[str]"
+          "__fspath__" is not present (reportArgumentType)
+d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_chapter_intro_forms.py
+  d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_chapter_intro_forms.py:47:11 - warning: Cannot assign to attribute "_DOC" for class "ModuleType"
+    Attribute "_DOC" is unknown (reportAttributeAccessIssue)
+  d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_chapter_intro_forms.py:54:11 - warning: Cannot assign to attribute "_DOC" for class "ModuleType"
+    Attribute "_DOC" is unknown (reportAttributeAccessIssue)
+d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_deai_density.py
+  d:\Documents\Code\Agents\academic-writing-skills\tests\skills\latex_thesis_zh\test_deai_density.py:291:12 - warning: Cannot assign to attribute "THESIS_DIR" for class "ModuleType"
+    Attribute "THESIS_DIR" is unknown (reportAttributeAccessIssue)
+0 errors, 75 warnings, 0 informations
+WARNING: there is a new pyright version available (v1.1.408 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
+  ✓ 类型检查通过
+
+🧪 步骤 4/4: 运行测试...
+  → 运行单元测试...
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: D:\Documents\Code\Agents\academic-writing-skills
+configfile: pyproject.toml
+testpaths: tests, academic-writing-skills
+collected 1904 items
+
+tests\contracts\test_claim_evidence_contract.py ......                   [  0%]
+tests\contracts\test_deai_alignment.py ................................. [  2%]
+....                                                                     [  2%]
+tests\contracts\test_deai_pattern_cluster_contract.py .........          [  2%]
+tests\contracts\test_defensive_ai_rhetoric_contract.py ................. [  3%]
+..                                                                       [  3%]
+tests\contracts\test_docs_bilingual_resources.py ..........              [  4%]
+tests\contracts\test_method_narrative_alignment.py ....                  [  4%]
+tests\contracts\test_paragraph_arc_audit_contract.py .........           [  4%]
+tests\contracts\test_parsers_alignment.py .............................. [  6%]
+.......                                                                  [  6%]
+tests\contracts\test_polish_contract_alignment.py ..........             [  7%]
+tests\contracts\test_skill_contracts.py .......................          [  8%]
+tests\contracts\test_skill_versions.py .                                 [  8%]
+tests\contracts\test_skills_install.py ..............                    [  9%]
+tests\contracts\test_spec_checklists.py ......                           [  9%]
+tests\contracts\test_subsection_context_contract.py ........             [ 10%]
+tests\contracts\test_thesis_zh_guidance_fidelity.py ........             [ 10%]
+tests\contracts\test_thesis_zh_venue_consistency.py ....                 [ 10%]
+tests\contracts\test_trigger_evals.py ..............................     [ 12%]
+tests\contracts\test_venue_templates_layout.py ..................        [ 13%]
+tests\contracts\test_writing_modules_alignment.py ....................   [ 14%]
+tests\shared\test_en_family_parsers_multifile.py ....................... [ 15%]
+.                                                                        [ 15%]
+tests\shared\test_parsers.py ..........................                  [ 16%]
+tests\skills\cover_letter\test_cover_letter_align_check.py ............. [ 17%]
+.........                                                                [ 18%]
+tests\skills\cover_letter\test_cover_letter_journal_fit.py ............. [ 18%]
+                                                                         [ 18%]
+tests\skills\cover_letter\test_cover_letter_presubmission.py ........... [ 19%]
+......                                                                   [ 19%]
+tests\skills\cover_letter\test_cover_letter_scripts.py ................. [ 20%]
+.........                                                                [ 21%]
+tests\skills\latex_paper_en\test_abstract.py .........                   [ 21%]
+tests\skills\latex_paper_en\test_check_references_multifile.py ......    [ 21%]
+tests\skills\latex_paper_en\test_citation_styles.py .......              [ 22%]
+tests\skills\latex_paper_en\test_deai_density_en.py ......               [ 22%]
+tests\skills\latex_paper_en\test_deai_overclaim.py ....                  [ 22%]
+tests\skills\latex_paper_en\test_deai_tense.py ........                  [ 23%]
+tests\skills\latex_paper_en\test_latex_method_narrative.py .......       [ 23%]
+tests\skills\latex_paper_en\test_latex_paper_en_audit.py ............... [ 24%]
+.                                                                        [ 24%]
+tests\skills\latex_paper_en\test_latex_paper_en_scripts.py ............. [ 25%]
+....................................                                     [ 26%]
+tests\skills\latex_paper_en\test_logic_funnel_brackets.py ....           [ 27%]
+tests\skills\latex_paper_en\test_multifile_scripts.py .................. [ 28%]
+                                                                         [ 28%]
+tests\skills\latex_paper_en\test_paragraph_arc_en.py ................... [ 29%]
+..........................................                               [ 31%]
+tests\skills\latex_paper_en\test_parsers_title_abstract.py ...........   [ 31%]
+tests\skills\latex_paper_en\test_polish_pipeline.py .................... [ 32%]
+                                                                         [ 32%]
+tests\skills\latex_paper_en\test_section_aliases.py ..........           [ 33%]
+tests\skills\latex_paper_en\test_tables.py .............                 [ 34%]
+tests\skills\latex_thesis_zh\test_abstract_thesis_mode.py .............. [ 34%]
+.................................                                        [ 36%]
+tests\skills\latex_thesis_zh\test_analyze_conclusion.py ................ [ 37%]
+............                                                             [ 38%]
+tests\skills\latex_thesis_zh\test_blind_review.py ................       [ 38%]
+tests\skills\latex_thesis_zh\test_body_chapters.py ...................   [ 39%]
+tests\skills\latex_thesis_zh\test_caption_commands.py .............      [ 40%]
+tests\skills\latex_thesis_zh\test_chapter_intro_forms.py ...........     [ 41%]
+tests\skills\latex_thesis_zh\test_check_spec.py ........................ [ 42%]
+................................................                         [ 44%]
+tests\skills\latex_thesis_zh\test_check_style_zh.py .................... [ 46%]
+.....                                                                    [ 46%]
+tests\skills\latex_thesis_zh\test_compile_outdir.py .................... [ 47%]
+...............................................................          [ 50%]
+tests\skills\latex_thesis_zh\test_consistency_semantics.py ............. [ 51%]
+...................                                                      [ 52%]
+tests\skills\latex_thesis_zh\test_deai_density.py ................       [ 53%]
+tests\skills\latex_thesis_zh\test_deai_tense_zh.py ..........            [ 53%]
+tests\skills\latex_thesis_zh\test_intro_citations.py ............        [ 54%]
+tests\skills\latex_thesis_zh\test_intro_mainline.py .............        [ 54%]
+tests\skills\latex_thesis_zh\test_latex_thesis_zh_checker_precision.py . [ 55%]
+....................................                                     [ 56%]
+tests\skills\latex_thesis_zh\test_latex_thesis_zh_coverage.py .......... [ 57%]
+...............................                                          [ 59%]
+tests\skills\latex_thesis_zh\test_latex_thesis_zh_gb7714.py ..........   [ 59%]
+tests\skills\latex_thesis_zh\test_latex_thesis_zh_multifile.py ......... [ 60%]
+..................                                                       [ 61%]
+tests\skills\latex_thesis_zh\test_latex_thesis_zh_scripts.py ........... [ 61%]
+.....................................................................    [ 65%]
+tests\skills\latex_thesis_zh\test_method_narrative.py ...........        [ 65%]
+tests\skills\latex_thesis_zh\test_paragraph_arc.py ..................... [ 66%]
+...........                                                              [ 67%]
+tests\skills\latex_thesis_zh\test_process_chapter.py .............       [ 68%]
+tests\skills\latex_thesis_zh\test_results_analysis.py .................. [ 69%]
+..............                                                           [ 69%]
+tests\skills\latex_thesis_zh\test_section_rules_zh.py .......            [ 70%]
+tests\skills\latex_thesis_zh\test_subsection_context.py ...............  [ 71%]
+tests\skills\latex_thesis_zh\test_verify_bib_scanner.py ....             [ 71%]
+tests\skills\paper_audit\test_check_citations.py ..........              [ 71%]
+tests\skills\paper_audit\test_html_render.py ..                          [ 71%]
+tests\skills\paper_audit\test_i18n.py .........                          [ 72%]
+tests\skills\paper_audit\test_installed_layout.py .                      [ 72%]
+tests\skills\paper_audit\test_literature_search.py ..................... [ 73%]
+................................                                         [ 75%]
+tests\skills\paper_audit\test_method_narrative_audit_integration.py ...  [ 75%]
+tests\skills\paper_audit\test_paper_audit.py ........................... [ 76%]
+........................................................................ [ 80%]
+............................................                             [ 82%]
+tests\skills\paper_audit\test_paper_audit_checkpoint.py ................ [ 83%]
+.                                                                        [ 83%]
+tests\skills\paper_audit\test_paper_audit_deep_review.py ............... [ 84%]
+..........................................................               [ 87%]
+tests\skills\paper_audit\test_paper_audit_integration.py .....ss.        [ 87%]
+tests\skills\paper_audit\test_paper_audit_pre_submission.py .....        [ 88%]
+tests\skills\paper_audit\test_paper_audit_revision_trajectory.py ....... [ 88%]
+......                                                                   [ 88%]
+tests\skills\paper_audit\test_paper_audit_synthesis.py .........         [ 89%]
+tests\skills\paper_audit\test_paper_audit_topology_docs.py .........     [ 89%]
+tests\skills\paper_audit\test_subsection_index.py ..........             [ 90%]
+tests\skills\paper_audit\test_subsection_lane_wiring.py ...              [ 90%]
+tests\skills\paper_audit\test_workspace_layout.py ........               [ 90%]
+tests\skills\paper_audit\test_zh_check_adapters.py ..................... [ 92%]
+..............                                                           [ 92%]
+tests\skills\paper_audit\test_zh_dispatch_integration.py ........        [ 93%]
+tests\skills\paper_audit\test_zh_script_resolution.py ...........        [ 93%]
+tests\skills\paper_audit\test_zh_thesis_lane_wiring.py .......           [ 94%]
+tests\skills\typst_paper\test_deai_typst.py .......                      [ 94%]
+tests\skills\typst_paper\test_typst_method_narrative.py ...........      [ 95%]
+tests\skills\typst_paper\test_typst_paper_coverage.py ...............    [ 95%]
+tests\skills\typst_paper\test_typst_paper_scripts.py ................... [ 96%]
+.................                                                        [ 97%]
+academic-writing-skills\bib-search-citation\tests\test_bib_search.py ... [ 97%]
+.......................................                                  [100%]
+
+================= 1902 passed, 2 skipped in 195.21s (0:03:15) =================
+  ✓ 测试通过
+
+════════════════════════════════════════════════════════════════
+  ✅ CI 流程执行完成！
+════════════════════════════════════════════════════════════════

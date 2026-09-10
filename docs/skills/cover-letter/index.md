@@ -58,6 +58,10 @@ Supported bundled venues: `nature`, `science`, `cell`, `ieee-trans`, `acm`, `spr
 
 Findings use `severity`, `priority`, `source_kind`, and `comment_type`; script-backed findings are intended to be rerunnable.
 
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory permission list on other platforms. Map read, search, exec, and delegate onto this session's available capabilities. If this session has no native delegate, run the same checks sequentially in one agent and say so. Keep academic judgment and final acceptance on a strong model. Cheap-model work stays inside an approved file and test boundary.
+
 ## Public Resources
 
 ### References

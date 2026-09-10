@@ -1,0 +1,33 @@
+{
+  "id": "five-harness-evergreen-audit",
+  "name": "five-harness-evergreen-audit",
+  "title": "五套 Harness 能力边界与常青维护审查",
+  "description": "审查当前代码、测试与失败工作流，对照五套 harness 能力边界，形成六个子任务的待批准改造计划；许可保留学术非商业。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-07",
+  "completedAt": "2026-09-07",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-07-harness-project-contract",
+    "09-07-harness-ci-gates",
+    "09-07-harness-onboarding",
+    "09-07-harness-skill-portability",
+    "09-07-harness-validation-closeout",
+    "09-07-harness-audit-encoding"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

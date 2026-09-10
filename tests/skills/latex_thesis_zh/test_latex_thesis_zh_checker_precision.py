@@ -146,16 +146,17 @@ class TestConsistencySemantics:
     def test_real_variant_drift_still_reported(self, tmp_path: Path):
         tex = tmp_path / "main.tex"
         tex.write_text(
-            "深度神经网络是主流方法。\n深层学习也被广泛使用。\n",
+            "深度学习是主流方法。\n深层学习也被广泛使用。\n",
             encoding="utf-8",
         )
         checker = check_consistency.ConsistencyChecker([str(tex)])
         result = checker.check_terms()
         assert result["status"] == "WARNING"
         assert any(i["type"] == "variant_mix" for i in result["inconsistencies"])
+        assert "NEEDS-LLM" in result["inconsistencies"][0]["suggestion"]
 
     def test_full_name_after_definition_flagged(self, tmp_path: Path):
-        """缩写已定义后正文仍大量（≥3 次）使用全称 → 提示统一用缩写。"""
+        """定义后全称达到计数阈值仅给可选风格候选，不断言语义错误。"""
         tex = tmp_path / "main.tex"
         tex.write_text(
             "卷积神经网络（CNN）是一类深度模型。\n"
@@ -168,7 +169,8 @@ class TestConsistencySemantics:
         result = checker.check_terms()
         hits = [i for i in result["inconsistencies"] if i["type"] == "full_after_abbrev"]
         assert hits
-        assert "首次出现用全称" in hits[0]["suggestion"]
+        assert "可选" in hits[0]["suggestion"]
+        assert "后文统一用缩写" not in hits[0]["suggestion"]
 
     def test_suggestion_never_says_unify_to_abbrev_blindly(self, tmp_path: Path):
         """建议语不再是"统一使用 'CNN'"这类与国标冲突的措辞。"""

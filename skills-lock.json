@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "qiaomu-meta-skill": {
+      "source": "joeseesun/qiaomu-meta-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "9aef56cc33983e85f26814fa0a025727712a2874891dff33ccd20ef69fbe8e76"
+    },
+    "zot": {
+      "source": "bahayonghang/zotero-cli",
+      "sourceType": "github",
+      "skillPath": "skills/zot/SKILL.md",
+      "computedHash": "901aa70bba96d86dfcbe55bfc57bf254ba00e35113d091d81ed3ca097d55b166"
+    }
+  }
+}

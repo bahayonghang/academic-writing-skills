@@ -73,6 +73,10 @@ Run the smallest matching module. For multi-part requests, follow the order docu
 - Separate findings and proposed edits; no fabricated citations, data, claims, funds, or acknowledgments.
 - Blind-review output only in `*_blind` copies, with the original source unchanged.
 
+## Portable Execution
+
+Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory permission list on other platforms. Map read, search, exec, and delegate onto this session's available capabilities. If this session has no native delegate, run the same checks sequentially in one agent and say so. Keep academic judgment and final acceptance on a strong model. Cheap-model work stays inside an approved file and test boundary.
+
 ## Public Resources
 
 ### Module References

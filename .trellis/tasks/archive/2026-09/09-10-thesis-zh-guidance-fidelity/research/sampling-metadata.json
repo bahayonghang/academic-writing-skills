@@ -1,0 +1,50 @@
+{
+  "generated_at_utc": "2026-09-10T12:54:29.913701+00:00",
+  "evidence_type": "local agent response review; not provider benchmark or human blind review",
+  "dispatch_record": "sampling-dispatch.md",
+  "isolated_inputs_identical": true,
+  "fixture_sha256_bytes": "4959ec3c0aa9b64848970194b3ec2efe135c045940bb6dae2040cde97344b269",
+  "common_rules_sha256_bytes": "78b2fc2ab98e7dfac0efa72fbbd3b4fd0e557d4451eef966e75d93bbcc831737",
+  "common_rules_scope": "Results-analysis guide section 7 and routing-rules introduction/general rules only, frozen before source edits.",
+  "metadata_limit": "Tool returned canonical task names, not a separate UUID. Requested model/effort are spawn arguments; actual model and usage telemetry were not returned and remain null. File timestamps record writes, not provider start/end times.",
+  "samples": [
+    {
+      "version": "before",
+      "agent_canonical_id": "/root/guidance/sample_before",
+      "spawn_tool": "collaboration.spawn_agent",
+      "agent_type": "default",
+      "fork_turns": "none",
+      "requested_model": "gpt-6-astra",
+      "requested_reasoning_effort": "high",
+      "actual_model_telemetry": null,
+      "usage_telemetry": null,
+      "output_last_write_utc": "2026-09-10T12:44:06.516036+00:00",
+      "packet": "sampling-before.md",
+      "packet_sha256_bytes": "8aa4f28f0aa7dd1dac4ad7f96a727ac45fc400b1ecabc6c8f4b8a2191b95aa57",
+      "rules_sha256_utf8_lf": "4c4b744a1027db7ce409ee34aa0a409822a6ac513c00bc050e35dfbc5ae1be96",
+      "input_section_sha256_utf8_lf": "790134ae22d2ab59c162d698003e9b5936199e9a00c53d6d2ff22c61338ec5a8",
+      "output": "output-before.md",
+      "output_sha256_bytes": "57157dd2e802a91e57bfebc715e4a41da79acb6005b262bd95eee314aeebde93",
+      "source_access": "Only the assigned packet; no expected_output/assertions/rubric or previous answers supplied. Agent wrote the raw response to the assigned output path."
+    },
+    {
+      "version": "after",
+      "agent_canonical_id": "/root/guidance/sample_after",
+      "spawn_tool": "collaboration.spawn_agent",
+      "agent_type": "default",
+      "fork_turns": "none",
+      "requested_model": "gpt-6-astra",
+      "requested_reasoning_effort": "high",
+      "actual_model_telemetry": null,
+      "usage_telemetry": null,
+      "output_last_write_utc": "2026-09-10T12:49:40.683633+00:00",
+      "packet": "sampling-after.md",
+      "packet_sha256_bytes": "dcc06bcbec52d8741644c8723fed9d9d66ddf5a354ab4e2a784091f0bab096f9",
+      "rules_sha256_utf8_lf": "ceaa894f3a5873bf9940fbe6f2606c08e2969e8013ee9ef036d68882766bf251",
+      "input_section_sha256_utf8_lf": "790134ae22d2ab59c162d698003e9b5936199e9a00c53d6d2ff22c61338ec5a8",
+      "output": "output-after.md",
+      "output_sha256_bytes": "57197fd751601b3a9e1fba5c5463e3e2dd48ff31cad6e4dd71232015e345dc57",
+      "source_access": "Only the assigned packet; no expected_output/assertions/rubric or previous answers supplied. Agent wrote the raw response to the assigned output path."
+    }
+  ]
+}

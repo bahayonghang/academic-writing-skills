@@ -996,7 +996,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/latex/compilation.md",
       "sourceLocale": "en",
-      "sourceSha256": "d4809f0eca99526af2e3322575cedd8e7de9b8b3a2245946b573a930ca069d43",
+      "sourceSha256": "f22e05a5ff5e9beadd355d7431c49de01ac4d8b327c1d45b0eeab613e2724e2b",
       "en": "docs/skills/latex-thesis-zh/resources/references/latex/compilation.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/latex/compilation.md"
     },
@@ -1032,7 +1032,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/compile.md",
       "sourceLocale": "en",
-      "sourceSha256": "6fba9cab7e3a455e3d06ecececd915c3ea3d852f2e397ada94d754a176dd5ab8",
+      "sourceSha256": "182f55280428c4c03ea1944e3cf7fdc3eeb31080005e952896eaf415ea7feed9",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/compile.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/compile.md"
     },
@@ -1050,7 +1050,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/consistency.md",
       "sourceLocale": "en",
-      "sourceSha256": "1d9828fbedc398b77e1ceea258d0eaabbf67878a241fd61c4e2e8123f4068607",
+      "sourceSha256": "d8f776344624048e7f9c113e4bfacabeb4d5329bcf5dc5c58ea4b1c7e696f5e8",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/consistency.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/consistency.md"
     },
@@ -1104,7 +1104,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/logic.md",
       "sourceLocale": "zh",
-      "sourceSha256": "f324bd02d06e850d7e1945aa95c2a7162e36ae63fa65aef49a4124d9a931cda4",
+      "sourceSha256": "0899e88c55e68f0aa6294475db7689829907ef13b9760926cb37b8597ea7871c",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/logic.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/logic.md"
     },
@@ -1167,7 +1167,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/abstract-structure.md",
       "sourceLocale": "zh",
-      "sourceSha256": "a22c2fcb141b2ed34e97b50f05cb7dfc2666966a7bdcadf1053286670f0d389e",
+      "sourceSha256": "0f94c7c20342feee66f6af1d24e741eacf4a88006136f07151b91e694212fe91",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/abstract-structure.md"
     },
@@ -1239,7 +1239,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md",
       "sourceLocale": "zh",
-      "sourceSha256": "36bae2bbbc712a8595db0d45f3065ae2ad2215282fc33be0ec2a98aae40a09e0",
+      "sourceSha256": "6f5dd094037753ff6bbdfc3216d9a91fe5f3c6f1d7c3e4472ddff2c98cefc985",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md"
     },
@@ -1338,7 +1338,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md",
       "sourceLocale": "zh",
-      "sourceSha256": "4024b7ac16c68072b94f499b8c50623e592e3a2b7a5d1d86c8f3aa50e4e050d2",
+      "sourceSha256": "7bbc20de20a3d561d2ad11ae5eb5ee6345a67efa3b90cecb50725c9d7c2e0b34",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/writing-philosophy-zh.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/writing-philosophy-zh.md"
     },
@@ -1410,7 +1410,7 @@
       "kind": "examples",
       "source": "academic-writing-skills/latex-thesis-zh/examples/logic-and-experiment.md",
       "sourceLocale": "zh",
-      "sourceSha256": "014dcbbc396baaa55da7f452625c7b523d15260d17c3182b4ce43bc4d50a4292",
+      "sourceSha256": "45efbb34f196756a5b260de9b0b4129a1dd1c67da5de396c4597364a2324485b",
       "en": "docs/skills/latex-thesis-zh/resources/examples/logic-and-experiment.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/logic-and-experiment.md"
     },
@@ -1500,7 +1500,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/editorial_decision_standards.md",
       "sourceLocale": "en",
-      "sourceSha256": "90153f40a6eddd15e755d09ad5d7023eeb9a613eab829f61af77fdda640d7d82",
+      "sourceSha256": "a8ab7712c4a92b47404561ea4174d6af67430dc15f02ebd9f0221f63c6cdaa92",
       "en": "docs/skills/paper-audit/resources/references/editorial_decision_standards.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/editorial_decision_standards.md"
     },
@@ -1671,7 +1671,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "8e7f3c8477fa57ab3f38949de6f5287c1fd6d575a245f30cd336483e376863bf",
+      "sourceSha256": "cf6002c3ade88fc43577e7e881ef4677d8ac8a255841ecd076422283bb2d74eb",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1707,7 +1707,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/workflow-detail.md",
       "sourceLocale": "en",
-      "sourceSha256": "77aa69e56e93f69a29164f65458f9cac24ab331e20b78b1ade88a6dc118b9eb5",
+      "sourceSha256": "9ba35db989f615f9c79d93707d5f6e761702c5811640bd7ea94177c130f4f686",
       "en": "docs/skills/paper-audit/resources/references/workflow-detail.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/workflow-detail.md"
     },
@@ -1950,7 +1950,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/synthesis_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "6a6534674c4fede9b2e2af883086a11f9868c6608e956eeb6120226222c5dc1b",
+      "sourceSha256": "2c7a5f44c940d9e214391f3f7923c2db6fa1014903af1fe8a338d3249c937f1b",
       "en": "docs/skills/paper-audit/resources/agents/synthesis_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/synthesis_agent.md"
     },

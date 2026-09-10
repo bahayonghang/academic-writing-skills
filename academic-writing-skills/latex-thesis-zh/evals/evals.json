@@ -1435,6 +1435,56 @@
           "description": "respects the operational boundary"
         }
       ]
+    },
+    {
+      "id": 48,
+      "prompt": "请分别完成 guidance_fidelity.tex 中八个独立场景的用户请求，按‘场景 1’至‘场景 8’分隔回答。只使用各场景给出的材料；检查与改写范围分别以该场景请求为准。",
+      "expected_output": "读取相关公开指南并逐场景回应：场景1保留可能性，不补数字或提升事实；场景2仅报告95%的准确率及原表引用，不推导提升或长程依赖因果；场景3指出训练预算不同的混杂，不用消融标签证明机制；场景4保留受控移除的组件贡献，不能升级为噪声抑制机制；场景5保留协议P和测试块T内有区分性证据的强因果结论及公式/引用，不一律降为相关；场景6未检索时移除或待核首次资格，不用据我们所知保留；场景7按输入学校1000—1500字要求处理1100字博士摘要，保留假设H、CPU和离线回放边界，不强套五句、GPU、超参数或新增实验，只诊断；场景8给源位置与段主题—章目标—证据—处置映射，保留24行主题综合的三篇引用和无显式过渡词的成立关系，定位29行收窄、33行移位提案，不改正文或current外内容。实际回答须独立逐项保真核读，字符串断言只作辅助。",
+      "files": [
+        "evals/fixtures/guidance_fidelity.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "可能.{0,12}(改善|提升|提高).{0,12}预测性能",
+          "description": "retains uncertainty when no result records exist"
+        },
+        {
+          "type": "contains",
+          "text": "\\ref{tab:single}",
+          "description": "keeps the supplied accuracy observation anchor"
+        },
+        {
+          "type": "regex",
+          "pattern": "(预算|100轮|50轮)[\\s\\S]*(混杂|归因|机制)",
+          "description": "reviews the actual ablation design rather than its label"
+        },
+        {
+          "type": "regex",
+          "pattern": "(组件贡献|模块A.{0,20}贡献)[\\s\\S]*(噪声抑制|机制)",
+          "description": "separates component contribution from mechanism evidence"
+        },
+        {
+          "type": "contains",
+          "text": "$z=x+\\epsilon$",
+          "description": "preserves the formula in the supported causal case"
+        },
+        {
+          "type": "regex",
+          "pattern": "(首次[\\s\\S]*(移除|删|待核))|((移除|删|待核)[\\s\\S]*首次)",
+          "description": "removes or defers unsupported priority instead of laundering it with a hedge"
+        },
+        {
+          "type": "regex",
+          "pattern": "(1000|1500)[\\s\\S]*1100[\\s\\S]*(CPU|离线)",
+          "description": "uses supplied school requirements and actual engineering evidence"
+        },
+        {
+          "type": "contains",
+          "text": "\\cite{regular,masked,survey}",
+          "description": "retains legitimate thematic grouped citations during read-only outlining"
+        }
+      ]
     }
   ]
 }

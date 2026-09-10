@@ -31,10 +31,12 @@
 
 兼容别名：`self-check` -> `quick-audit`；`review` -> `deep-review`。
 
-deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后交给
-`synthesis_agent.md` 综合。`gate`、`re-audit` 和 consolidation 后的修订建议分别使用
-对应的模式专属 agent。`agents/` 下的 specialized reviewer playbook 仅作参考，不会自动派发；
-完整边界见[代理名册](./resources/references/agent-roster.md)。
+deep-review 运行 5 个 committee 视角和 6 个以上 lane 视角，随后交给
+`synthesis_agent.md` 综合。仅当本会话确实生成了独立子代理时使用 native delegated；
+否则在同一代理内顺序完成相同视角。报告和 `overall_assessment.txt` 必须写明
+`native delegated` 或 `sequential single-agent`。`gate`、`re-audit` 和 consolidation
+后的修订建议分别使用对应的模式专属 agent。`agents/` 下的 specialized reviewer
+playbook 仅作参考，不会自动派发；完整边界见[代理名册](./resources/references/agent-roster.md)。
 
 ## 最小输入
 
@@ -43,6 +45,26 @@ deep-review 会派发 5 个 committee agent 和 6 个以上 lane agent，随后�
 - deep-review 可选 `--focus full|editor|theory|literature|methodology|logic`。
 - `re-audit` 需要 `--previous-report`。
 - 继续或渲染已有 workspace 时提供 `--review-dir`。
+
+## 安装布局
+
+维护本开发仓库，与把本技能安装进论文项目，是两条路径。
+
+完整的 `.tex` / `.typ` 脚本检查需要与 `paper-audit/` 同级的写作技能目录：
+
+- `latex-paper-en/scripts`
+- `latex-thesis-zh/scripts`
+- `typst-paper/scripts`
+
+推荐完整集合：在同一父目录下作为同级目录安装全部六个技能。见[安装](/zh/installation#paper-audit-layout)。
+
+仅复制 `paper-audit` 时为**覆盖受限**。缺失的同级脚本会被跳过。现有 exit 与 gate 语义保持不变。已记录的单独安装边界：missing=8，exit 0。
+
+不要把同级技能的 scripts 复制进 `paper-audit/`。`npx skills add` 安装器、符号链接布局、五套工具运行时在出现已捕获的真实运行之前均保持 **UNVERIFIED**。
+
+## 跨工具执行
+
+frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平台的强制权限列表。把读、搜索、执行、委派映射到当前会话已有的能力。deep-review 通道的 `review_report.md` 和 `overall_assessment.txt` 必须写明 `native delegated` 或 `sequential single-agent`。顺序执行不得写成 `independent panel`。顺序模式下的 `CONSENSUS` 只表示本会话跨视角一致，不是独立审稿人共识证据。学术判断和最终验收由强模型负责。低成本模型只处理已批准且有明确文件与测试边界的工作。五套工具的真实委派运行保持 **UNVERIFIED**。
 
 ## 脚本入口
 
