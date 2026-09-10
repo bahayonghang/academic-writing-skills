@@ -1,0 +1,199 @@
+{
+  "repo_root": "D:/Documents/Code/Agents/academic-writing-skills",
+  "review_scope": {
+    "mode": "single-task",
+    "root": "09-10-paper-audit-zh-thesis-fidelity",
+    "task_count": 1,
+    "members": [
+      {
+        "name": "09-10-paper-audit-zh-thesis-fidelity",
+        "path": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-paper-audit-zh-thesis-fidelity",
+        "location": "active",
+        "status": "planning"
+      }
+    ],
+    "edges": [],
+    "legacy_fallback_tasks": []
+  },
+  "tasks": [
+    {
+      "task_dir": "D:/Documents/Code/Agents/academic-writing-skills/.trellis/tasks/09-10-paper-audit-zh-thesis-fidelity",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 12,
+        "by_status": {
+          "resolved": 12
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 15,
+            "citation": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md:1",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md",
+            "file_lines": 69
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 16,
+            "citation": "academic-writing-skills/paper-audit/scripts/audit.py:2744",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/audit.py",
+            "file_lines": 3583
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 16,
+            "citation": "academic-writing-skills/paper-audit/scripts/zh_check_adapters.py:391",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/zh_check_adapters.py",
+            "file_lines": 400
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 17,
+            "citation": "academic-writing-skills/paper-audit/scripts/report_generator.py:325",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/report_generator.py",
+            "file_lines": 1621
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 17,
+            "citation": "academic-writing-skills/paper-audit/scripts/audit.py:637",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/audit.py",
+            "file_lines": 3583
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 18,
+            "citation": "academic-writing-skills/paper-audit/scripts/audit.py:2201",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/audit.py",
+            "file_lines": 3583
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 19,
+            "citation": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py:871",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py",
+            "file_lines": 968
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 19,
+            "citation": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py:701",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py",
+            "file_lines": 968
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 20,
+            "citation": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md:22",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md",
+            "file_lines": 50
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 20,
+            "citation": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py:836",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py",
+            "file_lines": 968
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 21,
+            "citation": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md:52",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md",
+            "file_lines": 129
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 21,
+            "citation": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md:59",
+            "status": "resolved",
+            "resolved_path": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md",
+            "file_lines": 129
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 6
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R5"
+            ],
+            "clause_hint": 11
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-10-paper-audit-zh-thesis-fidelity",
+      "location": "active"
+    }
+  ],
+  "reviews_git": {
+    "path": ".trellis/reviews/09-10-paper-audit-zh-thesis-fidelity.md",
+    "state": "ignored"
+  },
+  "blocking": []
+}
