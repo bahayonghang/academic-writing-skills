@@ -86,7 +86,9 @@ ref/
 .agents/
 .codex/
 .cursor/
-
+.grok/
+.kimi-code/
+.omp/
 
 review_results/
 
