@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "仓库规范索引；本任务不改 catalog skill"}
+{"file": ".trellis/tasks/09-11-ieee-writing-materials/research/corpus.md", "reason": "353 条 IEEE 语料、过滤门与 venue 顺序"}
+{"file": ".trellis/tasks/09-11-ieee-writing-materials/research/architecture-notes.md", "reason": "选项 A 目录树与 Nature/catalog 对照"}
+{"file": ".trellis/tasks/09-11-ieee-writing-materials/research/observation-schema.md", "reason": "逐篇 observation 字段与晋升"}
+{"file": "ref/nature-writing-studio/skill/SKILL.md", "reason": "TSV 路由与蒸馏流程参考；禁止复制 Nature 规则行"}
+{"file": "ref/nature-writing-studio/skill/knowledge/PROVENANCE.md", "reason": "出处记录格式"}
+{"file": ".agents/skills/qiaomu-meta-skill/references/resource-boundaries.md", "reason": "SKILL.md 路由、knowledge/references/scripts 分工"}

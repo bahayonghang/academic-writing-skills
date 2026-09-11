@@ -1,0 +1,28 @@
+{
+  "id": "ieee-writing-materials",
+  "name": "ieee-writing-materials",
+  "title": "IEEE 论文写法蒸馏到 materials",
+  "description": "",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-11",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "description": "Distill IEEE writing patterns from local Zotero into materials/IEEE knowledge package"
+  }
+}
