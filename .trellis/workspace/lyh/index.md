@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 44
-- **Last Active**: 2026-09-10
+- **Total Sessions**: 45
+- **Last Active**: 2026-09-11
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1531 | Active |
+| `journal-1.md` | ~1566 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 45 | 2026-09-11 | IEEE 写法知识包落地并归档 | `8320fd3`, `bc7b41e` | `dev` |
 | 44 | 2026-09-10 | 中文论文技能父子任务实施验收与归档 | `4e47e8e` | `dev` |
 | 43 | 2026-09-06 | paper-audit 意图门控与交付形态分级：集成验收与归档 | `22fd07e` | `dev` |
 | 42 | 2026-09-06 | 中文论文实践规范优化与任务归档 | `fb433f6` | `dev` |
