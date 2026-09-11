@@ -12,11 +12,7 @@ OBS_DIR = ELS_ROOT / "observations"
 
 def main() -> None:
     payload = json.loads(INVENTORY.read_text(encoding="utf-8"))
-    files = {
-        path.stem: path
-        for path in OBS_DIR.glob("*.md")
-        if path.name != "_schema.md"
-    }
+    files = {path.stem: path for path in OBS_DIR.glob("*.md") if path.name != "_schema.md"}
     complete = degraded = pending = 0
     for item in payload["items"]:
         key = item["key"]

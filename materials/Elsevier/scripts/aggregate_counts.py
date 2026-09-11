@@ -32,7 +32,9 @@ def load_complete() -> list[tuple[str, str]]:
     return rows
 
 
-def keys_matching(papers: list[tuple[str, str]], needle: str, ignore_case: bool = True) -> list[str]:
+def keys_matching(
+    papers: list[tuple[str, str]], needle: str, ignore_case: bool = True
+) -> list[str]:
     flags = re.I if ignore_case else 0
     return [key for key, text in papers if re.search(needle, text, flags)]
 
@@ -100,14 +102,18 @@ def rewrite_phrases(papers: list[tuple[str, str]]) -> None:
 def rewrite_story(papers: list[tuple[str, str]]) -> None:
     path = KNOW / "paper_story_patterns.tsv"
     rows = list(csv.DictReader(path.open(encoding="utf-8"), delimiter="\t"))
-    header = list(rows[0].keys()) if rows else [
-        "pattern_id",
-        "name",
-        "section_sequence",
-        "elsevier_variant",
-        "paper_count",
-        "note",
-    ]
+    header = (
+        list(rows[0].keys())
+        if rows
+        else [
+            "pattern_id",
+            "name",
+            "section_sequence",
+            "elsevier_variant",
+            "paper_count",
+            "note",
+        ]
+    )
     by_pat: dict[str, list[str]] = defaultdict(list)
     for key, text in papers:
         match = FRONT_PATTERN.search(text)

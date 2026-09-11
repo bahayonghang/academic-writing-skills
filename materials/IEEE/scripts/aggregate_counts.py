@@ -22,15 +22,17 @@ def load_complete() -> list[tuple[str, str]]:
         if path.name == "_schema.md":
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
-        status = (FRONT_STATUS.search(text) or type("m", (), {"group": lambda *_: ""})).group(1)
-        if status != "complete":
+        status_m = FRONT_STATUS.search(text)
+        if not status_m or status_m.group(1) != "complete":
             continue
-        key = (FRONT_KEY.search(text) or type("m", (), {"group": lambda *_: path.stem})).group(1)
-        rows.append((key, text))
+        key_m = FRONT_KEY.search(text)
+        rows.append((key_m.group(1) if key_m else path.stem, text))
     return rows
 
 
-def keys_matching(papers: list[tuple[str, str]], needle: str, ignore_case: bool = True) -> list[str]:
+def keys_matching(
+    papers: list[tuple[str, str]], needle: str, ignore_case: bool = True
+) -> list[str]:
     flags = re.I if ignore_case else 0
     found: list[str] = []
     for key, text in papers:

@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -21,8 +20,7 @@ TSV_HEADERS: dict[str, str] = {
         "\texemplar_quote\tprimary_section\tevidence\tprior_row\ttop_papers\tstatus"
     ),
     "phrase_bank.tsv": (
-        "phrase_id\tslot\tphrase\tpaper_count\tusage_note\tevidence"
-        "\tprior_row\ttop_papers\tstatus"
+        "phrase_id\tslot\tphrase\tpaper_count\tusage_note\tevidence\tprior_row\ttop_papers\tstatus"
     ),
     "opener_distribution.tsv": "section\topener_3gram\ttotal_occurrences\tpaper_count\ttop_papers",
     "gap_transitions.tsv": (
@@ -71,9 +69,7 @@ def _nature_forced_template(row: dict[str, str]) -> bool:
     blob = f"{description} {(row.get('exemplar_quote') or '').lower()}"
     if any(token in blob for token in NATURE_FORBIDDEN):
         return True
-    if "here we" in description and (primary == "abstract" or "abstract" in description):
-        return True
-    return False
+    return "here we" in description and (primary == "abstract" or "abstract" in description)
 
 
 def validate(allow_pending: bool) -> list[str]:
@@ -110,9 +106,7 @@ def validate(allow_pending: bool) -> list[str]:
         errors.append("duplicate inventory keys")
 
     obs_files = {
-        path.stem: path
-        for path in OBSERVATIONS_DIR.glob("*.md")
-        if path.name != "_schema.md"
+        path.stem: path for path in OBSERVATIONS_DIR.glob("*.md") if path.name != "_schema.md"
     }
     inventory_keys = set(keys)
     orphans = sorted(stem for stem in obs_files if stem not in inventory_keys)
@@ -157,7 +151,9 @@ def validate(allow_pending: bool) -> list[str]:
         if len(obs_files) != EXPECTED_COUNT:
             errors.append(f"observation files {len(obs_files)} != {EXPECTED_COUNT}")
         if status_counts["pending"] != 0:
-            errors.append(f"pending={status_counts['pending']} (expected 0 without --allow-pending)")
+            errors.append(
+                f"pending={status_counts['pending']} (expected 0 without --allow-pending)"
+            )
         done = status_counts["complete"] + status_counts["degraded"]
         if done != EXPECTED_COUNT:
             errors.append(f"complete+degraded={done} != {EXPECTED_COUNT}")

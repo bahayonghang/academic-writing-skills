@@ -142,7 +142,9 @@ def main() -> None:
         inv["status"] = "degraded"
         inv["observation"] = f"observations/{key}.md"
         written += 1
-    INVENTORY.write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    INVENTORY.write_text(
+        json.dumps(inventory, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(f"degraded_written={written} empty_abstract={empty}")
 
 
