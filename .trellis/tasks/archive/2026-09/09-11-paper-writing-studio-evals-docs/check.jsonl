@@ -1,0 +1,3 @@
+{"file":".agents/skills/qiaomu-meta-skill/references/review-release-gates.md","reason":"Production 包的发布与信任检查。"}
+{"file":"docs/installation.md","reason":"项目测试、资源同步与文档构建命令。"}
+{"file":".trellis/spec/guides/index.md","reason":"仓库质量检查索引。"}
