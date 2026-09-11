@@ -1,0 +1,3 @@
+pattern_id	name	section_sequence	elsevier_variant	paper_count	note
+SP-ELS-001	independent_related	abstract->introduction->related_work->method->experiments->conclusion	independent Related Work	30	independent Related Work; n=30
+SP-ELS-002	related_inlined	abstract->introduction->method->experiments->conclusion	related work inlined in introduction	68	related work inlined; n=68

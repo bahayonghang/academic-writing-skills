@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "验收时确认未改 catalog 契约"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "校验脚本不误用 bare import 约定"}
+{"file": ".trellis/tasks/09-11-ieee-writing-materials/research/corpus.md", "reason": "AC1 语料规模与非 IEEE 排除"}
+{"file": ".trellis/tasks/09-11-ieee-writing-materials/research/observation-schema.md", "reason": "AC2 observation 字段与 degraded 规则"}
+{"file": "ref/nature-writing-studio/skill/knowledge/PROVENANCE.md", "reason": "AC3 出处字段对照"}
+{"file": "AGENTS.md", "reason": "学术事实保护：不编造条目、作者、venue、实验结果"}

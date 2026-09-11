@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "仓库规范索引；本任务不改 catalog skill"}
+{"file": ".trellis/tasks/09-11-elsevier-writing-materials/research/corpus.md", "reason": "150 条领域刊单与过滤门"}
+{"file": ".trellis/tasks/09-11-elsevier-writing-materials/research/observation-schema.md", "reason": "Elsevier observation 字段"}
+{"file": "materials/IEEE/SKILL.md", "reason": "只读对照：知识包路由"}
+{"file": "materials/IEEE/corpus/FILTER.md", "reason": "只读对照：元数据过滤门写法"}
+{"file": "ref/nature-writing-studio/skill/knowledge/PROVENANCE.md", "reason": "出处记录格式"}
+{"file": ".agents/skills/qiaomu-meta-skill/references/resource-boundaries.md", "reason": "SKILL.md 与 knowledge/references/scripts 分工"}

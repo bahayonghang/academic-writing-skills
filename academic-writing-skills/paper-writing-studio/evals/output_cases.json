@@ -1,0 +1,21 @@
+{
+  "schema": "recorded_fixture_index",
+  "runner": "evals/output_contract_eval.py",
+  "cases": [
+    "unspecified-alias-and-protected-tokens",
+    "explicit-venue-wins-over-journal-and-domain",
+    "section-aliases",
+    "candidate-rows-never-promoted",
+    "anti-ai-and-degraded-trace",
+    "text-compact-is-distinct"
+  ],
+  "coverage": [
+    "unspecified venue and missing evidence",
+    "explicit venue versus journal/domain conflict",
+    "section aliases",
+    "candidate rows and profile isolation",
+    "protected tokens, anti-AI trace and degraded output",
+    "material text_compact difference"
+  ],
+  "evidence_boundary": "Recorded fixtures and the pure local core prove only local contract behavior; provider-backed output, real-paper quality, clean installation and human review remain missing evidence."
+}

@@ -1,0 +1,3 @@
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/prd.md","reason":"父任务的统一入口、选择优先级和输出验收。"}
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/design.md","reason":"父任务的分层边界、共享不变量与回滚约束。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/skill-engineering-method.md","reason":"根入口、接口和资源边界的 skill 设计方法。"}

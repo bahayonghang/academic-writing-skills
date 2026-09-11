@@ -1,0 +1,4 @@
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/prd.md","reason":"父任务的 profile 隔离、section alias 和三 venue 验收。"}
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/design.md","reason":"父任务的 profile load plan、来源隔离和兼容性设计。"}
+{"file":"materials/IEEE/references/writing/index.md","reason":"IEEE section reference 路由。"}
+{"file":"materials/Elsevier/references/writing/index.md","reason":"Elsevier section reference 路由。"}

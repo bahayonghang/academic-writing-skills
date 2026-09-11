@@ -1,0 +1,4 @@
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/prd.md","reason":"父任务的触发、输出、资源同步和缺证据验收。"}
+{"file":".trellis/tasks/09-11-paper-writing-studio-style-integration/research/prior-art-research.md","reason":"候选机制、取舍和 missing evidence。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/output-eval-method.md","reason":"输出评估与证据边界。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/creation-handoff.md","reason":"最终 creation handoff 结构。"}

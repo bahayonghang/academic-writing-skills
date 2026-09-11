@@ -1,0 +1,31 @@
+{
+  "id": "paper-audit-zh-thesis-fidelity",
+  "name": "paper-audit-zh-thesis-fidelity",
+  "title": "中文大论文审查与写作保真规范对齐",
+  "description": "使用 qiaomu-meta-skill 审查现有 paper-audit 中文学位论文链路，规划覆盖已归档中文论文技能修复及其事实、语义与编译证据边界的最小优化。",
+  "status": "completed",
+  "dev_type": "backend",
+  "scope": "paper-audit",
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-10",
+  "completedAt": "2026-09-11",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "旧任务已提交归档（实施 4e47e8e，journal 41c0cf7）。本任务规划完成，独立审阅 GO，阻断/应修/提示均0；见 research/validation.md。保持 planning，尚未授权或启动本任务实施。",
+  "meta": {
+    "planning_only": true,
+    "implementation_authorized": false,
+    "planning_head": "41c0cf7447989391e96a3bd79c8e7e697cf8d0f6",
+    "planning_review_complete": true
+  }
+}

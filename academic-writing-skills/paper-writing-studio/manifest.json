@@ -1,0 +1,32 @@
+{
+  "name": "paper-writing-studio",
+  "version": "0.1.0",
+  "owner": "Geekyhang",
+  "updated_at": "2026-09-11",
+  "status": "active",
+  "maturity_tier": "production",
+  "lifecycle_stage": "experimental-production",
+  "target_platforms": ["openai", "claude", "generic", "agent-skills-compatible"],
+  "upstream_inspiration": "ref/nature-writing-studio plus local IEEE and Elsevier Zotero-derived materials",
+  "upstream_sync": {
+    "nature": "read-only source snapshot; verify source provenance before refresh",
+    "ieee": "read-only local materials/IEEE profile",
+    "elsevier": "read-only local materials/Elsevier profile"
+  },
+  "intent": {
+    "job_to_be_done": "Polish academic prose with an explicit venue profile while preserving evidence-bearing tokens.",
+    "target_users": ["academic authors", "research-paper editors"],
+    "inputs": ["input_text", "target", "venue?", "journal?", "domain?"],
+    "outputs": ["text", "text_compact", "summary"],
+    "exclusions": ["formatting", "compilation", "Zotero writes", "invented evidence"]
+  },
+  "qiaomu_defaults": {
+    "language": "Chinese-first documentation with English prose output",
+    "unspecified_venue": "neutral baseline with missing evidence",
+    "candidate_rows": "report but never promote to applied rules"
+  },
+  "release_gates": {
+    "local": ["validate_skill", "trigger_eval", "skill_ir", "focused_tests"],
+    "missing_evidence": ["provider_backed_output", "human_editorial_review", "clean_installation"]
+  }
+}

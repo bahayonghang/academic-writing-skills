@@ -72,6 +72,10 @@ fragment 存在。需要精确跳转时，给目标节一个两语一致的显�
 文本资源哈希和同语言内容比较统一将 CRLF 规范化为 LF，避免同一 Git blob 因 Windows
 checkout 行尾策略不同而产生假漂移；其他字节差异仍必须失败。
 
+没有 `references/`、`templates/`、`examples/` 或 Markdown `agents/` 的轻量技能不进入
+双语资源迁移树；对这类包使用仓库级 `--inventory-only` 检查即可。不要为满足资源门禁
+人为添加空页面，也不要把空包的 inventory 通过结果写成已完成翻译或质量证据。
+
 ## 5. Good / Base / Bad Cases
 
 - Good：新增 `references/workflow.md` 后重建 manifest，校正 `sourceLocale`，同时添加

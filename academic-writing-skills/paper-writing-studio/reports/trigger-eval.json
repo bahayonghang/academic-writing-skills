@@ -1,0 +1,201 @@
+{
+  "ok": true,
+  "threshold": 0.34,
+  "description_concepts": [
+    "authoring_action",
+    "skill",
+    "venue"
+  ],
+  "missing_description_concepts": [],
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "false_positive": 0,
+    "false_negative": 0,
+    "pass_rate": 1.0
+  },
+  "failures": [],
+  "results": {
+    "should_trigger": [
+      {
+        "prompt": "按 Nature 风格润色 abstract，保留数字和引用。",
+        "family": "nature",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "Rewrite the IEEE Transactions introduction and keep evidence tokens.",
+        "family": "ieee",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "按 Elsevier 过程控制论文改写 experiments。",
+        "family": "elsevier",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "把这段学术英文润色成中性风格，保护数字和引用。",
+        "family": "unspecified",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "按 Nature 风格润色整篇 manuscript，保持引用和数字不变。",
+        "family": "full-manuscript",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "中译英学术写作润色这段 Results，保留证据 token。",
+        "family": "zh-to-en",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "skill"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "Polish the academic English of this full manuscript with an IEEE profile.",
+        "family": "academic-polish",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "authoring_action",
+          "venue"
+        ],
+        "negative_pattern": null
+      }
+    ],
+    "should_not_trigger": [
+      {
+        "prompt": "请编译 LaTeX 并检查双栏排版。",
+        "family": "formatting",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "请把条目写回 Zotero。",
+        "family": "zotero",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "请安装字体并生成投稿模板。",
+        "family": "submission-format",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": "安装字体"
+      },
+      {
+        "prompt": "请检查参考文献格式和期刊模板，不要改写正文。",
+        "family": "format-check",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.333,
+        "matched_concepts": [
+          "authoring_action"
+        ],
+        "negative_pattern": "格式"
+      },
+      {
+        "prompt": "未经授权把润色结果输出文件 manuscript.md。",
+        "family": "unauthorized-file-output",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.333,
+        "matched_concepts": [
+          "authoring_action"
+        ],
+        "negative_pattern": "输出文件"
+      }
+    ],
+    "near_neighbor": [
+      {
+        "prompt": "请总结这篇论文的研究结论。",
+        "family": "summary",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "请查找三篇最新文献。",
+        "family": "literature-search",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "请诊断 Python 环境中的依赖冲突。",
+        "family": "tooling",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": null
+      }
+    ]
+  }
+}

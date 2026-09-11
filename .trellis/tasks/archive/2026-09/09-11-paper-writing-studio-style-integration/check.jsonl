@@ -1,0 +1,6 @@
+{"file":".agents/skills/qiaomu-meta-skill/references/review-release-gates.md","reason":"Production 包的验证、信任、安装与公开 claim 边界。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/output-eval-method.md","reason":"输出契约、证据保真与可重复评估方法。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/skill-ir-method.md","reason":"跨平台 Skill IR 与 profile/输入输出边界。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/creation-handoff.md","reason":"最终 creation handoff 对参考 skill、取舍、原创贡献和证据等级的要求。"}
+{"file":".trellis/spec/guides/index.md","reason":"仓库级质量与验证指南索引。"}
+{"file":"docs/installation.md","reason":"测试、资源同步和文档构建的项目命令说明。"}
