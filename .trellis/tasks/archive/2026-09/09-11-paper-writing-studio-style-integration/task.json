@@ -1,0 +1,30 @@
+{
+  "id": "paper-writing-studio-style-integration",
+  "name": "paper-writing-studio-style-integration",
+  "title": "融合 Nature、IEEE 与 Elsevier 的学术写作润色 skill",
+  "description": "学习 ref/nature-writing-studio，并分析如何将 Nature 写法与 materials/IEEE、materials/Elsevier 中基于 Zotero 的写法合并到 academic-writing-skills/paper-writing-studio；先完成可审阅 Trellis 规划，待明确批准后再实施。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-11",
+  "completedAt": "2026-09-11",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-11-paper-writing-studio-core-routing",
+    "09-11-paper-writing-studio-evals-docs",
+    "09-11-paper-writing-studio-venue-profiles"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

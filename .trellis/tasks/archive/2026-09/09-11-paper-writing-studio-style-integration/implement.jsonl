@@ -1,0 +1,9 @@
+{"file":"ref/nature-writing-studio/skill/SKILL.md","reason":"Nature 输入输出、multi_section、反编造和 em-dash 机制的来源；实现前需抽取而非整段复制。"}
+{"file":"ref/nature-writing-studio/skill/agents/openai.yaml","reason":"Nature 按需加载、required files 与 provenance 约束的元数据来源。"}
+{"file":"materials/IEEE/SKILL.md","reason":"IEEE profile 的触发、排除、load order 与 core 晋升边界。"}
+{"file":"materials/IEEE/references/style-guide.md","reason":"IEEE Transactions 的 section 结构、自称、roadmap、贡献与结论规则。"}
+{"file":"materials/Elsevier/SKILL.md","reason":"Elsevier profile 的触发、排除、load order 与 core 晋升边界。"}
+{"file":"materials/Elsevier/references/style-guide.md","reason":"Elsevier 领域刊的 section 结构、自称、roadmap、贡献与结论规则。"}
+{"file":"materials/IEEE/knowledge/PROVENANCE.md","reason":"IEEE inventory、complete/degraded 覆盖与 candidate/core 证据门。"}
+{"file":"materials/Elsevier/knowledge/PROVENANCE.md","reason":"Elsevier inventory、complete/degraded 覆盖与 candidate/core 证据门。"}
+{"file":".agents/skills/qiaomu-meta-skill/references/prior-art-research.md","reason":"Production skill 的 prior-art 检索、去重、keep/adapt/reject/invent 与 missing evidence 合同。"}
