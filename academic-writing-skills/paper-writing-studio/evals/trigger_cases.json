@@ -1,0 +1,35 @@
+{
+  "positive_concepts": {
+    "skill": ["skill", "academic writing", "学术写作"],
+    "venue": ["Nature", "IEEE", "Elsevier", "venue", "neutral", "中性"],
+    "authoring_action": ["polish", "translate", "rewrite", "润色", "改写", "中译英"],
+    "evidence": ["evidence", "preserve", "保护", "引用"]
+  },
+  "description_required_concepts": ["skill", "venue", "authoring_action"],
+  "negative_patterns": [
+    "compile", "LaTeX formatting", "Zotero write", "安装字体", "格式", "format check",
+    "检查参考文献", "输出文件", "write file", "写入文件"
+  ],
+  "recommended_threshold": 0.34,
+  "should_trigger": [
+    {"text": "按 Nature 风格润色 abstract，保留数字和引用。", "family": "nature"},
+    {"text": "Rewrite the IEEE Transactions introduction and keep evidence tokens.", "family": "ieee"},
+    {"text": "按 Elsevier 过程控制论文改写 experiments。", "family": "elsevier"},
+    {"text": "把这段学术英文润色成中性风格，保护数字和引用。", "family": "unspecified"},
+    {"text": "按 Nature 风格润色整篇 manuscript，保持引用和数字不变。", "family": "full-manuscript"},
+    {"text": "中译英学术写作润色这段 Results，保留证据 token。", "family": "zh-to-en"},
+    {"text": "Polish the academic English of this full manuscript with an IEEE profile.", "family": "academic-polish"}
+  ],
+  "should_not_trigger": [
+    {"text": "请编译 LaTeX 并检查双栏排版。", "family": "formatting"},
+    {"text": "请把条目写回 Zotero。", "family": "zotero"},
+    {"text": "请安装字体并生成投稿模板。", "family": "submission-format"},
+    {"text": "请检查参考文献格式和期刊模板，不要改写正文。", "family": "format-check"},
+    {"text": "未经授权把润色结果输出文件 manuscript.md。", "family": "unauthorized-file-output"}
+  ],
+  "near_neighbor": [
+    {"text": "请总结这篇论文的研究结论。", "family": "summary"},
+    {"text": "请查找三篇最新文献。", "family": "literature-search"},
+    {"text": "请诊断 Python 环境中的依赖冲突。", "family": "tooling"}
+  ]
+}

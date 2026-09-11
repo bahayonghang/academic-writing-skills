@@ -1,0 +1,118 @@
+{
+  "schema_version": "2.0.0-qiaomu-lite",
+  "generated_at": "2026-09-11",
+  "package": {
+    "name": "paper-writing-studio",
+    "version": "0.1.0",
+    "owner": "Geekyhang",
+    "maturity_tier": "production",
+    "lifecycle_stage": "experimental-production",
+    "upstream_inspiration": "ref/nature-writing-studio plus local IEEE and Elsevier Zotero-derived materials",
+    "upstream_sync": {
+      "nature": "read-only source snapshot; verify source provenance before refresh",
+      "ieee": "read-only local materials/IEEE profile",
+      "elsevier": "read-only local materials/Elsevier profile"
+    }
+  },
+  "intent": {
+    "description": "Use this academic writing skill to polish or translate academic writing with an explicit Nature, IEEE, Elsevier, or neutral profile. Selects a profile by explicit venue, journal allowlist, then unambiguous domain; reports uncertainty instead of guessing.",
+    "job_to_be_done": "Polish academic prose with an explicit venue profile while preserving evidence-bearing tokens.",
+    "target_users": [
+      "academic authors",
+      "research-paper editors"
+    ],
+    "inputs": [
+      "input_text",
+      "target",
+      "venue?",
+      "journal?",
+      "domain?"
+    ],
+    "outputs": [
+      "text",
+      "text_compact",
+      "summary"
+    ],
+    "exclusions": [
+      "formatting",
+      "compilation",
+      "Zotero writes",
+      "invented evidence"
+    ],
+    "qiaomu_defaults": {
+      "language": "Chinese-first documentation with English prose output",
+      "unspecified_venue": "neutral baseline with missing evidence",
+      "candidate_rows": "report but never promote to applied rules"
+    }
+  },
+  "triggers": {
+    "should_trigger": [
+      "按 Nature 风格润色 abstract，保留数字和引用。",
+      "Rewrite the IEEE Transactions introduction and keep evidence tokens.",
+      "按 Elsevier 过程控制论文改写 experiments。",
+      "把这段学术英文润色成中性风格，保护数字和引用。",
+      "按 Nature 风格润色整篇 manuscript，保持引用和数字不变。",
+      "中译英学术写作润色这段 Results，保留证据 token。",
+      "Polish the academic English of this full manuscript with an IEEE profile."
+    ],
+    "should_not_trigger": [
+      "请编译 LaTeX 并检查双栏排版。",
+      "请把条目写回 Zotero。",
+      "请安装字体并生成投稿模板。",
+      "请检查参考文献格式和期刊模板，不要改写正文。",
+      "未经授权把润色结果输出文件 manuscript.md。"
+    ],
+    "near_neighbor": [
+      "请总结这篇论文的研究结论。",
+      "请查找三篇最新文献。",
+      "请诊断 Python 环境中的依赖冲突。"
+    ]
+  },
+  "workflow": {
+    "router_rules": [],
+    "compact_workflow": [],
+    "gate_ladder": [],
+    "output_contract": []
+  },
+  "resources": {
+    "references": [],
+    "scripts": [
+      "scripts\\__init__.py",
+      "scripts\\core.py"
+    ],
+    "evals": [
+      "evals\\output_cases.json",
+      "evals\\output_contract_cases.json",
+      "evals\\output_contract_eval.py",
+      "evals\\trigger_cases.json"
+    ],
+    "reports": [
+      "reports\\creation-handoff.md",
+      "reports\\prior-art-research.md",
+      "reports\\skill-ir.json",
+      "reports\\trigger-eval.json",
+      "reports\\trigger-eval.new.json"
+    ]
+  },
+  "portability": {
+    "canonical_format": null,
+    "adapter_targets": [
+      "openai",
+      "claude",
+      "generic",
+      "agent-skills-compatible"
+    ],
+    "activation": {},
+    "execution": {},
+    "trust": {},
+    "permissions": {},
+    "degradation": {}
+  },
+  "gates": {},
+  "evidence_boundary": {
+    "generated_reports_are_evidence": true,
+    "planned_work_is_evidence": false,
+    "missing_external_or_human_evidence_label": "missing evidence",
+    "public_claim_policy": "claim only what local validation, install proof, human review, or provider-backed evidence actually supports"
+  }
+}

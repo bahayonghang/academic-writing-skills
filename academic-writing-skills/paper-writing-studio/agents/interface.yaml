@@ -1,0 +1,43 @@
+name: paper-writing-studio
+display_name: Paper Writing Studio
+version: 0.1.0
+entry: SKILL.md
+interface:
+  display_name: Paper Writing Studio
+  short_description: Venue-aware academic writing polish with neutral fallback
+  default_prompt: Polish the supplied academic text using the selected venue profile and preserve evidence tokens.
+compatibility:
+  adapter_targets: [openai, claude, generic, agent-skills-compatible]
+inputs:
+  - input_text
+  - target
+  - venue (optional; nature|ieee|elsevier|unspecified)
+  - journal (optional allowlist hint)
+  - domain (optional unambiguous hint)
+outputs:
+  - text
+  - text_compact
+  - summary
+required_inputs:
+  - input_text
+  - target
+selection_precedence: explicit venue > journal allowlist > unambiguous domain > unspecified
+summary_fields:
+  - venue
+  - profile_version
+  - section
+  - rules_applied
+  - patterns_used
+  - evidence_rows
+  - protected_tokens
+  - ai_tells_avoided
+  - untraceable_tokens
+  - degraded
+  - conflicts
+  - missing_evidence
+exclusions:
+  - formatting or compilation
+  - citation-format checks
+  - Zotero writes
+  - unauthorized file output
+  - invented evidence

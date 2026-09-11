@@ -1,0 +1,32 @@
+{
+  "profile": "ieee",
+  "profile_version": "materials-ieee-2026-09-11",
+  "source_path": "materials/IEEE",
+  "provenance": "materials/IEEE/knowledge/PROVENANCE.md",
+  "allowed_sections": ["abstract", "introduction", "related_work", "methods", "results", "discussion", "conclusion", "sentence"],
+  "load_order": [
+    "references/style-guide.md",
+    "references/writing/{section}.md",
+    "knowledge/writing_rules.tsv",
+    "knowledge/phrase_bank.tsv",
+    "knowledge/{sectional_knowledge}.tsv"
+  ],
+  "section_routes": {
+    "method": "method",
+    "methods": "method",
+    "results": "experiments",
+    "experiments": "experiments",
+    "discussion": "conclusion",
+    "conclusion": "conclusion",
+    "related-work": "related-work",
+    "related_work": "related-work"
+  },
+  "mechanisms": ["transactions-self-reference", "related-work-route", "roadmap-aware-introduction", "conclusion-route", "core-statistical-gate"],
+  "forbidden_cross_profile_rules": ["nature", "elsevier", "nature_tsv", "elsevier_tsv", "shared_tsv_merge"],
+  "evidence_gate": {
+    "required": ["core_rule_or_phrase", "section_source"],
+    "statistical_minimum_paper_count": 5,
+    "candidate_policy": "report candidate rows and do not cite as core",
+    "degraded_policy": "set degraded=true and list missing observation evidence"
+  }
+}

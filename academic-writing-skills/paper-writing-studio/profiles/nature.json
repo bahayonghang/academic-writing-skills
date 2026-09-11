@@ -1,0 +1,35 @@
+{
+  "profile": "nature",
+  "profile_version": "2.0.1",
+  "source_path": "ref/nature-writing-studio/skill",
+  "provenance": "ref/nature-writing-studio/skill/knowledge/PROVENANCE.md",
+  "allowed_sections": ["abstract", "introduction", "methods", "results", "discussion", "figure_legend", "sentence", "multi_section"],
+  "load_order": [
+    "prompts/system_writer.txt",
+    "prompts/style_guide.txt",
+    "prompts/sections/{section}.txt",
+    "knowledge/writing_rules.tsv",
+    "knowledge/cross_section_rules.tsv",
+    "knowledge/anti_ai_patterns.tsv",
+    "knowledge/{sectional_knowledge}.tsv"
+  ],
+  "section_routes": {
+    "method": "methods",
+    "methods": "methods",
+    "results": "results",
+    "discussion": "discussion",
+    "conclusion": "discussion",
+    "figure-legend": "figure_legend",
+    "figure_legend": "figure_legend",
+    "multi-section": "multi_section",
+    "multi_section": "multi_section",
+    "sentence": "sentence"
+  },
+  "mechanisms": ["anti-fabrication", "em-dash-avoidance", "multi-section-context", "cross-section-audit", "hedge-by-evidence"],
+  "forbidden_cross_profile_rules": ["ieee", "elsevier", "shared_tsv_merge", "venue_fallback"],
+  "evidence_gate": {
+    "required": ["source_row_or_prompt"],
+    "candidate_policy": "report candidate rows and do not promote them",
+    "degraded_policy": "set degraded=true and list missing source rows"
+  }
+}

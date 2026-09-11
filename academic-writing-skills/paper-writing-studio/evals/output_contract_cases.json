@@ -1,0 +1,79 @@
+{
+  "schema": "recorded_fixture",
+  "purpose": "Validate routing, output shape, evidence traceability and degradation without invoking a provider.",
+  "cases": [
+    {
+      "id": "unspecified-alias-and-protected-tokens",
+      "kind": "selection_and_render",
+      "input": {
+        "input_text": "The error decreased from 12.5% [3] in \\cite{smith2024}.",
+        "target": "experiments"
+      },
+      "expected": {
+        "venue": "unspecified",
+        "selection_source": "neutral baseline",
+        "section": "results",
+        "protected_tokens": ["12.5%", "[3]", "\\cite{smith2024}"],
+        "missing_evidence": ["venue/journal/domain"]
+      }
+    },
+    {
+      "id": "explicit-venue-wins-over-journal-and-domain",
+      "kind": "selection",
+      "input": {
+        "venue": "nature",
+        "journal": "Applied Energy",
+        "domain": "control_ieee",
+        "target": "abstract"
+      },
+      "expected": {
+        "venue": "nature",
+        "selection_source": "explicit venue",
+        "conflict_count": 2,
+        "section": "abstract"
+      }
+    },
+    {
+      "id": "section-aliases",
+      "kind": "selection_and_render",
+      "input": {"target": "method", "venue": "ieee", "input_text": "A method."},
+      "expected": {"venue": "ieee", "section": "methods"}
+    },
+    {
+      "id": "candidate-rows-never-promoted",
+      "kind": "profile_gate",
+      "profiles": ["nature", "ieee", "elsevier"],
+      "expected": {
+        "candidate_policy_required": "report candidate rows",
+        "each_profile_isolated": true
+      }
+    },
+    {
+      "id": "anti-ai-and-degraded-trace",
+      "kind": "render",
+      "input": {"venue": "nature", "target": "discussion", "input_text": "The result is 42%."},
+      "render": {
+        "text": "The result is 42%. The evidence remains traceable.",
+        "ai_tells_avoided": ["em_dash", "generic_claim"],
+        "untraceable_tokens": ["new-claim"],
+        "degraded": true
+      },
+      "expected": {
+        "degraded": true,
+        "ai_tells_avoided": ["em_dash", "generic_claim"],
+        "untraceable_tokens": ["new-claim"]
+      }
+    },
+    {
+      "id": "text-compact-is-distinct",
+      "kind": "render",
+      "input": {"venue": "elsevier", "target": "results", "input_text": "The result is 42%."},
+      "render": {
+        "text": "The result is 42%. The confidence interval remains unchanged across all held-out trials.",
+        "degraded": false
+      },
+      "expected": {"compact_shorter": true, "degraded": false}
+    }
+  ],
+  "human_notes": "人审仍需判断语气、完整性和 venue 适切性；provider-backed 输出、真实论文质量、干净安装和人工 blind review 均为 missing evidence。"
+}
