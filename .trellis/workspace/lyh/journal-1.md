@@ -1564,3 +1564,38 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 规划 Elsevier 顶刊写法蒸馏任务
+
+
+## Session 46: Elsevier 写法知识包落地并归档
+
+**Date**: 2026-09-11
+**Task**: Elsevier 写法知识包落地并归档
+**Branch**: `dev`
+
+### Summary
+
+从本机 Zotero 蒸馏 150 篇 Elsevier 领域刊论文到 materials/Elsevier（98 complete / 52 degraded），校验通过后提交并归档 09-11-elsevier-writing-materials。
+
+### Main Changes
+
+- 新增 materials/Elsevier 知识包：observation、core 规则、分节指南与校验脚本
+- 写入并归档 Trellis 任务 09-11-elsevier-writing-materials
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8644162` | (see git log) |
+| `f0d2c0f` | (see git log) |
+
+### Testing
+
+- [OK] python materials/Elsevier/scripts/validate_knowledge.py 退出 0
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 无本任务后续；09-10-paper-audit-zh-thesis-fidelity 仍为 planning
