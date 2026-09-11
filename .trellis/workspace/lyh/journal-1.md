@@ -1599,3 +1599,24 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 无本任务后续；09-10-paper-audit-zh-thesis-fidelity 仍为 planning
+
+
+## Session 47: 完成 paper-writing-studio 三层实现与四任务归档
+
+**Date**: 2026-09-11
+**Task**: 完成 paper-writing-studio 三层实现与四任务归档
+**Branch**: `dev`
+
+### Summary
+
+完成统一 paper-writing-studio 核心路由、Nature/IEEE/Elsevier profile、evals/docs 与资源同步；修复包内 Ruff 格式问题。validate_skill、trigger eval 15/15、output eval 6/6、包测试、Pyright 与资源清单通过；provider、真实论文、人审、干净安装仍为 missing evidence。归档 core-routing、evals-docs、venue-profiles 和父任务。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4c2a0b1` | (see git log) |
+
+### Status
+
+[OK] **Completed**
