@@ -1,0 +1,39 @@
+section	opener_template	total_occurrences	paper_count	top_papers
+abstract	In the process industries, X pose significant challenges for Y.	1	1	ZVIVPYR4
+introduction	LARGE time-delay and nonlinearity are prevalent in process industries	1	1	ZVIVPYR4
+method	The [METHOD] combines A and B to model systems and optimize control.	1	1	ZVIVPYR4
+experiments	The efficacy of the algorithm was assessed using key metrics	1	1	ZVIVPYR4
+conclusion	In this research, we have successfully introduced	1	1	ZVIVPYR4
+abstract	With the increasing complexity of industrial systems and process data	1	1	P46RA6G8
+introduction	IN MODERN industrial process control and optimization	1	1	P46RA6G8
+related_work	Causal relation modeling has recently gained attention	1	1	P46RA6G8
+method	To address the challenges posed by X, we propose Y	1	1	P46RA6G8
+experiments	We use two real-world industrial process datasets	1	1	P46RA6G8
+conclusion	In this article, we proposed	1	1	P46RA6G8
+abstract	Soft sensing technology plays a crucial role in	1	1	2YFQJ43K
+introduction	THE process industry now faces an immediate necessity	1	1	2YFQJ43K
+method	The AVs may be categorized as	1	1	2YFQJ43K
+experiments	This section assesses the predictive performance	1	1	2YFQJ43K
+conclusion	In this article, we aimed to address	1	1	2YFQJ43K
+abstract	Predictive monitoring of industrial processes and quality indices	1	1	KUMVDDYB
+introduction	ENSURING stable quality and optimizing energy consumption	1	1	KUMVDDYB
+method	The proposed framework comprises three components	1	1	KUMVDDYB
+experiments	We evaluated the proposed method on a real-world industrial dataset	1	1	KUMVDDYB
+conclusion	This article has presented a joint training framework	1	1	KUMVDDYB
+abstract	Multivariate time series (MTS) forecasting is critical	1	1	9BBQ2XLM
+introduction	MULTIVARIATE time series (MTS) forecasting plays a critical role	1	1	9BBQ2XLM
+related_work	Recently, the integration of LLMs into MTS forecasting	1	1	9BBQ2XLM
+method	Following previous work, we measure nonstationarity	1	1	9BBQ2XLM
+experiments	We evaluate the effectiveness of [METHOD] on six real-world datasets	1	1	9BBQ2XLM
+conclusion	This article proposes [METHOD] for	1	1	9BBQ2XLM
+abstract	To address these challenges, this article proposes [METHOD]	1	1	SR9LIYM9
+introduction	IN INDUSTRIAL processes, key quality variables	1	1	SR9LIYM9
+related_work	In this section, we briefly review related works	1	1	SR9LIYM9
+method	This section presents the [METHOD] model	1	1	SR9LIYM9
+experiments	Given the objective of generating time-series data	1	1	SR9LIYM9
+conclusion	In this article, a [METHOD] framework ... was proposed	1	1	SR9LIYM9
+abstract	To address this limitation, we propose [METHOD]	1	1	5HNMW4GE
+introduction	IN COMPLEX industrial production processes	1	1	5HNMW4GE
+method	The proposed [METHOD] module ... is described in this section	1	1	5HNMW4GE
+experiments	In this section, a real-world industrial dataset	1	1	5HNMW4GE
+conclusion	This article proposes a novel [METHOD]	2	2	9BBQ2XLM,5HNMW4GE
