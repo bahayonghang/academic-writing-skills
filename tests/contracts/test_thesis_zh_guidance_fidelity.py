@@ -71,6 +71,15 @@ def test_chapter_advice_defers_to_school_and_actual_evidence() -> None:
     assert "900~1200" in abstract and "500~650" in abstract
 
 
+def test_conclusion_guidance_separates_synthesis_from_abstract_problem_opening() -> None:
+    text = _read("references/writing/conclusion-guide-zh.md")
+    assert "首段总领式总述" in text
+    assert "全文方法链" in text
+    assert "提出/建立/构建/设计了" in text
+    assert "“针对……问题”可以补充问题背景，但不是结论条目的必备起句" in text
+    assert '每条贡献遵循骨架"**针对……问题' not in text
+
+
 def test_reverse_outline_keeps_a_sound_paragraph_and_limits_edit_authority() -> None:
     text = _read("examples/logic-and-experiment.md")
     for token in (

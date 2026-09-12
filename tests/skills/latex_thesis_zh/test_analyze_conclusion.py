@@ -77,9 +77,9 @@ _CONCL_OK = (
     "\\chapter{总结与展望}\n"
     "本文围绕某过程的建模与控制问题展开研究。首先分析工艺流程，其次建立预测模型，"
     "然后设计优化策略，最后进行工业验证。本文主要创新性工作如下：\n"
-    "（1）针对高维数据不平衡问题，提出了数据增强方法，实验表明预测精度显著提升。\n"
-    "（2）针对多工况切换问题，建立了工况识别模型，验证了有效性。\n"
-    "（3）针对能耗优化问题，设计了优化控制策略，现场应用表明节能效果明显。\n"
+    "（1）提出了数据增强方法，实验表明预测精度显著提升。\n"
+    "（2）建立了工况识别模型，验证了有效性。\n"
+    "（3）设计了优化控制策略，现场应用表明节能效果明显。\n"
     "然而，所提方法在更复杂工况下的泛化能力仍存在一定不足。\n"
     "未来研究可从以下方面进一步深入。\n"
     "（1）研究多尺度数据融合的建模方法，提升模型鲁棒性。\n"
@@ -116,6 +116,10 @@ def test_llm_lane_always_present(tmp_path: Path) -> None:
     result = _analyze(tmp_path, _doc(_CONCL_OK))
     lane = {h.code for h in result.llm_lane}
     assert lane == {"CC-SKELETON", "CC-NEW-CONCEPT"}
+    skeleton = next(h.hint for h in result.llm_lane if h.code == "CC-SKELETON")
+    assert "提出/建立/构建/设计了" in skeleton
+    assert "只是可选背景" in skeleton
+    assert "针对…问题，提出" not in skeleton
 
 
 # ── CC-TRIAD ─────────────────────────────────────────────────
