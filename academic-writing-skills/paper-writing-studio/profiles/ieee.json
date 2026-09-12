@@ -1,8 +1,8 @@
 {
   "profile": "ieee",
   "profile_version": "materials-ieee-2026-09-11",
-  "source_path": "materials/IEEE",
-  "provenance": "materials/IEEE/knowledge/PROVENANCE.md",
+  "source_path": "profiles/ieee.json",
+  "provenance": "profiles/ieee.json",
   "allowed_sections": ["abstract", "introduction", "related_work", "methods", "results", "discussion", "conclusion", "sentence"],
   "load_order": [
     "references/style-guide.md",

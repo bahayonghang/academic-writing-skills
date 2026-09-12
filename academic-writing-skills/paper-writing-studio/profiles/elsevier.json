@@ -1,8 +1,8 @@
 {
   "profile": "elsevier",
   "profile_version": "materials-elsevier-2026-09-11",
-  "source_path": "materials/Elsevier",
-  "provenance": "materials/Elsevier/knowledge/PROVENANCE.md",
+  "source_path": "profiles/elsevier.json",
+  "provenance": "profiles/elsevier.json",
   "allowed_sections": ["abstract", "introduction", "related_work", "methods", "results", "discussion", "conclusion", "sentence"],
   "load_order": [
     "references/style-guide.md",
