@@ -7,11 +7,11 @@
   "maturity_tier": "production",
   "lifecycle_stage": "experimental-production",
   "target_platforms": ["openai", "claude", "generic", "agent-skills-compatible"],
-  "upstream_inspiration": "ref/nature-writing-studio plus local IEEE and Elsevier Zotero-derived materials",
+  "upstream_inspiration": "ref/nature-writing-studio plus IEEE and Elsevier venue profiles",
   "upstream_sync": {
     "nature": "read-only source snapshot; verify source provenance before refresh",
-    "ieee": "read-only local materials/IEEE profile",
-    "elsevier": "read-only local materials/Elsevier profile"
+    "ieee": "profile-local routing metadata; no corpus snapshot",
+    "elsevier": "profile-local routing metadata; no corpus snapshot"
   },
   "intent": {
     "job_to_be_done": "Polish academic prose with an explicit venue profile while preserving evidence-bearing tokens.",

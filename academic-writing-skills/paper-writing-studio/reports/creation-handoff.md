@@ -10,8 +10,8 @@
 ## Reference skills studied
 
 - ref/nature-writing-studio/skill: local source studied for section prompts, anti-fabrication, multi-section context and output shape.
-- materials/IEEE: local Zotero-derived source studied for Transactions section routes and core/candidate evidence gates.
-- materials/Elsevier: local Zotero-derived source studied for domain-journal routes and provenance.
+- profiles/ieee.json: Transactions section routes and core/candidate evidence gates.
+- profiles/elsevier.json: domain-journal routes and evidence-gate provenance.
 
 External catalog results were used only as adjacent discovery. They were not treated as inspected reference skills or copied.
 

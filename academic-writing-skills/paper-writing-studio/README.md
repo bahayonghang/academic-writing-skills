@@ -30,16 +30,16 @@ npx skills add <owner/repository>
 | profile | 适用范围 | 只读来源 | 特有边界 |
 | --- | --- | --- | --- |
 | `nature` | Nature 风格的单节或整稿润色 | `ref/nature-writing-studio/skill/` | anti-AI、em-dash、跨节上下文和证据分级留在本 profile |
-| `ieee` | IEEE Transactions 等工程论文 | `materials/IEEE/` | self-reference、Related Work 路由和 `core`/candidate 门留在本 profile |
-| `elsevier` | Elsevier 过程控制与工程论文 | `materials/Elsevier/` | domain-journal 路由、统计门和结论收束留在本 profile |
+| `ieee` | IEEE Transactions 等工程论文 | `profiles/ieee.json` | self-reference、Related Work 路由和 `core`/candidate 门留在本 profile |
+| `elsevier` | Elsevier 过程控制与工程论文 | `profiles/elsevier.json` | domain-journal 路由、统计门和结论收束留在本 profile |
 
 三套 profile 的 source path、provenance、section load order 和 TSV 不合并。`candidate` 行只记录为候选证据，不能提升为已应用规则。catalog installs、GitHub stars 和本地 fixture 都不是质量评分。
 
 - `profiles/nature.json` 指向 `ref/nature-writing-studio/skill/`，保留反编造、em-dash、shared context 和跨节审计机制。
-- `profiles/ieee.json` 指向 `materials/IEEE/`，只使用对应 section 的 reference 与 `core`/统计门控规则。
-- `profiles/elsevier.json` 指向 `materials/Elsevier/`，只使用对应 section 的 reference 与 `core`/统计门控规则。
+- `profiles/ieee.json` 保存 Transactions 路由与 `core`/candidate 门，不加载外部语料目录。
+- `profiles/elsevier.json` 保存 domain-journal 路由与统计门，不加载外部语料目录。
 
-这些 source path 是本开发仓库中的只读证据边界；独立复制 skill 后若没有来源快照，profile 不能声称已经加载语料，应返回 degraded/missing evidence。不会把三套 TSV 合并，也不会把 catalog installs 或 GitHub stars 当作质量评分。
+Nature 的 source path 是本开发仓库中的只读证据边界。IEEE 与 Elsevier 仅保留 profile 路由元数据，没有语料快照，不能声称已经加载语料，应返回 degraded/missing evidence。不会把三套 TSV 合并，也不会把 catalog installs 或 GitHub stars 当作质量评分。
 
 输出默认是 inline Markdown，包含 `text`、`text_compact` 和 summary。summary 记录 venue、profile version、section、规则/模式 ID、evidence rows、保护 token、冲突和 degraded 状态。无法确认来源时保留 `missing_evidence`，不回退到另一个 venue。skill 不负责 LaTeX/Typst 排版、编译、BibTeX、Zotero 写入、格式检查、未授权文件写出或补造数字、引用、实验结果。
 
@@ -67,4 +67,4 @@ Copyright (c) 向阳乔木
 X: https://x.com/vista8  
 GitHub: https://github.com/joeseesun/
 
-Upstream inspiration: ref/nature-writing-studio plus local IEEE and Elsevier Zotero-derived materials.
+Upstream inspiration: ref/nature-writing-studio plus IEEE and Elsevier venue profiles.

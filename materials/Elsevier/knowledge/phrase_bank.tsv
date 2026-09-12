@@ -1,6 +1,0 @@
-phrase_id	slot	phrase	paper_count	usage_note	evidence	prior_row	top_papers	status
-P001	abstract	To address these challenges, this study proposes	2	摘要缺口后点名方法	distilled		74U9GR7A,K557Z3XS	candidate
-P002	introduction	this paper proposes	43	引言点名方法	distilled		2D6ENKZ8,2RMSQZT8,4Y3JEW6L,5CIIJVTI,5S333U6L	core
-P003	introduction	The specific contributions of this study are as follows	1	贡献列表引导	distilled		K557Z3XS	candidate
-P004	introduction	The structure of the remainder of this paper is organized as follows	1	节序路标	distilled		K557Z3XS	candidate
-P005	conclusion	This study focuses on	1	结论开篇收回指标	distilled		K557Z3XS	candidate
