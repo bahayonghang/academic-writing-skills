@@ -19,8 +19,9 @@ uv run python -B scripts/analyze_conclusion.py main.tex --json
 
 - **三段式（CC-TRIAD）**：总结主体 + 创新表述 + 展望三要素齐全；缺展望/总结 → Error，
   缺创新表述 → Warning。
-- **开篇承上（CC-OPEN）**、**编号贡献（CC-ENUM）**、**贡献骨架（CC-SKELETON）**：开篇序词
-  串研究链、贡献 (1)(2)(3) 编号 3~4 条、每条"针对…提出…表明…"骨架。
+- **首段总领（CC-OPEN）**、**编号贡献（CC-ENUM）**、**贡献骨架（CC-SKELETON）**：首段序词
+  串全文方法链、贡献 (1)(2)(3) 编号 3~4 条、每条包含“提出/建立/构建/设计 + 技术对象 + 作用或证据”；
+  “针对…问题”只是可选背景。
 - **展望（CC-OUTLOOK-EMPTY/TRANS/COUNT）**：空话黑名单 + 局限承接过渡句 + 条数 2~3。
 - **结论 ≠ 摘要（CC-VERBATIM）**：difflib 逐句比对，逐字重复占比 ≥30% → Warning。
 - **数值一致（CC-QUANT）**：结论数值须能在正文找到；缺失出 NEEDS-LLM 软提示。

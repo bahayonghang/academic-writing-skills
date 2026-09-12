@@ -18,7 +18,7 @@ uv run python $SKILL_DIR/scripts/analyze_conclusion.py main.tex --json
 It is recommended to use the **flat three-paragraph format** for the conclusion chapter (5/5 do not need subsection numbers, just use the opening paragraph + numbered contribution list + outlook list):
 
 ```text
-① 开篇承上式总述：复述研究问题，用"首先……其次……最后……"串起全文研究链
+① 首段总领式总述：概括研究对象与总问题，用“首先……其次……然后/最后……”串起全文方法链
 ② "……如下："导语 + 编号贡献条 (1)(2)(3)[(4)]（3~4 条）
 ③ 局限/承接过渡句（"仍存在一定不足""仍然有很多问题悬而未决"）
 ④ 展望 2~3 条：具体技术研究方向
@@ -33,30 +33,29 @@ It is recommended to use the **flat three-paragraph format** for the conclusion 
 
 The whole chapter is **2~4 pages**, accounting for about 1.5%~3.3% of the text. The summary should be longer than the outlook (5/5, about 2:1~3:1).
 
-## Overview of the opening chapter (CC-OPEN)
+## Opening synthesis paragraph (CC-OPEN)
 
-The opening paragraph first retells the research question and the full-text research chain, uses prefaces to string the work of each chapter into a line, and then introduces the sub-sections. Preface
-(First/Secondly/Then/Again/Finally) **At least 2** can reflect the research chain, otherwise only an Info prompt will be made.
+The opening paragraph first summarizes the research object, overall problem, and full-text method chain, then introduces the numbered contributions. Use ordinal phrases (First/Secondly/Then/Again/Finally) to connect the methods or chapters; fewer than two only produces an Info prompt, and a human review still decides whether the chain is complete. This paragraph synthesizes the conclusion and should not copy the abstract's problem-method-results sentence pattern.
 
 Positive example sentence pattern (rewrite an excerpt from the model essay, do not copy it):
 
 ```text
-本文针对〈对象〉在〈场景〉下的〈瓶颈〉问题，开展了〈研究主题〉研究。首先，……；其次，
-……；最后，……。取得的主要创新性工作如下：
+本文围绕〈对象〉在〈场景〉下的〈总问题〉开展研究。首先，完成〈方法/模型链起点〉；其次，
+建立〈中间模型或算法〉；最后，形成〈决策、控制或应用环节〉。取得的主要创新性工作如下：
 ```
 
-## Contribution bar skeleton (CC-SKELETON / CC-ENUM)
+## Numbered contribution skeleton (CC-SKELETON / CC-ENUM)
 
 The contribution body is presented as a serialized list (1)(2)(3)[(4)], and the number of entries falls between **3~4** (exceeding only prompts). There must be one sentence before the list
 "...as follows:" Introduction, the words of the introduction can be "main innovative work/specific innovative work/main conclusions/achieved results", etc.
 
-Each contribution follows the skeleton "**Aiming at...problems, proposed/established/designed...methods/models, experiments/applications (results)
-Shows/verifies...**". There are many variations of the skeleton sentence pattern, and the script only performs rough screening and counting, and the semantic completeness is submitted to [LLM] for review.
+Each contribution should preferably follow “**proposed/established/built/designed + a method, model, algorithm, or framework + its technical object or role + existing experimental, simulation, production-data, or application evidence**.” A “for... problem” phrase may provide context, but it is optional and its absence is not a defect. The script performs only coarse structural screening; semantic completeness goes to [LLM] review.
 
 | Writing | Judgment |
 | --- | --- |
-| "(1) Aiming at the problem of high-dimensional data imbalance, a data enhancement model of monotonic bounded adversarial learning was established, and its consistency was verified using production data." | Passed (target-method-verification three elements are complete) |
-| "(1) This article studies data enhancement." | Defects (no problem orientation, no verification carrier, CC-SKELETON [LLM] prompt completion) |
+| "(1) A monotonic bounded adversarial-learning data enhancement model was established, and production data verified the consistency of its generated samples with actual data." | Passed (contribution verb-technical object-evidence elements are complete) |
+| "(2) A multi-model adversarial collaboration framework for quality prediction was built, and experiments verified its predictive capability under imbalanced data." | Passed (the “for... problem” phrase is optional context) |
+| "(3) This article studies data enhancement." | Defects (missing a clear contribution verb, technical object, and evidence close; CC-SKELETON [LLM] prompt completion) |
 | Contribution prose in paragraphs, no (1)(2) number | Info (CC-ENUM prompt changed to numbered list) |
 
 Contributions are organized by **technical contribution/chapter** (each = a method/model/chapter of work) and are not separately split according to summary points.
@@ -128,7 +127,7 @@ Check the existence; if it cannot be found, a NEEDS-LLM soft prompt (not a hard 
 
 ## Conclusion ≠ Abstract (CC-VERBATIM)
 
-The opening summary and subsections should be a **paraphrase** of the abstract (sentence structure reorganization, supplementary connectives), and **the abstract must not be copied word for word**. script
+The opening synthesis and numbered contributions should be a **whole-text rewrite** of the abstract (reorganize the method chain and contribution relations), and **the abstract must not be copied word for word**. The script
 Use difflib to compare the conclusion and the Chinese abstract sentence by sentence. If ratio ≥ 0.85, it will be reported as a hit; if the hit sentence accounts for ≥30% of the conclusion sentences, it will be reported as Warning.
 Single sentence hit column Info details. Semantic-level synonym rewriting for [LLM] review.
 
@@ -171,9 +170,9 @@ The serial number traceability of `conclusion-patterns.md`:
 | Checkcode | Lane | Trigger | Severity | Traceability |
 | --- | --- | --- | --- | --- |
 | CC-TRIAD | Script | Missing any element of summary/innovative expression/outlook | Error (lack of outlook/summary)/Warning (lack of innovative expression) | web C1/C5·HIT; C-LABEL |
-| CC-OPEN | Script | First paragraph < 2 words | Info | C-OPENING 5/5 |
+| CC-OPEN | Script | Opening synthesis contains fewer than 2 ordinal cues | Info | C-OPENING 5/5 |
 | CC-ENUM | Script | The contribution is not numbered or the number is not between 3~4 | Info | C-ENUM 5/5 |
-| CC-SKELETON | LLM | Contribution bar lacks the element of "propose... to indicate that..." | Warning | C-SKELETON 5/5 |
+| CC-SKELETON | LLM | Contribution bar lacks “propose/establish/build/design + technical object + supported role or evidence” | Warning | C-SKELETON 5/5 |
 | CC-OUTLOOK-EMPTY | Script | Outlook empty talk blacklist hit and no technical terms in the same sentence | Warning | C-OUTLOOK-SPEC 5/5; web C6 |
 | CC-OUTLOOK-TRANS | Script | Looking ahead without limitations/taking over transitional sentences | Info | C-OUTLOOK-TRANS 5/5 |
 | CC-OUTLOOK-COUNT | Script | The number of outlooks is not 2~3 | Info | C-OUTLOOK-COUNT 5/5 |

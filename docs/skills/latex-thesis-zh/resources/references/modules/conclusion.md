@@ -20,7 +20,7 @@ conclusion chapter. The 13 CC-* checks are detailed in the checker mapping and s
 `../writing/conclusion-guide-zh.md`:
 
 - **Three-part structure (CC-TRIAD)**: summary body + innovation statement + outlook must all be present. Missing outlook/summary -> Error; missing innovation statement -> Warning.
-- **Opening inheritance (CC-OPEN)**, **numbered contributions (CC-ENUM)**, and **contribution skeleton (CC-SKELETON)**: opening ordinal phrases connect the research chain; list 3-4 contributions as (1)(2)(3); each follows the “for... propose... results show...” skeleton.
+- **Opening synthesis (CC-OPEN)**, **numbered contributions (CC-ENUM)**, and **contribution skeleton (CC-SKELETON)**: opening ordinal phrases connect the full-text method chain; list 3-4 contributions as (1)(2)(3), each with “propose/establish/build/design + technical object + supported role or evidence.” A “for... problem” preface is optional context.
 - **Outlook (CC-OUTLOOK-EMPTY/TRANS/COUNT)**: empty-phrase blacklist + limitation-to-outlook transition + 2-3 items.
 - **Conclusion is not the abstract (CC-VERBATIM)**: sentence-level difflib comparison; verbatim repetition ratio >=30% -> Warning.
 - **Numeric consistency (CC-QUANT)**: every number in the conclusion must be found in the body; missing numbers produce a soft NEEDS-LLM prompt.

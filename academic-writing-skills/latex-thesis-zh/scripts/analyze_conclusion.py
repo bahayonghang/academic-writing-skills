@@ -309,7 +309,7 @@ class ConclusionAnalyzer:
         return out
 
     def _check_open(self, summary_lines: list[tuple[int, str]], loc: str) -> list[Finding]:
-        """CC-OPEN（C-OPENING 5/5）：首段承上式总述用序词串起研究链，<2 个 -> Info。"""
+        """CC-OPEN（C-OPENING 5/5）：首段总领式总述用序词串起方法链，<2 个 -> Info。"""
         if not summary_lines:
             return []
         summary_text = " ".join(t for _, t in summary_lines)
@@ -324,8 +324,8 @@ class ConclusionAnalyzer:
                 "Info",
                 self.doc.lineref(summary_lines[0][0]),
                 f"结论开篇总述的研究链序词偏少（{hits} 个，如首先/其次/最后）。",
-                "在开篇用“首先…其次…最后…”复述全文研究链，再引出分条总结。",
-                "承上式总述能让结论衔接全文主线，是范文结论的通用开篇写法。",
+                "在首段用“首先…其次…然后/最后…”概括全文方法链，再引出分条贡献。",
+                "总领段能让结论衔接全文主线；序词数量只是提示，仍需人工核对方法链是否完整。",
             )
         ]
 
@@ -616,8 +616,8 @@ class ConclusionAnalyzer:
         return [
             LlmHint(
                 "CC-SKELETON",
-                "逐条核对贡献条是否遵循“针对…问题，提出/建立/设计了…，(通过…)实验/应用表明/"
-                "验证了…”骨架；缺“问题导向开头”或“验证收口”的条目请指出并给出改写。",
+                "逐条核对贡献条是否包含“提出/建立/构建/设计了 + 技术对象 + 作用或证据”要素；"
+                "“针对…问题”只是可选背景，不因缺少该短语判定不合格；缺贡献动词、技术对象或证据收口的条目请指出并给出改写。",
             ),
             LlmHint(
                 "CC-NEW-CONCEPT",
