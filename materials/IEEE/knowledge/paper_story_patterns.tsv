@@ -1,4 +1,0 @@
-pattern_id	name	section_sequence	ieee_variant	paper_count	note
-SP-IEEE-001	transactions_full	abstract->introduction->related_work->method->experiments->conclusion	independent Related Work	94	independent Related Work; n=94
-SP-IEEE-002	related_inlined	abstract->introduction->method->experiments->conclusion	related work inlined in introduction	167	related work inlined; n=167
-SP-IEEE-003	conference_short	abstract->introduction->method->experiments->conclusion	conference short paper	0	candidate skeleton; not core
