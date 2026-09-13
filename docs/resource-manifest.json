@@ -357,7 +357,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/evidence/over-claim-guard.md",
       "sourceLocale": "en",
-      "sourceSha256": "e1819b8fa6a740e4e0decb9ff131b240d41ed95905ee075a759bd5949e3a924b",
+      "sourceSha256": "5540d7b22767d2b7e07c2a46a8c3b58c4ce715222c5609d2894ba91754241d39",
       "en": "docs/skills/latex-paper-en/resources/references/evidence/over-claim-guard.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/evidence/over-claim-guard.md"
     },
@@ -427,6 +427,15 @@
     {
       "skill": "latex-paper-en",
       "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/modules/claim-forward.md",
+      "sourceLocale": "en",
+      "sourceSha256": "721eaaf45a5efc1c34cddeeba98d7b407c31b15393a95ec6ddd43572d5daae10",
+      "en": "docs/skills/latex-paper-en/resources/references/modules/claim-forward.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/claim-forward.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/compile.md",
       "sourceLocale": "en",
       "sourceSha256": "c2efff955b70406cea413540cf2e45cf32ff245f4e462ef91f12a2fed57e47cc",
@@ -438,7 +447,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "5af4bff955426a3894837f7566ea3522d2e105f9d0d5d7f57de4e5cd554006d7",
+      "sourceSha256": "eb66cce93524a9378182a57b0f0d02bdb1e4f8ea92e8f549b4d8231f8fa05b02",
       "en": "docs/skills/latex-paper-en/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/deai.md"
     },
@@ -456,7 +465,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/expression.md",
       "sourceLocale": "en",
-      "sourceSha256": "da6e40060d9e01cb0cecfd9925bca31ae192ed03f0f6ef7fe2f16e8de78b28fd",
+      "sourceSha256": "285e3dfb3387a26fd70d755e9d4d8ece9b9a637151bb7c2cf82eb6b7582fb71c",
       "en": "docs/skills/latex-paper-en/resources/references/modules/expression.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/expression.md"
     },
@@ -510,7 +519,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/modules/routing-rules.md",
       "sourceLocale": "en",
-      "sourceSha256": "066cbab9a90d6e7b09673a544c483230905d5c970123f0e28e8d68ea4b28d6ec",
+      "sourceSha256": "1a146ea30112a485925245d4478b40e792359ab2cac54b57322eba8abe526775",
       "en": "docs/skills/latex-paper-en/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/modules/routing-rules.md"
     },
@@ -639,6 +648,24 @@
       "sourceSha256": "6a6f083347043685d8e8aa175ecfb024831dbbe1c19ccfdf65a1933d980a2888",
       "en": "docs/skills/latex-paper-en/resources/references/writing/best-practices.md",
       "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/best-practices.md"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/claim-forward-terms.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "95985dfc607dcc75bda905d9107ca7202433f0b6226e5cfd6b8ec02d0a102e9d",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/claim-forward-terms.yaml",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/claim-forward-terms.yaml"
+    },
+    {
+      "skill": "latex-paper-en",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-paper-en/references/writing/claim-forward.md",
+      "sourceLocale": "en",
+      "sourceSha256": "f9aeb93a8d62f299a10be2ab18640357e951a9bb5385bd02a5cdeffb7ec98df1",
+      "en": "docs/skills/latex-paper-en/resources/references/writing/claim-forward.md",
+      "zh": "docs/zh/skills/latex-paper-en/resources/references/writing/claim-forward.md"
     },
     {
       "skill": "latex-paper-en",

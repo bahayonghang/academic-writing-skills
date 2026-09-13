@@ -39,6 +39,7 @@
 | `figures` | 图片存在性、扩展名、DPI 或 caption 审阅 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_figures.py main.tex` |
 | `pseudocode` | 算法块、caption、label、注释和行号审查 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_pseudocode.py main.tex --venue ieee` |
 | `deai` | AI 痕迹和低信息密度套话检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
+| `claim-forward` | 主张被免责声明或 caveat 后置、自我削弱措辞、hedge 堆叠、负面收尾 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_claim_forward.py main.tex --section introduction` |
 | `experiment` | 实验写法、讨论深度和结论完整性 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
 | `abstract` | 五元素摘要诊断 | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex` |
 | `tables` | 表格结构、booktabs 和三线表检查 | `uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex` |
@@ -82,6 +83,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [模块：适应](./resources/references/modules/adapt.md)
 - [模块：参考书目](./resources/references/modules/bibliography.md)
 - [图形和表格标题生成指南](./resources/references/modules/caption.md)
+- [模块：主张前置检查（Claim-Forward）](./resources/references/modules/claim-forward.md)
 - [模块：编译](./resources/references/modules/compile.md)
 - [模块：去AI编辑](./resources/references/modules/deai.md)
 - [模块：实验回顾](./resources/references/modules/experiment.md)
@@ -105,6 +107,8 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [期刊改编工作流程](./resources/references/venues/journal-adaptation-workflow.md)
 - [抽象结构指南](./resources/references/writing/abstract-structure.md)
 - [最佳实践](./resources/references/writing/best-practices.md)
+- [主张前置写作指南（Claim-Forward）](./resources/references/writing/claim-forward.md)
+- [Claim-Forward 词表](./resources/references/writing/claim-forward-terms.yaml)
 - [学术写作中常见的中式英语错误](./resources/references/writing/common-errors.md)
 - [摘要部分写作](./resources/references/writing/section-writing/abstract.md)
 - [结论部分写作](./resources/references/writing/section-writing/conclusion.md)

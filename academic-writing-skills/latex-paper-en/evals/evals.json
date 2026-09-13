@@ -701,6 +701,61 @@
           "description": "no unsupported evidence is invented"
         }
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "Run the claim-forward check on the attached fixture. Report the five positive cases (a disclaimer before the first claim in the Introduction, a limitation sentence ahead of the claim in Contributions, four hedges on one Method claim, 'regrettably ... still lags far behind' in Results, and a Conclusion that ends on 'does not handle' with no direction). Explain why the cited prior-work sentence in Discussion, the Limitations section, and the bare 'only'/'limited' sentence are not findings. Propose minimal reorderings; do not delete any limitation or unfavorable result, and do not strengthen a verb past its evidence.",
+      "expected_output": "Route to claim-forward and run scripts/check_claim_forward.py. List CF-DISCLAIM, CF-CAVEAT-POS, CF-HEDGE-STACK, CF-SELFWEAK, CF-CLOSE-NEG once each with Original/Candidate blocks; keep every limitation in the candidates (reorder or reword only); state that cited prior work, the Limitations section, and bare only/limited are exempt; add a direction to the closing paragraph instead of removing the negative judgment; check the over-claim ladder before any stronger wording.",
+      "files": [
+        "evals/fixtures/claim_forward_cases.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "CF-DISCLAIM",
+          "description": "disclaimer-before-claim code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-CAVEAT-POS",
+          "description": "limitation-before-claim code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-HEDGE-STACK",
+          "description": "hedge stack code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-SELFWEAK",
+          "description": "self-weakening collocation code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-CLOSE-NEG",
+          "description": "negative closing code named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(Limitations section|prior work|cited)",
+          "description": "boundary cases explained as exempt"
+        },
+        {
+          "type": "regex",
+          "pattern": "(do not delete|keep the limitation|not removed|reorder)",
+          "description": "limitations preserved, only reordered or reworded"
+        },
+        {
+          "type": "regex",
+          "pattern": "(over-claim|evidence rung|ladder)",
+          "description": "upward calibration bounded by evidence"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims PRESERVED"
+        }
+      ]
     }
   ]
 }

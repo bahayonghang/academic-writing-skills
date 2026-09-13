@@ -1,6 +1,6 @@
 ---
 name: latex-paper-en
-description: English LaTeX assistant for existing .tex journal or conference papers. Use for compile repair, venue formatting, bibliography/citation checks, section writing, logic, related work, tables, pseudocode, de-AI polish, translation, adaptation, and submission readiness; use latex-thesis-zh for Chinese theses and paper-audit for critique.
+description: English LaTeX assistant for existing .tex journal or conference papers. Use for compile repair, venue formatting, bibliography/citation checks, section writing, logic, related work, tables, pseudocode, de-AI polish, claim-forward (self-weakening) fixes, translation, adaptation, and submission readiness; use latex-thesis-zh for Chinese theses and paper-audit for critique.
 when_to_use: >-
   Trigger on prompts like "fix my LaTeX", "proofread my IEEE paper", "rewrite related work",
   "find the research gap", "format citations", "make a three-line table", "write pseudocode",
@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "6.0.0"
-  last_updated: "2026-08-29"
+  last_updated: "2026-09-13"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -67,6 +67,7 @@ Not for: drafting a paper from scratch; literature research without a paper proj
 | `figures`         | Figure existence, extension, DPI, or caption review                                                            | `uv run python -B $SKILL_DIR/scripts/check_figures.py main.tex`                              | `references/review/reviewer-perspective.md`                                                                                           |
 | `pseudocode`      | IEEE-safe pseudocode review, `algorithm2e` cleanup, caption/label/reference checks, and comment-length review  | `uv run python -B $SKILL_DIR/scripts/check_pseudocode.py main.tex --venue ieee`              | `references/modules/pseudocode.md`                                                                                                    |
 | `deai`            | Reduce AI-writing traces while preserving LaTeX syntax                                                         | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`          | `references/modules/deai.md`                                                                                                          |
+| `claim-forward`   | Claims placed after disclaimers or caveats, self-weakening wording on own results, stacked hedges, or a negative closing paragraph | `uv run python -B $SKILL_DIR/scripts/check_claim_forward.py main.tex --section introduction` | `references/modules/claim-forward.md`                                                                                                 |
 | `experiment`      | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments`   | `references/modules/experiment.md`                                                                                                    |
 | `tables`          | Table structure validation, three-line table generation, or booktabs review                                    | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex`                               | `references/modules/tables.md`                                                                                                        |
 | `caption`         | Figure/table caption wording and evidence-boundary review                                                      | (LLM-driven workflow)                                                                        | references/modules/caption.md                                                                                                         |
@@ -75,9 +76,10 @@ Not for: drafting a paper from scratch; literature research without a paper proj
 
 ## Routing Rules
 
-- Infer the module from the request; ask only when two or more modules are equally plausible. Run 2-3 compatible checks sequentially in this order: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`. Polish coarse-to-fine (logic -> sentences -> lexical); never reverse.
+- Infer the module from the request; ask only when two or more modules are equally plausible. Run 2-3 compatible checks sequentially in this order: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` / `claim-forward` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`. Polish coarse-to-fine (logic -> sentences -> lexical); never reverse.
 - `logic` for cross-section alignment / funnel / contribution drift (add `--motivation-thread` for whole-paper promise/closure maps); `literature` only for Related Work organization or gap derivation; `experiment` for results/discussion/baseline/ablation concerns even when phrased as "logic"; `section-writing` for drafting/rewrite plans (load its module doc plus exactly one guide from `references/writing/section-writing/`).
 - `deai --tier light|medium|heavy` gives graded D1-D5 dimension analysis; omit `--tier` for defaults.
+- `claim-forward` for under-claiming (claim after caveat, self-weakening words, hedge stacks, negative close); it reorders and rewords only and never deletes a limitation — strengthen wording only up to the evidence rung in `references/evidence/over-claim-guard.md`.
 - On script failure: stop, report the exact command and exit code, and suggest the smallest fallback — do not silently switch modules.
 - Full decision notes: `references/modules/routing-rules.md`.
 
@@ -150,6 +152,7 @@ Read only the file matching the active module.
 
 - `references/modules/`: per-module commands and decision notes; `routing-rules.md` (full routing/output/safety detail), `section-writing.md`, `caption.md`, `pseudocode.md`.
 - `references/writing/style-guide.md`: tone/style defaults; `references/writing/section-writing/`: per-section writing guides.
+- `references/writing/claim-forward.md`: claim-first rewrite rules, preferred/discouraged patterns, and the rejected selective-presentation edits; term table in `references/writing/claim-forward-terms.yaml`.
 - Method interfaces: load `references/writing/section-writing/method.md` for module flow, equation closure, or run-in headings in a Methods section.
 - `references/venues/catalog.md`: venue index — prefer `templates/<venue>.md` (`ieee`, `acm`, `neurips`, `icml`, `springer-lncs`) when a venue is named.
 - `references/citations/verification.md`: citation verification workflow.

@@ -147,6 +147,8 @@ EXPECTED_ABSENCES: dict[str, list[str]] = {
     "improve_expression.py": ["zh"],
     "translate_academic.py": ["zh"],
     "check_pseudocode.py": ["zh"],
+    # claim-forward ships language-specialized EN/ZH copies; Typst is out of scope
+    "check_claim_forward.py": ["typst"],
 }
 
 

@@ -57,6 +57,7 @@ SKILLS = {
             "figures",
             "pseudocode",
             "deai",
+            "claim-forward",
             "experiment",
             "tables",
             "caption",

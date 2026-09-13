@@ -37,7 +37,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 
 `compile`, `format`, `bibliography`, `grammar`, `sentences`, `logic`,
 `literature`, `section-writing`, `expression`, `translation`, `title`, `figures`,
-`pseudocode`, `deai`, `experiment`, `tables`, `caption`, `abstract`, `adapt`.
+`pseudocode`, `deai`, `claim-forward`, `experiment`, `tables`, `caption`, `abstract`, `adapt`.
 
 ### `latex-thesis-zh`
 

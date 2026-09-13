@@ -19,6 +19,8 @@
 | `very`    | "very few" —— 自动替换实测产出 "highly few"                               |
 | `kind of` | 删掉它会改变 "a kind of transformer" 的含义                               |
 
+对作者自身结果的自我削弱措辞（`regrettably`、`merely`、`falls short of`）以及放在 caveat 之后的主张不是语气问题；请路由到 [claim-forward.md](claim-forward.md)。
+
 **不要把 `use → employ`、`show → demonstrate` 加回来。** 它们是被有意删除的：de-AI 指南把 "we use ..." 列为正确的学术英语，把 "demonstrate the effectiveness" 列为 AI 痕迹，套用这两条会让本模块与 [deai.md](deai.md) 互相打架（finding E15）。加搭配排除表也不是解法——`make sense`、`make up`、`make do`、`make it` 是开放集，漏一个就产出错误英语。
 
 受保护 token（统计值、带单位数值、模型/数据集/基因名）在替换前被遮蔽，并列入 `Protected:`。完整分级：[protected-tokens.md](../writing/protected-tokens.md)。

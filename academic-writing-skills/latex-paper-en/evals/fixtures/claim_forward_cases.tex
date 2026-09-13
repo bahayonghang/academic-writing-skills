@@ -1,0 +1,55 @@
+\documentclass{article}
+% Fixture for the claim-forward module (latex-paper-en).
+% Cases A-E are positives (one per CF-* code); Cases F-H are boundaries that
+% must stay silent. Written for evals/evals.json id 24 and
+% tests/skills/latex_paper_en/test_claim_forward.py.
+\begin{document}
+
+\begin{abstract}
+We present a lightweight tracker that achieves 12\% higher accuracy than the strongest baseline on three indoor benchmarks.
+The tracker runs at 210 frames per second on a single GPU.
+\end{abstract}
+
+\section{Introduction}
+% Case A: CF-DISCLAIM — paragraph opens by denying scope before stating the claim.
+We do not claim to solve general scene understanding.
+Instead, this paper presents a lightweight tracker that achieves 12\% higher accuracy on indoor benchmarks.
+
+\section{Contributions}
+% Case C: CF-CAVEAT-POS — limitation sentence ahead of the claim it qualifies.
+Although the evaluation is restricted to indoor scenes, the conclusions should be read with that scope in mind.
+We introduce a tracker that reduces latency by 40\% relative to the best published method.
+
+\section{Method}
+% Case D: CF-HEDGE-STACK — four hedges on one claim sentence.
+Our approach may potentially improve robustness to some extent in some cases.
+The matching module uses a fixed window of eight frames.
+
+\section{Results}
+% Case B: CF-SELFWEAK — self-weakening collocations on the authors' own result.
+Our method achieves 94.1\% accuracy on the standard split.
+Regrettably, our method still lags far behind the oracle on the long-tail split.
+
+% Case H: boundary — bare "only" and "limited" are not self-weakening.
+Our method achieves 3\% higher accuracy than the best baseline.
+It only requires a single GPU and has a limited memory footprint of 2~GB.
+
+\section{Discussion}
+% Case F: boundary — cited prior work may be described as falling short.
+Prior work~\cite{tracker2019} falls short of real-time rates on commodity hardware.
+These methods also suffer from serious drift over long sequences.
+
+\section*{Limitations}
+% Case G: boundary — a Limitations section is where limitations belong.
+Our evaluation does not cover outdoor scenes with strong illumination change.
+We show results on three indoor benchmarks only.
+
+\section{Conclusion}
+We presented a lightweight tracker and showed a 12\% accuracy gain on three indoor benchmarks.
+The design keeps the per-frame cost below five milliseconds.
+
+% Case E: CF-CLOSE-NEG — final paragraph ends on a negative judgment with no direction.
+Our framework achieves real-time rates on a single GPU.
+However, it does not handle streaming inputs with variable frame rates.
+
+\end{document}
