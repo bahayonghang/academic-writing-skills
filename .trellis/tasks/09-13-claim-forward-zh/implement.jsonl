@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/source-basis.md", "reason": "来源、许可、红线切分、ZH 五篇学位论文基线（仅/尚未/未能 取舍）"}
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/delta-matrix.md", "reason": "S1-S24 判定与 CF 码定义"}
+{"file": ".trellis/spec/academic-writing-skills/claim-forward-contract.md", "reason": "C1 建立的契约（5 码、输出格式、豁免）；C2 扩展 ZH 节"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "ZH Rewrite Contract 纳入范围（现仅 expression）"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "禁向 deai_check.py 三副本加 hedge 正则"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "deai 三副本锁、SMOKE_COMMANDS、just ci"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "docs 双语页与 manifest 同步"}

@@ -1,0 +1,30 @@
+{
+  "id": "claim-forward-integration",
+  "name": "claim-forward-integration",
+  "title": "防御性写作（自我削弱）检查与改写整合到 EN/ZH/paper-audit",
+  "description": "",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-13",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-13-claim-forward-en",
+    "09-13-claim-forward-zh",
+    "09-13-claim-forward-audit"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

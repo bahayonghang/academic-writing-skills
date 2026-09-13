@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/source-basis.md", "reason": "两个来源 skill 的事实、许可、红线兼容性切分、命名冲突、ZH 基线证据"}
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/delta-matrix.md", "reason": "S1–S24 逐条采纳/改编/已覆盖/否决判定与 CF 码汇总"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "spec 索引；C1 需新增 claim-forward-contract 行"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "同名概念冲突来源；禁止向 deai_check.py 加 hedge 正则"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "改写输出四字段、三分列表、[Script] 恒 NEEDS-LLM"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md", "reason": "paper-audit 文档层整合先例（固定码集合 + 契约测试）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "docs 双语页面与 manifest 同步规则"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "just ci 四步、哈希锁与 EXPECTED_ABSENCES 规则"}
