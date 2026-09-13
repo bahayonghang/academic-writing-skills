@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/source-basis.md", "reason": "来源、许可、红线切分、命名冲突"}
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/delta-matrix.md", "reason": "S1-S24 判定与 CF 码定义（Severity/门控/Owner）"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "claim-forward 归入 [LLM] layer only 组；[Script] 恒 NEEDS-LLM"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "禁向 deai_check.py 加 hedge 正则；同名概念区分"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "与 deai 去重边界（BINARY_CONTRAST_SHELLS / throat_clearing）"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-en-contract.md", "reason": "terms YAML + 内置 fallback 的先例"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "TIER1 哈希锁、EXPECTED_ABSENCES、just ci"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "docs 双语页与 manifest 同步"}
