@@ -8,6 +8,7 @@ Spec: .trellis/spec/academic-writing-skills/claim-forward-contract.md
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -58,12 +59,15 @@ LEAK_RE = re.compile(r"CF-[A-Z]|claim[_-]forward|self[_-]weaken|hedge_stack", re
 
 
 def _run(script: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
     return subprocess.run(
         [sys.executable, "-B", str(script), *args],
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
+        env=env,
     )
 
 
@@ -174,14 +178,14 @@ def test_no_new_module_named_defensive() -> None:
 # ---------------------------------------------------------------------------
 
 
-# sha256 of the paper-audit engine / schema files the feature must leave byte-identical
-# (recorded when C3 landed; update only through a task that deliberately changes them).
+# sha256 of git-canonical LF bytes. Normalize CRLF before hashing so Windows
+# working trees match CI. Update only through a task that changes the files.
 AUDIT_FROZEN_SHA256: dict[str, str] = {
-    "scripts/audit.py": "72ad368b8b9894e9249062c061dbff5b274ee921e5c66c4bf3c6f27a34e350f8",
-    "scripts/scholar_eval.py": "b241f7da8e1757ac87e9a2f5d818705659de31ed58de77168dd9a1a425ae8c67",
+    "scripts/audit.py": "80fdbd78a72c68d85f98915732e6e6aa1de033cc3ffb5a0339b65724423055cc",
+    "scripts/scholar_eval.py": "402a054fc87d5024b7e65b01d82cede5d65e671d04a48f90480d12dcbde70ad9",
     "scripts/zh_check_adapters.py": "8af2cdb59cc0e6024e7da898a994482d746ac1153b0cfba7b18137cbdcce3077",
-    "references/quality_rubrics.md": "56f5ee3604ade91a97c97dd45ae733502f298f6a71d6684b6ce2f0d70138f910",
-    "references/ISSUE_SCHEMA.md": "42c013cd8fd7113b747b8113c12fe56c83d6fd69b26b524c8083064b6ccf9b23",
+    "references/quality_rubrics.md": "bba8d125a77fdbfbd7aa94a9f9f7a687fcc3303c05007d85b0fcddb2f3f91154",
+    "references/ISSUE_SCHEMA.md": "1dba805634d57efaff0487940c2958e66007bc75f164da2c2ddb0265adddfb01",
 }
 
 
@@ -223,7 +227,8 @@ def test_paper_audit_documents_carry_under_claim_guidance() -> None:
 def test_paper_audit_engine_files_are_byte_identical(rel_path: str) -> None:
     import hashlib
 
-    digest = hashlib.sha256((AUDIT / rel_path).read_bytes()).hexdigest()
+    payload = (AUDIT / rel_path).read_bytes().replace(b"\r\n", b"\n")
+    digest = hashlib.sha256(payload).hexdigest()
     assert digest == AUDIT_FROZEN_SHA256[rel_path], rel_path
 
 
