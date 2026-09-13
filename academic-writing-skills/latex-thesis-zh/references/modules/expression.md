@@ -90,3 +90,5 @@ B 档（无「建议」行，只有「候选」）：
 本模块产出可直接替换原文的文本，适用改写契约。`[Script]` 层输出恒为 `Meaning-Check: NEEDS-LLM`，且只允许置规则可确定的标记（`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`）；只有 `[LLM]` 层可提出 `PRESERVED`，且仍是待作者核对的提案。字段定义与 `Risk-Flags` 闭集见 `references/modules/routing-rules.md`。
 
 改写不得升高措辞强度。把留有余地的表述换成更强的断言（「可能」→「能够」、「有助于」→「显著提升」）是过度声称，不是表达改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../writing/over-claim-guard.md)——本模块只做词汇层替换建议，强度分级不在此重复实现。
+
+对自身结果的自我削弱搭配（「遗憾的是」「仍明显落后于」「效果有限」）与写在 caveat 之后的主张不是表达问题，也与 `E-ABSOLUTE` 方向相反；交给 [claim-forward.md](claim-forward.md)。

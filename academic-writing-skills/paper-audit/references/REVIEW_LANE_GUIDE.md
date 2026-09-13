@@ -10,18 +10,24 @@ Default `deep-review` lanes:
     `P-ARC-CLOSE` (wrap-up / closing), `P-ARC-LINK` (adjacent-paragraph interface),
     and `P-ARC-FLAT` (body expansion); missing transition words alone are not a
     logical break
+  - flag a disclaimer or limitation placed before the paragraph's first claim
+    (`CF-DISCLAIM` / `CF-CAVEAT-POS`) per the under-claim section of
+    `OVER_CLAIM_GUARD.md`; reorder only, never delete
 - `section_methods`
   - check definitions, assumptions, derivations, and method detail; for methodological interface and argumentation completeness, load the `section_methods` focus block in `SUBAGENT_TEMPLATES.md`
 - `section_results`
   - check metric computation, evidence sufficiency, and comparison fairness
 - `section_discussion_conclusion`
-  - check interpretation, limitation handling, and claim closure
+  - check interpretation, limitation handling, and claim closure; flag a closing
+    paragraph that ends on a negative judgment with no direction (`CF-CLOSE-NEG`)
+    and never recommend deleting the negative result
 - `section_appendix`
   - check whether appendix material supports or contradicts headline claims
 
 ## Cross-cutting lanes
 
-- `claims_vs_evidence` — max 8 issues
+- `claims_vs_evidence` — max 8 issues (under-claim `CF-SELFWEAK` / `CF-HEDGE-STACK`
+  compete inside this quota as `claim_accuracy`; no separate quota)
 - `notation_and_numeric_consistency` — max 10 issues
 - `evaluation_fairness_and_reproducibility` — max 8 issues
 - `self_standard_consistency` — max 6 issues

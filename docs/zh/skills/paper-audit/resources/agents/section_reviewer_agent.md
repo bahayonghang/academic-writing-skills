@@ -14,6 +14,8 @@
 - 分配到 `subsection_context_polish` 时，读取源坐标窗口，并遵循
   `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`
   定义的权限
+- 标记先于本节首个主张的免责句或限制句（`CF-DISCLAIM` / `CF-CAVEAT-POS`），以及结论中以负面判定收尾且无方向的末段（`CF-CLOSE-NEG`）；
+  作为 `presentation` 报告，只建议调序，绝不删除限制语
 
 ## 输出
 

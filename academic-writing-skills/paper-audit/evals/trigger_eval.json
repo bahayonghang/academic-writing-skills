@@ -100,6 +100,11 @@
       "query": "Review this manuscript like a reviewer, but do not leave any files on disk.",
       "should_trigger": true,
       "category": "edge"
+    },
+    {
+      "query": "Review my paper as a reviewer and also tell me where the writing under-sells the results; the introduction keeps apologising before it states the contribution.",
+      "should_trigger": true,
+      "category": "edge"
     }
   ]
 }

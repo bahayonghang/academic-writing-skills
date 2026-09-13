@@ -37,12 +37,12 @@ and a source-level writing check is not a reviewer-style submission decision.
 
 `compile`, `format`, `bibliography`, `grammar`, `sentences`, `logic`,
 `literature`, `section-writing`, `expression`, `translation`, `title`, `figures`,
-`pseudocode`, `deai`, `experiment`, `tables`, `caption`, `abstract`, `adapt`.
+`pseudocode`, `deai`, `claim-forward`, `experiment`, `tables`, `caption`, `abstract`, `adapt`.
 
 ### `latex-thesis-zh`
 
 `compile`, `format`, `structure`, `consistency`, `template`, `bibliography`,
-`title`, `deai`, `logic`, `literature`, `experiment`, `references`, `tables`,
+`title`, `deai`, `claim-forward`, `logic`, `literature`, `experiment`, `references`, `tables`,
 `abstract`, `conclusion`, `spec-check`, `blind-review`.
 
 For a whole thesis, start with `structure`. Use `spec-check` only with the correct school

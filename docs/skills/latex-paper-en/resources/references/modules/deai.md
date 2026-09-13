@@ -19,6 +19,8 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - The `tense` category (`[Script]` LOW) flags present-tense reporting verbs in Methods / Experiments / Results, gated to those sections; see [tense-guide.md](tense-guide.md).
 - The `overclaim` category (`[Script]` LOW) flags unambiguous causal / firstness / universality phrasing; see [over-claim-guard.md](../evidence/over-claim-guard.md).
 
+- Hedge stacking, disclaimers before the first claim, and self-weakening collocations are **not** de-AI traces and this script carries no hedge regex by contract; route them to [claim-forward.md](claim-forward.md). `not X but Y` shells and "It is worth noting" stay here.
+
 ## Density and Budget Semantics
 
 - Term counts and denominators share one visible-prose adapter that excludes comments,

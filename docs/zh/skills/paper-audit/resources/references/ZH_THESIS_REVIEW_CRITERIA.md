@@ -28,7 +28,7 @@
 | 4 | 研究方法与技术路线 | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_logic.py` / `analyze_experiment.py` + reviewer |
 | 5 | 工作量与难度 | `significance` (13%) | `[LLM]` | reviewer 判断；不得用篇幅、图表数、公式数、参考文献数代理 |
 | 6 | 创新性（硕士 / 博士标准分档） | `novelty` (13%) | `[LLM]` | reviewer 判断 |
-| 7 | 结论可靠性 | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_conclusion.py`（module `CONCLUSION`）+ reviewer |
+| 7 | 结论可靠性 | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_conclusion.py`（module `CONCLUSION`）+ reviewer；结论末段负面判定无展望（`CF-CLOSE-NEG`）由 reviewer 判 `[LLM]`，只建议补方向 |
 | 8 | 章节结构完备性 | `presentation` (8%) | `[Script]` | `check_spec.py`（module `SPEC`） |
 | 9 | 摘要与关键词规范 | `clarity` (13%) | `[Script]` | `analyze_abstract.py`（module `ABSTRACT`） |
 | 10 | 三线表规范 | `presentation` (8%) | `[Script]` | `check_tables.py`（module `TABLES`） |

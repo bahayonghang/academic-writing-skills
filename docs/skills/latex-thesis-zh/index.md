@@ -38,6 +38,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 | `deai` | Visible Chinese prose contains AI-writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
 | `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, engineering-application argument, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | The review lacks thematic synthesis, selective attribution, cluster-end comparison, or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
+| `claim-forward` | Claims placed after disclaimers or caveats, self-weakening wording, hedge stacks, negative closing | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
 | `experiment` | Experiment language, evidence layers, display/statistical scope, or per-method-chapter completeness needs review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | Cross-references, `\caption` / `\bicaption`, labels, or numbering are inconsistent | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
 | `tables` | Three-line tables, real caption position, booktabs structure, or table generation needs checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
@@ -91,6 +92,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Title](./resources/references/modules/title.md)
 - [Chinese expression](./resources/references/modules/expression.md)
 - [De-AI review](./resources/references/modules/deai.md)
+- [Claim-forward check](./resources/references/modules/claim-forward.md)
 - [Literature review](./resources/references/modules/literature.md)
 - [Experiment review](./resources/references/modules/experiment.md)
 - [Cross-references](./resources/references/modules/references.md)
@@ -111,6 +113,8 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Method module description and interfaces](./resources/references/writing/method-description-guide-zh.md)
 - [Results-analysis and evidence-scope guide](./resources/references/writing/results-analysis-guide-zh.md)
 - [Conclusion chapter guide](./resources/references/writing/conclusion-guide-zh.md)
+- [Claim-forward writing guide](./resources/references/writing/claim-forward-zh.md)
+- [Claim-forward term table](./resources/references/writing/claim-forward-terms-zh.yaml)
 - [Abstract structure](./resources/references/writing/abstract-structure.md)
 - [Structure guide](./resources/references/writing/structure-guide.md)
 - [Logic and coherence](./resources/references/writing/logic-coherence.md)

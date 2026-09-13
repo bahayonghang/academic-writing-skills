@@ -47,3 +47,5 @@ Skill-layer response:
 
 See also: [../writing/conclusion-guide-zh.md](../writing/conclusion-guide-zh.md), the dedicated
 conclusion-chapter writing guide with structural templates, positive/negative examples, and the checker mapping.
+
+A closing paragraph that ends on a negative judgment with no outlook direction (`CF-CLOSE-NEG`) is reported by [claim-forward.md](claim-forward.md); it complements CC-OUTLOOK-TRANS — negative judgment → transition sentence → outlook passes both, and no limitation is deleted.

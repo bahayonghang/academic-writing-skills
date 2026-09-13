@@ -170,6 +170,21 @@
       "query": "Debug this Python script that crashes on numpy import.",
       "should_trigger": false,
       "category": "negative-unrelated"
+    },
+    {
+      "query": "My introduction keeps saying what we don't claim before saying what we did; can you check main.tex for self-weakening wording and move the claims first?",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Reviewers said our results section sounds apologetic (regrettably, only marginally). Run a claim-forward check on the LaTeX paper without deleting the limitations.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "The conclusion of my .tex paper ends on a negative note with no future work; flag hedge stacking and under-claiming.",
+      "should_trigger": true,
+      "category": "edge"
     }
   ]
 }

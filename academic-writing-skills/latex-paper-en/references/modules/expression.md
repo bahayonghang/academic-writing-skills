@@ -19,6 +19,8 @@ Reported as candidates, never auto-applied — the pattern is detectable but a r
 | `very`    | "very few" — auto-replacing produced "highly few"                                      |
 | `kind of` | Deleting it changes the meaning of "a kind of transformer"                             |
 
+Self-weakening wording on the authors' own results (`regrettably`, `merely`, `falls short of`) and claims placed after their caveats are not tone issues; route them to [claim-forward.md](claim-forward.md).
+
 **Do not add `use → employ` or `show → demonstrate` back.** They were removed on purpose: the de-AI guide lists "we use ..." as correct academic English and "demonstrate the effectiveness" as an AI tell, so applying them made this module fight [deai.md](deai.md) (finding E15). A collocation exclusion list is not the fix either — `make sense`, `make up`, `make do`, `make it` are an open set, and every gap produces wrong English.
 
 Protected tokens (statistics, values with units, model/dataset/gene names) are masked before substitution and listed under `Protected:`. Full classification: [protected-tokens.md](../writing/protected-tokens.md).

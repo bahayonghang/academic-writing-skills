@@ -39,6 +39,7 @@ English LaTeX paper assistant for existing `.tex` conference and journal manuscr
 | `figures` | Figure existence, extension, DPI, or caption review | `uv run python academic-writing-skills/latex-paper-en/scripts/check_figures.py main.tex` |
 | `pseudocode` | Algorithm block, caption, label, comment, and line-number review | `uv run python academic-writing-skills/latex-paper-en/scripts/check_pseudocode.py main.tex --venue ieee` |
 | `deai` | AI-trace and low-information boilerplate checks | `uv run python academic-writing-skills/latex-paper-en/scripts/deai_check.py main.tex --section introduction` |
+| `claim-forward` | Claims placed after disclaimers or caveats, self-weakening wording, hedge stacks, negative closing | `uv run python academic-writing-skills/latex-paper-en/scripts/check_claim_forward.py main.tex --section introduction` |
 | `experiment` | Experiment write-up, discussion depth, and conclusion completeness | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_experiment.py main.tex --section experiments` |
 | `abstract` | Five-element abstract diagnosis | `uv run python academic-writing-skills/latex-paper-en/scripts/analyze_abstract.py main.tex` |
 | `tables` | Table structure, booktabs, and three-line compliance | `uv run python academic-writing-skills/latex-paper-en/scripts/check_tables.py main.tex` |
@@ -82,6 +83,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Module: Adapt](./resources/references/modules/adapt.md)
 - [Module: Bibliography](./resources/references/modules/bibliography.md)
 - [Figure and Table Caption Generation Guide](./resources/references/modules/caption.md)
+- [Module: Claim-Forward Check](./resources/references/modules/claim-forward.md)
 - [Module: Compile](./resources/references/modules/compile.md)
 - [Module: De-AI Editing](./resources/references/modules/deai.md)
 - [Module: Experiment Review](./resources/references/modules/experiment.md)
@@ -105,6 +107,8 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Journal Adaptation Workflow](./resources/references/venues/journal-adaptation-workflow.md)
 - [Abstract Structure Guide](./resources/references/writing/abstract-structure.md)
 - [Best Practices](./resources/references/writing/best-practices.md)
+- [Claim-Forward Writing Guide](./resources/references/writing/claim-forward.md)
+- [Claim-Forward Term Table](./resources/references/writing/claim-forward-terms.yaml)
 - [Common Chinglish Errors in Academic Writing](./resources/references/writing/common-errors.md)
 - [Abstract Section Writing](./resources/references/writing/section-writing/abstract.md)
 - [Conclusion Section Writing](./resources/references/writing/section-writing/conclusion.md)

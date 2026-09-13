@@ -52,3 +52,5 @@ Skill-layer response:
 
 See also: [../writing/conclusion-guide-zh.md](../writing/conclusion-guide-zh.md) 结论章写作专章指南
 （结构模板 + 正反例 + checker 映射表）。
+
+结论末段以负面判定收尾且无展望方向（`CF-CLOSE-NEG`）由 [claim-forward.md](claim-forward.md) 报告；它与 CC-OUTLOOK-TRANS 互补——负面判定 → 承接句 → 展望即同时通过，不删限制。

@@ -124,6 +124,17 @@ hint at / point toward                      ← very weak signal or hypothesis
 - 再现既定机制→`confirms` / `validates`;
 - 强大的统计效果→强大的措辞**加上**数字。
 
+## 向上校准（claim-forward）
+
+上面的阶梯是上限，不是目标。相反的失败是措辞低于证据所支撑的档位：主张前的免责声明、写在结果前面的限制句、对作者自己的数字使用 `regrettably` / `merely` / `falls short of`，或以新的自我否定收尾的结论。`claim-forward` 模块（`references/modules/claim-forward.md`，指南见 `references/writing/claim-forward.md`）处理这一方向。
+
+保持两个方向一致的规则：
+
+- 把措辞**抬到**证据支撑的档位，绝不越过。用上面的反向校准清单判断强措辞是否成立；若不成立，只调整句子顺序，动词不动。
+- 绝不为显得果断而删除 caveat、不利对比或非主线结果。Claim-forward 改顺序与措辞；每条限制的内容都保留。
+- 每条限制只在讨论证据的地方写一次。删除*重复的* caveat 是校准；删除*唯一的*副本是过度声明。
+- 把差距写成测量值（"trails the oracle by 4.1 points"），而不是致歉（"regrettably still lags far behind"）。
+
 ## 自检（起草一段后扫描）
 
 - [ ] 用过的`first` / `novel`？您是否真的搜索过文献，或者添加了“据我们所知”？

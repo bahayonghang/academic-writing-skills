@@ -115,6 +115,23 @@ hint at / point toward                      ← very weak signal or hypothesis
 
 标记获得的强硬措辞是一种误报——放弃它。
 
+## 低估主张与向上校准
+
+上面的阶梯是上限，不是目标。反向的失败是措辞低于证据已支撑的那一级：首个主张前的免责句（`CF-DISCLAIM`）、
+写在它限定的主张前面的限制句（`CF-CAVEAT-POS`）、对作者自己的数字用
+`regrettably` / `merely` / `still lags far behind`（`CF-SELFWEAK`）、一句主张叠三个及以上 hedge
+（`CF-HEDGE-STACK`，只作 `[LLM]` 观察、不计数），或结论末段以负面判定收尾且无方向（`CF-CLOSE-NEG`）。
+这些码与写作技能的 `check_claim_forward.py` 共用；paper-audit 不运行该脚本，只把该模式作为 `[LLM]` 观察报告。
+
+审稿侧规则：
+
+- 低估主张按 `claim_accuracy`（`CF-SELFWEAK`、`CF-HEDGE-STACK`）或
+  `presentation`（`CF-DISCLAIM`、`CF-CAVEAT-POS`、`CF-CLOSE-NEG`）报告；码写在 finding 的说明里，不新增 schema 字段。
+- `allowed_wording` 可以比原文更强，但只能抬到证据行已支撑的那一级；用上面的反向校准清单判断。
+- 绝不为了让文字显得果断而建议删除限制语、不利对比或非主线结果。claim-forward 建议只改顺序与措辞；内容不变。
+- 与择优呈现的边界：批评者通道标记的是被*删除*或*隐藏*的结果；claim-forward 标记的是*存在但被道歉式陈述*的结果。
+  建议把限制移到主张之后不是择优呈现；建议让它消失才是。
+
 ## 审查通道如何使用它
 
 这`claims_vs_evidence`审查通道标志过度声称措辞为`claim_accuracy`调查结果与

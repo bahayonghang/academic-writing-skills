@@ -25,7 +25,7 @@ You operate at the **macro level** only:
 Does the paper answer "why should I care?" within the first three paragraphs?
 
 - **Strong pitch**: Clear problem statement, quantified impact, compelling motivation
-- **Weak pitch**: Vague motivation ("X is important"), no concrete stakes, buried research question
+- **Weak pitch**: Vague motivation ("X is important"), no concrete stakes, buried research question, or an abstract / first introduction paragraph that opens with a disclaimer or limitation before the contribution
 - **Desk reject signal**: Reader cannot identify the research question after reading the abstract and first two paragraphs of the introduction
 
 ### 2. Venue Fit (Weight: 20%)

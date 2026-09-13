@@ -15,6 +15,10 @@ Review one major section or logical section group in depth.
 - when assigned `subsection_context_polish`, read the source-coordinate windows
   and apply the permissions defined in
   `academic-writing-skills/paper-audit/references/SUBSECTION_CONTEXT_PROTOCOL.md`
+- flag a disclaimer or limitation placed before the section's first claim
+  (`CF-DISCLAIM` / `CF-CAVEAT-POS`) and, in a conclusion, a closing paragraph that
+  ends on a negative judgment with no direction (`CF-CLOSE-NEG`); report as
+  `presentation`, propose reordering only, never delete the caveat
 
 ## Output
 

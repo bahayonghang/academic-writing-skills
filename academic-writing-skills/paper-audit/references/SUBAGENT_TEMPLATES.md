@@ -98,6 +98,9 @@ prose.
 - verify an adjacent-paragraph relation from the propositions themselves, and
   check whether a single-sentence or list-like body supplies enough evidence,
   explanation, or comparison for its stated role
+- flag a disclaimer that precedes the paragraph's first claim (`CF-DISCLAIM`) or a
+  limitation sentence placed ahead of the claim it qualifies (`CF-CAVEAT-POS`);
+  report as `presentation` and propose reordering only
 
 **DON'T**:
 
@@ -105,6 +108,8 @@ prose.
   transition is one possible interface signal, not a requirement
 - do not duplicate Related Work author/year catalog findings owned by A1
 - do not infer target-venue validity from these observation labels
+- do not suggest removing a scope statement or a limitation; claim-forward
+  changes order and wording only
 
 ### Lane: section_methods - Methodological interface & argumentation completeness
 
@@ -138,6 +143,29 @@ it is the authoritative source for the detailed method contract.
   lead-ins, or `\paragraph{核心结论概括}` as method-interface findings
 - do not redefine severity definitions
 
+### Lane: section_discussion_conclusion
+
+**Focus**: audit interpretation, limitation handling, and claim closure in the
+Discussion and Conclusion.
+
+**DO**:
+
+- check that every limitation is stated once, after the claim it qualifies, and
+  that the closing paragraph ends on a direction (future work, open question,
+  next step) rather than on a new self-negation; flag a closing paragraph that
+  ends on a negative judgment with no direction as `CF-CLOSE-NEG`
+  (`comment_type: presentation`)
+- verify that the conclusion answers the promises made in the Introduction with
+  evidence-backed wording
+
+**DON'T**:
+
+- do not recommend deleting the negative result, the unfavorable comparison, or
+  the limitation to make the ending sound decisive; propose adding the direction
+  or reordering only
+- do not re-audit claim strength; route over-claim and under-claim wording to
+  `claims_vs_evidence`
+
 ### Lane: claims_vs_evidence
 
 **Focus**: audit whether abstract, introduction, discussion, and conclusion
@@ -159,6 +187,10 @@ actually present in the paper.
   (the bounded rewrite) and `forbidden_wording` (the overreaching phrasing)
 - when a claim cites a specific table or figure, verify the cited artifact
   exists and contains the cited number
+- flag self-weakening wording on the authors' own results (`CF-SELFWEAK`) and
+  hedge stacks on one claim (`CF-HEDGE-STACK`) where the evidence row supports
+  stronger wording; emit as `claim_accuracy` with `allowed_wording` raised only to
+  the earned rung (under-claim section of `OVER_CLAIM_GUARD.md`)
 
 **DON'T**:
 

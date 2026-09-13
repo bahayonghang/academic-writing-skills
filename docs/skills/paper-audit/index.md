@@ -230,3 +230,4 @@ Re-audit this revised manuscript against report_v1.md and summarize resolved vs 
 - `claim_map.json` distinguishes visible anchors from support strength; a citation key alone does not prove support.
 - Data availability findings are advisory unless a venue-required central source gap should block submission.
 - PDF input runs text-only checks and skips LaTeX/Typst source hygiene.
+- Under-claim (a disclaimer or limitation before the claim, self-weakening wording, a negative closing paragraph) is reported by the review lanes as `presentation` / `claim_accuracy` observations with claim-forward codes; the audit never recommends deleting a caveat or an unfavorable result.

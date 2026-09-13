@@ -214,3 +214,4 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - `claim_map.json` 区分可见锚点和支撑强度；citation key 本身不等于真实支撑。
 - Data availability 默认 advisory；只有 venue 明确要求且 central source data 缺失时才阻塞投稿。
 - PDF 输入只做文本类检查，跳过 LaTeX/Typst 源码 hygiene。
+- 低估主张（主张前的免责句或限制、自我削弱措辞、负面收尾的结论末段）由审阅通道以带 claim-forward 码的 `presentation` / `claim_accuracy` 观察报告；审计绝不建议删除限制语或不利结果。

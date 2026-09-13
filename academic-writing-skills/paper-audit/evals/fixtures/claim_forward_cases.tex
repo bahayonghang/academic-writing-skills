@@ -1,0 +1,50 @@
+\documentclass{article}
+\title{Claim-Forward Audit Fixture}
+% Cases A-D are under-claim positives (CF-DISCLAIM, CF-SELFWEAK, CF-CAVEAT-POS, CF-CLOSE-NEG).
+% Case E is the boundary: a Limitations paragraph and an unfavorable comparison stated plainly;
+% the audit must not recommend deleting either.
+\begin{document}
+\begin{abstract}
+We present a lightweight tracker that improves accuracy by 12\% on three indoor benchmarks (Table~\ref{tab:main}).
+\end{abstract}
+
+\section{Introduction}
+% Case A: CF-DISCLAIM - the first paragraph opens with what the paper does not claim.
+We do not claim to solve general scene understanding.
+Our tracker improves accuracy by 12\% on three indoor benchmarks while running at 210 frames per second.
+
+\section{Contributions}
+% Case C: CF-CAVEAT-POS - the limitation precedes the claim it qualifies.
+Although our evaluation is limited to indoor scenes, the conclusions should be read within that scope.
+We reduce latency by 40\% relative to the strongest published tracker.
+
+\section{Results}
+% Case B: CF-SELFWEAK - self-weakening wording on the authors' own numbers; Table 1 shows a 2.0 point gap.
+Our tracker reaches 94.1\% accuracy on the standard split.
+Regrettably, it still lags far behind the oracle on the long-tail split.
+\begin{table}[h]
+\centering
+\caption{Long-tail split accuracy.}
+\label{tab:main}
+\begin{tabular}{lc}
+Method & Accuracy \\
+Ours & 91.3 \\
+Oracle & 93.3 \\
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+% Case E (part 1): an unfavorable comparison stated plainly. Not a finding; must not be deleted.
+On the outdoor split, the transformer baseline outperforms our tracker by 3.1 points (Table~\ref{tab:main}).
+
+\subsection{Limitations}
+% Case E (part 2): a Limitations paragraph. Not a finding; must not be deleted.
+The evaluation covers indoor scenes only, and the tracker has not been tested under strong illumination changes.
+
+\section{Conclusion}
+We presented a lightweight tracker and validated a 12\% accuracy gain on three indoor benchmarks.
+
+% Case D: CF-CLOSE-NEG - the last paragraph ends on a negative judgment with no direction.
+Our tracker runs in real time on a single GPU.
+However, it remains far from practical for variable-frame-rate streams.
+\end{document}

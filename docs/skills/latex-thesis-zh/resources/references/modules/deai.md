@@ -76,4 +76,6 @@ and `可能/或许` reduce claim strength; they do not replace per-mechanism evi
 
 See [`../writing/tense-guide-zh.md`](../writing/tense-guide-zh.md) for the judgment-level checklist (which verbs are borderline, why `is`/`are` are excluded).
 
+Hedge 堆叠、首个主张前的免责句、自我削弱搭配**不是** AI 痕迹，本脚本按契约不含 hedge 正则；交给 [claim-forward.md](claim-forward.md)。`不是 X 而是 Y` 壳与「值得注意的是」留在本模块。
+
 > Full details: see [`../deai/guide.md`](../deai/guide.md)

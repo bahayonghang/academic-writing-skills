@@ -37,12 +37,12 @@
 
 `compile`、`format`、`bibliography`、`grammar`、`sentences`、`logic`、
 `literature`、`section-writing`、`expression`、`translation`、`title`、`figures`、
-`pseudocode`、`deai`、`experiment`、`tables`、`caption`、`abstract`、`adapt`。
+`pseudocode`、`deai`、`claim-forward`、`experiment`、`tables`、`caption`、`abstract`、`adapt`。
 
 ### `latex-thesis-zh`
 
 `compile`、`format`、`structure`、`consistency`、`template`、`bibliography`、
-`title`、`deai`、`logic`、`literature`、`experiment`、`references`、`tables`、
+`title`、`deai`、`claim-forward`、`logic`、`literature`、`experiment`、`references`、`tables`、
 `abstract`、`conclusion`、`spec-check`、`blind-review`。
 
 整篇学位论文默认先运行 `structure`。只有确认学校模板和学位类型后才使用

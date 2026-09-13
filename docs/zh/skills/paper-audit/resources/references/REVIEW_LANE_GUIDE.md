@@ -9,18 +9,22 @@
     `P-ARC-LEAD`（段首主题引导）、`P-ARC-CLOSE`（段末收束）、
     `P-ARC-LINK`（相邻段接口）和 `P-ARC-FLAT`（段内展开）；仅缺少显式过渡词
     不等于逻辑断裂
+  - 标记先于段落首个主张的免责句或限制句（`CF-DISCLAIM` / `CF-CAVEAT-POS`），
+    依据 `OVER_CLAIM_GUARD.md` 的低估主张一节；只调序，绝不删除
 - `section_methods`
   - 检查定义、假设、推导和方法细节；审查方法论接口与论证完整性时，加载 `section_methods` 焦点块（位于 `SUBAGENT_TEMPLATES.md`）
 - `section_results`
   - 检查度量计算、证据充分性和比较公平性
 - `section_discussion_conclusion`
-  - 检查解释、限制处理和声明结束
+  - 检查解释、限制处理和声明结束；标记以负面判定收尾且无方向的末段（`CF-CLOSE-NEG`），
+    绝不建议删除负面结果
 - `section_appendix`
   - 检查附录材料是否支持或矛盾标题主张
 
 ## 横切审查通道
 
-- `claims_vs_evidence`— 最多 8 个问题
+- `claims_vs_evidence`— 最多 8 个问题（低估主张 `CF-SELFWEAK` / `CF-HEDGE-STACK` 以 `claim_accuracy`
+  在本配额内竞争；不设独立配额）
 - `notation_and_numeric_consistency`— 最多 10 个问题
 - `evaluation_fairness_and_reproducibility`— 最多 8 个问题
 - `self_standard_consistency`— 最多 6 个问题

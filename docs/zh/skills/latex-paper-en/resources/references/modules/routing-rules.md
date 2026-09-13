@@ -6,7 +6,7 @@
 
 - 在提出后续问题之前，从用户请求中推断出模块。仅当两个或多个模块在关键字路由后同样合理时才请求该模块。
 - 如果用户要求一轮进行 2-3 次兼容检查，请按顺序运行它们，而不是强制进行单模块回复。
-- 需要多个模块时的执行顺序：`compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
+- 需要多个模块时的执行顺序：`compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` / `claim-forward` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
 - 当对同一篇散文应用多次润色时，要从粗到细——论证/逻辑——>句子结构——>词汇/格式——并且不要颠倒过来；参见 `references/modules/workflow.md`。
 
 ## 在相邻模块之间进行选择
@@ -37,7 +37,7 @@
 判定标准只有一条：**该模块是否产出可直接替换原文的文本？** 若它只产出"该怎么改"的指令，则改写发生在 LLM 侧，只适用 `[LLM]` 层。三组逐项列出——不要因为某模块"看起来像润色"就给它加契约。
 
 - **纳入契约（`[Script]` + `[LLM]` 两层）**：`expression`、`grammar`、`sentences`、`translation`。
-- **仅 `[LLM]` 层**（无脚本，或脚本只出指令不出替换文本）：`section-writing`、`caption`、`adapt`、`deai`。`deai` 的 `-> Suggestion: vary sentence length` 这类输出是行为指令；LLM 依此产出的改写带 `[LLM]` 层字段。
+- **仅 `[LLM]` 层**（无脚本，或脚本只出指令不出替换文本）：`section-writing`、`caption`、`adapt`、`deai`、`claim-forward`。`deai` 的 `-> Suggestion: vary sentence length` 这类输出是行为指令；LLM 依此产出的改写带 `[LLM]` 层字段。`claim-forward` 只产出 `Candidate:` 提案（重排或按模板替换、带 `{placeholders}` 的句子），不是替换文本；其 `[Script]` 块只带 `Meaning-Check: NEEDS-LLM`，LLM 改写再补四字段。
 - **排除——完全不加契约段**：`compile`、`format`、`bibliography`、`figures`、`tables`、`pseudocode`、`logic`、`literature`、`experiment`、`abstract`、`title`。这些是纯诊断模块，加字段只是噪音。
 
 ### 分层规则

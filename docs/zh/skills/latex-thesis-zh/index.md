@@ -34,6 +34,7 @@
 | `deai` | 中文可见正文存在 AI 写作痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
 | `logic` | 绪论漏斗、章节承接、主线、方法模块接口、工程应用章论证或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | 文献综述缺少主题综合、代表文献归因、簇末比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
+| `claim-forward` | 主张被免责句或限制句后置、自我削弱搭配、hedge 堆叠、结论末段负面收尾 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
 | `experiment` | 需要审阅实验表达、证据层次、展示/统计口径或逐方法章实验完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | 交叉引用、`\caption` / `\bicaption`、标签或编号不一致 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
 | `tables` | 需要检查三线表、真实题注位置、booktabs 结构或生成表格 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
@@ -86,6 +87,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [标题](./resources/references/modules/title.md)
 - [中文表达](./resources/references/modules/expression.md)
 - [去 AI 审阅](./resources/references/modules/deai.md)
+- [主张前置检查（claim-forward）](./resources/references/modules/claim-forward.md)
 - [文献综述](./resources/references/modules/literature.md)
 - [实验审阅](./resources/references/modules/experiment.md)
 - [交叉引用](./resources/references/modules/references.md)
@@ -106,6 +108,8 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [方法模块描述与接口](./resources/references/writing/method-description-guide-zh.md)
 - [结果分析与证据口径指南](./resources/references/writing/results-analysis-guide-zh.md)
 - [结论章指南](./resources/references/writing/conclusion-guide-zh.md)
+- [主张前置写作指南（claim-forward）](./resources/references/writing/claim-forward-zh.md)
+- [claim-forward 词表](./resources/references/writing/claim-forward-terms-zh.yaml)
 - [摘要结构](./resources/references/writing/abstract-structure.md)
 - [结构指南](./resources/references/writing/structure-guide.md)
 - [逻辑与连贯性](./resources/references/writing/logic-coherence.md)

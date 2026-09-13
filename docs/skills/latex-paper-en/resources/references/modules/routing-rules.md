@@ -6,7 +6,7 @@ Extended routing guidance for `latex-paper-en`. The SKILL.md keeps only the core
 
 - Infer the module from the user request before asking follow-up questions. Ask for the module only when two or more modules are equally plausible after keyword routing.
 - If the user asks for 2-3 compatible checks in one turn, run them sequentially instead of forcing a single-module reply.
-- Execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
+- Execution order when multiple modules are needed: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` / `claim-forward` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`.
 - When applying multiple polish passes to the same prose, work coarse-to-fine — argument/logic -> sentence structure -> lexical/formatting — and do not reverse it; see `references/modules/workflow.md`.
 
 ## Choosing between adjacent modules
@@ -37,7 +37,7 @@ Extended routing guidance for `latex-paper-en`. The SKILL.md keeps only the core
 The single test is: **does the module emit text that can directly replace the source?** If it only emits an instruction about how to change something, the rewrite happens on the LLM side and only the `[LLM]` layer applies. The three groups are listed explicitly — do not extend the contract to a module because it "looks like polishing".
 
 - **Contract applies (`[Script]` + `[LLM]` layers)**: `expression`, `grammar`, `sentences`, `translation`.
-- **`[LLM]` layer only** (no script, or the script emits instructions rather than replacement text): `section-writing`, `caption`, `adapt`, `deai`. `deai` output such as `-> Suggestion: vary sentence length` is a behavioural instruction; the rewrite the LLM derives from it carries the `[LLM]`-layer fields.
+- **`[LLM]` layer only** (no script, or the script emits instructions rather than replacement text): `section-writing`, `caption`, `adapt`, `deai`, `claim-forward`. `deai` output such as `-> Suggestion: vary sentence length` is a behavioural instruction; the rewrite the LLM derives from it carries the `[LLM]`-layer fields. `claim-forward` emits `Candidate:` proposals (reordered or template-substituted sentences with `{placeholders}`), not replacement text; its `[Script]` block carries only `Meaning-Check: NEEDS-LLM`, and the LLM rewrite adds the four fields.
 - **Excluded — no contract block at all**: `compile`, `format`, `bibliography`, `figures`, `tables`, `pseudocode`, `logic`, `literature`, `experiment`, `abstract`, `title`. These are diagnostic; adding the fields there is noise.
 
 ### Layer rules

@@ -10,6 +10,9 @@ Focus on:
 - missing caveats
 - defensive speculative explanations (multiple mechanisms without per-mechanism evidence,
   followed by a caveat that the current data verify none of them)
+- under-claim: self-weakening wording or stacked hedges where the evidence supports
+  stronger wording (`CF-SELFWEAK` / `CF-HEDGE-STACK`); report as `claim_accuracy` and
+  raise `allowed_wording` only to the earned rung, never by deleting a caveat
 
 For over-claim wording, use `references/OVER_CLAIM_GUARD.md`: classify the type
 (causal / firstness / universality / effect-size / temporal / application / comparison),

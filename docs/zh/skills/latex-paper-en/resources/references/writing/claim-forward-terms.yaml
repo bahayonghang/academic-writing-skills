@@ -1,0 +1,90 @@
+# Claim-forward term table for latex-paper-en/scripts/check_claim_forward.py
+#
+# The script ships an identical built-in fallback (_DEFAULT_TERMS). Edit this
+# file to tune detection without touching code; an invalid or missing field
+# silently falls back to the built-in value for that field only.
+#
+# Baseline evidence: EN collocations are synthetic (no private corpus); treat
+# precision as UNVERIFIED until calibrated on real manuscripts.
+version: 1
+
+# Self-weakening collocations (CF-SELFWEAK). `prefer` is a candidate template;
+# placeholders in braces must be filled by the LLM from the manuscript's own
+# evidence, never invented. An empty `prefer` means "delete the opener".
+self_weakening:
+  - match: "regrettably"
+    prefer: ""
+  - match: "unfortunately"
+    prefer: ""
+  - match: "still lags far behind"
+    prefer: "trails {baseline} by {gap}"
+  - match: "lags far behind"
+    prefer: "trails {baseline} by {gap}"
+  - match: "falls short of"
+    prefer: "reaches {ratio} of"
+  - match: "of limited effect"
+    prefer: "improves {metric} by {value} on {scope}"
+  - match: "only marginally"
+    prefer: "by {value}"
+  - match: "merely"
+    prefer: ""
+  - match: "suffers from serious"
+    prefer: "is bounded by {cause} in"
+  - match: "we were unable to"
+    prefer: "this work does not cover"
+  - match: "we failed to"
+    prefer: "this work does not"
+  - match: "remains far from"
+    prefer: "reaches {ratio} of"
+
+# Hedge tokens counted per claim sentence (CF-HEDGE-STACK fires at >= 3).
+hedges:
+  - "may"
+  - "might"
+  - "could"
+  - "possibly"
+  - "potentially"
+  - "perhaps"
+  - "to some extent"
+  - "to a certain degree"
+  - "in some cases"
+  - "under certain conditions"
+  - "somewhat"
+  - "relatively"
+  - "arguably"
+  - "it seems"
+  - "appears to"
+
+# Paragraph-opening disclaimers (CF-DISCLAIM).
+disclaim_openers:
+  - "we do not claim"
+  - "we do not argue"
+  - "we do not attempt"
+  - "we make no claim"
+  - "this paper does not"
+  - "this work does not"
+  - "it is not our goal"
+  - "it is not our intention"
+  - "rather than"
+
+# Direction markers that close a negative judgment (CF-CLOSE-NEG is suppressed
+# when one appears in or after the negative sentence).
+direction_markers:
+  - "future work"
+  - "we plan"
+  - "next step"
+  - "opens"
+  - "promising"
+  - "will extend"
+  - "will explore"
+  - "will investigate"
+  - "remains to be"
+  - "direction"
+
+# Process-chronology openers. Documented for the [LLM] CF-LOSS-FRAME judgment;
+# the script does not emit findings for them.
+process_openers:
+  - "we first tried"
+  - "we initially"
+  - "after several attempts"
+  - "our initial approach"

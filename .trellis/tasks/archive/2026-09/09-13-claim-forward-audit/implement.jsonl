@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/source-basis.md", "reason": "来源与红线切分；cherry-picking 边界依据"}
+{"file": ".trellis/tasks/09-13-claim-forward-integration/research/delta-matrix.md", "reason": "C3 只用 5 个观察码；S16-S18 否决理由"}
+{"file": ".trellis/spec/academic-writing-skills/claim-forward-contract.md", "reason": "C1 建立的契约；C3 填 paper-audit 观察码集合"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-audit-contract.md", "reason": "文档层整合先例：固定码集合、无 rubric/lane/audit.py 改动"}
+{"file": ".trellis/spec/academic-writing-skills/paper-audit-boundary-contracts.md", "reason": "claims_vs_evidence 上限 8、comment_type 闭集、MODULE_DIMENSION_MAP fail-closed"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "paper-audit 字符串锁测试位置"}
