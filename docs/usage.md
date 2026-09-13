@@ -42,7 +42,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 ### `latex-thesis-zh`
 
 `compile`, `format`, `structure`, `consistency`, `template`, `bibliography`,
-`title`, `deai`, `logic`, `literature`, `experiment`, `references`, `tables`,
+`title`, `deai`, `claim-forward`, `logic`, `literature`, `experiment`, `references`, `tables`,
 `abstract`, `conclusion`, `spec-check`, `blind-review`.
 
 For a whole thesis, start with `structure`. Use `spec-check` only with the correct school

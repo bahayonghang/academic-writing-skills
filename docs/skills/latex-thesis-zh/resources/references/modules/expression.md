@@ -92,3 +92,5 @@ Tier B (no "建议" line, only "候选"):
 This module emits text that can directly replace the source, so the rewrite contract applies. `[Script]` output always carries `Meaning-Check: NEEDS-LLM` and may set only the rule-determinable flags (`none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`); only the `[LLM]` layer may propose `PRESERVED`, and even then it stays a proposal for the author to verify. Field definitions and the `Risk-Flags` closed set: `references/modules/routing-rules.md`.
 
 A rewrite must never raise claim strength. Swapping a hedged statement for a stronger assertion ("可能" → "能够", "有助于" → "显著提升") is an over-claim, not an improvement in expression: keep the original strength, or set `Risk-Flags: overstatement` and say so explicitly. Criteria: [over-claim-guard.md](../writing/over-claim-guard.md) — this module offers lexical-level suggestions only and does not reimplement strength grading.
+
+Self-weakening collocations on the authors' own results (「遗憾的是」「仍明显落后于」「效果有限」) and claims written after their caveats are not expression issues, and they run opposite to `E-ABSOLUTE`; hand them to [claim-forward.md](claim-forward.md).

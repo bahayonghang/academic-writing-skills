@@ -76,4 +76,6 @@
 判断层检查清单参见 [`../writing/tense-guide-zh.md`](../writing/tense-guide-zh.md)，其中说明
 哪些动词处于边界，以及为何排除 `is`/`are`。
 
+Hedge 堆叠、首个主张前的免责句、自我削弱搭配**不是** AI 痕迹，本脚本按契约不含 hedge 正则；交给 [claim-forward.md](claim-forward.md)。`不是 X 而是 Y` 壳与「值得注意的是」留在本模块。
+
 > 完整说明：参见 [`../deai/guide.md`](../deai/guide.md)

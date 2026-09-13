@@ -250,6 +250,21 @@
       "query": "请给中文博士论文这一小节做逆向提纲，逐段核对段主题、章目标和证据，指出该保留、收窄或移位的位置，先不要改正文。",
       "should_trigger": true,
       "category": "writing-reverse-outline"
+    },
+    {
+      "query": "我的博士论文绪论老是先写“本文不试图……”再说做了什么，导师说太谦虚；帮我查 main.tex 里的自我削弱措辞并把主张放到前面。",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "学位论文实验章写了“遗憾的是，本文方法仍明显落后于……”，结论末段也是以缺陷收尾没有展望。跑一下主张前置检查，但不要删掉任何限制。",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "My English LaTeX paper's introduction keeps saying what we don't claim before the contribution; run a claim-forward check on main.tex.",
+      "should_trigger": false,
+      "category": "claim-forward"
     }
   ]
 }

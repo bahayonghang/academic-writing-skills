@@ -1057,6 +1057,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/claim-forward.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "24a43f5cb811a822acaf92c41c23477f4efc87f7e727141476db9bb7966d656d",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/claim-forward.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/claim-forward.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/compile.md",
       "sourceLocale": "en",
       "sourceSha256": "182f55280428c4c03ea1944e3cf7fdc3eeb31080005e952896eaf415ea7feed9",
@@ -1068,7 +1077,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/conclusion.md",
       "sourceLocale": "zh",
-      "sourceSha256": "7b291a64cc311ab7e41977eef57680d4bf8e16fccc54734286ba00d9054e2d5b",
+      "sourceSha256": "9341b4145e56307b3a84ede088cdd56f016cb87c3fc583e3c5c700cbfb083906",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/conclusion.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/conclusion.md"
     },
@@ -1086,7 +1095,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "eefbd7a4f3a66d04e2436623a50193204f265fa45b36305eebbaeef0b48fde7d",
+      "sourceSha256": "cbc99d0235318490b1eccfd34de76da554c6b88a67216188b8767e86e3edd08a",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
     },
@@ -1104,7 +1113,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/expression.md",
       "sourceLocale": "zh",
-      "sourceSha256": "25c30d088172ce70e543efee3657d11cb43a66cf6db0b6ee6e4de75a74cdf60b",
+      "sourceSha256": "d4d48a5c21871e0dca24c254c4de42970b39088ad6dde03e65a3240c8876df08",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/expression.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/expression.md"
     },
@@ -1149,7 +1158,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "9802f68b8eaae259ec399aedfb63f7c3b496fa5f0989a263fc10970dea4b42e3",
+      "sourceSha256": "1ab3e9828fffe56b85edda579bd6be0bdf1af910c95a98045b18014cf1731dce",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
@@ -1210,6 +1219,24 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/claim-forward-terms-zh.yaml",
+      "sourceLocale": "neutral",
+      "sourceSha256": "f68f841fba7a705f688f65dd9aa31ff2fa113ce34a0cfbe2508f6d5bc4987e69",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/claim-forward-terms-zh.yaml",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/claim-forward-terms-zh.yaml"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/claim-forward-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "abab4f7fecab52ef65895e4c1ae3bcd8bf3530ba314f206e1dab72f1335bc664",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/claim-forward-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/claim-forward-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/conclusion-guide-zh.md",
       "sourceLocale": "zh",
       "sourceSha256": "4888f9ef8fd41dcb322551aff30c49906ad5c8f671fb342333d87026ee53af5d",
@@ -1266,7 +1293,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/over-claim-guard.md",
       "sourceLocale": "zh",
-      "sourceSha256": "6f5dd094037753ff6bbdfc3216d9a91fe5f3c6f1d7c3e4472ddff2c98cefc985",
+      "sourceSha256": "460d865da1fdb62b83c6eba56ec3a6b5d88030bc28fa1a88620ae0d7d3da4bf6",
       "en": "docs/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/over-claim-guard.md"
     },

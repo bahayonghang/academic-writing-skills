@@ -1485,6 +1485,61 @@
           "description": "retains legitimate thematic grouped citations during read-only outlining"
         }
       ]
+    },
+    {
+      "id": 49,
+      "prompt": "对附带的 fixture 运行主张前置（claim-forward）检查。报告五个正例（绪论段首“本文不试图”先于主张、主要贡献小节限制句先于主张、方法章一句主张叠三个 hedge、实验结果“遗憾的是……仍明显落后于”、结论末段以“无法处理”收尾且无展望），并解释讨论章带引用的前人工作句、“本文的不足”小节、裸“仅为 0.018 / 不仅”和“尚未解决”为何不是发现。给出最小调序候选；不得删除任何限制或不利结果，不得把动词抬到证据之上。",
+      "expected_output": "路由到 claim-forward 并运行 scripts/check_claim_forward.py。逐一列出 CF-DISCLAIM、CF-CAVEAT-POS、CF-HEDGE-STACK、CF-SELFWEAK、CF-CLOSE-NEG 各一条，带 Original/Candidate 块；候选只调序或换搭配，保留每条限制；说明引用句、不足小节、裸“仅/尚未”为豁免；结论末段补方向而不删负面判定；加强措辞前对照 over-claim-guard 的向上校准节。",
+      "files": [
+        "evals/fixtures/claim_forward_cases_zh.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "CF-DISCLAIM",
+          "description": "disclaimer-before-claim code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-CAVEAT-POS",
+          "description": "limitation-before-claim code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-HEDGE-STACK",
+          "description": "hedge stack code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-SELFWEAK",
+          "description": "self-weakening collocation code named"
+        },
+        {
+          "type": "contains",
+          "text": "CF-CLOSE-NEG",
+          "description": "negative closing code named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不足|引用|前人|尚未|仅为)",
+          "description": "boundary cases explained as exempt"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不删|保留|调序|前置)",
+          "description": "limitations preserved, only reordered or reworded"
+        },
+        {
+          "type": "regex",
+          "pattern": "(over-claim|过度声明|向上校准|阶梯)",
+          "description": "upward calibration bounded by evidence"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims PRESERVED"
+        }
+      ]
     }
   ]
 }

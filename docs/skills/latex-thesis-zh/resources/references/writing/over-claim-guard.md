@@ -129,6 +129,17 @@ Weak evidence requires caution, but cautious wording for strong evidence becomes
 - an established mechanism is reproduced -> “确认 / 验证” is appropriate;
 - a large effect has strong statistics -> use strong wording **with the number**.
 
+## Upward calibration (claim-forward)
+
+The ladder above is a ceiling, not a target. The opposite failure is wording that sits **below** the rung its evidence already earns: a disclaimer written before the claim, a limitation sentence placed in front of the result it qualifies, "遗憾的是 / 仅仅 / 仍明显落后于" on the authors' own numbers, or a conclusion that ends on a new self-negation. That direction is handled by the `claim-forward` module (`references/modules/claim-forward.md`; guide in `references/writing/claim-forward-zh.md`).
+
+Rules that keep the two directions consistent:
+
+- Move wording **up to** the rung the evidence supports, never past it. Use the "reverse calibration" list above to decide whether strong wording is earned; if it is not, reorder the sentences and leave the verb.
+- Never delete a caveat, an unfavorable comparison, or a non-mainline result to sound decisive. Claim-forward changes order and wording only; the content of every limitation stays.
+- Write each limitation once, where the evidence is discussed. Removing a *duplicate* caveat is calibration; removing the *only* copy is an over-claim.
+- Report a gap as a measurement ("落后理想上界 4.1 个百分点"), not as an apology ("遗憾的是仍明显落后").
+
 ## Self-Check After Each Paragraph
 
 - [ ] Used “首次/新颖”? Without a search, remove the priority claim or mark it for verification, rather than just adding “据我们所知”
