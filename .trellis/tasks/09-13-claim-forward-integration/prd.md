@@ -44,15 +44,15 @@
 
 ## 跨子任务验收标准
 
-- [ ] 三个 skill 的术语一致：`claim-forward` / 主张前置 / `CF-*`；无 "defensive" 命名的新模块或代码。
-- [ ] `.trellis/spec/academic-writing-skills/claim-forward-contract.md` 存在，`index.md` 有索引行；`tests/contracts/test_claim_forward_contract.py` 覆盖 EN/ZH/audit 三方。
-- [ ] EN 与 ZH 脚本对同一 5 码集合输出格式一致：`% CLAIM-FORWARD (Line N) [Severity: …] [Priority: …]: [Script] CF-… ` + `% Original:` + `% Candidate:` + `% Meaning-Check: NEEDS-LLM`；exit 0。
-- [ ] `deai_check.py` 三副本、TIER1 哈希组、`analyze_conclusion.py`、`audit.py`、`scholar_eval.py` 字节不变。
-- [ ] paper-audit 观察码集合恰为 5 个，契约测试锁定。
-- [ ] 三份 evals.json 各追加 1 条（EN id 24、ZH id 49、PA id 26），trigger_eval 各加正向查询；`test_trigger_evals.py` 绿。
-- [ ] `docs/` 双语页面 + `resource-manifest.json` 同步；`uv run python docs/scripts/check_resource_sync.py` 绿；`just doc-build` 绿。
-- [ ] `just ci` 四步全绿。
-- [ ] 三个子任务的参考文档均含来源归属（两仓库 URL + MIT）与否决说明。
+- [x] 三个 skill 的术语一致：`claim-forward` / 主张前置 / `CF-*`；无 "defensive" 命名的新模块或代码。
+- [x] `.trellis/spec/academic-writing-skills/claim-forward-contract.md` 存在，`index.md` 有索引行；`tests/contracts/test_claim_forward_contract.py` 覆盖 EN/ZH/audit 三方。
+- [x] EN 与 ZH 脚本对同一 5 码集合输出格式一致：`% CLAIM-FORWARD (Line N) [Severity: …] [Priority: …]: [Script] CF-… ` + `% Original:` + `% Candidate:` + `% Meaning-Check: NEEDS-LLM`；exit 0。
+- [x] `deai_check.py` 三副本、TIER1 哈希组、`analyze_conclusion.py`、`audit.py`、`scholar_eval.py` 字节不变。
+- [x] paper-audit 观察码集合恰为 5 个，契约测试锁定。
+- [x] 三份 evals.json 各追加 1 条（EN id 24、ZH id 49、PA id 26），trigger_eval 各加正向查询；`test_trigger_evals.py` 绿。
+- [x] `docs/` 双语页面 + `resource-manifest.json` 同步；`uv run python docs/scripts/check_resource_sync.py` 绿；`just doc-build` 绿。
+- [x] `just ci` 四步全绿。
+- [x] 三个子任务的参考文档均含来源归属（两仓库 URL + MIT）与否决说明。
 
 ## Constraints
 
@@ -66,3 +66,9 @@
 ## 修订记录
 
 - 2026-09-13 v1：初版；来源分析与 S1–S24 判定完成。
+
+## 集成复查（2026-09-13）
+
+- C1 f08472a / C2 980097e / C3 83e4426 三提交；`just ci` 1989 passed，`check_resource_sync.py` 与 `just doc-build` 绿。
+- 命名复查：无 `defensive` 命名的新文件、模块或码（EN 模块文档触发词列表含 "defensive tone" 作为用户同义词，属 prose 非命名）。
+- ZH 私有语料复核后为位置类码加自身主语门控（CAVEAT-POS 51 → 4），记录在 C2 `research/zh-baseline-run.md`。
