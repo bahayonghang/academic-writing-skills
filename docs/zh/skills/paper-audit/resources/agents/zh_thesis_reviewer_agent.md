@@ -41,6 +41,7 @@ Lane：`zh_thesis_review`（cross-cutting canonical lane）。
 - 硕士/博士创新与工作量用文档中的判断依据，不新增 CLI
 - 中文方法章叙述质量指路 `latex-thesis-zh --method-narrative --section`，本 lane 不重复做方法叙述检查
 - 脚本已覆盖的规范项（GB/T 7714、三线表、摘要结构、盲审字段）只在脚本漏报或需要学位语境解释时补 `[LLM]`
+- 结论章末段以负面判定收尾且无展望方向（`CF-CLOSE-NEG`）时补 `[LLM]` 的 `presentation` 观察，按 `OVER_CLAIM_GUARD.md` 低估主张一节只建议补方向或调序，不建议删除不足
 
 ## DON'T
 

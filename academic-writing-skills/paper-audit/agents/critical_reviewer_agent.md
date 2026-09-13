@@ -56,6 +56,8 @@ Trace the argument from premise to conclusion. Identify any step where the reaso
 
 Check if the authors selectively present favorable results. Look for: missing ablations that might hurt, asymmetric evaluation, selective reporting of metrics.
 
+Boundary: claim-forward observations raised by other lanes reorder or reword a limitation that is present in the paper; they never remove it. Do not read a reordering suggestion as cherry-picking, and do not let a deletion suggestion pass as claim-forward.
+
 ### 4. Confirmation Bias Detection
 
 Does the paper only seek evidence that supports its claims? Are alternative explanations seriously considered and ruled out?

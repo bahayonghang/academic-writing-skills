@@ -174,16 +174,57 @@ def test_no_new_module_named_defensive() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_paper_audit_cf_codes_are_within_the_fixed_set() -> None:
+# sha256 of the paper-audit engine / schema files the feature must leave byte-identical
+# (recorded when C3 landed; update only through a task that deliberately changes them).
+AUDIT_FROZEN_SHA256: dict[str, str] = {
+    "scripts/audit.py": "72ad368b8b9894e9249062c061dbff5b274ee921e5c66c4bf3c6f27a34e350f8",
+    "scripts/scholar_eval.py": "b241f7da8e1757ac87e9a2f5d818705659de31ed58de77168dd9a1a425ae8c67",
+    "scripts/zh_check_adapters.py": "8af2cdb59cc0e6024e7da898a994482d746ac1153b0cfba7b18137cbdcce3077",
+    "references/quality_rubrics.md": "56f5ee3604ade91a97c97dd45ae733502f298f6a71d6684b6ce2f0d70138f910",
+    "references/ISSUE_SCHEMA.md": "42c013cd8fd7113b747b8113c12fe56c83d6fd69b26b524c8083064b6ccf9b23",
+}
+
+
+def test_paper_audit_cf_codes_are_exactly_the_fixed_set() -> None:
     found: set[str] = set()
     for folder in ("references", "agents"):
         for path in (AUDIT / folder).rglob("*.md"):
             found.update(CF_CODE_RE.findall(path.read_text(encoding="utf-8")))
-    assert found <= AUDIT_CF_CODES, sorted(found - AUDIT_CF_CODES)
+    assert found == AUDIT_CF_CODES, sorted(found ^ AUDIT_CF_CODES)
     # No CF-* code may leak into the scoring / schema layer.
     for name in ("scripts", "evals"):
         for path in (AUDIT / name).rglob("*.py"):
             assert not CF_CODE_RE.search(path.read_text(encoding="utf-8")), path
+
+
+def test_paper_audit_documents_carry_under_claim_guidance() -> None:
+    guard = (AUDIT / "references" / "OVER_CLAIM_GUARD.md").read_text(encoding="utf-8")
+    assert "## Under-claim and upward calibration" in guard
+    assert "Never recommend deleting a caveat" in guard
+    templates = (AUDIT / "references" / "SUBAGENT_TEMPLATES.md").read_text(encoding="utf-8")
+    assert "### Lane: section_discussion_conclusion" in templates
+    assert (
+        "CF-CLOSE-NEG"
+        in templates.split("### Lane: section_discussion_conclusion", 1)[1].split(
+            "### Lane: claims_vs_evidence", 1
+        )[0]
+    )
+    psychology = (AUDIT / "references" / "REVIEWER_PSYCHOLOGY.md").read_text(encoding="utf-8")
+    knife = psychology.split("## Authors handing the reviewer a knife", 1)[1].split("\n## ", 1)[0]
+    assert "UNVERIFIED" in knife
+    criteria = (AUDIT / "references" / "ZH_THESIS_REVIEW_CRITERIA.md").read_text(encoding="utf-8")
+    rows = [ln for ln in criteria.splitlines() if re.match(r"^\| \d+ \|", ln)]
+    assert len(rows) == 15
+    fixture = AUDIT / "evals" / "fixtures" / "claim_forward_cases.tex"
+    assert fixture.is_file()
+
+
+@pytest.mark.parametrize("rel_path", sorted(AUDIT_FROZEN_SHA256), ids=lambda s: Path(s).name)
+def test_paper_audit_engine_files_are_byte_identical(rel_path: str) -> None:
+    import hashlib
+
+    digest = hashlib.sha256((AUDIT / rel_path).read_bytes()).hexdigest()
+    assert digest == AUDIT_FROZEN_SHA256[rel_path], rel_path
 
 
 # ---------------------------------------------------------------------------

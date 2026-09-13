@@ -28,7 +28,7 @@ Weights come from `quality_rubrics.md`. This file does not copy rubric bands or 
 | 4 | Research method and technical route | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_logic.py` / `analyze_experiment.py` + reviewer |
 | 5 | Workload and difficulty | `significance` (13%) | `[LLM]` | reviewer; do not proxy by length, figure count, equation count, or bibliography size |
 | 6 | Novelty (master / doctoral bands) | `novelty` (13%) | `[LLM]` | reviewer |
-| 7 | Reliability of conclusions | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_conclusion.py` (module `CONCLUSION`) + reviewer |
+| 7 | Reliability of conclusions | `soundness` (18%) | `[Script]` + `[LLM]` | `analyze_conclusion.py` (module `CONCLUSION`) + reviewer; a closing paragraph that ends on a negative judgment with no outlook (`CF-CLOSE-NEG`) is a reviewer `[LLM]` call that only proposes adding the direction |
 | 8 | Chapter completeness | `presentation` (8%) | `[Script]` | `check_spec.py` (module `SPEC`) |
 | 9 | Abstract and keyword conventions | `clarity` (13%) | `[Script]` | `analyze_abstract.py` (module `ABSTRACT`) |
 | 10 | Three-line table conventions | `presentation` (8%) | `[Script]` | `check_tables.py` (module `TABLES`) |

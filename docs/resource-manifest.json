@@ -1518,7 +1518,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/CLAIM_EVIDENCE_CONTRACT.md",
       "sourceLocale": "en",
-      "sourceSha256": "74896825910ba02eecb8a559f8714c8f3cef58c85b13ef75698b17a8fccfd4e6",
+      "sourceSha256": "0ade9003eb9c6ebbabc1208d4c63c8332d2a21fa4a8ce691f7ff8e2c0f9eb19c",
       "en": "docs/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/CLAIM_EVIDENCE_CONTRACT.md"
     },
@@ -1608,7 +1608,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/OVER_CLAIM_GUARD.md",
       "sourceLocale": "en",
-      "sourceSha256": "cd5fb4b763b738c85d786f297b94f7d72c13a933b3f8ce87b787cab98801edb5",
+      "sourceSha256": "1128d36ee7ba60849125635139d06754d1ef650c40879a7bcfcc20136471a5c7",
       "en": "docs/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/OVER_CLAIM_GUARD.md"
     },
@@ -1680,7 +1680,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEW_LANE_GUIDE.md",
       "sourceLocale": "en",
-      "sourceSha256": "34a6da61cd352f6f6eedd0a1601a44b0e2550ee4f2985e5b8e1f634c51b3bb5c",
+      "sourceSha256": "7074cc347e5c1b5a7f615202b7f9da270dc7ac7884af3819631c3949b70c7c70",
       "en": "docs/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEW_LANE_GUIDE.md"
     },
@@ -1689,7 +1689,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/REVIEWER_PSYCHOLOGY.md",
       "sourceLocale": "en",
-      "sourceSha256": "2e7580be6ec34aad4cbe18b754850a604aeaa4c3cd0d41673313ade54433c254",
+      "sourceSha256": "821457cbdba0a2b355d430a383bd88333c5a107f1a419bc06ae1a379c7dc0e48",
       "en": "docs/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/REVIEWER_PSYCHOLOGY.md"
     },
@@ -1725,7 +1725,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/SUBAGENT_TEMPLATES.md",
       "sourceLocale": "en",
-      "sourceSha256": "cf6002c3ade88fc43577e7e881ef4677d8ac8a255841ecd076422283bb2d74eb",
+      "sourceSha256": "309e64dacf612dc0624836e1107ff2668f5324e7dcf818b81ec166a074415bef",
       "en": "docs/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/SUBAGENT_TEMPLATES.md"
     },
@@ -1770,7 +1770,7 @@
       "kind": "references",
       "source": "academic-writing-skills/paper-audit/references/ZH_THESIS_REVIEW_CRITERIA.md",
       "sourceLocale": "zh",
-      "sourceSha256": "ac22f4efeb7f4382a0217b28b16b421a69d993651f2b2a709b8cf5663261ef05",
+      "sourceSha256": "d8d574691aa34547841a03905ce1ee31ce8aec9e0e3cfa31744330feef0a9dad",
       "en": "docs/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md",
       "zh": "docs/zh/skills/paper-audit/resources/references/ZH_THESIS_REVIEW_CRITERIA.md"
     },
@@ -1842,7 +1842,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/claims_evidence_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "4b0f61217079df71ee43f6cff73859c5c5e7b0fa2b067c909cf2167dcc336fc3",
+      "sourceSha256": "898807b911ad8c4652a1d1949c793e84bf8ab4b2a89decf8a118501428136d9c",
       "en": "docs/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/claims_evidence_reviewer_agent.md"
     },
@@ -1896,7 +1896,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/critical_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "fc7456324f906791c7697e52a1a2b0c0e8787fd9991a76bce0ddb093b4653e35",
+      "sourceSha256": "3985d3d6f208fdd5ade32c9ed64baf1953c723b458c401c06d34d4038df41ecb",
       "en": "docs/skills/paper-audit/resources/agents/critical_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/critical_reviewer_agent.md"
     },
@@ -1914,7 +1914,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/editor_in_chief_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "07e15331aafb7e951a5aac201bfd4a53a61b4857ea06028b46e10ab4b62ffc0f",
+      "sourceSha256": "11d5e809473f37a12e2cd91790933cd9c1f6f982148601239e09b865dbffaa11",
       "en": "docs/skills/paper-audit/resources/agents/editor_in_chief_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/editor_in_chief_agent.md"
     },
@@ -1986,7 +1986,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/section_reviewer_agent.md",
       "sourceLocale": "en",
-      "sourceSha256": "5b728e968395a53c3979f07def835373981e12fc74433f984c0877afd582362d",
+      "sourceSha256": "68ff57aaff7ece52b8680f3a54e88d6d369abdb89da134e57019fe91d3290f5e",
       "en": "docs/skills/paper-audit/resources/agents/section_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/section_reviewer_agent.md"
     },
@@ -2013,7 +2013,7 @@
       "kind": "agents",
       "source": "academic-writing-skills/paper-audit/agents/zh_thesis_reviewer_agent.md",
       "sourceLocale": "zh",
-      "sourceSha256": "92ca7bc004278066045ed0a59760030f480e0a20c9bb83be165884e5cba89381",
+      "sourceSha256": "f60f1582f7819504f89e4f27ff5546a3544e75d21056ffb1a4f5a2b8e547f1e9",
       "en": "docs/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md"
     },

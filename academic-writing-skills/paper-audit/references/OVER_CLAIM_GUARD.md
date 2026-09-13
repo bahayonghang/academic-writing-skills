@@ -121,6 +121,33 @@ Do not flag strong wording that the evidence earns:
 
 Flagging earned strong wording is a false positive — leave it.
 
+## Under-claim and upward calibration
+
+The ladder above is a ceiling, not a target. The opposite failure is prose that sits
+below the rung its evidence earns: a disclaimer before the first claim (`CF-DISCLAIM`),
+a limitation sentence placed ahead of the claim it qualifies (`CF-CAVEAT-POS`),
+`regrettably` / `merely` / `still lags far behind` on the authors' own numbers
+(`CF-SELFWEAK`), three or more hedges on one claim (`CF-HEDGE-STACK`, an `[LLM]`
+observation that is not counted), or a conclusion whose last paragraph ends on a
+negative judgment with no direction (`CF-CLOSE-NEG`). The codes are shared with the
+writing skills' `check_claim_forward.py`; paper-audit does not run that script and
+reports the pattern as an `[LLM]` observation.
+
+Rules for the audit side:
+
+- Report under-claim as `claim_accuracy` (`CF-SELFWEAK`, `CF-HEDGE-STACK`) or
+  `presentation` (`CF-DISCLAIM`, `CF-CAVEAT-POS`, `CF-CLOSE-NEG`); put the code in
+  the finding note, not in a new schema field.
+- `allowed_wording` may be stronger than the manuscript wording only up to the rung
+  the evidence row already supports; use the reverse-calibration list above to decide.
+- Never recommend deleting a caveat, an unfavorable comparison, or a non-mainline
+  result to make prose sound decisive. Claim-forward advice changes order and wording;
+  content stays.
+- Boundary with cherry-picking: the critical lane flags results that were *removed*
+  or *hidden*; claim-forward flags results that are *present but apologised for*.
+  Suggesting that a limitation move after its claim is not cherry-picking; suggesting
+  that it disappear is.
+
 ## How the lane uses this
 
 The `claims_vs_evidence` lane flags over-claim wording as `claim_accuracy` findings with

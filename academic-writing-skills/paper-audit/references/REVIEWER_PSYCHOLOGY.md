@@ -93,6 +93,18 @@ A paper usually gets 2-3 reviewers of these kinds — write (and audit) for all 
 - **Generalist / editor** — cares about "so what" and whether a non-specialist can follow the
   abstract and introduction. Audit: accessibility of abstract/intro, significance framing.
 
+## Authors handing the reviewer a knife (audit-only)
+
+A sentence in which the authors weaken their own result (`regrettably`, `merely`,
+`still lags far behind`, a disclaimer before the first claim, a conclusion that ends on
+a self-negation) is easy to quote verbatim as a rejection reason. The audit reports
+these as claim-forward observations (`CF-DISCLAIM`, `CF-SELFWEAK`, `CF-CAVEAT-POS`,
+`CF-HEDGE-STACK`, `CF-CLOSE-NEG`; see the under-claim section of `OVER_CLAIM_GUARD.md`)
+and recommends reordering or rewording only. It never recommends deleting the
+limitation or the unfavorable result, because that turns a presentation issue into a
+cherry-picking issue. This heuristic is an experience rule with no empirical source;
+its effect on actual reviewer decisions remains **UNVERIFIED**.
+
 ## Making the paper "reject-proof"
 
 Reviewers often decide first and then look for evidence to justify it. The defensive moves

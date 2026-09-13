@@ -84,12 +84,15 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
   当前论点，也未说明下一步去向
 - 从命题本身核对相邻段关系，并检查单句或列表式正文是否为其段落作用提供了足够的
   证据、解释或比较
+- 标记先于段落首个主张的免责句（`CF-DISCLAIM`）或写在它限定的主张前面的限制句（`CF-CAVEAT-POS`）；
+  作为 `presentation` 报告，只建议调序
 
 **不要**：
 
 - 不要只因为缺少显式过渡词就判为逻辑断裂；显式过渡只是接口信号之一，并非必要条件
 - 不要重复报告由 A1 负责的相关工作作者/年份罗列问题
 - 不要从这些观察标签推断其对目标会议或期刊有效
+- 不要建议删除范围陈述或限制；claim-forward 只改顺序与措辞
 
 ### 通道：section_methods - 方法论接口与论证完整性
 
@@ -114,6 +117,21 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 - 不把 Related Work 分组标题、Typst 实验分析 lead-in 或 `\paragraph{核心结论概括}` 报为方法接口问题
 - 不重新定义严重程度
 
+### 审查通道：section_discussion_conclusion
+
+**焦点**：审查讨论与结论中的解释、限制处理和主张闭合。
+
+**做**：
+
+- 检查每条限制只写一次、位于它限定的主张之后，且末段以方向（未来工作、开放问题、下一步）收尾而不是以新的自我否定收尾；
+  末段以负面判定收尾且无方向时标为 `CF-CLOSE-NEG`（`comment_type: presentation`）
+- 核对结论是否用有证据支撑的措辞回应了引言中的承诺
+
+**不要**：
+
+- 不要为了让结尾显得果断而建议删除负面结果、不利对比或限制；只建议补方向或调序
+- 不要重复审核主张强度；过度声明与低估主张的措辞交给 `claims_vs_evidence`
+
 ### 审查通道：声明与证据
 
 **焦点**：审核摘要、引言、讨论和结论是否正确
@@ -132,6 +150,8 @@ Write a JSON array to <review_dir>/comments/<lane_name>.json
 （有界重写）和`forbidden_wording`（过分的措辞）
 - 当声明引用特定表格或图形时，验证引用的工件
 存在并包含被引数
+- 当证据行支撑更强措辞时，标记作者对自身结果的自我削弱措辞（`CF-SELFWEAK`）和一句主张上的 hedge 堆叠（`CF-HEDGE-STACK`）；
+  作为 `claim_accuracy` 发出，`allowed_wording` 只抬到证据已支撑的那一级（`OVER_CLAIM_GUARD.md` 的低估主张一节）
 
 **不**：
 

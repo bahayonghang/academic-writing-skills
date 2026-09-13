@@ -94,6 +94,8 @@
 - paper-audit：`audit.py`、`scholar_eval.py`、`zh_check_adapters.py`、`quality_rubrics.md` 权重、
   `ISSUE_SCHEMA.md`、lane 数、`ZH_THESIS_REVIEW_CRITERIA.md` 行数。
 - `EXPECTED_ABSENCES["check_claim_forward.py"] = ["typst"]`；typst 不在范围。
+- 上述 paper-audit 五文件（`audit.py` / `scholar_eval.py` / `zh_check_adapters.py` / `quality_rubrics.md` /
+  `ISSUE_SCHEMA.md`）由 `test_claim_forward_contract.py` 的 `AUDIT_FROZEN_SHA256` 锁定字节；改动须走独立任务并更新哈希。
 
 ## 7. paper-audit 观察码集合
 
@@ -101,7 +103,22 @@ paper-audit 只在文档与 agent 层使用 `CF-*`，集合固定为
 `{CF-DISCLAIM, CF-SELFWEAK, CF-CAVEAT-POS, CF-HEDGE-STACK, CF-CLOSE-NEG}`；`CF-HEDGE-STACK`
 在 audit 侧为 `[LLM]` 观察，不计数。`comment_type` 只用 `presentation`（DISCLAIM / CAVEAT-POS /
 CLOSE-NEG）与 `claim_accuracy`（SELFWEAK / HEDGE-STACK）。审稿侧不得建议删除 caveat、不利对比或
-非主线结果。（本节由 C3 任务落地；落地前脚本码集合已生效。）
+非主线结果。
+
+落地位置（C3，2026-09-13，纯文档层，无脚本、无评分、lane 数不变）：
+
+- `OVER_CLAIM_GUARD.md` "## Under-claim and upward calibration" 节：阶梯为上限、四条规则、红线句
+  "Never recommend deleting a caveat"、与 cherry-picking 的边界（顺序 / 措辞可改，内容不删）。
+- `CLAIM_EVIDENCE_CONTRACT.md` "## Under-claim" 节：`allowed_wording` 可强于原文但只到证据行已支撑的档。
+- `SUBAGENT_TEMPLATES.md`：`section_intro_related`（DISCLAIM / CAVEAT-POS，`presentation`）、
+  `claims_vs_evidence`（SELFWEAK / HEDGE-STACK，`claim_accuracy`，配额 8 内竞争）、新增
+  `section_discussion_conclusion` 焦点块（CLOSE-NEG；DON'T 删负面结果）。
+- `REVIEW_LANE_GUIDE.md` 三 lane 各一条；`REVIEWER_PSYCHOLOGY.md` "Authors handing the reviewer a knife"
+  启发（UNVERIFIED）；`ZH_THESIS_REVIEW_CRITERIA.md` 第 7 行承载列加 CLOSE-NEG 指路（仍 15 行）。
+- agents：claims_evidence / section / critical（边界句）/ editor_in_chief（weak pitch 信号）/ zh_thesis 各一条。
+- paper-audit **不运行** EN/ZH `check_claim_forward.py`（与 deai 不传 `--analyze` 同一原则）；码只出现在
+  references / agents 的 `.md`，`scripts/` 与 `evals/*.py` 不得出现 `CF-`。
+- eval id 26 + `evals/fixtures/claim_forward_cases.tex`（A–D 正例 + E 边界：不利对比与 Limitations 段必须保留）。
 
 ## 8. Tests Required
 

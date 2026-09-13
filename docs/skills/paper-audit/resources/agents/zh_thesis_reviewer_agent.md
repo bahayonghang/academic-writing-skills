@@ -41,6 +41,7 @@ Write `<review_dir>/comments/zh_thesis_review.json` using the existing `referenc
 - Judge master vs doctoral novelty qualitatively; do not add a CLI flag
 - Send method-chapter narration to `latex-thesis-zh --method-narrative --section`
 - Add `[LLM]` notes on script-covered items only when the script missed a case or the degree context needs explanation
+- When the last paragraph of the conclusion ends on a negative judgment with no outlook (`CF-CLOSE-NEG`), add an `[LLM]` `presentation` observation; per the under-claim section of `OVER_CLAIM_GUARD.md`, propose only adding the direction or reordering, never deleting the limitation
 
 ## DON'T
 

@@ -36,6 +36,10 @@ Use this shape when emitting a claim-evidence map:
 - A metric without a dataset, baseline, or unit of analysis should remain `observed`, not `strong`.
 - A section or appendix reference is useful only when the target section actually contains the promised method, proof, data, or limitation.
 
+## Under-claim
+
+A claim-evidence mismatch has two directions. When the evidence row already supports a stronger statement than the manuscript makes, `allowed_wording` may be stronger than the manuscript wording, raised only to the rung the anchors earn; report it as `claim_accuracy` and follow the under-claim section of `OVER_CLAIM_GUARD.md`. Never trade a caveat for the stronger wording.
+
 ## Defensive Speculative Explanations
 
 Treat a multi-mechanism explanation as `unsupported extrapolation` when it:

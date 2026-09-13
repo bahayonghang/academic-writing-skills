@@ -89,6 +89,14 @@ Step 4 (~30 min):   Introduction close read + spot-check appendix -> write the r
 - **通才/编辑** — 关心“那又怎样”以及非专家是否可以遵循
 摘要和引言。审核：摘要/介绍的可访问性、重要性框架。
 
+## 作者递刀子（仅用于审计）
+
+作者削弱自己结果的句子（`regrettably`、`merely`、`still lags far behind`、首个主张前的免责句、以自我否定收尾的结论）
+很容易被审稿人原样引用为拒稿理由。审计把这些作为 claim-forward 观察报告（`CF-DISCLAIM`、`CF-SELFWEAK`、`CF-CAVEAT-POS`、
+`CF-HEDGE-STACK`、`CF-CLOSE-NEG`；见 `OVER_CLAIM_GUARD.md` 的低估主张一节），只建议调序或改措辞。
+绝不建议删除限制或不利结果，因为那会把呈现问题变成择优呈现问题。该启发式是经验规则，无实证来源；
+其对真实审稿决定的影响仍 **UNVERIFIED**。
+
 ## 使论文“防拒绝”
 
 审稿人通常首先做出决定，然后寻找证据来证明其合理性。防守动作

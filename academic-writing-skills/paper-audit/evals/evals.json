@@ -294,6 +294,22 @@
         {"type": "regex", "pattern": "(verify_quotes|consolidate_review_findings)", "description": "the unavailable scripts are named, not summarized"},
         {"type": "contains", "text": "PYTHONDONTWRITEBYTECODE", "description": "bytecode caches suppressed so the run really leaves no file"}
       ]
+    },
+    {
+      "id": 26,
+      "prompt": "Run deep-review on the attached fixture and report where the writing under-sells the results. The Introduction opens with what the paper does not claim, the Contributions paragraph puts a scope caveat before the claim, the Results section calls a 2.0-point gap 'regrettably ... still lags far behind', and the Conclusion ends on 'remains far from practical' with no direction. The Discussion also states plainly that a baseline outperforms the tracker on the outdoor split, and a Limitations paragraph follows. Tell me what to change and what must stay.",
+      "expected_output": "Report four claim-forward observations: CF-DISCLAIM (presentation, reorder the claim first), CF-CAVEAT-POS (presentation, claim before the scope caveat), CF-SELFWEAK (claim_accuracy, allowed_wording states the 2.0-point gap as a measurement), CF-CLOSE-NEG (presentation, add the direction after the negative judgment). State that the unfavorable outdoor comparison and the Limitations paragraph are not findings and must be kept; do not recommend deleting the unfavorable result or any caveat. Raise wording only to the rung the evidence supports, per the under-claim section of OVER_CLAIM_GUARD.md.",
+      "files": ["evals/fixtures/claim_forward_cases.tex"],
+      "assertions": [
+        {"type": "contains", "text": "CF-DISCLAIM", "description": "disclaimer-before-claim observation named"},
+        {"type": "contains", "text": "CF-CAVEAT-POS", "description": "limitation-before-claim observation named"},
+        {"type": "contains", "text": "CF-SELFWEAK", "description": "self-weakening wording observation named"},
+        {"type": "contains", "text": "CF-CLOSE-NEG", "description": "negative closing observation named"},
+        {"type": "regex", "pattern": "(presentation|claim_accuracy)", "description": "observations use the two allowed comment types"},
+        {"type": "regex", "pattern": "(keep|kept|must stay|not a finding|do not delete|not recommend deleting)", "description": "the unfavorable comparison and the Limitations paragraph are preserved"},
+        {"type": "regex", "pattern": "(OVER_CLAIM_GUARD|under-claim|evidence rung|reverse-calibration)", "description": "wording raised only to the evidence-supported rung"},
+        {"type": "not_contains", "text": "delete the limitation", "description": "no advice to remove a caveat"}
+      ]
     }
   ]
 }
