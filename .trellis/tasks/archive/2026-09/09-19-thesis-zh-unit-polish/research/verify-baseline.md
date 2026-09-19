@@ -1,0 +1,13 @@
+| Code | Count |
+| --- | ---: |
+| UP-SCOPE | 0 |
+| UP-CITE | 0 |
+| UP-REF | 0 |
+| UP-LABEL | 0 |
+| UP-MATH | 0 |
+| UP-NUM | 0 |
+| UP-TOKEN | 0 |
+| UP-TERM | 0 |
+| UP-STRENGTH | 0 |
+| UP-NEG | 0 |
+| UP-LENGTH | 0 |

@@ -1,0 +1,28 @@
+{
+  "id": "thesis-zh-unit-polish",
+  "name": "thesis-zh-unit-polish",
+  "title": "latex-thesis-zh 段落/小节单元受控润色（polish 模块）",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-19",
+  "completedAt": "2026-09-19",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "2026-09-19: AC-01 through AC-12 and user-authorized Fable refinements implemented and verified. Fixed biblatex/capital references and legal whitespace before stars; improved term-aware strength candidates, reports/help, ordering and YAML loader tests. Final core suite 179 passed; full CI 2169 passed, 2 platform skips, Pyright 0 errors/75 existing warnings. Resource gate 280 entries and docs build passed; independent review has no remaining findings. See research/implementation-validation.md. Awaiting Phase 3.4 commit-plan confirmation; no commit, push or archive performed.",
+  "meta": {
+    "requirement_sources": "S1 ref/graduate-thesis-polish-and-write-skill (MIT); S2 zhihu 582506176/answer/2083151703524877127 (大学生知识星球)"
+  }
+}
