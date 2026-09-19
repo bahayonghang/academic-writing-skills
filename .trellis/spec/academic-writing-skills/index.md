@@ -22,6 +22,7 @@
 | [paragraph-arc-en-contract.md](./paragraph-arc-en-contract.md)           | 英文论文 P-ARC 差异、5000 词密度换算、序列词边界与 synthetic-only 证据边界          | 改 EN `--paragraph-arc`、英文密度阈值或三副本序列词计数之前                              |
 | [paragraph-arc-audit-contract.md](./paragraph-arc-audit-contract.md)     | paper-audit Clarity 五档、lane/agent 四项观察、评分隔离与证据边界                    | 改审稿侧段落弧线 rubric、lane、agent、psychology 或对应双语资源之前                       |
 | [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
+| [unit-polish-contract.md](./unit-polish-contract.md) | `polish` 单元边界、`UP-*` 核对、冻结脚本和验证入口 | 改单元润色脚本、协议、路由、fixture 或公开镜像之前 |
 
 ## 背景速览
 

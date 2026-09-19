@@ -39,6 +39,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 | `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, engineering-application argument, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | The review lacks thematic synthesis, selective attribution, cluster-end comparison, or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `claim-forward` | Claims placed after disclaimers or caveats, self-weakening wording, hedge stacks, negative closing | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
+| `polish` | Rewrite and verify one paragraph or subsection; list units first for a chapter or full thesis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/polish_unit_zh.py main.tex --plan` |
 | `experiment` | Experiment language, evidence layers, display/statistical scope, or per-method-chapter completeness needs review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | Cross-references, `\caption` / `\bicaption`, labels, or numbering are inconsistent | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
 | `tables` | Three-line tables, real caption position, booktabs structure, or table generation needs checking | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
@@ -93,6 +94,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Chinese expression](./resources/references/modules/expression.md)
 - [De-AI review](./resources/references/modules/deai.md)
 - [Claim-forward check](./resources/references/modules/claim-forward.md)
+- [Unit polishing and verification](./resources/references/modules/polish.md)
 - [Literature review](./resources/references/modules/literature.md)
 - [Experiment review](./resources/references/modules/experiment.md)
 - [Cross-references](./resources/references/modules/references.md)
@@ -115,6 +117,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Conclusion chapter guide](./resources/references/writing/conclusion-guide-zh.md)
 - [Claim-forward writing guide](./resources/references/writing/claim-forward-zh.md)
 - [Claim-forward term table](./resources/references/writing/claim-forward-terms-zh.yaml)
+- [Unit-polishing protocol](./resources/references/writing/unit-polish-zh.md)
 - [Abstract structure](./resources/references/writing/abstract-structure.md)
 - [Structure guide](./resources/references/writing/structure-guide.md)
 - [Logic and coherence](./resources/references/writing/logic-coherence.md)
@@ -149,6 +152,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Logic and experiment](./resources/examples/logic-and-experiment.md)
 - [Literature-review rewrite](./resources/examples/literature-review-rewrite.md)
 - [Bibliography and de-AI](./resources/examples/bibliography-and-deai.md)
+- [Unit polishing and verification](./resources/examples/unit-polish.md)
 
 ## Common Requests And Handoffs
 

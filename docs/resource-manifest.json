@@ -1095,7 +1095,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/deai.md",
       "sourceLocale": "en",
-      "sourceSha256": "cbc99d0235318490b1eccfd34de76da554c6b88a67216188b8767e86e3edd08a",
+      "sourceSha256": "2aa99c147c2896f7c3ca37b84a937da7e6e1d9a8d1bfa4f7f940f8895aafae0a",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/deai.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/deai.md"
     },
@@ -1113,7 +1113,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/expression.md",
       "sourceLocale": "zh",
-      "sourceSha256": "d4d48a5c21871e0dca24c254c4de42970b39088ad6dde03e65a3240c8876df08",
+      "sourceSha256": "f674fcdfd3ccb1ebae21513fefede7a924cf6afc78b63e5b473c66eb82ad312b",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/expression.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/expression.md"
     },
@@ -1147,6 +1147,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/modules/polish.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "ad820a504d58566124fdbcf8e5d83dd34e1045ce39e65cda323a3f9e325a8da4",
+      "en": "docs/skills/latex-thesis-zh/resources/references/modules/polish.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/polish.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/references.md",
       "sourceLocale": "zh",
       "sourceSha256": "86b0228816d679999f3f55c1ad9c9ebd7db1cda9c4ae8596db16bb15c8470e29",
@@ -1158,7 +1167,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/modules/routing-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "1ab3e9828fffe56b85edda579bd6be0bdf1af910c95a98045b18014cf1731dce",
+      "sourceSha256": "b6f09c42d31ef1eea996e05c1f004bec380ea0038899906e6a070dcf73ecd645",
       "en": "docs/skills/latex-thesis-zh/resources/references/modules/routing-rules.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/references/modules/routing-rules.md"
     },
@@ -1390,6 +1399,15 @@
     {
       "skill": "latex-thesis-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-thesis-zh/references/writing/unit-polish-zh.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "8327380f2a564e03e1021cbd91d0fb568bf83ebac60424afec35ce250377d79d",
+      "en": "docs/skills/latex-thesis-zh/resources/references/writing/unit-polish-zh.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/references/writing/unit-polish-zh.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-thesis-zh/references/writing/writing-philosophy-zh.md",
       "sourceLocale": "zh",
       "sourceSha256": "7bbc20de20a3d561d2ad11ae5eb5ee6345a67efa3b90cecb50725c9d7c2e0b34",
@@ -1476,6 +1494,15 @@
       "sourceSha256": "edeebc00a53c2f1820129d59c91f00f786dc2d4d0fa1745cc1d71e286a91308b",
       "en": "docs/skills/latex-thesis-zh/resources/examples/structure-and-consistency.md",
       "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/structure-and-consistency.md"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-thesis-zh/examples/unit-polish.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e8581267871aad8510256c6651ed24e2cd4c42ba45298edb91ccc9c1f5f0e858",
+      "en": "docs/skills/latex-thesis-zh/resources/examples/unit-polish.md",
+      "zh": "docs/zh/skills/latex-thesis-zh/resources/examples/unit-polish.md"
     },
     {
       "skill": "paper-audit",

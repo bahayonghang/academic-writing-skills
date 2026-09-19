@@ -1,5 +1,7 @@
 # Module: 中文表达检查（expression）
 
+单元级完整润色与漂移核对走 [polish](polish.md)，本模块提供语句级诊断。
+
 **触发**：这段太口语、改学术一点、句子太长太绕、标点乱、冒号或分号堆叠、搭配不当、数值单位写法
 
 **规则真相源**：[academic-style-zh.md](../writing/academic-style-zh.md)；数字与单位另见 [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md)。

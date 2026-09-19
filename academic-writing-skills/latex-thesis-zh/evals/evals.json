@@ -1540,6 +1540,63 @@
           "description": "script layer never claims PRESERVED"
         }
       ]
+    },
+    {
+      "id": 50,
+      "prompt": "请对附带的中文学位论文 main.tex 先列润色单元清单，再润色 1.1.1：保留原有标题、引用、数字、参数与结论强度。先给完整单元润色稿，再给三类修改说明和四字段块。对 revised-ok.tex 和 revised-drift.tex 分别运行单元核对；报告引用键删除、数字改变、可能变成证明、复制只读邻域和新增标题的漂移。仅检查时不改写，不能把脚本通过当成语义已保全。",
+      "expected_output": "路由到 polish，先运行 polish_unit_zh.py --plan，按坐标只读当前单元和邻域，复用单元前诊断。完整润色稿保持事实与强度；附删除无信息表达、句子逻辑结构调整、待作者补证三类说明和四字段。--verify 的 ok 稿无 Error，drift 稿报告 UP-CITE、UP-NUM、UP-STRENGTH 和 UP-SCOPE，Error 导致退出码 1。脚本恒为 NEEDS-LLM，不宣称 PRESERVED。",
+      "files": [
+        "evals/fixtures/unit-polish/main.tex",
+        "evals/fixtures/unit-polish/revised-ok.tex",
+        "evals/fixtures/unit-polish/revised-drift.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "polish_unit_zh.py",
+          "description": "uses the unit planning and verification entry"
+        },
+        {
+          "type": "contains",
+          "text": "--plan",
+          "description": "locates units before rewriting"
+        },
+        {
+          "type": "contains",
+          "text": "--verify",
+          "description": "verifies the proposed unit"
+        },
+        {
+          "type": "contains",
+          "text": "UP-CITE",
+          "description": "reports citation-key drift"
+        },
+        {
+          "type": "contains",
+          "text": "UP-NUM",
+          "description": "reports numeric drift"
+        },
+        {
+          "type": "contains",
+          "text": "UP-STRENGTH",
+          "description": "reports suspected strength drift"
+        },
+        {
+          "type": "contains",
+          "text": "UP-SCOPE",
+          "description": "reports heading and read-only-context scope drift"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "does not mistake script verification for semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(修改说明|待补证)",
+          "description": "delivers change notes or identifies evidence gaps"
+        }
+      ]
     }
   ]
 }

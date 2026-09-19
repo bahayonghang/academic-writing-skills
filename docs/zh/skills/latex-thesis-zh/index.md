@@ -35,6 +35,7 @@
 | `logic` | 绪论漏斗、章节承接、主线、方法模块接口、工程应用章论证或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>]` |
 | `literature` | 文献综述缺少主题综合、代表文献归因、簇末比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `claim-forward` | 主张被免责句或限制句后置、自我削弱搭配、hedge 堆叠、结论末段负面收尾 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
+| `polish` | 润色并核对一个自然段或小节；整章或全文先列单元清单 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/polish_unit_zh.py main.tex --plan` |
 | `experiment` | 需要审阅实验表达、证据层次、展示/统计口径或逐方法章实验完整性 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_experiment.py main.tex` |
 | `references` | 交叉引用、`\caption` / `\bicaption`、标签或编号不一致 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_references.py main.tex` |
 | `tables` | 需要检查三线表、真实题注位置、booktabs 结构或生成表格 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_tables.py main.tex` |
@@ -88,6 +89,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [中文表达](./resources/references/modules/expression.md)
 - [去 AI 审阅](./resources/references/modules/deai.md)
 - [主张前置检查（claim-forward）](./resources/references/modules/claim-forward.md)
+- [单元润色与核对](./resources/references/modules/polish.md)
 - [文献综述](./resources/references/modules/literature.md)
 - [实验审阅](./resources/references/modules/experiment.md)
 - [交叉引用](./resources/references/modules/references.md)
@@ -110,6 +112,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [结论章指南](./resources/references/writing/conclusion-guide-zh.md)
 - [主张前置写作指南（claim-forward）](./resources/references/writing/claim-forward-zh.md)
 - [claim-forward 词表](./resources/references/writing/claim-forward-terms-zh.yaml)
+- [单元润色协议](./resources/references/writing/unit-polish-zh.md)
 - [摘要结构](./resources/references/writing/abstract-structure.md)
 - [结构指南](./resources/references/writing/structure-guide.md)
 - [逻辑与连贯性](./resources/references/writing/logic-coherence.md)
@@ -144,6 +147,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [逻辑与实验](./resources/examples/logic-and-experiment.md)
 - [文献综述改写](./resources/examples/literature-review-rewrite.md)
 - [参考文献与去 AI](./resources/examples/bibliography-and-deai.md)
+- [逐单元润色与核对](./resources/examples/unit-polish.md)
 
 ## 常见请求与交接
 

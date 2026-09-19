@@ -5,7 +5,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 ## 总则
 
 - 先根据用户问题自动推断模块，不把“你想用哪个模块”当成默认追问。
-- 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `deai` / `claim-forward` / `tables` / `abstract`。
+- 如果一个请求同时包含 2-3 个兼容目标，按固定顺序串行执行，而不是只做第一个：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `expression` / `deai` / `claim-forward` / `polish` / `tables` / `abstract`。
 - 对同一段文字做多轮润色时，按“论证/逻辑 -> 句子结构 -> 词汇/排版”由粗到细处理，顺序不可颠倒；详见 `references/writing/writing-philosophy-zh.md`。
 - 某个脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不要静默切换到别的模块掩盖失败。
 
@@ -14,7 +14,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 判定标准只有一条：**该模块是否产出可直接替换原文的具体文本？** 若产出的只是"该怎么改"的指令，则改写行为发生在 LLM 侧，只适用 `[LLM]` 层。三组逐项列出——不要因为某模块"看起来像润色"就给它加契约段。
 
 - **纳入契约（`[Script]` + `[LLM]` 两层）**：`expression`。
-- **仅 `[LLM]` 层**（无脚本，或脚本只出指令不出替换文本）：`deai`、`claim-forward`。`deai` 的 `-> 建议: 长短句交替` 是行为指令；LLM 依此产出的改写带 `[LLM]` 层字段。`claim-forward` 输出 `Candidate:` 提案（调序后的句子或带 `{占位}` 的模板替换），不是替换文本；其 `[Script]` 块只带 `Meaning-Check: NEEDS-LLM`，LLM 改写再补四字段。
+- **仅 `[LLM]` 层**（无脚本，或脚本只出指令不出替换文本）：`deai`、`claim-forward`、`polish`。`deai` 的 `-> 建议: 长短句交替` 是行为指令；LLM 依此产出的改写带 `[LLM]` 层字段。`claim-forward` 输出 `Candidate:` 提案（调序后的句子或带 `{占位}` 的模板替换），不是替换文本；其 `[Script]` 块只带 `Meaning-Check: NEEDS-LLM`，LLM 改写再补四字段。`polish` 的脚本只列单元与漂移发现，每条核对同样带 `Meaning-Check: NEEDS-LLM`，四字段由 `[LLM]` 改写块补齐。
 - **排除——完全不加契约段**：`compile`、`format`、`structure`、`consistency`、`template`、`bibliography`、`references`、`tables`、`title`、`logic`、`literature`、`experiment`、`abstract`、`conclusion`、`spec-check`、`blind-review`。这些是纯诊断模块，加字段只会制造噪音。
 
 ### 分层规则
@@ -65,6 +65,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
 - 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。
 - 涉及“先说本文不做什么再说做了什么”“写得太谦虚 / 像在道歉”“遗憾的是 / 仍明显落后 / 效果有限”“一句话堆了三个可能 / 或许 / 在一定程度上”“结论末段以缺陷收尾没有展望”时走 `claim-forward`：`check_claim_forward.py` 发 `CF-DISCLAIM` / `CF-SELFWEAK` / `CF-CAVEAT-POS` / `CF-HEDGE-STACK` / `CF-CLOSE-NEG` 五个 `[Script]` 码，只调顺序和搭配，绝不删除限制、不利对比或非主线结果；加强措辞前先对照 `references/writing/over-claim-guard.md` 的“向上校准”节，只抬到证据已支撑的那一级。三条边界：`不是 X 而是 Y` 壳与“值得注意的是”归 `deai`；摘要痛点词（尚未 / 难以）归 `abstract` 的 T-PAIN，不是自我削弱；结论展望前的承接句（`CC-OUTLOOK-TRANS`）合法，`CF-CLOSE-NEG` 只报负面判定后无方向的末段。引用句、“不足 / 局限 / 研究范围”小节、裸“仅 / 尚未”不报。
+- 明确要求“润色这段”“润色这一节”“把第 X 章语言润色一下”时走 `polish`：先 `polish_unit_zh.py --plan`，再按单元读取、改写、`--verify`；整章/全文同样逐单元处理。只要求检查/审校时不改写；原有标题、事实与结论强度保持不变，只读邻域不进入润色稿。单元前诊断由 `expression` / `deai` / `claim-forward` 提供，论证问题先走 `logic`；详见 [polish](polish.md) 与 [单元润色协议](../writing/unit-polish-zh.md)。
 - 涉及“这段太口语，改学术一点”“句子太长太绕，帮我理顺”“搭配读着别扭”“中英标点混着用”“冒号/分号太多”“标签式冒号”“分号串整段”“数值和单位怎么写”“概数用不用汉字”时走 `expression`：`check_style_zh.py` 跑九个 E-* 检查器（`E-COLLOQ`/`E-ABSOLUTE`/`E-COLLOC`/`E-INCOMP`/`E-PUNCT`/`E-NUMSPACE`/`E-UNITFONT`/`E-NUMSTYLE`/`E-LONGSENT`），规则真相源是 `references/writing/academic-style-zh.md`，数字与单位另见 `references/formatting/number-unit-guide-zh.md`。其中连续正文的冒号、分号与句间逻辑按规则源 §5.4 由 `[LLM]` 判断，`E-PUNCT` 仍只检查 §5.3 的中英标点混用，不增加规则、阈值或检查码。分档表与逐检查器排除条件见 `references/modules/expression.md`。五条边界（每条都有既有 owner，重造必冲突）：
   - vs `abstract`：**人称（我们/本文）不归 `expression`**。第一人称走 `analyze_abstract.py` 的 T-VOICE，首句是否定位研究对象走 T-OPEN，两者维度不同。`check_style_zh.py` 不实现任何人称检查。
   - vs `over-claim-guard`：`expression` 的 `E-ABSOLUTE` 只做**词汇层**替换建议（显然/必然/最好…）；论断强度分级仍归 `references/writing/over-claim-guard.md`，不重复实现。

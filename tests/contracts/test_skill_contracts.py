@@ -82,6 +82,7 @@ SKILLS = {
             "title",
             "deai",
             "claim-forward",
+            "polish",
             "logic",
             "literature",
             "experiment",

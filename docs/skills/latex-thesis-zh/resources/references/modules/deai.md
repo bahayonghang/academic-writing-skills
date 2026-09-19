@@ -1,5 +1,7 @@
 # De-AI Module Reference
 
+For complete unit rewrites and drift verification, use [polish](polish.md); this module supplies the pre-rewrite AI-trace diagnosis.
+
 Purpose: Detect and reduce AI-generated writing traces while preserving LaTeX syntax and technical accuracy.
 
 ## Core Principles

@@ -64,6 +64,7 @@ POLISH_MODULE_DOCS = {
     ],
     "latex-thesis-zh": [
         SKILLS_ROOT / "latex-thesis-zh" / "references" / "modules" / "expression.md",
+        SKILLS_ROOT / "latex-thesis-zh" / "references" / "modules" / "polish.md",
     ],
     "typst-paper": [
         SKILLS_ROOT / "typst-paper" / "references" / "modules" / "EXPRESSION.md",

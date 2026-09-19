@@ -1,6 +1,6 @@
 ---
 name: latex-thesis-zh
-description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文工程：编译诊断、GB/T 7714、模板识别、结构/格式/公式断行、术语一致性、逻辑与文献综述、方法/工程应用章、标题优化、去 AI 味、主张前置（自我削弱/免责句后置）检查、盲审隐匿、对照学校规范逐项终检。触发词：学位论文/毕业论文/硕士/博士论文。英文论文用 latex-paper-en，审稿总评用 paper-audit。
+description: 中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文工程：编译诊断、GB/T 7714、模板识别、结构/格式/公式断行、术语一致性、逻辑与文献综述、方法/工程应用章、标题优化、去 AI 味、主张前置（自我削弱/免责句后置）检查、单元润色与漂移核对、盲审隐匿、对照学校规范逐项终检。触发词：学位论文/毕业论文/硕士/博士论文/润色这段/润色这一节/单元润色/核对润色。英文论文用 latex-paper-en，审稿总评用 paper-audit。
 when_to_use: >-
   触发于“毕业论文/学位论文/硕士论文/博士论文”“XeLaTeX 编译失败”“GB/T 7714 检查参考文献”
   “公式编号挤到下一行”“双语题注/续图/长表留白”“每章最多 5 节”“章引言/本章小结怎么写”“工程应用/系统实现章怎么写”“术语前后不一致”
@@ -25,7 +25,7 @@ metadata:
       structure,
     ]
   version: "6.0.0"
-  last_updated: "2026-09-13"
+  last_updated: "2026-09-19"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -72,6 +72,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 | `logic`        | Check logical coherence, introduction funnel, heading lead-ins, lit review quality, chapter mainline, engineering-application/system-implementation argument, and cross-section closure; method-module narrative and interfaces (`--method-narrative --section <章名>`); subsection context (`--subsection-context`, `--subsection`, `--emit-window`); intro/process mainline checks; paper-stitching sweep and chapter-intro bridging tiers | `uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>] [--subsection-context]` | `references/modules/logic.md`                                                                              |
 | `literature`   | 文献综述像流水账、缺少主题综合/代表文献归因/簇末比较、研究空白没有被自然推出；绪论引用数量/堆引/年份分布诊断（`--intro-citations`）                                                                                                                                                                                                                     | `uv run python $SKILL_DIR/scripts/analyze_literature.py main.tex --section related`          | `references/modules/literature.md`                                                                         |
 | `claim-forward` | 主张被免责句或限制句后置、对自身结果的自我削弱搭配（遗憾的是/仍明显落后于）、主张句 hedge 堆叠、结论末段负面收尾无展望 | `uv run python $SKILL_DIR/scripts/check_claim_forward.py main.tex --section introduction` | `references/modules/claim-forward.md` |
+| `polish` | 润色一个自然段或小节并核对漂移；整章或全文先列单元清单 | `uv run python $SKILL_DIR/scripts/polish_unit_zh.py main.tex --plan` | `references/modules/polish.md` |
 | `experiment`   | Review experiment language, discussion layers, and conclusion completeness; per-method-chapter completeness (`--per-chapter`) or opt-in results depth, display/statistical scope, and evidence cues (`--results-analysis`)                                                                                                                             | `uv run python $SKILL_DIR/scripts/analyze_experiment.py main.tex [--per-chapter] [--results-analysis]` | `references/modules/experiment.md`                                                                         |
 | `references`   | Cross-reference integrity: undefined `\ref`, unreferenced labels, missing `\caption` / `\bicaption`, numbering gaps                                                                                                                                                                                                                            | `uv run python $SKILL_DIR/scripts/check_references.py main.tex`                              | `references/modules/references.md`                                                                         |
 | `tables`       | 表格结构、真实题注位置、三线表生成和 booktabs 检查；长表留白与二次缩放按指南人工复核                                                                                                                                                                                                                                                             | `uv run python $SKILL_DIR/scripts/check_tables.py main.tex`                                  | `references/modules/tables.md`                                                                             |
@@ -82,8 +83,9 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 
 ## 路由规则
 
-- 自动推断模块，不默认追问“你想用哪个模块”。多目标请求按固定顺序串行执行：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `expression` / `deai` / `claim-forward` / `tables` / `abstract` / `conclusion`。
+- 自动推断模块，不默认追问“你想用哪个模块”。多目标请求按固定顺序串行执行：`template` -> `compile` -> `format` -> `structure` / `consistency` -> `bibliography` / `references` -> `logic` / `literature` -> `experiment` / `title` / `expression` / `deai` / `claim-forward` / `polish` / `tables` / `abstract` / `conclusion`。
 - 多轮润色按“论证/逻辑 -> 句子结构 -> 词汇/排版”由粗到细，顺序不可颠倒（详见 `references/writing/writing-philosophy-zh.md`）。
+- “润色这段/这一节/把第 X 章语言润色一下”走 `polish`；整章或全文先 `--plan`，逐单元改写并 `--verify`。只要求检查或审校时仅诊断。保留原有标题、事实及结论强度，邻域只读；详见 `references/writing/unit-polish-zh.md`。
 - 常见歧义速判：交叉引用/编号断档或题注缺失走 `references`（条目本身走 `bibliography`）；表格题注位置和三线表结构走 `tables`；续图、子题注、长表留白、图像有效 ppi 或编译页图表版式走 `format`，并按需读取 caption/table/compile 指南；公式断行走 `format`（`\label`/`\eqref` 问题走 `references`，标题后直入公式走 `logic`）；标题架构串行 `structure` -> `title --headings`；章引言/分章型小结/主线闭合走 `logic`；工程应用/系统实现章按正文走 `logic` 并读取工程章指南，不能凭章号运行 `--per-chapter`；文献主题综合与代表归因走 `literature`；摘要多组件关系走 `abstract`；结果分析深度及展示/统计口径走 `experiment --results-analysis`（论断强度语义复核读 over-claim-guard，AI 痕迹走 `deai`）；结论章内容/展望走 `conclusion`（结论格式——`\cite`/字数/模糊措辞——走 `spec-check`）；规范终检走 `spec-check`；盲审匿名走 `blind-review`；口语化/绝对化词汇/搭配不当/标点混用/冒号或分号堆叠/数值单位写法/单句过长走 `expression`（冒号/分号句间逻辑只由 `[LLM]` 按 academic-style-zh §5.4 判断；段落论证走 `logic`，AI 痕迹与句长均匀度走 `deai`，人称走 `abstract`，论断强度走 over-claim-guard）。完整判据与各模块专用旗标（`--analyze`、`--tier`、`--motivation-thread`、`--spec-file`、`--generate --dry-run` 等）见 `references/modules/routing-rules.md`——执行前必读对应条目。
 - 主张后置/自我削弱（先说本文不做什么、遗憾的是、仍明显落后于、hedge 堆叠、结论末段负面收尾）走 `claim-forward`：只调顺序与搭配，绝不删除限制或不利对比；加强措辞只抬到 `references/writing/over-claim-guard.md` 证据阶梯已支撑的一级。摘要痛点词归 `abstract`，`不是 X 而是 Y` 壳归 `deai`。
 - 脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不静默切换模块。
@@ -122,6 +124,7 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - `[LLM]` 层：可置 `Meaning-Check: PRESERVED` 与闭集内任一标记，但 `PRESERVED` 是待作者核对的**提案**，不是已验证的事实。
 - 改写不得升高措辞强度。强度发生变化时置 `Risk-Flags: overstatement`；判据见 `references/writing/over-claim-guard.md`，各润色模块文档均有指针。
 - `deai` 产出的是行为指令而非替换文本；LLM 依其指令产出的改写适用 `[LLM]` 层契约。`claim-forward` 同属仅 LLM 层：脚本只给 `Candidate:` 提案与 `Meaning-Check: NEEDS-LLM`，四字段由 LLM 改写块补齐。
+- `polish` 同属仅 `[LLM]` 层：清单与核对脚本不产出替换文本，核对恒为 `Meaning-Check: NEEDS-LLM`；完整单元润色稿由 `[LLM]` 补齐四字段，并附三类修改说明与核对摘要。
 
 ## Workflow
 
@@ -168,6 +171,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - `references/writing/results-analysis-guide-zh.md`: 结果分析的事实组织、展示/统计集合与分层缺失口径、证据阶梯、RA-* 启发式边界与人工复核清单。
 - `references/writing/conclusion-guide-zh.md`: 结论章（总结与展望）专章——首段总领式方法链、编号贡献动词骨架、展望空话黑名单、结论≠摘要、CC-\* checker 映射表（配合 `conclusion` 模块）。
 - `references/writing/claim-forward-zh.md`: 主张前置改写规则、推荐/不推荐写法、与结论章承接句及过度声明阶梯的关系、被否决的选择性呈现改法；词表在 `references/writing/claim-forward-terms-zh.yaml`（配合 `claim-forward`）。
+- `references/writing/unit-polish-zh.md`: 单元润色的范围、保留清单、改动准入、交付顺序与逐单元核对协议（配合 `polish`）；合成示例见 `examples/unit-polish.md`。
 - `references/writing/academic-style-zh.md`: 中文学术写作规范——口语化纠正、绝对化词汇、逻辑连接词、常见语病、正文冒号/分号句间逻辑、数字与单位（`expression` 模块的规则真相源）。
 - `references/formatting/number-unit-guide-zh.md`: 数字与单位国标细则（GB/T 15835、GB 3100 系列）与标准优先级声明（配合 `expression`）。
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
