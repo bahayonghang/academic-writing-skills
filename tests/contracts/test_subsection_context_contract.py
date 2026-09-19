@@ -120,7 +120,7 @@ def test_skill_routes_are_updated_without_version_bumps() -> None:
 
     for text in (paper_skill, zh_skill):
         assert 'version: "6.0.0"' in text
-    assert 'last_updated: "2026-09-13"' in zh_skill
+    assert 'last_updated: "2026-09-19"' in zh_skill
     assert 'last_updated: "2026-09-13"' in paper_skill
 
     assert "subsection_context_polish" in paper_skill

@@ -1,5 +1,7 @@
 # Module: Chinese Expression Check (expression)
 
+For complete unit rewrites and drift verification, use [polish](polish.md); this module supplies sentence-level diagnosis.
+
 **Trigger**: this passage is too colloquial, make it more academic, sentences too long and convoluted, punctuation is messy, colon or semicolon piling, wrong collocation, value/unit notation
 
 **Rule source of truth**: [academic-style-zh.md](../writing/academic-style-zh.md); numbers and units are further covered by [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md).

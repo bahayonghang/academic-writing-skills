@@ -104,6 +104,7 @@ SMOKE_COMMANDS = [
     ("analyze_abstract.py", ["main.tex"], {0}, "Thesis Abstract Skeleton Diagnosis"),
     ("analyze_conclusion.py", ["main.tex"], {0}, "Conclusion Content Check"),
     ("check_claim_forward.py", ["main.tex"], {0}, "CLAIM-FORWARD"),
+    ("polish_unit_zh.py", ["main.tex", "--plan"], {0}, "润色单元清单"),
     (
         "check_spec.py",
         ["main.tex", "--template", "yanshan", "--degree", "doctor", "--year", "2026"],

@@ -1,0 +1,31 @@
+% Synthetic thesis: all data, models, and citation keys are fictional test material.
+\documentclass{ctexbook}
+\begin{document}
+\chapter{方法与实验}
+本章介绍合成样本的处理流程，并记录用于核对润色范围的占位实验条件。
+
+\section{局部误差分析}
+本节比较两个占位模型的预测误差，所有结论仅限于本节所述的合成样本。
+
+\subsection{误差比较}
+本文不试图说明其他装置的运行效果。值得注意的是，本研究在相同条件下比较了模型 A 和模型 B 的预测误差，共统计 20 个样本。模型 A 的 MAE 为 0.12，模型 B 的 MAE 为 0.15，测量间隔为 5\,s。该结果可能支持模型 A 在当前样本上的误差优势\cite{demo2026a,demo2026b}。
+
+误差按式\eqref{eq:demo-error}计算，输入与输出的对应关系见图\ref{fig:demo-flow}。变量 $e=y-\hat{y}$ 表示单个样本的残差。
+\begin{equation}
+e=y-\hat{y}
+\label{eq:demo-error}
+\end{equation}
+
+\subsection{邻域说明}
+后续分析只记录占位样本的排列规则并保留独立的讨论范围。
+本小节不仅记录样本顺序，而且列出相应索引，但没有据此推断其他场景的结果。
+
+\chapter{过程记录}
+本章使用另一组占位描述展示方法段的语句结构，不增加前章结论的适用范围。
+
+\section{处理步骤}
+本节记录数据进入处理流程后的操作顺序，供单元润色时保留方法步骤。
+
+\subsection{样本处理}
+首先读取占位容器中的记录，再按时间排序并识别空缺位置，然后统计各组样本的残差并计算组内均值，最后把组号和计算结果写入索引以便复核。
+\end{document}

@@ -265,6 +265,21 @@
       "query": "My English LaTeX paper's introduction keeps saying what we don't claim before the contribution; run a claim-forward check on main.tex.",
       "should_trigger": false,
       "category": "claim-forward"
+    },
+    {
+      "query": "请润色这一节中文博士论文，main.tex 里 3.2.1 的标题、引用、公式和结论强度都要保持，再核对润色稿。",
+      "should_trigger": true,
+      "category": "unit-polish"
+    },
+    {
+      "query": "把我中文 LaTeX 学位论文 3.2.1 语言改学术一点，按小节给完整润色稿、修改说明和单元核对。",
+      "should_trigger": true,
+      "category": "unit-polish"
+    },
+    {
+      "query": "Polish this paragraph in my English LaTeX journal paper and verify that its claims are unchanged; use latex-paper-en.",
+      "should_trigger": false,
+      "category": "negative-overlap-unit-polish"
     }
   ]
 }

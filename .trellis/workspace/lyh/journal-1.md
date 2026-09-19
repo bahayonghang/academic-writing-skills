@@ -1620,3 +1620,40 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 48: latex-thesis-zh 单元受控润色模块落地并归档
+
+**Date**: 2026-09-19
+**Task**: latex-thesis-zh 单元受控润色模块落地并归档
+**Branch**: `dev`
+
+### Summary
+
+为 latex-thesis-zh 新增 polish 模块：以段落或小节为单元做受控润色，交付前用脚本核对引用、数字和结论强度是否漂移；同步 spec、契约测试与双语 docs，并归档 09-19-thesis-zh-unit-polish。
+
+### Main Changes
+
+- 新增 polish_unit_zh.py、单元协议、路由、evals 与契约测试
+- 同步 spec unit-polish-contract 与双语 docs/README
+- 归档 Trellis 任务 09-19-thesis-zh-unit-polish
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `97215d7` | (see git log) |
+
+### Testing
+
+- [OK] just ci 2169 passed / 2 skipped
+- [OK] check_resource_sync.py --skill latex-thesis-zh
+- [OK] just doc-build
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 无本任务后续

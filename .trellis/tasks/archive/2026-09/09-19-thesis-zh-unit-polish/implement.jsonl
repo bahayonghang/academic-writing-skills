@@ -1,0 +1,12 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "spec 索引与副本/哈希锁背景速览"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "两层四字段契约、三轴、A/B/C 分档、受保护 token 护栏——UP-* 分档与 NEEDS-LLM 规则的依据"}
+{"file": ".trellis/spec/academic-writing-skills/subsection-context-contract.md", "reason": "depth-3 小节游标、三元窗口、只读边界——单元模型直接复用"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "段落切分与章节所有权——paragraph 单元切分复用 _split_arc_paragraphs"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "禁增 deai 类别、audit→rewrite→fidelity 契约、冒号/分号归属——协议文件不得重造"}
+{"file": ".trellis/spec/academic-writing-skills/claim-forward-contract.md", "reason": "仅 [LLM] 层模块落地样板、NO_LEAK_FILES、hedges 词表复用"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "importlib 按路径加载、私有语料边界、evals.json Bash python 写入、pytest 不加 PYTHONIOENCODING"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增 references/examples 后 manifest 与双语镜像页契约"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 路由表增模块时 SMOKE_COMMANDS 联动清单"}
+{"file": ".trellis/tasks/09-19-thesis-zh-unit-polish/research/prior-art-mapping.md", "reason": "S1/S2 先例逐机制 keep/adapt/reject/invent、探针证据、所有权表、冲突项 D1-D4"}
+{"file": ".trellis/tasks/09-19-thesis-zh-unit-polish/research/existing-machinery.md", "reason": "复用 API 签名、既有脚本 JSON 形态、全部锁与联动清单、编辑锚点"}
+{"file": ".trellis/spec/academic-writing-skills/unit-polish-contract.md", "reason": "本任务单元、核对码及原文不变契约"}

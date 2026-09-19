@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "核对 [Script] 恒 NEEDS-LLM、无 Risk-Flags 越权、B 档不给替换文本"}
+{"file": ".trellis/spec/academic-writing-skills/subsection-context-contract.md", "reason": "核对单元编号与窗口语义未漂移、analyze_logic.py 未改"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对测试加载方式、evals 追加方式、私有语料未入仓库"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "核对 manifest 散列、双语页链接目标一致、usage token"}
+{"file": ".trellis/tasks/09-19-thesis-zh-unit-polish/research/existing-machinery.md", "reason": "逐锁核对：deai/parsers 哈希、ROUTER_ROW_RE、SMOKE、孤儿扫描、POLISH_MODULE_DOCS、evals 前缀哈希"}
+{"file": ".trellis/spec/academic-writing-skills/unit-polish-contract.md", "reason": "核查 UP-* 边界、冻结脚本及本地证据范围"}
