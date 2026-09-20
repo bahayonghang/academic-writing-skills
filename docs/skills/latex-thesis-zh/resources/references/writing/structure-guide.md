@@ -144,6 +144,7 @@
 - Prohibit headings that go directly to lists, formulas, charts, algorithm contexts, or subheadings without any transition instructions.
 - The introduction should be written as a complete paragraph rather than a short reminder; it is recommended to use explicit guidance expressions such as "This chapter/section will..." "The following will expand from...".
 - The **Chapter Introduction** of each chapter of the main text (Chapter 2 to the conclusion) should be written in two paragraphs, about 300~500 words, connecting the previous chapter and the next: the first paragraph uses the chapter number ("Chapter See the "Introduction to the main article" section of [`thesis-writing-guide.md`](thesis-writing-guide.md) for details.
+- A section lead-in with subsections should only define the scope of the current section or provide a concise reading roadmap, without repeating the entire chapter problem and the complete method chain (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)).
 - The **Chapter Summary** of each chapter of the main text should be written as a single paragraph: it does not repeat the table of contents, does not add new results, and does not replace the final conclusion; it should summarize the issues, methods, evidence, value and support for the main line of the full text.
 - Exceptions usually include: abstract, table of contents, references, acknowledgments, appendices and other non-main argument units.
 

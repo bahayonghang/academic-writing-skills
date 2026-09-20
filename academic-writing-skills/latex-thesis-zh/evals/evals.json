@@ -1597,6 +1597,56 @@
           "description": "delivers change notes or identifies evidence gaps"
         }
       ]
+    },
+    {
+      "id": 51,
+      "prompt": "请对附带的中文学位论文工程运行各级段落职责与结构重复检查（--paragraph-roles）。针对章引言背景重述、目录路线双写、总节导语重复、小节首段罗列挑战、公式后逐字翻译算子以及本章小结新增论证分别给出诊断与去重建议，但不要自动改写正文。",
+      "expected_output": "路由到 logic --paragraph-roles，对正文各级段落职责与结构去重输出 [Script] 观察。对第 3 章引言报告 PR-INTRO-BG（第 2 章概述式引言豁免）与 PR-INTRO-TOC；对 3.1 导语报告 PR-LEAD-DUP；对 3.1.1 首段报告 PR-SUB-CHAL；对公式后逐字翻译段报告 PR-EQ-NARR；对小结新增引用与公式报告 PR-SUM-NEW。每项均为 Info/P3 且含 Meaning-Check: NEEDS-LLM，不宣称 PRESERVED，不复制整句，指引参考 paragraph-roles-zh.md。",
+      "files": [
+        "evals/fixtures/paragraph-roles/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "PR-INTRO-BG",
+          "description": "detects industry background repetition in body chapter intro"
+        },
+        {
+          "type": "contains",
+          "text": "PR-INTRO-TOC",
+          "description": "detects double TOC or over-detailed section preview in chapter intro"
+        },
+        {
+          "type": "contains",
+          "text": "PR-LEAD-DUP",
+          "description": "detects lexical overlap between section lead-in and chapter intro"
+        },
+        {
+          "type": "contains",
+          "text": "PR-SUB-CHAL",
+          "description": "detects global challenges enumerated in subsection opening"
+        },
+        {
+          "type": "contains",
+          "text": "PR-EQ-NARR",
+          "description": "detects verbatim operator translation in post-equation prose"
+        },
+        {
+          "type": "contains",
+          "text": "PR-SUM-NEW",
+          "description": "detects new citations or equations introduced in chapter summary"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(paragraph-roles-zh|各级段落职责|结构去重)",
+          "description": "points to paragraph-roles reference guide"
+        }
+      ]
     }
   ]
 }

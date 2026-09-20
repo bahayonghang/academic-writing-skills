@@ -49,6 +49,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 涉及模板不明、编译失败、学校规范不清这三类问题时，优先 `template`，再决定后续是 `compile` 还是 `format`。
 - `logic` 默认全文档运行（含导语、主线、章引言、漏斗、三方对齐与 C3 绪论-结论闭合）；`--section` 只聚焦单章（接受英文键或中文名，如 `--section 绪论`），此时仅运行与该章相关的检查（如 related 的 A1/A3、introduction 的漏斗）。`--cross-section` 已并入默认行为，仅作兼容保留。
 - 涉及“段落首句没有总领”“段末缺少收束”“相邻段跳跃”“单句成段/段内纯罗列”时，走 `logic --paragraph-arc`，并补读 `references/writing/paragraph-arc-zh.md`。该 flag 默认关闭，只输出含 `Meaning-Check: NEEDS-LLM` 的 `[Script]` 观察；`--section` 可缩小章节作用域，`--first-chapter` 不参与段落弧线定位。`logic` 仍属于纯诊断模块，不增加改写契约。
+- 涉及“章引言又讲了一遍背景”“每节开头都重复整章问题”“小节首段又列一遍挑战”“公式后把每步都翻成文字”“小结又加了引用/公式”“各级段落该写什么不该写什么 / 结构重复 / 写作冗余”时，走 `logic --paragraph-roles`，并补读 `references/writing/paragraph-roles-zh.md`。该 flag 默认关闭，只输出含 `Meaning-Check: NEEDS-LLM` 的 `[Script]` 观察；实验结果段的流水账仍走 `experiment --results-analysis`。
 - `deai` 全文档分析用 `--analyze`（覆盖所有章节，含未命中关键词的正文章）；`--section` 针对单章快速检查，二者互补，不要只跑 `--section` 就下全文结论。
 - `deai` 在英文摘要区域会额外做时态检查：方法/结果句用现在时报告动词（如 `shows`/`presents`）发 `[Script]` LOW 痕迹，中文正文不检查；能识别 generic `\begin{abstract}`、thuthesis `\begin{abstract*}`、pkuthss `\begin{eabstract}`（跳过中文摘要环境）。判断级清单见 `references/writing/tense-guide-zh.md`。
 - 涉及“标题后直接接列表/公式”“绪论-结论闭合”“章节主线”“研究空白推导”“四级标题导语”时，默认走 `logic`；明确要重构文献综述写法或核对“主题簇—代表文献归因—簇末综合”接口时切到 `literature`。

@@ -146,6 +146,25 @@ uv run python -B scripts/analyze_logic.py thesis.tex --emit-window --subsection 
 [`../writing/subsection-context-zh.md`](../writing/subsection-context-zh.md)，词表见
 [`../writing/subsection-context-terms.yaml`](../writing/subsection-context-terms.yaml)。
 
+## Paragraph Role Checks (`--paragraph-roles`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-roles [--section SECTION]
+```
+
+该附加分支观察正文各级段落的职责分配与结构重复，输出六类 `[Script]` 观察，默认 Info/P3 并含 `Meaning-Check: NEEDS-LLM`。`--method-narrative` 在未指定 `--section` 时的提前返回路径保持不变，在该路径下 `--paragraph-roles` 不运行。
+
+| 代码 | 观察位置 | 启发式触发条件 | 豁免与边界 |
+| --- | --- | --- | --- |
+| `PR-INTRO-BG` | 章引言 | 行业背景词去重命中 $\ge 3$ 且无承接句 | 第 2 章（概述式引言）豁免 |
+| `PR-INTRO-TOC` | 章引言 | 节号目录与路线预告在同引言双写，或节号目录条目 $\ge 5$ 逐节详列 | 单独合规节号目录或单独路线预告通过 |
+| `PR-LEAD-DUP` | 含子节的总节导语 | 导语与本章章引言 bigram Jaccard $\ge 0.3500$ | 导语 $<40$ 汉字或无章引言豁免 |
+| `PR-SUB-CHAL` | 具体方法小节首段 | depth-3 首段挑战词 $\ge 2$ 且列举序词 $\ge 2$ | 绪论/结论章豁免；标题含引言/概述豁免 |
+| `PR-EQ-NARR` | 公式后首段 | 编号公式后首段算子翻译词去重命中 $\ge 3$ | “式中/其中”纯符号释义段豁免 |
+| `PR-SUM-NEW` | 本章小结 | 小结出现 `\cite{}`、数学环境或图表/算法环境 | `\ref` 回指已有图表不报；注释行不报 |
+
+规则真相源见 [`../writing/paragraph-roles-zh.md`](../writing/paragraph-roles-zh.md)，词表见 [`../writing/paragraph-roles-terms.yaml`](../writing/paragraph-roles-terms.yaml)。
+
 ## Body-Chapter Stitching & Intro Bridging (default)
 
 - **P-PAPER（默认全章，无需 flag）**：可见正文出现"源论文/小论文/N 篇论文"表述即报（Minor/P2），

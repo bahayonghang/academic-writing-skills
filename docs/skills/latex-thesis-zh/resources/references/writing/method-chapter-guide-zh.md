@@ -91,6 +91,7 @@ More stable and more conducive to positioning the main line for blind review (se
 - **It is forbidden to repeat the introduction and summary** (Tsinghua §4.5: Contents already mentioned in the introduction and summary will not be repeated in the chapter introduction).
 - **"Defect-driven transition" recommended paradigm**: The most elegant transition between chapters is at the **end of the experiment in the previous chapter** - forced out by the defects exposed by the experiment
   Next chapter (pulverizing Chapter 5 "Single-step decision-making causes system instability" to force out Chapter 6 rolling optimization).
+- **Do not repeat industry background or duplicate directory**: The chapter introduction must not restate the broad industry background and literature review already provided in the introduction; choose either a roadmap preview or a section directory, never both in the same introduction; the section directory must not elaborate on the specific details of every section. For role matrix and deduplication rules across all paragraph levels, see [`paragraph-roles-zh.md`](paragraph-roles-zh.md).
 
 | Writing | Judgment |
 | --- | --- |
@@ -152,6 +153,7 @@ More stable and more conducive to positioning the main line for blind review (se
   → **Treat the forward-link sentence only as an Info recommendation; its absence must not trigger a hard finding** (red line 2). An engineering-application chapter summary should close with evidenced mechanisms, the current evidence boundary, and its contribution to the thesis. Quantified benefits and broader applicability may be stated only when the supplied evidence supports them.
 - **Conclusion ≠ Simple repetition of the summary of each chapter** (Tsinghua §4.6): "Conclusion/Summary and Outlook" of the full text comprehensively summarizes the contribution, limitations and future of the full text
   Direction; the summary of this chapter only summarizes the evidence in the chapter, and does not mechanically repeat the "Chapter X..." sentence pattern of each chapter.
+- **Do not introduce new arguments**: The summary must not introduce new citations, formulas, figures/tables, or derivations (back-referencing existing figures or tables in the chapter is compliant); summarizing method highlights at sentence-level granularity is compliant, whereas step-by-step recitation of training or deployment pipelines is non-compliant (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)).
 
 ## 7. Echoing the framework of Chapter 2
 
@@ -242,6 +244,7 @@ Point to the specification section:
 | The method name is contradictory | **LLM** | The method name/abbreviation in the text conflicts with the full text | Manual | Eight |
 | Authenticity of the succession / "This article vs this chapter" | **LLM** | Whether the following sentence corresponds to real dependence and whether the reference is misplaced | Artificial | Three/Eight |
 | The formula lacks the interpretation of "in the formula" | **LLM** | The numbered formula is missing the symbol-by-symbol interpretation (sampling) | Manual | Four |
+| PR-* | logic (`--paragraph-roles`) | Paragraph role responsibilities and structural deduplication observations in main text (chapter intro / lead-in / subsection opening / post-equation / summary) | Info | Three/Six (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)) |
 
 ## Output suggested format
 

@@ -161,6 +161,25 @@ only. See [`../writing/subsection-context-zh.md`](../writing/subsection-context-
 criteria, eligibility rules, and protocol, and
 [`../writing/subsection-context-terms.yaml`](../writing/subsection-context-terms.yaml) for markers.
 
+## Paragraph Role Checks (`--paragraph-roles`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-roles [--section SECTION]
+```
+
+This additive branch observes the distribution of responsibilities and structural deduplication across paragraph levels in the main text, emitting six `[Script]` observations that default to Info/P3 with `Meaning-Check: NEEDS-LLM`. The early return path of `--method-narrative` when `--section` is not supplied remains unchanged; `--paragraph-roles` does not run on that path.
+
+| Code | Observed position | Heuristic trigger condition | Exemptions and boundaries |
+| --- | --- | --- | --- |
+| `PR-INTRO-BG` | Chapter introduction | Deduplicated background markers $\ge 3$ and no backward link | Chapter 2 (overview-style intro) exempt |
+| `PR-INTRO-TOC` | Chapter introduction | Section directory and roadmap preview co-occur in one intro, or section directory entries $\ge 5$ detailed | Standalone compliant directory or standalone roadmap passes |
+| `PR-LEAD-DUP` | Section lead-in with subsections | Lead-in bigram Jaccard with chapter intro $\ge 0.3500$ | Lead-in $<40$ Han characters or no chapter intro exempt |
+| `PR-SUB-CHAL` | Opening paragraph of method subsection | Depth-3 opening challenge markers $\ge 2$ and enumeration markers $\ge 2$ | Intro/conclusion chapters exempt; title with "intro/overview" exempt |
+| `PR-EQ-NARR` | Post-equation opening paragraph | Deduplicated operator translation markers after numbered equation $\ge 3$ | "式中/其中" pure symbol-glossing paragraphs exempt |
+| `PR-SUM-NEW` | Chapter summary | Summary contains `\cite{}`, math environment, or figure/table/algorithm environment | `\ref` back-referencing existing figures/tables passes; comments pass |
+
+See [`../writing/paragraph-roles-zh.md`](../writing/paragraph-roles-zh.md) for the rule source and [`../writing/paragraph-roles-terms.yaml`](../writing/paragraph-roles-terms.yaml) for term lists.
+
 ## Body-Chapter Stitching and Introduction Bridging (Default)
 
 - **P-PAPER (all chapters by default, no flag)**: report every occurrence of “源论文/小论文/N 篇论文” in visible prose (Minor/P2), without truncation. This is direct blind-review evidence of stitching; replace with “core problem/research content/this chapter.”

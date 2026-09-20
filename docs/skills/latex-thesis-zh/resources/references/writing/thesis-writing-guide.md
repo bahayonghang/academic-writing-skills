@@ -63,6 +63,7 @@ For each chapter from Chapter 2 to the conclusion, it is **recommended** to writ
 - **Parallel method chapters need not refer backward**: the required handoff strength is **proportional to the real dependency between chapters**. A purely parallel method chapter may establish its own problem without referring to the previous chapter; the checker gives only an Info recommendation, not a defect. Only when the chapter reuses an earlier result (for example, it mentions "Chapter X") but its introduction omits the dependency should the checker request a role-reuse sentence.
 - **Role reuse sentence inheritance and compliance**: Succession relies on "role reuse sentences" rather than "narrative review paragraphs" - instead of repeating what was done in the previous chapter, directly state "use the prediction model of Chapter X as the fitness function of this chapter", that is, compliance.
 - **Method route preview format is compliant**: The method route preview written as "First...Second...Finally" is sufficient. There is no need to write the section number directory of "Section N.2 will introduce...", both states are compliant.
+- **Do not repeat industry background or duplicate directory**: The chapter introduction must not restate the broad industry background or literature review already established in the introduction; choose either a section directory or a roadmap preview, never both in the same introduction; the section directory must not elaborate on the specific details of every section. For role matrix and deduplication rules across all paragraph levels, see [`paragraph-roles-zh.md`](paragraph-roles-zh.md).
 
 **Positive and negative examples**:
 
@@ -86,6 +87,8 @@ user request that requires multiple paragraphs or a list; do not turn one paragr
 fixed number of values into universal rules. Use sequence words only for a process with a real temporal or
 execution order. Do not force parallel modules, method interfaces, or independent evaluation tasks into a
 “first-second-finally” sequence.
+
+**Argument boundary**: The summary must not introduce new citations, formulas, figures/tables, or derivations (extending the existing rule of "do not add citations not in the original text", see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)); summarizing method highlights at sentence-level granularity is compliant, whereas step-by-step recitation of training or deployment pipelines is non-compliant; back-referencing existing figures or tables in the chapter body (`\ref`) is compliant.
 
 **Single segment character sequence**:
 

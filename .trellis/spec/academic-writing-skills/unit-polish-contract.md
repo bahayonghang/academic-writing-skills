@@ -44,8 +44,8 @@ uv run python scripts/polish_unit_zh.py INPUT --verify
 - `--plan` 的文本报告只列单元，不附核对结论或语义复核结论；`--verify` 的 A 档
   原文/润色稿差异应可直接阅读，不泄露 Python 容器表示法。JSON 结构不受影响。
 - 既有 `analyze_logic.py`、`deai_check.py`、`parsers.py`、`check_style_zh.py`、
-  `check_claim_forward.py`、`tex_loader.py` 保持不变；通过 import 复用游标、
-  段落切分、窗口及 loader，hedges 来源保持为 claim-forward 词表。
+  `check_claim_forward.py`、`tex_loader.py` 在**本模块**保持不变；通过 import 复用游标、
+  段落切分、窗口及 loader，hedges 来源保持为 claim-forward 词表。其他任务若改这些文件，必须同步更新 `test_polish_unit_zh.py` 的 `FROZEN_HASHES`（LF 规范化 sha256）。
 - 导语保留；连接词按位置与证据判断；结论强度保持；不引入论文指纹。
   不新增 deai 类别，不为语言改写调整论文中的实验事实或受保护载荷。
 

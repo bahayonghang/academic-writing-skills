@@ -81,6 +81,8 @@ For a standard method, explain how it is applied to the current problem and what
 standard version. A choice likely to be challenged needs the minimum necessary argument: purpose,
 applicability, and verifiable support.
 
+The opening paragraph of a module should directly state its inputs, function, or unresolved interfaces, rather than re-listing all research challenges; for paragraph roles and deduplication rules across levels, see [`paragraph-roles-zh.md`](paragraph-roles-zh.md).
+
 ## 4. Fill Every Interface Edge
 
 Every adjacent module pair must identify the upstream product, connecting transformation, and
@@ -125,6 +127,7 @@ Each key equation forms a purpose -> equation -> explanation -> downstream-use l
 - “式中” completes only symbol glossing; also state the constraint addressed, object produced, and downstream consumer.
 - Use the overview figure for global flow and module figures for local transformations; cite important edges instead of writing only “as shown in the figure.”
 - Keep pseudocode inputs, updated/frozen objects, loop order, stopping conditions, and outputs consistent with the prose.
+- Explain symbols, key mechanisms, and boundary conditions after equations, without translating every operator into words in sequence (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)).
 
 ## 6. Match Benefit Claims to Evidence Strength
 

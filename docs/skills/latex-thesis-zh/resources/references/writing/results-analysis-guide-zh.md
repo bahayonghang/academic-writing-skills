@@ -89,6 +89,7 @@ Unexpected outcomes are valid analytical objects: report them accurately, identi
 they alter, and state the follow-up test needed to distinguish explanations.
 
 Basis: user specification §2 and §5.2; external sources #3 and #8.
+For the positional role matrix and deduplication boundaries of experimental result paragraphs, see [`paragraph-roles-zh.md`](paragraph-roles-zh.md); specific criteria and check codes remain governed by this guide.
 
 ## 3. Complete Numeric Comparisons Metric by Metric
 

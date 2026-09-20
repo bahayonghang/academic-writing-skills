@@ -1,0 +1,84 @@
+# paragraph-roles-terms.yaml: 默认段落职责与结构去重词表
+# 常量阈值（PR_INTRO_BG_MIN_HITS等）集中定义于 analyze_logic.py，全部标注为 未标定 / UNVERIFIED
+
+background_markers:
+  - 行业背景
+  - 国家战略
+  - 现实需求
+  - 产业需求
+  - 国民经济
+  - 工业互联网
+  - 智能制造
+  - 数字化转型
+  - 时代背景
+  - 战略需求
+  - 广泛应用
+  - 蓬勃发展
+  - 飞速发展
+  - 关键作用
+  - 核心支撑
+  - 支柱产业
+roadmap_markers:
+  - 首先
+  - 其次
+  - 然后
+  - 进而
+  - 最后
+  - 组织如下
+  - 安排如下
+  - 方法路线
+  - 总体路线
+challenge_markers:
+  - 挑战
+  - 瓶颈
+  - 难点
+  - 难题
+  - 困难
+  - 缺陷
+  - 不足
+  - 局限
+enumeration_markers:
+  - 一是
+  - 二是
+  - 三是
+  - 第一
+  - 第二
+  - 第三
+  - 首先
+  - 其次
+  - 其三
+  - 最后
+operator_markers:
+  - 矩阵相乘
+  - 矩阵乘法
+  - 矩阵乘积
+  - 矩阵转置
+  - 逐元素相乘
+  - 哈达玛积
+  - 向量内积
+  - 卷积操作
+  - 激活函数
+  - 求和累加
+  - 矩阵求逆
+  - 求逆运算
+  - 相乘
+  - 相加
+  - 相除
+  - 相减
+  - 点乘
+  - 叉乘
+summary_new_argument_envs:
+  - equation
+  - equation*
+  - align
+  - align*
+  - gather
+  - gather*
+  - multline
+  - multline*
+  - figure
+  - figure*
+  - table
+  - table*
+  - algorithm
+  - algorithmic

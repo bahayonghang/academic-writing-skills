@@ -11,6 +11,7 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 try:
     from parsers import extract_abstract, get_parser, resolve_section_keys
@@ -555,6 +556,69 @@ def _chapter_bridge_gap(line: int, title: str, suggest: str, has_dependency: boo
     ]
 
 
+def _chapter_intro_block(
+    chapter: dict[str, Any], headings: list[dict[str, Any]], lines: list[str], parser
+) -> tuple[int, str, str] | None:
+    """提取正文章引言块（report_line, intro_text, form），无小节时返回 None。"""
+    # 本章范围：章标题行 -> 下一个 level-1 标题（或文末）。
+    next_chapter_line = next(
+        (h["line"] for h in headings if h["level"] == 1 and h["line"] > chapter["line"]),
+        None,
+    )
+    chapter_end = (next_chapter_line - 1) if next_chapter_line else len(lines)
+
+    # 本章首个下级小节（level >= 2）。无小节则跳过本章。
+    first_section = next(
+        (h for h in headings if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2),
+        None,
+    )
+    if first_section is None:
+        return None
+    first_section_line = first_section["line"]
+
+    # 章引言块 = 章标题行+1 .. 首个小节行-1 的可见正文。
+    intro_parts: list[str] = []
+    for line_no in range(chapter["line"] + 1, min(first_section_line - 1, len(lines)) + 1):
+        raw = lines[line_no - 1].strip()
+        if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            intro_parts.append(visible)
+    intro_text = " ".join(intro_parts)
+    intro_len = len(intro_text.replace(" ", ""))
+
+    # 报告行 / 形态：默认“章后导语”形态。
+    report_line = chapter["line"]
+    intro_form = "lead"
+
+    # 编号引言节形态适配（bug-fix）：章标题后直接进入“引言/概述”小节、章标题与该小节
+    # 之间无正文（或过短）时，改取该小节正文作为章引言检查对象，报告行定位到该小节标题。
+    if intro_len < CHAPTER_INTRO_MIN_CHARS and any(
+        t in first_section["title"] for t in INTRO_SECTION_TITLES_ZH
+    ):
+        section_end = chapter_end
+        for later in headings:
+            if later["line"] > first_section_line and later["level"] <= first_section["level"]:
+                section_end = later["line"] - 1
+                break
+        numbered_parts: list[str] = []
+        for line_no in range(first_section_line + 1, min(section_end, len(lines)) + 1):
+            raw = lines[line_no - 1].strip()
+            if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
+                continue
+            visible = parser.extract_visible_text(raw)
+            if visible:
+                numbered_parts.append(visible)
+        numbered_text = " ".join(numbered_parts)
+        if numbered_text:
+            intro_text = numbered_text
+            report_line = first_section_line
+            intro_form = "numbered"
+
+    return report_line, intro_text, intro_form
+
+
 def _check_chapter_intro(
     content: str, lines: list[str], parser, first_chapter: int | None = None
 ) -> list[str]:
@@ -605,58 +669,16 @@ def _check_chapter_intro(
         )
         chapter_end = (next_chapter_line - 1) if next_chapter_line else len(lines)
 
-        # 本章首个下级小节（level >= 2）。无小节则跳过本章。
-        first_section = next(
-            (h for h in headings if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2),
-            None,
-        )
-        if first_section is None:
+        intro_block = _chapter_intro_block(chapter, headings, lines, parser)
+        if intro_block is None:
             continue
-        first_section_line = first_section["line"]
-
-        # 章引言块 = 章标题行+1 .. 首个小节行-1 的可见正文。
-        intro_parts: list[str] = []
-        for line_no in range(chapter["line"] + 1, min(first_section_line - 1, len(lines)) + 1):
-            raw = lines[line_no - 1].strip()
-            if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
-                continue
-            visible = parser.extract_visible_text(raw)
-            if visible:
-                intro_parts.append(visible)
-        intro_text = " ".join(intro_parts)
+        report_line, intro_text, intro_form = intro_block
         intro_len = len(intro_text.replace(" ", ""))
-
-        # 报告行 / 形态 / 篇幅上限：默认“章后导语”形态。
-        report_line = chapter["line"]
-        intro_form = "lead"
-        max_chars = CHAPTER_INTRO_MAX_CHARS
-
-        # 编号引言节形态适配（bug-fix）：章标题后直接进入“引言/概述”小节、章标题与该小节
-        # 之间无正文（或过短）时，改取该小节正文作为章引言检查对象，报告行定位到该小节标题。
-        if intro_len < CHAPTER_INTRO_MIN_CHARS and any(
-            t in first_section["title"] for t in INTRO_SECTION_TITLES_ZH
-        ):
-            section_end = chapter_end
-            for later in headings:
-                if later["line"] > first_section_line and later["level"] <= first_section["level"]:
-                    section_end = later["line"] - 1
-                    break
-            numbered_parts: list[str] = []
-            for line_no in range(first_section_line + 1, min(section_end, len(lines)) + 1):
-                raw = lines[line_no - 1].strip()
-                if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
-                    continue
-                visible = parser.extract_visible_text(raw)
-                if visible:
-                    numbered_parts.append(visible)
-            numbered_text = " ".join(numbered_parts)
-            if numbered_text:
-                intro_text = numbered_text
-                intro_len = len(intro_text.replace(" ", ""))
-                report_line = first_section_line
-                intro_form = "numbered"
-                max_chars = CHAPTER_INTRO_NUMBERED_MAX_CHARS
-
+        max_chars = (
+            CHAPTER_INTRO_NUMBERED_MAX_CHARS
+            if intro_form == "numbered"
+            else CHAPTER_INTRO_MAX_CHARS
+        )
         bridge_suggest = (
             "在章引言第一段用章节号回顾前一章解决了什么、得出什么结论，引出本章为何继续。"
         )
@@ -1046,6 +1068,109 @@ SUBSECTION_CONTEXT_MIN_HAN = 20
 SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
 SUBSECTION_CONTEXT_NO_DEPTH3 = "% 小节级：本文档无 depth-3 标题，未产出小节级观察。"
 
+
+# ── 段落职责与结构去重诊断（可选开关：--paragraph-roles）─────────────────
+
+PARAGRAPH_ROLES_TERMS_FILENAME = "paragraph-roles-terms.yaml"
+# 常量阈值（未标定 / UNVERIFIED，启发式初值）
+PR_INTRO_BG_MIN_HITS = 3
+PR_INTRO_TOC_MIN_ITEMS = 5
+PR_LEAD_DUP_JACCARD = 0.3500
+PR_LEAD_MIN_HAN = 40
+PR_SUB_CHAL_MIN_HITS = 2
+PR_EQ_NARR_MIN_HITS = 3
+
+DEFAULT_PARAGRAPH_ROLES_TERMS: dict[str, tuple[str, ...]] = {
+    "background_markers": (
+        "行业背景",
+        "国家战略",
+        "现实需求",
+        "产业需求",
+        "国民经济",
+        "工业互联网",
+        "智能制造",
+        "数字化转型",
+        "时代背景",
+        "战略需求",
+        "广泛应用",
+        "蓬勃发展",
+        "飞速发展",
+        "关键作用",
+        "核心支撑",
+        "支柱产业",
+    ),
+    "roadmap_markers": (
+        "首先",
+        "其次",
+        "然后",
+        "进而",
+        "最后",
+        "组织如下",
+        "安排如下",
+        "方法路线",
+        "总体路线",
+    ),
+    "challenge_markers": (
+        "挑战",
+        "瓶颈",
+        "难点",
+        "难题",
+        "困难",
+        "缺陷",
+        "不足",
+        "局限",
+    ),
+    "enumeration_markers": (
+        "一是",
+        "二是",
+        "三是",
+        "第一",
+        "第二",
+        "第三",
+        "首先",
+        "其次",
+        "其三",
+        "最后",
+    ),
+    "operator_markers": (
+        "矩阵相乘",
+        "矩阵乘法",
+        "矩阵乘积",
+        "矩阵转置",
+        "逐元素相乘",
+        "哈达玛积",
+        "向量内积",
+        "卷积操作",
+        "激活函数",
+        "求和累加",
+        "矩阵求逆",
+        "求逆运算",
+        "相乘",
+        "相加",
+        "相除",
+        "相减",
+        "点乘",
+        "叉乘",
+    ),
+    "summary_new_argument_envs": (
+        "equation",
+        "equation*",
+        "align",
+        "align*",
+        "gather",
+        "gather*",
+        "multline",
+        "multline*",
+        "figure",
+        "figure*",
+        "table",
+        "table*",
+        "algorithm",
+        "algorithmic",
+    ),
+}
+
+_ROLES_TERM_KEYS = tuple(DEFAULT_PARAGRAPH_ROLES_TERMS)
 DEFAULT_SUBSECTION_CONTEXT_TERMS: dict[str, tuple[str, ...]] = {
     "inbound": ("在此基础上", "针对上述", "基于此", "前述", "上一小节", "承接"),
     "outbound": ("为后续", "为下一", "提供输入", "由此可得", "综上"),
@@ -1233,6 +1358,33 @@ def _load_subsection_context_terms(script_dir: Path) -> dict[str, tuple[str, ...
     if not isinstance(data, dict):
         return terms
     for key in DEFAULT_SUBSECTION_CONTEXT_TERMS:
+        configured = data.get(key)
+        if (
+            isinstance(configured, list)
+            and configured
+            and all(isinstance(value, str) and value for value in configured)
+        ):
+            terms[key] = tuple(configured)
+    return terms
+
+
+def _load_paragraph_roles_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
+    """Load paragraph roles term table, falling back per key when YAML is absent or invalid."""
+    terms = {key: tuple(values) for key, values in DEFAULT_PARAGRAPH_ROLES_TERMS.items()}
+    yaml_path = script_dir.parent / "references" / "writing" / PARAGRAPH_ROLES_TERMS_FILENAME
+    if not yaml_path.exists():
+        return terms
+    try:
+        import yaml
+    except ImportError:
+        return terms
+    try:
+        data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeError, yaml.YAMLError):
+        return terms
+    if not isinstance(data, dict):
+        return terms
+    for key in _ROLES_TERM_KEYS:
         configured = data.get(key)
         if (
             isinstance(configured, list)
@@ -3281,6 +3433,340 @@ def _check_process_chapter(
     return out
 
 
+def _pr_finding(
+    code: str,
+    start: int,
+    end: int | None,
+    message: str,
+    current: str,
+    suggested: str,
+    rationale: str,
+) -> list[str]:
+    return [
+        f"% 段落职责（{_zh_loc(start, end)}）[Severity: Info] [Priority: P3]: "
+        f"[Script] {code} {message}",
+        f"% Current: {current}",
+        f"% Suggested: {suggested}",
+        f"% Rationale: {rationale}",
+        "% Meaning-Check: NEEDS-LLM",
+        "",
+    ]
+
+
+def _check_paragraph_roles(
+    content: str,
+    lines: list[str],
+    parser,
+    sections: dict[str, tuple[int, int]],
+    ranges: list[tuple[int, int]],
+    first_chapter: int | None = None,
+) -> list[str]:
+    """正文各级段落职责与结构去重观察（--paragraph-roles）。"""
+    terms = _load_paragraph_roles_terms(Path(__file__).resolve().parent)
+    bg_markers = terms["background_markers"]
+    roadmap_markers = terms["roadmap_markers"]
+    challenge_markers = terms["challenge_markers"]
+    enumeration_markers = terms["enumeration_markers"]
+    operator_markers = terms["operator_markers"]
+    summary_envs = set(terms["summary_new_argument_envs"])
+
+    headings = parser.extract_headings(content)
+    chapters = [h for h in headings if h["level"] == 1]
+    if not chapters:
+        return []
+
+    body_chapters = [c for c in chapters if not _is_chapter_intro_exempt(c["title"])]
+    paragraphs = _split_arc_paragraphs(content, parser, sections)
+
+    findings: list[tuple[int, list[str]]] = []
+
+    for order, chapter in enumerate(body_chapters):
+        title = chapter["title"]
+        if first_chapter is not None:
+            real_num = first_chapter + chapters.index(chapter)
+            is_first_body = real_num == 2
+        else:
+            is_first_body = order == 0
+
+        next_ch = next(
+            (h for h in headings if h["level"] == 1 and h["line"] > chapter["line"]), None
+        )
+        chapter_end = (next_ch["line"] - 1) if next_ch else len(lines)
+
+        # ── 1. 章引言检查（PR-INTRO-BG / PR-INTRO-TOC）──
+        intro_block = _chapter_intro_block(chapter, headings, lines, parser)
+        if intro_block is not None:
+            report_line, intro_text, _intro_form = intro_block
+            intro_len = len(intro_text.replace(" ", ""))
+            if intro_text and intro_len >= CHAPTER_INTRO_MIN_CHARS:
+                # PR-INTRO-BG: 第 2 章（概述式引言）豁免
+                if not is_first_body:
+                    sentences = [
+                        s.strip() for s in _ARC_SENTENCE_SPLIT_RE.split(intro_text) if s.strip()
+                    ]
+                    bg_hits: set[str] = set()
+                    for s in sentences:
+                        # 且块内无"第X章"承接句命中同一句
+                        if CHAPTER_DEP_REF_RE.search(s) is None:
+                            for m in bg_markers:
+                                if m in s:
+                                    bg_hits.add(m)
+                    if len(bg_hits) >= PR_INTRO_BG_MIN_HITS:
+                        findings.append(
+                            (
+                                report_line,
+                                _pr_finding(
+                                    "PR-INTRO-BG",
+                                    report_line,
+                                    None,
+                                    f"第“{title}”章章引言可能重述宏观行业背景",
+                                    f"命中 {len(bg_hits)} 项背景词（{', '.join(sorted(bg_hits))}）",
+                                    "章引言聚焦本章技术问题与前章接口，将宏观行业背景留由绪论交代。",
+                                    "正文章引言承担承上启下职责，重复绪论已交代过的行业背景会造成跨章节结构冗余。",
+                                ),
+                            )
+                        )
+
+                # PR-INTRO-TOC: 节号目录与路线预告双写，或节号目录详列过多
+                sec_matches = SECTION_NUM_PREVIEW_RE.findall(intro_text)
+                num_sec = len(sec_matches)
+                route_preview = [w for w in ("首先", "其次", "最后") if w in roadmap_markers]
+                route_hits = [w for w in route_preview if w in intro_text]
+                has_double = num_sec >= 1 and len(route_hits) >= 2
+                has_too_many = num_sec >= PR_INTRO_TOC_MIN_ITEMS
+                if has_double or has_too_many:
+                    if has_double:
+                        curr = (
+                            f"同一引言内节号目录（命中 {num_sec} 处）与方法路线预告"
+                            f"（命中 {len(route_hits)} 处：{'/'.join(sorted(route_hits))}）双写"
+                        )
+                    else:
+                        curr = f"节号目录详列 {num_sec} 个小节安排（阈值 {PR_INTRO_TOC_MIN_ITEMS}）"
+                    findings.append(
+                        (
+                            report_line,
+                            _pr_finding(
+                                "PR-INTRO-TOC",
+                                report_line,
+                                None,
+                                f"第“{title}”章章引言小节预告存在结构重复或详列过多",
+                                curr,
+                                "方法路线预告与节号目录二选一，避免在同一引言内双写；节号目录不逐节展开每节细节。",
+                                "章引言提供简短路线即可，双写或逐节详列会与正文小节导语造成内容重叠。",
+                            ),
+                        )
+                    )
+
+        # ── 2. 含子节的总节导语检查（PR-LEAD-DUP）──
+        if intro_block is not None:
+            intro_clean = intro_block[1]
+            if len(intro_clean.replace(" ", "")) >= CHAPTER_INTRO_MIN_CHARS:
+                ch_secs = [
+                    h
+                    for h in headings
+                    if chapter["line"] < h["line"] <= chapter_end and h["level"] == 2
+                ]
+                for idx, sec in enumerate(ch_secs):
+                    sec_end = (
+                        ch_secs[idx + 1]["line"] - 1 if idx + 1 < len(ch_secs) else chapter_end
+                    )
+                    has_l3 = any(
+                        h
+                        for h in headings
+                        if sec["line"] < h["line"] <= sec_end and h["level"] == 3
+                    )
+                    if not has_l3:
+                        continue
+                    sec_paras = [p for p in paragraphs if sec["line"] < p.start <= sec_end]
+                    if not sec_paras:
+                        continue
+                    lead_p = sec_paras[0]
+                    lead_han = len(re.findall(r"[\u4e00-\u9fff]", lead_p.visible))
+                    if lead_p.is_heading_lead and lead_han >= PR_LEAD_MIN_HAN:
+                        jaccard = round(_arc_jaccard(lead_p.visible, intro_clean), 4)
+                        if jaccard >= PR_LEAD_DUP_JACCARD:
+                            findings.append(
+                                (
+                                    lead_p.start,
+                                    _pr_finding(
+                                        "PR-LEAD-DUP",
+                                        lead_p.start,
+                                        lead_p.end,
+                                        f"总节导语“{sec['title']}”与本章章引言词面重叠较高",
+                                        f"与章引言 bigram Jaccard 重叠度为 {jaccard:.4f}（阈值 {PR_LEAD_DUP_JACCARD:.4f}）",
+                                        "总节导语重点界定本节讨论对象或提供简短阅读地图，避免重复整章问题与全方法链。",
+                                        "总节导语位于章引言之下，重复全章背景会造成跨层级写作冗余。",
+                                    ),
+                                )
+                            )
+
+        # ── 3. 具体方法小节首段检查（PR-SUB-CHAL）──
+        is_lit_chapter = any(kw in title for kw in ("相关工作", "文献综述", "综述", "现状"))
+        if not is_lit_chapter:
+            subsections = [
+                h
+                for h in headings
+                if chapter["line"] < h["line"] <= chapter_end and h["level"] == 3
+            ]
+            for sub in subsections:
+                sub_title = sub["title"]
+                if any(t in sub_title for t in INTRO_SECTION_TITLES_ZH):
+                    continue
+                next_h_line = next(
+                    (h["line"] for h in headings if h["line"] > sub["line"]),
+                    chapter_end + 1,
+                )
+                sub_paras = [p for p in paragraphs if sub["line"] < p.start < next_h_line]
+                if not sub_paras:
+                    continue
+                first_p = sub_paras[0]
+                first_han = len(re.findall(r"[\u4e00-\u9fff]", first_p.visible))
+                if first_han < 40:
+                    continue
+                c_hits = {m for m in challenge_markers if m in first_p.visible}
+                e_hits = {m for m in enumeration_markers if m in first_p.visible}
+                if len(c_hits) >= PR_SUB_CHAL_MIN_HITS and len(e_hits) >= 2:
+                    findings.append(
+                        (
+                            first_p.start,
+                            _pr_finding(
+                                "PR-SUB-CHAL",
+                                first_p.start,
+                                first_p.end,
+                                f"具体方法小节首段“{sub_title}”可能重复列举全局研究挑战",
+                                f"首段命中挑战词 {len(c_hits)} 项（{'/'.join(sorted(c_hits))}）、列举序词 {len(e_hits)} 项（{'/'.join(sorted(e_hits))}）",
+                                "方法小节首段直接说明本模块输入、作用或未解决接口，全局研究挑战留由上层章节交代。",
+                                "具体方法小节应直接开展技术推导，小节开头重复罗列研究挑战属于层级职责错位。",
+                            ),
+                        )
+                    )
+
+        # ── 4. 公式后段落检查（PR-EQ-NARR）──
+        eq_blocks = _mn_equation_blocks(lines, chapter["line"], chapter_end)
+        if eq_blocks:
+            groups: list[list[tuple[int, int, str]]] = []
+            for block in eq_blocks:
+                if not groups or _mn_visible_between(
+                    lines, groups[-1][-1][1] + 1, block[0] - 1, parser
+                ):
+                    groups.append([block])
+                else:
+                    groups[-1].append(block)
+
+            for group in groups:
+                after_line = group[-1][1] + 1
+                para_lines: list[int] = []
+                for ln in range(after_line, min(chapter_end, len(lines)) + 1):
+                    raw = lines[ln - 1].strip()
+                    if not raw:
+                        if para_lines:
+                            break
+                        continue
+                    if raw.startswith(parser.get_comment_prefix()):
+                        continue
+                    uncommented = _mn_strip_latex_comment(raw)
+                    if (
+                        MN_ANY_EQUATION_BEGIN_RE.search(uncommented)
+                        or MN_HEADING_COMMAND_RE.match(uncommented)
+                        or _ARC_BEGIN_ENV_RE.search(uncommented)
+                    ):
+                        break
+                    visible = parser.extract_visible_text(raw)
+                    if visible:
+                        para_lines.append(ln)
+
+                if not para_lines:
+                    continue
+
+                p_start, p_end = para_lines[0], para_lines[-1]
+                p_text = " ".join(
+                    parser.extract_visible_text(lines[ln - 1].strip())
+                    for ln in para_lines
+                    if parser.extract_visible_text(lines[ln - 1].strip())
+                )
+                han_count = len(re.findall(r"[\u4e00-\u9fff]", p_text))
+                if han_count < 40:
+                    continue
+
+                op_hits = {m for m in operator_markers if m in p_text}
+                if len(op_hits) >= PR_EQ_NARR_MIN_HITS:
+                    findings.append(
+                        (
+                            p_start,
+                            _pr_finding(
+                                "PR-EQ-NARR",
+                                p_start,
+                                p_end,
+                                "公式后段落可能逐字翻译代数运算算子",
+                                f"公式后段落命中 {len(op_hits)} 项算子翻译词（{', '.join(sorted(op_hits))}）",
+                                "公式后着重解释关键机制、边界条件与下游用途，避免按公式顺序逐算子翻译成文字。",
+                                "数学公式本身已明确表达运算逻辑，文字段落应提供符号物理意义与机制解释。",
+                            ),
+                        )
+                    )
+
+    # ── 5. 本章小结检查（PR-SUM-NEW）──
+    for h in headings:
+        clean_t = re.sub(r"^(?:第[0-9一二三四五六七八九十]+[章节]|[\d\.]+)\s*", "", h["title"])
+        clean_t = re.sub(r"[~\s]+", "", clean_t)
+        if clean_t == "本章小结":
+            sum_start = h["line"] + 1
+            next_same_h = next(
+                (
+                    other["line"]
+                    for other in headings
+                    if other["line"] > h["line"] and other["level"] <= h["level"]
+                ),
+                None,
+            )
+            sum_end = (next_same_h - 1) if next_same_h else len(lines)
+
+            violation_types: set[str] = set()
+            first_viol_line: int | None = None
+
+            for ln in range(sum_start, min(sum_end, len(lines)) + 1):
+                raw = lines[ln - 1].strip()
+                if not raw or raw.startswith(parser.get_comment_prefix()):
+                    continue
+                uncommented = _mn_strip_latex_comment(raw)
+                if re.search(r"\\cite[a-zA-Z*]*\s*(?:\[[^\]]*\]\s*)*\{", uncommented):
+                    violation_types.add("参考文献引用（\\cite）")
+                    if first_viol_line is None:
+                        first_viol_line = ln
+                for env in summary_envs:
+                    if rf"\begin{{{env}}}" in uncommented:
+                        violation_types.add(f"环境（\\begin{{{env}}}）")
+                        if first_viol_line is None:
+                            first_viol_line = ln
+                if "\\[" in uncommented:
+                    violation_types.add("行间公式（\\[）")
+                    if first_viol_line is None:
+                        first_viol_line = ln
+
+            if violation_types and first_viol_line is not None:
+                findings.append(
+                    (
+                        first_viol_line,
+                        _pr_finding(
+                            "PR-SUM-NEW",
+                            first_viol_line,
+                            None,
+                            "本章小结可能引入了正文尚未充分论证的新内容",
+                            f"小结中发现 {', '.join(sorted(violation_types))}",
+                            "本章小结只做既有证据收束，不新增引用、公式、图表或算法；回指已有图表请用 \\ref。",
+                            "章末小结旨在总结本章已证结论与方法要点，引入新论据会分散收束焦点。",
+                        ),
+                    )
+                )
+
+    findings.sort(key=lambda x: x[0])
+    out: list[str] = []
+    for line_no, finding_lines in findings:
+        if any(r_start <= line_no <= r_end for r_start, r_end in ranges):
+            out.extend(finding_lines)
+    return out
+
+
 def analyze(
     file_path: Path,
     section: str | None = None,
@@ -3294,6 +3780,7 @@ def analyze(
     subsection_context: bool = False,
     subsection: str | None = None,
     emit_window: bool = False,
+    paragraph_roles: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -3457,6 +3944,18 @@ def analyze(
                     )
                 )
 
+    if paragraph_roles:
+        pr_ranges = ranges if section else [(1, len(lines))]
+        out.extend(
+            _check_paragraph_roles(
+                content,
+                lines,
+                parser,
+                sections,
+                pr_ranges,
+                first_chapter=first_chapter,
+            )
+        )
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -3516,6 +4015,11 @@ def main() -> int:
         action="store_true",
         help="只打印指定小节的上下文部件与源坐标，不复制正文",
     )
+    cli.add_argument(
+        "--paragraph-roles",
+        action="store_true",
+        help="运行正文各级段落职责观察（章引言/总节导语/小节首段/公式后段/本章小结；默认关闭）",
+    )
     args = cli.parse_args()
 
     if args.emit_window and not args.subsection:
@@ -3538,6 +4042,7 @@ def main() -> int:
         args.subsection_context,
         args.subsection,
         args.emit_window,
+        args.paragraph_roles,
     )
     print("\n".join(report))
     if args.method_narrative and any(line.startswith("% ERROR") for line in report):

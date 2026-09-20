@@ -97,6 +97,7 @@ SMOKE_COMMANDS = [
     ("optimize_title.py", ["main.tex", "--check", "--headings"], {0}, "TITLE-ARCH"),
     ("deai_check.py", ["main.tex", "--section", "introduction"], {0}, "章节: introduction"),
     ("analyze_logic.py", ["main.tex"], {0}, "缺少导语段落"),
+    ("analyze_logic.py", ["main.tex", "--paragraph-roles"], {0}, "缺少导语段落"),
     ("analyze_literature.py", ["main.tex", "--section", "related"], {0}, "文献综述"),
     ("analyze_experiment.py", ["main.tex"], {0}, "% EXPERIMENT"),
     ("check_references.py", ["main.tex"], {1}, "Undefined reference"),

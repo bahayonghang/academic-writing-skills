@@ -280,6 +280,21 @@
       "query": "Polish this paragraph in my English LaTeX journal paper and verify that its claims are unchanged; use latex-paper-en.",
       "should_trigger": false,
       "category": "negative-overlap-unit-polish"
+    },
+    {
+      "query": "我的中文博士论文第三章引言又把行业背景讲了一遍，帮我检查各级段落职责与结构重复。",
+      "should_trigger": true,
+      "category": "writing-paragraph-roles"
+    },
+    {
+      "query": "学位论文每个方法小节开头都在重复本章面临的问题，帮我看看 main.tex 里有没有写作冗余和结构重复。",
+      "should_trigger": true,
+      "category": "writing-paragraph-roles"
+    },
+    {
+      "query": "My English conference paper has repetitive paragraph openings across sections; please check for structural redundancy in main.tex.",
+      "should_trigger": false,
+      "category": "negative-overlap-paragraph-roles"
     }
   ]
 }
