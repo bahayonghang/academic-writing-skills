@@ -1657,3 +1657,38 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 无本任务后续
+
+
+## Session 49: latex-thesis-zh 正文段落职责与 --paragraph-roles
+
+**Date**: 2026-09-20
+**Task**: latex-thesis-zh 正文段落职责与 --paragraph-roles
+**Branch**: `dev`
+
+### Summary
+
+新增六位置段落职责指南与 opt-in PR-* 观察；修正示例命令与阈值说明后归档。
+
+### Main Changes
+
+- 新增 paragraph-roles-zh.md、词表、--paragraph-roles 六码、路由、evals、spec 与双语镜像
+- 修正 --section method 示例与阈值无 CLI 覆盖说明
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1c908cd` | (see git log) |
+| `df84f4e` | (see git log) |
+
+### Testing
+
+- [OK] just ci 2183 passed / 2 skipped；just doc-build；resource sync latex-thesis-zh
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 无；任务已归档

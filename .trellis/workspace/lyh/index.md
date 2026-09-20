@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 48
-- **Last Active**: 2026-09-19
+- **Total Sessions**: 49
+- **Last Active**: 2026-09-20
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1659 | Active |
+| `journal-1.md` | ~1694 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 49 | 2026-09-20 | latex-thesis-zh 正文段落职责与 --paragraph-roles | `1c908cd`, `df84f4e` | `dev` |
 | 48 | 2026-09-19 | latex-thesis-zh 单元受控润色模块落地并归档 | `97215d7` | `dev` |
 | 47 | 2026-09-11 | 完成 paper-writing-studio 三层实现与四任务归档 | `4c2a0b1` | `dev` |
 | 46 | 2026-09-11 | Elsevier 写法知识包落地并归档 | `8644162`, `f0d2c0f` | `dev` |
