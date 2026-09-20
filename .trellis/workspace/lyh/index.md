@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 49
+- **Total Sessions**: 50
 - **Last Active**: 2026-09-20
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1694 | Active |
+| `journal-1.md` | ~1731 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 50 | 2026-09-20 | latex-thesis-zh 章引言一段式与两段式支持 | `6bb61c0` | `dev` |
 | 49 | 2026-09-20 | latex-thesis-zh 正文段落职责与 --paragraph-roles | `1c908cd`, `df84f4e` | `dev` |
 | 48 | 2026-09-19 | latex-thesis-zh 单元受控润色模块落地并归档 | `97215d7` | `dev` |
 | 47 | 2026-09-11 | 完成 paper-writing-studio 三层实现与四任务归档 | `4c2a0b1` | `dev` |

@@ -1692,3 +1692,40 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 无；任务已归档
+
+
+## Session 50: latex-thesis-zh 章引言一段式与两段式支持
+
+**Date**: 2026-09-20
+**Task**: latex-thesis-zh 章引言一段式与两段式支持
+**Branch**: `dev`
+
+### Summary
+
+正文章引言同时支持一段式与两段式：指南增六步推进序与段式选型，logic 新增 opt-in --chapter-intro-style（CI-STYLE/CI-MOVES/CI-LONG），并修复章号列举承上误报与写死两段的建议文案。
+
+### Main Changes
+
+- thesis-writing-guide 正文章引言改为双段式规范源（共同要件、一段式六步、段式选型）
+- 六份指南/模块文档去掉两段式为推荐形态的措辞
+- analyze_logic.py 扩展 CHAPTER_DEP_REF_RE、建议文案中立化，并新增 --chapter-intro-style
+- evals、docs 双语镜像、spec 契约与 test_chapter_intro_style.py
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6bb61c0` | (see git log) |
+
+### Testing
+
+- [OK] pytest 271 passed (chapter-intro-style + related contracts)
+- [OK] fixture 命中 CI-STYLE/CI-MOVES/CI-LONG；check_resource_sync.py --skill latex-thesis-zh 绿
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- just ci 本轮未等完；确认后可推送或开 PR
