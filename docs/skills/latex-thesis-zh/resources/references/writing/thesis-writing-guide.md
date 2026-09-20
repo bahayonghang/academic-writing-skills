@@ -39,24 +39,89 @@ Checkpoint:
 > See [introduction-guide-zh.md](introduction-guide-zh.md); the corresponding script check is
 > `analyze_literature.py --intro-citations` and `analyze_logic.py --intro-mainline`.
 
-## Introduction to the main article (two paragraphs connecting the previous and the following, recommended form)
+## Body-Chapter Introduction (One-Paragraph / Two-Paragraph, Connecting Preceding and Following)
 
-For each chapter from Chapter 2 to the conclusion, it is **recommended** to write a **Chapter Introduction** after the chapter title and then enter the subsections, echoing the "Chapter Summary" at the end of the chapter. It is different from the three-layer funnel introduction of Chapter 1. It is shorter and more focused on "connecting the previous and the following". The paper-to-chapter workflow is always more stable and more conducive to blind review and positioning of the main line, so this section is listed as an active recommendation form; however, it is recommended rather than rigid. See the "flexible caliber" below for the elastic boundary (see the third section of [method-chapter-guide-zh.md](method-chapter-guide-zh.md) for details on the method chapter, and the two paragraph templates in this section are the sources of citations).
+For each chapter from Chapter 2 to the conclusion, it is recommended to write a **Chapter Introduction** after the chapter title before entering subsections, echoing the "Chapter Summary" at the end of the chapter. In terms of positional form, both **numbered introduction sections** (`\chapter` followed directly by `\section{引言}`) and **post-chapter lead-ins** (unnumbered body prose after the chapter title) are compliant (see Section 3 of [method-chapter-guide-zh.md](method-chapter-guide-zh.md)). In terms of natural paragraphs, **both one-paragraph and two-paragraph forms are compliant**. In a paper-to-chapter workflow, **always writing a backward-connecting sentence is safer** (when inter-chapter dependencies exist) and more conducive to positioning the mainline during blind review; therefore, the backward sentence is the recommended move rather than fixing the number of paragraphs. However, this is **recommended rather than rigid**; see "Flexible rules" below for boundaries (method-chapter details appear in Section 3 of [method-chapter-guide-zh.md](method-chapter-guide-zh.md), and the templates below serve as the reference source).
 
-**Length**: Generally 1~2 natural paragraphs, about 300~500 words (the methods chapter can be extended, bear a small review and include `\cite`). It is not an abstract, and it should not repeat what was already covered in the introduction to the literature review.
+**Length**: Generally 1~2 natural paragraphs, about 300~500 words (literature-intensive method chapters can be longer, undertaking a mini-review and including `\cite`). It is not an abstract, and should not repeat content already covered in the Chapter 1 literature review.
+
+### Common Moves (Fixed Moves, Flexible Paragraphs)
+
+Regardless of whether a one-paragraph or two-paragraph form is adopted, a qualified body-chapter introduction should cover the following four core semantic moves (fixed moves, flexible paragraphs):
+
+| Move | Role | Typical phrasing | Necessity |
+| --- | --- | --- | --- |
+| ① Problem | Anchor process phenomena or data traits of this chapter's object, deriving technical problems and consequences | "＜Object＞ is obtained by ＜process＞ at ＜cycle＞... ＜Phenomenon＞ causes ＜problem＞, affecting ＜consequence＞." | Required |
+| ② Backward interface | State connection with previous chapters, citing prior achievements via a role-reuse sentence | "The predictive model constructed in Chapters 3 and 4 serves as the fitness function for this chapter..." | By dependency (omissible for parallel chapters) |
+| ③ Solution announcement | Announce the method, model, or system proposed in this chapter | "To address this problem, this chapter proposes ＜Method＞ (Full Name, ABBR), used for..." | Required |
+| ④ Closure or roadmap | State this chapter's research roadmap or value closure toward the whole thesis / follow-ups | "This chapter first... then... finally validates..." or "providing ... support for Chapter Y" | Required (choose either or both; do not write section directories) |
+
+### Two-Paragraph Form
+
+The two-paragraph form is suitable when backward handoff requires explaining conclusions and limitations of the previous chapter (≥ 2 sentences), or when the problem and solution contain multiple hierarchical layers. The first paragraph may also be written as "phenomenon → problem" rather than purely backward-looking, and the backward-connecting sentence can be placed at the end of paragraph 1 or the beginning of paragraph 2 (covered by flexible rules).
 
 **Two roles**:
 
-1. **Continuation (paragraph 1)**: Point out the value of the previous chapter to this chapter - what was solved in the previous chapter and what conclusions were drawn, which leads to why this chapter should continue. Use **chapter number** ("Chapter 2") to refer to it, and avoid relative expressions such as "previous chapter/above/previous chapter" (to facilitate skipping and positioning).
-2. **Forward setup (paragraph 2)**: State the problem addressed in this chapter, its core idea, and its advantage over existing methods. Depending on disciplinary needs, end with one or two sentences that **preview the method sequence** ("First... next... finally... experiments based on ... validate ...") or list the section arrangement ("This chapter is organized as follows: ..."; engineering chapters often include a chapter framework diagram). This roadmap is optional and should follow disciplinary and supervisor conventions.
+1. **Backward handoff (Paragraph 1)**: State the value of the previous chapter to this chapter—what the previous chapter solved, what conclusions were reached, leading to why this chapter must continue. Refer to **chapter numbers** ("Chapter 2"), avoiding relative expressions like "previous chapter / above / earlier" (to facilitate reading and navigation).
+2. **Forward setup (Paragraph 2)**: State what problem this chapter addresses, what the core idea is, and what advantages it holds over existing methods; at the end of the paragraph, according to disciplinary needs, use one or two sentences for a **method roadmap preview** ("First... then... finally, based on... experiments validate...") or section arrangements ("This chapter is organized as follows: ...", engineering disciplines often include a framework diagram). The signposting roadmap is not rigid and may follow discipline or supervisor conventions.
 
-**Applicable templates**:
+**Applicable template**:
 
 ```text
 第 X 章……解决了……，并得出……，但在……方面仍存在……。
 针对这一问题，本章提出……，其核心思想是……，相比……的优势在于……。
 本章组织如下：N.1 节……，N.2 节……，N.3 节……。
 ```
+
+### One-Paragraph Form
+
+The one-paragraph form is common and concise in chapters addressing a single technical problem, where backward connection can be compressed into a single role-reuse sentence and the solution can be announced in a single sentence.
+
+**Six-step progression order**:
+
+| Step | Move | Sentences | Required | Key writing points |
+| --- | --- | --- | --- | --- |
+| ① Object anchor | Problem | 1~2 | Required | Process phenomena or data traits of this chapter's object with concrete quantities; do not restate Chapter 1 industry background |
+| ② Problem derivation | Problem | 1~3 | Required | Derive the technical problem and its consequences from phenomena ("causing... affecting...") |
+| ③ Necessity sentence | — | 0~1 | Optional | Retain only when grounded in this chapter's object ("To this end, it is urgent to..."); delete empty platitudes like "has great significance" (point to deai) |
+| ④ Backward interface | Backward | 0~1 | By dependency | Role-reuse sentence + chapter numbers, listable ("Chapters 3 and 4 model as fitness function"); omissible for parallel chapters; avoid "previous chapter" |
+| ⑤ Solution announcement | Solution | 1~2 | Required | "Targeting this problem, this chapter constructs/proposes ＜Method＞ (English Full Name, ABBR), used for..." |
+| ⑥ Closure or roadmap | Closure/Roadmap | 1~3 | Required | Value closure ("provides ... support for ...") or method roadmap ("first... then... finally..."), choose either or both; do not write section directories |
+
+**One-paragraph template (synthetic text)**:
+
+```text
+<对象>由<数据/工序>以<周期/规模>获得，而<关键量>……。<现象>导致<技术问题>，影响<后果>。
+[第 X 章的<产出>在<条件>下<局限>。]
+针对该问题，本章基于<思想>，构建<方法名>（English Full Name, ABBR），用于<作用>。
+本章首先……，随后……，最后基于<数据>验证……；[为第 Y 章的<任务>提供<接口>。]
+```
+
+**Length and openings**:
+- Length: Single natural paragraph, about 300~600 Chinese characters, 6~12 sentences (600 is an uncalibrated / UNVERIFIED advisory threshold).
+- Three opening strategies (cited from W1):
+  1. Direct opening: Start directly from this chapter's research object and process/data phenomena;
+  2. Question-driven opening: Open with the core technical contradiction or question to be solved;
+  3. Transitional opening: First sentence directly states the backward role-reuse interface.
+
+**One-paragraph positive and negative examples (synthetic text)**:
+- **Compliant positive example**:
+  > Online sensor sequences in continuous flow reaction processes are usually collected at second-level frequencies, with high data dimensions and non-stationary drift. Sampling fluctuations make transient features difficult to extract accurately, affecting the response speed of product purity soft measurement. To this end, it is urgent to improve the adaptive representation ability of feature extraction under non-stationary conditions. This chapter takes the dynamic calibration model established in Chapters 2 and 3 as the basic feature extractor, targets multi-condition non-stationary drift, and proposes an Adaptive Attention Gating Network (AAGN). This chapter first presents the dynamic gating topology and loss constraints of AAGN, then designs a noise-resistant updating mechanism, and finally validates representation performance on empirical datasets, providing high-fidelity state inputs for closed-loop optimization in Chapter 5.
+  > (Analysis: Object anchor → problem derivation → necessity → backward enumeration → solution announcement → roadmap and closure, complete moves, about 270 characters (a compressed sample; real writing expands to 300~600 characters), tight progression.)
+- **Non-compliant negative example**:
+  > With the rapid development of modern industrialization and the widespread adoption of intelligent manufacturing technologies, industrial big data soft measurement holds extremely significant strategic value, practical utility, and broad application prospects in modern process industries, serving as a prominent frontier research hotspot attracting joint attention from academia and industry. For the research object of this chapter, because actual production processes are severely affected and jointly constrained by numerous complex, volatile onsite environments and various uncertain stochastic interference factors, dynamic data sequences collected by onsite sensors inevitably exhibit severe characteristics of high nonlinearity, multi-modality, large delays, and non-stationarity, creating enormous difficulties and severe challenges for high-precision soft measurement and safe, stable operational control. Targeting these major challenges, this chapter proposes an innovative soft-measurement algorithmic framework. This chapter is organized as follows: Section 4.1 presents the introduction; Section 4.2 describes related work; Section 4.3 proposes the algorithm; Section 4.4 conducts experiments; Section 4.5 concludes the chapter. This chapter first designs the algorithm model, secondly conducts parameter optimization, and finally performs experimental verification.
+  > (Flaw analysis: ① Restating macro background and boilerplate significance sentences, pointing to `deai` empty phrases; ② Single sentence exceeding 120 words, pointing to `check_style_zh.py` E-LONGSENT over-long sentences; ③ Stacking "major challenges / enormous difficulties" rhetoric, pointing to `academic-style-zh.md`; ④ Writing both section directory and method roadmap, violating deduplication principles, pointing to [`paragraph-roles-zh.md`](paragraph-roles-zh.md).)
+
+### Paragraph Style Selection
+
+| Condition | One-paragraph form | Two-paragraph form |
+| --- | --- | --- |
+| Backward handoff | Can be compressed into a single role-reuse sentence, or parallel chapters omit it | Requires explaining conclusions and limitations of previous chapter (≥ 2 sentences) |
+| Problem hierarchy | Single technical problem | Two or more problem layers, or needs framework before problem |
+| Solution | Can be announced in one sentence | Solution contains multiple modules requiring itemized introduction |
+| Length | About 300~600 words, 6~12 sentences | About 400~900 words; literature-intensive chapters needing mini-review `\cite` can be ≥ 3 paragraphs |
+| Thesis consistency | Chapters may mix styles (2/5 in corpus), no forced uniformity | Same as left |
+| Common prohibitions | Do not write both section directory and method roadmap in same intro; do not restate Chapter 1 background or review | Same as left |
 
 **Flexible caliber** (verified by 5 industrial doctoral theses, the checker reduces false positives accordingly, consistent with section 3 of method-chapter-guide-zh.md):
 
@@ -69,15 +134,24 @@ For each chapter from Chapter 2 to the conclusion, it is **recommended** to writ
 
 | Writing | Judgment |
 |------|------|
-| "Chapter 2 established a baseline model, but its overhead is too high on long sequences. To address this bottleneck, this chapter proposes a sparse attention mechanism... This chapter is organized as follows: Section 3.1..." | Passed (with chapter numbers, questions + ideas + road signs) |
+| "Chapter 2 established a baseline model, but its overhead is too high on long sequences. To address this bottleneck, this chapter proposes a sparse attention mechanism... This chapter is organized as follows: Section 3.1..." | Passed (two-paragraph: with chapter numbers, questions + ideas + road signs) |
+| In a single paragraph, complete object anchor, problem derivation, Chapter 2 and 3 model reuse, new method proposal, and roadmap preview (about 400 words) | Passed (one-paragraph: complete six-step moves, lists chapter numbers for backward link, no dual directory and roadmap) |
 | Purely parallel method chapter: The introduction only establishes the problems of this chapter and predicts the method route of this chapter, without referring back to the previous chapter | Passed (the parallel chapter does not need to be inherited, only Info is recommended to be explicitly inherited) |
+| In a single intro paragraph, listing both "Section N.1... Section N.2..." and immediately "First... then... finally" | Flaw (duplicate directory and roadmap, violates deduplication principle, choose either one) |
 | Section N.3 says "uses the feature set from Chapter X", but the introduction never mentions Chapter X | Missing backward link (there is an explicit dependency but no handoff; add a sentence explaining the reused role) |
 | Directly after the chapter title: `\section` or formula | Missing chapter introduction (missing both a continuation and a continuation) |
-| "The baseline method was discussed in the previous chapter." A single sentence is transferred to a subsection | Relative reference + oversimplification (should be expanded into two paragraphs, use chapter numbers instead) |
+| "The baseline method was discussed in the previous chapter." A single sentence is transferred to a subsection | Relative reference + oversimplification (should add the problem, solution, and closure/roadmap moves and use chapter numbers instead) |
 | Write the entire chapter method details into the chapter introduction | Too long (details should be dropped to the corresponding subsections) |
 
 > Boundary: The introduction (Chapter 1) is written in the funnel style of the "Introduction" section, and the two-paragraph format of this section is not applied; this section is only for the main chapters.
 
+### Sources
+
+- W1: Wanwei Shukan, *Degree Thesis Writing Guide and Template—Introduction and Transition Paragraphs*, https://www.eshukan.com/academic/show.aspx?id=170089 ("Introductions to other chapters are usually also a single natural paragraph, introducing the theme of this chapter and briefly explaining its content, serving a guide reading function"; three opening strategies: direct/question/transition)
+- W2: Shanghai International Studies University, *Graduate Degree Thesis Formatting Specification Guidelines*, https://graduate.shisu.edu.cn/_upload/article/34/80/bd4949214d11ab764fb3259a644c/26c942f8-0ab8-44aa-97cf-f4e41291ea81.pdf (Backward link and overview as two moves; numbered intro section and lead-in forms both compliant)
+- W3: Pat Thomson, *connecting chapters/chapter introductions*, https://patthomson.net/2014/01/16/connecting-chapterschapter-introductions/ (LINK / FOCUS / OVERVIEW three steps; fixed moves, flexible paragraphs)
+- W4: Thesis Hub, *Structuring Thesis Chapters: The Introductory/Concluding Paragraphs*, https://thesishub.org/structuring-thesis-chapters-the-introductory-concluding-paragraphs/ (Single introduction paragraph accomplishes backward link, introduces chapter object, previews chapter, and links to thesis argument)
+- W7: Leshem & Bitzer (2021), *'Signposting' research stories in doctoral theses*, https://doi.org/10.5785/37-1-965 (Excessive signposting makes text repetitious; one-paragraph form avoids duplicate directory and roadmap, avoids repeating background)
 ## Summary at the end of the main article (single paragraph closing style)
 
 For each chapter from Chapter 2 to the conclusion, the "Chapter Summary" at the end of the chapter should echo the beginning and end of the chapter introduction: the chapter introduction is responsible for explaining "why this chapter was written", and the chapter summary is responsible for explaining "what this chapter solved, how to prove it, and what support it has for the whole article." It is not an abbreviation for the final "summary and outlook", nor is it a restatement of the section titles.

@@ -295,6 +295,21 @@
       "query": "My English conference paper has repetitive paragraph openings across sections; please check for structural redundancy in main.tex.",
       "should_trigger": false,
       "category": "negative-overlap-paragraph-roles"
+    },
+    {
+      "query": "第四章引言我写成了一段，要不要拆成两段？",
+      "should_trigger": true,
+      "category": "writing-chapter-intro-forms"
+    },
+    {
+      "query": "硕士论文第三章引言帮我按一段式推进序改写，检查承上启下要件是否齐全。",
+      "should_trigger": true,
+      "category": "writing-chapter-intro-forms"
+    },
+    {
+      "query": "My English conference paper has a single-paragraph chapter introduction; please check whether it should be expanded into two paragraphs.",
+      "should_trigger": false,
+      "category": "negative-overlap-chapter-intro-forms"
     }
   ]
 }

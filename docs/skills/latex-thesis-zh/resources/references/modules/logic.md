@@ -30,10 +30,10 @@ topics and chapter goals, and between evidence and paragraph topics, see the
 
 **Detection**: Script scans `\chapter`, `\section`, `\subsection`, `\subsubsection`, `\paragraph` - flags if first child is non-prose content.
 
-### Chapter Introduction Specialization (Backward and Forward Bridge)
+### Chapter Introduction Specialization (Backward and Forward Bridge, One or Two Paragraphs)
 
 S1 checks only whether a lead-in exists. For the **chapter introduction** of each body chapter
-(Chapter 2 through the chapter before the conclusion, with child sections), the script also performs a
+(Chapter 2 through the chapter before the conclusion, with child sections; both one-paragraph and two-paragraph forms are compliant), the script also performs a
 specialized backward/forward bridging check (`% 章引言 ... [Script]`) that complements S1:
 
 - **Missing backward link / missing forward preview** (Major/P1): the introduction does not connect to the previous chapter (no chapter number/bridge) or does not explain the current problem and section arrangement.
@@ -41,7 +41,7 @@ specialized backward/forward bridging check (`% 章引言 ... [Script]`) that co
 - **Too short / too long** (Minor/P2): deviates from the convention of 1-2 paragraphs, about 300-500 Chinese characters.
 
 The introduction (Chapter 1) is handled by `_check_introduction_funnel` and explicitly excluded from
-the chapter-introduction check, so there is no overlap. For rewriting guidance, see “Body-Chapter
+the chapter-introduction check, so there is no overlap. For rewriting guidance and paragraph-style selection, see “Body-Chapter
 Introduction” in [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md).
 
 ## Literature Review Quality (A1-A4)
@@ -179,6 +179,22 @@ This additive branch observes the distribution of responsibilities and structura
 | `PR-SUM-NEW` | Chapter summary | Summary contains `\cite{}`, math environment, or figure/table/algorithm environment | `\ref` back-referencing existing figures/tables passes; comments pass |
 
 See [`../writing/paragraph-roles-zh.md`](../writing/paragraph-roles-zh.md) for the rule source and [`../writing/paragraph-roles-terms.yaml`](../writing/paragraph-roles-terms.yaml) for term lists.
+
+## Chapter Intro Style Checks (`--chapter-intro-style`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --chapter-intro-style [--section SECTION] [--first-chapter N]
+```
+
+This additive branch observes the natural paragraph style (one-paragraph / two-paragraph / multi-paragraph) and core move coverage of each body chapter introduction, emitting three `[Script]` observations that default to Info/P3 with `Meaning-Check: NEEDS-LLM`. The early return path of `--method-narrative` when `--section` is not supplied remains unchanged; `--chapter-intro-style` does not run on that path. `--section` accepts English keys or Chinese section names (for example `method`), filtering introductions by range; `--first-chapter N` declares the true chapter number for single-chapter files, ensuring Chapter 2 backward-link exemptions apply accurately.
+
+| Code | Observed position | Heuristic trigger condition | Exemptions and boundaries |
+| --- | --- | --- | --- |
+| `CI-STYLE` | Body-chapter introduction | Emitted for every non-empty body-chapter introduction block: style label (one/two/multi-paragraph), positional form, estimated word count, paragraph and sentence counts, move coverage vector | Empty introduction block (covered by default check) |
+| `CI-MOVES` | Body-chapter introduction | Any core move (problem, solution, closure or roadmap) missing; if solution is not matched and default check already reported missing preview, solution is not duplicated | Empty introduction block; outside `--section` range |
+| `CI-LONG` | One-paragraph introduction | Single-paragraph Han character count $> 600$ and $\le$ default length upper limit (lead 900, numbered section 1600), suggesting splitting at solution sentence | Exceeding default upper limit (covered by default too-long check, zero overlap); two-paragraph/multi-paragraph |
+
+See "Body-Chapter Introduction" in [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md) for the rule source of truth, and [`../writing/chapter-intro-style-terms.yaml`](../writing/chapter-intro-style-terms.yaml) for term lists.
 
 ## Body-Chapter Stitching and Introduction Bridging (Default)
 

@@ -32,7 +32,7 @@
 | `title` | 需要审阅论文、章或节标题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `expression` | 中文语句存在口语、长句、标点混用或冒号/分号句间逻辑问题 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_style_zh.py main.tex` |
 | `deai` | 中文可见正文存在 AI 写作痕迹 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | 绪论漏斗、章节承接、主线、方法模块接口、工程应用章论证、段落职责或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>] [--subsection-context] [--paragraph-roles]` |
+| `logic` | 绪论漏斗、章节承接、主线、方法模块接口、工程应用章论证、段落职责、章引言段式或闭合不足 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>] [--subsection-context] [--paragraph-roles] [--chapter-intro-style]` |
 | `literature` | 文献综述缺少主题综合、代表文献归因、簇末比较或可答辩的研究空白 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `claim-forward` | 主张被免责句或限制句后置、自我削弱搭配、hedge 堆叠、结论末段负面收尾 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
 | `polish` | 润色并核对一个自然段或小节；整章或全文先列单元清单 | `uv run python academic-writing-skills/latex-thesis-zh/scripts/polish_unit_zh.py main.tex --plan` |
@@ -114,6 +114,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [claim-forward 词表](./resources/references/writing/claim-forward-terms-zh.yaml)
 - [单元润色协议](./resources/references/writing/unit-polish-zh.md)
 - [正文各级段落职责与结构去重](./resources/references/writing/paragraph-roles-zh.md)
+- [章引言段式观察词表](./resources/references/writing/chapter-intro-style-terms.yaml)
 - [摘要结构](./resources/references/writing/abstract-structure.md)
 - [结构指南](./resources/references/writing/structure-guide.md)
 - [逻辑与连贯性](./resources/references/writing/logic-coherence.md)

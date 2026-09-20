@@ -11,7 +11,7 @@ uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section meth
 
 - **适用范围**：第 2 章至结论前的正文各章（绪论专章见 [`introduction-guide-zh.md`](introduction-guide-zh.md)，结论专章见 [`conclusion-guide-zh.md`](conclusion-guide-zh.md)）。
 - **指南分工**：
-  - 章引言承上启下两段式与弹性口径见 [`thesis-writing-guide.md`](thesis-writing-guide.md) 与 [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md) 第三节；
+  - 章引言一段式 / 两段式与弹性口径见 [`thesis-writing-guide.md`](thesis-writing-guide.md) 与 [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md) 第三节；
   - 总节导语规范见 [`structure-guide.md`](structure-guide.md)；
   - 方法小节首段与公式闭环见 [`method-description-guide-zh.md`](method-description-guide-zh.md) 第三节与第五节；
   - 实验结果分析见 [`results-analysis-guide-zh.md`](results-analysis-guide-zh.md)；

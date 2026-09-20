@@ -36,7 +36,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 | `title` | Thesis, chapter, or section titles need review | `uv run python academic-writing-skills/latex-thesis-zh/scripts/optimize_title.py main.tex --check --headings` |
 | `expression` | Chinese prose has colloquial wording, long sentences, mixed punctuation, or colon/semicolon logic issues | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_style_zh.py main.tex` |
 | `deai` | Visible Chinese prose contains AI-writing traces | `uv run python academic-writing-skills/latex-thesis-zh/scripts/deai_check.py main.tex --section introduction` |
-| `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, engineering-application argument, paragraph roles, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>] [--subsection-context] [--paragraph-roles]` |
+| `logic` | The introduction funnel, chapter handoffs, mainline, method-module interfaces, engineering-application argument, paragraph roles, chapter-intro style, or closure is weak | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_logic.py main.tex [--method-narrative --section <章名>] [--subsection-context] [--paragraph-roles] [--chapter-intro-style]` |
 | `literature` | The review lacks thematic synthesis, selective attribution, cluster-end comparison, or a defensible gap | `uv run python academic-writing-skills/latex-thesis-zh/scripts/analyze_literature.py main.tex --section related` |
 | `claim-forward` | Claims placed after disclaimers or caveats, self-weakening wording, hedge stacks, negative closing | `uv run python academic-writing-skills/latex-thesis-zh/scripts/check_claim_forward.py main.tex --section introduction` |
 | `polish` | Rewrite and verify one paragraph or subsection; list units first for a chapter or full thesis | `uv run python academic-writing-skills/latex-thesis-zh/scripts/polish_unit_zh.py main.tex --plan` |
@@ -119,6 +119,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Claim-forward term table](./resources/references/writing/claim-forward-terms-zh.yaml)
 - [Unit-polishing protocol](./resources/references/writing/unit-polish-zh.md)
 - [Paragraph roles and structural deduplication](./resources/references/writing/paragraph-roles-zh.md)
+- [Chapter intro style term table](./resources/references/writing/chapter-intro-style-terms.yaml)
 - [Abstract structure](./resources/references/writing/abstract-structure.md)
 - [Structure guide](./resources/references/writing/structure-guide.md)
 - [Logic and coherence](./resources/references/writing/logic-coherence.md)

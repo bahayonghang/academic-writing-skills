@@ -72,9 +72,8 @@ X.6 本章小结
 
 ## 三、章引言规范（承上启下）——本指南最关键口径
 
-**用户已决策口径**：承上启下两段式为**主动推荐形态**——paper-to-chapter 工作流下始终写承上
-更稳、更利于盲审定位主线（两段模板见 [`thesis-writing-guide.md`](thesis-writing-guide.md)
-"正文章引言"）。但它**推荐而非硬性**，弹性边界经 5 篇范文核实：
+**用户已决策口径**：承上启下为**推荐要件**，一段式与两段式均合规（段式选型见 [`thesis-writing-guide.md`](thesis-writing-guide.md)
+"正文章引言"）——paper-to-chapter 工作流下始终写承上更稳、更利于盲审定位主线。但它**推荐而非硬性**，弹性边界经 5 篇范文核实：
 
 - **并列方法章可不承上**：承上强度 **∝ 章间真实依赖**。有数据/模型依赖的章 5/5 强承上（烧成
   第 5 章点名第 3、4 章）；纯并列方法章之间可不回指（熟料、固废焚烧各章自足立论）。→ 检查器
@@ -92,6 +91,7 @@ X.6 本章小结
 - **"缺陷驱动过渡"推荐范式**：最优雅的章间过渡在**上一章实验末尾**——用实验暴露的缺陷逼出
   下一章（粉磨第 5 章"单步决策致系统不稳定"逼出第 6 章滚动优化）。
 - **不重述行业背景与双写目录**：章引言不重新交代绪论已写过的宏观行业背景与文献综述；路线预告与节号目录二选一、不在同一引言内双写；节号目录不逐节展开每节具体内容。各级段落职责与去重规则详见 [`paragraph-roles-zh.md`](paragraph-roles-zh.md)。
+- **段式选择与推进序**：一段式与两段式均合规。一段式按六步推进序（对象锚定 → 问题推导 → 必要性 → 承上接口 → 方案宣告 → 收束或路线）推进，两段式按两段角色展开；选型依据与正反例详见 [`thesis-writing-guide.md`](thesis-writing-guide.md) "正文章引言"。
 
 | 写法 | 判定 |
 | --- | --- |
@@ -99,6 +99,7 @@ X.6 本章小结
 | 纯并列章：引言只立本章问题、不回指前章，但预告本章方法路线 | Info 推荐（并列章可不承上，红线 1） |
 | 章内 4.3 节写"沿用第 3 章的特征集"，但引言完全不提第 3 章 | 维持原级（有依赖线索却漏承接，应补角色复用句） |
 | 引言写成第二篇绪论、大段重复绪论综述 | 违反清华§4.5（应删至承接问题、不重复综述） |
+| 单段内按对象锚定 → 问题推导 → 承上列举 → 方案宣告 → 路线预告紧凑推进（约 400 字） | 通过（一段式六步要件完整，见 [`thesis-writing-guide.md`](thesis-writing-guide.md)） |
 
 ## 四、方法设计呈现规范
 
@@ -251,6 +252,7 @@ X.6 本章小结
 | 承上真实性 / "本文 vs 本章" | **LLM** | 承接句是否对应真实依赖、指代是否错位 | 人工 | 三/八 |
 | 公式缺"式中"释义 | **LLM** | 编号公式后缺逐符号释义（抽样） | 人工 | 四 |
 | PR-* | logic（`--paragraph-roles`） | 正文各级段落职责与结构重复观察（章引言/总节导语/小节首段/公式后段/小结） | Info | 三/六（参见 [`paragraph-roles-zh.md`](paragraph-roles-zh.md)） |
+| CI-* | logic（`--chapter-intro-style`） | 正文章引言段式观察与要件覆盖（一段式/两段式/多段式、问题/承上/方案/收束或路线） | Info | 三（参见 [`thesis-writing-guide.md`](thesis-writing-guide.md)） |
 
 ## 输出建议格式
 
@@ -265,7 +267,7 @@ X.6 本章小结
 
 - [process-chapter-guide-zh.md](process-chapter-guide-zh.md)：第二章过程分析章式，判别后指向。
 - [introduction-guide-zh.md](introduction-guide-zh.md)：绪论六节骨架（章引言禁重复其综述）。
-- [thesis-writing-guide.md](thesis-writing-guide.md)：全文主线、章引言两段模板与本章小结单段模板。
+- [thesis-writing-guide.md](thesis-writing-guide.md)：全文主线、章引言一段式/两段式模板与本章小结单段模板。
 - [engineering-application-chapter-guide-zh.md](engineering-application-chapter-guide-zh.md)：独立工程应用/系统实现章的论证与证据边界。
 - [structure-guide.md](structure-guide.md)：直属小节数量弹性口径、章标题与小节标题扣合。
 - [../modules/logic.md](../modules/logic.md)：P-PAPER 泛化与 `--first-chapter` 说明。

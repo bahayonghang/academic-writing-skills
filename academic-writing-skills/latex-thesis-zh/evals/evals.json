@@ -1647,6 +1647,41 @@
           "description": "points to paragraph-roles reference guide"
         }
       ]
+    },
+    {
+      "id": 52,
+      "prompt": "请对附带的中文学位论文工程运行章引言段式观察（--chapter-intro-style）。识别正文各章引言是一段式还是两段式、检查问题/承上/方案/收束或路线等核心要件覆盖情况，并对偏长的一段式给出拆分建议，但不要自动改写正文。",
+      "expected_output": "路由到 logic --chapter-intro-style，对正文各章引言输出 [Script] 观察。对各正文章报告 CI-STYLE（第 2 章标编号引言节且承上标不适用；第 3 章标一段式全要件；第 4 章标一段式缺收束；第 5 章标一段式偏长；第 6 章标两段式合规）；对第 4 章报告 CI-MOVES（缺少收束或路线要件）；对第 5 章报告 CI-LONG（一段式偏长建议拆为两段）。每项均为 Info/P3 且含 Meaning-Check: NEEDS-LLM，不宣称 PRESERVED，不复制整句，指引参考 thesis-writing-guide.md。",
+      "files": [
+        "evals/fixtures/chapter-intro-style/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "CI-STYLE",
+          "description": "observes chapter introduction paragraph style and move coverage"
+        },
+        {
+          "type": "contains",
+          "text": "CI-MOVES",
+          "description": "detects missing core moves in chapter introduction"
+        },
+        {
+          "type": "contains",
+          "text": "CI-LONG",
+          "description": "suggests splitting overly long single-paragraph chapter introduction"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(thesis-writing-guide|正文章引言|一段式|两段式)",
+          "description": "points to thesis-writing-guide reference guide"
+        }
+      ]
     }
   ]
 }

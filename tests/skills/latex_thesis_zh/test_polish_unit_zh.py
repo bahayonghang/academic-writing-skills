@@ -23,7 +23,7 @@ NO_DEPTH3 = FIXTURES / "thesis-project/main.tex"
 SYNTHETIC = FIXTURES / "unit-polish"
 EXPECTED_IDS = ["1.1.1", "1.2.1", "1.2.2", "1.2.3", "1.3.1", "1.4.1", "1.4.2", "1.4.3", "2.1.1"]
 FROZEN_HASHES = {
-    "analyze_logic.py": "369b1377f59d2d1db98da08587d7155f36f071179ed05acc1e17aa0ab9bb0d9f",
+    "analyze_logic.py": "d88c933981247dd79c1131c48c4d45f4d6750fabd90299c68ed42899297dae44",
     "deai_check.py": "08afae7e2ebc82636ceea9ac083d448a72e5e1dab1534663273238c7d59da135",
     "parsers.py": "49dc31832a14307a6cf7ab183de793a0b0c273478e5b9375e78bef66e75bb53c",
     "check_style_zh.py": "3774ff1d228d85c9999e5730c2c8fac11d71633a4953aa11b7fe751aa0104cbc",

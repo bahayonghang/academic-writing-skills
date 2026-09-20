@@ -274,7 +274,10 @@ RELATIVE_REF_PATTERNS_ZH = (
 CHAPTER_NUM_REF_RE = re.compile(r"第\s*\d+\s*章")
 # 章号复用引用（含中文数字）：R5/D8 用它判定“章内其余部分是否复用前章产出”的依赖线索，
 # 以及 _check_chapter_intro 承接检测。比 CHAPTER_NUM_REF_RE（仅阿拉伯数字，P-FRAME 专用）更宽。
-CHAPTER_DEP_REF_RE = re.compile(r"第\s*[一二三四五六七八九十百\d]+\s*章")
+CHAPTER_DEP_REF_RE = re.compile(
+    r"第\s*[一二三四五六七八九十百\d]+"
+    r"(?:\s*[、，,～~\-—至和与及]\s*[一二三四五六七八九十百\d]+)*\s*章"
+)
 SECTION_NUM_PREVIEW_RE = re.compile(r"\d+\.\d+\s*节")
 # 章引言豁免标题（在 LEAD_EXEMPT_TITLES_ZH 之外，额外排除绪论与收尾章）。
 # 注意：此处“引言”指**章标题**为“引言”的整章（某些论文把第 1 章命名为“引言”），
@@ -556,18 +559,16 @@ def _chapter_bridge_gap(line: int, title: str, suggest: str, has_dependency: boo
     ]
 
 
-def _chapter_intro_block(
+def _chapter_intro_span(
     chapter: dict[str, Any], headings: list[dict[str, Any]], lines: list[str], parser
-) -> tuple[int, str, str] | None:
-    """提取正文章引言块（report_line, intro_text, form），无小节时返回 None。"""
-    # 本章范围：章标题行 -> 下一个 level-1 标题（或文末）。
+) -> tuple[int, int, int, str] | None:
+    """提取正文章引言区间 (report_line, span_start, span_end, form)；无小节返回 None。"""
     next_chapter_line = next(
         (h["line"] for h in headings if h["level"] == 1 and h["line"] > chapter["line"]),
         None,
     )
     chapter_end = (next_chapter_line - 1) if next_chapter_line else len(lines)
 
-    # 本章首个下级小节（level >= 2）。无小节则跳过本章。
     first_section = next(
         (h for h in headings if chapter["line"] < h["line"] <= chapter_end and h["level"] >= 2),
         None,
@@ -576,9 +577,11 @@ def _chapter_intro_block(
         return None
     first_section_line = first_section["line"]
 
-    # 章引言块 = 章标题行+1 .. 首个小节行-1 的可见正文。
+    lead_start = chapter["line"] + 1
+    lead_end = min(first_section_line - 1, len(lines))
+
     intro_parts: list[str] = []
-    for line_no in range(chapter["line"] + 1, min(first_section_line - 1, len(lines)) + 1):
+    for line_no in range(lead_start, lead_end + 1):
         raw = lines[line_no - 1].strip()
         if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
             continue
@@ -588,12 +591,11 @@ def _chapter_intro_block(
     intro_text = " ".join(intro_parts)
     intro_len = len(intro_text.replace(" ", ""))
 
-    # 报告行 / 形态：默认“章后导语”形态。
     report_line = chapter["line"]
+    span_start = lead_start
+    span_end = lead_end
     intro_form = "lead"
 
-    # 编号引言节形态适配（bug-fix）：章标题后直接进入“引言/概述”小节、章标题与该小节
-    # 之间无正文（或过短）时，改取该小节正文作为章引言检查对象，报告行定位到该小节标题。
     if intro_len < CHAPTER_INTRO_MIN_CHARS and any(
         t in first_section["title"] for t in INTRO_SECTION_TITLES_ZH
     ):
@@ -602,8 +604,10 @@ def _chapter_intro_block(
             if later["line"] > first_section_line and later["level"] <= first_section["level"]:
                 section_end = later["line"] - 1
                 break
+        num_start = first_section_line + 1
+        num_end = min(section_end, len(lines))
         numbered_parts: list[str] = []
-        for line_no in range(first_section_line + 1, min(section_end, len(lines)) + 1):
+        for line_no in range(num_start, num_end + 1):
             raw = lines[line_no - 1].strip()
             if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
                 continue
@@ -612,17 +616,37 @@ def _chapter_intro_block(
                 numbered_parts.append(visible)
         numbered_text = " ".join(numbered_parts)
         if numbered_text:
-            intro_text = numbered_text
             report_line = first_section_line
+            span_start = num_start
+            span_end = num_end
             intro_form = "numbered"
 
-    return report_line, intro_text, intro_form
+    return report_line, span_start, span_end, intro_form
+
+
+def _chapter_intro_block(
+    chapter: dict[str, Any], headings: list[dict[str, Any]], lines: list[str], parser
+) -> tuple[int, str, str] | None:
+    """提取正文章引言块（report_line, intro_text, form），无小节时返回 None。"""
+    span = _chapter_intro_span(chapter, headings, lines, parser)
+    if span is None:
+        return None
+    report_line, span_start, span_end, intro_form = span
+    parts: list[str] = []
+    for line_no in range(span_start, span_end + 1):
+        raw = lines[line_no - 1].strip()
+        if _classify_lead_gap(raw) in {"empty", "comment", "structural"}:
+            continue
+        visible = parser.extract_visible_text(raw)
+        if visible:
+            parts.append(visible)
+    return report_line, " ".join(parts), intro_form
 
 
 def _check_chapter_intro(
     content: str, lines: list[str], parser, first_chapter: int | None = None
 ) -> list[str]:
-    """正文章引言（承上启下两段式）专项检查。
+    """正文章引言（承上启下，一段或两段）专项检查。
 
     仅作用于正文章（level-1 标题，排除绪论/引言/结论/总结/展望及摘要等），
     且该章须含至少一个下级小节——否则“预告各节安排”无从谈起，交给 S1 与
@@ -679,10 +703,10 @@ def _check_chapter_intro(
             if intro_form == "numbered"
             else CHAPTER_INTRO_MAX_CHARS
         )
-        bridge_suggest = (
-            "在章引言第一段用章节号回顾前一章解决了什么、得出什么结论，引出本章为何继续。"
+        bridge_suggest = "在章引言中用章节号写一句角色复用句承接前一章解决了什么、得出什么结论，引出本章为何继续；一段式可压成一句。"
+        preview_suggest = (
+            "在章引言中说明本章针对什么问题、核心思想，必要时预告本章方法路线或各节安排。"
         )
-        preview_suggest = "在章引言第二段说明本章针对什么问题、核心思想，必要时预告本章各节安排。"
 
         # 空章引言：承上（非首个正文章）+ 启下均缺失。第 2 章（order==0）跳过承上（见 docstring）。
         if not intro_text:
@@ -755,7 +779,7 @@ def _check_chapter_intro(
                 [
                     f"% 章引言（{_zh_loc(report_line)}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章章引言过简（约{intro_len}字）",
-                    "% 建议：扩展为承上启下两段——先承接前章，再交代本章问题、思路与各节安排。",
+                    "% 建议：补齐承上启下要件（一段或两段均可）——先承接前章，再交代本章问题、思路与方法路线。",
                     "% 理由：章引言一般为 1~2 个自然段、约 300~500 字，过简难以承担承上启下。",
                     "",
                 ]
@@ -770,7 +794,7 @@ def _check_chapter_intro(
                 [
                     f"% 章引言（{_zh_loc(report_line)}）[Severity: Minor] [Priority: P2]: "
                     f"[Script] 第“{title}”章{observe}",
-                    "% 建议：将具体方法/实验细节下沉到对应小节，章引言保留承上启下两段。",
+                    "% 建议：将具体方法/实验细节下沉到对应小节，章引言只保留承上启下要件。",
                     "% 理由：章引言应是简短导览，过长会与正文小节重复并稀释主线。",
                     "",
                 ]
@@ -1068,6 +1092,60 @@ SUBSECTION_CONTEXT_MIN_HAN = 20
 SUBSECTION_CONTEXT_MIN_HAN_RATIO = 0.30
 SUBSECTION_CONTEXT_NO_DEPTH3 = "% 小节级：本文档无 depth-3 标题，未产出小节级观察。"
 
+
+# ── 章引言段式观察（可选开关：--chapter-intro-style）─────────────────
+
+CHAPTER_INTRO_STYLE_TERMS_FILENAME = "chapter-intro-style-terms.yaml"
+# 常量阈值（未标定 / UNVERIFIED，启发式初值）
+CI_ONE_PARA_MAX_HAN = 600  # 未标定 / UNVERIFIED
+
+CI_PROBLEM_MARKERS = (
+    "问题",
+    "难题",
+    "难点",
+    "瓶颈",
+    "不足",
+    "缺乏",
+    "缺少",
+    "难以",
+    "无法",
+    "导致",
+    "影响",
+    "制约",
+    "挑战",
+)
+CI_SOLUTION_MARKERS = (
+    "提出",
+    "构建",
+    "设计",
+    "建立",
+    "研究",
+    "开发",
+    "给出",
+    "引入",
+    "采用",
+)
+CI_CLOSING_MARKERS = (
+    "提供支撑",
+    "提供数据支撑",
+    "提供依据",
+    "提供基础",
+    "奠定基础",
+    "奠定了基础",
+    "提供保障",
+    "提供新思路",
+    "提供工具",
+    "打下基础",
+    "为后续",
+    "为第",
+)
+
+DEFAULT_CHAPTER_INTRO_STYLE_TERMS: dict[str, tuple[str, ...]] = {
+    "problem_markers": CI_PROBLEM_MARKERS,
+    "solution_markers": CI_SOLUTION_MARKERS,
+    "closing_markers": CI_CLOSING_MARKERS,
+}
+_CI_STYLE_TERM_KEYS = tuple(DEFAULT_CHAPTER_INTRO_STYLE_TERMS)
 
 # ── 段落职责与结构去重诊断（可选开关：--paragraph-roles）─────────────────
 
@@ -1385,6 +1463,33 @@ def _load_paragraph_roles_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
     if not isinstance(data, dict):
         return terms
     for key in _ROLES_TERM_KEYS:
+        configured = data.get(key)
+        if (
+            isinstance(configured, list)
+            and configured
+            and all(isinstance(value, str) and value for value in configured)
+        ):
+            terms[key] = tuple(configured)
+    return terms
+
+
+def _load_chapter_intro_style_terms(script_dir: Path) -> dict[str, tuple[str, ...]]:
+    """Load chapter intro style term table, falling back per key when YAML is absent or invalid."""
+    terms = {key: tuple(values) for key, values in DEFAULT_CHAPTER_INTRO_STYLE_TERMS.items()}
+    yaml_path = script_dir.parent / "references" / "writing" / CHAPTER_INTRO_STYLE_TERMS_FILENAME
+    if not yaml_path.exists():
+        return terms
+    try:
+        import yaml
+    except ImportError:
+        return terms
+    try:
+        data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeError, yaml.YAMLError):
+        return terms
+    if not isinstance(data, dict):
+        return terms
+    for key in _CI_STYLE_TERM_KEYS:
         configured = data.get(key)
         if (
             isinstance(configured, list)
@@ -3767,6 +3872,200 @@ def _check_paragraph_roles(
     return out
 
 
+def _ci_finding(
+    code: str,
+    start: int,
+    end: int | None,
+    message: str,
+    current: str,
+    suggested: str,
+    rationale: str,
+) -> list[str]:
+    return [
+        f"% 章引言段式（{_zh_loc(start, end)}）[Severity: Info] [Priority: P3]: "
+        f"[Script] {code} {message}",
+        f"% Current: {current}",
+        f"% Suggested: {suggested}",
+        f"% Rationale: {rationale}",
+        "% Meaning-Check: NEEDS-LLM",
+        "",
+    ]
+
+
+def _check_chapter_intro_style(
+    content: str,
+    lines: list[str],
+    parser,
+    sections: dict[str, tuple[int, int]],
+    ranges: list[tuple[int, int]],
+    first_chapter: int | None = None,
+) -> list[str]:
+    """正文章引言段式与要件观察（--chapter-intro-style）。"""
+    terms = _load_chapter_intro_style_terms(Path(__file__).resolve().parent)
+    problem_markers = terms["problem_markers"]
+    solution_markers = terms["solution_markers"]
+    closing_markers = terms["closing_markers"]
+
+    headings = parser.extract_headings(content)
+    chapters = [h for h in headings if h["level"] == 1]
+    if not chapters:
+        return []
+
+    body_chapters = [c for c in chapters if not _is_chapter_intro_exempt(c["title"])]
+
+    all_arc_paragraphs = _split_arc_paragraphs(content, parser, sections)
+
+    out: list[str] = []
+    for order, chapter in enumerate(body_chapters):
+        title = chapter["title"]
+
+        if first_chapter is not None:
+            real_num = first_chapter + chapters.index(chapter)
+            is_first_body = real_num == 2
+        else:
+            is_first_body = order == 0
+
+        span = _chapter_intro_span(chapter, headings, lines, parser)
+        if span is None:
+            continue
+        report_line, span_start, span_end, intro_form = span
+        if span_start > span_end:
+            continue
+
+        paragraphs = [p for p in all_arc_paragraphs if span_start <= p.start <= span_end]
+        if not paragraphs:
+            continue
+
+        intro_text = " ".join(p.visible for p in paragraphs).strip()
+        if not intro_text:
+            continue
+
+        p_start = paragraphs[0].start
+        p_end = paragraphs[-1].end
+
+        if not any(r_start <= p_start <= r_end for r_start, r_end in ranges):
+            continue
+
+        p_count = len(paragraphs)
+        han = sum(_arc_han_count(p.visible) for p in paragraphs)
+        sents = sum(len(p.sentences) for p in paragraphs)
+
+        if p_count == 1:
+            style = "one"
+            style_label = "一段式"
+        elif p_count == 2:
+            style = "two"
+            style_label = "两段式"
+        else:
+            style = "multi"
+            style_label = "多段式"
+
+        form_label = "编号引言节" if intro_form == "numbered" else "章后导语"
+
+        has_problem = any(m in intro_text for m in problem_markers)
+
+        has_bridge = (
+            any(k in intro_text for k in CHAPTER_BRIDGE_KEYWORDS_ZH)
+            or CHAPTER_DEP_REF_RE.search(intro_text) is not None
+        )
+
+        has_solution = any(
+            "本章" in s and any(m in s for m in solution_markers)
+            for p in paragraphs
+            for s in p.sentences
+        )
+
+        has_closing = (
+            any(m in intro_text for m in closing_markers)
+            or any(k in intro_text for k in CHAPTER_ROADMAP_KEYWORDS_ZH)
+            or SECTION_NUM_PREVIEW_RE.search(intro_text) is not None
+        )
+
+        has_roadmap = (
+            any(k in intro_text for k in CHAPTER_ROADMAP_KEYWORDS_ZH)
+            or SECTION_NUM_PREVIEW_RE.search(intro_text) is not None
+        )
+        has_chapter_action = "本章" in intro_text and any(
+            k in intro_text for k in CHAPTER_PREVIEW_KEYWORDS_ZH
+        )
+        default_missing_preview = not has_roadmap and not has_chapter_action
+
+        problem_label = "✓" if has_problem else "✗"
+        bridge_label = "不适用" if is_first_body else ("✓" if has_bridge else "✗")
+        solution_label = "✓" if has_solution else "✗"
+        closing_label = "✓" if has_closing else "✗"
+
+        # ── 1. CI-STYLE（正文章引言块非空时恒报）──────────────────
+        if style == "one":
+            style_suggest = (
+                "一段式宜遵循六步推进序（对象锚定 → 问题推导 → 必要性 → 承上接口 → 方案宣告 → 收束或路线），"
+                "避免双写目录与路线（见 thesis-writing-guide.md）。"
+            )
+        elif style == "two":
+            style_suggest = "两段式宜按承上（第①段）与启下（第②段）展开，或第①段写现象与问题、承上置于段末（见 thesis-writing-guide.md）。"
+        else:
+            style_suggest = "多段式章引言宜确认是否承担文献密集小型综述；若非综述，建议根据段式选型表精简为一段式或两段式（见 thesis-writing-guide.md）。"
+
+        style_current = (
+            f"段式={style_label}；位置={form_label}；约 {han} 字；{p_count} 段 {sents} 句；"
+            f"要件 问题:{problem_label} 承上:{bridge_label} 方案:{solution_label} 收束或路线:{closing_label}"
+        )
+        out.extend(
+            _ci_finding(
+                "CI-STYLE",
+                p_start,
+                p_end,
+                f"第“{title}”章章引言段式与要件观察",
+                style_current,
+                style_suggest,
+                "章引言一段式与两段式均合规，要件固定、段数灵活，供作者与审阅者按章间依赖和篇幅核对。",
+            )
+        )
+
+        # ── 2. CI-MOVES（要件缺失）──────────────────────────────
+        missing: list[str] = []
+        if not has_problem:
+            missing.append("问题（现象推导/技术瓶颈）")
+        if not has_solution and not default_missing_preview:
+            missing.append("方案（方案宣告，如“针对该问题，本章提出/构建……”）")
+        if not has_closing:
+            missing.append("收束或路线（价值收束或方法路线预告）")
+
+        if missing:
+            out.extend(
+                _ci_finding(
+                    "CI-MOVES",
+                    p_start,
+                    p_end,
+                    f"第“{title}”章章引言缺少核心要件",
+                    f"缺少要件：{'、'.join(missing)}",
+                    "补齐缺失要件（参考 thesis-writing-guide.md 共同要件与六步推进序），使章引言具备完整导读功能。",
+                    "无论一段式还是两段式，合格章引言均需交代问题、方案与收束/路线；要件缺失会削弱章节独立立论与主线推进。",
+                )
+            )
+
+        # ── 3. CI-LONG（一段式偏长）──────────────────────────────
+        max_chars = (
+            CHAPTER_INTRO_NUMBERED_MAX_CHARS
+            if intro_form == "numbered"
+            else CHAPTER_INTRO_MAX_CHARS
+        )
+        if style == "one" and CI_ONE_PARA_MAX_HAN < han <= max_chars:
+            out.extend(
+                _ci_finding(
+                    "CI-LONG",
+                    p_start,
+                    p_end,
+                    f"第“{title}”章一段式章引言偏长（约{han}字，建议拆为两段）",
+                    f"一段式约 {han} 字，阈值 {CI_ONE_PARA_MAX_HAN}",
+                    "当前一段式篇幅较长，建议在方案宣告句处拆分为两段：第①段交代现象与问题（必要时承上），第②段交代本章方案与路线。",
+                    "一段式篇幅超过 600 字（未标定初值）时通常已承载两段信息量，拆分有助于读者快速抓取本章核心。",
+                )
+            )
+
+    return out
+
+
 def analyze(
     file_path: Path,
     section: str | None = None,
@@ -3781,6 +4080,7 @@ def analyze(
     subsection: str | None = None,
     emit_window: bool = False,
     paragraph_roles: bool = False,
+    chapter_intro_style: bool = False,
 ) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
@@ -3956,6 +4256,18 @@ def analyze(
                 first_chapter=first_chapter,
             )
         )
+    if chapter_intro_style:
+        ci_ranges = ranges if section else [(1, len(lines))]
+        out.extend(
+            _check_chapter_intro_style(
+                content,
+                lines,
+                parser,
+                sections,
+                ci_ranges,
+                first_chapter=first_chapter,
+            )
+        )
     if len(out) == len(warn):
         out.append("% 逻辑/方法论：未检测到规则级逻辑问题。")
     return out
@@ -4020,6 +4332,11 @@ def main() -> int:
         action="store_true",
         help="运行正文各级段落职责观察（章引言/总节导语/小节首段/公式后段/本章小结；默认关闭）",
     )
+    cli.add_argument(
+        "--chapter-intro-style",
+        action="store_true",
+        help="运行章引言段式观察（一段式/两段式标签、要件覆盖、一段式过长；默认关闭）",
+    )
     args = cli.parse_args()
 
     if args.emit_window and not args.subsection:
@@ -4043,6 +4360,7 @@ def main() -> int:
         args.subsection,
         args.emit_window,
         args.paragraph_roles,
+        args.chapter_intro_style,
     )
     print("\n".join(report))
     if args.method_narrative and any(line.startswith("% ERROR") for line in report):

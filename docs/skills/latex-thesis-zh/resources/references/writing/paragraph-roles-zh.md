@@ -11,7 +11,7 @@ uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section meth
 
 - **Applicable scope**: Main-text body chapters from Chapter 2 up to the chapter before the conclusion (for the dedicated introduction chapter guide, see [`introduction-guide-zh.md`](introduction-guide-zh.md); for the dedicated conclusion chapter guide, see [`conclusion-guide-zh.md`](conclusion-guide-zh.md)).
 - **Division of labor across guides**:
-  - For two-paragraph chapter introduction handoffs and flexible rules, see [`thesis-writing-guide.md`](thesis-writing-guide.md) and Section 3 of [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md);
+  - For one-paragraph / two-paragraph chapter introduction handoffs and flexible rules, see [`thesis-writing-guide.md`](thesis-writing-guide.md) and Section 3 of [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md);
   - For section lead-in specifications, see [`structure-guide.md`](structure-guide.md);
   - For method subsection openings and equation closure, see Sections 3 and 5 of [`method-description-guide-zh.md`](method-description-guide-zh.md);
   - For experimental results analysis, see [`results-analysis-guide-zh.md`](results-analysis-guide-zh.md);
