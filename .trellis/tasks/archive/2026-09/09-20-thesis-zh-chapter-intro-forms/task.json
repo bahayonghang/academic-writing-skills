@@ -1,0 +1,28 @@
+{
+  "id": "thesis-zh-chapter-intro-forms",
+  "name": "thesis-zh-chapter-intro-forms",
+  "title": "latex-thesis-zh 正文章引言一段式与两段式写法支持",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-20",
+  "completedAt": "2026-09-20",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "description": "latex-thesis-zh 正文章引言支持一段式与两段式：thesis-writing-guide 增一段式六步推进序/模板/正反例/段式选型；六文件措辞改为两种段式均合规；analyze_logic 修正章号列举承上误报与写死两段的建议文案；新增 opt-in logic --chapter-intro-style（CI-STYLE/CI-MOVES/CI-LONG）。"
+  }
+}

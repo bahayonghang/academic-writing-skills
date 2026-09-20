@@ -1,0 +1,9 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "spec 索引与副本/哈希锁背景速览"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "importlib 按路径加载、evals.json Bash python 写入、默认行为变化例外双声明、私有语料边界、pytest 不加 PYTHONIOENCODING"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "修改 references / 新增 YAML 后 manifest 与 en/zh 镜像页契约"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-roles-contract.md", "reason": "PR-* opt-in 样板、_pr_finding 格式、_chapter_intro_block 共用、FROZEN_HASHES 同步义务；PR-* 语义不得改动"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "ArcParagraph 切分与 baseline-before.txt 逐字节锁——段式判定复用 _split_arc_paragraphs"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 路由表变更时 SMOKE_COMMANDS 与契约测试联动"}
+{"file": ".trellis/tasks/09-20-thesis-zh-chapter-intro-forms/research/existing-machinery.md", "reason": "术语分离、规则源锚点、analyze_logic.py 行号、两处误伤实测、联动锁清单、既有取舍"}
+{"file": ".trellis/tasks/09-20-thesis-zh-chapter-intro-forms/research/reference-corpus-stats.md", "reason": "5 篇范文段式统计、一段式六步推进序、用户样例可改进点（私有语料只用统计）"}
+{"file": ".trellis/tasks/09-20-thesis-zh-chapter-intro-forms/research/sources-and-prior-art.md", "reason": "带 URL 来源、技能目录先例 keep/adapt/reject/invent、泛化门槛记录"}
