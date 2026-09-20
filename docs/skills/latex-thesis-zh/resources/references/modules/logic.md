@@ -167,7 +167,7 @@ criteria, eligibility rules, and protocol, and
 uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-roles [--section SECTION]
 ```
 
-This additive branch observes the distribution of responsibilities and structural deduplication across paragraph levels in the main text, emitting six `[Script]` observations that default to Info/P3 with `Meaning-Check: NEEDS-LLM`. The early return path of `--method-narrative` when `--section` is not supplied remains unchanged; `--paragraph-roles` does not run on that path.
+This additive branch observes the distribution of responsibilities and structural deduplication across paragraph levels in the main text, emitting six `[Script]` observations that default to Info/P3 with `Meaning-Check: NEEDS-LLM`. The early return path of `--method-narrative` when `--section` is not supplied remains unchanged; `--paragraph-roles` does not run on that path. `--section` accepts English keys or Chinese section names (for example `method`), not chapter numbers; findings are filtered by range, so `PR-SUM-NEW` is omitted when the chapter-summary heading is outside the selected range.
 
 | Code | Observed position | Heuristic trigger condition | Exemptions and boundaries |
 | --- | --- | --- | --- |

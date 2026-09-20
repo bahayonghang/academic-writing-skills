@@ -6,7 +6,7 @@
 
 ```bash
 uv run python scripts/analyze_logic.py main.tex --paragraph-roles
-uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section 3
+uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section method
 ```
 
 - **适用范围**：第 2 章至结论前的正文各章（绪论专章见 [`introduction-guide-zh.md`](introduction-guide-zh.md)，结论专章见 [`conclusion-guide-zh.md`](conclusion-guide-zh.md)）。
@@ -16,7 +16,7 @@ uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section 3
   - 方法小节首段与公式闭环见 [`method-description-guide-zh.md`](method-description-guide-zh.md) 第三节与第五节；
   - 实验结果分析见 [`results-analysis-guide-zh.md`](results-analysis-guide-zh.md)；
   - 本章小结规范见 [`thesis-writing-guide.md`](thesis-writing-guide.md) 与 [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md) 第六节。
-- **运行特征**：`--paragraph-roles` 是可选附加开关，默认关闭；不传时 `logic` 输出保持不变。所有输出均为 `[Script]` 观察，默认 Info/P3，且包含 `Meaning-Check: NEEDS-LLM`。
+- **运行特征**：`--paragraph-roles` 是可选附加开关，默认关闭；不传时 `logic` 输出保持不变。所有输出均为 `[Script]` 观察，默认 Info/P3，且包含 `Meaning-Check: NEEDS-LLM`。`--section` 接受英文键或中文章节名（如 `method` / `方法`），不接受章号；按章节区间过滤，本章小结若不在所选区间内则不报 `PR-SUM-NEW`。
 
 ## 六位置职责矩阵
 
@@ -163,7 +163,7 @@ uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section 3
 
 ### 启发式阈值常量表
 
-以下常量集中定义于 `scripts/analyze_logic.py`，全部标注为**未标定 / UNVERIFIED**。常量仅作为启发式提示入口，不宣称误报率，支持词表与命令行配置：
+以下常量集中定义于 `scripts/analyze_logic.py`，全部标注为**未标定 / UNVERIFIED**。常量仅作为启发式提示入口，不宣称误报率；阈值不提供命令行覆盖。词表六字段可通过 `paragraph-roles-terms.yaml` 逐字段覆盖，与阈值常量相互独立。
 
 | 常量 | 默认值 | 判定语义 | 状态声明 |
 | --- | --- | --- | --- |

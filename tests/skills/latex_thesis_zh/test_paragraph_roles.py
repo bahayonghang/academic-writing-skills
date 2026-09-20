@@ -44,6 +44,16 @@ def test_loaded_module_is_zh_logic() -> None:
     assert Path(logic.__file__).resolve() == _SCRIPT.resolve()
 
 
+def test_guide_section_example_uses_known_keys_not_chapter_numbers() -> None:
+    guide = (_SKILL_DIR / "references" / "writing" / "paragraph-roles-zh.md").read_text(
+        encoding="utf-8"
+    )
+    assert "--section 3" not in guide
+    assert "--section method" in guide
+    assert "阈值不提供命令行覆盖" in guide
+    assert "支持词表与命令行配置" not in guide
+
+
 def test_yaml_terms_equal_builtin_defaults() -> None:
     yaml_path = _SKILL_DIR / "references" / "writing" / "paragraph-roles-terms.yaml"
     assert yaml_path.exists()

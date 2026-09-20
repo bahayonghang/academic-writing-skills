@@ -6,7 +6,7 @@ This guide provides baseline responsibility allocations and structural deduplica
 
 ```bash
 uv run python scripts/analyze_logic.py main.tex --paragraph-roles
-uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section 3
+uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section method
 ```
 
 - **Applicable scope**: Main-text body chapters from Chapter 2 up to the chapter before the conclusion (for the dedicated introduction chapter guide, see [`introduction-guide-zh.md`](introduction-guide-zh.md); for the dedicated conclusion chapter guide, see [`conclusion-guide-zh.md`](conclusion-guide-zh.md)).
@@ -16,7 +16,7 @@ uv run python scripts/analyze_logic.py main.tex --paragraph-roles --section 3
   - For method subsection openings and equation closure, see Sections 3 and 5 of [`method-description-guide-zh.md`](method-description-guide-zh.md);
   - For experimental results analysis, see [`results-analysis-guide-zh.md`](results-analysis-guide-zh.md);
   - For chapter summary specifications, see [`thesis-writing-guide.md`](thesis-writing-guide.md) and Section 6 of [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md).
-- **Execution profile**: `--paragraph-roles` is an optional additive flag, disabled by default; without this flag, `logic` output remains completely unchanged. All findings are `[Script]` observations defaulting to Info/P3 and including `Meaning-Check: NEEDS-LLM`.
+- **Execution profile**: `--paragraph-roles` is an optional additive flag, disabled by default; without this flag, `logic` output remains completely unchanged. All findings are `[Script]` observations defaulting to Info/P3 and including `Meaning-Check: NEEDS-LLM`. `--section` accepts English keys or Chinese section names (for example `method` / `方法`), not chapter numbers; findings are filtered by section range, so `PR-SUM-NEW` is omitted when the chapter-summary heading is outside the selected range.
 
 ## Six-Position Responsibility Matrix
 
@@ -163,7 +163,7 @@ When running `--paragraph-roles` to obtain heuristic candidates, LLMs or human r
 
 ### Heuristic Threshold Constants Table
 
-The following constants are defined in `scripts/analyze_logic.py` and are explicitly designated as **未标定 / UNVERIFIED**. They serve as heuristic screening prompts without claims on cross-corpus false-positive rates, and can be overridden via term tables:
+The following constants are defined in `scripts/analyze_logic.py` and are explicitly designated as **未标定 / UNVERIFIED**. They serve as heuristic screening prompts without claims on false-positive rates. Thresholds have no CLI override. The six term-table fields can be overridden per field in `paragraph-roles-terms.yaml` and are independent of these constants.
 
 | Constant | Default value | Semantic meaning | Calibration status |
 | --- | --- | --- | --- |

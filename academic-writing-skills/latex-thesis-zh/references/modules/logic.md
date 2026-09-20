@@ -152,7 +152,7 @@ uv run python -B scripts/analyze_logic.py thesis.tex --emit-window --subsection 
 uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-roles [--section SECTION]
 ```
 
-该附加分支观察正文各级段落的职责分配与结构重复，输出六类 `[Script]` 观察，默认 Info/P3 并含 `Meaning-Check: NEEDS-LLM`。`--method-narrative` 在未指定 `--section` 时的提前返回路径保持不变，在该路径下 `--paragraph-roles` 不运行。
+该附加分支观察正文各级段落的职责分配与结构重复，输出六类 `[Script]` 观察，默认 Info/P3 并含 `Meaning-Check: NEEDS-LLM`。`--method-narrative` 在未指定 `--section` 时的提前返回路径保持不变，在该路径下 `--paragraph-roles` 不运行。`--section` 接受英文键或中文章节名（如 `method`），不接受章号；按区间过滤，本章小结标题若不在所选区间内则不报 `PR-SUM-NEW`。
 
 | 代码 | 观察位置 | 启发式触发条件 | 豁免与边界 |
 | --- | --- | --- | --- |
