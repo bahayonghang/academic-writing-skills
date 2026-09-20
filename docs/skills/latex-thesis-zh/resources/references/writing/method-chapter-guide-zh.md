@@ -73,9 +73,8 @@ X.6 本章小结
 
 ## 3. Chapter introduction specifications (connecting the previous to the following) - the most critical part of this guide
 
-**The user has made a decision**: The two-stage linkage between the previous and the following is the **active recommendation form**——paper-to-chapter workflow always writes the following
-More stable and more conducive to positioning the main line for blind review (see the two-section template [`thesis-writing-guide.md`](thesis-writing-guide.md)
-"Introduction to the main article"). But it is **recommended rather than hard**, and the elastic boundary has been verified by 5 sample essays:
+**The user has made a decision**: Connecting the preceding and following content is a **recommended requirement**, and both one-paragraph and two-paragraph forms are compliant (for paragraph-style selection, see [`thesis-writing-guide.md`](thesis-writing-guide.md)
+"Body-Chapter Introduction")——in a paper-to-chapter workflow, always writing a backward-connecting sentence is safer and more conducive to positioning the main line for blind review. But it is **recommended rather than hard**, and the elastic boundary has been verified by 5 sample essays:
 
 - **Parallel method chapters may not be inherited**: Strength of succession **∝ Real dependence between chapters**. Chapter 5/5 with data/model dependencies (burned
   Chapter 5 names Chapters 3 and 4); purely parallel method chapters do not need to refer back to each other (each chapter on clinker and solid waste incineration stands on its own). → Inspector
@@ -91,6 +90,8 @@ More stable and more conducive to positioning the main line for blind review (se
 - **It is forbidden to repeat the introduction and summary** (Tsinghua §4.5: Contents already mentioned in the introduction and summary will not be repeated in the chapter introduction).
 - **"Defect-driven transition" recommended paradigm**: The most elegant transition between chapters is at the **end of the experiment in the previous chapter** - forced out by the defects exposed by the experiment
   Next chapter (pulverizing Chapter 5 "Single-step decision-making causes system instability" to force out Chapter 6 rolling optimization).
+- **Do not repeat industry background or duplicate directory**: The chapter introduction must not restate the broad industry background and literature review already provided in the introduction; choose either a roadmap preview or a section directory, never both in the same introduction; the section directory must not elaborate on the specific details of every section. For role matrix and deduplication rules across all paragraph levels, see [`paragraph-roles-zh.md`](paragraph-roles-zh.md).
+- **Paragraph style selection and progression order**: Both one-paragraph and two-paragraph forms are compliant. The one-paragraph form proceeds along the six-step sequence (object anchor → problem derivation → necessity → backward interface → solution announcement → closure or roadmap), while the two-paragraph form expands by the two paragraph roles; for selection rationale and examples, see [`thesis-writing-guide.md`](thesis-writing-guide.md) "Body-Chapter Introduction".
 
 | Writing | Judgment |
 | --- | --- |
@@ -98,6 +99,7 @@ More stable and more conducive to positioning the main line for blind review (se
 | Pure parallel chapter: The introduction only establishes the problems of this chapter, does not refer back to the previous chapter, but predicts the method route of this chapter | Info recommendation (the parallel chapter does not need to follow the previous chapter, red line 1) |
 | Section 4.3 of the chapter says "Inherit the feature set of Chapter 3", but the introduction does not mention Chapter 3 at all | Maintain the original level (there are dependent clues but missing inheritance, the role reuse sentence should be supplemented) |
 | The introduction is written as the second introduction, and the introduction and summary are repeated in large paragraphs | Violation of Tsinghua §4.5 (should be deleted to continue the problem, and the summary should not be repeated) |
+| In a single paragraph, advance tightly along object anchor → problem derivation → backward enumeration → solution announcement → roadmap preview (about 400 words) | Passed (complete six-step moves for one-paragraph form, see [`thesis-writing-guide.md`](thesis-writing-guide.md)) |
 
 ## 4. Method Design Presentation Standards
 
@@ -152,6 +154,7 @@ More stable and more conducive to positioning the main line for blind review (se
   → **Treat the forward-link sentence only as an Info recommendation; its absence must not trigger a hard finding** (red line 2). An engineering-application chapter summary should close with evidenced mechanisms, the current evidence boundary, and its contribution to the thesis. Quantified benefits and broader applicability may be stated only when the supplied evidence supports them.
 - **Conclusion ≠ Simple repetition of the summary of each chapter** (Tsinghua §4.6): "Conclusion/Summary and Outlook" of the full text comprehensively summarizes the contribution, limitations and future of the full text
   Direction; the summary of this chapter only summarizes the evidence in the chapter, and does not mechanically repeat the "Chapter X..." sentence pattern of each chapter.
+- **Do not introduce new arguments**: The summary must not introduce new citations, formulas, figures/tables, or derivations (back-referencing existing figures or tables in the chapter is compliant); summarizing method highlights at sentence-level granularity is compliant, whereas step-by-step recitation of training or deployment pipelines is non-compliant (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)).
 
 ## 7. Echoing the framework of Chapter 2
 
@@ -242,6 +245,8 @@ Point to the specification section:
 | The method name is contradictory | **LLM** | The method name/abbreviation in the text conflicts with the full text | Manual | Eight |
 | Authenticity of the succession / "This article vs this chapter" | **LLM** | Whether the following sentence corresponds to real dependence and whether the reference is misplaced | Artificial | Three/Eight |
 | The formula lacks the interpretation of "in the formula" | **LLM** | The numbered formula is missing the symbol-by-symbol interpretation (sampling) | Manual | Four |
+| PR-* | logic (`--paragraph-roles`) | Paragraph role responsibilities and structural deduplication observations in main text (chapter intro / lead-in / subsection opening / post-equation / summary) | Info | Three/Six (see [`paragraph-roles-zh.md`](paragraph-roles-zh.md)) |
+| CI-* | logic (`--chapter-intro-style`) | Body-chapter introduction style observation and move coverage (one/two/multi-paragraph, problem/backward/solution/closure-or-roadmap) | Info | Three (see [`thesis-writing-guide.md`](thesis-writing-guide.md)) |
 
 ## Output suggested format
 
@@ -256,7 +261,7 @@ Point to the specification section:
 
 - [process-chapter-guide-zh.md](process-chapter-guide-zh.md): Chapter 2 process analysis chapter format, point after identification.
 - [introduction-guide-zh.md](introduction-guide-zh.md): The six-section skeleton of the introduction (it is forbidden to repeat the summary of the chapter introduction).
-- [thesis-writing-guide.md](thesis-writing-guide.md): Main line of the full text, two-paragraph template for chapter introduction and single-paragraph template for chapter summary.
+- [thesis-writing-guide.md](thesis-writing-guide.md): Main line of the full text, one-paragraph/two-paragraph template for chapter introduction and single-paragraph template for chapter summary.
 - [engineering-application-chapter-guide-zh.md](engineering-application-chapter-guide-zh.md): Argument and evidence boundaries for an independent engineering-application or system-implementation chapter.
 - [structure-guide.md](structure-guide.md): The number of directly subordinate sections is flexible, and the chapter title is linked to the section title.
 - [../modules/logic.md](../modules/logic.md): P-PAPER generalization with `--first-chapter` description.

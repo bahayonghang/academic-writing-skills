@@ -1,0 +1,28 @@
+{
+  "id": "thesis-zh-paragraph-roles",
+  "name": "thesis-zh-paragraph-roles",
+  "title": "latex-thesis-zh 正文各级段落职责与结构重复检查",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-20",
+  "completedAt": "2026-09-20",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "description": "把用户总结的六位置段落职责表（章引言/总节导语/方法小节首段/公式后段/实验结果段/本章小结）写入 latex-thesis-zh：新指南 paragraph-roles-zh.md + 五份指南交叉引用 + 路由 + docs 镜像；可选 opt-in logic --paragraph-roles PR-* 观察码。目的：防止结构重复与写作冗余。"
+  }
+}

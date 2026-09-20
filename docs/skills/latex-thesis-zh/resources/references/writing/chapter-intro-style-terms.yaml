@@ -1,0 +1,40 @@
+# chapter-intro-style-terms.yaml: 默认章引言段式观察词表
+# CI_ONE_PARA_MAX_HAN = 600 未标定 / UNVERIFIED，阈值不由 YAML 覆盖
+
+problem_markers:
+  - 问题
+  - 难题
+  - 难点
+  - 瓶颈
+  - 不足
+  - 缺乏
+  - 缺少
+  - 难以
+  - 无法
+  - 导致
+  - 影响
+  - 制约
+  - 挑战
+solution_markers:
+  - 提出
+  - 构建
+  - 设计
+  - 建立
+  - 研究
+  - 开发
+  - 给出
+  - 引入
+  - 采用
+closing_markers:
+  - 提供支撑
+  - 提供数据支撑
+  - 提供依据
+  - 提供基础
+  - 奠定基础
+  - 奠定了基础
+  - 提供保障
+  - 提供新思路
+  - 提供工具
+  - 打下基础
+  - 为后续
+  - 为第

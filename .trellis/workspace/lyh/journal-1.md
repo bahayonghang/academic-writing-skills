@@ -1657,3 +1657,75 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - 无本任务后续
+
+
+## Session 49: latex-thesis-zh 正文段落职责与 --paragraph-roles
+
+**Date**: 2026-09-20
+**Task**: latex-thesis-zh 正文段落职责与 --paragraph-roles
+**Branch**: `dev`
+
+### Summary
+
+新增六位置段落职责指南与 opt-in PR-* 观察；修正示例命令与阈值说明后归档。
+
+### Main Changes
+
+- 新增 paragraph-roles-zh.md、词表、--paragraph-roles 六码、路由、evals、spec 与双语镜像
+- 修正 --section method 示例与阈值无 CLI 覆盖说明
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1c908cd` | (see git log) |
+| `df84f4e` | (see git log) |
+
+### Testing
+
+- [OK] just ci 2183 passed / 2 skipped；just doc-build；resource sync latex-thesis-zh
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 无；任务已归档
+
+
+## Session 50: latex-thesis-zh 章引言一段式与两段式支持
+
+**Date**: 2026-09-20
+**Task**: latex-thesis-zh 章引言一段式与两段式支持
+**Branch**: `dev`
+
+### Summary
+
+正文章引言同时支持一段式与两段式：指南增六步推进序与段式选型，logic 新增 opt-in --chapter-intro-style（CI-STYLE/CI-MOVES/CI-LONG），并修复章号列举承上误报与写死两段的建议文案。
+
+### Main Changes
+
+- thesis-writing-guide 正文章引言改为双段式规范源（共同要件、一段式六步、段式选型）
+- 六份指南/模块文档去掉两段式为推荐形态的措辞
+- analyze_logic.py 扩展 CHAPTER_DEP_REF_RE、建议文案中立化，并新增 --chapter-intro-style
+- evals、docs 双语镜像、spec 契约与 test_chapter_intro_style.py
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6bb61c0` | (see git log) |
+
+### Testing
+
+- [OK] pytest 271 passed (chapter-intro-style + related contracts)
+- [OK] fixture 命中 CI-STYLE/CI-MOVES/CI-LONG；check_resource_sync.py --skill latex-thesis-zh 绿
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- just ci 本轮未等完；确认后可推送或开 PR

@@ -1,0 +1,10 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "spec 索引与副本/哈希锁背景速览"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "importlib 按路径加载、evals.json Bash python 写入、默认行为零变化约定、私有语料边界、pytest 不加 PYTHONIOENCODING"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增/修改 references 后 manifest 与 en/zh 镜像页契约"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "P-ARC 段落切分、_arc_finding 格式、YAML 逐字段回退——PR-* 脚本层的同构样板；P-ARC 语义不得改动"}
+{"file": ".trellis/spec/academic-writing-skills/subsection-context-contract.md", "reason": "depth-3 小节游标与只读边界——小节首段定位复用"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "M-EQUATION 公式块解析与 Info/P3 契约——PR-EQ-NARR 复用边界，M-* 不得改动"}
+{"file": ".trellis/spec/academic-writing-skills/results-analysis-checker-contract.md", "reason": "RA-* 所有权——实验结果段只指路不新增码"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "SKILL.md 路由表变更时 SMOKE_COMMANDS 与契约测试联动"}
+{"file": ".trellis/tasks/09-20-thesis-zh-paragraph-roles/research/existing-machinery.md", "reason": "六位置既有覆盖与缺口、analyze_logic.py 锚点、编辑锚点、联动锁清单、既有取舍"}
+{"file": ".trellis/tasks/09-20-thesis-zh-paragraph-roles/research/sources-and-prior-art.md", "reason": "需求原表、带 URL 来源、技能目录先例 keep/adapt/reject/invent、证据标签"}

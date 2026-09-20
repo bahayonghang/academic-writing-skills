@@ -218,8 +218,7 @@ Preview "Process Description → Structure → Important and Difficult Points"; 
 - **Not required**: Explicitly write "Chapter 1" to continue the conclusion of the previous chapter - this is the link between Chapter 3 and the method chapter.
   (See the "Introduction to the main article" section of [`thesis-writing-guide.md`](thesis-writing-guide.md)).
 
-Based on this, the R2 checker only checks "the preview sections + length" for Chapter 2, and does not report "missing connection"; the two-part link from Chapter 3
-Applicable from now on. The two forms of this chapter summary are summarized in the order of sections and are almost mirror images of the introduction/introduction (both list of points and single paragraph are available, see
+Based on this, the R2 checker only checks "the preview sections + length" for Chapter 2, and does not report "missing connection"; the linking transition (one-paragraph or two-paragraph) applies from Chapter 3 onward. The two forms of this chapter summary are summarized in the order of sections and are almost mirror images of the introduction/introduction (both list of points and single paragraph are available, see
 [`thesis-writing-guide.md`](thesis-writing-guide.md)'s "Summary at the end of the article" section).
 
 ## Output suggested format

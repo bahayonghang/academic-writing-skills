@@ -77,6 +77,7 @@ uv run python scripts/analyze_experiment.py thesis.tex --results-analysis
 再说明它改变了哪项原有预期以及需要什么后续检验。
 
 依据：用户规范 §2、§5.2；外部来源 #3、#8。
+实验结果段的位置职责见新指南矩阵行，具体判据与检查码仍以本指南为准（参见 [`paragraph-roles-zh.md`](paragraph-roles-zh.md)）。
 
 ## 三、逐指标完成数值比较
 

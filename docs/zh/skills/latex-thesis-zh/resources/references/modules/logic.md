@@ -28,15 +28,15 @@ AXES 用来检查论证角色，不要求把一个观察补成提升或机制结
 
 **Detection**: Script scans `\chapter`, `\section`, `\subsection`, `\subsubsection`, `\paragraph` — flags if first child is non-prose content.
 
-### Chapter Intro Specialization (承上启下)
+### Chapter Intro Specialization (承上启下，一段或两段)
 
-S1 只判断"有没有导语"。对正文各章（第 2 章至结论前、且含下级小节）的**章引言**，脚本另做承上启下专项检查（`% 章引言 ... [Script]`），与 S1 互补：
+S1 只判断"有没有导语"。对正文各章（第 2 章至结论前、且含下级小节）的**章引言**（一段或两段均合规），脚本另做承上启下专项检查（`% 章引言 ... [Script]`），与 S1 互补：
 
 - **承上缺失 / 启下缺失**（Major/P1）：章引言未承接前章（无章节号/桥接），或未交代本章问题与各节安排。
 - **相对指代**（Minor/P2）：出现"上一章/上文"，建议改用章节号"第 X 章"。
 - **篇幅过简 / 过长**（Minor/P2）：偏离"1~2 段、约 300~500 字"的约定。
 
-绪论（第 1 章）由 `_check_introduction_funnel` 负责，章引言检查按标题显式排除，零重叠。改写指导见 [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md) 的"正文章引言"一节。
+绪论（第 1 章）由 `_check_introduction_funnel` 负责，章引言检查按标题显式排除，零重叠。改写指导与一段式/两段式选型见 [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md) 的"正文章引言"一节。
 
 ## Literature Review Quality (A1-A4)
 
@@ -145,6 +145,41 @@ uv run python -B scripts/analyze_logic.py thesis.tex --emit-window --subsection 
 只有 `current` 可改，其余部件只作证据。完整判据、合格段规则和协议见
 [`../writing/subsection-context-zh.md`](../writing/subsection-context-zh.md)，词表见
 [`../writing/subsection-context-terms.yaml`](../writing/subsection-context-terms.yaml)。
+
+## Paragraph Role Checks (`--paragraph-roles`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --paragraph-roles [--section SECTION]
+```
+
+该附加分支观察正文各级段落的职责分配与结构重复，输出六类 `[Script]` 观察，默认 Info/P3 并含 `Meaning-Check: NEEDS-LLM`。`--method-narrative` 在未指定 `--section` 时的提前返回路径保持不变，在该路径下 `--paragraph-roles` 不运行。`--section` 接受英文键或中文章节名（如 `method`），不接受章号；按区间过滤，本章小结标题若不在所选区间内则不报 `PR-SUM-NEW`。
+
+| 代码 | 观察位置 | 启发式触发条件 | 豁免与边界 |
+| --- | --- | --- | --- |
+| `PR-INTRO-BG` | 章引言 | 行业背景词去重命中 $\ge 3$ 且无承接句 | 第 2 章（概述式引言）豁免 |
+| `PR-INTRO-TOC` | 章引言 | 节号目录与路线预告在同引言双写，或节号目录条目 $\ge 5$ 逐节详列 | 单独合规节号目录或单独路线预告通过 |
+| `PR-LEAD-DUP` | 含子节的总节导语 | 导语与本章章引言 bigram Jaccard $\ge 0.3500$ | 导语 $<40$ 汉字或无章引言豁免 |
+| `PR-SUB-CHAL` | 具体方法小节首段 | depth-3 首段挑战词 $\ge 2$ 且列举序词 $\ge 2$ | 绪论/结论章豁免；标题含引言/概述豁免 |
+| `PR-EQ-NARR` | 公式后首段 | 编号公式后首段算子翻译词去重命中 $\ge 3$ | “式中/其中”纯符号释义段豁免 |
+| `PR-SUM-NEW` | 本章小结 | 小结出现 `\cite{}`、数学环境或图表/算法环境 | `\ref` 回指已有图表不报；注释行不报 |
+
+规则真相源见 [`../writing/paragraph-roles-zh.md`](../writing/paragraph-roles-zh.md)，词表见 [`../writing/paragraph-roles-terms.yaml`](../writing/paragraph-roles-terms.yaml)。
+
+## Chapter Intro Style Checks (`--chapter-intro-style`)
+
+```bash
+uv run python -B scripts/analyze_logic.py thesis.tex --chapter-intro-style [--section SECTION] [--first-chapter N]
+```
+
+该附加分支观察正文各章引言的自然段式（一段式 / 两段式 / 多段式）与核心要件覆盖情况，输出三类 `[Script]` 观察，默认 Info/P3 并含 `Meaning-Check: NEEDS-LLM`。`--method-narrative` 在未指定 `--section` 时的提前返回路径保持不变，在该路径下 `--chapter-intro-style` 不运行。`--section` 接受英文键或中文章节名（如 `method`），按区间过滤引言；`--first-chapter N` 声明单章真实章号，使第 2 章承上豁免按真实章号生效。
+
+| 代码 | 观察位置 | 启发式触发条件 | 豁免与边界 |
+| --- | --- | --- | --- |
+| `CI-STYLE` | 正文章引言 | 正文章引言块非空时恒报一条：段式标签（一段式/两段式/多段式）、位置形态、约字数、段数与句数、要件覆盖向量 | 引言块为空（默认检查已报） |
+| `CI-MOVES` | 正文章引言 | 核心要件（问题、方案、收束或路线）任一缺失；若方案未命中且默认检查已报缺启下则不重复报告方案 | 引言块为空；`--section` 区间外 |
+| `CI-LONG` | 一段式引言 | 一段式汉字数 $> 600$ 且 $\le$ 默认篇幅上限（导语 900、编号小节 1600）时，建议在方案宣告处拆为两段 | 篇幅超默认上限（默认过长已报，零重叠）；两段式/多段式 |
+
+规则真相源见 [`../writing/thesis-writing-guide.md`](../writing/thesis-writing-guide.md) 的"正文章引言"一节，词表见 [`../writing/chapter-intro-style-terms.yaml`](../writing/chapter-intro-style-terms.yaml)。
 
 ## Body-Chapter Stitching & Intro Bridging (default)
 

@@ -1,0 +1,740 @@
+{
+  "ok": true,
+  "complete": false,
+  "researched_at": "2026-09-20",
+  "queries": [
+    "thesis chapter introduction writing guide",
+    "学位论文 章节引言 承上启下 写法",
+    "academic chapter transition signposting checker"
+  ],
+  "metric_semantics": {
+    "skills_sh_installs": "ecosystem install telemetry; not ratings or correctness",
+    "skillsmp_repo_stars": "GitHub repository stars; not installs, ratings, or skill-specific quality",
+    "cross_catalog_score": "not calculated; metrics remain separate"
+  },
+  "query_runs": [
+    {
+      "query": "thesis chapter introduction writing guide",
+      "skills_sh": "not_run",
+      "skillsmp": "ok",
+      "skillsmp_candidates": 8
+    },
+    {
+      "query": "学位论文 章节引言 承上启下 写法",
+      "skills_sh": "not_run",
+      "skillsmp": "ok",
+      "skillsmp_candidates": 10
+    },
+    {
+      "query": "academic chapter transition signposting checker",
+      "skills_sh": "not_run",
+      "skillsmp": "ok",
+      "skillsmp_candidates": 7
+    }
+  ],
+  "candidate_family_count": 25,
+  "candidates": [
+    {
+      "family_key": "affaan-m/ecc:ito-baskets",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "ito-baskets",
+        "author": "affaan-m",
+        "description": "Read-only Itô basket and prediction-market data skill. Index the live basket catalog, compare a basket against user-supplied research or a watchlist, build a source-grounded market brief, or draft a non-executable planning worksheet. Use when a user asks to browse or index Itô baskets, compare a basket against notes or a thesis, research prediction-market events/venues/liquidity, or plan a basket or market idea without trading. Never advises, orders, trades, reserves, or executes.",
+        "content_language": "en",
+        "github_url": "https://github.com/affaan-m/ECC/tree/main/skills/ito-baskets",
+        "skillsmp_url": "https://skillsmp.com/creators/affaan-m/ecc/skills-ito-baskets",
+        "repo_stars": 260918,
+        "catalog_updated_at": "2026-08-12T19:52:26+00:00",
+        "source_key": "affaan-m/ecc:skills/ito-baskets",
+        "family_key": "affaan-m/ecc:ito-baskets",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "affaan-m/ecc:literature-review",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "literature-review",
+        "author": "affaan-m",
+        "description": "Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging. Use when the task is to find, screen, synthesize, and cite a body of academic or technical literature.",
+        "content_language": "en",
+        "github_url": "https://github.com/affaan-m/ECC/tree/main/skills/scientific-thinking-literature-review",
+        "skillsmp_url": "https://skillsmp.com/creators/affaan-m/ecc/skills-scientific-thinking-literature-review",
+        "repo_stars": 260918,
+        "catalog_updated_at": "2026-08-12T03:58:14+00:00",
+        "source_key": "affaan-m/ecc:skills/scientific-thinking-literature-review",
+        "family_key": "affaan-m/ecc:literature-review",
+        "aliases": [],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "affaan-m/ecc:scholar-evaluation",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "scholar-evaluation",
+        "author": "affaan-m",
+        "description": "Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or scientific work — papers, proposals, methods sections, or evidence quality — against a repeatable rubric.",
+        "content_language": "en",
+        "github_url": "https://github.com/affaan-m/ECC/tree/main/skills/scientific-thinking-scholar-evaluation",
+        "skillsmp_url": "https://skillsmp.com/creators/affaan-m/ecc/skills-scientific-thinking-scholar-evaluation",
+        "repo_stars": 260918,
+        "catalog_updated_at": "2026-08-12T03:58:14+00:00",
+        "source_key": "affaan-m/ecc:skills/scientific-thinking-scholar-evaluation",
+        "family_key": "affaan-m/ecc:scholar-evaluation",
+        "aliases": [],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:hps-academic-paper",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "hps-academic-paper",
+        "author": "nexu-io",
+        "description": "A review deck on compositional generalization in large language models — the field map, the gap, the evidence, and open questions. Built as a decision-grade academic research deck for PI, lab group, reviewers.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/hps-academic-paper",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/plugins-official-examples-hps-academic-paper",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-07-14T08:43:57+00:00",
+        "source_key": "nexu-io/open-design:plugins/_official/examples/hps-academic-paper",
+        "family_key": "nexu-io/open-design:hps-academic-paper",
+        "aliases": [],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:html-ppt-zhangzara-biennale-yellow",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "html-ppt-zhangzara-biennale-yellow",
+        "author": "nexu-io",
+        "description": "A curatorial deck for a contemporary art biennale — the thesis, the rooms, the works, and the visitor journey. Built as a decision-grade design craft deck for museum board, curators.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/design-templates/html-ppt-zhangzara-biennale-yellow",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/design-templates-html-ppt-zhangzara-biennale-yellow",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-07-10T09:41:47+00:00",
+        "source_key": "nexu-io/open-design:design-templates/html-ppt-zhangzara-biennale-yellow",
+        "family_key": "nexu-io/open-design:html-ppt-zhangzara-biennale-yellow",
+        "aliases": [
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-biennale-yellow"
+          },
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-biennale-yellow"
+          }
+        ],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:html-ppt-zhangzara-cartesian",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "html-ppt-zhangzara-cartesian",
+        "author": "nexu-io",
+        "description": "An economics senior thesis on the employment effects of local minimum-wage increases — identification strategy, evidence, and limitations. Built as a decision-grade coursework defense deck for thesis committee.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/design-templates/html-ppt-zhangzara-cartesian",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/design-templates-html-ppt-zhangzara-cartesian",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-07-10T09:41:47+00:00",
+        "source_key": "nexu-io/open-design:design-templates/html-ppt-zhangzara-cartesian",
+        "family_key": "nexu-io/open-design:html-ppt-zhangzara-cartesian",
+        "aliases": [
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-cartesian"
+          },
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-cartesian"
+          }
+        ],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:html-ppt-zhangzara-monochrome",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "html-ppt-zhangzara-monochrome",
+        "author": "nexu-io",
+        "description": "A grant proposal on CRISPR base-editing for sickle-cell disease — the hypothesis, the approach, the milestones, and the risk. Built as a decision-grade academic research deck for grant review committee.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/design-templates/html-ppt-zhangzara-monochrome",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/design-templates-html-ppt-zhangzara-monochrome",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-07-10T09:41:47+00:00",
+        "source_key": "nexu-io/open-design:design-templates/html-ppt-zhangzara-monochrome",
+        "family_key": "nexu-io/open-design:html-ppt-zhangzara-monochrome",
+        "aliases": [
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-monochrome"
+          },
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-monochrome"
+          }
+        ],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:html-ppt-zhangzara-vellum",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "html-ppt-zhangzara-vellum",
+        "author": "nexu-io",
+        "description": "A humanities lecture: how Renaissance linear perspective reshaped early cartography — sources, argument, and evidence. Built as a decision-grade academic research deck for faculty, graduate seminar.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/design-templates/html-ppt-zhangzara-vellum",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/design-templates-html-ppt-zhangzara-vellum",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-07-10T09:41:47+00:00",
+        "source_key": "nexu-io/open-design:design-templates/html-ppt-zhangzara-vellum",
+        "family_key": "nexu-io/open-design:html-ppt-zhangzara-vellum",
+        "aliases": [
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-vellum"
+          },
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-vellum"
+          }
+        ],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "nexu-io/open-design:kami-deck",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "kami-deck",
+        "author": "nexu-io",
+        "description": "A lab-meeting deck on gut-microbiome links to sleep quality — the design, the results, the caveats, and the next experiment. Built as a decision-grade academic research deck for lab group, PI.",
+        "content_language": "en",
+        "github_url": "https://github.com/nexu-io/open-design/tree/main/design-templates/kami-deck",
+        "skillsmp_url": "https://skillsmp.com/creators/nexu-io/open-design/design-templates-kami-deck",
+        "repo_stars": 96674,
+        "catalog_updated_at": "2026-08-18T07:09:45+00:00",
+        "source_key": "nexu-io/open-design:design-templates/kami-deck",
+        "family_key": "nexu-io/open-design:kami-deck",
+        "aliases": [
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/kami-deck"
+          },
+          {
+            "language": "en",
+            "github_url": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/kami-deck"
+          }
+        ],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "bytedance/deer-flow:academic-paper-review",
+      "queries": [
+        "academic chapter transition signposting checker"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "academic-paper-review",
+        "author": "bytedance",
+        "description": "Use this skill when the user requests to review, analyze, critique, or summarize academic papers, research articles, preprints, or scientific publications. Supports comprehensive structured reviews covering methodology assessment, contribution evaluation, literature positioning, and constructive feedback generation. Trigger on queries involving paper URLs, uploaded PDFs, arXiv links, or requests like \"review this paper\", \"analyze this research\", \"summarize this study\", or \"write a peer review\".",
+        "content_language": "en",
+        "github_url": "https://github.com/bytedance/deer-flow/tree/main/skills/public/academic-paper-review",
+        "skillsmp_url": "https://skillsmp.com/creators/bytedance/deer-flow/skills-public-academic-paper-review",
+        "repo_stars": 82528,
+        "catalog_updated_at": "2026-04-05T02:19:35+00:00",
+        "source_key": "bytedance/deer-flow:skills/public/academic-paper-review",
+        "family_key": "bytedance/deer-flow:academic-paper-review",
+        "aliases": [],
+        "query": "academic chapter transition signposting checker"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "k-dense-ai/scientific-agent-skills:scientific-slides",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "scientific-slides",
+        "author": "K-Dense-AI",
+        "description": "Build slide decks and presentations for research talks. Use this for making PowerPoint slides, conference presentations, seminar talks, research presentations, thesis defense slides, or any scientific talk. Provides slide structure, design templates, timing guidance, and visual validation. Works with PowerPoint and LaTeX Beamer.",
+        "content_language": "en",
+        "github_url": "https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/scientific-slides",
+        "skillsmp_url": "https://skillsmp.com/creators/k-dense-ai/scientific-agent-skills/skills-scientific-slides",
+        "repo_stars": 45497,
+        "catalog_updated_at": "2026-09-10T22:54:37+00:00",
+        "source_key": "k-dense-ai/scientific-agent-skills:skills/scientific-slides",
+        "family_key": "k-dense-ai/scientific-agent-skills:scientific-slides",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "anthropics/financial-services:earnings-analysis",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "earnings-analysis",
+        "author": "anthropics",
+        "description": "Create professional equity research earnings update reports (8-12 pages, 3,000-5,000 words) analyzing quarterly results for companies already under coverage. Fast-turnaround format focusing on beat/miss analysis, key metrics, updated estimates, and revised thesis. Includes 1-3 summary tables and 8-12 charts. Use when user requests \"earnings update\", \"quarterly update\", \"earnings analysis\", \"Q1/Q2/Q3/Q4 results\", or post-earnings report.",
+        "content_language": "en",
+        "github_url": "https://github.com/anthropics/financial-services/tree/main/plugins/agent-plugins/earnings-reviewer/skills/earnings-analysis",
+        "skillsmp_url": "https://skillsmp.com/creators/anthropics/financial-services/plugins-agent-plugins-earnings-reviewer-skills-earnings-analysis",
+        "repo_stars": 34884,
+        "catalog_updated_at": "2026-05-05T14:58:18+00:00",
+        "source_key": "anthropics/financial-services:plugins/agent-plugins/earnings-reviewer/skills/earnings-analysis",
+        "family_key": "anthropics/financial-services:earnings-analysis",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "anthropics/financial-services:thesis-tracker",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "thesis-tracker",
+        "author": "anthropics",
+        "description": "Maintain and update investment theses for portfolio positions and watchlist names. Track key data points, catalysts, and thesis milestones over time. Use when updating a thesis with new information, reviewing position rationale, or checking if a thesis is still intact. Triggers on \"update thesis for [company]\", \"is my thesis still intact\", \"thesis check\", \"add data point to [company]\", or \"review my positions\".",
+        "content_language": "en",
+        "github_url": "https://github.com/anthropics/financial-services/tree/main/plugins/vertical-plugins/equity-research/skills/thesis-tracker",
+        "skillsmp_url": "https://skillsmp.com/creators/anthropics/financial-services/plugins-vertical-plugins-equity-research-skills-thesis-tracker",
+        "repo_stars": 34884,
+        "catalog_updated_at": "2026-05-21T01:10:06+00:00",
+        "source_key": "anthropics/financial-services:plugins/vertical-plugins/equity-research/skills/thesis-tracker",
+        "family_key": "anthropics/financial-services:thesis-tracker",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "hkuds/vibe-trading:management-deep-dive",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "management-deep-dive",
+        "author": "HKUDS",
+        "description": "Deep management assessment — the 'buying a stock is buying a person' layer. For a company or a named executive, evaluate integrity (promise-vs-delivery tracking, crisis behavior, stakeholder treatment), ability (strategic foresight, execution, capital-allocation record) and governance (equity structure, compensation, related-party deals). Outputs a weighted score across integrity / ability / capital-allocation / governance plus Duan Yongping's 3-question verdict ('would you hand this person your money for 10 years'). Use when standard research leaves management quality uncertain, or when management IS the investment thesis.",
+        "content_language": "en",
+        "github_url": "https://github.com/HKUDS/Vibe-Trading/tree/main/agent/src/skills/management-deep-dive",
+        "skillsmp_url": "https://skillsmp.com/creators/hkuds/vibe-trading/agent-src-skills-management-deep-dive",
+        "repo_stars": 33596,
+        "catalog_updated_at": "2026-07-06T09:25:39+00:00",
+        "source_key": "hkuds/vibe-trading:agent/src/skills/management-deep-dive",
+        "family_key": "hkuds/vibe-trading:management-deep-dive",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "hkuds/vibe-trading:thesis-tracker",
+      "queries": [
+        "thesis chapter introduction writing guide"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "thesis-tracker",
+        "author": "HKUDS",
+        "description": "Buy-side discipline system. For each holding, maintain a written investment thesis — core thesis in 5 sentences, falsifiable assumptions, red lines, valuation anchors — and re-check it each quarter against new earnings/events. Scores thesis health 1-10 from assumption breakage and red-line triggers, and recommends hold / add / trim / exit. Use it right after buying a stock (to write the thesis) and every earnings season (to check it). Bridges the research→buy→monitor gap that most investors skip.",
+        "content_language": "en",
+        "github_url": "https://github.com/HKUDS/Vibe-Trading/tree/main/agent/src/skills/thesis-tracker",
+        "skillsmp_url": "https://skillsmp.com/creators/hkuds/vibe-trading/agent-src-skills-thesis-tracker",
+        "repo_stars": 33596,
+        "catalog_updated_at": "2026-07-06T09:25:39+00:00",
+        "source_key": "hkuds/vibe-trading:agent/src/skills/thesis-tracker",
+        "family_key": "hkuds/vibe-trading:thesis-tracker",
+        "aliases": [],
+        "query": "thesis chapter introduction writing guide"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "brycewang-stanford/auto-empirical-research-skills:latex-thesis-zh",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "latex-thesis-zh",
+        "author": "brycewang-stanford",
+        "description": "Chinese LaTeX thesis assistant for existing .tex degree thesis projects (XeLaTeX/LuaLaTeX/latexmk). Use this skill whenever a user works on a Chinese master's or doctoral thesis needing compilation, GB/T 7714 bibliography checks, chapter structure mapping, template detection (thuthesis, pkuthss), terminology consistency, logic coherence review, heading lead-in checks, title optimization, de-AI editing, experiment chapter review, three-line table validation, or abstract structure diagnosis. Trigger even for single issues like \"帮我编译论文\", \"检查国标格式\", \"看看绪论逻辑\", \"毕业论文\", \"学位论文\", \"硕士/博士论文\", \"三线表\", \"检查摘要\", or \"摘要结构\".",
+        "content_language": "mul",
+        "github_url": "https://github.com/brycewang-stanford/Auto-Empirical-Research-Skills/tree/main/skills/35-bahayonghang-academic-writing-skills/skills/latex-thesis-zh",
+        "skillsmp_url": "https://skillsmp.com/creators/brycewang-stanford/auto-empirical-research-skills/skills-35-bahayonghang-academic-writing-skills-skills-latex-thesis-zh",
+        "repo_stars": 3709,
+        "catalog_updated_at": "2026-04-03T02:07:17+00:00",
+        "source_key": "brycewang-stanford/auto-empirical-research-skills:skills/35-bahayonghang-academic-writing-skills/skills/latex-thesis-zh",
+        "family_key": "brycewang-stanford/auto-empirical-research-skills:latex-thesis-zh",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "xstongxue/best-skills:paper-write",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "paper-write",
+        "author": "xstongxue",
+        "description": "本科与硕士学位论文全流程撰写辅助。支持大纲审核（理工科/文科）、结构仿写（通用/实验/绪论/摘要；文科含文献综述、案例分析、对策建议、文科绪论与摘要）、参考文献获取、融合、润色（含实验章节/文科章节）、缩写、扩写、防 AIGC、中英互译、结构化信息提取。当用户提到论文撰写、大纲审核、论文章节仿写、参考文献、论文润色、防 AIGC、论文翻译、文科论文、文献综述、对策建议时使用。",
+        "content_language": "zh",
+        "github_url": "https://github.com/xstongxue/best-skills/tree/main/skills/paper-write",
+        "skillsmp_url": "https://skillsmp.com/creators/xstongxue/best-skills/skills-paper-write",
+        "repo_stars": 2855,
+        "catalog_updated_at": "2026-05-28T01:36:17+00:00",
+        "source_key": "xstongxue/best-skills:skills/paper-write",
+        "family_key": "xstongxue/best-skills:paper-write",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "leoyeai/openclaw-master-skills:biomedical-paper",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "biomedical-paper",
+        "author": "LeoYeAI",
+        "description": "AI-powered biomedical manuscript generation with docx output.\nActivates when user provides Chinese draft/outline and requests full English research paper.\nIncludes: Abstract, Introduction, Methods, Results, Discussion, References.\nSpecialized for: GBD epidemiology, cohort studies (CHARLS/NHANES), cross-sectional mediation analyses, pharmacovigilance (FAERS).\nAlso supports: Chinese graduate/doctoral thesis (学位论文) formatting.\nFeatures: python-docx generation, Vancouver numbered references, journal-specific formatting.\nConfidence: High (validated workflow with 30+ successful papers)",
+        "content_language": "zh",
+        "github_url": "https://github.com/LeoYeAI/openclaw-master-skills/tree/main/skills/biomedical-paper-billing",
+        "skillsmp_url": "https://skillsmp.com/creators/leoyeai/openclaw-master-skills/skills-biomedical-paper-billing",
+        "repo_stars": 2128,
+        "catalog_updated_at": "2026-05-25T02:00:43+00:00",
+        "source_key": "leoyeai/openclaw-master-skills:skills/biomedical-paper-billing",
+        "family_key": "leoyeai/openclaw-master-skills:biomedical-paper",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "leoyeai/openclaw-master-skills:thu-thesis",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "thu-thesis",
+        "author": "LeoYeAI",
+        "description": "清华大学毕业论文 Word → PDF 一键格式规范化工具。输入任意 Word (.docx) 格式的清华毕业论文，自动转换为符合清华 thuthesis 官方 LaTeX 模板规范的高质量 PDF。适用于所有清华学位论文（MBA/学硕/专硕），一条命令搞定。功能：自动提取章节结构、中英文摘要、参考文献（自动生成 BibTeX）、图片（含 caption）、表格（含表头和标题）、致谢、个人简历；自动生成符号和缩略语说明（含孤儿缩略语检测与正文首次出现处自动补写）；自动生成插图清单和附表清单；输出完整 thuthesis LaTeX 项目并编译为 PDF。运行时依赖：python-docx、jinja2、xelatex/bibtex（TeX Live）；setup.sh 会从 GitHub 克隆 thuthesis 到 /tmp/thuthesis-latest。Use when: 用户需要把 Word 格式的清华毕业论文转为规范 PDF，或需要对毕业论文做格式规范化处理。",
+        "content_language": "zh",
+        "github_url": "https://github.com/LeoYeAI/openclaw-master-skills/tree/main/skills/thu-thesis",
+        "skillsmp_url": "https://skillsmp.com/creators/leoyeai/openclaw-master-skills/skills-thu-thesis",
+        "repo_stars": 2128,
+        "catalog_updated_at": "2026-05-05T16:03:12+00:00",
+        "source_key": "leoyeai/openclaw-master-skills:skills/thu-thesis",
+        "family_key": "leoyeai/openclaw-master-skills:thu-thesis",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "zju-real/hugagentos:officecli-academic-paper",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "officecli-academic-paper",
+        "author": "ZJU-REAL",
+        "description": "**排版学术论文 / 期刊 / 会议论文 / 学位论文章节 .docx**：APA / Chicago / IEEE / MLA 引用格式、编号公式、图表交叉引用、脚注尾注、参考文献悬挂缩进、双栏期刊版式。商业报告与公文不要用它。 Use this skill to build academic-style .docx output: journal / conference / thesis chapters carrying formal citation style (APA, Chicago, IEEE, MLA), numbered equations, figure & table cross-references, footnotes/endnotes, bibliography, or multi-column journal layout. Trigger on: 'research paper', 'journal paper', 'conference paper', 'manuscript', 'thesis', 'APA', 'MLA', 'Chicago', 'IEEE two-column', 'bibliography', 'hanging indent', 'citation style', 'abstract + keywords', 'equation numbering', 'cross-reference', paper with footnotes/endnotes. Output is a single .docx.",
+        "content_language": "en",
+        "github_url": "https://github.com/ZJU-REAL/HugAgentOS/tree/main/src/backend/skill_bundles/default/officecli-academic-paper",
+        "skillsmp_url": "https://skillsmp.com/creators/zju-real/hugagentos/src-backend-skill-bundles-default-officecli-academic-paper",
+        "repo_stars": 1101,
+        "catalog_updated_at": "2026-08-25T08:29:06+00:00",
+        "source_key": "zju-real/hugagentos:src/backend/skill_bundles/default/officecli-academic-paper",
+        "family_key": "zju-real/hugagentos:officecli-academic-paper",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "brycewang-stanford/awesome-journal-skills:journal-of-shanxi-university-of-finance-and-economics",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "journal-of-shanxi-university-of-finance-and-economics",
+        "author": "brycewang-stanford",
+        "description": "Use when targeting 《山西财经大学学报》(Journal of Shanxi University of Finance and Economics — 山西财经大学主办的月刊, 只收规范实证研究、正文≥25000字、作者须有博士学位/在读博士、非匿名、查重≤10%) or deciding whether a Chinese econ/management manuscript fits this venue. Encodes the journal's strict empirical-only bar, house style, official-submission re-check, and desk-reject heuristics.",
+        "content_language": "zh",
+        "github_url": "https://github.com/brycewang-stanford/Awesome-Journal-Skills/tree/main/Chinese-SocialScience-Journal-Skills/skills/journal-of-shanxi-university-of-finance-and-economics",
+        "skillsmp_url": "https://skillsmp.com/creators/brycewang-stanford/awesome-journal-skills/chinese-socialscience-journal-skills-skills-journal-of-shanxi-university-of-finance-and-economics",
+        "repo_stars": 1040,
+        "catalog_updated_at": "2026-06-10T07:24:10+00:00",
+        "source_key": "brycewang-stanford/awesome-journal-skills:chinese-socialscience-journal-skills/skills/journal-of-shanxi-university-of-finance-and-economics",
+        "family_key": "brycewang-stanford/awesome-journal-skills:journal-of-shanxi-university-of-finance-and-economics",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "leonchaox/qinyan-academic-skills:qinyan-paper-polish",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "qinyan-paper-polish",
+        "author": "LeonChaoX",
+        "description": "沁言学术通用论文润色优化 - 按照专业学术规范对中英文学术论文、学位论文和专业报告进行语言润色，提升表达质量、逻辑连贯性和格式规范性。适用于未指定期刊的常规润色；若用户明确要求 Nature/Nature Communications 风格、章节级论证重构、声称—证据边界审查或投稿级英文精修，改用 qinyan-nature-polishing。触发词：论文润色、论文修改、润色优化、paper polishing、academic writing、论文改写、文本润色、报告润色",
+        "content_language": "zh",
+        "github_url": "https://github.com/LeonChaoX/qinyan-academic-skills/tree/main/skills/%E6%B2%81%E8%A8%80%E5%AD%A6%E6%9C%AFskills/qinyan-paper-polish",
+        "skillsmp_url": "https://skillsmp.com/creators/leonchaox/qinyan-academic-skills/skills-skills-qinyan-paper-polish",
+        "repo_stars": 898,
+        "catalog_updated_at": "2026-07-20T08:49:08+00:00",
+        "source_key": "leonchaox/qinyan-academic-skills:skills/%e6%b2%81%e8%a8%80%e5%ad%a6%e6%9c%afskills/qinyan-paper-polish",
+        "family_key": "leonchaox/qinyan-academic-skills:qinyan-paper-polish",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "chujianyun/skills:add-photo-certificate-watermarks",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "add-photo-certificate-watermarks",
+        "author": "chujianyun",
+        "description": "为照片、身份证、护照、学位证、毕业证、资格证、营业执照等证件或证书扫描件及 PDF 添加本地文字水印。用户提出照片加版权水印、身份证或学历证件添加“仅限某用途”水印、资质文件批量加水印、生成水印预览，或需要保持头像、二维码、印章等区域可辨认时使用。支持 JPEG、PNG、WebP 和 PDF，默认先预览、保留原件并清除图片元数据。不用于去除水印、伪造或篡改证件内容，也不用于仅设计 Logo 水印素材。",
+        "content_language": "zh",
+        "github_url": "https://github.com/chujianyun/skills/tree/main/skills/media/add-photo-certificate-watermarks",
+        "skillsmp_url": "https://skillsmp.com/creators/chujianyun/skills/skills-media-add-photo-certificate-watermarks",
+        "repo_stars": 736,
+        "catalog_updated_at": "2026-08-11T14:36:52+00:00",
+        "source_key": "chujianyun/skills:skills/media/add-photo-certificate-watermarks",
+        "family_key": "chujianyun/skills:add-photo-certificate-watermarks",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "willoscar/research-units-pipeline-skills:thesis-chapter-reconstructor",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "thesis-chapter-reconstructor",
+        "author": "WILLOSCAR",
+        "description": "围绕毕业论文主线重构章节：把原论文式叙事改成学位论文式叙事，重写章节目标、内容比重、前后承接与论证方式。",
+        "content_language": "zh",
+        "github_url": "https://github.com/WILLOSCAR/research-units-pipeline-skills/tree/main/.codex/skills/thesis-chapter-reconstructor",
+        "skillsmp_url": "https://skillsmp.com/creators/willoscar/research-units-pipeline-skills/codex-skills-thesis-chapter-reconstructor",
+        "repo_stars": 509,
+        "catalog_updated_at": "2026-09-03T11:41:47+00:00",
+        "source_key": "willoscar/research-units-pipeline-skills:.codex/skills/thesis-chapter-reconstructor",
+        "family_key": "willoscar/research-units-pipeline-skills:thesis-chapter-reconstructor",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    },
+    {
+      "family_key": "bahayonghang/academic-writing-skills:latex-thesis-zh",
+      "queries": [
+        "学位论文 章节引言 承上启下 写法"
+      ],
+      "skills_sh": null,
+      "skillsmp": {
+        "source": "skillsmp",
+        "name": "latex-thesis-zh",
+        "author": "bahayonghang",
+        "description": "中文 LaTeX 学位论文助手，面向已有 .tex 硕博论文工程：编译诊断、GB/T 7714、模板识别、结构/格式/公式断行、术语一致性、逻辑与文献综述、方法/工程应用章、标题优化、去 AI 味、主张前置（自我削弱/免责句后置）检查、盲审隐匿、对照学校规范逐项终检。触发词：学位论文/毕业论文/硕士/博士论文。英文论文用 latex-paper-en，审稿总评用 paper-audit。",
+        "content_language": "zh",
+        "github_url": "https://github.com/bahayonghang/academic-writing-skills/tree/main/academic-writing-skills/latex-thesis-zh",
+        "skillsmp_url": "https://skillsmp.com/creators/bahayonghang/academic-writing-skills/academic-writing-skills-latex-thesis-zh",
+        "repo_stars": 469,
+        "catalog_updated_at": "2026-09-13T09:27:38+00:00",
+        "source_key": "bahayonghang/academic-writing-skills:academic-writing-skills/latex-thesis-zh",
+        "family_key": "bahayonghang/academic-writing-skills:latex-thesis-zh",
+        "aliases": [],
+        "query": "学位论文 章节引言 承上启下 写法"
+      },
+      "catalogs": [
+        "skillsmp"
+      ],
+      "requires_source_review": true
+    }
+  ],
+  "missing_evidence": [],
+  "next_steps": [
+    "shortlist by job relevance and role coverage, not combined popularity",
+    "open canonical GitHub source and inspect SKILL.md before adoption",
+    "verify license, maintenance, permissions, security, duplication, and rating evidence",
+    "write keep/adapt/reject/invent synthesis before authoring"
+  ]
+}

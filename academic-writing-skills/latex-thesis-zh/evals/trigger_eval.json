@@ -280,6 +280,36 @@
       "query": "Polish this paragraph in my English LaTeX journal paper and verify that its claims are unchanged; use latex-paper-en.",
       "should_trigger": false,
       "category": "negative-overlap-unit-polish"
+    },
+    {
+      "query": "我的中文博士论文第三章引言又把行业背景讲了一遍，帮我检查各级段落职责与结构重复。",
+      "should_trigger": true,
+      "category": "writing-paragraph-roles"
+    },
+    {
+      "query": "学位论文每个方法小节开头都在重复本章面临的问题，帮我看看 main.tex 里有没有写作冗余和结构重复。",
+      "should_trigger": true,
+      "category": "writing-paragraph-roles"
+    },
+    {
+      "query": "My English conference paper has repetitive paragraph openings across sections; please check for structural redundancy in main.tex.",
+      "should_trigger": false,
+      "category": "negative-overlap-paragraph-roles"
+    },
+    {
+      "query": "第四章引言我写成了一段，要不要拆成两段？",
+      "should_trigger": true,
+      "category": "writing-chapter-intro-forms"
+    },
+    {
+      "query": "硕士论文第三章引言帮我按一段式推进序改写，检查承上启下要件是否齐全。",
+      "should_trigger": true,
+      "category": "writing-chapter-intro-forms"
+    },
+    {
+      "query": "My English conference paper has a single-paragraph chapter introduction; please check whether it should be expanded into two paragraphs.",
+      "should_trigger": false,
+      "category": "negative-overlap-chapter-intro-forms"
     }
   ]
 }

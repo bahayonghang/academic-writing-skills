@@ -23,6 +23,8 @@
 | [paragraph-arc-audit-contract.md](./paragraph-arc-audit-contract.md)     | paper-audit Clarity 五档、lane/agent 四项观察、评分隔离与证据边界                    | 改审稿侧段落弧线 rubric、lane、agent、psychology 或对应双语资源之前                       |
 | [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
 | [unit-polish-contract.md](./unit-polish-contract.md) | `polish` 单元边界、`UP-*` 核对、冻结脚本和验证入口 | 改单元润色脚本、协议、路由、fixture 或公开镜像之前 |
+| [paragraph-roles-contract.md](./paragraph-roles-contract.md) | 中文学位论文正文各级段落职责与结构去重 PR-* 判据、阈值、报告与回滚承诺 | 改 --paragraph-roles、PR-* 词表/判据、相关 fixture 或路由资源之前 |
+| [chapter-intro-style-contract.md](./chapter-intro-style-contract.md) | 中文学位论文章引言一段式与两段式 CI-* 判据、阈值、默认行为变化与回滚承诺 | 改 --chapter-intro-style、CI-* 词表/判据、正文章引言指南或路由之前 |
 
 ## 背景速览
 
