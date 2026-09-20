@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "核对 evals 追加方式、默认输出基线锁、无私有语料、pytest 编码约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "核对 manifest 散列、双语镜像页与 index 链接"}
+{"file": ".trellis/spec/academic-writing-skills/paragraph-arc-contract.md", "reason": "核对 PR-* 未改 P-ARC 语义与输出格式、Info/P3 与 NEEDS-LLM"}
+{"file": ".trellis/spec/academic-writing-skills/method-narrative-contract.md", "reason": "核对 M-EQUATION 未变、公式块解析复用未越界"}
+{"file": ".trellis/tasks/09-20-thesis-zh-paragraph-roles/research/existing-machinery.md", "reason": "逐锁核对 §4：基线字节锁、ROUTER_ROW_RE、SMOKE、保真锁、evals 前缀哈希、manifest"}
+{"file": ".trellis/tasks/09-20-thesis-zh-paragraph-roles/research/sources-and-prior-art.md", "reason": "核对指南引用只用带 URL 来源、四条口径协调与既有指南一致"}
