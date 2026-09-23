@@ -15,5 +15,6 @@ tests/fixtures/paragraph_arc/baseline-before.txt -text -diff
 tests/fixtures/paragraph_arc_en/baseline-before.txt -text -diff
 .trellis/tasks/**/08-29-paper-en-paragraph-arc/research/baseline-before.txt -text -diff
 
-# 09-22 thesis-zh baseline snapshots: exact pre-change CLI bytes, never CRLF-converted.
+# 09-22 thesis-zh baseline snapshots: exact capture bytes, never CRLF-converted.
+# Tests compare LF-normalized text. File: and ChkTeX: lines are not part of that contract.
 tests/fixtures/thesis-zh-baselines/** -text

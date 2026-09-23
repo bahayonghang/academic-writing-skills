@@ -59,7 +59,7 @@ uv run python scripts/check_references.py INPUT [--school yanshan-ee-2025|generi
 
 `tests/skills/latex_thesis_zh/test_number_equation_table.py` 按路径加载四个 ZH 脚本，并恢复 `sys.path` 与 `sys.modules`。
 子进程设置 `PYTHONIOENCODING=utf-8`，解释器使用 `python -X utf8`。
-断言学院模式与 generic 的差异、非法 school、C1 `--degree-wording` 组合、数字/公式/表身/题注的正反例，以及无新参数基线的字节比较。
+断言学院模式与 generic 的差异、非法 school、C1 `--degree-wording` 组合、数字/公式/表身/题注的正反例，以及无新参数基线。基线比较先把 CRLF 规范为 LF，并把 `File:` 绝对路径与 `ChkTeX:` 可用性行换成占位符；其余字节仍必须一致。两份快照文件互比保持原始字节。
 `test_polish_unit_zh.py` 只更新 `check_style_zh.py` 的 LF 规范化哈希。
 公开资源同步源文件、另一语言译文、中文或英文同语言镜像和 manifest。最终运行目标测试、资源同步、`just ci` 和 `just doc-build`。
 

@@ -930,6 +930,11 @@ class TestCollegeChecklist:
         env = dict(os.environ)
         env["PYTHONDONTWRITEBYTECODE"] = "1"
         env["PYTHONIOENCODING"] = "utf-8"
+
+        def lf(data: bytes) -> bytes:
+            # Windows print() writes CRLF. Ubuntu CI writes LF. JSON text stays exact.
+            return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
         for template in ("yanshan", "thuthesis", "pkuthss", "generic"):
             for degree in ("doctor", "master"):
                 result = subprocess.run(
@@ -955,5 +960,5 @@ class TestCollegeChecklist:
                 )
                 name = f"{template}-{degree}"
                 assert result.returncode == 1
-                assert result.stdout == (_OLD_BASELINE / f"{name}.stdout").read_bytes()
-                assert result.stderr == (_OLD_BASELINE / f"{name}.stderr").read_bytes()
+                assert lf(result.stdout) == lf((_OLD_BASELINE / f"{name}.stdout").read_bytes())
+                assert lf(result.stderr) == lf((_OLD_BASELINE / f"{name}.stderr").read_bytes())

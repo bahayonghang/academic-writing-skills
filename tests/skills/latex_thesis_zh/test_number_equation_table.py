@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -134,6 +135,17 @@ def test_invalid_school_is_nonzero_and_not_a_pass(tmp_path: Path):
             assert "未发现规则级表达问题" not in result.stdout
 
 
+def _portable_cli_bytes(data: bytes) -> bytes:
+    """Ignore checkout-only bytes in Windows-captured CLI snapshots.
+
+    Ubuntu CI emits LF, prints a different ``File:`` path, and has no chktex.
+    Every other byte still has to match.
+    """
+    text = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    text = re.sub(rb"(?m)^File: .+$", b"File: <TEX>", text)
+    return re.sub(rb"(?m)^ChkTeX: .+$", b"ChkTeX: <CHKTEX>", text)
+
+
 def test_omitted_school_matches_generic_and_default_baseline():
     commands = (
         ("style-default", "check_style_zh.py", []),
@@ -153,9 +165,21 @@ def test_omitted_school_matches_generic_and_default_baseline():
             env=env,
             check=False,
         )
-        assert completed.stdout == (BASELINE / f"{name}.stdout").read_bytes(), name
-        assert completed.stderr == (BASELINE / f"{name}.stderr").read_bytes(), name
+        assert _portable_cli_bytes(completed.stdout) == _portable_cli_bytes(
+            (BASELINE / f"{name}.stdout").read_bytes()
+        ), name
+        assert _portable_cli_bytes(completed.stderr) == _portable_cli_bytes(
+            (BASELINE / f"{name}.stderr").read_bytes()
+        ), name
         assert completed.returncode == int((BASELINE / f"{name}.exit").read_text(encoding="ascii"))
+    captured = (BASELINE / "format-default.stdout").read_bytes()
+    linux_like = captured.replace(b"\r\n", b"\n")
+    linux_like = re.sub(rb"(?m)^File: .+$", b"File: /tmp/checkout/main.tex", linux_like)
+    linux_like = linux_like.replace(b"ChkTeX: Available", b"ChkTeX: Not Available")
+    assert _portable_cli_bytes(linux_like) == _portable_cli_bytes(captured)
+    drifted = captured.replace(b"Status: WARNING", b"Status: PASS", 1)
+    assert _portable_cli_bytes(drifted) != _portable_cli_bytes(captured)
+
     for suffix in ("stdout", "stderr", "exit"):
         assert (BASELINE / f"style-default.{suffix}").read_bytes() == (
             C1_STYLE / f"style-default.{suffix}"
