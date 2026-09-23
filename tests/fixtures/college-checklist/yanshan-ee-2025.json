@@ -1,0 +1,1334 @@
+[
+  {
+    "id": "YSE-001",
+    "source_line": 71,
+    "requirement": "用 A4 标准纸（210 mm × 297 mm）。；页边距：上、下各 3 cm，左、右各 2.8 cm。；页眉、页脚距边界 2.5 cm。；自**中文摘要**起双面印刷，之前部分单面印刷。；目次页从右页开始。；第 1 章从右页开始；其后每章另起一页，**不留空白页**。",
+    "basis": "学院2025清单第1项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-002",
+    "source_line": 84,
+    "requirement": "封面包含新版校徽、校名（中英文）图案。；须含：博/硕士学位论文（中英文）、学术学位/专业学位、论文题名、作者姓名、学科专业（按招生专业填写）、指导教师（**不写副导师或校外导师**）。；标准字样：黑体小二号；学生自填内容：楷体 / Times New Roman 小二号。；姓名为两个汉字时，姓和名之间空 1 个汉字间隙。；姓名和职称之间空 1 个汉字间隙。；时间为毕业当年的 **6 月或 12 月**，字体为宋体 / Times New Roman 小二号。",
+    "basis": "学院2025清单第2项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-003",
+    "source_line": 97,
+    "requirement": "题名一般不超过 25 字，中英文对照。；不含标点符号，不使用非常规缩略词、代号和公式等。；若使用副题名：主题名与副题名字数之和不超过 35 字。；中文主题名与副题名之间用破折号相连；英文用冒号相连。",
+    "basis": "学院2025清单第3项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-004",
+    "source_line": 108,
+    "requirement": "中文页顶部包括：中图分类号、学校代码、UDC、密级。；「学术学位/专业学位博士/硕士学位论文」字样为宋体小二号。；论文题名为黑体 / Times New Roman 二号。；专业学位博士/硕士需用括号标注论文类型，如「（应用研究型）」，宋体三号。",
+    "basis": "学院2025清单第4项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-005",
+    "source_line": 115,
+    "requirement": "中文页作者信息包括：博/硕士研究生、导师、副导师（若无则不列）、申请学位、学科专业（按招生专业填写）、所属学院、答辩日期、授予学位单位。；标准字样为黑体四号；自填内容为宋体 / Times New Roman 四号。；姓名为两个字时，姓和名之间空 1 个汉字间隙；姓名和职称之间空 1 个汉字间隙。",
+    "basis": "学院2025清单第5项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-006",
+    "source_line": 121,
+    "requirement": "英文页论文题名为 Times New Roman 小二号加粗（实词首字母大写）。；「A dissertation ×××」「By ×××」「Supervisor: ×××」为 Times New Roman 小三号（姓在前、名在后，姓和名的首字母大写；职称在前，姓名在后）。；「School of ×××, Yanshan University」为 Times New Roman 小三号加粗。；「June, 2024」一类日期为 Times New Roman 小三号加粗，居中对齐。；英文题名页内容必须与中文题名页相关内容保持一致。",
+    "basis": "学院2025清单第6项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-007",
+    "source_line": 133,
+    "requirement": "学位论文原创性声明与学位论文使用授权书需填写完整的论文题名（**只写中文**，且与封面题名一致）。",
+    "basis": "学院2025清单第7项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-008",
+    "source_line": 141,
+    "requirement": "中文页奇数页起排。；包含中文题名、摘要、关键词、分类号。；论文题名居中排，黑体 / Times New Roman 小二号，段前 1 行、段后 1 行。",
+    "basis": "学院2025清单第8项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-009",
+    "source_line": 147,
+    "requirement": "「摘要：」为黑体小四号顶格，其后续写摘要内容。；摘要内容：宋体小四号不加粗，无空格；英文或数字用 Times New Roman 小四号。；摘要如分段，后续段落首行缩进 2 个汉字。",
+    "basis": "学院2025清单第9项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-010",
+    "source_line": 153,
+    "requirement": "硕士学位论文摘要为 500～650 字。；**〔博士〕** 博士学位论文摘要为 **900～1 200 字**。；使用第三人称撰写。；审查单注明：字数多一点可以，**不要比规范要求少**。",
+    "basis": "学院2025清单第10项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-011",
+    "source_line": 160,
+    "requirement": "摘要中不使用公式、化学结构式、图表和非公知公用的符号与术语。；摘要中不引用文献。",
+    "basis": "学院2025清单第11项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-012",
+    "source_line": 165,
+    "requirement": "「关键词：」在中文摘要正文下，黑体小四号顶格。；关键词 3～8 个，宋体小四号。；各关键词之间用分号隔开；换行时悬挂缩进对齐；最后一个关键词后不加标点。",
+    "basis": "学院2025清单第12项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-013",
+    "source_line": 171,
+    "requirement": "「分类号：」在关键词之下，黑体小四号顶格。；列 1～2 个中图分类号，宋体小四号；两号之间用分号；最后一个分类号后不加标点。",
+    "basis": "学院2025清单第13项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-014",
+    "source_line": 176,
+    "requirement": "英文页包含英文题名、「Abstract:」、「Keywords:」和「Classification:」。；英文题名居中排，Times New Roman 小二号加粗（实词首字母大写），段前 1 行、段后 1 行。",
+    "basis": "学院2025清单第14项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-015",
+    "source_line": 181,
+    "requirement": "「Abstract:」为 Times New Roman 小四号加粗顶格，其后续写英文摘要内容（Times New Roman 小四号不加粗）。；摘要如分段，后续段落首行缩进 4 个半角字符。；英文摘要内容与中文摘要内容保持一致。；英文摘要使用英文标点符号。",
+    "basis": "学院2025清单第15项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-016",
+    "source_line": 188,
+    "requirement": "「Keywords:」在英文摘要正文之下，Times New Roman 小四号加粗顶格。；英文关键词与中文关键词一一对应，全部小写（专词除外），Times New Roman 小四号。；各关键词之间用英文分号 `;` 隔开，空格续写；换行时悬挂缩进对齐；最后一个关键词后不加标点。",
+    "basis": "学院2025清单第16项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-017",
+    "source_line": 194,
+    "requirement": "「Classification:」在英文关键词之下，Times New Roman 小四号加粗顶格。；列 1～2 个 UDC 号，Times New Roman 小四号；两号之间用英文分号 `;` 隔开；最后一个分类号后不加标点。",
+    "basis": "学院2025清单第17项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-018",
+    "source_line": 203,
+    "requirement": "目次页奇数页起排。；页码为「Ⅰ」、「Ⅱ」、「1」、「2」样式，不能有「错误！未定义书签」。；标题与页码之间的引导符「…」上下居中排列。",
+    "basis": "学院2025清单第18项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-019",
+    "source_line": 209,
+    "requirement": "中英文摘要在目次中的条目为「摘要」和「Abstract」，**不是论文题目**。；目次内容没有「目次」。",
+    "basis": "学院2025清单第19项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-020",
+    "source_line": 214,
+    "requirement": "行距 1.2 倍。；章标题用黑体，节标题用宋体，英文与数字用 Times New Roman。",
+    "basis": "学院2025清单第20项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-021",
+    "source_line": 219,
+    "requirement": "章节号与标题之间空 1 个汉字间隙。；章节号 1、1.1、1.1.1 上下数字依次对齐。",
+    "basis": "学院2025清单第21项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-022",
+    "source_line": 228,
+    "requirement": "页码从摘要页开始，至全文最后一页结束，所有页面均有页码，页码连续。；奇数页在正面，偶数页在反面（打开论文后，奇数页应在右手边，偶数页应在左手边）。",
+    "basis": "学院2025清单第22项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-023",
+    "source_line": 233,
+    "requirement": "摘要、Abstract、目次等文前部分的页码为罗马数字，样式如「- Ⅰ -」「- Ⅱ -」。；中文摘要页、目次页从奇数页开始编排。",
+    "basis": "学院2025清单第23项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-024",
+    "source_line": 238,
+    "requirement": "正文各章、参考文献、主要成果、致谢等内容的页码均为阿拉伯数字，样式如「- 1 -」「- 2 -」。；第 1 章从奇数页开始撰写（若因此使文前部分最后留有空白页，该空白页应有页眉页脚）。；正文第 2 章及后续章节、参考文献、主要成果、致谢等另起一页编排，**不留空白页**。",
+    "basis": "学院2025清单第24项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-025",
+    "source_line": 248,
+    "requirement": "页眉从摘要页开始至全文最后页结束。；采用粗、细双线（粗线在上，1.5 磅），文字居中，宋体五号字。",
+    "basis": "学院2025清单第25项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-026",
+    "source_line": 253,
+    "requirement": "奇数页页眉可为：「摘 要」、「Abstract」、「目次」、「参考文献」、「附录 A × × ×」、「攻读博（硕）士学位期间取得的成果」、「索 引」、「致谢」或本章序号标题等。；偶数页页眉为「燕山大学□□□□学位论文」（与中文题名页「申请学位」处所填内容一致，如「工学博士」「能源动力硕士」「电子信息硕士」等）。原文此处「偶数页页眉为」重复一次，按语义取一次。；特别注意：中文摘要部分奇数页页眉分别为「摘 要」、「Abstract」，**不是论文题目**。",
+    "basis": "学院2025清单第26项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-027",
+    "source_line": 263,
+    "requirement": "不同等级标题序号均为阿拉伯数字。；第一级（章）标题：「第 1 章」；第二级（节）：「1.1」；第三级（节）：「1.1.1」。",
+    "basis": "学院2025清单第27项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-028",
+    "source_line": 268,
+    "requirement": "第一级标题：黑体小二号居中，段前 1 行、段后 1 行。；第二级标题：黑体小三号顶格，段前 0.5 行、段后 0.5 行。；第三级标题：黑体四号顶格，段前 0.5 行、段后 0.5 行。",
+    "basis": "学院2025清单第28项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-029",
+    "source_line": 274,
+    "requirement": "各级标题一般应在 15 字以内。；标题中不使用标点符号。；章节号与标题之间空 1 个汉字间隙。",
+    "basis": "学院2025清单第29项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-030",
+    "source_line": 280,
+    "requirement": "全文最多使用三级标题（如「2.3.2」）。；三级标题以下使用（1）、a 等序号形式排序。",
+    "basis": "学院2025清单第30项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-031",
+    "source_line": 285,
+    "requirement": "各层次编号及标题不得置于页面的最后一行。",
+    "basis": "学院2025清单第31项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-032",
+    "source_line": 293,
+    "requirement": "正文采用中文宋体小四号撰写。；英文与数字使用 Times New Roman 小四号。",
+    "basis": "学院2025清单第32项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-033",
+    "source_line": 298,
+    "requirement": "正文两端对齐。；段落首行空两格，第二行无悬挂缩进。",
+    "basis": "学院2025清单第33项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-034",
+    "source_line": 303,
+    "requirement": "正文括号使用中文全括号，如「序号（1）、（2）」、「备注（说明）」等。",
+    "basis": "学院2025清单第34项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-035",
+    "source_line": 307,
+    "requirement": "使用不同等级序号进行分段论述时，序号等级区分明确，且不与章、节序号冲突。",
+    "basis": "学院2025清单第35项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-036",
+    "source_line": 315,
+    "requirement": "名词术语采用英语缩写词时，除本行业广泛应用的通用缩写词外，文中第一次出现的缩写词应该用括号注明英文原词。；缩写词使用格式全文统一。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第36项",
+    "method": "module:consistency",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-037",
+    "source_line": 320,
+    "requirement": "外文字母代表物理量符号、物理常量、物理变量时，使用 Times New Roman **斜体**。；同一物理量在全文中使用相同外文字母表示。；所有外文字母在全文中的含义唯一。",
+    "basis": "学院2025清单第37项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-038",
+    "source_line": 326,
+    "requirement": "外文字母代表计量单位时，使用 Times New Roman **正体**。；以人名命名的计量单位首字母大写，其余计量单位符号全部使用小写字母。",
+    "basis": "学院2025清单第38项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-039",
+    "source_line": 331,
+    "requirement": "物理量计量单位及符号按国标执行，不使用非法定计量单位及符号。",
+    "basis": "学院2025清单第39项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-040",
+    "source_line": 335,
+    "requirement": "计量单位符号采用正体。；数值与单位符号间留一半角空格（唯一例外：平面角的单位度、分和秒，数值和单位符号之间不留空）。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第40项",
+    "method": "module:expression",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-041",
+    "source_line": 344,
+    "requirement": "数字均采用阿拉伯数字，Times New Roman 正体。；使用千分空。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第41项",
+    "method": "module:expression",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-042",
+    "source_line": 353,
+    "requirement": "引文采用顺序编码。；正文中引用文献的标示置于所引内容最后一个字的右上角。；所引文献编号用阿拉伯数字置于方括号「[ ]」中，用小四号字体的上角标，如「二次铣削[1]」。；当提及的参考文献为文中直接说明时，用小四号字与正文排齐，如「由文献[8,10-13]可知」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第42项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-043",
+    "source_line": 360,
+    "requirement": "同一处引用多篇文献时，各篇文献序号在方括号内全部列出，各序号间用「,」分隔。；遇连续序号，可标注起讫序号，如「模型[7-8]」、「研究[11-13]」、「论述[15,17-19]」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第43项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-044",
+    "source_line": 365,
+    "requirement": "多次引用同一文献，需在序号「[ ]」后标注引文页码，如「测定[3]101-108」「规定[3]92」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第44项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-045",
+    "source_line": 369,
+    "requirement": "不得将引用文献标示置于章、节等标题处。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第45项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-046",
+    "source_line": 377,
+    "requirement": "插图不宜过大，以精练、完整、清晰为准。；所有插图均有编号和图题。；图题不包含标点符号。；图题在图编号之后空 1 个汉字间隙排写。",
+    "basis": "学院2025清单第46项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-047",
+    "source_line": 384,
+    "requirement": "图的编号按章编排，如第 1 章第 1 个插图为「图 1-1」。；图的编号和图题置于图下，居中书写。；硕士学位论文只用中文；**博士学位论文用中、英两种文字，中文在上**。；中文用宋体五号字，英文用 Times New Roman 五号字。；有图注或其他说明时应置于图题之上。；图题及图注行间距为最小值 18 磅。",
+    "basis": "学院2025清单第47项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-048",
+    "source_line": 393,
+    "requirement": "图中若有分图时，分图题置于分图之下，可以只用中文书写。；分图编号用 (a)、(b) 等表示。",
+    "basis": "学院2025清单第48项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-049",
+    "source_line": 398,
+    "requirement": "图中文字用宋体、Times New Roman 字体。；字号尽量采用五号字（字数较多时可用小五号，以清晰表达为原则）。；同一插图内字号要统一。",
+    "basis": "学院2025清单第49项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-050",
+    "source_line": 404,
+    "requirement": "插图中如果要对坐标轴进行单位标注，采用「量的符号或名称/单位符号」的标准化形式。；示例：`cp/[J/(kg·K)]`、`质量定压热容/[J/(kg·K)]`、`临界高温/kK`。",
+    "basis": "学院2025清单第50项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-051",
+    "source_line": 409,
+    "requirement": "插图之前需在正文中对插图进行提示，如「见图 1-1」、「如图 1-1 所示」等。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第51项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-052",
+    "source_line": 413,
+    "requirement": "插图与图题不拆开排写于两页。；插图处排版不够时可将后文部分文字提前排写，将图移至次页；插图与提示无需连续排版。",
+    "basis": "学院2025清单第52项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-053",
+    "source_line": 418,
+    "requirement": "有分图且分图过多无法在一页内排版时，可转至下页，**总图题只出现在下页**。",
+    "basis": "学院2025清单第53项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-054",
+    "source_line": 422,
+    "requirement": "插图中所有标点符号均采用英文标点符号，按英文排版格式撰写。",
+    "basis": "学院2025清单第54项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-055",
+    "source_line": 426,
+    "requirement": "插图内注释文字均使用中文（英文缩写、软件界面截图等不需修改成中文）。",
+    "basis": "学院2025清单第55项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-056",
+    "source_line": 430,
+    "requirement": "插图前与正文之间需空半行（图片行间距为最小值 18 磅，段前空 0.5 行）。；总图题后与正文之间需空半行（总图题行间距为最小值 18 磅，段后空 0.5 行）。；图片与图题之间、分图与分图之间不空行。",
+    "basis": "学院2025清单第56项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-057",
+    "source_line": 436,
+    "requirement": "引用图应注明出处，在中英文图题右上角加引用文献号。",
+    "basis": "学院2025清单第57项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-058",
+    "source_line": 440,
+    "requirement": "若插图宽大于版面，需将插图与图题逆时针旋转 90° 排版（页眉页脚保持不变）。",
+    "basis": "学院2025清单第58项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-059",
+    "source_line": 444,
+    "requirement": "地图需按国家有关规定审图。",
+    "basis": "学院2025清单第59项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-060",
+    "source_line": 448,
+    "requirement": "图形文字符号等应符合 GB/T 4728、GB/T 5465 和 GB/T 6988 等标准。；图内所有电子元器件都应有各自独立的代号。；各类电子元器件的电气图形符号应与教科书中的画法保持一致。；走线横平竖直，减少交叉和弯折。；应在「T」型和「十」型电气连接点处添加实心圆点。",
+    "basis": "学院2025清单第60项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-061",
+    "source_line": 456,
+    "requirement": "必须采用结构化程序并正确运用流程框图，应符合 GB/T 1526 的规定。",
+    "basis": "学院2025清单第61项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-062",
+    "source_line": 460,
+    "requirement": "波形应选用深色线条显示。；横纵坐标轴要标出所表示的物理量的名称和单位，一般居中放置。；纵坐标轴的物理量文本方向为水平方向。",
+    "basis": "学院2025清单第62项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-063",
+    "source_line": 470,
+    "requirement": "插表采用三线表，不加左、右边线。；第一行为表头，第二行至最后为表格内容。；顶线和底线为粗线，栏目线为细线。",
+    "basis": "学院2025清单第63项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-064",
+    "source_line": 476,
+    "requirement": "插表中文字用宋体 / Times New Roman，五号字（字数过多时用小五号，同一插表内字号统一）。；表中文字单倍行距，上下居中。；单元格内与单元格之间文字间距区分明显。",
+    "basis": "学院2025清单第64项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-065",
+    "source_line": 482,
+    "requirement": "表格均应有编号和表题。；表的编号按章编排，如第 1 章第 1 个插表为「表 1-1」。；表的编号与表题之间空 1 个汉字间隙。；表题中不允许使用标点符号，表题后不加标点。",
+    "basis": "学院2025清单第65项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-066",
+    "source_line": 489,
+    "requirement": "表的编号和表题置于表上，居中排写。；硕士学位论文只用中文；**博士学位论文用中、英两种文字，中文在上**。；中文用宋体五号字，英文用 Times New Roman 五号字。；表题行间距为最小值 18 磅。",
+    "basis": "学院2025清单第66项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-067",
+    "source_line": 496,
+    "requirement": "表格中内容相同的相邻栏或上下栏，应重复写出，或以通栏表示，不应用「同左」「同上」等字样代替。；表身中的「空白」表示无此项或未测量，「—」表示测量过而未发现。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第67项",
+    "method": "module:tables",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-068",
+    "source_line": 501,
+    "requirement": "同列/行数据若用同一单位，可将单位符号移至列/行头，采用「量的符号或名称/单位符号」的标准化形式。；示例：`cp/[J/(kg·K)]`、`质量定压热容/[J/(kg·K)]`、`临界高温/kK`。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第68项",
+    "method": "module:tables",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-069",
+    "source_line": 506,
+    "requirement": "插表之前文中必须有相关文字提示，如「见表 1-1」「如表 1-1 所示」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第69项",
+    "method": "module:references",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-070",
+    "source_line": 510,
+    "requirement": "插表不能拆开两页编排。；如某表在一页内安排不下时，才可转页，以续表形式接排。；接排的表格上方居中加「表×（续）」字样，并重复表头。",
+    "basis": "学院2025清单第70项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-071",
+    "source_line": 516,
+    "requirement": "插表中所有标点符号均采用英文标点符号，按英文排版格式撰写。",
+    "basis": "学院2025清单第71项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-072",
+    "source_line": 520,
+    "requirement": "插表内注释文字均使用中文（英文缩写等不需修改成中文）。",
+    "basis": "学院2025清单第72项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-073",
+    "source_line": 524,
+    "requirement": "插表上下与正文文字（或页眉线、页码）间需空正文的 0.5 行编排。",
+    "basis": "学院2025清单第73项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-074",
+    "source_line": 528,
+    "requirement": "引用文献中的表格时，除在正文文字中标注参考文献序号以外，还必须在中、英文表题的右上角标注参考文献序号。",
+    "basis": "学院2025清单第74项",
+    "method": "manual",
+    "scope": "博士",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "SKIP"
+    }
+  },
+  {
+    "id": "YSE-075",
+    "source_line": 532,
+    "requirement": "若插表宽大于版面，需将插表与表题逆时针旋转 90° 排版（页眉页脚保持不变）。",
+    "basis": "学院2025清单第75项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-076",
+    "source_line": 540,
+    "requirement": "论文中的公式均独立成行并居中书写。；公式应标注序号，并将序号置于括号内。；公式序号按章编排，如第 1 章第 1 个公式为「（1-1）」。；公式序号右端对齐。",
+    "basis": "学院2025清单第76项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-077",
+    "source_line": 547,
+    "requirement": "计算结果作为正文内容同正文一同排版，不作为公式独立成行。；只作简易表述的数学式不属于公式范畴，可写入正文，撰写格式与正文格式要求相同。",
+    "basis": "学院2025清单第77项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-078",
+    "source_line": 552,
+    "requirement": "文中引用公式，用「见式（1-1）」或「由公式（1-1）」，不使用「上式」「下式」等。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第78项",
+    "method": "module:format",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-079",
+    "source_line": 556,
+    "requirement": "公式前的文字以冒号「：」结尾，公式末不加标点。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第79项",
+    "method": "module:format",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-080",
+    "source_line": 560,
+    "requirement": "公式中外文字母使用 Times New Roman 字体。；表示物理量、普通变量、一般函数和集合等的符号使用斜体。；表示向量、矩阵等矢量及张量的符号使用加粗斜体。；圆周率 π、自然对数的底 e、微分符号 d、有限增量符号 Δ、表示虚部的 i 或 j、表示转置的 T、最大值 max、特殊函数如 sin 等用正体。；表示实数集、自然数集、整数集的 R、N、Z 等用加粗（或空心）正体。",
+    "basis": "学院2025清单第80项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-081",
+    "source_line": 568,
+    "requirement": "较长公式需要断开转行排版的，应在 ＝、≈、＜、＞、≠、≥ 等关系符，或 ＋、－、±、∓、×、·、÷、／ 等运算符**后**断开。；下一行开头不应重复这一符号。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第81项",
+    "method": "module:format",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-082",
+    "source_line": 573,
+    "requirement": "公式中第一次出现的代号应给予解释说明。；所有代号在全文中的含义唯一。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第82项",
+    "method": "module:consistency",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-083",
+    "source_line": 578,
+    "requirement": "采用「式中」进行物理量代号注释时：「式中」顶格，「式中」后空 2 个半角字符。；物理量代号与注释内容之间用破折号「——」，破折号占 4 个半角字符。；同一个公式所有注释的破折号对齐。；注释物理量需用公式表示时，公式后不应出现公式序号。",
+    "basis": "学院2025清单第83项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-084",
+    "source_line": 585,
+    "requirement": "采用「其中」进行代号解释说明时，「其中」顶格，后面无空格、无破折号。",
+    "basis": "学院2025清单第84项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-085",
+    "source_line": 589,
+    "requirement": "不使用文字形式表示等式。",
+    "basis": "学院2025清单第85项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-086",
+    "source_line": 597,
+    "requirement": "除绪论外，论文主体各章首段为总述，内容简明扼要，主要论述本章核心研究内容以及为何要做本章相关研究。；最后一节为「本章小结」，对本章研究内容、方法与成果作简要总结与概括（实验方法或材料等章除外）。",
+    "basis": "学院2025清单第86项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-087",
+    "source_line": 602,
+    "requirement": "正文页面底部留白不超过 2 行（各章结尾除外）。；可调整插图大小，或将部分文字前移。",
+    "basis": "学院2025清单第87项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-088",
+    "source_line": 607,
+    "requirement": "学位论文除「致谢」部分外，均采用第三人称撰写。",
+    "basis": "学院2025清单第88项",
+    "method": "script:third_person",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-089",
+    "source_line": 615,
+    "requirement": "结论作为正文最后一章，加章号。；不标注引用文献。；结论内容在 2000 字以内。",
+    "basis": "学院2025清单第89项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-090",
+    "source_line": 621,
+    "requirement": "结论是作者在学位论文研究过程中所取得的创新性成果的概要总结，分条分段论述。；**博士学位论文结论一般包括论文的主要结果、创新点、展望三部分。**",
+    "basis": "学院2025清单第90项",
+    "method": "llm",
+    "scope": "博士",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "SKIP"
+    }
+  },
+  {
+    "id": "YSE-091",
+    "source_line": 626,
+    "requirement": "常识性的结果或重复他人的结果不能作为结论。",
+    "basis": "学院2025清单第91项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-092",
+    "source_line": 634,
+    "requirement": "**博士论文的参考文献不少于 100 篇**；硕士论文不少于 40 篇。",
+    "basis": "学院2025清单第92项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-093",
+    "source_line": 638,
+    "requirement": "近 5 年的参考文献数量不少于总数的 1/3。；并有近 2 年的参考文献。",
+    "basis": "学院2025清单第93项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-094",
+    "source_line": 643,
+    "requirement": "教材、产品说明书、国家标准、未公开发表的研究报告等不能作为参考文献引用。",
+    "basis": "学院2025清单第94项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-095",
+    "source_line": 647,
+    "requirement": "本人在攻读学位期间发表的学术论文不列入参考文献中。",
+    "basis": "学院2025清单第95项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-096",
+    "source_line": 651,
+    "requirement": "所有文献均需列出文献类型。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第96项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-097",
+    "source_line": 655,
+    "requirement": "作者最多只列前 3 位；超过 3 位的，中文加「等」，英文加「et al」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第97项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-098",
+    "source_line": 659,
+    "requirement": "作者采用姓在前、名在后形式。；姓全部大写，名缩写为首字母，无缩写标点符。；示例：「Edward Adam Davis」缩写为「DAVIS E A」；「Guozhi Li」缩写为「LI G Z」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第98项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-099",
+    "source_line": 665,
+    "requirement": "英文文献标题名称首词首字母大写。；期刊名称的实词首字母大写，虚词全部小写。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第99项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-100",
+    "source_line": 670,
+    "requirement": "期刊文献需要有年、卷（期）。；个别期刊无卷或期的，可调整为「年,卷」或「年(期)」。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第100项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-101",
+    "source_line": 675,
+    "requirement": "图书、期刊、会议、学位论文等文献均应该列出参考页码。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第101项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-102",
+    "source_line": 679,
+    "requirement": "图书、学位论文需要列出出版地城市名。脚本仅辅助，余项人工。",
+    "basis": "学院2025清单第102项",
+    "method": "module:bibliography",
+    "scope": "通用",
+    "status": {
+      "doctor": "MODULE",
+      "master": "MODULE"
+    }
+  },
+  {
+    "id": "YSE-103",
+    "source_line": 683,
+    "requirement": "采用五号字体，行间距为最小值 22 磅。；两端对齐，首行顶格，次行悬挂缩进对齐。",
+    "basis": "学院2025清单第103项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-104",
+    "source_line": 688,
+    "requirement": "著录用的标识符号均采用英文标点。；标点后空 1 个半角字符再续写，最后以「.」结束。",
+    "basis": "学院2025清单第104项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-105",
+    "source_line": 697,
+    "requirement": "攻读 XX 学位期间取得的成果包括：录用或发表的学术论文、出版的专著/译著、申请及已获得的专利、科研获奖；与学位论文无关的成果，不在此列出。；参与的科研项目不属于个人成果，不在此列出，可在「致谢」部分提及。；若无学术论文、专著、专利、奖励的其中某项，则可删除相应标题。；若上述四类成果均无，则将成果页部分从文中删除，并同步删除目次中该部分内容。",
+    "basis": "学院2025清单第105项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-106",
+    "source_line": 709,
+    "requirement": "主要成果分类列出，类别序号采用「1.」「2.」「3.」「4.」排列。；序号与标题采用宋体 / Times New Roman 小四号字体加粗，段前 5 磅、段后 5 磅。；成果内容宋体 / Times New Roman 五号不加粗。；成果内容的撰写格式与「参考文献」相应内容的格式相同，序号采用 [1]、[2] 形式。",
+    "basis": "学院2025清单第106项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-107",
+    "source_line": 720,
+    "requirement": "对导师和给予指导或协助完成学位论文工作的组织和个人、对课题给予资助者表示感谢。；内容撰写应严肃简朴，语言应含蓄。",
+    "basis": "学院2025清单第107项",
+    "method": "llm",
+    "scope": "通用",
+    "status": {
+      "doctor": "NEEDS-LLM",
+      "master": "NEEDS-LLM"
+    }
+  },
+  {
+    "id": "YSE-108",
+    "source_line": 729,
+    "requirement": "如需脚注，在需要注释处标明序号。；序号设置为小四号右上角标。；每页注释序号均从「①」开始，不与前页注释连续编号。；注释内容排在加注处所在页的下方，用五号字。",
+    "basis": "学院2025清单第108项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-109",
+    "source_line": 740,
+    "requirement": "附录采用大写拉丁字母依序连续编号，如附录 A、附录 B 等。；附录编号、附录标题各占一行，置于附录条文之上居中位置。；附录出现在目次、页眉中时，编号与标题间空 1 个汉字间隙。",
+    "basis": "学院2025清单第109项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-110",
+    "source_line": 750,
+    "requirement": "中文按各词汉语拼音第一个字母排序。；英文按该词第一个英文字母排序。",
+    "basis": "学院2025清单第110项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  },
+  {
+    "id": "YSE-111",
+    "source_line": 759,
+    "requirement": "若有其他格式问题，可写在此处（纸质审查单预留空白栏）。；（自行记录页码与问题）",
+    "basis": "学院2025清单第111项",
+    "method": "manual",
+    "scope": "通用",
+    "status": {
+      "doctor": "MANUAL",
+      "master": "MANUAL"
+    }
+  }
+]

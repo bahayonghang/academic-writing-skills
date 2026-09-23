@@ -11,19 +11,22 @@
 | [spec-checklist-convention.md](./spec-checklist-convention.md)           | 逐项检查清单五列格式、CHECKERS 双向锁、TEMPLATE_THRESHOLDS 阈值来源规则                 | 改 templates/*.md 清单、check_spec.py 检查器、SKILL.md 路由表之前                       |
 | [docs-bilingual-resources.md](./docs-bilingual-resources.md)             | 技能公开资源到双语 VitePress 页面、manifest、侧栏和检查器的可执行契约                   | 增删 references/templates/examples/agents 或修改 docs 资源之前                          |
 | [paper-audit-boundary-contracts.md](./paper-audit-boundary-contracts.md) | paper-audit severity、ScholarEval 模块映射与外置 BibTeX 数据流契约                      | 修改 consolidation、ScholarEval 或 literature comparison 链路之前                       |
-| [method-narrative-contract.md](./method-narrative-contract.md)           | 三写作技能 M-* 判定、paper-audit 双调用、块解析、Info/P3 与报告层契约                 | 修改方法叙述检查、M-* 对齐面或 paper-audit methods 接线之前                              |
+| [method-narrative-contract.md](./method-narrative-contract.md)           | 三写作技能 M-* 判定、paper-audit 双调用、块解析、Info/P3 与报告层契约；文档层八标签不是脚本码 | 修改方法叙述检查、M-* 对齐面、文档层表达标签或 paper-audit methods 接线之前                              |
 | [cover-letter-contracts.md](./cover-letter-contracts.md)                 | cover-letter claim 位置、journal-fit 去重与警告 payload 契约                            | 修改 cover-letter claim/journal-fit/统一 CLI 数据流之前                                 |
 | [polish-rewrite-contract.md](./polish-rewrite-contract.md)               | 两层改写契约四字段、`--goal`/`--strength`/`--tier` 三轴、A/B/C 自动化分级、受保护 token | 改 EN/ZH/Typst 任一润色模块（expression/grammar/sentences/translation）或其契约字段之前 |
 | [defensive-ai-rhetoric-contract.md](./defensive-ai-rhetoric-contract.md) | 防御性推测解释的组合判据、证据校准修复、跨 surface eval 与 audit lane 预算              | 改 de-AI/experiment 的机制解释规则或 claims-vs-evidence lane 之前                        |
 | [deai-pattern-cluster-contract.md](./deai-pattern-cluster-contract.md)   | 七类学术 de-AI 模式簇、正反例、跨契约去重、保真复核与作者样本边界                     | 改 EN/ZH/Typst de-AI 模式 reference、fixture、eval 或输出契约之前                        |
-| [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让与公开路由同步契约                       | 改 `--results-analysis`、RA-* 词表/判据、结果分析 fixture 或路由资源之前                 |
+| [results-analysis-checker-contract.md](./results-analysis-checker-contract.md) | 中文学位论文 RA-* 区间、证据窗口、误报避让、可选跨表面数字与公开路由同步契约           | 改 `--results-analysis`、`--cross-surface`、RA-* 词表/判据、结果分析 fixture 或路由资源之前 |
 | [paragraph-arc-contract.md](./paragraph-arc-contract.md)                 | 中文学位论文 P-ARC 段落切分、章节所有权、阈值、报告与私有标定边界                    | 改 `--paragraph-arc`、P-ARC 判据、术语表、fixture、标定或公开资源之前                    |
 | [subsection-context-contract.md](./subsection-context-contract.md)       | 中文学位论文 depth-3 小节游标、三元窗口、S-CTX 观察与只读边界                    | 改 `--subsection-context`、`--emit-window`、小节编号、窗口 schema 或 S-CTX 资源之前       |
 | [paragraph-arc-en-contract.md](./paragraph-arc-en-contract.md)           | 英文论文 P-ARC 差异、5000 词密度换算、序列词边界与 synthetic-only 证据边界          | 改 EN `--paragraph-arc`、英文密度阈值或三副本序列词计数之前                              |
 | [paragraph-arc-audit-contract.md](./paragraph-arc-audit-contract.md)     | paper-audit Clarity 五档、lane/agent 四项观察、评分隔离与证据边界                    | 改审稿侧段落弧线 rubric、lane、agent、psychology 或对应双语资源之前                       |
-| [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
+| [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合；三类处置不新增码 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
 | [unit-polish-contract.md](./unit-polish-contract.md) | `polish` 单元边界、`UP-*` 核对、冻结脚本和验证入口 | 改单元润色脚本、协议、路由、fixture 或公开镜像之前 |
-| [paragraph-roles-contract.md](./paragraph-roles-contract.md) | 中文学位论文正文各级段落职责与结构去重 PR-* 判据、阈值、报告与回滚承诺 | 改 --paragraph-roles、PR-* 词表/判据、相关 fixture 或路由资源之前 |
+| [term-governance-contract.md](./term-governance-contract.md) | 中文学位论文可选术语治理、缩写体例与程度词的输入、扫描边界和报告契约 | 改 `--governance`、`--abbreviation-style`、`--degree-wording` 或对应公开资源之前 |
+| [numeric-equation-table-contract.md](./numeric-equation-table-contract.md) | 中文学位论文可选学院数字、公式、表身和中文题注的学校开关、扫描边界和报告契约 | 改 `--school`、NUM/EQ/TB/CAP 候选或对应公开资源之前 |
+| [citation-placement-contract.md](./citation-placement-contract.md) | 中文学位论文可选引文位置、重复页码、著录提示和综述递进的开关、扫描边界和报告契约 | 改 `--author-cite`、`--repeat-cite`、`--college-details`、`--progression-density` 或对应公开资源之前 |
+| [paragraph-roles-contract.md](./paragraph-roles-contract.md) | 中文学位论文正文各级段落职责与结构去重 PR-* 判据、阈值、报告与回滚承诺；删预告后的指代桥接不新增码 | 改 --paragraph-roles、PR-* 词表/判据、相关 fixture 或路由资源之前 |
 | [chapter-intro-style-contract.md](./chapter-intro-style-contract.md) | 中文学位论文章引言一段式与两段式 CI-* 判据、阈值、默认行为变化与回滚承诺 | 改 --chapter-intro-style、CI-* 词表/判据、正文章引言指南或路由之前 |
 
 ## 背景速览

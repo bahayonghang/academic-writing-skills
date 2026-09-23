@@ -41,3 +41,13 @@ Purpose: Validate references against GB/T 7714 and check BibTeX/BibLaTeX configu
 - **Page numbers**: Use double dash `1--15` (not single dash or tilde)
 
 > Full details: see [`../citations/gb-standard.md`](../citations/gb-standard.md) (sections 一–四)
+
+## 可选学院著录提示（`--college-details`）
+
+只与 `--standard gb7714` 或 `--standard gb7714-2025` 同时使用。其它组合，包括 `--standard default` 和省略 `--standard`，都是参数错误，非零退出，不表示通过，也不猜测学校。
+
+该开关不改变既有 standard 问题的顺序，只在末尾追加 Info 候选。`book`、`phdthesis` 和 `mastersthesis` 需要 `address` 或 `location` 至少其一。这些类型缺少 `pages` 时列为来源核验。`inproceedings` 缺少 `pages` 时还要人工核实学院第101项。`article` 沿用原有缺字段结果，不重复报告。
+
+正常完整个人姓名不是大小写违规。助词、连字符、重音和机构作者保持原样。不生成缩写姓名，也不把 `LI G Z` 当作正确的源 BibTeX。有作者数据时至多一条文件级说明：核最终 `BBL/PDF` 是否姓在前、姓大写、名用首字母。缺少传统页码或只有文章号时只列待核，不根据 PDF 总页数填写页码。
+
+候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`。

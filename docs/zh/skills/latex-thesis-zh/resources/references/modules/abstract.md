@@ -48,3 +48,7 @@ Thesis-specific closure:
 - 总结与展望：是否回应摘要和绪论中的贡献，并给出局限边界。
 
 See also: [abstract-structure.md](../writing/abstract-structure.md) for the 学位论文摘要骨架（thesis 模型）section (T-*/B-* checks) and the legacy five-element model with detection heuristics. 结论章内容检查见 [conclusion.md](conclusion.md)。
+
+## 摘要引号（仅 LLM）
+
+中文成对弯引号和英文摘要标点只由 `[LLM]` 判断，读 [abstract-structure.md](../writing/abstract-structure.md)。不新增检查码。引语的措辞、数学和引用键保持不变。

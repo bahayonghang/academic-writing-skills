@@ -16,6 +16,8 @@ import importlib.util
 import sys
 from pathlib import Path
 
+import pytest
+
 from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
 
 _ZH_DIR = SCRIPT_DIR_ZH
@@ -62,7 +64,14 @@ def _findings(tmp_path: Path, *body: str, **kwargs):
         "\\documentclass{ctexbook}\n\\begin{document}\n" + "\n".join(body) + "\n\\end{document}\n",
         encoding="utf-8",
     )
-    checker = check_style_zh.ChineseStyleChecker(tex, max_chars=kwargs.pop("max_chars", 80))
+    degree_wording = kwargs.pop("degree_wording", False)
+    school = kwargs.pop("school", "generic")
+    checker = check_style_zh.ChineseStyleChecker(
+        tex,
+        max_chars=kwargs.pop("max_chars", 80),
+        degree_wording=degree_wording,
+        school=school,
+    )
     return checker.analyze(**kwargs).findings
 
 
@@ -239,6 +248,7 @@ def test_no_person_checker_exists() -> None:
         "E-UNITFONT",
         "E-NUMSTYLE",
         "E-LONGSENT",
+        "E-DEGREE",
     }, f"checker set drifted: {sorted(codes)}"
 
 
@@ -307,3 +317,107 @@ def test_multi_file_project_locates_the_source_file(tmp_path: Path) -> None:
     assert any(f.loc.startswith("chapters/chap01.tex:") for f in findings), [
         f.loc for f in findings
     ]
+
+
+# ── E-DEGREE / --degree-wording ──────────────────────────────────────────────
+
+
+def test_degree_mode_skips_only_the_legal_absolute_span(tmp_path: Path) -> None:
+    legal = "绝对误差为0.3。"
+    assert "E-ABSOLUTE" not in _codes(tmp_path, legal, degree_wording=True)
+    assert "E-ABSOLUTE" in _codes(tmp_path, legal, degree_wording=False)
+    mixed = _by_code(
+        _findings(tmp_path, "绝对误差很小，结论绝对可靠。", degree_wording=True),
+        "E-ABSOLUTE",
+    )
+    assert mixed
+    assert "「绝对」" in mixed[0].candidate
+    other = _by_code(
+        _findings(tmp_path, "绝对误差很小，结论必然成立。", degree_wording=True),
+        "E-ABSOLUTE",
+    )
+    assert len(other) == 1
+    assert "「必然」" in other[0].candidate
+    assert "「绝对」" not in other[0].candidate
+
+
+@pytest.mark.parametrize(
+    "phrase",
+    ("绝对误差", "绝对值", "绝对温度", "绝对湿度", "绝对压力", "绝对坐标"),
+)
+def test_each_legal_collocation_is_span_local(tmp_path: Path, phrase: str) -> None:
+    sentence = f"{phrase}为0.3。"
+    assert "E-ABSOLUTE" not in _codes(tmp_path, sentence, degree_wording=True)
+    assert "E-ABSOLUTE" in _codes(tmp_path, sentence, degree_wording=False)
+
+
+def test_degree_phrases_are_local_candidates_without_a_replacement_sentence(
+    tmp_path: Path,
+) -> None:
+    findings = _by_code(_findings(tmp_path, "极易发散。", degree_wording=True), "E-DEGREE")
+    assert len(findings) == 1
+    finding = findings[0]
+    assert finding.original == "极易"
+    assert finding.suggestion == ""
+    assert finding.tier == "candidate"
+    assert finding.severity == "Info"
+    assert finding.priority == "P3"
+    assert "极易发散" not in finding.candidate
+    assert "不提供整句替换" in finding.candidate
+    assert "E-DEGREE" not in _codes(tmp_path, "极易发散。", degree_wording=False)
+
+
+def test_degree_phrase_set_and_complete_ignore_dedupe(tmp_path: Path) -> None:
+    originals = {
+        finding.original
+        for finding in _by_code(
+            _findings(tmp_path, "高度贴合且极低，也极易发散。", degree_wording=True),
+            "E-DEGREE",
+        )
+    }
+    assert originals == {"极易", "极低", "高度贴合"}
+    ignored = _findings(tmp_path, "该方法完全忽略了噪声。", degree_wording=True)
+    assert [finding.code for finding in ignored if finding.code == "E-ABSOLUTE"]
+    assert "E-DEGREE" not in [finding.code for finding in ignored]
+    assert "E-DEGREE" not in _codes(tmp_path, "文献[1]认为该方法极易发散。", degree_wording=True)
+    assert "E-ABSOLUTE" not in _codes(tmp_path, "文献[1]认为该方法极易发散。", degree_wording=True)
+
+
+def test_degree_mode_keeps_existing_protection_and_section_routing(tmp_path: Path) -> None:
+    assert "E-DEGREE" not in _codes(tmp_path, "% 极易发散。", degree_wording=True)
+    assert "E-DEGREE" not in _codes(tmp_path, "$极易$", degree_wording=True)
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        "\\documentclass{ctexbook}\n\\begin{document}\n极易发散。\n\\end{document}\n",
+        encoding="utf-8",
+    )
+    result = check_style_zh.ChineseStyleChecker(tex, degree_wording=True).analyze("不存在的章节")
+    assert not any(finding.code == "E-DEGREE" for finding in result.findings)
+    assert any("未找到章节" in warning for warning in result.warnings)
+
+
+def test_degree_report_marks_script_info_and_needs_llm(tmp_path: Path) -> None:
+    tex = tmp_path / "main.tex"
+    tex.write_text(
+        "\\documentclass{ctexbook}\n\\begin{document}\n极易发散。\n\\end{document}\n",
+        encoding="utf-8",
+    )
+    checker = check_style_zh.ChineseStyleChecker(tex, degree_wording=True)
+    report = check_style_zh.generate_report(checker.analyze())
+    assert "E-DEGREE" in report
+    assert "[Severity: Info]" in report
+    assert "[Priority: P3]" in report
+    assert "[Script]" in report
+    assert "% Meaning-Check: NEEDS-LLM" in report
+    assert "PRESERVED" not in report
+    assert "% 建议:" not in report
+
+
+def test_default_style_does_not_emit_college_number_codes(tmp_path: Path) -> None:
+    body = "温升达到50\\%，分组为1004.1。"
+    assert "NUM-SPACE" not in _codes(tmp_path, body)
+    assert "NUM-GROUP" not in _codes(tmp_path, body)
+    assert "NUM-SPACE" not in _codes(tmp_path, body, school="generic")
+    college = _codes(tmp_path, body, school="yanshan-ee-2025")
+    assert "NUM-SPACE" in college
+    assert "NUM-GROUP" in college

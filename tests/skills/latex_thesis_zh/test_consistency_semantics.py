@@ -305,3 +305,29 @@ def test_cli_preserves_modes_custom_terms_and_exit_protocol(tmp_path: Path, args
         data = payload if args else payload["abbreviations"]
         assert data["issues"][0]["abbreviation"] == "BERT"
     assert before == (main.read_bytes(), terms.read_bytes())
+
+
+def test_legacy_custom_terms_do_not_consume_governance_fields(tmp_path: Path):
+    terms = _write(
+        tmp_path,
+        "terms.json",
+        json.dumps(
+            {
+                "zh": [["自编码器", "自动编码器"]],
+                "en": [],
+                "banned": {"旧称": {"candidates": [{"text": "候选甲", "slot": "过程"}]}},
+                "locked": {"标准名": ["旧别名"]},
+                "exempt": {"environments": ["localterms"]},
+            },
+            ensure_ascii=False,
+        ),
+    )
+    main = _write(tmp_path, "main.tex", "自编码器与自动编码器。旧称与旧别名。")
+    checker = consistency.ConsistencyChecker([str(main)], custom_terms_file=str(terms))
+    result = checker.check_terms()
+    assert checker.governance is None
+    assert set(result) == {"term_occurrences", "inconsistencies", "status"}
+    assert result["inconsistencies"][0]["group"] == ["自编码器", "自动编码器"]
+    report = checker.generate_report(result, checker.check_abbreviations())
+    assert "候选甲" not in report
+    assert "canonical:" not in report

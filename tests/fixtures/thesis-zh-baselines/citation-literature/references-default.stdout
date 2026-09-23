@@ -1,0 +1,4 @@
+% REFERENCES chapters/intro.tex:3 [Severity: Critical] [Priority: P0]: Undefined reference: \ref{fig:ghost} — no matching \label found
+% REFERENCES chapters/experiment.tex:10 [Severity: Minor] [Priority: P2]: Reference before definition: \ref{tab:fixture-result} at line 10 appears before \label{tab:fixture-result} at line 21
+% REFERENCES chapters/experiment.tex:26 [Severity: Minor] [Priority: P2]: Unreferenced label: \label{fig:orphan} is never cited in text
+% REFERENCES chapters/experiment.tex:26 [Severity: Major] [Priority: P1]: Missing caption in figure environment: \label{fig:orphan} at line 26 has no \caption

@@ -56,3 +56,7 @@ Thesis-specific closure:
 See also: [abstract-structure.md](../writing/abstract-structure.md) for the degree-thesis abstract
 skeleton (thesis model) section (T-*/B-* checks) and the legacy five-element model with detection
 heuristics. See [conclusion.md](conclusion.md) for conclusion-chapter content checks.
+
+## Abstract quotation marks (LLM only)
+
+Paired Chinese quotation marks and English-abstract punctuation are judged only by `[LLM]`. Read [abstract-structure.md](../writing/abstract-structure.md). No check code is added. A quotation's wording, mathematics, and citation keys stay unchanged.

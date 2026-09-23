@@ -96,3 +96,25 @@ This module emits text that can directly replace the source, so the rewrite cont
 A rewrite must never raise claim strength. Swapping a hedged statement for a stronger assertion ("可能" → "能够", "有助于" → "显著提升") is an over-claim, not an improvement in expression: keep the original strength, or set `Risk-Flags: overstatement` and say so explicitly. Criteria: [over-claim-guard.md](../writing/over-claim-guard.md) — this module offers lexical-level suggestions only and does not reimplement strength grading.
 
 Self-weakening collocations on the authors' own results (「遗憾的是」「仍明显落后于」「效果有限」) and claims written after their caveats are not expression issues, and they run opposite to `E-ABSOLUTE`; hand them to [claim-forward.md](claim-forward.md).
+
+## Opt-in degree wording
+
+The nine default checkers stay unchanged. `--degree-wording` is off by default. When it is on, the checker adds `E-DEGREE` at Info/P3, tagged `[Script]`, with `Meaning-Check: NEEDS-LLM`. The phrases are `极易`, `极低`, and `高度贴合`. `完全忽略` is covered by the `E-ABSOLUTE` candidate for `完全` and is not a separate `E-DEGREE` candidate. The report names the local word and position only and does not provide a replacement sentence.
+
+In that mode, `E-ABSOLUTE` skips `绝对` only inside these spans: `绝对误差`, `绝对值`, `绝对温度`, `绝对湿度`, `绝对压力`, and `绝对坐标`. One legal collocation does not exempt another absolute word in the same sentence. `完全忽略` produces only one `E-ABSOLUTE` candidate for `完全`. The existing exclusion for quoted opinions still applies. No automatic replacement template is added.
+
+```bash
+uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --degree-wording
+```
+
+## Opt-in college number style
+
+`--school` accepts only `yanshan-ee-2025` and `generic`. The default is `generic`. There is no bare `yanshan` alias.
+College mode alone adds `NUM-SPACE`, `NUM-GROUP`, and `NUM-COVERAGE`. They are Info/P3 candidates tagged `[Script]`,
+with `Meaning-Check: NEEDS-LLM`. They do not offer a replacement sentence and do not rewrite mathematics.
+`--degree-wording` may be combined with `--school`. Neither swallows the other's findings nor duplicates the same hit.
+Without `--school`, the previous output stays unchanged. The criteria are in [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md).
+
+```bash
+uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --school yanshan-ee-2025
+```

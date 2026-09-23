@@ -47,6 +47,12 @@ and a source-level writing check is not a reviewer-style submission decision.
 
 For a whole thesis, start with `structure`. Use `spec-check` only with the correct school
 template and degree, and run `blind-review --check` before generating a review copy.
+Opt-in checks only report local candidates: `check_consistency.py --governance` requires `--custom-terms`, `--abbreviation-style` is independent, and `check_style_zh.py --degree-wording` is off by default; without these flags the previous output stays unchanged.
+College number, equation, table-body, and Chinese-caption checks use `--school yanshan-ee-2025` on `check_style_zh.py`, `check_format.py`, `check_tables.py`, and `check_references.py`. The default and `--school generic` add no candidates, and there is no bare `yanshan` alias.
+Citation placement, repeated-citation pages, college bibliography prompts, and review progression density run only behind explicit flags: `check_references.py --author-cite` and `--repeat-cite` are independent and may combine with `--school`; `verify_bib.py --college-details` is legal only with `--standard gb7714` or `gb7714-2025`; `analyze_literature.py --progression-density` may combine with `--section` and is mutually exclusive with `--intro-citations`. Without these flags the previous output stays unchanged.
+Same-chapter table, body, and chapter-summary final values are compared only by `analyze_experiment.py --cross-surface`. `--section` may narrow the chapter. `--cross-surface-terms FILE` is valid only with that switch and replaces only the metric or evaluation-set list. Candidates are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`, with a local position and no corrected number. Without `--cross-surface` the previous output stays unchanged, and the existing `--results-analysis` codes stay independent.
+The graduate-school checklist is `--template yanshan`. The 2025 college checklist is `--template yanshan-ee-2025`. The two coexist. 111 statuses are not 111 compliant items. A partial checker does not PASS a compound item, and MODULE or NEEDS-LLM still needs human review.
+Method-expression labels, a weakness written as an advantage, a pronoun left without an antecedent after a deleted preview, abstract quotation marks, and formula symbols in a title or chapter-arrangement line are LLM-only readings on the existing `logic`, `claim-forward`, `abstract`, and `structure` modules. They add no script code, no threshold, and no new module.
 
 ### `typst-paper`
 

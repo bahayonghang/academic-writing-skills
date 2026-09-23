@@ -140,6 +140,32 @@ boundaries, see
 
 ---
 
+# Cross-surface number candidates (--cross-surface)
+
+```bash
+uv run python scripts/analyze_experiment.py thesis.tex --cross-surface
+uv run python scripts/analyze_experiment.py thesis.tex --cross-surface --cross-surface-terms terms.json
+```
+
+`--cross-surface-terms` is valid only together with `--cross-surface`. The JSON object contains only `metrics` and `eval_sets`.
+The mode accepts only a same-chapter simple `tabular` or a standalone `longtable`, one `\ref{tab:}`, an explicit metric, a row object, an evaluation set, and a literal unit.
+`multirow`, `multicolumn`, macro tables, and cross-chapter references are not compared. The script does not output a corrected number and does not treat nearby numbers as equal.
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| RA-XS-BODY | The body final value differs from the bound table record | Info/P3 |
+| RA-XS-SUMMARY | The summary final value differs from the bound table record, or a bound key is absent from the table | Info/P3 |
+| RA-XS-MISSING | The body or the summary lacks a declared key-result surface | Info/P3 |
+| RA-XS-EVALSET | The same table, object, and metric explicitly use two evaluation-set names | Info/P3 |
+| RA-XS-METRIC | An affirmative sentence treats two different metrics as derivable or convertible | Info/P3 |
+| RA-XS-COVERAGE | The value cannot be bound uniquely, or the table syntax is uncovered | Info/P3 |
+
+Every candidate is `[Script]` and `Meaning-Check: NEEDS-LLM`. Manual review still checks the three surfaces, the denominator, the unit, and the object.
+Without `--cross-surface`, coverage statistics are not printed. The existing `--results-analysis` codes stay independent.
+See [`../writing/results-analysis-guide-zh.md`](../writing/results-analysis-guide-zh.md).
+
+---
+
 # Conclusion Completeness Check (B5)
 
 **Rule**: A complete conclusion contains three elements:

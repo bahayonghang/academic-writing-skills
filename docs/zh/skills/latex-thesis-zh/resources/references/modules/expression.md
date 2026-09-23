@@ -94,3 +94,25 @@ B 档（无「建议」行，只有「候选」）：
 改写不得升高措辞强度。把留有余地的表述换成更强的断言（「可能」→「能够」、「有助于」→「显著提升」）是过度声称，不是表达改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../writing/over-claim-guard.md)——本模块只做词汇层替换建议，强度分级不在此重复实现。
 
 对自身结果的自我削弱搭配（「遗憾的是」「仍明显落后于」「效果有限」）与写在 caveat 之后的主张不是表达问题，也与 `E-ABSOLUTE` 方向相反；交给 [claim-forward.md](claim-forward.md)。
+
+## 可选程度词
+
+默认的九个检查器不变。`--degree-wording` 默认关闭。打开后新增 `E-DEGREE`，级别为 Info/P3，来源标记为 `[Script]`，`Meaning-Check: NEEDS-LLM`。候选是 `极易`、`极低` 和 `高度贴合`。`完全忽略` 由 `E-ABSOLUTE` 的 `完全` 候选覆盖，不另作 `E-DEGREE` 候选。报告只给出局部词和位置，不提供整句替换。
+
+在该模式下，`E-ABSOLUTE` 对 `绝对` 只跳过这些合法搭配中的词位：`绝对误差`、`绝对值`、`绝对温度`、`绝对湿度`、`绝对压力`、`绝对坐标`。一处合法搭配不豁免同一句中的另一个绝对化词。`完全忽略` 只产生一条 `E-ABSOLUTE` 的 `完全` 候选。引述他人观点的既有排除仍然有效。不新增自动替换模板。
+
+```bash
+uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --degree-wording
+```
+
+## 可选学院数字体例
+
+`--school` 只有 `yanshan-ee-2025` 和 `generic` 两个取值，默认 `generic`。没有单独的 `yanshan` 别名。
+只有学院模式增加 `NUM-SPACE`、`NUM-GROUP` 和 `NUM-COVERAGE`。它们是 Info/P3 候选，来源为 `[Script]`，
+`Meaning-Check: NEEDS-LLM`，不提供替换句，也不改写数学。
+`--degree-wording` 可以与 `--school` 同时使用：二者不吞掉对方的发现，也不把同一处复制成两条。
+不传 `--school` 时原输出不变。判据见 [number-unit-guide-zh.md](../formatting/number-unit-guide-zh.md)。
+
+```bash
+uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --school yanshan-ee-2025
+```

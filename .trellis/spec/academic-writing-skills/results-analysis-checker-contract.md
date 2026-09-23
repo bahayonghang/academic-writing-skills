@@ -12,6 +12,7 @@
 ```text
 uv run python scripts/analyze_experiment.py INPUT
   [--section SECTION] [--per-chapter] [--results-analysis] [--generate]
+  [--cross-surface] [--cross-surface-terms FILE]
 ```
 
 ```python
@@ -20,6 +21,8 @@ analyze(
     section: str | None = None,
     per_chapter: bool = False,
     results_analysis: bool = False,
+    cross_surface: bool = False,
+    cross_surface_terms: Path | None = None,
 ) -> list[str]
 
 _collect_results_intervals(
@@ -32,10 +35,30 @@ _collect_results_intervals(
 `{start_line, raw_text, visible_text}`。每个 RA checker 的调用签名统一为
 `(paragraphs, interval, chapter_window_raw, chapter_window_visible) -> list[str]`。
 
+`--cross-surface-terms` 只能与 `--cross-surface` 同时出现。单独出现是参数错误，非零退出，
+不产生通过报告。词表文件只接受 JSON 对象 `{"metrics":["合成指标"],"eval_sets":["合成评价集"]}`。
+出现的字段替换该字段自己的默认列表，缺省字段保留默认，空数组表示该维没有覆盖。
+非法 JSON、非对象、非字符串数组或多余字段非零退出。不读 YAML，不新增依赖。
+
+默认指标：`准确率`、`精确率`、`召回率`、`F1`、`误差`。
+默认评价集：`测试集`、`验证集`、`训练集`。
+这些词是通用短表，不写入论文专名或私有实验数字。
+
 ## 3. Contracts
 
-- RA-* 只在 `--results-analysis` 下运行；默认模式与单独 `--per-chapter` 不得出现 RA 输出。
-  两旗标同时存在时先保留 E-* 逐章检查，再附加 RA-*。
+- 既有九码 RA-EQUIV、RA-CAUSAL、RA-SECONDBEST、RA-SHALLOW、RA-DISTVOCAB、RA-UNIVERSAL、
+  RA-STAGE、RA-TRANSITION、RA-STRUCT 只在 `--results-analysis` 下运行。默认模式与单独
+  `--per-chapter` 不得出现 `RA-`，也不得出现跨表面覆盖统计。
+  `--per-chapter` 与 `--results-analysis` 同时存在时先保留 E-* 逐章检查，再附加上述 RA-*。
+- `RA-XS-BODY`、`RA-XS-SUMMARY`、`RA-XS-MISSING`、`RA-XS-EVALSET`、`RA-XS-METRIC`、
+  `RA-XS-COVERAGE` 只在 `--cross-surface` 下运行。全部为 Info/P3、`[Script]`、
+  `Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字，不用差值大小决定严重度。
+  与 `--results-analysis` 同时传入时两个分析都运行并串接输出；新词表不改变旧 RA 词表、
+  旧九码或默认报告。开启时即使没有数值差异，也输出已比较键数、未覆盖数，并写明
+  本检查不是全文合规证明。关闭时不输出这些统计。
+- 比较键为同章的表标签、指标、行对象、评价集和字面单位。百分数不换成小数，区间按有序端点
+  比较，单位不做换算。无结果表或无小结不得写成三表面一致。不能唯一绑定或表格未覆盖时只给
+  `RA-XS-COVERAGE`，不判断哪一处数字正确。
 - 无 `--section` 时，区间为逐章 `EXP_SEC_RE` 通道与全局
   `^(discussion|result)(_\d+)?$` 通道的并集；重叠区间只保留带章上下文的逐章版本。
 - 有 `--section X` 时，X 先经 `SECTION_KEY_ALIASES` 归一化，只选

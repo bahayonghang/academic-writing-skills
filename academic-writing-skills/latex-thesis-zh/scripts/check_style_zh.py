@@ -69,6 +69,16 @@ ABSOLUTE_TERMS = {
 }
 # 引述他人观点时这些词属于转述而非本文论断，不报。
 CITATION_CONTEXT_RE = re.compile(r"文献\s*[\[［]|等[\[［]|已有研究|前人研究|该文献|作者认为")
+# --degree-wording 才启用。只跳过这些合法搭配里的「绝对」词位，不跳过整句。
+LEGAL_ABSOLUTE_COLLOCATIONS = (
+    "绝对误差",
+    "绝对值",
+    "绝对温度",
+    "绝对湿度",
+    "绝对压力",
+    "绝对坐标",
+)
+DEGREE_PHRASES = ("极易", "极低", "完全忽略", "高度贴合")
 
 # ── E-COLLOC：搭配不当（style-zh §4.1，闭集错误搭配对） ─────────────────────
 # 动词与宾语之间允许「了/过」与不超过 6 字的定语（"增加了模型的效率"），但不跨标点——
@@ -103,8 +113,33 @@ UNIT_WORDS = (
     "Pa|kPa|MPa|GPa|N|J|kJ|W|kW|MW|V|kV|A|mA|K|mol|L|mL|dB|bit|B|KB|MB|GB|TB"
 )
 NUM_UNIT_NOSPACE_RE = re.compile(rf"(?<![A-Za-z0-9])(\d+(?:\.\d+)?)({UNIT_WORDS})(?![A-Za-z0-9])")
-# 国标规定不空格的量：百分号、角度、摄氏度。
+# 国标规定不空格的量：百分号、角度、摄氏度。默认 E-NUMSPACE 仍用此例外。
+# 学院模式不把 ℃ 并入平面角豁免，见 _check_college_numbers。
 UNIT_NO_SPACE = ("%", "°", "℃", "‰", "′", "″")
+SCHOOL_CHOICES = ("yanshan-ee-2025", "generic")
+_COLLEGE_SCHOOL = "yanshan-ee-2025"
+_UNIT_WORD_RE = re.compile(rf"(?:{UNIT_WORDS})(?![A-Za-z0-9])")
+_COLLEGE_NUM_RE = re.compile(r"(?<![A-Za-z0-9\\.])(-?)(\d+(?:\\,\d+)*(?:\.\d+(?:\\,\d+)*)?)")
+_COLLEGE_SPACE_RE = re.compile(
+    r"(?<![A-Za-z0-9\\])"
+    r"(-?(?:\d+(?:\\,\d+)*)(?:\.\d+(?:\\,\d+)*)?)"
+    r"("
+    r"\\%|%|℃|°C(?![A-Za-z])|\\celsius(?![A-Za-z])|"
+    r"(?:\^\\circ|\^\{\\circ\})\s*(?:\\mathrm\{C\}|C)|"
+    rf"\\mathrm\{{(?:{UNIT_WORDS})\}}"
+    r")"
+)
+_MATH_SPAN_ANY_RE = re.compile(r"(?<!\\)\$(?:\\.|[^$])+\$|\\\[(?:\\.|[^\]])+\\\]")
+_VERBATIM_NAME_RE = re.compile(r"\\(begin|end)\{(verbatim|lstlisting|minted)\*?\}")
+_TIKZ_NAME_RE = re.compile(r"\\(begin|end)\{tikzpicture\}")
+_TIKZ_LINE_RE = re.compile(r"\\(?:draw|node|coordinate|path|fill|tikzset|tikz)\b")
+_TABULAR_EDGE_RE = re.compile(r"\\(begin|end)\{tabular\*?\}")
+_LONGTABLE_EDGE_RE = re.compile(r"\\(begin|end)\{longtable\*?\}")
+_SIDEWAYS_EDGE_RE = re.compile(r"\\(begin|end)\{sidewaystable\*?\}")
+_UNCLEAR_COL_RE = re.compile(r"\\(?:multicolumn|multirow)\b")
+_NUMERIC_CELL_RE = re.compile(
+    r"-?(?:\d+(?:\\,\d+)*)(?:\.\d+(?:\\,\d+)*)?(?:(?:~|\\,|\s)*(?:\\%|%|℃))?$"
+)
 
 # ── E-UNITFONT：数学环境内单位斜体（style-zh §6.2） ────────────────────────
 MATH_SPAN_RE = re.compile(r"\$[^$]+\$")
@@ -182,9 +217,17 @@ def _in_spans(index: int, spans: list[tuple[int, int]]) -> bool:
 class ChineseStyleChecker:
     """九个 E-* 检查器：A 档给替换建议，B 档只报候选（见模块文档的分档表）。"""
 
-    def __init__(self, entry: Path, max_chars: int = DEFAULT_MAX_CHARS) -> None:
+    def __init__(
+        self,
+        entry: Path,
+        max_chars: int = DEFAULT_MAX_CHARS,
+        degree_wording: bool = False,
+        school: str = "generic",
+    ) -> None:
         self.entry = Path(entry)
         self.max_chars = max_chars
+        self.degree_wording = degree_wording
+        self.school = school
 
     def analyze(
         self,
@@ -227,12 +270,17 @@ class ChineseStyleChecker:
                     continue
                 self._check_colloquial(visible, loc, result)
                 self._check_absolute(visible, loc, result)
+                if self.degree_wording:
+                    self._check_degree(visible, loc, result)
                 self._check_collocation(visible, loc, result)
                 self._check_incomplete(visible, loc, result)
                 self._check_punctuation(visible, loc, result)
                 self._check_number_unit_space(visible, loc, result)
                 self._check_number_style(visible, loc, result)
                 self._check_long_sentence(visible, loc, result)
+
+        if self.school == _COLLEGE_SCHOOL:
+            self._check_college_numbers(lines, ranges, doc, result)
 
         result.findings.sort(key=lambda f: (SEVERITY_ORDER.get(f.severity, 9), f.loc, f.code))
         return result
@@ -309,11 +357,33 @@ class ChineseStyleChecker:
 
     # ── B 档：只报候选，不给可直接套用的替换文本 ──────────────────────────
 
+    def _absolute_term_active(self, text: str, term: str) -> bool:
+        if term != "绝对" or not self.degree_wording:
+            return term in text
+        covered: list[tuple[int, int]] = []
+        for phrase in LEGAL_ABSOLUTE_COLLOCATIONS:
+            start = 0
+            while True:
+                index = text.find(phrase, start)
+                if index < 0:
+                    break
+                covered.append((index, index + len("绝对")))
+                start = index + len(phrase)
+        start = 0
+        while True:
+            index = text.find(term, start)
+            if index < 0:
+                return False
+            if not any(span_start <= index < span_end for span_start, span_end in covered):
+                return True
+            start = index + len(term)
+        return False
+
     def _check_absolute(self, text: str, loc: str, result: StyleResult) -> None:
         if CITATION_CONTEXT_RE.search(text):
             return
         for term, replacement in ABSOLUTE_TERMS.items():
-            if term not in text:
+            if not self._absolute_term_active(text, term):
                 continue
             result.findings.append(
                 Finding(
@@ -334,6 +404,34 @@ class ChineseStyleChecker:
                     ),
                 )
             )
+
+    def _check_degree(self, text: str, loc: str, result: StyleResult) -> None:
+        """Opt-in degree-word candidates. No full-sentence replacement."""
+        if CITATION_CONTEXT_RE.search(text):
+            return
+        complete_already_reported = "完全" in text
+        for phrase in DEGREE_PHRASES:
+            start = 0
+            while True:
+                index = text.find(phrase, start)
+                if index < 0:
+                    break
+                start = index + len(phrase)
+                if phrase == "完全忽略" and complete_already_reported:
+                    continue
+                result.findings.append(
+                    Finding(
+                        code="E-DEGREE",
+                        tier="candidate",
+                        loc=loc,
+                        severity="Info",
+                        priority="P3",
+                        title="程度词",
+                        original=phrase,
+                        candidate=f"「{phrase}」是程度词候选，需人工判断；不提供整句替换",
+                        basis="academic-style-zh.md 程度词（--degree-wording）",
+                    )
+                )
 
     def _check_incomplete(self, text: str, loc: str, result: StyleResult) -> None:
         for sentence in (s.strip() for s in SENTENCE_SPLIT_RE.split(text) if s.strip()):
@@ -473,6 +571,419 @@ class ChineseStyleChecker:
                 )
             )
 
+    def _check_college_numbers(self, lines: list[str], ranges, doc, result: StyleResult) -> None:
+        """Opt-in college number spacing and grouping. Candidates only; no math rewrite."""
+        verbatim = 0
+        tikz = 0
+        seen: set[tuple[str, str, str]] = set()
+        tab_depth = 0
+        tab_buf: list[tuple[int, str]] = []
+        tab_complex = False
+        long_depth = 0
+        side_depth = 0
+        for start, end in ranges:
+            for line_no in range(start, min(end, len(lines)) + 1):
+                raw = lines[line_no - 1]
+                verbatim, tikz, prose_skip = _college_line_state(raw, verbatim, tikz)
+                if verbatim or tikz:
+                    continue
+                visible = _strip_college_comment(raw)
+                long_b, long_e = _env_counts(visible, _LONGTABLE_EDGE_RE)
+                side_b, side_e = _env_counts(visible, _SIDEWAYS_EDGE_RE)
+                if long_depth == 0 and long_b:
+                    self._college_table_gap(doc, line_no, "longtable", result, seen)
+                if side_depth == 0 and side_b:
+                    self._college_table_gap(doc, line_no, "sidewaystable", result, seen)
+                long_depth = max(0, long_depth + long_b - long_e)
+                side_depth = max(0, side_depth + side_b - side_e)
+                if long_depth or side_depth or long_b or long_e or side_b or side_e:
+                    continue
+                tab_b, tab_e = _env_counts(visible, _TABULAR_EDGE_RE)
+                if tab_depth or tab_b:
+                    if tab_depth and tab_b:
+                        tab_complex = True
+                    if _UNCLEAR_COL_RE.search(visible):
+                        tab_complex = True
+                    tab_buf.append((line_no, visible))
+                    tab_depth = max(0, tab_depth + tab_b - tab_e)
+                    if tab_depth == 0:
+                        self._finish_college_tabular(tab_buf, tab_complex, doc, result, seen)
+                        tab_buf = []
+                        tab_complex = False
+                    continue
+                if prose_skip:
+                    continue
+                masked = _mask_college_line(raw)
+                if not masked.strip():
+                    continue
+                loc = doc.lineref(line_no)
+                math_at = _math_indexes(masked)
+                self._college_spacing(masked, math_at, loc, result, seen)
+                self._college_grouping(masked, math_at, loc, result, seen)
+        if tab_buf:
+            self._college_table_gap(doc, tab_buf[0][0], "unclosed", result, seen)
+
+    def _finish_college_tabular(
+        self,
+        buf: list[tuple[int, str]],
+        complex_table: bool,
+        doc,
+        result: StyleResult,
+        seen: set,
+    ) -> None:
+        if complex_table:
+            self._college_table_gap(doc, buf[0][0], "unclear", result, seen)
+            return
+        for line_no, text in buf:
+            cleaned = _strip_table_structure(text)
+            if not cleaned.strip():
+                continue
+            loc = doc.lineref(line_no)
+            for cell in _split_cells(_mask_college_line(cleaned)):
+                if not cell.strip():
+                    continue
+                math_at = _math_indexes(cell)
+                self._college_spacing(cell, math_at, loc, result, seen)
+                self._college_grouping(
+                    cell,
+                    math_at,
+                    loc,
+                    result,
+                    seen,
+                    force_quantity=_numeric_cell(cell),
+                )
+
+    def _college_table_gap(
+        self, doc, line_no: int, kind: str, result: StyleResult, seen: set
+    ) -> None:
+        messages = {
+            "longtable": "longtable 不做单元格数字扫描，列覆盖不足。这不是确定违规，也不作为通过。",
+            "sidewaystable": (
+                "sidewaystable 不做单元格数字扫描，列覆盖不足。这不是确定违规，也不作为通过。"
+            ),
+            "unclear": "multicolumn、multirow 或嵌套表列归属不明，不合并命中，不作为通过。",
+            "unclosed": "表格环境未闭合，覆盖不足，不作为通过。",
+        }
+        token = kind if kind in {"longtable", "sidewaystable"} else "tabular"
+        loc = doc.lineref(line_no)
+        key = (loc, "NUM-COVERAGE", f"{token}:{kind}")
+        if key in seen:
+            return
+        seen.add(key)
+        result.findings.append(
+            _college_finding(
+                "NUM-COVERAGE",
+                loc,
+                token,
+                messages[kind],
+                title="表格数字未覆盖",
+            )
+        )
+
+    def _college_spacing(self, text, math_at, loc, result: StyleResult, seen: set) -> None:
+        for match in _COLLEGE_SPACE_RE.finditer(text):
+            token = match.group(0)
+            if _college_space_excluded(text, match.start(), match.end()):
+                continue
+            key = (loc, "NUM-SPACE", token)
+            if key in seen:
+                continue
+            seen.add(key)
+            in_math = match.start() in math_at
+            result.findings.append(
+                _college_finding(
+                    "NUM-SPACE",
+                    loc,
+                    token,
+                    "数值与 %、\\% 或 ℃ 之间缺间隔。平面角度分秒保持紧贴。"
+                    "推荐源码间隔为 ~；已有空格或 \\, 等显式间隔不算违规。"
+                    + ("只报告位置，不改写数学。" if in_math else "只报告该片段，不给整句替换。"),
+                )
+            )
+
+    def _college_grouping(
+        self,
+        text,
+        math_at,
+        loc,
+        result: StyleResult,
+        seen: set,
+        *,
+        force_quantity: bool = False,
+    ) -> None:
+        for match in _COLLEGE_NUM_RE.finditer(text):
+            sign, body = match.group(1), match.group(2)
+            token = sign + body
+            context = _college_number_context(text, match.start(), match.end(), token, body)
+            if context == "skip":
+                continue
+            if context == "bare" and force_quantity:
+                context = "quantity"
+            in_math = match.start() in math_at
+            if context == "quantity":
+                if _college_groups_ok(body):
+                    continue
+                code = "NUM-GROUP"
+                detail = (
+                    "千分空应从小数点向两侧每 3 位分组。负号不计位数。"
+                    "只报告该数值，不改写、不换算。"
+                )
+            else:
+                digits = body.replace("\\,", "").replace(".", "")
+                if "." in body or "\\," in body or len(digits) < 4:
+                    continue
+                code = "NUM-COVERAGE"
+                detail = "未分类裸数字。这不是确定违规，也不构成学院豁免。"
+            if in_math:
+                detail += "只报告位置，不改写数学。"
+            key = (loc, code, token)
+            if key in seen:
+                continue
+            seen.add(key)
+            result.findings.append(_college_finding(code, loc, token, detail))
+
+
+def _college_finding(code: str, loc: str, token: str, detail: str, title: str = "") -> Finding:
+    titles = {
+        "NUM-SPACE": "数值与单位缺间隔",
+        "NUM-GROUP": "千分空分组",
+        "NUM-COVERAGE": "未分类裸数字",
+    }
+    return Finding(
+        code=code,
+        tier="candidate",
+        loc=loc,
+        severity="Info",
+        priority="P3",
+        title=title or titles[code],
+        original=token,
+        candidate=f"「{token}」{detail}",
+        basis="学院 yanshan-ee-2025 源码体例；~ 与 \\, 的选择见 number-unit-guide-zh.md",
+    )
+
+
+def _college_line_state(raw: str, verbatim: int, tikz: int) -> tuple[int, int, bool]:
+    stripped = raw.strip()
+    was_verbatim = verbatim > 0
+    was_tikz = tikz > 0
+    opens_verbatim = False
+    opens_tikz = False
+    for kind, _name in _VERBATIM_NAME_RE.findall(raw):
+        if kind == "begin":
+            verbatim += 1
+            opens_verbatim = True
+        else:
+            verbatim -= 1
+    for match in _TIKZ_NAME_RE.finditer(raw):
+        if match.group(1) == "begin":
+            tikz += 1
+            opens_tikz = True
+        else:
+            tikz -= 1
+    verbatim = max(verbatim, 0)
+    tikz = max(tikz, 0)
+    skip = bool(
+        not stripped
+        or stripped.startswith("%")
+        or was_verbatim
+        or was_tikz
+        or opens_verbatim
+        or opens_tikz
+        or _TIKZ_LINE_RE.search(stripped)
+        or re.match(
+            r"^\\(?:documentclass|usepackage|input|include|bibliography|"
+            r"newcommand|renewcommand|def)\b",
+            stripped,
+        )
+    )
+    return verbatim, tikz, skip
+
+
+def _strip_college_comment(raw: str) -> str:
+    return re.sub(r"(?<!\\)%.*", "", raw)
+
+
+def _env_counts(text: str, pattern: re.Pattern[str]) -> tuple[int, int]:
+    begins = 0
+    ends = 0
+    for match in pattern.finditer(text):
+        if match.group(1) == "begin":
+            begins += 1
+        else:
+            ends += 1
+    return begins, ends
+
+
+def _skip_braces(text: str, index: int) -> int:
+    if index >= len(text) or text[index] != "{":
+        return index
+    depth = 0
+    while index < len(text):
+        if text[index] == "\\" and index + 1 < len(text):
+            index += 2
+            continue
+        if text[index] == "{":
+            depth += 1
+        elif text[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return index + 1
+        index += 1
+    return index
+
+
+def _strip_begin_tabular(line: str) -> str:
+    match = re.search(r"\\begin\{tabular\*?\}", line)
+    if not match:
+        return line
+    index = match.end()
+    if index < len(line) and line[index] == "[":
+        close = line.find("]", index)
+        if close < 0:
+            return line[: match.start()]
+        index = close + 1
+    groups = 0
+    while groups < 2 and index < len(line):
+        while index < len(line) and line[index].isspace():
+            index += 1
+        if index >= len(line) or line[index] != "{":
+            break
+        index = _skip_braces(line, index)
+        groups += 1
+    return line[: match.start()] + line[index:]
+
+
+def _strip_table_structure(line: str) -> str:
+    line = _strip_begin_tabular(line)
+    line = re.sub(r"\\end\{tabular\*?\}", "", line)
+    line = re.sub(r"\\(?:toprule|midrule|bottomrule|hline)\b(?:\[[^\]]*\])?", "", line)
+    line = re.sub(r"\\(?:cline|cmidrule)(?:\[[^\]]*\])?\{[^{}]*\}", "", line)
+    return re.sub(r"\\\\(?:\[[^\]]*\])?", "", line)
+
+
+def _split_cells(text: str) -> list[str]:
+    cells: list[str] = []
+    start = 0
+    for match in re.finditer(r"(?<!\\)&", text):
+        cells.append(text[start : match.start()])
+        start = match.end()
+    cells.append(text[start:])
+    return cells
+
+
+def _numeric_cell(cell: str) -> bool:
+    piece = cell.replace("$", "")
+    piece = re.sub(r"\\(?:mathrm|textbf|text)\{([^{}]*)\}", r"\1", piece)
+    return _NUMERIC_CELL_RE.fullmatch(piece.strip()) is not None
+
+
+def _mask_college_line(raw: str) -> str:
+    masked = re.sub(r"(?<!\\)%.*", lambda match: " " * len(match.group(0)), raw)
+
+    def _blank(match: re.Match[str]) -> str:
+        return " " * len(match.group(0))
+
+    patterns = (
+        r"\\(?:includegraphics|url|path)\*?(?:\[[^\]]*\])?\{[^{}]*\}",
+        r"\\href\s*\{[^{}]*\}\s*\{[^{}]*\}",
+        r"\\(?:resizebox|rule)\*?\s*\{[^{}]*\}\s*\{[^{}]*\}",
+        r"\\(?:scalebox|hspace|vspace)\*?\s*\{[^{}]*\}",
+        r"\\begin\{minipage\}(?:\[[^\]]*\])*\s*\{[^{}]*\}",
+        r"\\(?:cite|citep|citet|ref|eqref|autoref|cref|Cref|pageref|label|tag)\*?"
+        r"(?:\[[^\]]*\])?\{[^{}]*\}",
+    )
+    for pattern in patterns:
+        masked = re.sub(pattern, _blank, masked)
+    return masked
+
+
+def _math_indexes(text: str) -> set[int]:
+    indexes: set[int] = set()
+    for match in _MATH_SPAN_ANY_RE.finditer(text):
+        indexes.update(range(match.start(), match.end()))
+    return indexes
+
+
+def _college_space_excluded(text: str, start: int, _end: int) -> bool:
+    prefix = text[max(0, start - 12) : start]
+    return bool(re.search(r"[A-Za-z]-?$", prefix))
+
+
+def _college_number_context(text: str, start: int, end: int, token: str, body: str) -> str:
+    prefix = text[max(0, start - 16) : start]
+    suffix = text[end : end + 32]
+    if re.search(r"(?:编号|学号|序号|证号|工号|No\.?|ID)\s*[:：]?\s*$", prefix, re.I):
+        return "skip"
+    if re.search(r"[A-Za-z]-?$", prefix):
+        return "skip"
+    if suffix.startswith("年"):
+        return "skip"
+    if re.match(r":\d{2}", suffix) or re.match(r"[-/]\d{1,2}[-/]\d{1,2}", suffix):
+        return "skip"
+    if re.match(r"\s*(?:\\times|\\cdot)\s*10\b", suffix) or re.match(r"[eE][+-]?\d", suffix):
+        return "skip"
+    if re.match(r"10\.\d{4,}", body) and suffix.startswith("/"):
+        return "skip"
+    if re.search(r"doi\s*[:=]\s*$", prefix, re.I):
+        return "skip"
+    if _college_path_token(text, start, end):
+        return "skip"
+    if (
+        re.match(r"[A-Za-z]", suffix)
+        and not _UNIT_WORD_RE.match(suffix)
+        and not suffix.startswith("\\")
+    ):
+        return "skip"
+    if "." in body or "\\," in body or _college_unit_follows(suffix):
+        return "quantity"
+    return "bare"
+
+
+def _college_path_token(text: str, start: int, end: int) -> bool:
+    left = start
+    while left > 0 and text[left - 1] not in " \t\n{}":
+        left -= 1
+    right = end
+    while right < len(text) and text[right] not in " \t\n{}":
+        right += 1
+    token = text[left:right]
+    if "/" in token or "\\\\" in token:
+        return True
+    return bool(re.search(r"\.(?:png|jpe?g|pdf|tex|eps|svg|csv|bib)\b", token, re.I))
+
+
+def _college_unit_follows(suffix: str) -> bool:
+    trimmed = re.sub(r"^(?:~|\\,|\\ |\\;|\\:|\s)+", "", suffix)
+    if trimmed.startswith(("%", "\\%", "℃")):
+        return True
+    if trimmed.startswith("\\mathrm{"):
+        return True
+    return bool(_UNIT_WORD_RE.match(trimmed))
+
+
+def _college_groups_ok(body: str) -> bool:
+    integer, _, fraction = body.partition(".")
+    if not _college_side_ok(integer, fractional=False):
+        return False
+    if fraction == "":
+        return "." not in body
+    return _college_side_ok(fraction, fractional=True)
+
+
+def _college_side_ok(part: str, *, fractional: bool) -> bool:
+    groups = part.split("\\,")
+    if any(not group.isdigit() for group in groups):
+        return False
+    if len(groups) == 1:
+        return len(groups[0]) <= 3
+    if fractional:
+        if not 1 <= len(groups[-1]) <= 3:
+            return False
+        return all(len(group) == 3 for group in groups[:-1])
+    if not 1 <= len(groups[0]) <= 3:
+        return False
+    return all(len(group) == 3 for group in groups[1:])
+
 
 def _contract_lines(finding: Finding) -> list[str]:
     return [
@@ -545,13 +1056,29 @@ def main() -> int:
         "--max-chars", type=int, default=DEFAULT_MAX_CHARS, help="单句长度阈值（默认 80 字）"
     )
     cli.add_argument("--json", "-j", action="store_true", help="以 JSON 输出")
+    cli.add_argument(
+        "--degree-wording",
+        action="store_true",
+        help="报告程度词候选，并按词位豁免合法绝对化搭配（默认关闭）",
+    )
+    cli.add_argument(
+        "--school",
+        choices=SCHOOL_CHOICES,
+        default="generic",
+        help="学院源码体例。仅 yanshan-ee-2025 启用数字/单位候选；默认 generic",
+    )
     args = cli.parse_args()
 
     if not Path(args.tex_file).exists():
         print(f"[ERROR] 文件未找到: {args.tex_file}", file=sys.stderr)
         return 1
 
-    checker = ChineseStyleChecker(Path(args.tex_file), max_chars=args.max_chars)
+    checker = ChineseStyleChecker(
+        Path(args.tex_file),
+        max_chars=args.max_chars,
+        degree_wording=args.degree_wording,
+        school=args.school,
+    )
     result = checker.analyze(args.section, args.goal, args.strength)
 
     if args.json:

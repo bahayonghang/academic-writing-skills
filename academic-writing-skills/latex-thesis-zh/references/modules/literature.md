@@ -74,3 +74,11 @@ uv run python -B scripts/analyze_literature.py thesis.tex --intro-citations --bi
 - 不增删或改写现有 citekey；缺失的作者、方法、对象或结果只列为待补证据。
 - 默认不直接重写整段 prose，先给诊断和改写蓝图。
 - 如果现有证据不足以支持“研究空白”，必须明确说证据不够，不能硬编。
+
+## 可选递进密度（`--progression-density`）
+
+可与 `--section` 组合。未传 `--section` 时只使用已有 `related` 范围；找不到该节时保留原错误，不改扫全文，也不报告通过。
+与 `--intro-citations` 互斥。可见正文不计题注、引用键、数学和代码。
+「进一步」严格多于 5 次、「针对」严格多于 7 次时给出 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM` 候选，并把阈值标为 `UNVERIFIED`。
+5 次和 7 次不触发。脚本不轮换同义词，也不输出替换句。
+六类改写方向和四种段落组织见 [`../writing/literature-progression-zh.md`](../writing/literature-progression-zh.md)，只用合成片段。

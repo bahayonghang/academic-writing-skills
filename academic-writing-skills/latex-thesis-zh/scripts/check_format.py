@@ -140,10 +140,11 @@ class FormatChecker:
 
     _VERBATIM_ENVS = ("verbatim", "lstlisting", "minted")
 
-    def __init__(self, tex_file: str, config: Optional[str] = None):
+    def __init__(self, tex_file: str, config: Optional[str] = None, school: str = "generic"):
         self.tex_file = Path(tex_file).resolve()
         self.work_dir = self.tex_file.parent
         self.config = config
+        self.school = school
 
     def _check_chktex(self) -> tuple[bool, str]:
         """Check if chktex is available."""
@@ -166,10 +167,18 @@ class FormatChecker:
         chinese_issues, warnings = self._run_chinese_checks()
         all_issues.extend(chinese_issues)
 
-        # info 级提示（如人称代词）不降级状态：仅 warning/error 触发 WARNING
+        # info 级提示（如人称代词）不降级状态：仅 warning/error 触发 WARNING。
+        # 学院覆盖不足不是通过；默认路径没有 EQ-COVERAGE，状态字不变。
         has_actionable = any(i["severity"] in ("warning", "error") for i in all_issues)
+        incomplete = any(i.get("code") == "EQ-COVERAGE" for i in all_issues)
+        if has_actionable:
+            status = "WARNING"
+        elif incomplete:
+            status = "NEEDS-LLM"
+        else:
+            status = "PASS"
         return {
-            "status": "WARNING" if has_actionable else "PASS",
+            "status": status,
             "chktex_available": ok,
             "issues": all_issues,
             "total": len(all_issues),
@@ -296,6 +305,9 @@ class FormatChecker:
                         }
                     )
 
+        if self.school == "yanshan-ee-2025":
+            issues.extend(self._college_equation_issues(doc))
+
         return issues, list(doc.warnings)
 
     @staticmethod
@@ -314,6 +326,149 @@ class FormatChecker:
         explicit = sum(bool(_PLACEHOLDER_TOKEN_RE.match(c)) for c in cells)
         all_filler = all(c == "" or bool(_PLACEHOLDER_TOKEN_RE.match(c)) for c in cells)
         return amp + 1 if explicit >= 2 and all_filler else None
+
+    def _college_equation_issues(self, doc) -> list[dict]:
+        """College equation candidates on raw assembled source. Not visible-text."""
+        text = _mask_comments_keep_len(doc.content)
+        text = _blank_envs(text, _CODE_ENV_RE)
+        envs, unbalanced = _scan_envs(text)
+        issues: list[dict] = []
+        if unbalanced:
+            issues.append(
+                self._college_issue(
+                    doc,
+                    0,
+                    "EQ-COVERAGE",
+                    "",
+                    "环境未闭合，覆盖不足，不作为通过",
+                )
+            )
+        for name, begin, body_start, body_end, _end_end in envs:
+            base = name[:-1] if name.endswith("*") else name
+            if not _is_display_math(base):
+                continue
+            body = text[body_start:body_end]
+            numbered = (not name.endswith("*")) and base in _NUMBERED_DISPLAYS
+            if numbered:
+                status = _leadin_status(text, begin)
+                if status == "hit":
+                    issues.append(
+                        self._college_issue(
+                            doc,
+                            begin,
+                            "EQ-LEADIN",
+                            "：",
+                            "编号公式前的可见正文句未以中文冒号结束。label 与注释不算引导句",
+                        )
+                    )
+                elif status == "manual":
+                    issues.append(
+                        self._college_issue(
+                            doc,
+                            begin,
+                            "EQ-COVERAGE",
+                            "",
+                            "公式与正文同行、宏封装或难以绑定引导句，留人工，不记为通过",
+                        )
+                    )
+            if base in _NUMBERED_DISPLAYS and _tail_hit(body):
+                issues.append(
+                    self._college_issue(
+                        doc,
+                        body_end - 1,
+                        "EQ-TAILPUNCT",
+                        "。",
+                        "公式末出现中文句号或逗号。cases 条件分隔符不计，不改写公式",
+                    )
+                )
+            if base == "cases":
+                pass
+            elif base in _CONT_DISPLAYS:
+                hits, ambiguous = _continuation_marks(body)
+                for offset, token in hits:
+                    issues.append(
+                        self._college_issue(
+                            doc,
+                            body_start + offset,
+                            "EQ-CONT",
+                            token,
+                            "单条等式的续行在行首重复了关系符或运算符。关系符留在上一行则不报",
+                        )
+                    )
+                if ambiguous:
+                    issues.append(
+                        self._college_issue(
+                            doc,
+                            begin,
+                            "EQ-COVERAGE",
+                            "",
+                            "无法区分推导链和长等式续行，Meaning-Check: NEEDS-LLM，不记为通过",
+                        )
+                    )
+            if _is_complex_env(base):
+                issues.append(
+                    self._college_issue(
+                        doc,
+                        begin,
+                        "EQ-COVERAGE",
+                        "",
+                        "复杂公式未自动判定，不记为通过",
+                    )
+                )
+        visible = _blank_command_payloads(text)
+        for match in re.finditer(r"上式(?!子)|下式", visible):
+            issues.append(
+                self._college_issue(
+                    doc,
+                    match.start(),
+                    "EQ-CITE",
+                    match.group(0),
+                    "可见正文使用了上式或下式。不提供整句替换",
+                )
+            )
+        for line_start, line in _iter_lines(text):
+            stripped = line.lstrip()
+            if stripped.startswith("式中") and not _shizhong_ok(stripped[2:]):
+                issues.append(
+                    self._college_issue(
+                        doc,
+                        line_start + line.index("式中"),
+                        "EQ-NOTE",
+                        "式中",
+                        "「式中」后应空 2 个半角空格，代号与注释之间用破折号——"
+                        "。顶格和破折号视觉对齐仍人工",
+                    )
+                )
+            elif stripped.startswith("其中") and _qizhong_bad(stripped[2:]):
+                issues.append(
+                    self._college_issue(
+                        doc,
+                        line_start + line.index("其中"),
+                        "EQ-NOTE",
+                        "其中",
+                        "「其中」后不加空格、不用破折号。顶格视觉对齐仍人工",
+                    )
+                )
+        return issues
+
+    def _college_issue(self, doc, pos: int, code: str, matched: str, detail: str) -> dict:
+        origin_pos = max(pos, 0)
+        line_no = _line_of(doc.content, origin_pos)
+        line_start = doc.content.rfind("\n", 0, origin_pos) + 1
+        src, src_line = doc.origin(line_no)
+        return {
+            "source": "college_source",
+            "file": src if doc.multi_file else str(self.tex_file.name),
+            "line": src_line,
+            "column": origin_pos - line_start + 1,
+            "severity": "info",
+            "priority": "P3",
+            "code": code,
+            "message": f"[Script] Meaning-Check: NEEDS-LLM {code}: {detail}",
+            "matched": matched,
+            "meaning_check": "NEEDS-LLM",
+            "layer": "[Script]",
+        }
 
     def generate_report(self, result: dict) -> str:
         """Generate human-readable report."""
@@ -355,11 +510,218 @@ class FormatChecker:
         return "\n".join(lines)
 
 
+SCHOOL_CHOICES = ("yanshan-ee-2025", "generic")
+_NUMBERED_DISPLAYS = {"equation", "align", "gather", "multline", "flalign", "eqnarray"}
+_CONT_DISPLAYS = _NUMBERED_DISPLAYS | {"split", "aligned", "gathered"}
+_REL_ALT = (
+    r"\\(?:approx|equiv|leq|geq|neq|sim|ll|gg|le|ge|pm|mp|times|cdot|div)"
+    r"|<=|>=|=|<(?!\\)|>(?!\\)|\+|-(?!\d)|/(?!/)"
+)
+_CONT_START_RE = re.compile(rf"^\s*&?\s*(?P<rel>{_REL_ALT})")
+_ALIGN_REL_RE = re.compile(rf"&?\s*(?P<rel>{_REL_ALT})")
+_CONSTRAINT_RE = re.compile(
+    r"\\text\{\s*s\.t\.|\\mathrm\{\s*s\.t\.|\\operatorname\{\s*s\.t\.|"
+    r"(?<![A-Za-z])s\.t\.|(?<![A-Za-z])subject\s+to|约束"
+)
+_ENV_TOKEN_RE = re.compile(r"\\(begin|end)\{([A-Za-z*]+)\}")
+_LEADIN_SKIP_RE = re.compile(
+    r"^\s*(?:\\(?:label|nonumber|notag|tag|centering|vspace|hspace|quad|qquad|"
+    r"bigskip|medskip|smallskip)\b[^\\]*)?\s*$"
+)
+_HEADING_RE = re.compile(r"\\(?:chapter|section|subsection|subsubsection|paragraph)\*?\{")
+_COMPLEX_ENV_RE = re.compile(r"(?:array|alignedat|subequations|[A-Za-z]*matrix)\*?")
+_NESTED_MATH_RE = re.compile(
+    r"(?:cases|split|aligned|gathered|alignedat|subequations|array|[A-Za-z]*matrix)\*?"
+)
+_TAIL_BLANK_RE = re.compile(r"(?:cases|array|alignedat|subequations|[A-Za-z]*matrix)\*?")
+_CODE_ENV_RE = re.compile(r"(?:verbatim|lstlisting|minted)\*?")
+_TRAILING_TAIL_RE = re.compile(r"(?:\\end\{[A-Za-z*]+\}\s*|\\\\(?:\[[^\]]*\])?\s*)+")
+_PAYLOAD_RE = re.compile(
+    r"\\(?:cite[a-zA-Z]*|ref|eqref|autoref|cref|Cref|pageref|label)\*?"
+    r"(?:\[[^\]]*\])?\{[^{}]*\}"
+)
+_MACRO_DEF_RE = re.compile(r"\s*\\(?:newcommand|renewcommand|providecommand|def)\b")
+
+
+def _mask_comments_keep_len(text: str) -> str:
+    chars = list(text)
+    index = 0
+    while index < len(chars):
+        if chars[index] == "%" and not _escaped(chars, index):
+            while index < len(chars) and chars[index] != "\n":
+                chars[index] = " "
+                index += 1
+            continue
+        index += 1
+    return "".join(chars)
+
+
+def _escaped(chars: list[str], index: int) -> bool:
+    slashes = 0
+    cursor = index - 1
+    while cursor >= 0 and chars[cursor] == "\\":
+        slashes += 1
+        cursor -= 1
+    return slashes % 2 == 1
+
+
+def _scan_envs(text: str) -> tuple[list[tuple[str, int, int, int, int]], bool]:
+    stack: list[tuple[str, int, int]] = []
+    found: list[tuple[str, int, int, int, int]] = []
+    unbalanced = False
+    for match in _ENV_TOKEN_RE.finditer(text):
+        kind, name = match.group(1), match.group(2)
+        if kind == "begin":
+            stack.append((name, match.start(), match.end()))
+            continue
+        if stack and stack[-1][0] == name:
+            bname, bstart, body_start = stack.pop()
+            found.append((bname, bstart, body_start, match.start(), match.end()))
+        else:
+            unbalanced = True
+    if stack:
+        unbalanced = True
+    return found, unbalanced
+
+
+def _line_of(text: str, pos: int) -> int:
+    return text.count("\n", 0, pos) + 1
+
+
+def _iter_lines(text: str):
+    offset = 0
+    for line in text.split("\n"):
+        yield offset, line
+        offset += len(line) + 1
+
+
+def _leadin_status(text: str, begin_pos: int) -> str:
+    line_start = text.rfind("\n", 0, begin_pos) + 1
+    if text[line_start:begin_pos].strip():
+        return "manual"
+    cursor = line_start
+    while True:
+        if cursor <= 0:
+            return "hit"
+        prev_end = cursor - 1
+        prev_start = text.rfind("\n", 0, prev_end) + 1
+        line = text[prev_start:prev_end]
+        cursor = prev_start
+        if not line.strip() or _LEADIN_SKIP_RE.match(line):
+            continue
+        if _HEADING_RE.search(line):
+            return "manual"
+        stripped = re.sub(r"(?:\\\\(?:\[[^\]]*\])?\s*)+$", "", line.strip())
+        if re.search(r"\\(?:begin|end)\{", stripped):
+            return "manual"
+        if stripped.startswith("\\") and not re.search(r"[一-鿿：]", stripped):
+            return "manual"
+        if stripped.endswith("："):
+            return "ok"
+        return "hit"
+
+
+def _is_complex_env(base: str) -> bool:
+    return _COMPLEX_ENV_RE.fullmatch(base) is not None
+
+
+def _is_display_math(base: str) -> bool:
+    return base in _CONT_DISPLAYS or base == "cases" or _is_complex_env(base)
+
+
+def _blank_envs(text: str, name_re: re.Pattern[str]) -> str:
+    chars = list(text)
+    for name, _begin, body_start, body_end, _end in _scan_envs(text)[0]:
+        if name_re.fullmatch(name):
+            for index in range(body_start, body_end):
+                if chars[index] != "\n":
+                    chars[index] = " "
+    return "".join(chars)
+
+
+def _blank_command_payloads(text: str) -> str:
+    blanked = _PAYLOAD_RE.sub(lambda match: " " * len(match.group(0)), text)
+    return "\n".join(
+        " " * len(line) if _MACRO_DEF_RE.match(line) else line for line in blanked.split("\n")
+    )
+
+
+def _tail_hit(body: str) -> bool:
+    cleaned = _blank_envs(body, _TAIL_BLANK_RE)
+    cleaned = re.sub(r"\\(?:label|tag)\*?\{[^{}]*\}", " ", cleaned)
+    cleaned = re.sub(r"\\(?:nonumber|notag)\b", " ", cleaned)
+    previous = None
+    while previous != cleaned:
+        previous = cleaned
+        cleaned = _TRAILING_TAIL_RE.sub("", cleaned.strip())
+    return cleaned.endswith("。") or cleaned.endswith("，")
+
+
+def _row_relations(row: str) -> list[str]:
+    return [match.group("rel") for match in _ALIGN_REL_RE.finditer(row)]
+
+
+def _repeats_relation(prev: str, rel: str) -> bool:
+    rels = _row_relations(prev)
+    if not rels:
+        return False
+    anchor = re.search(rf"&\s*(?P<rel>{_REL_ALT})", prev)
+    if anchor is not None and anchor.group("rel") == rel:
+        return True
+    return rel == rels[0] or rel == rels[-1]
+
+
+def _continuation_marks(body: str) -> tuple[list[tuple[int, str]], bool]:
+    cleaned = _blank_envs(body, _NESTED_MATH_RE)
+    parts = re.split(r"(\\\\(?:\[[^\]]*\])?)", cleaned)
+    rows: list[tuple[int, str]] = []
+    cursor = 0
+    for part in parts:
+        if part.startswith("\\\\"):
+            cursor += len(part)
+            continue
+        rows.append((cursor, part))
+        cursor += len(part)
+    hits: list[tuple[int, str]] = []
+    ambiguous = False
+    for index in range(1, len(rows)):
+        offset, row = rows[index]
+        stripped = row.strip()
+        if not stripped or _CONSTRAINT_RE.search(row):
+            continue
+        match = _CONT_START_RE.match(stripped)
+        if not match:
+            continue
+        if not _repeats_relation(rows[index - 1][1], match.group("rel")):
+            ambiguous = True
+            continue
+        hits.append((offset + row.find(stripped), match.group(0).strip()))
+    return hits, ambiguous
+
+
+def _shizhong_ok(rest: str) -> bool:
+    if not rest.startswith("  ") or rest[2:3] == " ":
+        return False
+    return ("——" in rest) or ("---" in rest)
+
+
+def _qizhong_bad(rest: str) -> bool:
+    if not rest:
+        return False
+    return rest[0].isspace() or ("——" in rest) or ("---" in rest)
+
+
 def main():
     parser = argparse.ArgumentParser(description="LaTeX Format Checker (Chinese Thesis)")
     parser.add_argument("tex_file", help=".tex file to check")
     parser.add_argument("--strict", "-s", action="store_true", help="Enable strict checking")
     parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
+    parser.add_argument(
+        "--school",
+        choices=SCHOOL_CHOICES,
+        default="generic",
+        help="学院源码体例。仅 yanshan-ee-2025 启用公式候选；默认 generic",
+    )
 
     args = parser.parse_args()
 
@@ -367,7 +729,7 @@ def main():
         print(f"[ERROR] File not found: {args.tex_file}")
         sys.exit(1)
 
-    checker = FormatChecker(args.tex_file)
+    checker = FormatChecker(args.tex_file, school=args.school)
     result = checker.check(strict=args.strict)
 
     if args.json:

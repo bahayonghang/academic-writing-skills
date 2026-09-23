@@ -82,3 +82,51 @@ Adapted, with the rejections noted above, from two MIT-licensed skills:
 
 - Kiterlin, _anti-defensive-writing_ — https://github.com/Kiterlin/anti-defensive-writing (sentence-function classification, five-step rewrite, preferred / discouraged patterns, "write limitations once").
 - Adkid-Zephyr, _anti-defensive-writing-Skill_ — https://github.com/Adkid-Zephyr/anti-defensive-writing-Skill (claim-before-limitation ordering, self-weakening word list, "no new self-negation in the conclusion", minimal-edit prompt, self-check questions). Its rules on selective presentation (organize only around strengths, avoid comparisons you cannot win, delete non-mainline results) are not adopted; see "What this guide does not permit".
+
+## Three dispositions for defensive wording (LLM only)
+
+These three dispositions are judged only by the LLM. They add no observation code and no word list, and they do not delete an unfavorable result. The strength ceiling remains the relation to the over-claim guard above. An unverified weakness must not be written as a design advantage.
+
+### Keep a real evidence boundary
+
+Scope: deleting the sentence would leave the method's legitimacy or the evidence level open to question.
+Keep: this thesis reports only the error inside the offline replay window and does not write that error as a closed-loop control gain.
+Do not rewrite: delete that sentence and leave only “this thesis reduced the control error”.
+
+### Turn a negation into a positive statement
+
+Scope: turn a negation into a positive statement only when the source already supports the positive wording. The distinction must remain.
+Keep: the normalized threshold performs the initial screening. The hardware limit is supplied separately by the deployment environment.
+Do not rewrite: change “do not equate the normalized threshold with the hardware limit” into “the normalized threshold guarantees hardware safety”.
+
+### Present a weakness as a trade-off
+
+Scope: present a weakness as a trade-off only when the manuscript already states it as a real design choice.
+Keep: the peak channel's extreme-value error is larger than the baseline. The manuscript already states that this channel emits the group mean under squared error, and extreme-value fidelity is not the design goal.
+Do not rewrite: an underestimated peak is rewritten as “effectively suppresses numerical jitter and keeps monotonicity”. An unverified weakness must not be written as a design advantage. A false-detection rate above the baseline must stay. Do not delete it, and do not rewrite it as “therefore more faithful”.
+
+### Metaphor words are context examples
+
+Words such as gate, fortify, intrinsic safety, and theoretical performance upper bound are not a banned-word regular expression. If the context already states a check, a block, or a fallback, write that observable mechanism. Do not build a banned-word list from these examples.
+
+### Suggestion blocks
+
+```latex
+% 主张前置（合成）[Severity: Minor] [Priority: P2]: [LLM] 保留真实证据边界
+% 问题：限制句写成了自我削弱，但边界本身是证据层级
+% 原文：本文只报告离线回放窗口内的误差，不把该误差写成闭环控制收益。
+% 修改后：保留原句。
+% 理由：删掉边界会把回放误差写成控制收益。本类只由 LLM 判断。
+
+% 主张前置（合成）[Severity: Minor] [Priority: P2]: [LLM] 否定转正面缺少原文支持
+% 问题：否定句被改成了原文没有的保证
+% 原文：不将归一化阈值等同于硬件限值。
+% 修改后：不得改成“归一化阈值保证硬件安全”。原文支持时才可写成“归一化阈值用于初筛。硬件限值由部署环境单独给定。”
+% 理由：正面说法必须仍能区分两类界限。
+
+% 主张前置（合成）[Severity: Major] [Priority: P1]: [LLM] 未验证弱点被写成设计优点
+% 问题：欠估被改成已证的抑制能力，不利数字被删掉
+% 原文：峰值被低估。误检率高于基线。
+% 修改后：保留两句观察。只有稿件已写明设计选择时，才可补充“该通道在均方误差下输出分组均值”。
+% 理由：未验证的弱点不得写成设计优点。不得删除不利结果。门禁、筑牢一类词只是语境例子，不是禁词正则。
+```

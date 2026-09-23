@@ -215,6 +215,8 @@ data-dependency interpretation.
 The script only filters candidates. Review M-MOTIVE, M-RATIONALE, M-IO, M-EDGE, M-NONDIRECT, the
 complete M-EQUATION contract, M-EVIDENCE, M-REPRO, and M-CLOSURE module by module and edge by edge.
 
+Document-expression labels are in the final section. They are not rows in the table above, and the script does not emit them.
+
 ## 11. Reproducibility Information and Sources
 
 At minimum, state input provenance and time semantics, preprocessing and data splits, how key
@@ -228,3 +230,146 @@ original source; additions and variants require an explicit description.
 - IEEE Author Center, [Structure Your Article](https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/create-the-text-of-your-article/structure-your-article/): method detail should support reproduction, trust, and extension.
 - Nature, [Formatting Guide](https://www.nature.com/nature/for-authors/formatting-guide): keep methods concise while retaining what readers need to explain and reproduce results.
 - PLOS ONE, [Submission Guidelines](https://journals.plos.org/plosone/s/submission-guidelines): give technical details for statistical and analytical methods, including software, preprocessing, and missing-data handling.
+
+## 12. Method-narrative expression constraints (LLM only)
+
+This section defines eight document-check labels. The judgment belongs only to the LLM. The labels are not script codes, and they do not extend the existing heading, sequence-word, equation-entry, or interface-table checks. This section keeps no branch that would later become a script.
+
+### M-CODLANG
+
+Scope: a method paragraph describes a tensor transform with programming terms, such as swapping axes, copying a dimension, or Concat.
+Bad example: after swapping axes along the batch dimension, Concat the two feature paths.
+Revision example: swap the time axis with the feature axis, then concatenate the two feature paths along the feature dimension.
+Risk: the reader sees an implementation call and not the mathematical map.
+Owner: LLM only. Severity Major, priority P1.
+
+### M-FIGTEXT
+
+Scope: inside one subsection, an operation name in the body does not match the architecture-figure label. The reading uses that figure's label.
+Bad example: the figure says “time-step mapping” while the body says “step mapping”.
+Revision example: the body uses “time-step mapping”.
+Risk: one operation has two names. A mismatch on a model name or a protected term is reported and is not silently renamed.
+Owner: LLM only. Severity Minor, priority P2.
+
+### M-FORMDUPE
+
+Scope: the body restates, in natural language, a computation the formula already states. That is semantic restatement.
+Bad example: the formula writes the concatenation, and the body again says that marker g and marker E are concatenated to form H.
+Revision example: keep the formula. The gloss sentence explains only a new bracket notation and does not narrate the concatenation again.
+Risk: the same relation is read twice, and a symbol definition that exists only in the prose may be deleted.
+Owner: LLM only. Severity Minor, priority P2.
+PR-EQ-NARR only locates operator-by-operator narration. The two are not the same defect.
+
+### M-SEMICOLON
+
+Scope: a method paragraph joins two or more independent propositions with semicolons. A semicolon that separates same-level definitions inside a gloss block may stay.
+Bad example: module A emits the state; module B reads that state and updates the weights.
+Revision example: module A emits the state. Module B reads that state and updates the weights.
+Risk: the semicolon hides the proposition boundary. A split must not add a cause the source does not state.
+Owner: LLM only. Severity Minor, priority P2.
+Do not edit the mathematics.
+
+### N-ISOLATE
+
+Scope: a method paragraph embeds a concrete hyperparameter assignment that belongs to the experiment configuration.
+Bad example: training uses p = 0.5.
+Revision example: training keeps an observation with probability p. The value of p is written in the experiment-setting paragraph.
+Risk: the method paragraph mixes how a quantity is used with which number is used.
+Owner: LLM only. Severity Minor, priority P2.
+Together with M-REPRO: do not delete information required to reproduce a result. First check whether the value belongs in another paragraph. Change the method sentence to the symbol only after the experiment-setting paragraph carries the value.
+
+### M-DETAILINV
+
+Scope: an implementation enumeration that is not required to understand the mathematical role, such as a feature-engineering list, a probability-branch list, or a metadata-field list.
+Bad example: the input is enumerated from first differences, second differences, and three pooled statistics.
+Revision example: a feature map extracts the window statistics.
+Risk: the method paragraph becomes a code comment.
+Owner: LLM only. Severity Minor, priority P2.
+If that enumeration is the only definition of the map, or if reproduction needs it, move it to an implementation note or the experiment paragraph. Do not delete it outright.
+
+### M-TERMREG
+
+Scope: colloquial or engineering wording in a method paragraph, such as “configure”, “piece together”, or “hard condition”, when the manuscript already has an academic wording.
+Bad example: piece the two state paths together into the input.
+Revision example: combine the two state paths into the input.
+Risk: register drift, not a new technical fact.
+Owner: LLM only. Severity Minor, priority P2.
+Do not replace a protected term or a model name.
+
+### M-REDUNDANT
+
+Scope: the opening repeats the previous transition, a long sentence after a formula restates the design intent, or a paraphrase restates the formula.
+Bad example: the previous section already said the drift must be suppressed. This section likewise builds the update in order to suppress the drift.
+Revision example: this section states the state update and passes the updated state to the next module.
+Risk: the reader reads the same motive again.
+Owner: LLM only. Severity Minor, priority P2.
+Do not delete the only interface or the only number. Replacing a word and repeating the claim is not deduplication.
+
+### Suggestion blocks
+
+```latex
+% 方法叙述（合成）[Severity: Major] [Priority: P1]: [LLM] M-CODLANG 张量操作写成了编程术语
+% 问题：方法段用编程术语描述张量变换
+% 原文：沿批量维交换轴后 Concat 两路特征。
+% 修改后：交换时间轴与特征轴，再按特征维拼接两路特征。
+% 理由：读者需要数学映射。本标签只由 LLM 判断。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-FIGTEXT 正文与架构图标注不一致
+% 问题：图标注写“时间步映射”，正文写“时步映射”
+% 原文：时步映射把窗口映射到隐变量。
+% 修改后：时间步映射把窗口映射到隐变量。
+% 理由：同一操作只保留图上的名字。模型名与受保护术语只报告，不改名。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-FORMDUPE 正文重述了公式已有的计算
+% 问题：公式已经给出拼接，正文又写了一遍
+% 原文：将标记 g 与标记 E 拼接得到 H。
+% 修改后：其中 $[\cdot;\cdot]$ 表示沿标记维拼接。
+% 理由：这是语义复述。PR-EQ-NARR 只定位逐算子翻译，二者不是同一缺陷。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-SEMICOLON 分号连接了独立命题
+% 问题：两个主谓结构被分号串在一起
+% 原文：模块 A 输出状态；模块 B 读取该状态并更新权重。
+% 修改后：模块 A 输出状态。模块 B 读取该状态并更新权重。
+% 理由：分号判断指向 expression 已有的 LLM 层。不改数学。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] N-ISOLATE 方法段写入了实验赋值
+% 问题：方法段给出了具体概率值
+% 原文：训练时取 $p=0.5$。
+% 修改后：训练时以概率 $p$ 保留观测。$p$ 的取值写在实验设置段。
+% 理由：不得删除复现所需信息。先核该数值是否属于另一段。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-DETAILINV 方法段写入了实现枚举
+% 问题：输入被写成特征工程清单
+% 原文：从一阶差分、二阶差分和三组池化统计中枚举输入。
+% 修改后：由特征映射 $\mathcal{R}$ 提取窗口统计量。
+% 理由：若该枚举是唯一定义或复现所需，先挪走，不直接删除。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-TERMREG 方法段使用了口语动词
+% 问题：“拼装”不是本段已有的学术说法
+% 原文：把两路状态拼装成输入。
+% 修改后：将两路状态组合为输入。
+% 理由：只改语域。不替换受保护术语或模型名。
+
+% 方法叙述（合成）[Severity: Minor] [Priority: P2]: [LLM] M-REDUNDANT 首段重复了上一段动机
+% 问题：两段都在讲抑制漂移，后段没有新接口
+% 原文：上一节已经说明需要抑制漂移。本节同样为了抑制漂移而建立更新式。
+% 修改后：本节给出状态更新式，并把更新结果交给下一模块。
+% 理由：换词以后再重复主张，不是去重。唯一接口或数值不得删除。
+```
+
+### Division from existing checks
+
+M-FORMDUPE owns semantic restatement. PR-EQ-NARR only locates operator-by-operator narration. Deduplicate at the same place, then let the LLM decide. Do not report the two as the same defect.
+
+N-ISOLATE and M-REPRO must not delete information required to reproduce a result. First check whether that information belongs in another paragraph.
+
+M-SEMICOLON points at the existing LLM layer in expression. See [academic-style-zh.md](academic-style-zh.md#punctuation-prose). Do not create a check code.
+
+All eight labels are judged only by the LLM. There is no script branch.
+
+### A sentence split promises math-token invariance only
+
+Bad example: stop the update when $a_{t}=a_{\max}$; otherwise step forward by $a_{t+1}=a_{t}+\delta$.
+Revision example: stop the update when $a_{t}=a_{\max}$. Otherwise step forward by $a_{t+1}=a_{t}+\delta$.
+
+The two math fragments stay as they are. Do not split one math fragment into two, and do not turn a Chinese phrase into a new equation. After the edit, run `polish_unit_zh.py --verify` on the touched unit. `UP-MATH` checks the math-token multiset only. This section promises token invariance only. It does not claim that the prose meaning is unchanged. Do not edit the mathematics.

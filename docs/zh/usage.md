@@ -47,6 +47,12 @@
 
 整篇学位论文默认先运行 `structure`。只有确认学校模板和学位类型后才使用
 `spec-check`，生成盲审版前先运行 `blind-review --check`。
+可选检查只报告局部候选：`check_consistency.py --governance` 必须配合 `--custom-terms`，`--abbreviation-style` 独立于治理开关，`check_style_zh.py --degree-wording` 默认关闭；不传这些开关时原输出保持不变。
+学院数字、公式、表身和中文题注检查使用 `check_style_zh.py`、`check_format.py`、`check_tables.py` 和 `check_references.py` 的 `--school yanshan-ee-2025`。默认和 `--school generic` 不新增候选，也不接受单独的 `yanshan`。
+引文位置、重复引用页码、学院著录提示和综述递进密度只在显式开关下运行：`check_references.py --author-cite` 与 `--repeat-cite` 相互独立，也可与 `--school` 组合；`verify_bib.py --college-details` 只能与 `--standard gb7714` 或 `gb7714-2025` 同时使用；`analyze_literature.py --progression-density` 可与 `--section` 组合，且与 `--intro-citations` 互斥。不传这些开关时原输出不变。
+同章结果表、正文和本章小结的终值只由 `analyze_experiment.py --cross-surface` 核对。`--section` 可缩小章节。`--cross-surface-terms FILE` 只能与该开关同时使用，且只替换指标或评价集词表。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字。不传 `--cross-surface` 时原输出不变，`--results-analysis` 的既有检查码保持独立。
+研究生院清单用 `--template yanshan`。学院 2025 清单用 `--template yanshan-ee-2025`。二者并存。111 个状态不是 111 项已合规。局部 checker 不把复合项判为 PASS，MODULE 与 NEEDS-LLM 仍须人工复核。
+方法表达标签、把弱点写成优点、预告删除后失去先行词的代词、摘要引号，以及标题或章节安排句中的公式符号，只在既有 `logic`、`claim-forward`、`abstract`、`structure` 上做 LLM 判读。不新增脚本码、阈值或模块。
 
 ### `typst-paper`
 

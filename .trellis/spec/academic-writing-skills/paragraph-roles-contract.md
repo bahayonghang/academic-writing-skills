@@ -51,6 +51,10 @@ PR_EQ_NARR_MIN_HITS = 3
      `\ref`/`\eqref`/`\autoref` 回指已有图表合法通过；注释行排除。
 - 架构回滚承诺：章引言块定位从 `_check_chapter_intro` 抽为 helper `_chapter_intro_block`；
   抽取后必须保证默认输出与 `baseline-before.txt` 逐字节相等。若基线锁红，回退为原内联实现并改用复制逻辑的私有 helper（在 spec 记录两处同步义务）。
+- 删预告后的指代是文档层 LLM 判断，写在 `paragraph-roles-zh.md`，不新增 PR 码。
+  删除预告句之后，代词仍须有先行词，桥接取最短的一句。不得把删掉的预告贴回去。
+  不得改写合法的「首先 / 其次」。换词后再重复主张不是去重。
+  `PR-EQ-NARR` 仍只定位逐算子翻译，与方法指南的 `M-FORMDUPE` 不是同一缺陷。
 
 ## 4. Private Calibration Boundary
 

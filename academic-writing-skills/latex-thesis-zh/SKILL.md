@@ -88,6 +88,17 @@ allowed-tools: Read, Glob, Grep, Bash(uv *)
 - “润色这段/这一节/把第 X 章语言润色一下”走 `polish`；整章或全文先 `--plan`，逐单元改写并 `--verify`。只要求检查或审校时仅诊断。保留原有标题、事实及结论强度，邻域只读；详见 `references/writing/unit-polish-zh.md`。
 - 常见歧义速判：交叉引用/编号断档或题注缺失走 `references`（条目本身走 `bibliography`）；表格题注位置和三线表结构走 `tables`；续图、子题注、长表留白、图像有效 ppi 或编译页图表版式走 `format`，并按需读取 caption/table/compile 指南；公式断行走 `format`（`\label`/`\eqref` 问题走 `references`，标题后直入公式走 `logic`）；标题架构串行 `structure` -> `title --headings`；章引言段式（一段还是两段）走 `logic --chapter-intro-style` 并读 thesis-writing-guide 段式选型，章引言/分章型小结/主线闭合走 `logic`；各级段落职责/结构重复走 `logic --paragraph-roles`（读 paragraph-roles-zh）；工程应用/系统实现章按正文走 `logic` 并读取工程章指南，不能凭章号运行 `--per-chapter`；文献主题综合与代表归因走 `literature`；摘要多组件关系走 `abstract`；结果分析深度及展示/统计口径走 `experiment --results-analysis`（论断强度语义复核读 over-claim-guard，AI 痕迹走 `deai`）；结论章内容/展望走 `conclusion`（结论格式——`\cite`/字数/模糊措辞——走 `spec-check`）；规范终检走 `spec-check`；盲审匿名走 `blind-review`；口语化/绝对化词汇/搭配不当/标点混用/冒号或分号堆叠/数值单位写法/单句过长走 `expression`（冒号/分号句间逻辑只由 `[LLM]` 按 academic-style-zh §5.4 判断；段落论证走 `logic`，AI 痕迹与句长均匀度走 `deai`，人称走 `abstract`，论断强度走 over-claim-guard）。完整判据与各模块专用旗标见 `references/modules/routing-rules.md`。
 - 主张后置/自我削弱（先说本文不做什么、遗憾的是、仍明显落后于、hedge 堆叠、结论末段负面收尾）走 `claim-forward`：只调顺序与搭配，绝不删除限制或不利对比；加强措辞只抬到 `references/writing/over-claim-guard.md` 证据阶梯已支撑的一级。摘要痛点词归 `abstract`，`不是 X 而是 Y` 壳归 `deai`。
+- 项目术语治理、缩写体例和程度词只在显式开关下运行：`check_consistency.py --governance --custom-terms FILE` 读取同一 JSON 的 banned/locked/exempt，不改旧同义组路径；`--abbreviation-style` 与治理开关独立；`check_style_zh.py --degree-wording` 默认关闭。这三项只给 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM` 的局部候选，不输出整句替换；不传开关时原输出不变。
+- 学院数字、公式、表身和中文题注只在 `--school yanshan-ee-2025` 下运行，入口是 `check_style_zh.py`、`check_format.py`、`check_tables.py` 和 `check_references.py`；默认和 `--school generic` 不新增候选，也不接受单独的 `yanshan`。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不改写数学。
+- 引文位置、重复引用页码、学院著录提示和综述递进密度只在显式开关下运行：`check_references.py --author-cite` 与 `--repeat-cite` 相互独立，也可与 `--school` 组合；`verify_bib.py --college-details` 只能与 `--standard gb7714` 或 `gb7714-2025` 同时使用；`analyze_literature.py --progression-density` 可与 `--section` 组合，且与 `--intro-citations` 互斥。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置、键或字段，不输出替换句，不改写引用键。不传这些开关时原输出不变。
+- 同章结果表、正文和本章小结的终值只由 `analyze_experiment.py --cross-surface` 核对，可与 `--section` 组合；`--cross-surface-terms FILE` 只能与该开关同时使用，且只替换指标或评价集词表。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字；不传 `--cross-surface` 时原输出不变，`--results-analysis` 的既有九码保持独立。
+- 学院 2025 格式审查清单见 `templates/yanshan-ee-2025.md`，命令用 `--template yanshan-ee-2025`，与研究生院 `yanshan` 并存；111 个状态不是 111 项已合规，`script:third_person` 只给 NEEDS-LLM 词位候选，MODULE 行只打印供人工运行的命令，局部 checker 不能把复合项判为 PASS。
+- 方法段出现张量、交换轴或 Concat 时走 `logic`，读 `references/writing/method-description-guide-zh.md` 的方法叙述表达约束。判断只由 `[LLM]` 完成，不新增脚本码。
+- 正文用词与架构图标注不一致时，走 `logic` 并按同一指南做方法一致核读。不静默改模型名或受保护术语。
+- 弱点被写成优点时走 `claim-forward`，读 `references/writing/claim-forward-zh.md` 的三类处置。不删除不利结果，不把未验证弱点写成设计优点。
+- 删去预告后“上述”没有先行词时走 `logic`，读 `references/writing/paragraph-roles-zh.md`。补最短桥接，不把删掉的预告贴回去，也不改写合法的“首先/其次”。
+- 摘要引号走 `abstract`，读 `references/writing/abstract-structure.md`。中文引语用成对 U+201C 与 U+201D，英文摘要用英文标点。引语的措辞、数学和引用键保持不变。
+- 标题或章节安排句中的公式符号走 `structure`，读 `references/writing/structure-guide.md` 与 `references/writing/introduction-guide-zh.md`。该检查不改正文数学、受保护术语或模型名。
 - 脚本失败时，先返回精确命令、退出码和关键报错，再给出最小下一步，不静默切换模块。
 
 ## Required Inputs
@@ -159,27 +170,27 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - `references/formatting/formula-guide.md`: formula line breaking and equation-number displacement.
 - `references/formatting/caption-guide.md`: 双语题注、续图/子题注、有效 ppi 与编译页验收边界。
 - `references/formatting/table-guide.md`: 三线表、长表局部留白、二次缩放与编译页表格验收。
-- `references/writing/structure-guide.md`: thesis structure, direct-section budget, heading lead-ins.
+- `references/writing/structure-guide.md`: thesis structure, direct-section budget, heading lead-ins. 另含标题不堆公式符号的人工检查。
 - `references/writing/logic-coherence.md`: logic, coherence, and literature-review expectations.
 - `references/writing/thesis-writing-guide.md`: 绪论、章引言（一段式 / 两段式）、框架/方法/系统章小结、文献综述、方法章、实验、结论与摘要/创新点/结论闭合。
-- `references/writing/abstract-structure.md`: 学位论文摘要骨架，以及编号工作段中串行依赖与并行组件的证据化叙述边界。
-- `references/writing/introduction-guide-zh.md`: 绪论专章——引用配额与年份分布、研究现状可视化（演进时间线/对比矩阵）、科学问题三要素、四方闭合。
+- `references/writing/abstract-structure.md`: 学位论文摘要骨架，以及编号工作段中串行依赖与并行组件的证据化叙述边界。另含中文成对弯引号与英文标点的人工检查。
+- `references/writing/introduction-guide-zh.md`: 绪论专章——引用配额与年份分布、研究现状可视化（演进时间线/对比矩阵）、科学问题三要素、四方闭合。另含章节安排句不堆公式符号的人工检查。
 - `references/writing/process-chapter-guide-zh.md`: 第二章（过程分析章）专章——章式判别、工艺流程分析、难点推导链、总体框架图与“第 X 章”映射（推荐加强项）、绪论-第二章分工。
 - `references/writing/method-chapter-guide-zh.md`: 正文方法+实验章（第 3 章起）专章——章式判别、五段骨架、章引言承上分级（并列可不承上）、实验工业版细则、拼接感/草稿态清单、防误报红线。
 - `references/writing/engineering-application-chapter-guide-zh.md`: 工程应用/系统实现章专章——按正文判定章型，建立“运行约束—设计目标/系统属性—可证机制—分级证据”主链，并区分回放、影子、试点和生产/闭环边界。
-- `references/writing/method-description-guide-zh.md`: 方法章含多个核心模块，或请求审阅模块动机、输入输出、相邻接口与公式闭环时读取；六角色、逐边接口和七步改写顺序的详细规则源。
+- `references/writing/method-description-guide-zh.md`: 方法章含多个核心模块，或请求审阅模块动机、输入输出、相邻接口与公式闭环时读取；六角色、逐边接口和七步改写顺序的详细规则源。文末八个文档标签只由 LLM 判断。
 - `references/writing/results-analysis-guide-zh.md`: 结果分析的事实组织、展示/统计集合与分层缺失口径、证据阶梯、RA-* 启发式边界与人工复核清单。
 - `references/writing/conclusion-guide-zh.md`: 结论章（总结与展望）专章——首段总领式方法链、编号贡献动词骨架、展望空话黑名单、结论≠摘要、CC-\* checker 映射表（配合 `conclusion` 模块）。
-- `references/writing/claim-forward-zh.md`: 主张前置改写规则、推荐/不推荐写法、与结论章承接句及过度声明阶梯的关系、被否决的选择性呈现改法；词表在 `references/writing/claim-forward-terms-zh.yaml`（配合 `claim-forward`）。
+- `references/writing/claim-forward-zh.md`: 主张前置改写规则、推荐/不推荐写法、与结论章承接句及过度声明阶梯的关系、被否决的选择性呈现改法；词表在 `references/writing/claim-forward-terms-zh.yaml`（配合 `claim-forward`）。另含证据边界、否定转正面与弱点取舍三类处置。
 - `references/writing/unit-polish-zh.md`: 单元润色的范围、保留清单、改动准入、交付顺序与逐单元核对协议（配合 `polish`）；合成示例见 `examples/unit-polish.md`。
-- `references/writing/paragraph-roles-zh.md`: 正文各级段落职责矩阵（章引言/总节导语/小节首段/公式后段/实验结果/本章小结）与结构去重规则。
+- `references/writing/paragraph-roles-zh.md`: 正文各级段落职责矩阵（章引言/总节导语/小节首段/公式后段/实验结果/本章小结）与结构去重规则。另含删预告后的指代桥接。
 - `references/writing/academic-style-zh.md`: 中文学术写作规范——口语化纠正、绝对化词汇、逻辑连接词、常见语病、正文冒号/分号句间逻辑、数字与单位（`expression` 模块的规则真相源）。
 - `references/formatting/number-unit-guide-zh.md`: 数字与单位国标细则（GB/T 15835、GB 3100 系列）与标准优先级声明（配合 `expression`）。
 - `references/writing/title-optimization.md`: Chinese academic title heuristics.
 - `references/deai/guide.md`: de-AI review heuristics.
 - `references/writing/tense-guide-zh.md`: 英文摘要时态判断级清单（配合 `deai`）。
 - `references/modules/experiment.md`: experiment-chapter review criteria.
-- `templates/`: per-template snapshots（模板事实唯一权威源）：`generic.md`、`thuthesis.md`、`pkuthss.md`、`yanshan.md`（2024 版规范快照 + 逐项清单，配合 `spec-check`）.
+- `templates/`: per-template snapshots（模板事实唯一权威源）：`generic.md`、`thuthesis.md`、`pkuthss.md`、`yanshan.md`（研究生院 2024 版规范快照 + 逐项清单）、`yanshan-ee-2025.md`（学院 2025 清单，与 `yanshan.md` 并存，配合 `spec-check`）.
   只读取当前模块所需的参考文件，避免一次加载整套指南。
 
 ## Example Requests

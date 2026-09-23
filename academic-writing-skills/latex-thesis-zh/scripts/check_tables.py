@@ -22,6 +22,17 @@ except ImportError:
 
 
 CAPTION_RE = re.compile(r"\\(?:bi)?caption\b\s*(?:\[[^\]]*\]\s*)?\{")
+SCHOOL_CHOICES = ("yanshan-ee-2025", "generic")
+_COLLEGE_SCHOOL = "yanshan-ee-2025"
+_CJK_END_PUNCT = "。！？；，、："
+_UNIT_WORDS = (
+    "kg|mg|g|t|km|cm|mm|nm|m|s|ms|ns|h|min|Hz|kHz|MHz|GHz|"
+    "Pa|kPa|MPa|GPa|N|J|kJ|W|kW|MW|V|kV|A|mA|K|mol|L|mL|dB|bit|B|KB|MB|GB|TB"
+)
+_CELL_UNIT_RE = re.compile(
+    rf"(-?(?:\d+(?:\.\d+)?))\s*(?:~|\\,)?\s*(\\%|%|℃|(?:{_UNIT_WORDS}))(?![A-Za-z])"
+)
+_CAPTION_CMD_RE = re.compile(r"\\(caption|bicaption)\b")
 
 
 class TableChecker:
@@ -37,12 +48,13 @@ class TableChecker:
     # Forbidden rule commands inside tabular body
     FORBIDDEN_RULES = {r"\hline", r"\vline", r"\cline"}
 
-    def __init__(self, tex_file: str):
+    def __init__(self, tex_file: str, school: str = "generic"):
         self.tex_file = Path(tex_file).resolve()
         self.content = ""
         self.lines: list[str] = []
         self.issues: list[dict] = []
         self.doc = None
+        self.school = school
 
     def _load(self) -> bool:
         """Load the .tex file content (assembling \\include'd chapters)."""
@@ -76,6 +88,10 @@ class TableChecker:
             self._check_caption_position(table)
             self._check_table_notes(table)
             self._check_number_precision(table)
+            if self.school == _COLLEGE_SCHOOL:
+                self._check_college_table(table)
+        if self.school == _COLLEGE_SCHOOL:
+            self._check_college_unscanned_floats()
 
         if fix_suggestions:
             for issue in self.issues:
@@ -396,6 +412,119 @@ class TableChecker:
             return "Add \\usepackage{booktabs} to the preamble."
         return ""
 
+    def _college_issue(self, line: int, code: str, detail: str) -> None:
+        self.issues.append(
+            {
+                "line": line,
+                "level": self.LEVEL_INFO,
+                "priority": "P3",
+                "message": f"[Script] Meaning-Check: NEEDS-LLM {code}: {detail}",
+                "category": code.lower().replace("-", "_"),
+                "code": code,
+                "meaning_check": "NEEDS-LLM",
+                "layer": "[Script]",
+            }
+        )
+
+    def _college_unscanned(self, line: int, kind: str) -> None:
+        self._college_issue(
+            line,
+            "TB-COVERAGE",
+            f"{kind} 浮动体未做同上/同左、同单位表头和题注标点扫描，覆盖不足，不作为通过",
+        )
+
+    def _check_college_unscanned_floats(self) -> None:
+        pattern = re.compile(r"\\begin\{(longtable|sidewaystable)\*?\}")
+        for i, line in enumerate(self.lines, 1):
+            stripped = re.sub(r"(?<!\\)%.*", "", line)
+            for match in pattern.finditer(stripped):
+                self._college_unscanned(i, match.group(1))
+
+    def _check_college_table(self, table: dict) -> None:
+        content = "\n".join(
+            re.sub(r"(?<!\\)%.*", "", line) for line in table["content"].splitlines()
+        )
+        if re.search(r"\\begin\{tabularx\*?\}", content):
+            self._college_unscanned(table["start"], "tabularx")
+            return
+        if len(re.findall(r"\\begin\{tabular\*?\}", content)) > 1:
+            self._college_unscanned(table["start"], "多个 tabular")
+            return
+        self._check_caption_punct(content, table["start"])
+        body = _tabular_body(content)
+        if body is None:
+            return
+        same = re.search(r"同上|同左", body)
+        if same:
+            located = content.find(body)
+            same_at = located + same.start() if located >= 0 else 0
+            self._college_issue(
+                table["start"] + content.count("\n", 0, same_at),
+                "TB-SAMEAS",
+                "表身出现「同上」或「同左」。题注和表注不在此项内，不提供整句替换",
+            )
+        if re.search(r"\\(?:multicolumn|multirow)\b|\\begin\{tabular", body):
+            self._college_issue(
+                table["start"],
+                "TB-COVERAGE",
+                "multicolumn、multirow 或嵌套表导致列归属不明，不合并命中，不作为通过",
+            )
+            return
+        self._check_unit_header(body, table["start"])
+
+    def _check_caption_punct(self, content: str, table_start: int) -> None:
+        for match in _CAPTION_CMD_RE.finditer(content):
+            status, chinese = _chinese_caption_arg(content, match.start(), match.group(1))
+            line = table_start + content.count("\n", 0, match.start())
+            if status != "ok":
+                self._college_issue(
+                    line,
+                    "CAP-COVERAGE",
+                    "无法确认中文题注主参数，留人工，不作为通过",
+                )
+                continue
+            visible = _caption_visible(chinese or "")
+            if visible and visible[-1] in _CJK_END_PUNCT:
+                self._college_issue(
+                    line,
+                    "CAP-PUNCT",
+                    "中文题注可见正文以中文标点结束。英文句点、可选短题注和"
+                    " \\bicaption 第二参数不计",
+                )
+
+    def _check_unit_header(self, body: str, line: int) -> None:
+        rows = _table_rows(body)
+        if rows is None:
+            self._college_issue(
+                line,
+                "TB-COVERAGE",
+                "简单表列数不一致，列归属不明，不作为通过",
+            )
+            return
+        header, data = rows
+        if not header or len(data) < 3:
+            return
+        width = len(header)
+        if any(len(row) != width for row in data):
+            self._college_issue(line, "TB-COVERAGE", "表列数不一致，列归属不明，不作为通过")
+            return
+        for col in range(width):
+            units = []
+            for row in data:
+                found = _literal_unit(row[col])
+                if found:
+                    units.append(found)
+            if len(units) < 3 or len(set(units)) != 1:
+                continue
+            unit = units[0]
+            if not _header_has_unit(header[col], unit):
+                self._college_issue(
+                    line,
+                    "TB-UNITHEAD",
+                    f"第 {col + 1} 列至少 3 个数值行使用字面单位 {unit}，表头未见该单位。"
+                    "不换算单位，不改写单元格",
+                )
+
     def generate_report(self, result: dict) -> str:
         """Generate human-readable report."""
         lines = []
@@ -447,6 +576,12 @@ def main():
         "--fix-suggestions", "-f", action="store_true", help="Include fix suggestions"
     )
     parser.add_argument("--json", "-j", action="store_true", help="Output in JSON format")
+    parser.add_argument(
+        "--school",
+        choices=SCHOOL_CHOICES,
+        default="generic",
+        help="学院源码体例。仅 yanshan-ee-2025 启用表身/题注候选；默认 generic",
+    )
 
     args = parser.parse_args()
 
@@ -454,7 +589,7 @@ def main():
         print(f"[ERROR] File not found: {args.tex_file}")
         sys.exit(1)
 
-    checker = TableChecker(args.tex_file)
+    checker = TableChecker(args.tex_file, school=args.school)
     result = checker.check(fix_suggestions=args.fix_suggestions)
 
     if args.json:
@@ -463,6 +598,135 @@ def main():
         print(checker.generate_report(result))
 
     sys.exit(1 if result["status"] == "FAIL" else 0)
+
+
+def _tabular_body(content: str) -> str | None:
+    match = re.search(r"\\begin\{tabular\*?\}", content)
+    if not match:
+        return None
+    index = _skip_ws(content, match.end())
+    if index < len(content) and content[index] == "[":
+        group = _read_group(content, index, "[", "]")
+        if group is None:
+            return None
+        _, index = group
+    seen = 0
+    while seen < 2:
+        index = _skip_ws(content, index)
+        if index >= len(content) or content[index] != "{":
+            break
+        group = _read_group(content, index, "{", "}")
+        if group is None:
+            return None
+        _, index = group
+        seen += 1
+    end = re.search(r"\\end\{tabular\*?\}", content[index:])
+    if not end:
+        return None
+    return content[index : index + end.start()]
+
+
+def _table_rows(body: str) -> tuple[list[str], list[list[str]]] | None:
+    if "\\midrule" in body:
+        header_text, _, data_text = body.partition("\\midrule")
+        data_text = data_text.split("\\bottomrule")[0]
+    else:
+        parts = _split_rows(body)
+        if len(parts) < 2:
+            return [], []
+        header_text, data_text = parts[0], "\\\\".join(parts[1:])
+    header = _split_rows(header_text)
+    header_cells = _cells(header[-1]) if header else []
+    data_rows = [_cells(row) for row in _split_rows(data_text)]
+    return header_cells, data_rows
+
+
+def _split_rows(text: str) -> list[str]:
+    rows = []
+    for row in re.split(r"\\\\", text):
+        cleaned = re.sub(r"\\(?:toprule|midrule|bottomrule|hline|cmidrule\{[^{}]*\})", "", row)
+        if cleaned.strip():
+            rows.append(cleaned)
+    return rows
+
+
+def _cells(row: str) -> list[str]:
+    return [cell.strip() for cell in row.split("&")]
+
+
+def _literal_unit(cell: str) -> str:
+    cleaned = re.sub(r"\\(?:textbf|mathrm|text)\{([^{}]*)\}", r"\1", cell)
+    if cleaned.strip() in {"", "-", "--", "---", "—", "–"}:
+        return ""
+    match = _CELL_UNIT_RE.search(cleaned)
+    return match.group(2) if match else ""
+
+
+def _header_has_unit(header: str, unit: str) -> bool:
+    if unit in {"%", "\\%", "℃"}:
+        return unit in header
+    return re.search(rf"(?<![A-Za-z0-9]){re.escape(unit)}(?![A-Za-z0-9])", header) is not None
+
+
+def _chinese_caption_arg(text: str, start: int, command: str) -> tuple[str, str | None]:
+    index = start + len(command) + 1
+    index = _skip_ws(text, index)
+    if index < len(text) and text[index] == "*":
+        index = _skip_ws(text, index + 1)
+    limit = 2 if command == "bicaption" else 1
+    for _ in range(limit):
+        if index < len(text) and text[index] == "[":
+            group = _read_group(text, index, "[", "]")
+            if group is None:
+                return "manual", None
+            _, index = group
+            index = _skip_ws(text, index)
+        else:
+            break
+    if index >= len(text) or text[index] != "{":
+        return "manual", None
+    group = _read_group(text, index, "{", "}")
+    if group is None:
+        return "manual", None
+    return "ok", group[0]
+
+
+def _skip_ws(text: str, index: int) -> int:
+    while index < len(text) and text[index] in " \t\r\n":
+        index += 1
+    return index
+
+
+def _read_group(text: str, index: int, open_ch: str, close_ch: str) -> tuple[str, int] | None:
+    if index >= len(text) or text[index] != open_ch:
+        return None
+    depth = 1
+    cursor = index + 1
+    while cursor < len(text):
+        if text[cursor] == "\\" and cursor + 1 < len(text):
+            cursor += 2
+            continue
+        if text[cursor] == open_ch:
+            depth += 1
+        elif text[cursor] == close_ch:
+            depth -= 1
+            if depth == 0:
+                return text[index + 1 : cursor], cursor + 1
+        cursor += 1
+    return None
+
+
+def _caption_visible(body: str) -> str:
+    body = re.sub(r"(?<!\\)%.*", "", body)
+    body = re.sub(r"(?<!\\)\$(?:\\.|[^$])*\$", " ", body)
+    body = re.sub(
+        r"\\(?:cite[a-zA-Z]*|ref|eqref|autoref|cref|Cref|pageref|label)\*?\{[^{}]*\}",
+        " ",
+        body,
+    )
+    body = re.sub(r"\\[A-Za-z]+\*?", "", body)
+    body = body.replace("{", "").replace("}", "")
+    return body.strip()
 
 
 if __name__ == "__main__":

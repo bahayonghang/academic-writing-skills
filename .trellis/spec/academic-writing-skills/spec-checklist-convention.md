@@ -51,3 +51,10 @@ CHECKERS，且 CHECKERS 每个 checker 必须被至少一个清单引用（防�
 | SKILL.md 路由表增删模块         | coverage 测试 `SMOKE_COMMANDS` 必须同步（`test_smoke_commands_cover_router_table` 强制）；`MODULE_COMMANDS` 键**仅当**有清单条目引用 `module:<模块>` 时才加——无引用时加键即死配置（先例：blind-review 只进 SMOKE_COMMANDS 未加 MODULE_COMMANDS） |
 | templates/*.md 新增清单段       | `test_spec_checklists.py` 自动纳入（按 `## 逐项检查清单` 枚举，无需改测试）                                                                                                                                                                      |
 | fixture thesis-project 内容变化 | `test_check_spec.py` 的天然违规断言（YS-18/24/26 FAIL 等）与 fixture README 埋点 #24                                                                                                                                                             |
+## Convention: 学院清单与研究生院清单并存，局部 checker 不通过复合项
+
+**What**：`templates/yanshan-ee-2025.md`（YSE-001 至 YSE-111）与 `yanshan.md`、`thuthesis.md`、`pkuthss.md`、`generic.md` 并存。学院清单不新增 `TEMPLATE_THRESHOLDS["yanshan-ee-2025"]`，也不套用燕山研究生院摘要字数或文献量阈值。
+
+**Why**：学院 2025 条目多为多子句。一个现有 checker 只覆盖其中一部分时，把整项写成 `script:` 会把未覆盖子句标成 PASS。`module:` 只打印后续命令，状态保持 MODULE。`script:third_person` 只给词位候选，状态保持 NEEDS-LLM。
+
+**How**：复合项用 `llm` 或 `module:`，并在检查项正文写明脚本仅辅助、余项人工。第 10、47、66、92 项 scope 为通用。第 74、90 项 scope 为博士。第 87、111 项为 manual。旧四份模板不得引用 `script:third_person`。

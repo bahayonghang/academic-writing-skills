@@ -359,3 +359,18 @@ missing evidence。
 10. CASRAI, [Causal Analysis](https://casrai.org/guides/causal-analysis)。
 
 依据：用户规范 §9、§10；外部来源 #1-#10。
+
+## 十二、三表面数字的人工核读与窄脚本
+
+人工核读仍要求关键定量结果在结果表、正文和本章小结三处使用同一终值。
+`analyze_experiment.py --cross-surface` 只覆盖同章简单表、唯一 `\ref{tab:}`、显式指标、行对象、评价集和字面单位。
+零差异不是全文合规证明。脚本不输出修正数字。
+
+显示层复算只核对已经印在表和正文中的终值。源层重算要回到原始记录并重算比例。
+本脚本不读 CSV、不重算比例、不换算单位。分母、单位或对象有任一处不明时，相同数字仍不可比较。
+
+不同名指标不得互推。正例：由准确率可得F1，应人工复核，不能把两个数字当成同一终值。
+反例：不能由准确率可得F1，不构成互推候选。
+
+`RA-XS-BODY`、`RA-XS-SUMMARY`、`RA-XS-MISSING`、`RA-XS-EVALSET`、`RA-XS-METRIC`、`RA-XS-COVERAGE` 都是 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM` 的局部位置。
+不传 `--cross-surface` 时不打印这些候选或覆盖统计。`--results-analysis` 的既有九码不变。

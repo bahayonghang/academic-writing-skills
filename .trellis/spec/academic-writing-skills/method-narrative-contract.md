@@ -105,6 +105,18 @@ en 与 Typst 的 `MN_ANNOUNCE_RE`、`MN_SEQ_OPEN_RE`、`MN_CAUSE_EXEMPT_RE`、
 - 修改公开 `references/**/*.md` 或 `agents/**/*.md` 后，必须更新 manifest、英文同源页与
   完整中文译文，并执行单技能和全量资源检查及文档构建。
 
+### 3.5 文档层表达标签（非脚本码）
+
+`method-description-guide-zh.md` 文末八个名称是文档检查标签，只由 LLM 判断：
+`M-CODLANG`、`M-FIGTEXT`、`M-FORMDUPE`、`M-SEMICOLON`、`N-ISOLATE`、`M-DETAILINV`、
+`M-TERMREG`、`M-REDUNDANT`。它们不扩展脚本码 `M-HEADING`、`M-SEQWORD`、`M-EQUATION`、
+`M-EDGETABLE`。`analyze_logic.py` 不发出这些标签。不保留以后改成脚本的分支。
+
+`M-FORMDUPE` 是语义复述。`PR-EQ-NARR` 只定位逐算子翻译。同一位置去重后由 LLM 裁定。
+不得把二者报成同一缺陷。`N-ISOLATE` 与 `M-REPRO` 不得删除复现所需信息，先核该信息是否属于另一段。
+`M-SEMICOLON` 指向 expression 已有的 LLM 层。拆句只承诺数学记号多重集，指路
+`polish_unit_zh.py --verify` 的 `UP-MATH`，不声称散文语义不变，不改数学。
+
 ## 4. Validation & Error Matrix
 
 | Condition | Required behavior |

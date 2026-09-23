@@ -142,3 +142,13 @@ gb7714-2025 样式实现（LaTeX 工作室 biblatex-gb7714-2025 测试版），�
 - 答辩/送审在 **2026-07-01 之后**：先确认学校研究生院/图书馆是否已切换新国标，
   再决定样式；本 skill 的 `verify_bib.py` 支持 `--standard gb7714-2025` 按新国标差异点检查。
 - 引用了 arXiv 预印本或公开数据集的论文，切换 2025 版后应按新增类型著录。
+
+## 六、学院著录候选
+
+`verify_bib.py --college-details` 只与 `--standard gb7714` 或 `--standard gb7714-2025` 同用。其它组合是参数错误，不猜测学校，也不表示通过。既有标准问题的顺序不变，只追加 Info 候选。
+
+`book`、`phdthesis` 与 `mastersthesis` 需要 `address` 或 `location`。缺少 `pages` 时作来源核验。`inproceedings` 缺少 `pages` 时还要人工核实学院第101项。`article` 不重复报告原有缺字段。
+
+完整个人姓名不作大小写违规。不生成缩写，也不把 `LI G Z` 当作正确源数据。有作者数据时至多一条说明，要求核最终 `BBL/PDF`。没有传统页码或只有文章号时只列待核，不根据 PDF 总页数填写页码。
+
+候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`。

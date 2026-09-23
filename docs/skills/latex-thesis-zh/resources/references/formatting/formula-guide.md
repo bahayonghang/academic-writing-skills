@@ -71,6 +71,29 @@ Recommendation:
 % 边界：相邻短公式若能正常放入版心，不需要同步拆分。
 ```
 
+## College source rules and the AMS example
+
+The `align` example under “Derivation Chain or Relation” is AMS style. It is not the 2025
+electrical-engineering college source rule. College equation candidates run only with
+`check_format.py --school yanshan-ee-2025`. The default and `--school generic` do not enable them.
+There is no bare `yanshan` alias.
+
+The college text says to break a long formula after a relation or operator, and not to repeat that
+symbol at the start of the next line. `A = B + C = \\ D` follows that source convention.
+`A &= B + C \\ &= D` is an `EQ-CONT` candidate. `cases`, separate left-hand definitions, and
+constraint rows are not reported. When a derivation chain cannot be distinguished from a
+continuation, the script emits one coverage note and does not record a pass. It does not judge
+mathematical truth and does not rewrite mathematics.
+
+Other formula candidates in the same mode:
+
+- `EQ-LEADIN`: the visible sentence immediately before a numbered display ends with a Chinese colon. A `\label` or a comment is not the lead-in. Same-line text, macro wrappers, and unbound displays stay manual.
+- `EQ-TAILPUNCT`: no Chinese period or comma after the last math token. A `cases` condition separator is not that punctuation.
+- `EQ-CITE`: visible 上式 or 下式.
+- `EQ-NOTE`: after 式中, two half-width spaces, then an em dash between the symbol and the gloss. After 其中, no space and no dash. Indentation and dash alignment stay manual. 其中 inside a comment is not body text.
+
+These candidates are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`. They report a local position only and do not emit a replacement sentence. A complex formula or an unclosed environment is incomplete coverage, not a pass.
+
 ## References
 
 - AMS-LaTeX `amsmath` documentation: `equation`, `multline`, `split`, `align`, `aligned`, `cases`.

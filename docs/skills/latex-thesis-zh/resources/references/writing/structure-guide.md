@@ -209,3 +209,22 @@ If a chapter only lists multiple works side by side, a bridging relationship suc
 - [ ] Acknowledgments are appropriate
 - [ ] Complete list of published papers
 - [ ] Appendix number is correct
+
+## 6. Titles do not pile formula symbols (LLM only)
+
+The judgment belongs only to the LLM. The scope is a title, and a sentence that states the chapter arrangement. It is not body mathematics.
+
+```text
+问题例：基于 $S_{\theta}$ 与 $H_{eta}$ 的状态估计
+改写例：非平稳序列的状态估计方法
+```
+
+This example does not authorize a change to body mathematics, a protected term, or a model name. $S_{\theta}$ in the body stays as written. The model name ResNet stays as written.
+
+```latex
+% 结构（合成）[Severity: Minor] [Priority: P2]: [LLM] 标题堆入了公式符号
+% 问题：节标题用公式符号代替方法名称
+% 原文：基于 $S_{\theta}$ 与 $H_{eta}$ 的状态估计
+% 修改后：非平稳序列的状态估计方法
+% 理由：标题负责导航。正文数学、受保护术语和模型名都不在本条里改。
+```

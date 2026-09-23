@@ -101,6 +101,7 @@ SMOKE_COMMANDS = [
     ("analyze_logic.py", ["main.tex", "--chapter-intro-style"], {0}, "缺少导语段落"),
     ("analyze_literature.py", ["main.tex", "--section", "related"], {0}, "文献综述"),
     ("analyze_experiment.py", ["main.tex"], {0}, "% EXPERIMENT"),
+    ("analyze_experiment.py", ["main.tex", "--cross-surface"], {0}, "不是全文合规证明"),
     ("check_references.py", ["main.tex"], {1}, "Undefined reference"),
     ("check_tables.py", ["main.tex"], {1}, "Vertical lines detected"),
     ("analyze_abstract.py", ["main.tex"], {0}, "Thesis Abstract Skeleton Diagnosis"),
@@ -393,3 +394,31 @@ def test_no_orphan_reference_files():
         if name not in rest and not dir_ref:
             orphans.append(str(target.relative_to(_SKILL_DIR)))
     assert not orphans, f"孤儿文件（无任何入链）: {orphans}"
+
+
+@pytest.mark.parametrize(
+    "script",
+    ("check_style_zh.py", "check_format.py", "check_tables.py", "check_references.py"),
+)
+def test_school_flag_is_opt_in_on_help(script: str):
+    result = _run(script, "--help")
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, output[:1500]
+    assert "yanshan-ee-2025" in output
+    assert "generic" in output
+    assert "{yanshan}" not in output
+    assert "{yanshan," not in output
+
+
+def test_citation_literature_flags_are_opt_in_on_help():
+    expected = {
+        "check_references.py": ("--author-cite", "--repeat-cite"),
+        "verify_bib.py": ("--college-details",),
+        "analyze_literature.py": ("--progression-density",),
+    }
+    for script, flags in expected.items():
+        result = _run(script, "--help")
+        output = result.stdout + result.stderr
+        assert result.returncode == 0, output[:1500]
+        for flag in flags:
+            assert flag in output, script

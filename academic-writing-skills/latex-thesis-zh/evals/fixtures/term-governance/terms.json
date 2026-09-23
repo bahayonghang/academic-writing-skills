@@ -1,0 +1,17 @@
+{
+  "zh": [["合成甲", "合成乙"]],
+  "en": [],
+  "banned": {
+    "旧称": {
+      "candidates": [
+        {"text": "候选甲", "slot": "过程"},
+        {"text": "候选乙", "slot": "对象"}
+      ]
+    },
+    "QV": {
+      "candidates": [{"text": "候选丙"}]
+    }
+  },
+  "locked": {"标准名": ["旧别名"]},
+  "exempt": {"environments": ["localterms"]}
+}
