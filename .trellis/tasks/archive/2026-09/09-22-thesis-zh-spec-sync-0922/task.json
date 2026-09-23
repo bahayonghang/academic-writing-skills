@@ -1,0 +1,33 @@
+{
+  "id": "thesis-zh-spec-sync-0922",
+  "name": "thesis-zh-spec-sync-0922",
+  "title": "latex-thesis-zh 对齐论文 spec 2026-09-22 增量（术语治理/数字公式/引文/结果一致/学院清单）",
+  "description": "对照论文仓库 .trellis/spec/writing 35 份 spec（含 09-10 后新增 12 份）与 latex-thesis-zh 现状做差距分析；父任务持有缺口清单、任务图与集成验收，不直接实现。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-22",
+  "completedAt": "2026-09-23",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-22-thesis-zh-term-governance",
+    "09-22-thesis-zh-number-equation-table",
+    "09-22-thesis-zh-citation-literature",
+    "09-22-thesis-zh-cross-surface-numbers",
+    "09-22-thesis-zh-college-checklist-2025",
+    "09-22-thesis-zh-method-hedging-guides"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
