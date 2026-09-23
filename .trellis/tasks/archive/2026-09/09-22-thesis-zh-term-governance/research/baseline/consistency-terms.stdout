@@ -1,0 +1,4 @@
+[INFO] Checking 10 files...
+
+Term consistency: WARNING
+  - NEEDS-LLM：同组表面形式共现，请核对是否指同一概念；仅在语义相同且无切换理由时统一，频次和分组顺序不决定规范名。
