@@ -1729,3 +1729,37 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - just ci 本轮未等完；确认后可推送或开 PR
+
+
+## Session 51: latex-thesis-zh 落地 2026-09-22 论文 spec 六项增量
+
+**Date**: 2026-09-23
+**Task**: latex-thesis-zh 落地 2026-09-22 论文 spec 六项增量
+**Branch**: `dev`
+
+### Summary
+
+一次提交六个子任务的 opt-in 检查、指南、双语资源与 spec 契约，并归档父任务与全部子任务。
+
+### Main Changes
+
+- 新增术语治理、数字公式表、引文著录、跨表面数值、学院清单与方法叙述指南。
+- 新检查保持显式开关，默认命令输出不变。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0c97c57907843fe3770d5a141e7433bb69d52fe5` | (see git log) |
+
+### Testing
+
+- [OK] integration-evidence 记录 pytest 1140 passed、lint、typecheck 与 resource sync；本会话未重跑 just ci 与 doc-build。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- just ci 与 just doc-build 仍未在本会话重跑；五宿主与真实论文效果继续 UNVERIFIED。
