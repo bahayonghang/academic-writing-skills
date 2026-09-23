@@ -1,0 +1,18 @@
+============================================================
+中文表达检查（expression）
+============================================================
+% CONTRACT [Script]: goal=grammar strength=minimal
+% WARN: appendix-gbk.tex: 非 UTF-8 编码，已按 GB18030 解码（建议统一转为 UTF-8）
+
+% EXPRESSION (chapters/experiment.tex:8) [Severity: Info] [Priority: P3] [Script]: E-COLLOQ 口语化程度副词
+% 原文: 本系统的整体效果非常好。
+% 建议: 「非常」宜改为「极为、显著、相当」
+% 依据: academic-style-zh.md §1.1（口语化表达纠正）
+% Changed:       1 lexical substitution (非常 -> 极为)
+% Protected:     none
+% Meaning-Check: NEEDS-LLM
+% Risk-Flags:    lexical-substitution
+
+------------------------------------------------------------
+边界说明: 人称（我们/本文）走 abstract 的 T-VOICE / T-OPEN；论断强度分级走 over-claim-guard.md；模板专属数字规范终检走 spec-check 的 YS-36；句长均匀度（CV）走 deai 的 D1；段落顺序与论证走 logic。以上均不在本模块重复报告。
+============================================================
