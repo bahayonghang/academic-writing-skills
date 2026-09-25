@@ -189,6 +189,23 @@ def test_missing_images_are_reported(tmp_path: Path, defense_scripts) -> None:
     assert data["logo"] is None
 
 
+def test_crlf_sources_extract_like_lf(tmp_path: Path, defense_scripts) -> None:
+    # A Windows checkout turns the fixture into CRLF; the inventory must not carry \r.
+    extract = defense_scripts.extract_thesis.extract_inventory
+    lf_root, crlf_root = tmp_path / "lf", tmp_path / "crlf"
+    shutil.copytree(FIXTURE_DIR, lf_root)
+    shutil.copytree(FIXTURE_DIR, crlf_root)
+    for path in crlf_root.rglob("*"):
+        if path.suffix in (".tex", ".aux"):
+            text = path.read_bytes().replace(b"\r\n", b"\n")
+            path.write_bytes(text.replace(b"\n", b"\r\n"))
+    lf, crlf = extract(lf_root), extract(crlf_root)
+    assert crlf["equations"] == lf["equations"]
+    assert crlf["tables"] == lf["tables"]
+    assert crlf["figures"] == lf["figures"]
+    assert "\r" not in json.dumps(crlf["equations"] + crlf["tables"], ensure_ascii=False)
+
+
 def test_extraction_keeps_fixture_files_unchanged(tmp_path: Path) -> None:
     before = tree_hashes(FIXTURE_DIR)
     root = tmp_path / "mini-thesis"

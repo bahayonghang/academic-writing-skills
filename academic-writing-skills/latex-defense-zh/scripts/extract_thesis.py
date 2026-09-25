@@ -273,7 +273,11 @@ class Source:
     @classmethod
     def load(cls, main: Path, root: Path) -> Source:
         doc = tex_loader.assemble(main)
-        text = "\n".join(tex_loader.COMMENT_RE.sub("", line) for line in doc.lines)
+        # CRLF sources (Windows checkouts) keep a trailing \r on each line; drop it so
+        # equation and table sources in the inventory match an LF deck.
+        text = "\n".join(
+            tex_loader.COMMENT_RE.sub("", line.removesuffix("\r")) for line in doc.lines
+        )
         starts = [0] + [index + 1 for index, char in enumerate(text) if char == "\n"]
         prefix = main.parent.relative_to(root).as_posix()
         return cls(doc=doc, text=text, line_starts=starts, prefix=prefix)
