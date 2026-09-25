@@ -2,7 +2,9 @@
 
 记录日期：2026-09-25。宿主：Claude Code（云端会话容器）。本文件不记录论文题目、姓名、正文、数字与本机路径。
 
-## AC11 真实论文验收：PENDING
+## AC11 真实论文验收：WAIVED
+
+2026-09-25 用户决定不做 AC11 真实论文验收，直接合并。以下为原状态说明。
 
 本会话运行在云端容器中，容器内没有用户的真实论文仓库，用户也未在会话中给出论文路径；按 design §5，不能以本仓库或 fixture 代替。
 AC11 保持 **PENDING**，需要用户在本机（或把论文仓库接入会话后）按父 `implement.md`「AC11 流程」执行一次，
@@ -66,5 +68,5 @@ pyright 警告数在本容器为 104（基线 86）。增量全部来自容器 v
 | AC3 | PASS | 完整资源检查与 `just doc-build` 通过；侧栏含「中文答辩稿 (latex-defense-zh)」组 |
 | AC4 | PASS | `just ci` 通过 |
 | AC5 | PASS | 技能目录、docs 新页、spec 与测试 grep 无本机绝对路径；技能目录无图片文件；内容均为合成 fixture |
-| AC6 | PENDING | 见上文 AC11 |
+| AC6 | WAIVED | 用户决定不做 AC11，见上文 |
 | AC7 | PASS（有说明） | 除 design §2 与技能目录外，另改 `docs/scripts/check_resource_sync.py`、C2/C3 文件（`build_deck.py`、`figure-grid.tex.j2`、`demo-deck.tex`、三份 references 及其双语页）与 `tests/skills/latex_defense_zh/conftest.py`、`test_defense_build.py`，均为上文缺陷修复 |
