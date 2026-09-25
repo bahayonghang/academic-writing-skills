@@ -1,0 +1,31 @@
+{
+  "id": "latex-defense-zh",
+  "name": "latex-defense-zh",
+  "title": "latex-defense-zh：博士学位论文答辩 Beamer 技能",
+  "description": "",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-23",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-23-defense-zh-framework-theme",
+    "09-23-defense-zh-extract-build",
+    "09-23-defense-zh-quality-gate",
+    "09-23-defense-zh-catalog-docs"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

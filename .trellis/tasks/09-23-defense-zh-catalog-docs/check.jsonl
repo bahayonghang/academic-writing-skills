@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验收时核对：evals 写入方式与契约测试"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "验收时核对：完整模式资源检查与技能数"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "验收时核对：AC11 证据分层与 UNVERIFIED 标注"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/thesis-repo-facts.md", "reason": "验收时核对：AC11 结果与论文仓库事实一致"}

@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "实现前读取：按路径加载脚本、私有语料不得成为 CI 前置、阈值与 evals 约定"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "实现前读取：§4 UTF-8 子进程协议（CLI 测试）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "实现前读取：quality-gate.md 须同步 manifest 与双语资源页"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "实现前读取：阈值来源规则，初始阈值须标注未标定"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/framework-analysis.md", "reason": "实现前读取：页序与页型，用于 D-TOC/D-CHAIN/D-COVERAGE 判据"}

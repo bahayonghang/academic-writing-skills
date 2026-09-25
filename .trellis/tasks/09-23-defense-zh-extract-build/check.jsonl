@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验收时核对：测试加载方式、编译 outdir 与 fixture 约定"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "验收时核对：子进程 UTF-8 编解码成对"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "验收时核对：plan-schema 双语页与 manifest"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/thesis-repo-facts.md", "reason": "验收时核对：提取规则覆盖六条设计约束"}

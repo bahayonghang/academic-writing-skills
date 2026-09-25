@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "实现前读取：evals.json 禁用 Edit/Write、SKILL.md 格式化与契约测试约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "实现前读取：examples/agents 资源页、manifest、侧栏与技能数"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "实现前读取：五工具证据分层，AC11 只验证 Claude Code"}
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "实现前读取：spec 索引格式，登记 defense-deck-contract.md"}
+{"file": ".trellis/spec/academic-writing-skills/cover-letter-contracts.md", "reason": "实现前读取：既有技能契约文档的写法样例"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/thesis-repo-facts.md", "reason": "实现前读取：AC11 真实论文仓库结构事实"}
