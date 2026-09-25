@@ -36,3 +36,5 @@ comments and similar commands such as `\captionsetup` do not satisfy the caption
 presence and position only, while long-table spacing, double scaling, and rendered-page acceptance
 remain review tasks described in the table guide.
 For bilingual (`\bicaption`) figure/table caption wording, see [caption-guide.md](../formatting/caption-guide.md).
+
+`--school yanshan-ee-2025` adds table-body candidates only: `TB-SAMEAS` for `同上` / `同左` outside the caption and notes, `TB-UNITHEAD` when at least three numeric rows share one literal unit missing from the header, and `CAP-PUNCT` for Chinese terminal punctuation on table floats. `multicolumn`, `multirow`, and nested tables produce a non-coverage note instead of a merged hit. Blank cells and dashes are not measurement facts. The default and `--school generic` add nothing. There is no bare `yanshan` alias. Findings are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`. Figure captions stay in `check_references.py`.

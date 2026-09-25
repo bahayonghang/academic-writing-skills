@@ -1,0 +1,13 @@
+BibTeX Check: D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\evals\fixtures\thesis-project\references.bib
+Status: FAIL
+
+Issues:
+  [ERROR] @fixture_thesis_d: Missing required field 'school'
+  [WARNING] @fixture_online_ebol: GB/T 7714 联机文献需要引用日期，缺少 'urldate'
+  [ERROR] @fixture_report_r: Missing required field 'institution'
+  [WARNING] @fixture_article_thin: GB/T 7714 期刊著录需要 卷(期): 页码，缺少 卷号 'volume'
+  [WARNING] @fixture_article_thin: GB/T 7714 期刊著录需要 卷(期): 页码，缺少 页码 'pages'
+  [INFO] @fixture_thesis_d, fixture_online_ebol: 2 条中文条目缺少 langid 字段（biblatex-gb7714 系列样式按 langid 区分中英文排序与 '等/et al.' 显示）
+  [INFO] @-: GB/T 7714-2025 已于 2025-12-02 发布、2026-07-01 实施（代替 2015 版）。答辩在 2026-07-01 之后建议与学校确认是否切换新国标，可改用 --standard gb7714-2025
+
+[INFO] 4 entries missing DOI/URL (Use --online-check to export list)

@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "实现前读取：按路径加载脚本、编译命令与产物共用输出目录、fixture 约定"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "实现前读取：§4 UTF-8 子进程协议（CLI 测试与 --compile）"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "实现前读取：plan-schema.md 须同步 manifest 与双语资源页"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/thesis-repo-facts.md", "reason": "实现前读取：论文仓库结构事实与六条设计约束"}
+{"file": ".trellis/tasks/09-23-latex-defense-zh/research/framework-analysis.md", "reason": "实现前读取：页序与页型，用于帧序列与版式预填"}

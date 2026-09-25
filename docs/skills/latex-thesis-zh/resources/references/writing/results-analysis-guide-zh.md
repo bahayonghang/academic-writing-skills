@@ -418,3 +418,18 @@ External sources:
 10. CASRAI, [Causal Analysis](https://casrai.org/guides/causal-analysis).
 
 Basis: user specification §9 and §10; external sources #1-#10.
+
+## 12. Manual Three-Surface Review and the Narrow Script
+
+Manual review still requires a key quantitative result to use the same final value in the results table, the body, and the chapter summary.
+`analyze_experiment.py --cross-surface` covers only a same-chapter simple table, one `\ref{tab:}`, an explicit metric, a row object, an evaluation set, and a literal unit.
+Zero differences are not proof of full-document compliance. The script does not output a corrected number.
+
+Display-layer checking compares final values already printed in the table and the prose. Source-layer recalculation returns to the original records and recomputes a ratio.
+This script does not read a CSV, recompute a ratio, or convert a unit. When the denominator, unit, or object is unclear, identical digits are still not comparable.
+
+Different metric names are not interchangeable. Positive example: 由准确率可得F1 must be reviewed by hand, and the two numbers are not one final value.
+Negative example: 不能由准确率可得F1 does not create a conversion candidate.
+
+`RA-XS-BODY`, `RA-XS-SUMMARY`, `RA-XS-MISSING`, `RA-XS-EVALSET`, `RA-XS-METRIC`, and `RA-XS-COVERAGE` are local `[Script]`, Info/P3, `Meaning-Check: NEEDS-LLM` positions.
+Without `--cross-surface`, these candidates and coverage statistics are not printed. The existing `--results-analysis` nine codes stay unchanged.

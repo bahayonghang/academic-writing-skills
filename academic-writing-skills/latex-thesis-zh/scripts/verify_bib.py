@@ -59,6 +59,8 @@ class BibTeXVerifier:
         online: bool = False,
         email: str | None = None,
         online_timeout: float = 10.0,
+        *,
+        college_details: bool = False,
     ):
         self.bib_file = Path(bib_file).resolve()
         self.standard = standard
@@ -67,6 +69,7 @@ class BibTeXVerifier:
         self.online = online
         self.email = email
         self.online_timeout = online_timeout
+        self.college_details = college_details
 
     def parse(self) -> list[dict]:
         """Parse BibTeX file."""
@@ -150,6 +153,8 @@ class BibTeXVerifier:
 
         if self.standard in self.GB_STANDARDS:
             results["issues"].extend(self._gb_file_level_notes())
+        if self.college_details and self.standard in self.GB_STANDARDS:
+            results["issues"].extend(self._college_detail_issues())
 
         if results["issues"]:
             has_errors = any(i["severity"] == "error" for i in results["issues"])
@@ -436,6 +441,67 @@ class BibTeXVerifier:
 
         return notes
 
+    @staticmethod
+    def _field_present(fields: dict, name: str) -> bool:
+        return bool(str(fields.get(name, "")).strip())
+
+    def _college_info(self, key: str, issue_type: str, message: str) -> dict:
+        return {
+            "key": key,
+            "type": issue_type,
+            "severity": "info",
+            "priority": "P3",
+            "message": f"[Script] Meaning-Check: NEEDS-LLM {message}",
+        }
+
+    def _college_detail_issues(self) -> list[dict]:
+        """Extra GB college prompts. Appended after the existing issue sequence."""
+        issues: list[dict] = []
+        place_types = {"book", "phdthesis", "mastersthesis"}
+        article_number_fields = ("eid", "articleno", "article-number")
+        has_author = False
+        for entry in self.entries:
+            fields = entry["fields"]
+            key = entry["key"]
+            entry_type = entry["type"]
+            if self._field_present(fields, "author"):
+                has_author = True
+            if entry_type in place_types and not (
+                self._field_present(fields, "address") or self._field_present(fields, "location")
+            ):
+                issues.append(
+                    self._college_info(
+                        key,
+                        "college_address",
+                        "缺少 address 或 location，请核出版地来源。不猜测学校。",
+                    )
+                )
+            has_article_number = any(
+                self._field_present(fields, name) for name in article_number_fields
+            )
+            if entry_type in place_types and not self._field_present(fields, "pages"):
+                if has_article_number:
+                    pages_message = "缺少传统页码或仅有文章号，列待核。不根据 PDF 总页数填写页码，也不把文章号写成页码。"
+                else:
+                    pages_message = "缺少 pages，列为来源核验候选。不根据 PDF 总页数填写页码。"
+                issues.append(self._college_info(key, "college_pages", pages_message))
+            elif entry_type == "inproceedings" and not self._field_present(fields, "pages"):
+                conf_message = "缺少 pages。学院第101项需人工核实。不根据 PDF 总页数填写页码。"
+                if has_article_number:
+                    conf_message += "若仅有文章号，只列待核，不把文章号写成页码。"
+                issues.append(self._college_info(key, "college_pages", conf_message))
+        if has_author:
+            issues.append(
+                self._college_info(
+                    "-",
+                    "college_author_style",
+                    "请核最终 BBL/PDF：姓在前、姓大写、名首字母。"
+                    "不生成缩写姓名，不把 LI G Z 当作正确的源 BibTeX。"
+                    "完整个人姓名、助词、连字符、重音和机构作者保持原样，不作大小写违规。",
+                )
+            )
+        return issues
+
     def generate_report(self, result: dict) -> str:
         lines = []
         lines.append(f"BibTeX Check: {self.bib_file}")
@@ -444,7 +510,12 @@ class BibTeXVerifier:
         if result["issues"]:
             lines.append("\nIssues:")
             for issue in result["issues"]:
-                lines.append(f"  [{issue['severity'].upper()}] @{issue['key']}: {issue['message']}")
+                priority = issue.get("priority")
+                priority_text = f" [Priority: {priority}]" if priority else ""
+                lines.append(
+                    f"  [{issue['severity'].upper()}]{priority_text} "
+                    f"@{issue['key']}: {issue['message']}"
+                )
 
         if result["needs_online_check"]:
             lines.append(
@@ -480,8 +551,15 @@ def main():
         help="Timeout per API request in seconds",
     )
     parser.add_argument("--output", help="Output file for online check JSON")
+    parser.add_argument(
+        "--college-details",
+        action="store_true",
+        help="在 gb7714 或 gb7714-2025 之后追加学院著录候选；其它 standard 为参数错误",
+    )
 
     args = parser.parse_args()
+    if args.college_details and args.standard not in ("gb7714", "gb7714-2025"):
+        parser.error("--college-details 只能与 --standard gb7714 或 gb7714-2025 同时使用")
 
     if not Path(args.bib_file).exists():
         print("File not found.")
@@ -493,6 +571,7 @@ def main():
         online=getattr(args, "online", False),
         email=getattr(args, "email", None),
         online_timeout=getattr(args, "online_timeout", 10.0),
+        college_details=args.college_details,
     )
     result = verifier.verify()
 

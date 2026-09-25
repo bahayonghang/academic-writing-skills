@@ -35,7 +35,23 @@ The standards involved:
 - Put **one space** between the value and the unit symbol: `3.2 kg`, `25 MPa`, `50 Hz`. In LaTeX the thin space `3.2\,kg` is more correct.
 - **No space** for: percent `92.1%`, per-mille `‰`, degrees `30°`, arcminutes `′`, arcseconds `″`, and Celsius `25℃` (the `25 °C` spelling does take a space).
 
+That bullet is the national-standard rule and the default `E-NUMSPACE` behavior. The college mode below disagrees for percent and Celsius. Do not mix the two.
+
 `E-NUMSPACE` is tier A: on a hit it proposes inserting `\,`, with `Risk-Flags: whitespace-normalized`.
+
+## College mode (`--school yanshan-ee-2025` only)
+
+The 2025 electrical-engineering checklist treats percent and Celsius as ordinary units: leave a half-width space between the value and the unit. Only plane-angle degrees, minutes, and seconds stay tight. Do not exempt `℃` together with plane angles.
+
+This does not change `E-NUMSPACE`. The default path still does not report missing space in `50\%` or `25℃` as `E-NUMSPACE`. College mode adds a separate `NUM-SPACE` candidate. The college text does not prescribe the TeX tokens `~` or `\,`. This repository recommends `50~\%` and `25~℃` in the guide. An existing half-width space, `~`, or `\,` is not reported as a violation.
+
+Group digits in threes outward from the decimal point. The minus sign is not a digit. `1\,004.1` and `0.174\,6` are clean. `1004.1`, `0.1746`, and `0.17\,46` are `NUM-GROUP` candidates. A year followed by 年, a time, a DOI, a path, scientific notation, a lettered model number, an identifier label, and TikZ coordinates are not definite violations. An unclassified bare number gets only `NUM-COVERAGE`: not a definite violation and not a college exemption. There is no closed list of years or model names.
+
+A unit that appears alone in a header, `降幅/\%`, and 百分点 are not “number then unit.” Inside mathematics the script reports the position only and does not rewrite the formula. These number candidates belong only to `check_style_zh.py`. A shared column unit belongs to `check_tables.py`, so one site is not reported twice.
+
+```bash
+uv run python -B $SKILL_DIR/scripts/check_style_zh.py main.tex --school yanshan-ee-2025
+```
 
 ## 3. Units are upright (GB/T 3101)
 

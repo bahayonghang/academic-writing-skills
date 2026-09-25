@@ -1,0 +1,261 @@
+{
+  "tex_file": "main.tex",
+  "spec": "generic (templates/generic.md)",
+  "template": "generic",
+  "degree": "doctor",
+  "ref_year": 2026,
+  "items": [
+    {
+      "id": "GEN-01",
+      "requirement": "题名简明反映最重要的特定内容，不超过 20 字（国标值，各校可能放宽，以本校规范为准）；避免不常用缩略词、首字母缩写字、字符、代号和公式",
+      "basis": "§5.1.1.2",
+      "method": "script:title_len",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "题名 13 字: 面向虚构场景的占位研究方法"
+    },
+    {
+      "id": "GEN-02",
+      "requirement": "题名在论文各处出现时完全相同；基金资助项目将基金注释在题名所在页地脚",
+      "basis": "§5.1.1.2",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-03",
+      "requirement": "应有中文摘要，为了国际交流还应有外文（多用英文）摘要；中文在前、英文在后为校级惯例",
+      "basis": "§5.1.5.2 + 校级惯例",
+      "method": "script:abstract_order",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到英文摘要环境，请人工核对中前英后与内容一致性"
+    },
+    {
+      "id": "GEN-04",
+      "requirement": "摘要独立自含：说明研究目的、实验方法、结果和最终结论，重点是结果和结论",
+      "basis": "§5.1.5.3",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-05",
+      "requirement": "摘要字数国标值：中文一般不宜超过 200～300 字、外文不宜超过 250 个实词（特殊需要可略多）；各校学位论文普遍另有更高字数要求，以本校规范为准（脚本仅报实测字数，不设阈值）",
+      "basis": "§5.1.5.4",
+      "method": "script:abstract_len",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "摘要实测约 90 字；当前模板无字数阈值依据，请对照本校规范判断"
+    },
+    {
+      "id": "GEN-06",
+      "requirement": "摘要中不用图、表、化学结构式、非公知公用的符号和术语（除非实在无变通办法）；不标注引用文献编号为校级惯例",
+      "basis": "§5.1.5.5 + 校级惯例",
+      "method": "script:abstract_no_cite",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "摘要未见引用编号/图表/公式环境"
+    },
+    {
+      "id": "GEN-07",
+      "requirement": "关键词 3～8 个，用显著的字符另起一行排在摘要左下方，尽量采用《汉语主题词表》等规范词（各校可能收紧个数；国标未规定分隔符）",
+      "basis": "§5.1.6",
+      "method": "script:kw_count",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到中文关键词（可能使用封面自定义宏），请人工核对 3~8 个"
+    },
+    {
+      "id": "GEN-08",
+      "requirement": "摘要、关键词、分类号和目次页均应有与中文对应的英文译文",
+      "basis": "§5.1.10",
+      "method": "script:kw_zh_en_match",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到中文关键词，请人工核对中英一一对应"
+    },
+    {
+      "id": "GEN-09",
+      "requirement": "应有目次页，排在序和前言之后另起页；图表较多时可分别列出清单置于目次页之后",
+      "basis": "§5.1.7 §5.1.8",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-10",
+      "requirement": "符号、缩略词等注释说明如需汇集，集中置于图表清单之后（条件项）",
+      "basis": "§5.1.9",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-11",
+      "requirement": "采用国家正式公布实施的简化汉字和法定的计量单位",
+      "basis": "§4.2",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-12",
+      "requirement": "术语、符号、代号全文统一；新专业术语/缩略语/习惯用语加注释，国外新术语译文后用圆括号注明原文",
+      "basis": "§4.3",
+      "method": "module:consistency",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 consistency 模块覆盖: uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --terms"
+    },
+    {
+      "id": "GEN-13",
+      "requirement": "引言简要说明研究目的、范围、前人工作与知识空白、理论基础、研究方法等；言简意赅、不与摘要雷同、不成为摘要的注释；教科书知识不赘述（综述与理论分析可单独成章）",
+      "basis": "§5.2.1",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-14",
+      "requirement": "图表编号国标为全篇连续（\"图1\"\"图2\"，连续到附录之前、与章条编号无关，仅一幅图也标\"图1\"）；各校普遍改按章编号（\"图 2.1\"/\"图 3-1\"），以本校规范为准并全文统一",
+      "basis": "§5.2.3 §5.2.4 + 校级惯例",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-15",
+      "requirement": "图应有编号和图题，置图下方居中；表编号和表题置表上方居中；曲线图坐标须标注量、标准规定符号、单位",
+      "basis": "§5.2.3 §5.2.4",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-16",
+      "requirement": "表转页接排：编号后跟表题（可省略）和\"（续）\"（如\"表1（续）\"），续表重复表头和单位陈述",
+      "basis": "§5.2.4",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "GEN-17",
+      "requirement": "结论准确、完整、明确、精练，是最终的总体结论、非各段小结的简单重复；不可能导出结论时可只作必要讨论；可提出建议、研究设想、尚待解决的问题等",
+      "basis": "§5.2.5",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-18",
+      "requirement": "参考文献按 GB 7714《文后参考文献著录规则》执行（不注日期引用，按其最新版执行）",
+      "basis": "§5.2.6",
+      "method": "module:bibliography",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 bibliography 模块覆盖: uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714"
+    },
+    {
+      "id": "GEN-19",
+      "requirement": "参考文献表另起一页；条目空两个字起排、回行时顶格排、文件之后不加标点符号",
+      "basis": "§6.6",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "GEN-20",
+      "requirement": "注释可作为脚注在页下分散著录，切忌在文中注释",
+      "basis": "§5.2.7",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-21",
+      "requirement": "附录依顺序用大写字母编号（附录 A、附录 B……），编号与标题各占一行置条文之上居中，每一附录另起一面；附录内条文编号如 B.1、B.1.1",
+      "basis": "§6.5 附录B",
+      "method": "script:appendix_letter",
+      "scope": "通用",
+      "status": "FAIL",
+      "evidence": "存在附录章（附录：编码边角用例）但未见 \\appendix，编号可能不是附录 A/B 形式"
+    },
+    {
+      "id": "GEN-22",
+      "requirement": "章、条编号顶格排，编号与标题或文字之间空一个字，章标题占两行；数字编号层级最深四级（x.x.x.x，附录 B 规范性示例）",
+      "basis": "§6.3 附录B",
+      "method": "script:heading_depth",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "章节层次不超过四级"
+    },
+    {
+      "id": "GEN-23",
+      "requirement": "公式另起一行居中排，较长公式尽可能在等号处回行、或在 +、－ 等符号之后回行；编号右端对齐；\"式中：\"空两个字起排、单独占一行",
+      "basis": "§6.4",
+      "method": "module:format",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 format 模块覆盖: uv run python $SKILL_DIR/scripts/check_format.py main.tex"
+    },
+    {
+      "id": "GEN-24",
+      "requirement": "页码：从绪论起（含正文、参考文献、附录、致谢等）用阿拉伯数字编连续码；前置部分（文摘页、目次页、清单、符号说明）国标为阿拉伯数字单独编连续码，各校普遍改用罗马数字，以本校规范为准",
+      "basis": "§4.7 + 校级惯例",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "GEN-25",
+      "requirement": "页面：天头/订口留边 25mm 以上、地脚/切口留边 20mm 以上（各校常给精确 cm 值，以本校规范为准）；A4 幅面（210mm×297mm）",
+      "basis": "§4.5 §6.7",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "GEN-26",
+      "requirement": "每章另起页（或另起右页）：国标无此条款，属校级惯例，以本校规范为准",
+      "basis": "校级惯例",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "GEN-27",
+      "requirement": "各章章末设\"本章小结\"：国标无此条款，部分学校要求，以本校规范为准",
+      "basis": "校级惯例",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    }
+  ],
+  "summary": {
+    "PASS": 3,
+    "FAIL": 1,
+    "NEEDS-LLM": 16,
+    "MODULE": 3,
+    "MANUAL": 4,
+    "SKIP": 0
+  },
+  "status": "FAIL"
+}

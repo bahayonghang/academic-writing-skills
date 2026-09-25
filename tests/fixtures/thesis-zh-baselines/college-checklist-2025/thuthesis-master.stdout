@@ -1,0 +1,351 @@
+{
+  "tex_file": "main.tex",
+  "spec": "thuthesis (templates/thuthesis.md)",
+  "template": "thuthesis",
+  "degree": "master",
+  "ref_year": 2026,
+  "items": [
+    {
+      "id": "THU-01",
+      "requirement": "论文题目\"严格控制在 25 个汉字（符）以内\"（指南无副题名合计条款，副题名一并计入 25 字判定）",
+      "basis": "§2.3.1",
+      "method": "script:title_len",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "题名 13 字: 面向虚构场景的占位研究方法"
+    },
+    {
+      "id": "THU-02",
+      "requirement": "中文摘要控制在 800～1000 汉字（符）",
+      "basis": "§2.3.5",
+      "method": "script:abstract_len",
+      "scope": "通用",
+      "status": "FAIL",
+      "evidence": "中文摘要实测约 90 字（口径：可见文本去空白字符数）；规范区间 800~1000"
+    },
+    {
+      "id": "THU-03",
+      "requirement": "摘要篇幅限制在一页内书写",
+      "basis": "§2.3.5",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-04",
+      "requirement": "关键词\"不超过 5 个，每个关键词之间用分号间隔\"（官方无个数下限，人工判断；thuthesis 源文件中 keywords 以西文逗号分隔、由模板自动输出为全角分号）",
+      "basis": "§2.3.5",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-05",
+      "requirement": "英文 Keywords 与中文摘要部分的关键词对应",
+      "basis": "§2.3.5",
+      "method": "script:kw_zh_en_match",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到中文关键词，请人工核对中英一一对应"
+    },
+    {
+      "id": "THU-06",
+      "requirement": "中文摘要在前、Abstract 在后（§2.1 组成顺序），摘要中文版与英文版文字内容对应",
+      "basis": "§2.1 §2.3.5",
+      "method": "script:abstract_order",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到英文摘要环境，请人工核对中前英后与内容一致性"
+    },
+    {
+      "id": "THU-07",
+      "requirement": "摘要中不出现图片、图表、表格或其他插图材料",
+      "basis": "§2.3.5",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-08",
+      "requirement": "摘要切忌写成全文提纲（避免\"第 1 章……；第 2 章……\"陈述方式），重点是结果和结论",
+      "basis": "§4.3",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-09",
+      "requirement": "目录列至二级节标题（例如 2.2.5）即可",
+      "basis": "§2.3.6",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-10",
+      "requirement": "一般不建议使用三级节标题；编号最深至四段（x.x.x.x，\\subsubsection），不出现更深层级",
+      "basis": "§2.3.9.2",
+      "method": "script:heading_depth",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "章节层次不超过四级"
+    },
+    {
+      "id": "THU-11",
+      "requirement": "组成部分及顺序符合规定（中英文封面、名单、授权说明、摘要、Abstract、目录、清单与符号说明、正文、参考文献、附录、致谢、声明、个人简历与学术成果、指导教师评语、答辩委员会决议书），各项独立成部分、每部分从新的一页开始",
+      "basis": "§2.1",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-12",
+      "requirement": "正文从另页右页开始，每一章应另起页",
+      "basis": "§2.3.9.1",
+      "method": "script:new_page_chapter",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "各章使用 \\chapter（book 类默认另起一页）"
+    },
+    {
+      "id": "THU-13",
+      "requirement": "章标题如\"第 1 章 引言\"：章序号用阿拉伯数字，章序号与标题名之间空一个汉字符（模板 name={第,章} 自动处理）",
+      "basis": "§2.3.9.2",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-14",
+      "requirement": "\"学位论文指导小组、公开评阅人和答辩委员会名单\"原则上限一页",
+      "basis": "§2.3.3",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-15",
+      "requirement": "图、表和表达式按章编号，两数字间用半角横线\"-\"或小数点\".\"连接（如\"图 2-1\"或\"图 2.1\"），全篇统一；thuthesis 默认点号，可用 number-separator 选项改连字符",
+      "basis": "§2.3.19",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-16",
+      "requirement": "图序与图题置于图下方（11pt 居中）、表序与表题置于表上方；表采用三线表（上下边线 1.5 磅、第三线 1 磅，必要时可加辅助线）",
+      "basis": "§2.3.19",
+      "method": "module:tables",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 tables 模块覆盖: uv run python $SKILL_DIR/scripts/check_tables.py main.tex"
+    },
+    {
+      "id": "THU-17",
+      "requirement": "各分图以 (a)、(b)、(c) 作为图序，并须有分图题",
+      "basis": "§2.3.19",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-18",
+      "requirement": "图宜紧置于首次引用该图的文字之后（图表交叉引用完整无断档）",
+      "basis": "§2.3.19",
+      "method": "module:references",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 references 模块覆盖: uv run python $SKILL_DIR/scripts/check_references.py main.tex"
+    },
+    {
+      "id": "THU-19",
+      "requirement": "跨页图在次页注明\"续\"字；续表在每页表序前加\"续\"字并重复表头；过宽图表逆时针旋转 90° 放置",
+      "basis": "§2.3.19",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-20",
+      "requirement": "表达式序号加括号置于表达式右边行末；较长表达式在运算符或括号之后回行，上下行尽可能在\"=\"处对齐",
+      "basis": "§2.3.19",
+      "method": "module:format",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 format 模块覆盖: uv run python $SKILL_DIR/scripts/check_format.py main.tex"
+    },
+    {
+      "id": "THU-21",
+      "requirement": "参考文献著录与标注统一按 GB/T 7714—2015 执行（不区分理工科和人文社科）；\"顺序编码制\"或\"著者-出版年制\"仅选一种并全文统一",
+      "basis": "§3 §3.4",
+      "method": "module:bibliography",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 bibliography 模块覆盖: uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714"
+    },
+    {
+      "id": "THU-22",
+      "requirement": "参考文献表与正文引用一一对应；引文参考文献表置于正文后另起页；阅读性参考文献可集中列入附录（标题\"书目\"）",
+      "basis": "§3.5 §3.1",
+      "method": "module:bibliography",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 bibliography 模块覆盖: uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714"
+    },
+    {
+      "id": "THU-23",
+      "requirement": "使用模板配套文献样式：thuthesis-numeric / thuthesis-author-year（bst 配 natbib，或 biblatex 的 style=thuthesis-author-year），样式由 gbt7714 / biblatex-gb7714-2015 少量改编",
+      "basis": "thuthesis 手册",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-24",
+      "requirement": "附录依顺序用大写字母编号（附录 A、附录 B……），只有一个附录时也编\"附录 A\"，每个附录应有标题",
+      "basis": "§2.3.11",
+      "method": "script:appendix_letter",
+      "scope": "通用",
+      "status": "FAIL",
+      "evidence": "存在附录章（附录：编码边角用例）但未见 \\appendix，编号可能不是附录 A/B 形式"
+    },
+    {
+      "id": "THU-25",
+      "requirement": "附录内图表式另行编号，如\"图 A.1\"\"表 B.2\"\"式（C-3）\"",
+      "basis": "§2.3.11",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-26",
+      "requirement": "引言大致包含：问题的提出、选题背景及意义、文献综述、研究方法、论文结构安排；文献综述\"述\"的同时要有\"评\"",
+      "basis": "§4.4",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-27",
+      "requirement": "结论是最终的、总体的结论，不是正文各章小结的简单重复；交代研究工作的局限，提出未来工作的意见或建议",
+      "basis": "§4.6",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-28",
+      "requirement": "评价自己的研究成果实事求是：除非有足够证据，避免使用\"首次\"\"领先\"\"填补空白\"或类似词语",
+      "basis": "§4.6",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-29",
+      "requirement": "除留学生外一律用汉语简体书写；非通用性新名词、新术语、新概念随即解释清楚",
+      "basis": "§4.1 §2.3.18",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-30",
+      "requirement": "量和单位严格执行 GB 3100—1993、GB/T 3101—1993、GB/T 3102—1993，全文统一、不得两种混用",
+      "basis": "§2.3.18",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-31",
+      "requirement": "致谢限一页，标题和篇眉内容均为\"致谢\"",
+      "basis": "§2.3.12",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-32",
+      "requirement": "声明单独一页，标题和篇眉内容均为\"声明\"",
+      "basis": "§2.3.13",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-33",
+      "requirement": "在学期间学术成果按类型分列并连续编号（学术论文、专著/译著、专利、研究报告、作品等）；未取得成果写\"无\"；已录用未刊载论文加括号注明被××××期刊录用",
+      "basis": "§2.3.14",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "THU-34",
+      "requirement": "页边距上下左右均 3.0 厘米、装订线 0 厘米，页眉/页脚距边界 2.2 厘米；A4 标准纸",
+      "basis": "§2.4.1 §2.2",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-35",
+      "requirement": "篇眉从\"摘要\"开始，内容与该部分章标题相同，奇偶页相同、各部分首页也有篇眉，五号字居中",
+      "basis": "§2.4.2",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-36",
+      "requirement": "页码：中文摘要至符号和缩略语说明用大写罗马数字从Ⅰ连续编排；正文第 1 章起用阿拉伯数字从 1 连续编排；页码置页脚居中、两侧不加修饰线",
+      "basis": "§2.4.2",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "THU-37",
+      "requirement": "从中文摘要开始双面印刷（封面等四部分单面、无篇眉页码）",
+      "basis": "§2.4.1",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    }
+  ],
+  "summary": {
+    "PASS": 3,
+    "FAIL": 2,
+    "NEEDS-LLM": 18,
+    "MODULE": 5,
+    "MANUAL": 9,
+    "SKIP": 0
+  },
+  "status": "FAIL"
+}

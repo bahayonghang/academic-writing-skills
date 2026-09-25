@@ -35,3 +35,5 @@ Skill 层响应：把脚本输出转换成 `% TABLES (Line N) [Severity] [Priori
 `\captionsetup` 等相似命令不能满足题注检查。检查器只报告存在性和位置，长表间距、
 二次缩放及编译页验收仍按表格指南人工复核。
 双语（`\bicaption`）图表题措辞见 [caption-guide.md](../formatting/caption-guide.md)。
+
+`--school yanshan-ee-2025` 只增加表身候选：`TB-SAMEAS` 针对题注和表注之外的 `同上` / `同左`，`TB-UNITHEAD` 针对至少三行数值共用字面单位而表头缺少该单位，`CAP-PUNCT` 针对表浮动体中文末标点。`multicolumn`、`multirow` 和嵌套表给出未覆盖说明，不合并命中。空白单元格和破折号不推断测量事实。默认和 `--school generic` 不新增候选，也没有单独的 `yanshan` 别名。发现为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`。图题仍归 `check_references.py`。

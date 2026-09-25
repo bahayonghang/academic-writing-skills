@@ -50,3 +50,41 @@ uv run python scripts/check_consistency.py main.tex
 默认行为变化用于修正误报与假绿：不再合并不同概念，检出先用后定义，保留合法重复释义，把不确定含义交给人工复核。这些检查不证明真实论文的语义一致性。
 
 > 逻辑与连贯性检查（非术语问题）参见 [`logic.md`](logic.md)。完整参考见 [`../writing/logic-coherence.md`](../writing/logic-coherence.md)
+
+## 可选术语治理与缩写体例
+
+这些检查在未给出开关时不运行。未传 `--governance` 或 `--abbreviation-style` 时，既有 `--terms`、`--abbreviations` 与完整报告保持不变。`--governance` 必须配合 `--custom-terms`，并扩展同一 JSON 对象。不增加第二份文件、schema 版本或迁移层。`zh` 与 `en` 分组仍走原加载器。`banned`、`locked` 与 `exempt` 仅在 `--governance` 打开时读取。
+
+```bash
+uv run python scripts/check_consistency.py main.tex --governance --custom-terms terms.json
+uv run python scripts/check_consistency.py main.tex --abbreviation-style
+```
+
+```json
+{
+  "zh": [["合成甲", "合成乙"]],
+  "en": [],
+  "banned": {
+    "旧称": {
+      "candidates": [
+        {"text": "候选甲", "slot": "过程"},
+        {"text": "候选乙", "slot": "对象"}
+      ]
+    }
+  },
+  "locked": {"标准名": ["旧别名"]},
+  "exempt": {"environments": ["localterms"]}
+}
+```
+
+| 字段 | 必须行为 |
+| --- | --- |
+| `banned` | 每个词至少一条非空 `text`。`slot` 可省略。一次命中列出全部候选和 slot。 |
+| `locked` | 规范名映射到禁用变体。报告写出该规范名，不按词频推断。 |
+| `exempt` | 只增加环境名。不能取消固定保护。 |
+
+扫描使用装配后的可见文本和源位置。它跳过注释、前导区、数学、cite/ref/label 载荷、路径、`verbatim` / `lstlisting` / `minted`、`thebibliography` 以及用户指定环境。行内 `\verb`、`\lstinline` 和 `\texttt` 的内容仍会扫描；只有 `verbatim`、`lstlisting` 和 `minted` 环境被屏蔽。缩略词表仅在环境名为 `abbreviation`、`abbreviations` 或 `acronym`，或区域标题为 `缩略词表` 或 `缩略词对照表` 时豁免。普通表格不豁免。不扫描外置 `.bib`，也不把题名导入候选。中文按字面匹配。ASCII 词使用标识符边界。未知自定义宏使覆盖不完整，因此没有命中不等于宣称没有问题。JSON 无效、文件缺失，或给出 `--governance` 却没有 `--custom-terms`，都属于非零 CLI 错误，且不打印通过结论。
+
+`--abbreviation-style` 与治理开关独立。在同一受保护片段屏蔽之后，合格首现是 `中文名称（英文全称，缩写）`。中英文逗号都可识别。报告中的项目形式是 `（英文全称，缩写）`。只登记句内边界清楚的名称。边界不清时给出一条 `NEEDS-LLM` 覆盖说明，而不是错误的二次命中。缩写可以混合大小写、数字和内部连字符，例如 `ZX`、`AbX` 和 `X-2`。已登记的一对之后，`中文名（缩写）` 或 `中文名 缩写` 是候选。首次只有 `中文名（缩写）` 不能证明已有合格展开，因此不产生二次结论。完整括注中的 Title Case 只作为候选；不改写专名大小写。含数学的括注和 `X 为中文名` 的符号解释不是 XOR 问题。与 `--terms` 或 `--abbreviations` 合用时，同位置同类候选去重。旧定义识别器保留。新的 JSON 字段只在新模式出现。
+
+发现使用 `[Script]`、Info/P3 和 `Meaning-Check: NEEDS-LLM`。它们只给出局部词、字段和位置，不提供替换整句。

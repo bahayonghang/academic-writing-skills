@@ -74,3 +74,11 @@ thesis, not only the contribution sentence of one conference paper. When needed,
 - Do not add, remove, or rewrite an existing citekey; list a missing author, method, object, or result only as evidence to obtain.
 - Do not rewrite an entire prose passage by default; provide diagnosis and a rewrite blueprint first.
 - If existing evidence cannot support a “research gap,” state that evidence is insufficient instead of inventing one.
+
+## Optional progression density (`--progression-density`)
+
+It combines with `--section`. When `--section` is omitted, use only the existing `related` range. If that section is missing, keep the original error, do not scan the whole file, and do not report a pass.
+It is mutually exclusive with `--intro-citations`. Visible prose excludes captions, citation keys, mathematics, and code.
+Strictly more than 5 occurrences of 「进一步」, or strictly more than 7 of 「针对」, emit an `[Script]`, Info/P3, `Meaning-Check: NEEDS-LLM` candidate and mark the threshold `UNVERIFIED`.
+Counts of 5 and 7 do not fire. The script does not rotate synonyms and does not emit a replacement sentence.
+The six rewrite directions and four paragraph organizations are in [`../writing/literature-progression-zh.md`](../writing/literature-progression-zh.md), shown only with synthetic fragments.

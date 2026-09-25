@@ -10,6 +10,8 @@
 | Work on a Chinese LaTeX thesis | `latex-thesis-zh` |
 | Work on a Typst paper | `typst-paper` |
 | Search a local `.bib` library | `bib-search-citation` |
+| Polish or translate academic prose for a venue | `paper-writing-studio` |
+| Build defense slides from a Chinese LaTeX thesis | `latex-defense-zh` |
 
 ## 2. Run One Real Command
 
@@ -53,6 +55,13 @@ uv run python academic-writing-skills/typst-paper/scripts/check_references.py ma
 
 ```bash
 uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.py --bib references.bib --query "mamba forecasting author:Cheng year>=2024 has:code cite:both limit:5"
+```
+
+### Thesis defense deck
+
+```bash
+uv run python -B academic-writing-skills/latex-defense-zh/scripts/extract_thesis.py --thesis thesis-repo --out defense-work/inventory.json --json
+uv run python -B academic-writing-skills/latex-defense-zh/scripts/plan_deck.py --inventory defense-work/inventory.json --out defense-work/slide_plan.yaml --minutes 40
 ```
 
 ## 3. Follow The Skill Router

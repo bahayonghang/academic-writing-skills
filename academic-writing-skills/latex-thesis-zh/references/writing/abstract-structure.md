@@ -181,3 +181,28 @@ B-NAT 改造自 `ref/claude-scholar/skills/nature-writing` 的社区归纳 Natur
 - Never add results or conclusions not present in the original text
 - Preserve all citations, labels, and math environments
 - Mark all modifications with brackets: [ADDED: ...] or [REVISED: ...]
+
+## 摘要引号与英文标点（仅 LLM）
+
+判断只由 LLM 完成。不新增检查码。`analyze_abstract.py` 不检查引号。
+
+中文引语使用成对 U+201C 与 U+201D。左引号是 U+201C，右引号是 U+201D。两头都用 U+201D，或用 ASCII 引号包中文引语，都不通过。英文摘要使用英文标点。中文逗号或中文句号出现在英文摘要句子里，不通过。
+
+引语的措辞、数学和引用键保持不变。改引号时不得改写引语、不得改数学、不得改引用键。
+
+```text
+中文通过：本文沿“状态估计与序列决策”主线
+中文不通过：本文沿”状态估计与序列决策”主线
+英文通过：The estimator reports the state, and the planner uses that state.
+英文不通过：The estimator reports the state，and the planner uses that state.
+引语保护通过：引号改为成对弯引号后，仍是一步估计 $x_{t}$，引用键仍是 lee2020。
+引语保护不通过：改引号时把“一步估计 $x_{t}$”改成“状态估计”，或把 \cite{lee2020} 改成 \cite{lee2021}。
+```
+
+```latex
+% 摘要（合成）[Severity: Minor] [Priority: P2]: [LLM] 中文引号未成对，或英文摘要使用了中文标点
+% 问题：引号方向或标点语言不对
+% 原文：本文沿”状态估计与序列决策”主线
+% 修改后：本文沿“状态估计与序列决策”主线
+% 理由：只改引号或标点。措辞、数学和引用键保持不变。不新增检查码。
+```

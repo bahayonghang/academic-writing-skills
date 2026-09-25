@@ -16,9 +16,11 @@ PYPROJECT = REPO_ROOT / "pyproject.toml"
 SKILL_NAMES = (
     "bib-search-citation",
     "cover-letter",
+    "latex-defense-zh",
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",
+    "paper-writing-studio",
     "typst-paper",
 )
 

@@ -1,0 +1,7 @@
+% WARN: appendix-gbk.tex: 非 UTF-8 编码，已按 GB18030 解码（建议统一转为 UTF-8）
+% EXPERIMENT (chapters/conclusion.tex:1) [Severity: Minor] [Priority: P2]: Conclusion lacks implications statement.
+
+% EXPERIMENT (chapters/conclusion.tex:1) [Severity: Minor] [Priority: P2]: Conclusion lacks explicit core findings summary.
+
+% EXPERIMENT (main.tex:1) [Severity: Info] [Priority: P3]: [Script] 结构提示：未检出独立的讨论章或综述章，B3（讨论深度）/B4（文献回溯）在此结构下难以生效；若为“一章一方法 + 同章实验”章式，请改用 --per-chapter 逐方法章检查。
+

@@ -1,0 +1,29 @@
+============================================================
+Table Structure Check Report
+============================================================
+File: D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\evals\fixtures\thesis-project\main.tex
+Tables found: 1
+Status: FAIL
+Issues: 7
+WARN: appendix-gbk.tex: 非 UTF-8 编码，已按 GB18030 解码（建议统一转为 UTF-8）
+
+------------------------------------------------------------
+
+[BOOKTABS_MISSING] (1 issues)
+  chapters/experiment.tex:12: [WARNING] Table uses \hline (3x) instead of booktabs commands. Replace with \toprule/\midrule/\bottomrule.
+
+[CAPTION_POSITION] (1 issues)
+  chapters/experiment.tex:12: [WARNING] Caption should appear above the table (before \begin{tabular}), not below.
+
+[HLINE] (3 issues)
+  chapters/experiment.tex:14: [WARNING] \hline detected. Use \toprule, \midrule, \bottomrule (booktabs) instead.
+  chapters/experiment.tex:16: [WARNING] \hline detected. Use \toprule, \midrule, \bottomrule (booktabs) instead.
+  chapters/experiment.tex:18: [WARNING] \hline detected. Use \toprule, \midrule, \bottomrule (booktabs) instead.
+
+[PACKAGE] (1 issues)
+  Global: [WARNING] booktabs package not loaded. Add \usepackage{booktabs} for professional three-line tables.
+
+[VERTICAL_LINES] (1 issues)
+  chapters/experiment.tex:12: [ERROR] Vertical lines detected in column spec: {|c|c|}. Three-line tables must not have vertical lines.
+
+============================================================

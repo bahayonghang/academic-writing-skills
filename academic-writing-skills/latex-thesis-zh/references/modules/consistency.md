@@ -50,3 +50,41 @@ With a main-file input, the checker uses the existing loader's include expansion
 Default behavior changes correct false positives and false passes: distinct concepts are no longer merged, late definitions are detected, legal repeated expansions are retained, and uncertain meanings are review candidates. These checks do not certify the semantic consistency of a real thesis.
 
 > For logic and coherence checks (non-terminology), see [`logic.md`](logic.md). Full reference: [`../writing/logic-coherence.md`](../writing/logic-coherence.md)
+
+## Opt-in governance and abbreviation style
+
+These checks stay off unless a flag is present. Without `--governance` or `--abbreviation-style`, the existing `--terms`, `--abbreviations`, and full-report output stay unchanged. `--governance` requires `--custom-terms` and extends the same JSON object. It does not add a second file, a schema version, or a migration layer. `zh` and `en` groups keep the existing loader. `banned`, `locked`, and `exempt` are read only when `--governance` is on.
+
+```bash
+uv run python scripts/check_consistency.py main.tex --governance --custom-terms terms.json
+uv run python scripts/check_consistency.py main.tex --abbreviation-style
+```
+
+```json
+{
+  "zh": [["合成甲", "合成乙"]],
+  "en": [],
+  "banned": {
+    "旧称": {
+      "candidates": [
+        {"text": "候选甲", "slot": "过程"},
+        {"text": "候选乙", "slot": "对象"}
+      ]
+    }
+  },
+  "locked": {"标准名": ["旧别名"]},
+  "exempt": {"environments": ["localterms"]}
+}
+```
+
+| Field | Required behavior |
+| --- | --- |
+| `banned` | Each term needs one non-empty `text`. `slot` may be omitted. One hit lists every candidate and slot. |
+| `locked` | The canonical name maps to forbidden variants. The report names that canonical form and does not infer it from frequency. |
+| `exempt` | Add environment names only. Fixed protection cannot be cancelled. |
+
+The scan uses assembled visible text and source positions. It skips comments, the preamble, math, cite/ref/label payloads, paths, `verbatim` / `lstlisting` / `minted`, `thebibliography`, and user-named environments. Inline `\verb`, `\lstinline`, and `\texttt` contents are still scanned; only the `verbatim`, `lstlisting`, and `minted` environments are masked. An abbreviation list is exempt only for an `abbreviation`, `abbreviations`, or `acronym` environment, or for a region titled `缩略词表` or `缩略词对照表`. An ordinary table is not exempt. External `.bib` files are not scanned, and titles are not imported as candidates. Chinese terms match literally. ASCII terms use identifier boundaries. Unknown custom macros make coverage incomplete, so no hit is not a claim of no problem. Invalid JSON, a missing file, or `--governance` without `--custom-terms` is a non-zero CLI error and does not print a pass conclusion.
+
+`--abbreviation-style` is independent. After the same protected-span mask, a qualified first mention is `中文名称（英文全称，缩写）`. Chinese and English commas are both recognized. The reported project form is `（英文全称，缩写）`. Only a name with a clear in-sentence boundary is registered. An unclear boundary produces one `NEEDS-LLM` coverage note, not a false second-mention hit. Abbreviations may mix case, digits, and internal hyphens, such as `ZX`, `AbX`, and `X-2`. After a registered pair, `中文名（缩写）` or `中文名 缩写` is a candidate. A first mention that is only `中文名（缩写）` does not prove a qualified expansion and does not create a second-mention finding. Title Case inside a full parenthetical is a candidate only; proper-name case is not rewritten. Math parentheticals and `X 为中文名` glosses are not XOR issues. Combined with `--terms` or `--abbreviations`, same-position same-class candidates are deduped. The old definition recognizer stays. New JSON fields appear only in the new mode.
+
+Findings use `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`. They name the local word, field, and position. They do not supply a replacement sentence.

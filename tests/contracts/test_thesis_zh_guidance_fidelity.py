@@ -8,7 +8,7 @@ import re
 
 import pytest
 
-from tests.support.paths import SKILLS_ROOT
+from tests.support.paths import REPO_ROOT, SKILLS_ROOT
 
 SKILL = SKILLS_ROOT / "latex-thesis-zh"
 FIXTURE = "evals/fixtures/guidance_fidelity.tex"
@@ -157,3 +157,139 @@ def test_historical_eval_prefix_is_unchanged(
     items = json.loads(_read(f"evals/{filename}"))[key]
     prefix = json.dumps(items[:count], ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     assert hashlib.sha256(prefix.encode("utf-8")).hexdigest() == digest
+
+
+_METHOD_LABELS = (
+    "M-CODLANG",
+    "M-FIGTEXT",
+    "M-FORMDUPE",
+    "M-SEMICOLON",
+    "N-ISOLATE",
+    "M-DETAILINV",
+    "M-TERMREG",
+    "M-REDUNDANT",
+)
+
+
+def test_method_expression_labels_are_llm_document_checks() -> None:
+    text = _read("references/writing/method-description-guide-zh.md")
+    for label in _METHOD_LABELS:
+        start = text.index(label)
+        window = text[start : start + 400]
+        assert "范围" in window
+        assert "问题例" in window
+        assert "改写例" in window
+        assert "风险" in window
+        assert "LLM" in window
+    assert "不得把二者报成同一缺陷" in text
+    assert "PR-EQ-NARR" in text
+    assert "M-REPRO" in text and "复现" in text
+    assert "polish_unit_zh.py --verify" in text
+    assert "UP-MATH" in text
+    assert "不声称" in text and "语义" in text
+    assert "不改数学" in text
+    assert "若实现脚本" not in text
+    assert "若以后实现" not in text
+    assert "[Severity:" in text and "[Priority:" in text and "[LLM]" in text
+
+
+def test_claim_forward_three_dispositions_keep_and_reject_examples() -> None:
+    text = _read("references/writing/claim-forward-zh.md")
+    assert text.count("可保留") >= 3
+    assert text.count("不可改") >= 3
+    assert "未验证的弱点不得写成设计优点" in text
+    assert "不得删除" in text
+    assert "不是禁词正则" in text
+    assert "门禁" in text and "筑牢" in text
+    assert "CF-METAPHOR" not in text
+    assert "只由 LLM" in text
+    assert "[Severity:" in text and "[LLM]" in text
+
+
+def test_deleted_preview_keeps_an_antecedent_and_legal_sequence_words() -> None:
+    text = _read("references/writing/paragraph-roles-zh.md")
+    assert "上述" in text and "先行词" in text and "最短" in text
+    assert "不得把删掉的预告贴回去" in text
+    bridge = text.split("最短桥接：", 1)[1].splitlines()[0]
+    revised = text.split("% 修改后：", 1)[1].splitlines()[0]
+    assert "上述" in bridge and "上述" in revised
+    assert "下一节先对齐" not in bridge
+    assert "首先" in text and "其次" in text
+    assert "不是去重" in text
+    assert "只由 LLM" in text
+    assert "[Severity:" in text and "[LLM]" in text
+
+
+def test_abstract_quotes_and_english_punctuation_keep_payload() -> None:
+    text = _read("references/writing/abstract-structure.md")
+    assert "U+201C" in text and "U+201D" in text
+    assert "英文标点" in text
+    assert "中文通过" in text and "中文不通过" in text
+    assert "英文通过" in text and "英文不通过" in text
+    assert "lee2020" in text
+    assert "一步估计" in text
+    assert "T-QUOTE" not in text
+    assert "只由 LLM" in text
+    assert "`analyze_abstract.py` 不检查引号" in text
+
+
+def test_title_and_arrangement_examples_do_not_authorize_body_edits() -> None:
+    structure = _read("references/writing/structure-guide.md")
+    introduction = _read("references/writing/introduction-guide-zh.md")
+    limit = "不授权改正文数学、受保护术语或模型名。"
+    assert limit in structure and limit in introduction
+    assert "非平稳序列的状态估计方法" in structure
+    assert "第 3 章给出状态估计方法" in introduction
+    assert "只由 LLM" in structure and "只由 LLM" in introduction
+    assert "[LLM]" in structure and "[LLM]" in introduction
+
+
+def test_c6_routes_stay_on_existing_modules() -> None:
+    skill = _read("SKILL.md")
+    routing = _read("references/modules/routing-rules.md")
+    for token in (
+        "张量",
+        "交换轴",
+        "Concat",
+        "方法一致",
+        "claim-forward",
+        "上述",
+        "U+201C",
+        "公式符号",
+        "structure",
+        "不新增脚本码",
+    ):
+        assert token in skill
+        assert token in routing
+    modules = re.findall(r"^\| `([^`]+)`\s*\|", skill, re.M)
+    assert "logic" in modules and "claim-forward" in modules
+    assert "abstract" in modules and "structure" in modules
+    assert "method-expression" not in modules
+    assert modules.count("logic") == 1
+    method_spec = (
+        REPO_ROOT / ".trellis/spec/academic-writing-skills/method-narrative-contract.md"
+    ).read_text(encoding="utf-8")
+    claim_spec = (
+        REPO_ROOT / ".trellis/spec/academic-writing-skills/claim-forward-contract.md"
+    ).read_text(encoding="utf-8")
+    role_spec = (
+        REPO_ROOT / ".trellis/spec/academic-writing-skills/paragraph-roles-contract.md"
+    ).read_text(encoding="utf-8")
+    assert "不得把二者报成同一缺陷" in method_spec
+    assert "不新增观察码" in claim_spec
+    assert "不得把删掉的预告贴回去" in role_spec
+
+
+def test_c6_eval_checks_route_and_do_not_rewrite_without_a_live_run() -> None:
+    payload = json.loads(_read("evals/evals.json"))
+    ids = [item["id"] for item in payload["evals"]]
+    assert ids == sorted(ids)
+    assert len(set(ids)) == len(ids)
+    assert ids[-1] == 58
+    entry = payload["evals"][-1]
+    assert "logic" in entry["expected_output"]
+    assert "claim-forward" in entry["expected_output"]
+    assert "设计优点" in entry["expected_output"]
+    assert "不代表已运行" in entry["expected_output"]
+    blob = json.dumps(entry, ensure_ascii=False)
+    assert "live model passed" not in blob

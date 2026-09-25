@@ -57,3 +57,7 @@ uv run python $SKILL_DIR/scripts/check_claim_forward.py main.tex --section concl
 ## 词表
 
 `references/writing/claim-forward-terms-zh.yaml`（字段：`self_weakening`（含 ZH 特有 `subject_gate`）、`hedges`、`disclaim_openers`、`direction_markers`、`process_openers`、`limitation_section_titles`）。脚本内置等值回退表，YAML 缺失或某字段非法时按字段回退。词表基线来自 5 篇私有博士学位论文（只做研究，不进测试），搭配级精度按该基线调过；调词表改 YAML，不改代码。
+
+## 弱点写成优点（仅 LLM）
+
+把弱点写成优点时，读 [claim-forward-zh.md](../writing/claim-forward-zh.md) 的三类处置。判断只由 `[LLM]` 完成。不新增脚本码。未验证的弱点不得写成设计优点。不利结果不得删除。比喻词不是禁词表。

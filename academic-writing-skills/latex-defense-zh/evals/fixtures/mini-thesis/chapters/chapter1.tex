@@ -1,0 +1,44 @@
+\chapter{绪论}
+\label{chap:intro}
+
+\section{研究背景与意义}
+城市交通流量预测是交通管理的基础任务。示例城市的检测器覆盖率不足，观测数据稀疏。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{chapter1/background.png}
+  \bicaption{示例城市检测器分布}{Distribution of detectors in the example city}
+  \label{fig:c1-background}
+\end{figure}
+
+\section{国内外研究现状}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{chapter1/literature.png}
+  \bicaption{示例文献数量统计}{Statistics of example publications}
+  \label{fig:c1-literature}
+\end{figure}
+
+\subsection{基于统计模型的预测方法}
+统计模型结构简单，但难以描述非线性关系。
+
+\subsection{基于深度学习的预测方法}
+深度学习方法精度较高，但依赖完整观测。
+
+\subsection{稀疏观测下的预测方法}
+现有稀疏观测方法多针对单一数据源。% 这是一条注释
+
+\section{研究问题与关键挑战}
+\begin{enumerate}
+  \item 观测稀疏导致空间相关性难以刻画。
+  \item 单一数据源难以覆盖复杂场景。
+  \item 模型部署后缺少在线更新机制。
+\end{enumerate}
+
+\section{研究内容与章节安排}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter1/organization.png}
+  \bicaption{论文组织结构}{Organization of the thesis}
+  \label{fig:c1-organization}
+\end{figure}

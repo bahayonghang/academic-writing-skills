@@ -10,7 +10,17 @@
 
 ### Added
 
-- 暂无。
+- `paper-writing-studio` 登记为第七个公开 catalog 技能：`SKILL.md` 改为仓库技能契约结构，版本对齐 `6.0.0`；
+  新增三份示例、`evals/evals.json` 与 `evals/trigger_eval.json`；进入安装器、契约测试列表与双语文档。
+- `latex-defense-zh` 登记为第八个公开 catalog 技能：从中文学位论文 XeLaTeX 仓库只读提取清单，按时长与阶段规划页面，
+  渲染燕山或通用主题的 Beamer 答辩稿与讲稿，并以 21 个 D-* 码的质量门与逐页预览检查；新增 `SKILL.md`、三份示例、
+  evals、答辩提问准备 agent、双语技能页与 `.trellis/spec/academic-writing-skills/defense-deck-contract.md`。
+
+### Fixed
+
+- `latex-defense-zh`：`figure-grid` 帧没有小节条时，子图网格被 Beamer 当作帧副标题吞掉而不显示，改用 `\begingroup` 分组；
+  `build_deck.py --force` 不再重写内容未变的文件，避免 latexmk 跳过重编后 `defense.pdf` 早于 `defense.tex` 而误报 D-COMPILE。
+- `docs/scripts/check_resource_sync.py` 的资源清单排序改为与平台无关（按路径分段不区分大小写），Linux 与 Windows 生成同一清单。
 
 ## [6.0.0] - 2026-07-16
 

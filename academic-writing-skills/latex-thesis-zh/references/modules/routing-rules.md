@@ -62,6 +62,7 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 - 涉及“方法章怎么写”“一章一方法+同章实验章式”“方法章骨架/五段结构”“实验部分不充分/像项目汇报（逐方法章）”“论文有小论文拼接感/源论文表述”“方法章草稿态残留/占位表格”时，先按正文确认确属方法章，再走 `experiment` 加 `--per-chapter`（逐方法章查 E-DATA/E-ATTR/E-REF/E-FIG/E-METRIC/E-PARAM/E-ABL/E-ECHO）与 `logic`（默认扫 P-PAPER 拼接表述、单章文件配 `--first-chapter N`）、`format`（F-NOTE/F-PLACEHOLDER），并补读 `references/writing/method-chapter-guide-zh.md`：五段骨架、章引言承上分级（并列方法章可不承上）、实验工业版规范、防误报红线 12 条（无显著性检验/人工经验基线/教科书基础节均合法，不报）。只有章号而没有正文信息时先读取章标题、直属小节和代表段落，不凭“第三/四/五/六章”运行 `--per-chapter`。
 - 涉及中文学位论文的“工程应用章/系统实现章/平台应用章”“架构和技术栈像清单”“服务机制怎么写”“界面操作像产品说明”“工程验证层级”时，先确认论文语境，并按正文是否承担“研究工件 → 运行约束 → 系统机制/操作任务 → 分级验证”来判定章型；命中后走既有 `logic` 并补读 `references/writing/engineering-application-chapter-guide-zh.md`。工程章不新增脚本或 flag，也不对整章运行方法章 `--per-chapter`；只有用户明确请求或确有定量结果小节时，才对该小节追加既有 `experiment --results-analysis`。离线回放、影子观察、受控试点、生产/闭环证据不得越级，可靠性、业务收益、执行/跟踪保真度和人工可用性分别取证；无论文语境的 API/部署 README 不触发本技能。
 - 涉及“结果分析太浅”“只报数字”“次优比较缺失”“图表描述未定位误差”“完整模型结果被归因到单个组件”“生成样本与筛选后选定集混用”“隐藏/删除展示通道”“冻结聚合是否重算”“缺失率分母/共同样本”时，走 `experiment --results-analysis`，并补读 `references/writing/results-analysis-guide-zh.md`。展示变化不授权统计重算；共同集合或分母未知时保留不可比较状态。RA-* 只定位启发式候选，不能代替 `R-*` 人工与 LLM 清单，也不覆盖新增的自然语言口径核对。歧义速判：结果分析的事实组织和证据深度归本旗标；论断强度与证据阶梯的语义裁决读 `references/writing/over-claim-guard.md`；AI 痕迹与防御性推测解释走 `deai` 及其 `[LLM]` 组合判据。
+- 涉及“表、正文和本章小结里的终值是否一致”“评价集名称是否混用”“不同指标是否被写成可互推”时，走 `experiment --cross-surface`，可加 `--section`。`--cross-surface-terms` 只能与该开关同时使用。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字。不传 `--cross-surface` 时不改变 `--results-analysis`。
 - 涉及“全篇动机主线/红线是否贯通”（绪论的每条承诺是否都被验证、被回应）时，用 `logic` 加 `--motivation-thread`：它附加一份只读的承诺映射 + 闭合映射启发式诊断，且不改变 `logic` 的默认输出。
 - 需要分级去 AI / AIGC 维度分析时，用 `deai` 加 `--tier light|medium|heavy`：缩放阈值、增加 D1 句长检查、按维度（D1-D5）标注；不传 `--tier` 时保持默认输出。
 - 涉及“实验像项目汇报”“讨论太浅”“结论不完整”“缺少限制与未来工作”时，默认走 `experiment`，不要误判成纯语言润色。
@@ -75,3 +76,55 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
   - vs `logic`：段落顺序、论证结构、章节主线不在 `expression`，仍走 `logic`。
 - 涉及“对照学校规范逐项检查”“终检/定稿检查/毕业前格式自查”“规范符合性”时走 `spec-check`：先确认学校与学位（燕山大学用 `--template yanshan`，清华/北大/无专用模板分别用 `--template thuthesis|pkuthss|generic`，四份模板快照均带逐项清单）；模板未识别且无清单时，请用户提供学校名或规范文件（整理成 `--spec-file` 清单）。脚本报告中 NEEDS-LLM 项按 `references/modules/spec-check.md` 第 4 步逐项判读，MODULE 项执行对应模块命令，MANUAL 项以“打印前自查单”原样交付，不要替用户宣称版式已符合。
 - 涉及“盲审”“外审”“送审版本”“匿名版/隐名”“隐去姓名/致谢”时走 `blind-review`：`--check` 定位泄露点（能拿到姓名时加 `--author`/`--supervisor` 全文扫描）；生成盲审版先 `--generate --dry-run` 给用户确认计划再生成——只写 `_blind` 副本、原文件字节不变；副本中 `TODO-BLIND(R2)` 成果条目与姓名句由你按 `references/modules/blind-review.md` 给出 `[LLM]` 改写建议、用户确认后落入副本（署名次序是事实，不得推断）。只问格式合规仍走 `spec-check`。
+
+## 可选术语治理、缩写体例与程度词
+
+项目术语治理、缩写体例和程度词只在显式开关下运行。`check_consistency.py` 的 `--governance` 必须配合 `--custom-terms`。`--abbreviation-style` 与治理开关独立。`check_style_zh.py` 的 `--degree-wording` 默认关闭。这三项只给 `[Script]`、Info/P3 和 `Meaning-Check: NEEDS-LLM` 的局部词、字段或位置，不输出整句替换。不传这些开关时原输出保持不变。复制到论文工程后只依赖技能包内资源。
+
+## 可选学院数字、公式、表身和中文题注
+
+`--school yanshan-ee-2025` 可以加在 `check_style_zh.py`、`check_format.py`、`check_tables.py` 和 `check_references.py` 上。默认和 `--school generic` 不增加候选。不接受单独的 `yanshan`。
+数字与单位只在 `check_style_zh.py`。公式源码只在 `check_format.py`。表身「同上」「同左」、同单位列表头和表题末标点只在 `check_tables.py`。非表浮动体的中文题注末标点只在 `check_references.py`。
+本模式不在 `check_references.py` 增加引文位置、页码或文献著录规则。
+候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只报告局部位置，不输出整句替换，不改写数学。不传 `--school` 时原输出不变。
+
+## 可选引文位置、重复页码、著录提示与综述递进
+
+引文位置、重复引用页码、学院著录提示和综述递进密度只在显式开关下运行。
+`check_references.py` 的 `--author-cite` 与 `--repeat-cite` 相互独立，也可与 `--school` 组合。
+`verify_bib.py` 的 `--college-details` 只能与 `--standard gb7714` 或 `--standard gb7714-2025` 同时使用。
+`analyze_literature.py` 的 `--progression-density` 可与 `--section` 组合，且与 `--intro-citations` 互斥。
+候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置、键或字段，不输出替换句，不改写引用键。
+不传这些开关时原输出不变。中文姓名不确定时写明作者主语不确定。重复页码不发明页码。递进阈值标为 `UNVERIFIED`。
+方向与组织见 [`literature-progression-zh.md`](../writing/literature-progression-zh.md)。
+
+## 可选跨表面数字
+
+`analyze_experiment.py --cross-surface` 核对同章结果表、正文和本章小结中已经唯一绑定的终值。
+`--cross-surface-terms FILE` 只能与 `--cross-surface` 同时出现。
+JSON 只接受 `metrics` 与 `eval_sets`。给出的字段替换该字段默认词表，缺省字段保留默认，空数组表示该维没有覆盖。
+默认指标是 `准确率`、`精确率`、`召回率`、`F1`、`误差`。默认评价集是 `测试集`、`验证集`、`训练集`。
+`RA-XS-BODY`、`RA-XS-SUMMARY`、`RA-XS-MISSING`、`RA-XS-EVALSET`、`RA-XS-METRIC` 和 `RA-XS-COVERAGE` 都是 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`。
+没有差异时仍报告已比较键数和未覆盖数，并说明不是全文合规证明。
+不传 `--cross-surface` 时不增加这些统计。脚本不读外部数据，不复算比例，不输出修正数字。
+
+## 学院 2025 清单路由
+
+研究生院规范终检走 `--template yanshan`。电气工程学院 2025 清单走 `--template yanshan-ee-2025`，读 `yanshan-ee-2025.md`。二者并存，不能用研究生院阈值判定学院条目。
+
+`--degree master` 仍保留 111 行。第 74 与第 90 项为博士，硕士 SKIP。第 10、47、66、92 项为通用，硕士不 SKIP。
+
+静态结果不能代替人工复核。`script:third_person` 只给 NEEDS-LLM 候选。`module:` 提示不执行。局部命中不把复合项标为 PASS。第 87 与第 111 项保持 `manual`。`--author-cite` 不是学院第 42 条原文。不使用 `--pdf`。
+
+## 方法表达、三类处置、删后桥接、摘要引号与标题符号
+
+下列请求不新增模块，也不新增脚本码或阈值。判断只由 `[LLM]` 完成。
+
+- 张量、交换轴或 Concat 走 `logic`，读 [method-description-guide-zh.md](../writing/method-description-guide-zh.md)。
+- 正文用词与架构图标注不一致时，仍走 `logic`，按同一指南做方法一致核读。不静默改模型名或受保护术语。
+- 弱点写成优点时走 `claim-forward`，读 [claim-forward-zh.md](../writing/claim-forward-zh.md)。未验证的弱点不得写成设计优点，不利结果不得删除。
+- 删去预告后“上述”没有先行词时走 `logic`，读 [paragraph-roles-zh.md](../writing/paragraph-roles-zh.md)。补最短桥接，不把删掉的预告贴回去，也不改写合法的“首先/其次”。
+- 摘要引号走 `abstract`，读 [abstract-structure.md](../writing/abstract-structure.md)。中文引语用成对 U+201C 与 U+201D，英文摘要用英文标点。引语的措辞、数学和引用键保持不变。
+- 标题或章节安排句中的公式符号走 `structure`，读 [structure-guide.md](../writing/structure-guide.md) 与 [introduction-guide-zh.md](../writing/introduction-guide-zh.md)。该检查不改正文数学、受保护术语或模型名。
+
+`M-FORMDUPE` 是语义复述。`PR-EQ-NARR` 只定位逐算子翻译。同一位置去重后由 LLM 裁定，不得把二者报成同一缺陷。`N-ISOLATE` 与 `M-REPRO` 不得删除复现所需信息，先核该信息是否属于另一段。分号判断指向 [academic-style-zh.md](../writing/academic-style-zh.md#punctuation-prose) 已有的 LLM 层。拆句保持数学记号多重集，指路 `polish_unit_zh.py --verify`。`UP-MATH` 只承诺记号不变，不声称散文语义不变，也不改数学。

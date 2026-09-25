@@ -54,3 +54,10 @@ Purpose: Check thesis page layout, heading format, figure/table/equation numberi
 - Equation numbers right-aligned without being displaced to a separate line
 - Displayed formulas split only when width, alignment, derivation, grouping, or readability requires it
 - Font and size compliance per heading level — 以本校最新格式规范为准
+
+## 学院公式源码（仅 `--school yanshan-ee-2025`）
+
+`check_format.py --school yanshan-ee-2025` 在原始装配文本上检查编号公式的引导冒号、公式末的中文句号或逗号、续行是否重复关系符或运算符、可见的「上式」「下式」，以及「式中」「其中」的源码间隔和破折号。
+不在抽掉数学的可见文本上做这些判断。`cases`、独立成组定义和约束行不报续行。复杂公式和未闭合环境不记为通过。
+视觉上的顶格和破折号对齐仍人工。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，不改写数学，不输出整句替换。
+缺省和 `--school generic` 不启用。细则见 [formula-guide.md](../formatting/formula-guide.md)。AMS 推导链示例不是学院源码要求。

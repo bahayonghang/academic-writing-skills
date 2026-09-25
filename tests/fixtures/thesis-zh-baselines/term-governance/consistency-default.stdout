@@ -1,0 +1,21 @@
+[INFO] Checking 10 files...
+============================================================
+Consistency Check Report / 一致性检查报告
+============================================================
+按入口 include 图检查装配全文顺序；覆盖范围受 loader 警告限制。
+[WARNING] WARN: appendix-gbk.tex: 非 UTF-8 编码，已按 GB18030 解码（建议统一转为 UTF-8）
+
+[1] Term Consistency / 术语一致性
+----------------------------------------
+Status: ⚠️ 1 candidates found
+
+  Group: 深度学习, 深层学习
+    - '深度学习': 1 times
+    - '深层学习': 1 times
+  Suggestion: NEEDS-LLM：同组表面形式共现，请核对是否指同一概念；仅在语义相同且无切换理由时统一，频次和分组顺序不决定规范名。
+
+[2] Abbreviation Check / 缩略语检查
+----------------------------------------
+Status: ✅ No abbreviation issues found within checked scope
+
+============================================================

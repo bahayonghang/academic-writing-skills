@@ -121,3 +121,17 @@
 使用现有 `compile.py` wrapper，并传入论文实际入口文件和 recipe。脚本检查通过或生成 PDF
 都不等于视觉验收完成。编译后实际查看受影响表格及相邻页。如果没有查看渲染页面，将视觉
 结果标为 `missing evidence`。
+
+## 学院源码检查（仅 yanshan-ee-2025）
+
+这些候选只在 `check_tables.py --school yanshan-ee-2025` 下出现。默认和 `--school generic` 不产生它们。
+没有单独的 `yanshan` 别名。每条发现都是 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`。
+它只指出局部单元格或题注，不给出替换句。
+
+- `TB-SAMEAS`：`同上` 或 `同左` 出现在表身。题注和表注除外。
+- `TB-UNITHEAD`：简单 `tabular` 中至少三行数值共用同一个字面单位，而表头没有该单位。脚本不换算单位。`multicolumn`、`multirow` 或嵌套表给出未覆盖说明，不合并成一条命中。
+- 仅给 `TB-COVERAGE`：`longtable`、`sidewaystable`、`tabularx`，以及第二个 `tabular` 出现在同一 `table` 浮动体内的情况，每个浮动体只给一条覆盖说明，不扫描 `同上`/`同左`、同单位表头和题注标点。
+- 空白单元格和破折号不能证明某量未测或测过未发现。该语义保持人工阅读。
+- 本脚本的 `CAP-PUNCT` 只覆盖表浮动体的中文末标点。图浮动体归 `check_references.py`。
+
+学院措辞来自 2025 年电气工程学院清单。它不写入已冻结的 `templates/yanshan.md`、`thuthesis.md`、`pkuthss.md` 或 `generic.md`。

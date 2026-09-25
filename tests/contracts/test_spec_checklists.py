@@ -105,6 +105,25 @@ def test_yanshan_checklist_floor():
         assert section in bases, f"yanshan 清单缺少 {section}x 章的条目"
 
 
+def test_college_checklist_is_the_only_third_person_caller():
+    templates = _checklist_templates()
+    college = templates["yanshan-ee-2025"]
+    assert [item.id for item in college] == [f"YSE-{number:03d}" for number in range(1, 112)]
+    assert [item.id for item in college if item.method == "script:third_person"] == ["YSE-088"]
+    by_id = {item.id: item for item in college}
+    assert by_id["YSE-010"].scope == "通用"
+    assert by_id["YSE-047"].scope == "通用"
+    assert by_id["YSE-066"].scope == "通用"
+    assert by_id["YSE-092"].scope == "通用"
+    assert by_id["YSE-074"].scope == "博士"
+    assert by_id["YSE-090"].scope == "博士"
+    for name, items in templates.items():
+        if name == "yanshan-ee-2025":
+            continue
+        assert all(item.method != "script:third_person" for item in items)
+    assert "yanshan-ee-2025" not in check_spec.TEMPLATE_THRESHOLDS
+
+
 def test_module_command_hints_match_router_scripts():
     """MODULE_COMMANDS 提示命令里的脚本必须真实存在（防文档漂移）。"""
     for mod, cmd in check_spec.MODULE_COMMANDS.items():

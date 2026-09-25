@@ -184,3 +184,26 @@ Methodological principles regarding cross-chapter deduplication, functional divi
 - K. Houston, [How to Write Mathematics](https://www.maths.ox.ac.uk/system/files/attachments/How%20to%20write%20mathematics.pdf) (formulas are shorthand notation, explain relationships rather than detailing every step, corresponding to W10)
 
 Tsinghua Graduate School's Thesis Writing Guide §4.5 (chapter intro does not repeat introduction review) and §4.6 (conclusion does not simply repeat chapter summaries) are documented in Sections 3 and 6 of [`method-chapter-guide-zh.md`](method-chapter-guide-zh.md), and their standards are directly maintained here.
+
+## Antecedent bridge after a deleted preview (LLM only)
+
+The judgment belongs only to the LLM. After a preview sentence is deleted, a pronoun still needs its antecedent. Name that object in one short sentence so the pronoun still points at it. Do not paste the deleted preview back.
+
+```text
+删除前：下一节先对齐采样时钟，再调度任务。上述两项完成后，系统才输出设定值。
+删除预告后：上述两项完成后，系统才输出设定值。上述没有先行词。
+最短桥接：本节完成采样时钟对齐与任务调度。上述两项完成后，系统才输出设定值。
+不得贴回：下一节先对齐采样时钟，再调度任务。上述两项完成后，系统才输出设定值。
+```
+
+A legal sequence word names a distinct action and gives its order. For example: first align the sampling clock, second schedule the task, and last emit the set-point. Here each of 首先, 其次, and 最后 owns one action. Do not rewrite the sentence merely because those words appear.
+
+Replacing a word and repeating the claim is not deduplication. Changing “first align, second schedule” into “align, then schedule” leaves both paragraphs as the same claim. Delete the earlier preview when it has no unique fact, and keep the later paragraph. If 上述 then has no antecedent, add the shortest bridge.
+
+```latex
+% 段落职责（合成）[Severity: Minor] [Priority: P2]: [LLM] 删预告后“上述”没有先行词
+% 问题：预告句删除后，代词没有所指
+% 原文：上述两项完成后，系统才输出设定值。
+% 修改后：本节完成采样时钟对齐与任务调度。上述两项完成后，系统才输出设定值。
+% 理由：桥接只补先行词。上述仍指采样时钟对齐与任务调度。不得把删掉的预告贴回去。合法的首先/其次标出不同步骤的顺序，不得改写。换词复述不是去重。
+```

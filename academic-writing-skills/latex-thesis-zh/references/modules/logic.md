@@ -220,3 +220,7 @@ subsection that needs analysis. Missing APIs, formulas, metrics, deployment fact
 | Sequence | 首先、随后 | first, subsequently |
 
 > Full details: see [`../writing/logic-coherence.md`](../writing/logic-coherence.md)
+
+## 文档层方法表达与删后桥接（仅 LLM）
+
+张量、交换轴或 Concat，以及正文与架构图叫法不一致，读 [method-description-guide-zh.md](../writing/method-description-guide-zh.md)。删去预告后“上述”没有先行词，读 [paragraph-roles-zh.md](../writing/paragraph-roles-zh.md)。两处都只由 `[LLM]` 判断。`M-FORMDUPE` 与 `PR-EQ-NARR` 不是同一缺陷。不新增脚本码。

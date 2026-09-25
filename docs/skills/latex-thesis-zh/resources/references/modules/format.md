@@ -54,3 +54,10 @@ All three scan visible prose only and exclude math environments, verbatim conten
 - Equation numbers right-aligned without displacement to a separate line
 - Displayed formulas split only when width, alignment, derivation, grouping, or readability requires it
 - Font and size compliance at each heading level, based on the university's latest formatting rules
+
+## College equation source checks (`--school yanshan-ee-2025` only)
+
+`check_format.py --school yanshan-ee-2025` checks, on the raw assembled source, the Chinese colon before a numbered display, a Chinese period or comma after the last math token, a repeated relation or operator at the start of a continuation, visible 上式 / 下式, and the source spacing and dash of 式中 / 其中.
+It does not run those rules on visible text that has had the mathematics removed. `cases`, separate left-hand definitions, and constraint rows do not produce a continuation hit. A complex formula or an unclosed environment is not recorded as a pass.
+Visual indentation and dash alignment stay manual. Candidates are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`. The script does not rewrite mathematics and does not emit a replacement sentence.
+The default and `--school generic` do not enable the checks. Details are in [formula-guide.md](../formatting/formula-guide.md). The AMS derivation example is not the college source rule.

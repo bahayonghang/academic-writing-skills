@@ -231,6 +231,13 @@ function buildSidebar(prefix: string): SidebarItem[] {
       items: skillItems(prefix, "latex-thesis-zh"),
     },
     {
+      text: isZh
+        ? "中文答辩稿 (latex-defense-zh)"
+        : "Thesis Defense Decks (latex-defense-zh)",
+      collapsed: false,
+      items: skillItems(prefix, "latex-defense-zh"),
+    },
+    {
       text: isZh ? "Typst 论文 (typst-paper)" : "Typst Papers (typst-paper)",
       collapsed: false,
       items: skillItems(prefix, "typst-paper"),
@@ -241,6 +248,13 @@ function buildSidebar(prefix: string): SidebarItem[] {
         : "Bib Search (bib-search-citation)",
       collapsed: false,
       items: skillItems(prefix, "bib-search-citation"),
+    },
+    {
+      text: isZh
+        ? "期刊风格润色 (paper-writing-studio)"
+        : "Venue Polish (paper-writing-studio)",
+      collapsed: false,
+      items: skillItems(prefix, "paper-writing-studio"),
     },
     {
       text: isZh ? "投稿信 (cover-letter)" : "Cover Letters (cover-letter)",
@@ -263,7 +277,7 @@ function buildSidebar(prefix: string): SidebarItem[] {
 export default defineConfig({
   title: "Academic Writing Skills",
   description:
-    "Skill-first documentation for LaTeX, Typst, bibliography search, paper audit, and academic cover-letter workflows",
+    "Skill-first documentation for LaTeX, Typst, bibliography search, paper audit, academic cover-letter, and thesis defense deck workflows",
 
   // Base URL for GitHub Pages
   base: "/academic-writing-skills/",

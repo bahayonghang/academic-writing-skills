@@ -1,0 +1,21 @@
+============================================================
+LaTeX Format Check Report (Chinese Thesis)
+============================================================
+File: D:\Documents\Code\Agents\academic-writing-skills\academic-writing-skills\latex-thesis-zh\evals\fixtures\thesis-project\main.tex
+Status: WARNING
+ChkTeX: Available
+Total Issues: 5
+WARN: appendix-gbk.tex: 非 UTF-8 编码，已按 GB18030 解码（建议统一转为 UTF-8）
+
+------------------------------------------------------------
+Issues:
+------------------------------------------------------------
+
+[CHINESE_CHECK] (5 issues)
+  [WARNING] chapters/achievements.tex:6: Mixed Chinese/English punctuation detected
+  [WARNING] chapters/achievements.tex:6: Mixed Chinese/English punctuation detected
+  [WARNING] chapters/achievements.tex:6: Mixed Chinese/English punctuation detected
+  [WARNING] chapters/achievements.tex:6: Mixed Chinese/English punctuation detected
+  [WARNING] chapters/experiment.tex:8: Potential oral expression in academic writing
+
+============================================================

@@ -58,7 +58,7 @@ Docs resource gate (not part of `just ci`):
 uv run --extra dev python docs/scripts/check_resource_sync.py
 ```
 
-Install the six catalog skills into this clone's (or another project's) agent
+Install the eight catalog skills into this clone's (or another project's) agent
 skill directories with the local installer. This is a maintainer helper for a
 clone of this repository. It does not replace `npx skills add`, and it does
 not verify the `npx` installer, symlink layout, or five-tool runtime discovery.
@@ -88,12 +88,14 @@ npx skills add bahayonghang/academic-writing-skills/latex-paper-en
 npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
+npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
+npx skills add bahayonghang/academic-writing-skills/latex-defense-zh
 
-# Install all six
+# Install all eight
 npx skills add bahayonghang/academic-writing-skills
 ```
 
-The six `npx skills add bahayonghang/academic-writing-skills/<skill>` command
+The eight `npx skills add bahayonghang/academic-writing-skills/<skill>` command
 strings are the documented installer surface. The `npx` installer, any symlink
 layout the installer creates, and five-tool runtime discovery stay
 **UNVERIFIED**. No captured real run is authorized in this round.
@@ -116,12 +118,14 @@ writing skills from the parent of the `paper-audit/` directory:
 ├── latex-paper-en/
 ├── latex-thesis-zh/
 ├── typst-paper/
-└── bib-search-citation/
+├── bib-search-citation/
+├── paper-writing-studio/
+└── latex-defense-zh/
 ```
 
 `audit.py` looks for `latex-paper-en/scripts`, `latex-thesis-zh/scripts`, and
 `typst-paper/scripts` next to `paper-audit/`. The recommended full collection is
-all six skill directories as siblings.
+all eight skill directories as siblings.
 
 A single `paper-audit` copy is **limited coverage**. Missing sibling scripts are
 skipped. The existing exit and gate behavior is unchanged. Recorded isolation

@@ -142,3 +142,13 @@ Until school templates are upgraded, it is generally still accepted to use the 2
 - Defense/submission for review after **2026-07-01**: First confirm whether the school’s graduate school/library has switched to the new national standard,
   Then decide the style; `verify_bib.py` of this skill supports `--standard gb7714-2025` checking according to the new national standard differences.
 - Papers that cite arXiv preprints or public data sets should be described in the new type after switching to the 2025 version.
+
+## 6. College bibliography candidates
+
+`verify_bib.py --college-details` is legal only with `--standard gb7714` or `--standard gb7714-2025`. Any other combination is a parameter error. It does not guess a school and it is not a pass. The existing standard issue sequence stays unchanged and only Info findings are appended.
+
+`book`, `phdthesis`, and `mastersthesis` need `address` or `location`. Missing `pages` is a source-check candidate. `inproceedings` missing `pages` also needs human verification of college item 101. `article` does not repeat the existing missing-field result.
+
+A full personal name is not a case violation. The script does not generate an abbreviation and does not treat `LI G Z` as correct source data. When author data exists, at most one note says to check the final `BBL/PDF`. A missing traditional page or an article number is listed for review. Do not suggest a page count from a PDF.
+
+Candidates are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`.

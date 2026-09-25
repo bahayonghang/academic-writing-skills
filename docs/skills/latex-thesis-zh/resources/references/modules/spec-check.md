@@ -12,7 +12,7 @@ uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --deg
 ```
 
 - `--template <id>`: use the checklist in `templates/<id>.md` (currently yanshan, thuthesis, pkuthss,
-  and generic). Without it, infer from documentclass; a template without a checklist causes an error
+  generic, and yanshan-ee-2025). Without it, infer from documentclass; a template without a checklist causes an error
   listing available checklists.
 - `--spec-file <path>`: use any custom rule file following the checklist-table format. This is the
   generic entry point for any university. Items referencing nonexistent checkers degrade to NEEDS-LLM
@@ -72,7 +72,7 @@ Use the same five-column Markdown table as “## 逐项检查清单” in `templ
 `conclusion_hedge` (vague conclusion wording) · `bib_count` · `bib_recency` (at least 1/3 in latest five years and at least one in latest two) ·
 `heading_len` (heading <=15 Chinese characters) · `heading_depth` (depth <=4) ·
 `cite_in_heading` (no \cite in headings) · `new_page_chapter` (each chapter starts a new page) ·
-`appendix_letter` (appendices lettered)
+`appendix_letter` (appendices lettered) · `third_person` (college item YSE-088 only; always NEEDS-LLM; never PASS)
 
 Range/lower-bound checkers use a +/-10% buffer. Values in the buffer report NEEDS-LLM because rules
 often say “generally”; values beyond it report FAIL. Length is the visible-text non-whitespace character
@@ -93,3 +93,15 @@ keywords, generic with no separator check. Missing keys retain defaults and neve
 - **“I am at Yanshan University; do my final pre-graduation check”** -> `--template yanshan`, then confirm degree from context.
 - **“Our university has no checklist”** -> ask for the original rules/PDF text, organize it first as a `--spec-file` checklist with a source for every item, let the user confirm it, and then run the final check. Never invent items from general practice.
 - **Before blind-review submission** -> run the `blind-review` module for personal-information redaction in addition to the final check.
+
+## College 2025 checklist
+
+The graduate-school final check uses `--template yanshan`. Its checklist file is `yanshan.md`. The 2025 college final check uses `--template yanshan-ee-2025`. Its checklist file is `yanshan-ee-2025.md`. The two checklists coexist. The college checklist does not use the graduate-school `TEMPLATE_THRESHOLDS`.
+
+`--degree master` and `--degree doctor` each return 111 rows. Items 74 and 90 use scope `博士`. A master's run sets SKIP and does not delete the row. Items 10, 47, 66, and 92 use scope `通用`. A doctor-only sentence stays inside the requirement. A master's run does not SKIP those items.
+
+`script:third_person` is only for item 88. It looks in visible author prose for `我们`, `笔者`, a `我` token (common non-person compounds such as 我国 or 自我 are excluded), `我认为`, and `我提出`, and it reports a location plus a short span. A hit and a miss are both NEEDS-LLM. A miss is not proof that the whole thesis is third person. An acknowledgment is bounded by its heading or standard environment. One earlier line that merely contains the word does not skip the rest of the thesis. The preamble, bibliography data, code, math, and key payloads are not scanned.
+
+`module:expression`, `module:format`, and `module:tables` hints add `--school yanshan-ee-2025`. The `module:references` hint is `check_references.py main.tex --school yanshan-ee-2025 --author-cite --repeat-cite`. The `module:bibliography` hint is `verify_bib.py references.bib --standard gb7714 --college-details`, and the user must replace the bib path. The `module:consistency` hint adds `--abbreviation-style`. It does not add `--governance` when there is no terms file. These commands are printed for a later human run. They are not executed. MODULE is not a checked state. `--author-cite` is an author-writing convention. It is not the text of college item 42.
+
+One local checker does not mark a multi-clause item PASS. Items 87 and 111 are `manual`. Do not derive a review conclusion from a FAIL count. A college checklist run with zero FAIL items exits 0. Exit 0 is not college compliance. Do not add `--pdf`, and do not read page-bottom PDF geometry.

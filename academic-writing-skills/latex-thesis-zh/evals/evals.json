@@ -1682,6 +1682,184 @@
           "description": "points to thesis-writing-guide reference guide"
         }
       ]
+    },
+    {
+      "id": 53,
+      "prompt": "请对附带的合成论文工程做可选术语治理、缩写体例和程度词检查。使用 --governance --custom-terms、独立的 --abbreviation-style，以及 check_style_zh.py --degree-wording。不要改默认检查，也不要输出整句替换。",
+      "expected_output": "路由到 consistency 的 --governance 与 --abbreviation-style，以及 expression 的 --degree-wording。治理报告 banned 的全部候选和 slot、locked 的规范名；缩写体例只在合格首现后报告二次括注、Title Case 和并列候选。程度词报告极易等局部候选，并豁免绝对误差的词位。每项均为 [Script]、Info/P3、Meaning-Check: NEEDS-LLM。不传这些开关时原输出不变。",
+      "files": [
+        "evals/fixtures/term-governance/main.tex",
+        "evals/fixtures/term-governance/terms.json",
+        "evals/fixtures/term-governance/degree.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(--governance|--abbreviation-style|--degree-wording)",
+          "description": "routes the three opt-in flags"
+        },
+        {
+          "type": "contains",
+          "text": "Meaning-Check: NEEDS-LLM",
+          "description": "script layer does not claim semantic preservation"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(候选|局部|Info/P3|\\[Script\\])",
+          "description": "reports a local candidate rather than a full-sentence replacement"
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "prompt": "请对附带的合成稿做学院数字、公式、表身和中文题注检查。四个入口都使用 --school yanshan-ee-2025。不要改默认检查，不要接受单独的 yanshan，也不要输出整句替换或改写数学。",
+      "expected_output": "路由到 check_style_zh.py、check_format.py、check_tables.py 和 check_references.py 的 --school yanshan-ee-2025。数字间隔和千分空只在 style；公式引导、末标点、续行、上式和下式、式中只在 format；表身同上和同单位表头、表题末标点只在 tables；非表浮动体中文题注只在 references。每项均为 [Script]、Info/P3、Meaning-Check: NEEDS-LLM。默认和 --school generic 不新增候选。",
+      "files": [
+        "evals/fixtures/number-equation-table/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(--school|yanshan-ee-2025)",
+          "description": "routes the college school flag"
+        },
+        {
+          "type": "contains",
+          "text": "Meaning-Check: NEEDS-LLM",
+          "description": "script layer does not claim semantic preservation"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(候选|局部|Info/P3|\\[Script\\])",
+          "description": "reports a local candidate rather than a full-sentence replacement"
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "prompt": "请对附带的合成稿做引文位置、重复引用页码、学院著录提示和综述递进密度检查。使用 --author-cite、--repeat-cite、verify_bib.py --standard gb7714 --college-details，以及 analyze_literature.py --progression-density。不要改默认检查，不要发明页码或缩写姓名，也不要输出替换句。",
+      "expected_output": "路由到 check_references.py 的 --author-cite 与 --repeat-cite，verify_bib.py 的 --college-details（仅 gb7714 或 gb7714-2025），以及 analyze_literature.py 的 --progression-density。作者滞后引用、缺 postnote 的重复键、缺出版地或页码、以及「进一步」「针对」超阈值都只给 [Script]、Info/P3、Meaning-Check: NEEDS-LLM 的局部候选。完整姓名 Guozhi Li 不作大小写违规。阈值标为 UNVERIFIED。不传这些开关时原输出不变。",
+      "files": [
+        "evals/fixtures/citation-literature/main.tex",
+        "evals/fixtures/citation-literature/chapters/review.tex",
+        "evals/fixtures/citation-literature/references.bib"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(--author-cite|--repeat-cite|--college-details|--progression-density)",
+          "description": "routes the four opt-in flags"
+        },
+        {
+          "type": "contains",
+          "text": "Meaning-Check: NEEDS-LLM",
+          "description": "script layer does not claim semantic preservation"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(候选|局部|Info/P3|\\[Script\\]|UNVERIFIED)",
+          "description": "reports a local candidate and an unverified threshold"
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "prompt": "请对附带的合成稿做同章结果表、正文和本章小结的终值核对。使用 analyze_experiment.py --cross-surface，并读取 terms.json。不要改默认检查，不要输出修正数字，也不要把未绑定的相同数字当成一致。",
+      "expected_output": "路由到 analyze_experiment.py --cross-surface。--cross-surface-terms 只能与该开关同时使用，JSON 只替换指标或评价集词表。RA-XS-* 候选均为 [Script]、Info/P3、Meaning-Check: NEEDS-LLM，只给局部位置，不输出修正数字。简单表三表面一致只说明该支持子集一致，不是全文合规证明。不传 --cross-surface 时原输出不变，--results-analysis 的既有九码保持独立。",
+      "files": [
+        "evals/fixtures/cross-surface/main.tex",
+        "evals/fixtures/cross-surface/terms.json"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(--cross-surface|RA-XS-)",
+          "description": "routes the opt-in cross-surface check"
+        },
+        {
+          "type": "contains",
+          "text": "Meaning-Check: NEEDS-LLM",
+          "description": "script layer does not claim semantic preservation"
+        },
+        {
+          "type": "not_contains",
+          "text": "Meaning-Check: PRESERVED",
+          "description": "script layer never claims semantic preservation"
+        },
+        {
+          "type": "regex",
+          "pattern": "(候选|局部|Info/P3|\\[Script\\]|不是全文合规证明)",
+          "description": "reports a local candidate and not full-document proof"
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "prompt": "请对照电气工程学院 2025 格式审查清单做终检。使用 check_spec.py --template yanshan-ee-2025 --degree doctor --year 2026。不要把 111 个状态当成 111 项已合规，不要用局部 checker 把复合项判为 PASS，也不要新增 PDF 检查。",
+      "expected_output": "路由到 check_spec.py --template yanshan-ee-2025。研究生院清单仍是 --template yanshan。硕士运行保留 111 行，第 74 与第 90 项 SKIP，第 10、47、66、92 项不 SKIP。script:third_person 只给 NEEDS-LLM 词位候选。MODULE 行只打印人工后续命令，不表示已检查。第 87 与第 111 项保持 MANUAL。--author-cite 不是学院第 42 条原文。111 个状态不是 111 项已合规。",
+      "files": [
+        "evals/fixtures/thesis-project/main.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "yanshan-ee-2025",
+          "description": "routes the college checklist"
+        },
+        {
+          "type": "contains",
+          "text": "NEEDS-LLM",
+          "description": "third-person candidates stay NEEDS-LLM"
+        },
+        {
+          "type": "regex",
+          "pattern": "(不是 111 项|人工|MANUAL)",
+          "description": "111 statuses are not treated as 111 compliant items"
+        },
+        {
+          "type": "regex",
+          "pattern": "(yanshan(?!-ee)|研究生院)",
+          "description": "keeps the graduate-school template distinct"
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "prompt": "请审阅下面两句合成文本，不要把它当成真实论文，也不要运行模型评测。句 A：沿批量维交换轴后 Concat 两路特征。句 B：峰值被低估，因此本方法有效抑制数值抖动并保持单调。请给出路由，并指出哪一句不能改成设计优点。",
+      "expected_output": "句 A 路由到 logic，读 method-description-guide-zh.md 的文档标签，只由 [LLM] 判断，不新增脚本码。句 B 路由到 claim-forward 的三类处置：未验证弱点不得改写成设计优点，不利结果不得删除。本条只检查路由和不应改写的例子，不代表已运行的模型输出。",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(logic|claim-forward)",
+          "description": "routes the two existing modules"
+        },
+        {
+          "type": "regex",
+          "pattern": "(设计优点|不得改写|不应改写)",
+          "description": "names the do-not-rewrite example"
+        },
+        {
+          "type": "regex",
+          "pattern": "不代表已运行",
+          "description": "does not claim a live model run"
+        }
+      ]
     }
   ]
 }

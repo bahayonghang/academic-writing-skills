@@ -57,3 +57,7 @@ Summary line: `% CLAIM-FORWARD: <n> finding(s) (CF-...=k, ...)`.
 ## Terms table
 
 `references/writing/claim-forward-terms-zh.yaml` (fields: `self_weakening` (with the ZH-specific `subject_gate`), `hedges`, `disclaim_openers`, `direction_markers`, `process_openers`, `limitation_section_titles`). The script ships an identical built-in fallback and falls back per field when the YAML is missing or a field is malformed. The term baseline comes from 5 private doctoral theses (research only, not in tests) and collocation precision was tuned against it; tune the YAML rather than the code.
+
+## A weakness written as an advantage (LLM only)
+
+When a weakness is written as an advantage, read the three dispositions in [claim-forward-zh.md](../writing/claim-forward-zh.md). The judgment belongs only to `[LLM]`. No script code is added. An unverified weakness must not be written as a design advantage. An unfavorable result must not be deleted. Metaphor words are not a banned-word list.

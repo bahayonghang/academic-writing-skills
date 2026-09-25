@@ -1,0 +1,196 @@
+% demo-deck.tex
+% Synthetic demo deck for latex-defense-zh. The deck covers the twelve layouts
+% in references/slide-layouts.md. A "% layout: <name>" line precedes each frame.
+% All names, titles, numbers, and references in this file are synthetic.
+%
+% Default theme (YanshanDefense):
+%   latexmk -xelatex demo-deck.tex
+% Generic theme:
+%   latexmk -xelatex -jobname=demo-generic "-usepretex=\def\DefenseThemeName{GenericDefense}" demo-deck.tex
+\providecommand{\DefenseThemeName}{YanshanDefense}
+\documentclass[aspectratio=169,11pt]{ctexbeamer}
+\usetheme{\DefenseThemeName}
+
+\DefenseSetup{logo=logo.png,stage=predefense}
+\title{面向合成数据的\\示例建模方法研究}
+\author{示例作者}
+\DefenseSupervisor{示例导师\quad 教授}
+\DefenseSubject{计算机科学与技术}
+\DefenseSchool{示例学院}
+\date{2026年9月}
+
+\DefenseAddChapter{1}{绪论}
+\DefenseAddChapter{2}{理论基础与问题框架}
+\DefenseAddChapter{3}{示例方法一研究}
+\DefenseAddChapter{4}{示例方法二研究}
+\DefenseAddChapter{5}{示例平台设计与应用}
+\DefenseAddChapter{6}{总结与展望}
+
+\DefenseDefineLabel{fig:demo-model}{3-1}
+\DefenseDefineLabel{eq:demo-output}{3-1}
+\DefenseDefineLabel{eq:demo-loss}{3-2}
+
+\begin{document}
+
+% layout: cover
+\begin{frame}[plain]
+\DefenseCoverFrame
+\end{frame}
+
+% layout: toc
+\begin{frame}[plain]
+\DefenseTocFrame{0}
+\end{frame}
+
+% layout: bullets
+\begin{frame}{1.1 研究背景与意义}
+\DefenseSubsection{1.1.1 示例任务背景}
+\begin{itemize}
+  \item 示例任务的数据规模持续增长，人工分析的成本随之上升。
+  \item 现有流程依赖人工经验，分析结果的\DefenseHighlight{一致性}不足。
+  \item 示例任务需要一种可复现、可更新的自动建模方法。
+\end{itemize}
+\DefenseTakeaway{示例任务需要可复现、可更新的自动建模方法}
+\end{frame}
+
+% layout: figure-bullets
+\begin{frame}{1.2 国内外研究现状}
+\DefenseSubsection{1.2.1 数据驱动建模方法}
+\begin{columns}[T,onlytextwidth]
+  \column{0.54\textwidth}
+  \DefenseFigure[height=0.5\textheight]{example-image-a}{图1-1\quad 示例方法类别统计}
+  \column{0.42\textwidth}
+  \begin{itemize}
+    \item 规则方法可解释性强，但覆盖范围有限。
+    \item 统计学习方法依赖人工特征设计。
+    \item 深度学习方法精度较高，但需要大量标注样本。
+  \end{itemize}
+\end{columns}
+\DefenseTakeaway{现有方法难以同时兼顾精度与标注成本}
+\end{frame}
+
+% layout: cards
+\begin{frame}{1.3 现存问题与挑战}
+\DefenseCard{问题一}{示例数据存在\DefenseHighlight{分布差异}，单一模型难以覆盖全部场景。}
+\DefenseCard{问题二}{标注样本\DefenseHighlight{稀缺}，监督学习方法的泛化能力不足。}
+\DefenseCard{问题三}{模型部署后缺少\DefenseHighlight{在线更新}机制，精度随时间下降。}
+\end{frame}
+
+% layout: figure
+\begin{frame}{1.4 研究内容与章节安排}
+\DefenseFigure{example-image-16x9}{图1-2\quad 示例论文组织结构}
+\DefenseTakeaway{第 3、4 章分别回答问题一与问题二，第 5 章完成平台应用}
+\end{frame}
+
+% layout: toc
+\begin{frame}[plain]
+\DefenseTocFrame{3}
+\end{frame}
+
+% layout: figure-bullets
+\begin{frame}{3.1 引言}
+\DefenseSubsection{研究内容 1：示例方法一研究}
+\DefenseFigure[height=0.36\textheight]{example-image-16x9}{图3-1\quad 示例技术路线}
+\begin{itemize}
+  \item 首先构建示例模型，其次设计训练目标，最后在合成数据上验证。
+\end{itemize}
+\DefenseTakeaway{本章针对问题一提出示例方法一}
+\end{frame}
+
+% layout: equations-figure
+\begin{frame}{3.3 示例模型建立}
+\DefenseSubsection{3.3.1 模型结构与训练目标}
+\begin{columns}[T,onlytextwidth]
+  \column{0.52\textwidth}
+  \begin{DefenseSource}
+  \begin{align*}
+    \hat{y}_t &= f_{\theta}(\mathbf{x}_t) + b \tag*{(3-1)}\\
+    \mathcal{L}(\theta) &= \frac{1}{N}\sum_{t=1}^{N}\left(y_t-\hat{y}_t\right)^2 \tag*{(3-2)}
+  \end{align*}
+  式~\eqref{eq:demo-loss} 为训练目标，模型结构见图~\ref{fig:demo-model}\cite{demo-ref}。
+  \end{DefenseSource}
+  \begin{itemize}
+    \item 以均方误差作为训练目标。
+  \end{itemize}
+  \column{0.44\textwidth}
+  \DefenseFigure[height=0.45\textheight]{example-image-b}{图3-1\quad 示例模型结构}
+\end{columns}
+\DefenseTakeaway{示例模型以均方误差为训练目标}
+\end{frame}
+
+% layout: figure-grid
+\begin{frame}{3.4 案例研究与结果分析}
+\DefenseSubsection{3.4.1 示例实验一}
+\begingroup\centering
+\begin{minipage}[t]{0.32\linewidth}
+  \DefenseFigure[height=0.21\textheight]{example-image-a}{(a) 方法 A 结果}
+\end{minipage}\hspace{0.08\linewidth}%
+\begin{minipage}[t]{0.32\linewidth}
+  \DefenseFigure[height=0.21\textheight]{example-image-b}{(b) 方法 B 结果}
+\end{minipage}\par\vspace{2pt}
+\begin{minipage}[t]{0.32\linewidth}
+  \DefenseFigure[height=0.21\textheight]{example-image-c}{(c) 方法 C 结果}
+\end{minipage}\hspace{0.08\linewidth}%
+\begin{minipage}[t]{0.32\linewidth}
+  \DefenseFigure[height=0.21\textheight]{example-image}{(d) 本章方法结果}
+\end{minipage}\par\endgroup
+\DefenseCaption{图3-2\quad 示例对比结果}
+\DefenseTakeaway{本章方法的结果与参考值最接近}
+\end{frame}
+
+% layout: table
+\begin{frame}{3.4 案例研究与结果分析}
+\DefenseSubsection{3.4.2 示例指标对比}
+\DefenseCaption{表3-1\quad 示例方法指标对比}
+\begin{DefenseSource}
+\centering
+\adjustbox{max width=\textwidth,max totalheight=0.62\textheight}{%
+\begin{tabular}{lccc}
+  \toprule
+  \multirow{2}{*}{方法} & \multicolumn{2}{c}{误差指标} & \multirow{2}{*}{\makecell{耗时\\(s)}}\\
+  \cmidrule(lr){2-3}
+  & RMSE & MAE & \\
+  \midrule
+  方法 A\cite{demo-ref} & 0.52 & 0.41 & 1.2\\
+  方法 B & 0.47 & 0.36 & 1.5\\
+  本章方法 & \textbf{0.39} & \textbf{0.30} & 1.4\\
+  \bottomrule
+\end{tabular}}\par
+\end{DefenseSource}
+\DefenseTakeaway{表中本章方法两项误差指标最低（合成数据）}
+\end{frame}
+
+% layout: paper-summary
+\begin{frame}{3.5 本章小结}
+\begin{itemize}
+  \item 提出示例方法一，给出模型结构与训练目标。
+  \item 在合成数据上验证了方法的有效性。
+  \item 分析了方法的计算耗时与适用范围。
+\end{itemize}
+\DefensePaperBox{示例作者, 示例合作者. 示例方法一研究[J]. 示例期刊, 2026, 1(1): 1-10.}
+\DefenseTakeaway{示例方法一回答了问题一}
+\end{frame}
+
+% layout: cards
+\begin{frame}{总结与展望}
+\DefenseSubsection{01\quad 主要创新点}
+\DefenseCard{创新点 1}{针对示例数据的\DefenseHighlight{分布差异}问题，提出示例方法一，实现跨场景建模。（第 3 章）}
+\DefenseCard{创新点 2}{针对标注样本\DefenseHighlight{稀缺}问题，构建示例方法二，降低标注需求。（第 4 章）}
+\DefenseCard{创新点 3}{针对模型\DefenseHighlight{在线更新}问题，设计示例更新机制，保持部署精度。（第 5 章）}
+\end{frame}
+
+% layout: outlook
+\begin{frame}{总结与展望}
+\DefenseSubsection{02\quad 未来研究展望}
+\DefenseBoxTitle{其一}\quad 将示例方法推广到更多数据类型，检验方法的适用边界。
+
+\vspace{0.3cm}
+\DefenseBoxTitle{其二}\quad 研究模型更新过程中的计算开销，降低在线部署成本。
+\end{frame}
+
+% layout: thanks
+\begin{frame}[plain]
+\DefenseThanksFrame
+\end{frame}
+
+\end{document}

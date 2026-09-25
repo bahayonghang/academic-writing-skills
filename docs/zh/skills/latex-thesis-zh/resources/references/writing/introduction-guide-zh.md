@@ -128,3 +128,22 @@ uv run python $SKILL_DIR/scripts/analyze_logic.py main.tex --intro-mainline
 - [../modules/literature.md](../modules/literature.md)：A1~A3 与 B1~B5 检查项详解。
 - [../modules/logic.md](../modules/logic.md)：L-SCI/L-MAP/L-FUN/L-DOM 检查项详解。
 - [paragraph-arc-zh.md](paragraph-arc-zh.md)：段落首尾、相邻接口与段内展开的观察契约。
+
+## 章节安排句不堆公式符号（仅 LLM）
+
+判断只由 LLM 完成。适用范围是绪论里交代各章做什么的句子，不是正文公式。
+
+```text
+问题例：第 3 章给出 $S_{\theta}$ 的估计，并把 $H_{eta}(x)$ 交给第 4 章。
+改写例：第 3 章给出状态估计方法，并把估计结果交给第 4 章的序列决策。
+```
+
+该例不授权改正文数学、受保护术语或模型名。
+
+```latex
+% 绪论（合成）[Severity: Minor] [Priority: P2]: [LLM] 章节安排句堆入了公式符号
+% 问题：安排句用公式符号指代章节任务
+% 原文：第 3 章给出 $S_{\theta}$ 的估计，并把 $H_{eta}(x)$ 交给第 4 章。
+% 修改后：第 3 章给出状态估计方法，并把估计结果交给第 4 章的序列决策。
+% 理由：只改安排句的堆叠。正文数学、受保护术语和模型名保持不动。
+```

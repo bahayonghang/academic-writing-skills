@@ -168,3 +168,9 @@ required by formulas, code, URLs, quotations, citations, or the university templ
 - International System of Units (SI)
 - Put one space between value and unit
 - Use upright letters, not italics
+
+## 7. Opt-in degree wording
+
+`--degree-wording` is off by default. When it is on, `极易`, `极低`, and `高度贴合` are Info/P3 candidates tagged `[Script]` and carrying `Meaning-Check: NEEDS-LLM`. No replacement sentence is provided.
+
+`绝对误差`, `绝对值`, `绝对温度`, `绝对湿度`, `绝对压力`, and `绝对坐标` exempt only the `绝对` span inside them. Another absolute word in the same sentence is still checked. `完全忽略` is covered by the `E-ABSOLUTE` candidate for `完全` and is not a separate `E-DEGREE` candidate. Quoted opinions stay unreported. With the flag off, the previous output does not change because of these exemptions.

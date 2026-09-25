@@ -13,7 +13,7 @@ python -m pytest academic-writing-skills/paper-writing-studio/tests/test_core.py
 作为 agent skill 安装时使用仓库的标准安装流程。自然语言示例：
 
 ```powershell
-npx skills add <owner/repository>
+npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
 ```
 
 你可以直接这样说：
@@ -51,10 +51,10 @@ python .agents/skills/qiaomu-meta-skill/scripts/trigger_eval.py academic-writing
 python .agents/skills/qiaomu-meta-skill/scripts/export_skill_ir.py academic-writing-skills/paper-writing-studio --output reports/skill-ir.json
 uv run --extra dev python -m pytest academic-writing-skills/paper-writing-studio/tests -q
 python -X utf8 academic-writing-skills/paper-writing-studio/evals/output_contract_eval.py
-uv run python docs/scripts/check_resource_sync.py --inventory-only
+uv run python docs/scripts/check_resource_sync.py --skill paper-writing-studio
 ```
 
-`evals/trigger_cases.json` 覆盖三种 venue、未指定 venue、单节/整稿、中译英和学术英文润色，以及排版、编译、Zotero、格式检查和未授权文件输出的负边界。`evals/output_contract_cases.json` 覆盖 alias、journal 冲突、candidate、保护 token、anti-AI、degraded 与 `text_compact`。该包没有公开的 `references/`、`templates/`、`examples/` 或 Markdown `agents/` 资源，因此资源同步检查使用 `--inventory-only` 验证仓库清单；报告是 `recorded_fixture` 和纯本地 core 证据；provider、真实论文、人审和干净安装仍标为 `missing evidence`。
+`evals/trigger_cases.json` 覆盖三种 venue、未指定 venue、单节/整稿、中译英和学术英文润色，以及排版、编译、Zotero、格式检查和未授权文件输出的负边界。`evals/output_contract_cases.json` 覆盖 alias、journal 冲突、candidate、保护 token、anti-AI、degraded 与 `text_compact`。该包的公开资源是 `examples/` 中的三份示例，资源同步检查用 `--skill paper-writing-studio` 核对 manifest 与双语资源页；报告是 `recorded_fixture` 和纯本地 core 证据；provider、真实论文、人审和干净安装仍标为 `missing evidence`。
 
 ## Troubleshooting
 

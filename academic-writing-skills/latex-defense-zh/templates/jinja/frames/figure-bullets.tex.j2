@@ -1,0 +1,31 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+((* if frame.position == "top" *))
+\DefenseFigure[height=0.36\textheight((* if frame.figure.width *)),width=((( frame.figure.width )))\linewidth((* endif *))]{((( frame.figure.file )))}{((( frame.figure.caption )))}
+((* if frame.bullets *))
+\begin{itemize}
+((* for bullet in frame.bullets *))
+  \item ((( bullet )))
+((* endfor *))
+\end{itemize}
+((* endif *))
+((* else *))
+\begin{columns}[T,onlytextwidth]
+  \column{0.54\textwidth}
+  \DefenseFigure[height=0.5\textheight((* if frame.figure.width *)),width=((( frame.figure.width )))\linewidth((* endif *))]{((( frame.figure.file )))}{((( frame.figure.caption )))}
+  \column{0.42\textwidth}
+((* if frame.bullets *))
+  \begin{itemize}
+((* for bullet in frame.bullets *))
+    \item ((( bullet )))
+((* endfor *))
+  \end{itemize}
+((* endif *))
+\end{columns}
+((* endif *))
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}

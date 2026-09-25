@@ -158,7 +158,198 @@ def _paragraph_a2_status(raws: list[str], texts: list[str]) -> tuple[str, int]:
     return "uncertain", score
 
 
-def analyze(file_path: Path, section: str | None = None) -> list[str]:
+# 来源论文标定，不是本技能的通用质量分。严格大于该值才报告，并标 UNVERIFIED。
+_PROGRESS_FURTHER = "进一步"
+_PROGRESS_TARGET = "针对"
+_PROGRESS_FURTHER_MAX = 5
+_PROGRESS_TARGET_MAX = 7
+_PROGRESS_ENVS = {
+    "verbatim",
+    "verbatim*",
+    "Verbatim",
+    "lstlisting",
+    "minted",
+    "alltt",
+    "equation",
+    "equation*",
+    "align",
+    "align*",
+    "gather",
+    "gather*",
+    "displaymath",
+    "eqnarray",
+    "multline",
+    "flalign",
+}
+_MATH_PATTERNS = (
+    r"\$\$[\s\S]*?\$\$",
+    r"(?<!\$)\$(?!\$)[^$\n]*\$",
+    r"\\\[[\s\S]*?\\\]",
+    r"\\\([\s\S]*?\\\)",
+)
+
+
+def _progress_spaces(fragment: str) -> str:
+    return "".join("\n" if char == "\n" else " " for char in fragment)
+
+
+def _progress_escaped(chars: list[str], index: int) -> bool:
+    slashes = 0
+    cursor = index - 1
+    while cursor >= 0 and chars[cursor] == "\\":
+        slashes += 1
+        cursor -= 1
+    return slashes % 2 == 1
+
+
+def _progress_mask_comments(text: str) -> str:
+    chars = list(text)
+    index = 0
+    while index < len(chars):
+        if chars[index] == "%" and not _progress_escaped(chars, index):
+            while index < len(chars) and chars[index] != "\n":
+                chars[index] = " "
+                index += 1
+            continue
+        index += 1
+    return "".join(chars)
+
+
+def _progress_blank(chars: list[str], start: int, end: int) -> None:
+    for index in range(start, end):
+        if chars[index] != "\n":
+            chars[index] = " "
+
+
+def _progress_blank_envs(chars: list[str]) -> None:
+    text = "".join(chars)
+    ranges: list[tuple[int, int]] = []
+    for match in re.finditer(r"\\begin\{([A-Za-z*]+)\}", text):
+        name = match.group(1)
+        if name not in _PROGRESS_ENVS:
+            continue
+        token = "\\end{" + name + "}"
+        end = text.find(token, match.end())
+        if end < 0:
+            continue
+        ranges.append((match.start(), end + len(token)))
+    for start, end in ranges:
+        _progress_blank(chars, start, end)
+
+
+def _progress_group_end(text: str, index: int, open_ch: str, close_ch: str) -> int | None:
+    if index >= len(text) or text[index] != open_ch:
+        return None
+    depth = 1
+    cursor = index + 1
+    while cursor < len(text):
+        if text[cursor] == "\\" and cursor + 1 < len(text):
+            cursor += 2
+            continue
+        if text[cursor] == open_ch:
+            depth += 1
+        elif text[cursor] == close_ch:
+            depth -= 1
+            if depth == 0:
+                return cursor + 1
+        cursor += 1
+    return None
+
+
+def _progress_skip_ws(text: str, index: int) -> int:
+    while index < len(text) and text[index] in " \t\r\n":
+        index += 1
+    return index
+
+
+def _progress_command_end(text: str, index: int) -> int | None:
+    if index >= len(text) or text[index] != "\\":
+        return None
+    cursor = index + 1
+    while cursor < len(text) and text[cursor].isalpha():
+        cursor += 1
+    name = text[index + 1 : cursor]
+    lowered = name.lower()
+    if not (lowered.startswith("cite") or name in {"caption", "bicaption"}):
+        return None
+    if cursor < len(text) and text[cursor] == "*":
+        cursor += 1
+    cursor = _progress_skip_ws(text, cursor)
+    if lowered.startswith("cite"):
+        guard = 0
+        while cursor < len(text) and text[cursor] in "[{" and guard < 8:
+            end = _progress_group_end(
+                text, cursor, text[cursor], "]" if text[cursor] == "[" else "}"
+            )
+            if end is None:
+                return None
+            cursor = _progress_skip_ws(text, end)
+            guard += 1
+        return cursor
+    limit = 2 if name == "bicaption" else 1
+    consumed = 0
+    for _ in range(2):
+        if cursor < len(text) and text[cursor] == "[":
+            end = _progress_group_end(text, cursor, "[", "]")
+            if end is None:
+                return None
+            cursor = _progress_skip_ws(text, end)
+        else:
+            break
+    while consumed < limit and cursor < len(text) and text[cursor] == "{":
+        end = _progress_group_end(text, cursor, "{", "}")
+        if end is None:
+            return None
+        cursor = _progress_skip_ws(text, end)
+        consumed += 1
+    if consumed == 0:
+        return None
+    return cursor
+
+
+def _progression_visible(section_text: str) -> str:
+    chars = list(_progress_mask_comments(section_text))
+    _progress_blank_envs(chars)
+    text = "".join(chars)
+    for pattern in _MATH_PATTERNS:
+        for match in re.finditer(pattern, text):
+            _progress_blank(chars, match.start(), match.end())
+    text = "".join(chars)
+    index = 0
+    while index < len(text):
+        if text[index] != "\\":
+            index += 1
+            continue
+        end = _progress_command_end(text, index)
+        if end is None:
+            index += 1
+            continue
+        _progress_blank(chars, index, end)
+        text = "".join(chars)
+        index = end
+    return "".join(chars)
+
+
+def _progression_lines(comment: str, section_text: str, start: int, end: int) -> list[str]:
+    visible = _progression_visible(section_text)
+    counts = (
+        (_PROGRESS_FURTHER, visible.count(_PROGRESS_FURTHER), _PROGRESS_FURTHER_MAX),
+        (_PROGRESS_TARGET, visible.count(_PROGRESS_TARGET), _PROGRESS_TARGET_MAX),
+    )
+    lines: list[str] = []
+    loc = _zh_loc(start, end)
+    for word, count, limit in counts:
+        if count <= limit:
+            continue
+        lines.append(
+            f"{comment} 文献综述（{loc}）[Severity: Info] [Priority: P3]: "
+            f"[Script] Meaning-Check: NEEDS-LLM 「{word}」出现 {count} 次，严格多于 {limit}。"
+            "阈值 UNVERIFIED。只报告候选，不轮换同义词，不输出替换句。"
+        )
+    return lines
+
+
+def analyze(file_path: Path, section: str | None = None, progression: bool = False) -> list[str]:
     global _DOC
     parser = get_parser(file_path)
     doc = assemble(file_path)
@@ -269,6 +460,9 @@ def analyze(file_path: Path, section: str | None = None) -> list[str]:
             f"{comment} 建议改写链条：先概括多篇文献的共同结论，再指出方法分歧或 trade-off，随后提炼仍未解决的限制，最后再连接到本文贡献。",
         ]
     )
+    if progression:
+        section_text = "\n".join(lines[start - 1 : end])
+        out.extend(_progression_lines(comment, section_text, start, end))
 
     return out
 
@@ -560,7 +754,14 @@ def main() -> int:
         default=None,
         help="年份分布的基准年（默认取系统当前年份；测试或补写旧稿时可覆盖）",
     )
+    cli.add_argument(
+        "--progression-density",
+        action="store_true",
+        help="统计章节内「进一步」「针对」的出现次数（阈值 UNVERIFIED）；与 --intro-citations 互斥",
+    )
     args = cli.parse_args()
+    if args.progression_density and args.intro_citations:
+        cli.error("--progression-density 与 --intro-citations 不能同时使用")
 
     if not args.file.exists():
         print(f"[错误] 文件未找到: {args.file}", file=sys.stderr)
@@ -583,7 +784,7 @@ def main() -> int:
         )
         return 0
 
-    print("\n".join(analyze(args.file, args.section)))
+    print("\n".join(analyze(args.file, args.section, progression=args.progression_density)))
     return 0
 
 

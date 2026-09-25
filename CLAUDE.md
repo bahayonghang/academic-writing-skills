@@ -11,4 +11,4 @@ Claude Code loads this file. Shared maintainer facts live in `AGENTS.md` through
 - In a new Claude Code session, run `/context` to confirm that this file and the imported `AGENTS.md` loaded. A loaded file is not a five-tool runtime verification.
 - Other harnesses discover `AGENTS.md` natively or through an explicit read path. Do not treat the Claude `@AGENTS.md` import syntax as universal.
 
-Parser copies, tests, gates, six skills, version 6.0.0, academic-use terms, and academic fact-protection rules are in `AGENTS.md`.
+Parser copies, tests, gates, eight skills, version 6.0.0, academic-use terms, and academic fact-protection rules are in `AGENTS.md`.

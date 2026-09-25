@@ -1,0 +1,3 @@
+style-default.stdout c1_match=True current=1170 c1=1170
+style-default.stderr c1_match=True current=0 c1=0
+style-default.exit c1_match=True current=2 c1=2

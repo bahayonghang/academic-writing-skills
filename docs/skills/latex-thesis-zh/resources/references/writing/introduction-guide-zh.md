@@ -123,3 +123,22 @@ review, avoiding duplicate `P-ARC-FLAT` output.
 - [../modules/literature.md](../modules/literature.md): details of A1-A3 and B1-B5 checks.
 - [../modules/logic.md](../modules/logic.md): details of L-SCI/L-MAP/L-FUN/L-DOM checks.
 - [paragraph-arc-zh.md](paragraph-arc-zh.md): observation contract for paragraph openings, closes, adjacent interfaces, and internal development.
+
+## Chapter-arrangement lines do not pile formula symbols (LLM only)
+
+The judgment belongs only to the LLM. The scope is a sentence in the introduction that says what each chapter does. It is not body mathematics.
+
+```text
+问题例：第 3 章给出 $S_{\theta}$ 的估计，并把 $H_{eta}(x)$ 交给第 4 章。
+改写例：第 3 章给出状态估计方法，并把估计结果交给第 4 章的序列决策。
+```
+
+This example does not authorize a change to body mathematics, a protected term, or a model name.
+
+```latex
+% 绪论（合成）[Severity: Minor] [Priority: P2]: [LLM] 章节安排句堆入了公式符号
+% 问题：安排句用公式符号指代章节任务
+% 原文：第 3 章给出 $S_{\theta}$ 的估计，并把 $H_{eta}(x)$ 交给第 4 章。
+% 修改后：第 3 章给出状态估计方法，并把估计结果交给第 4 章的序列决策。
+% 理由：只改安排句的堆叠。正文数学、受保护术语和模型名保持不动。
+```

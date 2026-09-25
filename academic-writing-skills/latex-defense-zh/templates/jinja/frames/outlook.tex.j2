@@ -1,0 +1,15 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+((* for item in frame.outlook *))
+((* if not loop.first *))
+
+\vspace{0.3cm}
+((* endif *))
+\DefenseBoxTitle{((( item.label )))}\quad ((( item.text )))
+((* endfor *))
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}

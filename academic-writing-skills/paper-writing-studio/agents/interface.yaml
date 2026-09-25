@@ -1,6 +1,6 @@
 name: paper-writing-studio
 display_name: Paper Writing Studio
-version: 0.1.0
+version: 6.0.0
 entry: SKILL.md
 interface:
   display_name: Paper Writing Studio

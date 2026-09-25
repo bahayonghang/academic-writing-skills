@@ -1,0 +1,37 @@
+\chapter{交通流量预测平台设计与应用}
+
+\section{平台需求分析}
+平台需要支持数据接入、模型管理与结果展示。
+
+\section{平台总体架构}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter6/architecture.png}
+  \bicaption{平台总体架构}{Overall architecture of the platform}
+  \label{fig:c6-architecture}
+\end{figure}
+
+\section{平台功能实现}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter6/interface.png}
+  \bicaption{平台预测界面}{Prediction interface of the platform}
+  \label{fig:c6-interface}
+\end{figure}
+
+\section{应用效果}
+\begin{table}[htbp]
+  \centering
+  \bicaption{示例应用效果}{Example application effect}
+  \label{tab:c6-effect}
+  \begin{tabular}{lcc}
+    \toprule
+    指标 & 应用前 & 应用后\\
+    \midrule
+    平均误差 & 0.48 & 0.37\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{本章小结}
+本章设计并实现了交通流量预测平台。

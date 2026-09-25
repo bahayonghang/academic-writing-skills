@@ -678,6 +678,329 @@ def check_appendix_letter(ctx: SpecContext) -> CheckOutcome:
     return "SKIP", "未检测到附录"
 
 
+# 学院清单的人称候选与 MODULE 提示。旧模板不走这些分支。
+_COLLEGE_TEMPLATE = "yanshan-ee-2025"
+_MODULE_UNCHECKED = "（命令供人工后续运行，本行未检查）"
+_CODE_ENVS = {
+    "lstlisting",
+    "verbatim",
+    "minted",
+    "alltt",
+    "python",
+    "code",
+    "listings",
+    "lstlistings",
+}
+_MATH_ENVS = {
+    "equation",
+    "align",
+    "gather",
+    "multline",
+    "eqnarray",
+    "displaymath",
+    "math",
+    "flalign",
+    "alignat",
+    "subequations",
+    "ieeeeqnarray",
+    "split",
+    "aligned",
+    "gathered",
+    "cases",
+}
+_BIB_ENVS = {"thebibliography"}
+_DATA_ENVS = {"filecontents"}
+_ACK_ENVS = {
+    "acknowledgement",
+    "acknowledgements",
+    "acknowledgment",
+    "acknowledgments",
+}
+_BEGIN_ENV_RE = re.compile(r"\\begin\{([^}]+)\}")
+_END_ENV_RE = re.compile(r"\\end\{([^}]+)\}")
+_VERB_RE = re.compile(r"\\[Vv]erb\*?(?:\[[^\]]*\])?([^A-Za-z0-9\s]).*?\1")
+_LSTINLINE_RE = re.compile(r"\\lstinline\*?(?:\[[^\]]*\])?(?:\{[^{}]*\}|([^A-Za-z0-9\s]).*?\1)")
+_MINTINLINE_RE = re.compile(
+    r"\\mintinline\*?(?:\[[^\]]*\])?\{[^{}]*\}(?:\{[^{}]*\}|([^A-Za-z0-9\s]).*?\1)"
+)
+_KEY_CMD_RE = re.compile(
+    r"\\(?:href\*?\s*\{[^{}]*\}\s*\{[^{}]*\}"
+    r"|(?:[Cc]ite\w*"
+    r"|[Pp]aren(?:cites|cite)|[Tt]ext(?:cites|cite)|[Aa]uto(?:cites|cite)"
+    r"|[Ff]oot(?:cites|cite)|[Ss]mart(?:cites|cite)"
+    r"|ref|eqref|pageref|autoref|[Cc]ref|[Vv]ref|nameref|label"
+    r"|bibliography|addbibresource|bibitem|url|path|includegraphics)"
+    r"\*?(?:\[[^\]]*\])*\{[^{}]*\})"
+)
+_ACK_TITLE_RE = re.compile(
+    r"^(致谢|谢辞|acknowledgements?|acknowledgments?)$",
+    re.IGNORECASE,
+)
+_PERSON_RE = re.compile(
+    r"我认为|我提出|我们(?!国家)|(?<!执)笔者|(?<![自忘])我(?![国校军方院系所省市们])"
+)
+_ATTRIB_VERB_RE = re.compile(r"(指出|认为|写道|声称|表示|说道|提出)\s*[：:]?\s*$")
+_OTHER_CUE_RE = re.compile(r"文献|论文|学者|报道|报导")
+_CONNECTIVE_RE = re.compile(r"^(?:因此|所以|于是|故|则|并|且|而|但|其)$")
+_OPEN_TO_CLOSE = {"“": "”", "「": "」", "『": "』", '"': '"'}
+
+
+def _env_kind(name: str) -> Optional[str]:
+    base = name.strip()
+    if base.endswith("*"):
+        base = base[:-1]
+    key = base.lower()
+    if key in _ACK_ENVS:
+        return "ack"
+    if key in _BIB_ENVS or key in _DATA_ENVS:
+        return "bib"
+    if key in _CODE_ENVS:
+        return "code"
+    if key in _MATH_ENVS:
+        return "math"
+    return None
+
+
+def _college_module_command(mod: str) -> str:
+    """学院模板的人工后续命令。不执行，也不改旧模板的 MODULE_COMMANDS。"""
+    hints = {
+        "expression": (
+            "uv run python $SKILL_DIR/scripts/check_style_zh.py main.tex --school yanshan-ee-2025"
+        ),
+        "format": "uv run python $SKILL_DIR/scripts/check_format.py main.tex --school yanshan-ee-2025",
+        "tables": "uv run python $SKILL_DIR/scripts/check_tables.py main.tex --school yanshan-ee-2025",
+        "references": (
+            "uv run python $SKILL_DIR/scripts/check_references.py main.tex "
+            "--school yanshan-ee-2025 --author-cite --repeat-cite"
+            "（--author-cite 是作者写作约定，不是学院第42条原文；"
+            "命令供人工后续运行，本行未检查）"
+        ),
+        "bibliography": (
+            "uv run python $SKILL_DIR/scripts/verify_bib.py references.bib "
+            "--standard gb7714 --college-details"
+            "（须将 references.bib 替换为实际 bib 路径；命令供人工后续运行，本行未检查）"
+        ),
+        "consistency": (
+            "uv run python $SKILL_DIR/scripts/check_consistency.py main.tex --abbreviation-style"
+        ),
+    }
+    command = hints.get(mod, MODULE_COMMANDS.get(mod, "见 SKILL.md Module Router"))
+    if "未检查" in command:
+        return command
+    return command + _MODULE_UNCHECKED
+
+
+def _mask_author_prose_line(
+    line: str,
+    stack: list[str],
+    math_dollar: bool,
+    math_display: bool,
+) -> tuple[str, list[str], bool, bool]:
+    """去掉注释、代码、数学、文献环境和键载荷，保留作者可见叙述。"""
+    if line.lstrip().startswith("%"):
+        return "", stack, math_dollar, math_display
+    code = re.sub(r"(?<!\\)%.*", "", line)
+    out: list[str] = []
+    i = 0
+    n = len(code)
+    while i < n:
+        if code.startswith("\\begin{", i):
+            begin = _BEGIN_ENV_RE.match(code, i)
+            if begin:
+                kind = _env_kind(begin.group(1))
+                if kind:
+                    stack.append(kind)
+                i = begin.end()
+                continue
+        if code.startswith("\\end{", i):
+            end = _END_ENV_RE.match(code, i)
+            if end:
+                kind = _env_kind(end.group(1))
+                if kind and kind in stack:
+                    while stack and stack[-1] != kind:
+                        stack.pop()
+                    if stack:
+                        stack.pop()
+                i = end.end()
+                continue
+        in_env = bool(stack)
+        if not in_env and code.startswith("\\[", i):
+            math_display = True
+            i += 2
+            continue
+        if not in_env and code.startswith("\\]", i):
+            math_display = False
+            i += 2
+            continue
+        if not in_env and code.startswith("\\(", i):
+            math_dollar = True
+            i += 2
+            continue
+        if not in_env and code.startswith("\\)", i):
+            math_dollar = False
+            i += 2
+            continue
+        skipping = in_env or math_dollar or math_display
+        if not skipping and (code.startswith("\\verb", i) or code.startswith("\\Verb", i)):
+            verb = _VERB_RE.match(code, i)
+            if verb:
+                i = verb.end()
+                continue
+        if not skipping and code.startswith("\\lstinline", i):
+            inline = _LSTINLINE_RE.match(code, i)
+            if inline:
+                i = inline.end()
+                continue
+        if not skipping and code.startswith("\\mintinline", i):
+            inline = _MINTINLINE_RE.match(code, i)
+            if inline:
+                i = inline.end()
+                continue
+        if not skipping and code.startswith("\\", i):
+            key = _KEY_CMD_RE.match(code, i)
+            if key:
+                i = key.end()
+                continue
+        if not in_env and code[i] == "$" and (i == 0 or code[i - 1] != "\\"):
+            if code.startswith("$$", i):
+                math_display = not math_display
+                i += 2
+            else:
+                math_dollar = not math_dollar
+                i += 1
+            continue
+        if not skipping:
+            out.append(code[i])
+        i += 1
+    return "".join(out), stack, math_dollar, math_display
+
+
+def _is_other_person_attrib(prefix: str) -> bool:
+    window = prefix[-48:]
+    match = _ATTRIB_VERB_RE.search(window)
+    if match is None:
+        return False
+    subject = window[: match.start()].strip()
+    if not subject:
+        return False
+    if re.search(r"本文|本章|本研究|本节|本工作|笔者|我们", subject) or subject.endswith("我"):
+        return False
+    if _OTHER_CUE_RE.search(subject):
+        return True
+    name = re.search(r"([一-鿿]{2,4})\s*$", subject)
+    return name is not None and _CONNECTIVE_RE.match(name.group(1)) is None
+
+
+def _blank_other_person_quotes(text: str) -> str:
+    chars = list(text)
+    i = 0
+    while i < len(chars):
+        closer = _OPEN_TO_CLOSE.get(chars[i])
+        if closer is None:
+            i += 1
+            continue
+        j = i + 1
+        while j < len(chars) and chars[j] != closer:
+            j += 1
+        if _is_other_person_attrib("".join(chars[:i])):
+            end = j if j < len(chars) else len(chars)
+            for k in range(i + 1, end):
+                chars[k] = " "
+        if j >= len(chars):
+            break
+        i = j + 1
+    return "".join(chars)
+
+
+def _blank_leading_quote(text: str) -> str:
+    chars = list(text)
+    i = 0
+    while i < len(chars) and chars[i].isspace():
+        i += 1
+    if i >= len(chars):
+        return text
+    closer = _OPEN_TO_CLOSE.get(chars[i])
+    if closer is None:
+        return text
+    j = i + 1
+    while j < len(chars) and chars[j] != closer:
+        chars[j] = " "
+        j += 1
+    return "".join(chars)
+
+
+def _preamble_end_line(lines: list[str]) -> int:
+    for index, line in enumerate(lines, 1):
+        if line.lstrip().startswith("%"):
+            continue
+        visible = re.sub(r"(?<!\\)%.*", "", line)
+        if re.search(r"\\begin\{document\}", visible):
+            return index
+    return 0
+
+
+def _ack_heading_spans(ctx: SpecContext) -> list[tuple[int, int]]:
+    """致谢标题或同级范围。正文里仅出现“致谢”二字不开启范围。"""
+    headings = ctx.parser.extract_headings(ctx.content)
+    spans: list[tuple[int, int]] = []
+    last = len(ctx.lines)
+    for index, heading in enumerate(headings):
+        title = LatexParser.normalize_heading_title(heading["title"])
+        if _ACK_TITLE_RE.match(title) is None:
+            continue
+        end = last
+        for later in headings[index + 1 :]:
+            if later["level"] <= heading["level"]:
+                end = later["line"] - 1
+                break
+        spans.append((heading["line"], max(end, heading["line"])))
+    return spans
+
+
+def _line_in_spans(line_no: int, spans: list[tuple[int, int]]) -> bool:
+    return any(start <= line_no <= end for start, end in spans)
+
+
+def _collect_person_hits(ctx: SpecContext) -> list[tuple[int, str]]:
+    preamble_end = _preamble_end_line(ctx.lines)
+    ack_spans = _ack_heading_spans(ctx)
+    stack: list[str] = []
+    math_dollar = False
+    math_display = False
+    pending_quote = False
+    hits: list[tuple[int, str]] = []
+    for line_no, line in enumerate(ctx.lines, 1):
+        masked, stack, math_dollar, math_display = _mask_author_prose_line(
+            line, stack, math_dollar, math_display
+        )
+        if line_no <= preamble_end or _line_in_spans(line_no, ack_spans):
+            pending_quote = False
+            continue
+        if pending_quote:
+            masked = _blank_leading_quote(masked)
+            pending_quote = False
+        masked = _blank_other_person_quotes(masked)
+        pending_quote = _is_other_person_attrib(masked.strip())
+        hits.extend((line_no, match.group(0)) for match in _PERSON_RE.finditer(masked))
+    return hits
+
+
+def check_third_person(ctx: SpecContext) -> CheckOutcome:
+    """词位候选。有无命中都是 NEEDS-LLM，不证明全文第三人称。"""
+    hits = _collect_person_hits(ctx)
+    review = "须人工核读。候选不是第三人称定论，零命中也不是全文第三人称证明。"
+    if not hits:
+        return (
+            "NEEDS-LLM",
+            "未发现所列候选（我们、笔者、含“我”的词位、我认为、我提出）。"
+            "扫描范围不含前导区、致谢、文献数据、代码、数学和键。" + review,
+        )
+    shown = hits[:12]
+    parts = [f"{ctx.loc(line_no)}「{span}」" for line_no, span in shown]
+    extra = f"；另有 {len(hits) - len(shown)} 处" if len(hits) > len(shown) else ""
+    return "NEEDS-LLM", "候选：" + "；".join(parts) + extra + "。" + review
+
+
 CHECKERS: dict[str, Checker] = {
     "title_len": check_title_len,
     "abstract_no_cite": check_abstract_no_cite,
@@ -698,6 +1021,7 @@ CHECKERS: dict[str, Checker] = {
     "cite_in_heading": check_cite_in_heading,
     "new_page_chapter": check_new_page_chapter,
     "appendix_letter": check_appendix_letter,
+    "third_person": check_third_person,
 }
 
 
@@ -741,7 +1065,10 @@ def run_checklist(items: list[ChecklistItem], ctx: SpecContext) -> list[ItemResu
                 status, ev = checker(ctx)
         elif item.method.startswith("module:"):
             mod = item.method.split(":", 1)[1]
-            cmd = MODULE_COMMANDS.get(mod, "见 SKILL.md Module Router")
+            if ctx.template_id == _COLLEGE_TEMPLATE:
+                cmd = _college_module_command(mod)
+            else:
+                cmd = MODULE_COMMANDS.get(mod, "见 SKILL.md Module Router")
             status, ev = "MODULE", f"由 {mod} 模块覆盖: {cmd}"
         elif item.method == "llm":
             status, ev = "NEEDS-LLM", "由 agent 对照正文与规范依据逐项判读"
@@ -838,6 +1165,11 @@ def generate_report(
         f"（FAIL {counts['FAIL']} · NEEDS-LLM {counts['NEEDS-LLM']}"
         f" · MANUAL {counts['MANUAL']}）"
     )
+    if ctx.template_id == _COLLEGE_TEMPLATE:
+        lines.append(
+            "学院清单：MODULE、MANUAL、NEEDS-LLM 与 SKIP 均未验收。"
+            "状态数不是合规项数，111 个状态不是 111 项通过。"
+        )
     lines.append("=" * 60)
     return "\n".join(lines)
 
@@ -849,7 +1181,10 @@ def main() -> None:
     parser.add_argument("tex_file", help="论文入口 .tex 文件")
     parser.add_argument(
         "--template",
-        help="规范清单模板 id（templates/<id>.md，需含「逐项检查清单」段），如 yanshan",
+        help=(
+            "规范清单模板 id（templates/<id>.md，需含「逐项检查清单」段），"
+            "如 yanshan、yanshan-ee-2025"
+        ),
     )
     parser.add_argument(
         "--spec-file", help="自定义规范清单文件路径（格式同 templates/*.md 的清单表格）"
@@ -921,6 +1256,10 @@ def main() -> None:
             },
             "status": "FAIL" if any(r.status == "FAIL" for r in results) else "PASS",
         }
+        if template_id == _COLLEGE_TEMPLATE:
+            payload["not_acceptance"] = (
+                "MODULE、MANUAL、NEEDS-LLM 与 SKIP 均未验收；状态数不是合规项数。"
+            )
         print(json.dumps(payload, indent=2, ensure_ascii=False))
     else:
         print(generate_report(results, ctx, spec_label, degree_note))

@@ -4,6 +4,7 @@
 （见 .trellis/spec/academic-writing-skills/testing-and-tooling.md）。
 """
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -13,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.support.paths import SCRIPT_DIR_ZH, SKILLS_ROOT
+from tests.support.paths import REPO_ROOT, SCRIPT_DIR_ZH, SKILLS_ROOT
 
 _SKILL_DIR = SKILLS_ROOT / "latex-thesis-zh"
 FIXTURE = _SKILL_DIR / "evals" / "fixtures" / "thesis-project"
@@ -526,6 +527,7 @@ class TestCliIntegration:
         assert payload["summary"]["FAIL"] >= 3
         ids = {item["id"] for item in payload["items"]}
         assert {"YS-01", "YS-18", "YS-58"} <= ids
+        assert "script:third_person" not in {item["method"] for item in payload["items"]}
 
     def test_fixture_master_skips_doctor_items(self):
         result = _run_cli(
@@ -569,6 +571,7 @@ class TestCliIntegration:
         "script:bib_recency",
         "script:conclusion_no_cite",
         "script:chapter_summary",
+        "script:third_person",
     }
 
     def test_fixture_thuthesis_checklist(self):
@@ -610,3 +613,352 @@ class TestCliIntegration:
         assert "实测" in by_id["GEN-05"]["evidence"]
         assert by_id["GEN-06"]["status"] == "PASS"  # 摘要无引用/图表/公式
         assert by_id["GEN-21"]["status"] == "FAIL"  # 附录章无 \appendix
+        assert not self.BANNED_NON_YS_METHODS & {i["method"] for i in payload["items"]}
+
+
+_COLLEGE_MATRIX = REPO_ROOT / "tests" / "fixtures" / "college-checklist" / "yanshan-ee-2025.json"
+_OLD_BASELINE = REPO_ROOT / "tests/fixtures/thesis-zh-baselines/college-checklist-2025"
+_COMPOUND_NOT_PASS = (1, 3, 10, 12, 86, 89, 92, 93, 109)
+_OLD_TEMPLATE_DIR = SKILLS_ROOT / "latex-thesis-zh" / "templates"
+# LF-normalized sha256 of the four pre-existing school templates (frozen by 09-22 C5).
+_OLD_TEMPLATE_HASHES = {
+    "yanshan.md": "6c72cf9f6002d9da8a2d678a98875edffe994a8563a1d18aa0331db848c07b26",
+    "thuthesis.md": "9ebb084e70d3dbb6306596144efa7a7027d48be3aaaa899f47634e1eb9b97d61",
+    "pkuthss.md": "baaa30ac2fb08064db15d650f82bf82af2eac59d47e5d53366d231a23b3d5fe7",
+    "generic.md": "f3f5835b3692c92e4d04309aac9cc080186be5900ad55788e1143700c8f2d6cb",
+}
+
+
+def _college_matrix() -> list[dict]:
+    return json.loads(_COLLEGE_MATRIX.read_text(encoding="utf-8"))
+
+
+class TestThirdPerson:
+    def test_hits_are_needs_llm_with_location(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "我们认为该方法有效。\n"
+            "笔者认为结构可行。\n"
+            "我认为结果成立。\n"
+            "我提出一种结构。\n"
+            "实验中我采用对照。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        for span in ("「我们」", "「笔者」", "「我认为」", "「我提出」", "「我」"):
+            assert span in evidence
+        assert "Line " in evidence
+        assert "人工" in evidence
+        assert "第三人称定论" in evidence
+        assert "PASS" not in evidence
+
+    def test_zero_hits_remain_needs_llm(self, tmp_path: Path):
+        content = "\\begin{document}\n本文给出一种结构。\n我国与我校保持稳定。\n\\end{document}\n"
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert "未发现" in evidence
+        assert "我们" in evidence and "笔者" in evidence
+        assert "不是全文第三人称证明" in evidence
+        assert "「我们」" not in evidence
+        assert "「我」" not in evidence
+        assert "PASS" not in evidence
+
+    def test_excludes_non_author_regions(self, tmp_path: Path):
+        content = (
+            "\\documentclass{ctexbook}\n"
+            "\\newcommand{\\hidden}{我们认为}\n"
+            "\\begin{document}\n"
+            "我国电网与我校实验室。\n"
+            "文献指出：“我们认为该方法有效”。\n"
+            "张三认为：“我提出了结构”。\n"
+            "\\cite{我们认为2020}\n"
+            "\\label{我提出}\n"
+            "\\begin{lstlisting}\n"
+            "我们认为\n"
+            "\\end{lstlisting}\n"
+            "\\begin{verbatim}\n"
+            "笔者\n"
+            "\\end{verbatim}\n"
+            "$我们$\n"
+            "\\begin{equation}\n"
+            "我提出\n"
+            "\\end{equation}\n"
+            "\\verb|我们认为|\n"
+            "\\begin{thebibliography}{1}\n"
+            "\\bibitem{k} 我们认为\n"
+            "\\end{thebibliography}\n"
+            "\\begin{acknowledgements}\n"
+            "我们认为谢谢。\n"
+            "\\end{acknowledgements}\n"
+            "\\chapter{致谢}\n"
+            "我们感谢导师。\n"
+            "\\chapter{结论}\n"
+            "本文完成实验。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert "未发现" in evidence
+        assert "「我们」" not in evidence
+        assert "「我」" not in evidence
+        assert "「笔者」" not in evidence
+
+    def test_excludes_biblatex_keys_inline_code_and_filecontents(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "\\cref{我们认为}\n"
+            "\\Cref{我提出}\n"
+            "\\parencite{笔者认为}\n"
+            "\\textcite{我们认为}\n"
+            "\\autocite{我}\n"
+            "\\vref{fig:我们}\n"
+            "\\nameref{sec:我提出}\n"
+            "\\begin{minted}{python}\n"
+            "我们认为\n"
+            "\\end{minted}\n"
+            "\\mintinline{python}{我提出}\n"
+            "\\Verb|我们认为|\n"
+            "\\begin{filecontents*}{refs.bib}\n"
+            "@article{k, title={我们认为}}\n"
+            "\\end{filecontents*}\n"
+            "实验中我采用对照。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert "「我们」" not in evidence
+        assert "「笔者」" not in evidence
+        assert "「我提出」" not in evidence
+        assert evidence.count("「我」") == 1
+        assert "人工" in evidence
+        assert "PASS" not in evidence
+
+    def test_acknowledgement_word_does_not_swallow_later_prose(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "\\chapter{方法}\n"
+            "本章不写致谢。\n"
+            "我们认为方法有效。\n"
+            "\\chapter{正文}\n"
+            "\\section{致谢}\n"
+            "我们认为谢谢。\n"
+            "\\section{后续}\n"
+            "我提出一种结构。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert evidence.count("「我们」") == 1
+        assert "「我提出」" in evidence
+        assert "人工" in evidence
+
+    def test_author_quote_still_hits_and_key_does_not(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "本文认为：“我们仍需核读”。\n"
+            "\\cite{我们认为2020}我们认为方法有效。\n"
+            "我国研究中，我认为结果成立。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert evidence.count("「我们」") == 2
+        assert "「我认为」" in evidence
+        assert "「我」" not in evidence
+
+    def test_common_non_person_compounds_are_not_candidates(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "我军、自我、忘我、我方、我院、我系、我所、我省、我市均非人称。\n"
+            "执笔者与我们国家也不是候选。\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert "未发现" in evidence
+        assert "「" not in evidence
+        hit = "\\begin{document}\n笔者认为我们可行，我采用对照。\n\\end{document}\n"
+        status, evidence = _check("third_person", _ctx(tmp_path, hit))
+        assert evidence.count("「笔者」") == 1
+        assert evidence.count("「我们」") == 1
+        assert evidence.count("「我」") == 1
+
+    def test_url_href_graphics_and_path_payloads_are_masked(self, tmp_path: Path):
+        content = (
+            "\\begin{document}\n"
+            "见\\url{https://example.org/我们}与\\href{https://example.org/笔者}{我们的站点}。\n"
+            "\\includegraphics[width=我们]{fig/我认为.png}\\path{C:/笔者/我提出}\n"
+            "\\end{document}\n"
+        )
+        status, evidence = _check("third_person", _ctx(tmp_path, content))
+        assert status == "NEEDS-LLM"
+        assert "「" not in evidence
+
+    def test_no_pdf_and_no_college_threshold(self):
+        text = (SCRIPT_DIR_ZH / "check_spec.py").read_text(encoding="utf-8")
+        assert "pymupdf" not in text.lower()
+        assert "--pdf" not in text
+        assert "yanshan-ee-2025" not in check_spec.TEMPLATE_THRESHOLDS
+
+
+class TestCollegeChecklist:
+    def test_doctor_and_master_match_matrix(self):
+        matrix = _college_matrix()
+        assert [row["id"] for row in matrix] == [f"YSE-{number:03d}" for number in range(1, 112)]
+        for degree in ("doctor", "master"):
+            result = _run_cli(
+                "main.tex",
+                "--template",
+                "yanshan-ee-2025",
+                "--degree",
+                degree,
+                "--year",
+                "2026",
+                "--json",
+            )
+            assert result.returncode == 0, result.stderr
+            payload = json.loads(result.stdout)
+            assert payload["template"] == "yanshan-ee-2025"
+            assert payload["not_acceptance"]
+            assert "不是合规项数" in payload["not_acceptance"]
+            assert len(payload["items"]) == 111
+            for row, item in zip(matrix, payload["items"], strict=True):
+                assert item["id"] == row["id"]
+                assert item["requirement"] == row["requirement"]
+                assert item["basis"] == row["basis"]
+                assert item["method"] == row["method"]
+                assert item["scope"] == row["scope"]
+                assert item["status"] == row["status"][degree]
+                assert item["status"]
+            by_id = {item["id"]: item for item in payload["items"]}
+            for number in _COMPOUND_NOT_PASS:
+                item = by_id[f"YSE-{number:03d}"]
+                assert item["status"] != "PASS"
+                assert not item["method"].startswith("script:")
+            assert by_id["YSE-010"]["status"] != "SKIP"
+            assert by_id["YSE-047"]["status"] != "SKIP"
+            assert by_id["YSE-066"]["status"] != "SKIP"
+            assert by_id["YSE-092"]["status"] != "SKIP"
+            assert by_id["YSE-087"]["status"] == "MANUAL"
+            assert by_id["YSE-111"]["status"] == "MANUAL"
+            assert by_id["YSE-088"]["method"] == "script:third_person"
+            assert by_id["YSE-088"]["status"] == "NEEDS-LLM"
+            assert "未发现" in by_id["YSE-088"]["evidence"]
+            assert "人工" in by_id["YSE-088"]["evidence"]
+            assert "不是全文第三人称证明" in by_id["YSE-088"]["evidence"]
+            assert by_id["YSE-079"]["method"] == "module:format"
+            assert by_id["YSE-079"]["status"] == "MODULE"
+            assert "公式末不加标点" in by_id["YSE-079"]["requirement"]
+            assert by_id["YSE-098"]["method"] == "module:bibliography"
+            assert "LI G Z" in by_id["YSE-098"]["requirement"]
+            assert "脚本仅辅助，余项人工" in by_id["YSE-098"]["requirement"]
+            for item in payload["items"]:
+                if item["method"].startswith("module:"):
+                    assert "脚本仅辅助，余项人工" in item["requirement"]
+                    assert item["status"] in {"MODULE", "SKIP"}
+                    assert "未检查" in item["evidence"] or item["status"] == "SKIP"
+                else:
+                    assert "脚本仅辅助，余项人工" not in item["requirement"]
+        master = json.loads(
+            _run_cli(
+                "main.tex",
+                "--template",
+                "yanshan-ee-2025",
+                "--degree",
+                "master",
+                "--year",
+                "2026",
+                "--json",
+            ).stdout
+        )
+        skips = [item["id"] for item in master["items"] if item["status"] == "SKIP"]
+        assert skips == ["YSE-074", "YSE-090"]
+        doctor = json.loads(
+            _run_cli(
+                "main.tex",
+                "--template",
+                "yanshan-ee-2025",
+                "--degree",
+                "doctor",
+                "--year",
+                "2026",
+                "--json",
+            ).stdout
+        )
+        assert [item["id"] for item in doctor["items"] if item["status"] == "SKIP"] == []
+        by_id = {item["id"]: item for item in doctor["items"]}
+        assert "--school yanshan-ee-2025" in by_id["YSE-040"]["evidence"]
+        assert "check_style_zh.py" in by_id["YSE-040"]["evidence"]
+        assert "check_format.py" in by_id["YSE-078"]["evidence"]
+        assert "check_tables.py" in by_id["YSE-067"]["evidence"]
+        assert "--author-cite" in by_id["YSE-042"]["evidence"]
+        assert "--repeat-cite" in by_id["YSE-042"]["evidence"]
+        assert "第42条" in by_id["YSE-042"]["evidence"]
+        assert "--abbreviation-style" in by_id["YSE-036"]["evidence"]
+        assert "--governance" not in by_id["YSE-036"]["evidence"]
+        assert "--college-details" in by_id["YSE-096"]["evidence"]
+        assert "替换" in by_id["YSE-096"]["evidence"]
+        assert by_id["YSE-040"]["status"] == "MODULE"
+        text = _run_cli(
+            "main.tex",
+            "--template",
+            "yanshan-ee-2025",
+            "--degree",
+            "doctor",
+            "--year",
+            "2026",
+        )
+        assert text.returncode == 0
+        assert "111 个状态不是 111 项通过" in text.stdout
+        assert "未验收" in text.stdout
+
+    def test_old_template_module_hint_has_no_college_flag(self, tmp_path: Path):
+        items = [check_spec.ChecklistItem("YS-39", "表格", "§2.10", "module:tables", "通用")]
+        evidence = check_spec.run_checklist(items, _ctx(tmp_path, "\\chapter{绪论}\n正文。\n"))[0]
+        assert evidence.status == "MODULE"
+        assert "check_tables.py" in evidence.evidence
+        assert "yanshan-ee-2025" not in evidence.evidence
+        assert "--author-cite" not in evidence.evidence
+
+    def test_old_four_templates_unchanged(self):
+        for name, expected in _OLD_TEMPLATE_HASHES.items():
+            raw = (_OLD_TEMPLATE_DIR / name).read_bytes().replace(b"\r\n", b"\n")
+            assert hashlib.sha256(raw).hexdigest() == expected, name
+
+    def test_old_template_json_matches_baseline(self):
+        env = dict(os.environ)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
+
+        def lf(data: bytes) -> bytes:
+            # Windows print() writes CRLF. Ubuntu CI writes LF. JSON text stays exact.
+            return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+        for template in ("yanshan", "thuthesis", "pkuthss", "generic"):
+            for degree in ("doctor", "master"):
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-X",
+                        "utf8",
+                        "-B",
+                        str(SCRIPT_DIR_ZH / "check_spec.py"),
+                        "main.tex",
+                        "--template",
+                        template,
+                        "--degree",
+                        degree,
+                        "--year",
+                        "2026",
+                        "--json",
+                    ],
+                    cwd=FIXTURE,
+                    env=env,
+                    capture_output=True,
+                    check=False,
+                )
+                name = f"{template}-{degree}"
+                assert result.returncode == 1
+                assert lf(result.stdout) == lf((_OLD_BASELINE / f"{name}.stdout").read_bytes())
+                assert lf(result.stderr) == lf((_OLD_BASELINE / f"{name}.stderr").read_bytes())

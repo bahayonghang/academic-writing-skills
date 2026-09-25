@@ -125,3 +125,18 @@ When submitting thesis with .docx:
 Use the existing `compile.py` wrapper with the thesis's real entry file and recipe. A passing script check or a
 generated PDF does not establish visual acceptance. Inspect the affected table and adjacent pages after compilation.
 If no rendered page was actually viewed, report the visual result as `missing evidence`.
+
+## College source checks (yanshan-ee-2025 only)
+
+These candidates run only with `check_tables.py --school yanshan-ee-2025`. The default and
+`--school generic` do not emit them. There is no bare `yanshan` alias. Each finding is `[Script]`,
+Info/P3, and `Meaning-Check: NEEDS-LLM`. It names a local cell or caption and does not supply a
+replacement sentence.
+
+- `TB-SAMEAS`: `同上` or `同左` in the tabular body. Caption text and table notes are excluded.
+- `TB-UNITHEAD`: a simple `tabular` column with at least three numeric rows that share one literal unit, while the header lacks that unit. The script does not convert units. `multicolumn`, `multirow`, or a nested table produces a non-coverage note instead of a merged hit.
+- `TB-COVERAGE` only: `longtable`, `sidewaystable`, `tabularx`, and a second `tabular` inside one `table` float get one coverage note per float. They are not scanned for `同上`/`同左`, shared-unit headers, or caption punctuation.
+- Blank cells and dashes do not establish that a quantity was not measured or was measured and not found. Keep that reading manual.
+- `CAP-PUNCT` in this script covers Chinese terminal punctuation of table floats only. Figure floats belong to `check_references.py`.
+
+The college wording is the 2025 electrical-engineering checklist. It is not written into the frozen `templates/yanshan.md`, `thuthesis.md`, `pkuthss.md`, or `generic.md` files.

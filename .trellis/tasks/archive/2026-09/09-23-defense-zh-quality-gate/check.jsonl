@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "验收时核对：测试加载与私有语料边界"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "验收时核对：子进程 UTF-8 编解码成对"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "验收时核对：quality-gate 双语页与 manifest"}
+{"file": ".trellis/spec/academic-writing-skills/spec-checklist-convention.md", "reason": "验收时核对：阈值来源标注"}

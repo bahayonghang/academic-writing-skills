@@ -1,0 +1,333 @@
+{
+  "tex_file": "main.tex",
+  "spec": "pkuthss (templates/pkuthss.md)",
+  "template": "pkuthss",
+  "degree": "doctor",
+  "ref_year": 2026,
+  "items": [
+    {
+      "id": "PKU-01",
+      "requirement": "题目简明扼要，\"一般不宜超过20 个汉字（符）\"；如有副标题，主副标题之间用破折号间隔（指南无副题名合计条款，副标题一并计入 20 字判定）",
+      "basis": "§1.1",
+      "method": "script:title_len",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "题名 13 字: 面向虚构场景的占位研究方法"
+    },
+    {
+      "id": "PKU-02",
+      "requirement": "博士中文摘要一般 800-1000 汉字（符）",
+      "basis": "§1.3",
+      "method": "script:abstract_len",
+      "scope": "博士",
+      "status": "FAIL",
+      "evidence": "中文摘要实测约 90 字（口径：可见文本去空白字符数）；规范区间 800~1000"
+    },
+    {
+      "id": "PKU-03",
+      "requirement": "硕士论文摘要\"一般 600 汉字左右\"（官方原文无判定区间，按实测字数人工判断）",
+      "basis": "§1.3",
+      "method": "llm",
+      "scope": "硕士",
+      "status": "SKIP",
+      "evidence": "适用范围为「硕士」，当前学位为 doctor"
+    },
+    {
+      "id": "PKU-04",
+      "requirement": "关键词应有 3~5 个，每个关键词之间用逗号间隔；放摘要页最下方、从新的一行撰写",
+      "basis": "§1.3",
+      "method": "script:kw_count",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到中文关键词（可能使用封面自定义宏），请人工核对 3~5 个且逗号分隔"
+    },
+    {
+      "id": "PKU-05",
+      "requirement": "论文摘要不能出现图片、表格或其他插图材料；基金资助在摘要第一页页脚标注",
+      "basis": "§1.3",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-06",
+      "requirement": "摘要切忌写成全文提纲（避免\"第一章……；第二章……\"的陈述方式）",
+      "basis": "第二章",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-07",
+      "requirement": "英文摘要由上到下包含：英文题目、作者姓名、专业名称（括号括起放姓名之后）、指导教师姓名、\"ABSTRACT\"、摘要内容和关键词（KEY WORDS）",
+      "basis": "§1.4",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-08",
+      "requirement": "英文摘要的内容与中文摘要一致；KEY WORDS 与中文关键词对应，第一个字母大写、之间用半角逗号间隔",
+      "basis": "§1.4",
+      "method": "script:kw_zh_en_match",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到中文关键词，请人工核对中英一一对应"
+    },
+    {
+      "id": "PKU-09",
+      "requirement": "十个组成部分依次为：封面、版权声明、中文摘要、英文摘要、目录、正文（含引言和结论）、参考文献、附录、致谢/后记或说明、原创性声明和授权使用说明；各部分独立、每部分从新的一页开始",
+      "basis": "第一章开篇",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-10",
+      "requirement": "中文摘要在前、英文摘要（ABSTRACT）在后",
+      "basis": "第一章开篇",
+      "method": "script:abstract_order",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "未找到英文摘要环境，请人工核对中前英后与内容一致性"
+    },
+    {
+      "id": "PKU-11",
+      "requirement": "使用大量符号、标志、缩略词时应编写\"主要符号对照表\"（放目录之后、正文之前）；数量不多可以不设、文中出现时随即说明（条件项，非必备章节）",
+      "basis": "§1.6",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-12",
+      "requirement": "目录一般列到三级标题，即二级节标题（如 2.2.5）即可",
+      "basis": "§1.5",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-13",
+      "requirement": "一般不建议使用三级及以上节标题；不出现超过四段数字编号的层级",
+      "basis": "§1.7.1",
+      "method": "script:heading_depth",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "章节层次不超过四级"
+    },
+    {
+      "id": "PKU-14",
+      "requirement": "章序号用中文数字（如\"第一章 引言\"），章序号与标题之间空一个汉字符、黑体三号居中；节编号用阿拉伯数字、数字间用半角小数点连接",
+      "basis": "§1.7.1",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-15",
+      "requirement": "图、表和表达式按章编号，两数字间用半角小数点\".\"连接（\"图 2.1\"\"表 5.6\"\"式（1.2）\"；指南只给点号制式，无连字符选项）",
+      "basis": "§1.7.4",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-16",
+      "requirement": "图序与图名置于图下方（宋体 11pt 居中）、表序与表名置于表上方；分图以 (a)、(b)、(c) 作图序并须有分图名",
+      "basis": "§1.7.4",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-17",
+      "requirement": "续表在每页表序前加\"续\"字",
+      "basis": "§1.7.4",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-18",
+      "requirement": "脚注用①②③样式上标标注，序号按页编排（不同页脚注序号不需连续），内容宋体小五",
+      "basis": "§1.7.3",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-19",
+      "requirement": "论文中引用过的文献必须著录、未引用的文献不得出现；参考文献集中著录于正文之后、不得分章节著录；外文文献直接使用外文著录",
+      "basis": "§1.8",
+      "method": "module:bibliography",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 bibliography 模块覆盖: uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714"
+    },
+    {
+      "id": "PKU-20",
+      "requirement": "标注法采用\"顺序编码制\"或\"著者-出版年制\"；顺序编码制文献序号放\"[ ]\"内、以上标方式标注在索引位置",
+      "basis": "§1.8",
+      "method": "module:bibliography",
+      "scope": "通用",
+      "status": "MODULE",
+      "evidence": "由 bibliography 模块覆盖: uv run python $SKILL_DIR/scripts/verify_bib.py references.bib --standard gb7714"
+    },
+    {
+      "id": "PKU-21",
+      "requirement": "pkuthss 默认 biblatex 样式 caspervector 实现的格式与《写作指南》规定并不一致；可考虑改用 style=gb7714-2015，或用 biblatex-caspervector 的 ugly 选项贴近国标格式",
+      "basis": "pkuthss 文档",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-22",
+      "requirement": "附录依顺序用大写字母编号（附录 A、附录 B……），只有一个附录时也编\"附录 A\"；附录内图表如\"图 A.1\"\"表 B.2\"\"式（C-3）\"；附录并不是必须的",
+      "basis": "§1.9",
+      "method": "script:appendix_letter",
+      "scope": "通用",
+      "status": "FAIL",
+      "evidence": "存在附录章（附录：编码边角用例）但未见 \\appendix，编号可能不是附录 A/B 形式"
+    },
+    {
+      "id": "PKU-23",
+      "requirement": "致谢言语谦虚诚恳、实事求是，字数不超过 1000 个汉字",
+      "basis": "§1.10",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-24",
+      "requirement": "个人简历、在学期间发表的学术论文和成果等放附录之后、致谢之前；发表论文列表要求同参考文献列表格式",
+      "basis": "§1.10",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-25",
+      "requirement": "引言大致包含五部分：问题的提出、选题背景及意义、文献综述、研究方法、论文结构安排",
+      "basis": "第二章",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-26",
+      "requirement": "评价自己的研究成果实事求是：除非有足够证据，避免使用\"首次\"\"领先\"\"填补空白\"或类似词语",
+      "basis": "第二章",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-27",
+      "requirement": "采用国家正式公布实施的简化汉字撰写（古文字、外文引用、外国语言文学论文等除外；经批准的英文论文须用中文封面）",
+      "basis": "第一章开篇",
+      "method": "llm",
+      "scope": "通用",
+      "status": "NEEDS-LLM",
+      "evidence": "由 agent 对照正文与规范依据逐项判读"
+    },
+    {
+      "id": "PKU-28",
+      "requirement": "纸张标准 A4；页边距上/下/左/右/装订线为 3.0/2.5/2.6/2.6/0cm、装订线位置左、左右对称页边距；页眉距边界 2.0cm、页脚距边界 1.75cm",
+      "basis": "§1.11",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-29",
+      "requirement": "页眉五号宋体居中、奇偶页不同（奇数页=各章名称，偶数页=\"北京大学博士学位论文\"或\"北京大学硕士学位论文\"），页眉文字下划一条 0.75 磅横线",
+      "basis": "§1.11",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-30",
+      "requirement": "页码：从\"摘要\"至\"目录\"用罗马数字；从\"第一章 引言\"开始用阿拉伯数字",
+      "basis": "§1.11",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-31",
+      "requirement": "每章从新的一页开始（pkuthss 默认双面模式、每章从右页/奇数页开始；避免章末空白页可加 openany 选项）",
+      "basis": "pkuthss 文档",
+      "method": "script:new_page_chapter",
+      "scope": "通用",
+      "status": "PASS",
+      "evidence": "各章使用 \\chapter（book 类默认另起一页）"
+    },
+    {
+      "id": "PKU-32",
+      "requirement": "双面打印（封面和原创性声明除外）、左侧装订；电子版为 1 个独立 PDF 且内容与纸质版完全一致（签字除外）",
+      "basis": "第三章",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-33",
+      "requirement": "排版双盲版论文时封面须用 \\makeblind 而非 \\maketitle，去掉致谢等章节、隐去其它可能泄露个人信息的部分（西文摘要用 beabstract 环境；送审前另跑 blind-review 模块）",
+      "basis": "pkuthss 文档 §2.2",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-34",
+      "requirement": "格式审查提示字号不严格符合标准时，可在文档类选项中加入 ugly（模板默认在少数字号细节上有意偏离学校书面规定）",
+      "basis": "pkuthss 文档",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    },
+    {
+      "id": "PKU-35",
+      "requirement": "模板未尝试设定表格的默认字号，须自行按学校规定进行设置",
+      "basis": "pkuthss 文档",
+      "method": "manual",
+      "scope": "通用",
+      "status": "MANUAL",
+      "evidence": "需编译 PDF/打印核对，列入打印前自查单"
+    }
+  ],
+  "summary": {
+    "PASS": 3,
+    "FAIL": 2,
+    "NEEDS-LLM": 18,
+    "MODULE": 2,
+    "MANUAL": 9,
+    "SKIP": 1
+  },
+  "status": "FAIL"
+}

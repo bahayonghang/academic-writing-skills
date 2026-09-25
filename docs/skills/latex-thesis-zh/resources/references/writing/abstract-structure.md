@@ -186,3 +186,28 @@ Avoid dual implementation drift (deai trace does not flow into this module).
 - Never add results or conclusions not present in the original text
 - Preserve all citations, labels, and math environments
 - Mark all modifications with brackets: [ADDED: ...] or [REVISED: ...]
+
+## Abstract quotation marks and English punctuation (LLM only)
+
+The judgment belongs only to the LLM. No check code is added. `analyze_abstract.py` does not check quotation marks.
+
+A Chinese quotation uses the paired characters U+201C and U+201D. The opening mark is U+201C and the closing mark is U+201D. A pair that uses U+201D at both ends, or an ASCII quotation mark around a Chinese quotation, fails. The English abstract uses English punctuation. A Chinese comma or a Chinese full stop inside an English abstract sentence fails.
+
+The quotation's wording, mathematics, and citation keys stay unchanged. Fixing the marks must not rewrite the quotation, the mathematics, or a citation key.
+
+```text
+中文通过：本文沿“状态估计与序列决策”主线
+中文不通过：本文沿”状态估计与序列决策”主线
+英文通过：The estimator reports the state, and the planner uses that state.
+英文不通过：The estimator reports the state，and the planner uses that state.
+引语保护通过：引号改为成对弯引号后，仍是一步估计 $x_{t}$，引用键仍是 lee2020。
+引语保护不通过：改引号时把“一步估计 $x_{t}$”改成“状态估计”，或把 \cite{lee2020} 改成 \cite{lee2021}。
+```
+
+```latex
+% 摘要（合成）[Severity: Minor] [Priority: P2]: [LLM] 中文引号未成对，或英文摘要使用了中文标点
+% 问题：引号方向或标点语言不对
+% 原文：本文沿”状态估计与序列决策”主线
+% 修改后：本文沿“状态估计与序列决策”主线
+% 理由：只改引号或标点。措辞、数学和引用键保持不变。不新增检查码。
+```

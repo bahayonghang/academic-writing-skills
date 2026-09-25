@@ -1,0 +1,11 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+((* for card in frame.cards *))
+\DefenseCard{((( card.label )))}{((( card.text )))}
+((* endfor *))
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}

@@ -107,3 +107,15 @@ Compilation success, an `.aux` entry, or an existing PNG/PDF is only intermediat
 page was not actually viewed, report `missing evidence`; do not announce that layout passes. This
 workflow does not authorize deleting or compressing the original PDF, installing system tools, or
 controlling a desktop UI.
+
+## 10. College Chinese caption punctuation (yanshan-ee-2025 only)
+
+The college checklist says a Chinese figure or table caption contains no punctuation and does not end with punctuation. The one-character gap after the number, and English capitalization, stay manual and follow the university and the template.
+
+`check_tables.py --school yanshan-ee-2025` checks Chinese captions inside table floats only.
+`check_references.py --school yanshan-ee-2025` checks non-table floats such as `figure`. One float belongs to one script.
+This mode does not add citation placement, page numbers, or bibliography-field rules to `check_references.py`.
+
+The script looks only at whether the visible text of the Chinese main argument ends with Chinese punctuation. The optional short argument and argument 2 of `\bicaption` are outside this check.
+An English period is not a Chinese-punctuation hit. Punctuation inside code, mathematics, or citation keys does not count. If the Chinese main argument cannot be identified, leave it manual.
+A Chinese caption with no terminal punctuation is not reported. The default and `--school generic` do not enable the check. Candidates are `[Script]`, Info/P3, and `Meaning-Check: NEEDS-LLM`, with no replacement sentence.

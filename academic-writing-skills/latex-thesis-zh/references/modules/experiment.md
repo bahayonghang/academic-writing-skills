@@ -136,6 +136,32 @@ uv run python scripts/analyze_experiment.py thesis.tex --results-analysis
 
 ---
 
+# 跨表面数字候选 (--cross-surface)
+
+```bash
+uv run python scripts/analyze_experiment.py thesis.tex --cross-surface
+uv run python scripts/analyze_experiment.py thesis.tex --cross-surface --cross-surface-terms terms.json
+```
+
+`--cross-surface-terms` 只能与 `--cross-surface` 同时使用。JSON 只含 `metrics` 和 `eval_sets`。
+该模式只支持同章简单 `tabular` 或独立 `longtable`、唯一 `\ref{tab:}`、显式指标、行对象、评价集和字面单位。
+`multirow`、`multicolumn`、宏表和跨章引用不比较。脚本不输出修正数字，也不把相近数字判为相等。
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| RA-XS-BODY | 正文终值与已绑定表记录不一致 | Info/P3 |
+| RA-XS-SUMMARY | 小结终值与已绑定表记录不一致，或已明确绑定的表中无此记录 | Info/P3 |
+| RA-XS-MISSING | 正文或小结缺少已声明的关键结果表面 | Info/P3 |
+| RA-XS-EVALSET | 同一表、对象和指标明确使用两个评价集名称 | Info/P3 |
+| RA-XS-METRIC | 肯定句把两个不同指标写成可得或换算 | Info/P3 |
+| RA-XS-COVERAGE | 不能唯一绑定，或表格语法未覆盖 | Info/P3 |
+
+全部为 `[Script]` 与 `Meaning-Check: NEEDS-LLM`。人工仍须核读三表面、分母、单位和对象。
+不传 `--cross-surface` 时不打印覆盖统计。`--results-analysis` 的既有检查码保持独立。
+详见 [`../writing/results-analysis-guide-zh.md`](../writing/results-analysis-guide-zh.md)。
+
+---
+
 # 结论完整性检查 (B5)
 
 **规则**：完整的结论必须包含三个要素：

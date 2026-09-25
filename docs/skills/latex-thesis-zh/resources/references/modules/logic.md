@@ -230,3 +230,7 @@ subsection that needs analysis. Missing APIs, formulas, metrics, deployment fact
 | Sequence | 首先、随后 | first, subsequently |
 
 > Full details: see [`../writing/logic-coherence.md`](../writing/logic-coherence.md)
+
+## Document-level method expression and the post-deletion bridge (LLM only)
+
+Tensor wording, an axis swap, or Concat, and a mismatch between body wording and an architecture-figure label, are read in [method-description-guide-zh.md](../writing/method-description-guide-zh.md). After a preview is deleted, 上述 with no antecedent is read in [paragraph-roles-zh.md](../writing/paragraph-roles-zh.md). Both judgments belong only to `[LLM]`. `M-FORMDUPE` and `PR-EQ-NARR` are not the same defect. No script code is added.

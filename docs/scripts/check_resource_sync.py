@@ -49,15 +49,24 @@ def _normalized_resource_bytes(path: Path) -> bytes:
     return content
 
 
+def _path_order(path: Path) -> list[str]:
+    """Case-insensitive, part-wise order, so the manifest is identical on every OS."""
+    return [part.lower() for part in path.parts]
+
+
 def public_source_files(repo_root: Path = REPO_ROOT) -> list[tuple[str, str, Path]]:
     skills_root = repo_root / "academic-writing-skills"
     resources: list[tuple[str, str, Path]] = []
-    for skill_dir in sorted(path for path in skills_root.iterdir() if path.is_dir()):
+    for skill_dir in sorted(
+        (path for path in skills_root.iterdir() if path.is_dir()), key=_path_order
+    ):
         for kind in PUBLIC_KINDS:
             kind_root = skill_dir / kind
             if not kind_root.exists():
                 continue
-            for source in sorted(path for path in kind_root.rglob("*") if path.is_file()):
+            for source in sorted(
+                (path for path in kind_root.rglob("*") if path.is_file()), key=_path_order
+            ):
                 if source.suffix.lower() in KIND_SUFFIXES[kind]:
                     resources.append((skill_dir.name, kind, source))
     return resources

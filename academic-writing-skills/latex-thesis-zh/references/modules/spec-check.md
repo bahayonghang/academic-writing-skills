@@ -11,7 +11,7 @@ uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --deg
 ```
 
 - `--template <id>`：使用 `templates/<id>.md` 的清单（当前带清单的模板：yanshan、thuthesis、
-  pkuthss、generic；未指定时按 documentclass 自动推断，推断到无清单的模板会报错并列出可用清单）。
+  pkuthss、generic、yanshan-ee-2025；未指定时按 documentclass 自动推断，推断到无清单的模板会报错并列出可用清单）。
 - `--spec-file <path>`：使用任意符合清单表格格式的自定义规范文件（通用入口：任何学校的
   规范都可整理成清单后接入；引用了不存在检查器的条目自动降级为 NEEDS-LLM，不会中断）。
 - `--degree master|doctor`：学位类型（影响字数/文献数量阈值与条目适用范围；缺省时从正文
@@ -79,7 +79,7 @@ uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --deg
 `conclusion_hedge`（结论模糊措辞）· `bib_count` · `bib_recency`（近五年≥1/3 且有近两年）·
 `heading_len`（标题≤15 字）· `heading_depth`（层次≤4 级）·
 `cite_in_heading`（标题内禁 \cite）· `new_page_chapter`（每章另起页）·
-`appendix_letter`（附录字母编号）
+`appendix_letter`（附录字母编号）· `third_person`（仅学院清单 YSE-088，永远 NEEDS-LLM，不判 PASS）
 
 判定为区间/下限的检查器带 ±10% 缓冲带：落在缓冲带内报 NEEDS-LLM（规范多用“一般”措辞），
 超出才报 FAIL。字数口径为“可见文本去空白字符数”（近似，含图表文字），报告中已注明。
@@ -101,3 +101,15 @@ uv run python $SKILL_DIR/scripts/check_spec.py main.tex --template yanshan --deg
 - **“我们学校没有清单”** → 请用户提供规范原文/PDF 文本，先整理成 `--spec-file` 清单
   （每条注明规范原文出处；整理结果先给用户确认，不得凭通例编造条目），再跑终检。
 - **盲审送审前** → 终检之外另跑 `blind-review` 模块（个人信息隐匿检查）。
+
+## 学院 2025 清单
+
+研究生院终检用 `--template yanshan`，清单文件是 `yanshan.md`。学院 2025 终检用 `--template yanshan-ee-2025`，清单文件是 `yanshan-ee-2025.md`。两份清单并存。学院清单不使用研究生院的 `TEMPLATE_THRESHOLDS`。
+
+`--degree master` 与 `--degree doctor` 都输出 111 行。第 74 项和第 90 项的适用范围是 `博士`，硕士状态为 SKIP，不删除该行。第 10、47、66、92 项的适用范围是 `通用`。条文里的博士加严句留在检查项中，硕士不 SKIP。
+
+`script:third_person` 只用于第 88 项。它在可见作者叙述中找 `我们`、`笔者`、含 `我` 的词位（已排除常见非人称复合词）、`我认为` 和 `我提出`，给出位置和短片段。有无命中都是 NEEDS-LLM。零命中不是全文第三人称证明。致谢由标题或标准环境确定，不因某一行出现“致谢”而跳过后文。前导区、文献数据、代码、数学和键不扫描。
+
+`module:expression`、`module:format` 和 `module:tables` 的提示附加 `--school yanshan-ee-2025`。`module:references` 的提示是 `check_references.py main.tex --school yanshan-ee-2025 --author-cite --repeat-cite`。`module:bibliography` 的提示是 `verify_bib.py references.bib --standard gb7714 --college-details`，必须替换 bib 路径。`module:consistency` 的提示附加 `--abbreviation-style`，没有术语文件时不附加 `--governance`。这些命令只打印，不执行。MODULE 不是已检查。`--author-cite` 是作者写作约定，不是学院第 42 条原文。
+
+一个局部 checker 不能把多子句条目判为 PASS。第 87 项和第 111 项是 `manual`。不要用 FAIL 条数推导审查结论。学院清单没有 FAIL 时退出码为 0。退出码 0 不是学院验收通过。不新增 `--pdf`，不读取 PDF 页底几何。

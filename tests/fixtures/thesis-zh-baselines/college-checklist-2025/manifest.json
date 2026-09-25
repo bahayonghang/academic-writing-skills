@@ -1,0 +1,54 @@
+[
+  {
+    "name": "yanshan-doctor",
+    "exit": 1,
+    "stdout_bytes": 20244,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "yanshan-master",
+    "exit": 1,
+    "stdout_bytes": 20235,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "thuthesis-doctor",
+    "exit": 1,
+    "stdout_bytes": 14423,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "thuthesis-master",
+    "exit": 1,
+    "stdout_bytes": 14423,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "pkuthss-doctor",
+    "exit": 1,
+    "stdout_bytes": 14153,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "pkuthss-master",
+    "exit": 1,
+    "stdout_bytes": 14110,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "generic-doctor",
+    "exit": 1,
+    "stdout_bytes": 11394,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "generic-master",
+    "exit": 1,
+    "stdout_bytes": 11394,
+    "stderr_bytes": 0
+  },
+  {
+    "git_diff_exit": 0,
+    "git_diff_bytes": 0
+  }
+]

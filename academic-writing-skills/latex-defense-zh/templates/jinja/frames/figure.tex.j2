@@ -1,0 +1,9 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+\DefenseFigure((* if frame.figure.width *))[width=((( frame.figure.width )))\linewidth]((* endif *)){((( frame.figure.file )))}{((( frame.figure.caption )))}
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}
