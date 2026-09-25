@@ -1763,3 +1763,36 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - just ci 与 just doc-build 仍未在本会话重跑；五宿主与真实论文效果继续 UNVERIFIED。
+
+
+## Session 52: latex-defense-zh C3 收尾与 C4 技能入口、catalog 登记
+<!-- trellis-session: v=2 fp=997b219a10d9ac36 -->
+
+**Date**: 2026-09-25
+**Task**: latex-defense-zh C3 收尾与 C4 技能入口、catalog 登记
+**Branch**: `claude/gifted-johnson-0g4ziz`
+
+### Summary
+
+C3 端到端证据与归档；C4 SKILL.md、示例、evals、agents、第八个 catalog 技能登记、双语 docs 与 spec；合成论文真实填写演练修复 figure-grid 副本标题吞图、--force 误报 D-COMPILE、PyMuPDF 测试隔离与清单排序；AC11 真实论文验收待用户提供论文仓库。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ede1c9f` | fix(docs): 资源清单排序与平台无关 |
+| `e90cb00` | feat(latex-defense-zh): 技能入口与第八个 catalog 技能登记 |
+
+### Testing
+
+- [OK] just ci: 2515 passed, 8 skipped
+- [OK] DEFENSE_ZH_COMPILE=1 pytest tests/skills/latex_defense_zh: 152 passed
+- [OK] check_resource_sync.py full; just doc-build
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 用真实论文仓库执行 AC11，补记 research/acceptance-real-thesis.md 后归档 C4 与父任务
