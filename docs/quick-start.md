@@ -10,6 +10,7 @@
 | Work on a Chinese LaTeX thesis | `latex-thesis-zh` |
 | Work on a Typst paper | `typst-paper` |
 | Search a local `.bib` library | `bib-search-citation` |
+| Polish or translate academic prose for a venue | `paper-writing-studio` |
 
 ## 2. Run One Real Command
 

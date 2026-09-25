@@ -19,6 +19,7 @@ SKILL_NAMES = (
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",
+    "paper-writing-studio",
     "typst-paper",
 )
 

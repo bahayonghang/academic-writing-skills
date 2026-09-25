@@ -10,7 +10,8 @@
 
 ### Added
 
-- 暂无。
+- `paper-writing-studio` 登记为第七个公开 catalog 技能：`SKILL.md` 改为仓库技能契约结构，版本对齐 `6.0.0`；
+  新增三份示例、`evals/evals.json` 与 `evals/trigger_eval.json`；进入安装器、契约测试列表与双语文档。
 
 ## [6.0.0] - 2026-07-16
 

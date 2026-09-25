@@ -17,6 +17,7 @@ _SKILL_NAMES = (
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",
+    "paper-writing-studio",
     "typst-paper",
 )
 
@@ -47,7 +48,7 @@ def _tiny_catalog(root: Path) -> Path:
     return catalog
 
 
-def test_discover_skills_finds_six_catalog_packages() -> None:
+def test_discover_skills_finds_seven_catalog_packages() -> None:
     skills = installer.discover_skills(SKILLS_ROOT)
     names = [skill.name for skill in skills]
     assert names == list(_SKILL_NAMES)

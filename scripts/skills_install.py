@@ -24,6 +24,7 @@ CATALOG_SKILL_NAMES: tuple[str, ...] = (
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",
+    "paper-writing-studio",
     "typst-paper",
 )
 

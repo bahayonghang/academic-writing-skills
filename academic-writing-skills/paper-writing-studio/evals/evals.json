@@ -1,0 +1,163 @@
+{
+  "skill_name": "paper-writing-studio",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "没有目标期刊。请润色这段 experiments：The error decreased from 12.5% [3] in \\cite{smith2024}.",
+      "expected_output": "Select the unspecified neutral baseline, map experiments to the canonical section results, keep 12.5%, [3], and \\cite{smith2024} unchanged, and list venue/journal/domain in missing_evidence.",
+      "files": [
+        "evals/output_contract_cases.json"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "unspecified",
+          "description": "neutral baseline selected"
+        },
+        {
+          "type": "regex",
+          "pattern": "results",
+          "description": "experiments alias mapped to results"
+        },
+        {
+          "type": "contains",
+          "text": "\\cite{smith2024}",
+          "description": "citation token kept"
+        },
+        {
+          "type": "contains",
+          "text": "12.5%",
+          "description": "number token kept"
+        },
+        {
+          "type": "regex",
+          "pattern": "venue/journal/domain",
+          "description": "missing venue signal reported"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "按 Nature 风格润色这段 abstract。期刊写 Applied Energy，领域是 control_ieee。",
+      "expected_output": "Select nature from the explicit venue and report two conflicts: journal=elsevier and domain=ieee. Do not load the IEEE or Elsevier profile.",
+      "files": [
+        "evals/output_contract_cases.json"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "explicit venue",
+          "description": "explicit venue wins"
+        },
+        {
+          "type": "regex",
+          "pattern": "journal=elsevier conflicts with venue=nature",
+          "description": "journal conflict reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "domain=ieee conflicts with venue=nature",
+          "description": "domain conflict reported"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Rewrite this IEEE method paragraph: We adopt a two-stage training scheme for the DAGNN model.",
+      "expected_output": "Select ieee from the explicit venue, map the target method to the canonical section methods, keep DAGNN unchanged, and mark the output degraded because the package has no IEEE corpus snapshot.",
+      "files": [
+        "evals/output_contract_cases.json"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "\"section\": \"methods\"|section.{0,10}methods",
+          "description": "method alias mapped to methods"
+        },
+        {
+          "type": "contains",
+          "text": "DAGNN",
+          "description": "acronym kept"
+        },
+        {
+          "type": "regex",
+          "pattern": "degraded",
+          "description": "degraded trace reported"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "按 Nature 风格润色这段 discussion：The result is 42%.",
+      "expected_output": "Keep 42% unchanged. Record avoided AI tells in ai_tells_avoided. List any token without a source in untraceable_tokens. Set degraded to true when the Nature source path is absent.",
+      "files": [
+        "evals/output_contract_cases.json"
+      ],
+      "assertions": [
+        {
+          "type": "contains",
+          "text": "42%",
+          "description": "number token kept"
+        },
+        {
+          "type": "regex",
+          "pattern": "ai_tells_avoided",
+          "description": "anti-AI trace present"
+        },
+        {
+          "type": "regex",
+          "pattern": "untraceable_tokens",
+          "description": "untraceable trace present"
+        },
+        {
+          "type": "regex",
+          "pattern": "degraded",
+          "description": "degraded trace present"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "按 Elsevier 期刊润色这段 results：The result is 42%. The confidence interval remains unchanged across all held-out trials.",
+      "expected_output": "Select elsevier from the explicit venue. Return text, a text_compact that is shorter than text, and summary. Keep 42% unchanged.",
+      "files": [
+        "evals/output_contract_cases.json"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "elsevier",
+          "description": "elsevier profile selected"
+        },
+        {
+          "type": "regex",
+          "pattern": "text_compact",
+          "description": "compact output present"
+        },
+        {
+          "type": "contains",
+          "text": "42%",
+          "description": "number token kept"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "请编译 main.tex 并修复双栏排版。",
+      "expected_output": "Do not polish prose. State that compilation and layout are out of scope and route the request to latex-paper-en, latex-thesis-zh, or typst-paper.",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "latex-paper-en|latex-thesis-zh|typst-paper",
+          "description": "routes to a writing skill"
+        },
+        {
+          "type": "not_contains",
+          "text": "text_compact",
+          "description": "no polish output"
+        }
+      ]
+    }
+  ]
+}

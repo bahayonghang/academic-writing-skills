@@ -38,9 +38,11 @@ def test_manifest_matches_live_public_inventory() -> None:
     assert {entry["skill"] for entry in entries} == {
         "bib-search-citation",
         "cover-letter",
+        "latex-defense-zh",
         "latex-paper-en",
         "latex-thesis-zh",
         "paper-audit",
+        "paper-writing-studio",
         "typst-paper",
     }
 
@@ -184,6 +186,7 @@ def test_bilingual_usage_pages_cover_live_skill_routers() -> None:
         "latex-paper-en",
         "latex-thesis-zh",
         "paper-audit",
+        "paper-writing-studio",
         "typst-paper",
     ):
         tokens = _router_tokens(skill)
@@ -193,7 +196,7 @@ def test_bilingual_usage_pages_cover_live_skill_routers() -> None:
             assert not missing, f"{skill} router missing from usage page: {missing}"
 
 
-def test_bilingual_installation_pages_list_all_six_skills() -> None:
+def test_bilingual_installation_pages_list_all_seven_skills() -> None:
     installation_pages = [
         (REPO_ROOT / "docs" / "installation.md").read_text(encoding="utf-8"),
         (REPO_ROOT / "docs" / "zh" / "installation.md").read_text(encoding="utf-8"),

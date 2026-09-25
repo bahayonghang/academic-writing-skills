@@ -243,6 +243,13 @@ function buildSidebar(prefix: string): SidebarItem[] {
       items: skillItems(prefix, "bib-search-citation"),
     },
     {
+      text: isZh
+        ? "期刊风格润色 (paper-writing-studio)"
+        : "Venue Polish (paper-writing-studio)",
+      collapsed: false,
+      items: skillItems(prefix, "paper-writing-studio"),
+    },
+    {
       text: isZh ? "投稿信 (cover-letter)" : "Cover Letters (cover-letter)",
       collapsed: false,
       items: skillItems(prefix, "cover-letter"),

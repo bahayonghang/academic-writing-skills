@@ -10,7 +10,7 @@ Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi).
 
 ## Project Structure & Module Organization
 
-Core skill packages live under `academic-writing-skills/`. There are six skill root directories:
+Core skill packages live under `academic-writing-skills/`. There are seven skill root directories:
 
 - `latex-paper-en/`
 - `latex-thesis-zh/`
@@ -18,6 +18,7 @@ Core skill packages live under `academic-writing-skills/`. There are six skill r
 - `bib-search-citation/`
 - `paper-audit/`
 - `cover-letter/`
+- `paper-writing-studio/`
 
 Each skill typically contains `SKILL.md`, `scripts/`, `references/`, `examples/`, and optional `agents/`, `templates/`, or `evals/`. `SKILL.md` is the capability and routing source. Public `references/`, `templates/`, `examples/`, and Markdown `agents/` are the detailed rule sources. Automated tests live in `tests/` and in skill-local `academic-writing-skills/*/tests/`. User-facing documentation is in `docs/` with localized content under `docs/zh/`. The docs site is a bilingual mirror; do not infer skill behavior from old docs pages. Maintainer coding guidelines live under `.trellis/spec/`. Use `ref/` for supporting reference material, not product code.
 
@@ -65,7 +66,7 @@ Pyright uses `typeCheckingMode = "basic"`. Errors fail `just ci`. Existing warni
 
 ## Parser copies
 
-Five skills ship `scripts/parsers.py`: `latex-paper-en`, `latex-thesis-zh`, `typst-paper`, `paper-audit`, and `cover-letter`. `bib-search-citation` does not. `DocumentParser` (ABC) → `LatexParser`, `TypstParser`. Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`. Keep copies aligned when changing shared behavior. The contract is `tests/contracts/test_parsers_alignment.py` (hash-locked `ALIGNMENTS`; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
+Five skills ship `scripts/parsers.py`: `latex-paper-en`, `latex-thesis-zh`, `typst-paper`, `paper-audit`, and `cover-letter`. `bib-search-citation` and `paper-writing-studio` do not. `DocumentParser` (ABC) → `LatexParser`, `TypstParser`. Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`. Keep copies aligned when changing shared behavior. The contract is `tests/contracts/test_parsers_alignment.py` (hash-locked `ALIGNMENTS`; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
 
 PDF audit uses lazy `pymupdf` (PyMuPDF). The enhanced path also uses optional `pymupdf4llm`.
 

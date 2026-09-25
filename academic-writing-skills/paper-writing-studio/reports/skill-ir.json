@@ -1,9 +1,9 @@
 {
   "schema_version": "2.0.0-qiaomu-lite",
-  "generated_at": "2026-09-11",
+  "generated_at": "2026-09-23",
   "package": {
     "name": "paper-writing-studio",
-    "version": "0.1.0",
+    "version": "6.0.0",
     "owner": "Geekyhang",
     "maturity_tier": "production",
     "lifecycle_stage": "experimental-production",
@@ -72,7 +72,14 @@
     "router_rules": [],
     "compact_workflow": [],
     "gate_ladder": [],
-    "output_contract": []
+    "output_contract": [
+      "The default output is inline Markdown with three parts: `text`, `text_compact`, and `summary`. Write a file only when the user asks for it.",
+      "`text` is the polished or translated prose. `text_compact` comes from `render_result`: the first 65% of the whitespace-normalized `text`.",
+      "`summary` keys come from `render_result` in `scripts/core.py`: `venue`, `profile_version`, `section`, `domain`, `rules_applied`, `patterns_used`, `evidence_rows`, `ai_tells_avoided`, `untraceable_tokens`, `degraded`, `selection_source`, `conflicts`, `missing_evidence`, `protected_tokens`.",
+      "`profile_version` is the `profile_version` of the selected profile file. The core default is `unresolved`.",
+      "`rules_applied` and `evidence_rows` list only rows that were loaded. Candidate rows stay visible in `summary` as candidates. They never appear in `rules_applied`.",
+      "If a profile source is absent, set `degraded: true` and list the missing source in `missing_evidence`. Do not fall back to another venue."
+    ]
   },
   "resources": {
     "references": [],
@@ -81,17 +88,18 @@
       "scripts\\core.py"
     ],
     "evals": [
+      "evals\\evals.json",
       "evals\\output_cases.json",
       "evals\\output_contract_cases.json",
       "evals\\output_contract_eval.py",
-      "evals\\trigger_cases.json"
+      "evals\\trigger_cases.json",
+      "evals\\trigger_eval.json"
     ],
     "reports": [
       "reports\\creation-handoff.md",
       "reports\\prior-art-research.md",
       "reports\\skill-ir.json",
-      "reports\\trigger-eval.json",
-      "reports\\trigger-eval.new.json"
+      "reports\\trigger-eval.json"
     ]
   },
   "portability": {

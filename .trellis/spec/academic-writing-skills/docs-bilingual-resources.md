@@ -31,7 +31,7 @@ uv run python docs/scripts/check_resource_sync.py --write-manifest --inventory-o
 
 | Field | Type | Contract |
 | --- | --- | --- |
-| `skill` | string | 六个公开技能目录名之一 |
+| `skill` | string | 七个公开技能目录名之一 |
 | `kind` | string | `references` / `templates` / `examples` / `agents` |
 | `source` | repo-relative path | 真实源文件，保持文件名大小写 |
 | `sourceLocale` | enum | `en` / `zh` / `neutral`，逐文件判定 |

@@ -24,7 +24,7 @@ Schema (keep in sync with skill-creator/scripts/run_loop.py):
 
 Health rules enforced here:
 
-* one ``trigger_eval.json`` per shipped skill (five total)
+* one ``trigger_eval.json`` per shipped skill (seven total)
 * ``skill_name`` matches both the directory name and the SKILL.md frontmatter
 * ``queries`` has at least 12 items, at least 5 positives, at least 5 negatives
 * every entry has the three required fields with the right types
@@ -59,6 +59,7 @@ SKILL_NAMES = (
     "bib-search-citation",
     "paper-audit",
     "cover-letter",
+    "paper-writing-studio",
 )
 
 MIN_QUERIES = 12

@@ -112,6 +112,12 @@ SKILLS = {
         "min_evals": 5,
         "expects_uv_commands": True,
     },
+    "paper-writing-studio": {
+        "modules": ["nature", "ieee", "elsevier", "unspecified"],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": False,
+    },
     "typst-paper": {
         "modules": [
             "compile",

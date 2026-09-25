@@ -1,0 +1,50 @@
+% Synthetic thesis fixture for latex-defense-zh tests.
+% All names, titles, numbers, and references are synthetic.
+% Images are not committed; the tests generate them at run time.
+\documentclass[doctor,academic]{ysuthesis}
+
+\graphicspath{{fig/}}
+
+\newcommand{\ysuctitlelines}{面向稀疏观测的城市交通\\流量预测方法研究}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\def\Loss{\mathcal{L}}
+\newcommand{\unusedmacro}{未使用的宏}
+
+\title{面向稀疏观测的城市交通流量预测方法研究}{Research on Urban Traffic Flow Prediction Methods under Sparse Observations}
+\author{示例作者}{Example Author}
+\supervisor{示例导师}{教授}{Example Supervisor}{Professor}
+\school{示例学院}{Example School}
+\subject{控制科学与工程}{Control Science and Engineering}
+\date{二〇二六年六月}{June, 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\mainmatter
+
+\include{chapters/chapter1}
+\include{chapters/chapter2}
+\include{chapters/chapter3}
+\include{chapters/chapter4}
+\include{chapters/chapter5}
+\include{chapters/chapter6}
+\include{chapters/chapter7}
+
+\backmatter
+
+\achievement{
+  \achievementcategory{1. 发表及录用的学术论文}
+  \begin{enumerate}
+    \item 示例作者, 示例导师. 基于时空图卷积的示例流量补全方法[J]. 示例学报, 2025, 1(1): 1-10.（对应论文第三章）
+    \item 示例作者, 示例合作者. 融合多源数据的示例流量预测方法[J]. 示例期刊, 2025, 2(3): 11-20.（对应论文第三、四章）
+    \item 示例作者. 面向模型更新的示例在线预测方法[C]. 示例会议, 2026: 21-28.（对应论文第5章）
+  \end{enumerate}
+  \achievementcategory{2. 申请的发明专利}
+  \begin{enumerate}
+    \item 示例作者, 示例导师. 一种示例交通流量预测方法: 示例专利号[P]. 2026.
+  \end{enumerate}
+}
+
+\end{document}

@@ -1,0 +1,346 @@
+% defense-layouts.sty
+% Shared layout macros for the latex-defense-zh Beamer themes.
+% beamerthemeYanshanDefense.sty and beamerthemeGenericDefense.sty load this package.
+% Layout names, fields, and limits: references/slide-layouts.md.
+% Colors, positions, and font sizes: references/visual-spec.md.
+% Part of academic-writing-skills (latex-defense-zh). Academic use only.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{defense-layouts}[2026/09/23 v6.0.0 latex-defense-zh layout macros]
+
+\RequirePackage{amsmath}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc,shapes.geometric,arrows.meta}
+\RequirePackage{adjustbox}
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+\RequirePackage{makecell}
+
+% ---------------------------------------------------------------------------
+% Colors. These are neutral defaults. Each theme redefines all six names.
+% ---------------------------------------------------------------------------
+\definecolor{defenseNavy}{HTML}{1F3A5F}
+\definecolor{defenseBlue}{HTML}{2E5E8C}
+\definecolor{defenseAccent}{HTML}{2E5E8C}
+\definecolor{defenseBoxHead}{HTML}{4A6A8A}
+\definecolor{defensePaper}{HTML}{1F3A5F}
+\definecolor{defenseRed}{HTML}{C0392B}
+\setbeamercolor{defense toc current}{fg=black}
+
+% ---------------------------------------------------------------------------
+% Fonts. CJK: Microsoft YaHei -> Source Han Sans SC -> FandolHei.
+% Latin: Arial -> TeX Gyre Heros.
+% ---------------------------------------------------------------------------
+\IfFontExistsTF{Microsoft YaHei}
+  {\setCJKsansfont{Microsoft YaHei}[BoldFont=* Bold]}
+  {\IfFontExistsTF{Source Han Sans SC}
+    {\setCJKsansfont{Source Han Sans SC}[BoldFont=* Bold]}
+    {\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]}}
+\IfFontExistsTF{Arial}
+  {\setsansfont{Arial}}
+  {\setsansfont{texgyreheros}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,
+    ItalicFont=*-italic,BoldItalicFont=*-bolditalic]}
+
+% ---------------------------------------------------------------------------
+% Frame defaults: top alignment, \small body text, no navigation symbols.
+% ---------------------------------------------------------------------------
+\beamer@centeredfalse
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{\vbox to 0.3cm{}}
+\setbeamertemplate{frame begin}{\small}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamertemplate{itemize items}[circle]
+\setbeamercolor{itemize item}{fg=defenseAccent}
+\setbeamercolor{itemize subitem}{fg=defenseAccent}
+
+% ---------------------------------------------------------------------------
+% Settings, metadata, chapter list, and label map.
+% ---------------------------------------------------------------------------
+\ExplSyntaxOn
+\tl_new:N \g__defense_logo_tl
+\tl_new:N \g__defense_logo_text_tl
+\tl_new:N \g__defense_stage_tl
+\tl_gset:Nn \g__defense_stage_tl { predefense }
+\tl_new:N \g__defense_supervisor_tl
+\tl_new:N \g__defense_subject_tl
+\tl_new:N \g__defense_school_tl
+\seq_new:N \g__defense_chapter_seq
+\prop_new:N \g__defense_label_prop
+
+\keys_define:nn { defense }
+  {
+    logo .tl_gset:N = \g__defense_logo_tl ,
+    logo-text .tl_gset:N = \g__defense_logo_text_tl ,
+    stage .choices:nn = { predefense , defense }
+      { \tl_gset_eq:NN \g__defense_stage_tl \l_keys_choice_tl } ,
+  }
+
+\NewDocumentCommand \DefenseSetup { m } { \keys_set:nn { defense } {#1} }
+\NewDocumentCommand \DefenseStage { m } { \keys_set:nn { defense } { stage = #1 } }
+\NewDocumentCommand \DefenseSupervisor { m } { \tl_gset:Nn \g__defense_supervisor_tl {#1} }
+\NewDocumentCommand \DefenseSubject { m } { \tl_gset:Nn \g__defense_subject_tl {#1} }
+\NewDocumentCommand \DefenseSchool { m } { \tl_gset:Nn \g__defense_school_tl {#1} }
+\NewDocumentCommand \DefenseAddChapter { m m }
+  { \seq_gput_right:Nn \g__defense_chapter_seq { {#1} {#2} } }
+\NewDocumentCommand \DefenseDefineLabel { m m }
+  { \prop_gput:Nnn \g__defense_label_prop {#1} {#2} }
+
+\cs_new:Npn \defense@supervisor { \g__defense_supervisor_tl }
+\cs_new:Npn \defense@subject { \g__defense_subject_tl }
+\cs_new:Npn \defense@school { \g__defense_school_tl }
+\cs_new:Npn \defense@stagetext
+  {
+    \str_if_eq:VnTF \g__defense_stage_tl { defense }
+      { 博士学位论文答辩 } { 博士学位论文预答辩 }
+  }
+
+% DefenseSource: inside the group, \ref and \eqref print the thesis number that
+% \DefenseDefineLabel maps (?? when the label has no mapping), and the citation
+% commands print nothing. Outside the group, all commands keep their meaning.
+\cs_new:Npn \__defense_label_number:n #1
+  {
+    \prop_if_in:NnTF \g__defense_label_prop {#1}
+      { \prop_item:Nn \g__defense_label_prop {#1} } { ?? }
+  }
+\NewDocumentEnvironment { DefenseSource } { }
+  {
+    \DeclareDocumentCommand \ref { s m } { \__defense_label_number:n {##2} }
+    \DeclareDocumentCommand \eqref { s m } { ( \__defense_label_number:n {##2} ) }
+    \clist_map_inline:nn { cite , citep , citet , upcite , parencite , textcite }
+      { \exp_args:Nc \DeclareDocumentCommand {##1} { s o o m } { } }
+  }
+  { }
+
+% Logo slot. A theme selects the "defense logo" template: [image] or [empty].
+% [image] shows the logo file when it exists; otherwise it shows logo-text.
+\dim_new:N \l__defense_logo_height_dim
+\tl_new:N \l__defense_logo_font_tl
+\cs_new_protected:Npn \defense@logo #1#2
+  {
+    \group_begin:
+      \dim_set:Nn \l__defense_logo_height_dim {#1}
+      \tl_set:Nn \l__defense_logo_font_tl {#2}
+      \usebeamertemplate { defense~logo }
+    \group_end:
+  }
+\cs_new_protected:Npn \__defense_logo_text:
+  {
+    \tl_if_blank:VF \g__defense_logo_text_tl
+      {
+        \group_begin:
+          \l__defense_logo_font_tl \bfseries \color { defenseNavy }
+          \g__defense_logo_text_tl
+        \group_end:
+      }
+  }
+\cs_new_protected:Npn \defense@logo@image
+  {
+    \tl_if_blank:VTF \g__defense_logo_tl
+      { \__defense_logo_text: }
+      {
+        \IfFileExists { \g__defense_logo_tl }
+          { \includegraphics [ height = \l__defense_logo_height_dim ] { \g__defense_logo_tl } }
+          { \__defense_logo_text: }
+      }
+  }
+
+% Table of contents lines. Line pitch is min(0.99 cm, 6.9 cm / chapter count).
+% The lines are left-aligned and the block is centered on the page.
+% \defense@tocmeasure runs outside the tikzpicture: TikZ uses \nullfont inside.
+\int_new:N \l__defense_toc_count_int
+\int_new:N \l__defense_toc_index_int
+\dim_new:N \l__defense_toc_step_dim
+\dim_new:N \l__defense_toc_width_dim
+\dim_new:N \l__defense_toc_top_dim
+\box_new:N \l__defense_toc_box
+\cs_new:Npn \__defense_toc_text:nn #1#2 { 第 #1 章 \quad #2 }
+\cs_new_protected:Npn \__defense_toc_line:nnnn #1#2#3#4
+  {
+    \defense@tocline
+      { \dim_eval:n { 0.5\paperwidth - 0.5\l__defense_toc_width_dim } }
+      { \dim_eval:n { \l__defense_toc_top_dim + \l__defense_toc_step_dim * ( #2 - 1 ) } }
+      {
+        \str_if_eq:nnTF {#1} {#3}
+          { \bfseries \usebeamercolor [ fg ] { defense~toc~current } }
+          { }
+      }
+      { \__defense_toc_text:nn {#3} {#4} }
+  }
+\cs_new_protected:Npn \defense@tocmeasure
+  {
+    \int_set:Nn \l__defense_toc_count_int { \seq_count:N \g__defense_chapter_seq }
+    \dim_zero:N \l__defense_toc_width_dim
+    \int_compare:nNnT { \l__defense_toc_count_int } > { 0 }
+      {
+        \dim_set:Nn \l__defense_toc_step_dim
+          { \dim_min:nn { 0.99cm } { 6.9cm / \l__defense_toc_count_int } }
+        \seq_map_inline:Nn \g__defense_chapter_seq
+          {
+            \hbox_set:Nn \l__defense_toc_box
+              { \normalsize \bfseries \__defense_toc_text:nn ##1 }
+            \dim_set:Nn \l__defense_toc_width_dim
+              { \dim_max:nn { \l__defense_toc_width_dim } { \box_wd:N \l__defense_toc_box } }
+          }
+        \dim_set:Nn \l__defense_toc_top_dim
+          {
+            1.9cm + ( 6.9cm - \l__defense_toc_step_dim
+              * ( \l__defense_toc_count_int - 1 ) ) / 2
+          }
+      }
+  }
+\cs_new_protected:Npn \defense@toclines #1
+  {
+    \int_zero:N \l__defense_toc_index_int
+    \seq_map_inline:Nn \g__defense_chapter_seq
+      {
+        \int_incr:N \l__defense_toc_index_int
+        \__defense_toc_line:nnnn {#1} { \int_use:N \l__defense_toc_index_int } ##1
+      }
+  }
+\ExplSyntaxOff
+
+% #1 x from the page left edge, #2 y from the page top edge, #3 font, #4 text.
+\newcommand\defense@tocline[4]{%
+  \node[anchor=west,inner sep=0pt,font=\normalsize#3] at (#1,-#2) {#4};}
+
+% ---------------------------------------------------------------------------
+% Beamer templates that the themes select.
+% ---------------------------------------------------------------------------
+\defbeamertemplate{defense logo}{image}{\defense@logo@image}
+\defbeamertemplate{defense logo}{empty}{}
+\setbeamertemplate{defense logo}[image]
+
+% Content page header: logo at top left, centered title with a double line on
+% each side, frame number in a parallelogram at top right. The picture uses
+% page coordinates (origin at the top-left page corner) and keeps a 0.8 cm box.
+\defbeamertemplate{frametitle}{defense}{%
+  \nointerlineskip
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle (\textwidth,-0.8cm);
+    \begin{scope}[shift={(-\beamer@leftmargin,0pt)}]
+      \node[anchor=north west,inner sep=0pt] at (0.28cm,-0.05cm)
+        {\defense@logo{0.76cm}{\normalsize}};
+      \node[inner sep=0pt,font=\usebeamerfont{frametitle}] (defense-title)
+        at (0.5\paperwidth,-0.8cm) {\usebeamercolor[fg]{frametitle}\insertframetitle};
+      \coordinate (defense-title-left) at ([xshift=-0.3cm]defense-title.west);
+      \coordinate (defense-title-right) at ([xshift=0.3cm]defense-title.east);
+      \foreach \y in {0.85cm,0.90cm} {
+        \draw[defenseNavy,line width=0.6pt] (0.28cm,-\y) -- (defense-title-left |- 0,-\y);
+        \draw[defenseNavy,line width=0.6pt] (defense-title-right |- 0,-\y)
+          -- (\paperwidth-0.28cm,-\y);
+      }
+      \shade[left color=defenseAccent,right color=defenseBlue]
+        (15.24cm,-0.24cm) -- (15.69cm,-0.24cm) -- (15.57cm,-0.71cm) -- (15.12cm,-0.71cm) -- cycle;
+      \node[text=white,font=\scriptsize\bfseries] at (15.405cm,-0.475cm) {\insertframenumber};
+    \end{scope}
+  \end{tikzpicture}%
+}
+
+% ---------------------------------------------------------------------------
+% Whole-frame layouts. The template writes \begin{frame}[plain] ... \end{frame};
+% these macros output only the frame interior.
+% ---------------------------------------------------------------------------
+\newcommand\defense@infotable{%
+  \renewcommand\arraystretch{1.1}%
+  \begin{tabular}{@{}r@{\hspace{0.25em}}l@{}}
+    汇报人：& \insertauthor\\
+    专\quad 业：& \defense@subject\\
+    导\quad 师：& \defense@supervisor\\
+    学\quad 院：& \defense@school
+  \end{tabular}}
+
+% #1 band text.
+\newcommand\defense@titlepage[1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{scope}[shift={(current page.north west)}]
+      \node[anchor=north west,inner sep=0pt] at (0.24cm,-0.24cm) {\defense@logo{1.23cm}{\Large}};
+      \node[anchor=north west,inner sep=0pt,font=\Large\bfseries] at (8.6cm,-0.52cm)
+        {\defense@stagetext};
+      \fill[defenseNavy] (0,-2.31cm) rectangle (\paperwidth,-5.52cm);
+      \node[text=white,font=\huge\bfseries,align=flush center,text width=15cm]
+        at (0.5\paperwidth,-3.915cm) {#1};
+      \node[anchor=north,inner sep=0pt,font=\normalsize] at (0.5\paperwidth,-6.09cm)
+        {\defense@infotable};
+      \node[anchor=north,inner sep=0pt,font=\normalsize] at (0.5\paperwidth,-8.33cm)
+        {\insertdate};
+    \end{scope}
+  \end{tikzpicture}}
+
+\newcommand\DefenseCoverFrame{\defense@titlepage{\inserttitle}}
+\newcommand\DefenseThanksFrame{\defense@titlepage{敬请各位老师批评和指正！}}
+
+% #1 current chapter number; 0 highlights no line.
+\newcommand\DefenseTocFrame[1]{%
+  \defense@tocmeasure
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{scope}[shift={(current page.north west)}]
+      \fill[defenseBlue] (0.5\paperwidth,-0.8cm) ellipse [x radius=1.605cm,y radius=0.66cm];
+      \node[text=white,font=\Huge\bfseries] at (0.5\paperwidth,-0.8cm) {目\enspace 录};
+      \defense@toclines{#1}
+    \end{scope}
+  \end{tikzpicture}}
+
+% ---------------------------------------------------------------------------
+% Content macros.
+% ---------------------------------------------------------------------------
+\newcommand\DefenseSubsection[1]{%
+  \par\noindent
+  \begin{tikzpicture}[baseline=(defense-sub.base)]
+    \node[circle,fill=defenseAccent,minimum size=0.42cm,inner sep=0pt] (defense-dot) {};
+    \node[circle,fill=white,minimum size=0.14cm,inner sep=0pt] at (defense-dot) {};
+    \node[anchor=west,inner sep=0pt,text=defenseAccent,font=\normalsize\bfseries] (defense-sub)
+      at ([xshift=0.15cm]defense-dot.east) {#1};
+  \end{tikzpicture}\par\vspace{0.12cm}}
+
+% Conclusion sentence in a red frame at the bottom of the frame.
+\newcommand\DefenseTakeaway[1]{%
+  \par\vspace{0pt plus 1filll}\noindent
+  \begin{tikzpicture}
+    \node[draw=defenseRed,line width=0.8pt,rounded corners=3pt,inner xsep=6pt,inner ysep=4pt,
+      text width=\linewidth-12pt-0.8pt,align=flush center,font=\small\bfseries] {#1};
+  \end{tikzpicture}\par}
+
+\newcommand\DefenseHighlight[1]{\textcolor{defenseRed}{\textbf{#1}}}
+
+\newcommand\DefenseBoxTitle[1]{%
+  \tikz[baseline=(defense-box.base)]\node[fill=defenseBoxHead,text=white,font=\bfseries,
+    rounded corners=2pt,inner xsep=5pt,inner ysep=3pt] (defense-box) {#1};}
+
+\newcommand\DefenseCaption[1]{\par\vspace{2pt}{\centering\footnotesize #1\par}}
+
+% #1 extra \includegraphics options, #2 file, #3 caption with the thesis number.
+\NewDocumentCommand\DefenseFigure{O{}mm}{%
+  \par{\centering
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio,#1]{#2}\par}%
+  \DefenseCaption{#3}}
+
+% Publication box: a filled label on the left and the bibliographic text.
+\newcommand\DefensePaperBox[1]{%
+  \par\vspace{0.2cm}\noindent
+  \begin{tikzpicture}
+    \node[anchor=north west,inner xsep=6pt,inner ysep=4pt,text width=\linewidth-1.3cm-12pt-1.6pt,
+      align=left,font=\footnotesize] (defense-paper) at (1.3cm,0) {#1};
+    \begin{scope}
+      \clip[rounded corners=3pt] (0,0) rectangle (defense-paper.south east);
+      \fill[defensePaper] (0,0) rectangle (1.3cm,0 |- defense-paper.south);
+    \end{scope}
+    \draw[defensePaper,line width=0.8pt,rounded corners=3pt] (0,0) rectangle (defense-paper.south east);
+    \node[text=white,font=\small\bfseries] at (0.65cm,0 |- defense-paper.west) {论文};
+  \end{tikzpicture}\par}
+
+% Card: a label box, an arrow, and a rounded card with the text.
+\newcommand\DefenseCard[2]{%
+  \par\noindent
+  \begin{tikzpicture}
+    \node[anchor=west,draw=defenseAccent,line width=0.8pt,rounded corners=4pt,inner xsep=6pt,
+      inner ysep=4pt,text width=\linewidth-3.2cm-12pt-0.8pt,align=left,font=\small]
+      (defense-card) at (3.2cm,0) {#2};
+    \node[fill=defenseBoxHead,text=white,font=\small\bfseries,rounded corners=3pt,
+      minimum width=2.2cm,inner ysep=4pt] (defense-card-label) at (1.1cm,0) {#1};
+    \draw[defenseAccent,line width=1pt,-{Stealth[length=5pt]}]
+      (defense-card-label.east) -- (defense-card.west);
+  \end{tikzpicture}\par\vspace{0.12cm}}
+
+\endinput

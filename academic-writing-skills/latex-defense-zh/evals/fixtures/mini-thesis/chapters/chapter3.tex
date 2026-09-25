@@ -1,0 +1,84 @@
+\chapter{基于时空图卷积的流量补全方法研究}
+
+\section{引言}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{chapter3/route.png}
+  \bicaption{本章技术路线}{Technical route of this chapter}
+  \label{fig:c3-route}
+\end{figure}
+本章首先构建时空图，其次设计补全网络，最后在合成数据上验证方法。
+
+\section{问题描述}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{chapter3/missing.png}
+  \bicaption{示例检测器缺失模式}{Missing pattern of example detectors}
+  \label{fig:c3-missing}
+\end{figure}
+
+\section{时空图卷积补全模型}
+\subsection{时空图构建}
+邻接矩阵定义为
+\begin{equation}
+  A_{ij} = \exp\left(-\frac{d_{ij}^{2}}{\sigma^{2}}\right)
+  \label{eq:c3-adjacency}
+\end{equation}
+
+\subsection{补全网络设计}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter3/network.png}
+  \bicaption{补全网络结构}{Structure of the completion network}
+  \label{fig:c3-network}
+\end{figure}
+补全损失为
+\begin{equation}
+  \Loss_{\mathrm{c}} = \frac{1}{|\Omega|}\sum_{(i,t)\in\Omega}\left(x_{i,t}-\hat{x}_{i,t}\right)^{2}
+  \label{eq:c3-loss}
+\end{equation}
+
+\section{实验与结果分析}
+\subsection{实验设置}
+\begin{table}[htbp]
+  \centering
+  \bicaption{示例数据集统计}{Statistics of the example datasets}
+  \label{tab:c3-datasets}
+  \begin{tabular}{lcc}
+    \toprule
+    数据集 & 检测器数 & 时间步数\\
+    \midrule
+    示例数据集 A & 120 & 8640\\
+    示例数据集 B & 80 & 5760\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{补全结果对比}
+\begin{figure}[htbp]
+  \centering
+  \subcaptionbox{方法 A 补全结果\label{fig:c3-compare-a}}[0.32\textwidth]{\includegraphics[width=0.3\textwidth]{chapter3/compare-a.png}}
+  \subcaptionbox{方法 B 补全结果}[0.32\textwidth]{\includegraphics[width=0.3\textwidth]{chapter3/compare-b.png}}
+  \subcaptionbox{本章方法补全结果}[0.32\textwidth]{\includegraphics[width=0.3\textwidth]{chapter3/compare-c.png}}
+  \bicaption{示例补全结果对比}{Comparison of example completion results}
+  \label{fig:c3-compare}
+\end{figure}
+
+\subsection{指标对比}
+\begin{table}[htbp]
+  \centering
+  \bicaption{示例补全指标对比}{Comparison of example completion metrics}
+  \label{tab:c3-metrics}
+  \begin{tabular}{lcc}
+    \toprule
+    方法 & RMSE & MAE\\
+    \midrule
+    方法 A\cite{demo-a} & 0.52 & 0.41\\
+    方法 B（式~\eqref{eq:c3-loss}） & 0.47 & 0.36\\
+    本章方法（图~\ref{fig:c3-network}） & \textbf{0.39} & \textbf{0.30}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{本章小结}
+本章提出了基于时空图卷积的流量补全方法。

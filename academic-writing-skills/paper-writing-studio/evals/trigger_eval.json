@@ -1,0 +1,80 @@
+{
+  "skill_name": "paper-writing-studio",
+  "queries": [
+    {
+      "query": "按 Nature 风格润色 abstract，保留数字和引用。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Rewrite the IEEE Transactions introduction and keep evidence tokens.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "按 Elsevier 过程控制论文改写 experiments。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "把这段学术英文润色成中性风格，保护数字和引用。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "按 Nature 风格润色整篇 manuscript，保持引用和数字不变。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "中译英学术写作润色这段 Results，保留证据 token。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "Polish the academic English of this full manuscript with an IEEE profile.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "请编译 LaTeX 并检查双栏排版。",
+      "should_trigger": false,
+      "category": "negative-overlap-latex-paper-en"
+    },
+    {
+      "query": "请把条目写回 Zotero。",
+      "should_trigger": false,
+      "category": "negative-zotero-write"
+    },
+    {
+      "query": "请安装字体并生成投稿模板。",
+      "should_trigger": false,
+      "category": "negative-template-setup"
+    },
+    {
+      "query": "请检查参考文献格式和期刊模板，不要改写正文。",
+      "should_trigger": false,
+      "category": "negative-overlap-bib-search-citation"
+    },
+    {
+      "query": "未经授权把润色结果输出文件 manuscript.md。",
+      "should_trigger": false,
+      "category": "negative-unauthorized-file-output"
+    },
+    {
+      "query": "请总结这篇论文的研究结论。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "请查找三篇最新文献。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "请诊断 Python 环境中的依赖冲突。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    }
+  ]
+}

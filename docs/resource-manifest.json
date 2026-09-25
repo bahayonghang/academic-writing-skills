@@ -272,6 +272,87 @@
       "zh": "docs/zh/skills/cover-letter/resources/agents/committee_editor_agent.md"
     },
     {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/content-rules.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "c62d70a19f84c335ce346404a6e141e48c51d7fc240523a0fd712827101d5f17",
+      "en": "docs/skills/latex-defense-zh/resources/references/content-rules.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/content-rules.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/defense-framework.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "66db8afc809e7ddc155526615c0db4876b66a5ee4de5d1c0309e26f8daea627e",
+      "en": "docs/skills/latex-defense-zh/resources/references/defense-framework.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/defense-framework.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/plan-schema.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "119e878b8a0e78fad2f2faf51a9c5ccc12cd7a06736736dba312facf3792f3f5",
+      "en": "docs/skills/latex-defense-zh/resources/references/plan-schema.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/plan-schema.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/qa-prep.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "f71c81c23b79991644cdcffcfc8e03156cc8b9ec9684649b290082b0c845cdbd",
+      "en": "docs/skills/latex-defense-zh/resources/references/qa-prep.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/qa-prep.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/quality-gate.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "20ae583bdc27a4b2b6c3ff779bb736a02e9bfe251c2bae5a4f0ba99bb65c1d7b",
+      "en": "docs/skills/latex-defense-zh/resources/references/quality-gate.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/quality-gate.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/slide-layouts.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "98150ecb6433fdb4bb1aad478a808fc5b39fd321a1b4ea074d09b277c5347957",
+      "en": "docs/skills/latex-defense-zh/resources/references/slide-layouts.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/slide-layouts.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/speaker-notes.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "c678e00440cb2410e2412aed6276c50ddf0fbcface28c22d32c93ad3845c5a55",
+      "en": "docs/skills/latex-defense-zh/resources/references/speaker-notes.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/speaker-notes.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/time-budget.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "21b904e61e6a093a285a648f982270d915f1a9b8f8900b9be6987812ae5c7944",
+      "en": "docs/skills/latex-defense-zh/resources/references/time-budget.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/time-budget.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/visual-spec.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
+      "en": "docs/skills/latex-defense-zh/resources/references/visual-spec.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/visual-spec.md"
+    },
+    {
       "skill": "latex-paper-en",
       "kind": "references",
       "source": "academic-writing-skills/latex-paper-en/references/citations/journal-abbreviations.md",
@@ -2088,6 +2169,33 @@
       "sourceSha256": "f60f1582f7819504f89e4f27ff5546a3544e75d21056ffb1a4f5a2b8e547f1e9",
       "en": "docs/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md",
       "zh": "docs/zh/skills/paper-audit/resources/agents/zh_thesis_reviewer_agent.md"
+    },
+    {
+      "skill": "paper-writing-studio",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-writing-studio/examples/ieee-introduction-rewrite.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "99a0cc31978c969827a7abe7198c537af9c189e7c10e2b232a9a1b252c175e75",
+      "en": "docs/skills/paper-writing-studio/resources/examples/ieee-introduction-rewrite.md",
+      "zh": "docs/zh/skills/paper-writing-studio/resources/examples/ieee-introduction-rewrite.md"
+    },
+    {
+      "skill": "paper-writing-studio",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-writing-studio/examples/nature-abstract-polish.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "4adb86a096fb2c49b16a77a25735c2efee7e1d66b01da164fe7765df1845e440",
+      "en": "docs/skills/paper-writing-studio/resources/examples/nature-abstract-polish.md",
+      "zh": "docs/zh/skills/paper-writing-studio/resources/examples/nature-abstract-polish.md"
+    },
+    {
+      "skill": "paper-writing-studio",
+      "kind": "examples",
+      "source": "academic-writing-skills/paper-writing-studio/examples/unspecified-neutral-polish.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "70a609755f09d8b23a704a995e07abc5f5a2268737bc1628fd4c32a7bc3f285d",
+      "en": "docs/skills/paper-writing-studio/resources/examples/unspecified-neutral-polish.md",
+      "zh": "docs/zh/skills/paper-writing-studio/resources/examples/unspecified-neutral-polish.md"
     },
     {
       "skill": "typst-paper",

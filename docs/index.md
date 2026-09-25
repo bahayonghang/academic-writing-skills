@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Academic Writing Skills"
   text: "Route the task, run the evidence-backed workflow"
-  tagline: "Bilingual documentation for six skills covering LaTeX, Typst, bibliography search, paper audit, and submission cover letters."
+  tagline: "Bilingual documentation for seven skills covering LaTeX, Typst, bibliography search, paper audit, submission cover letters, and venue-aware polishing."
   actions:
     - theme: brand
       text: Quick Start
@@ -35,6 +35,9 @@ features:
   - icon: 🔎
     title: "`bib-search-citation`"
     details: "Search local BibTeX/BibLaTeX libraries and return citation-ready results."
+  - icon: 🖋️
+    title: "`paper-writing-studio`"
+    details: "Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile."
 ---
 
 ## Start From The Artifact
@@ -47,6 +50,7 @@ features:
 | A Chinese LaTeX thesis | [`latex-thesis-zh`](/skills/latex-thesis-zh/) |
 | A Typst paper | [`typst-paper`](/skills/typst-paper/) |
 | A local `.bib` library | [`bib-search-citation`](/skills/bib-search-citation/) |
+| Academic prose that needs venue-style polishing or translation | [`paper-writing-studio`](/skills/paper-writing-studio/) |
 
 ## Documentation Contract
 

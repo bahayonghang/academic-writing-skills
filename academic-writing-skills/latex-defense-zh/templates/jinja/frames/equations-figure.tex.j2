@@ -1,0 +1,32 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+((* if frame.figure *))
+\begin{columns}[T,onlytextwidth]
+  \column{0.52\textwidth}
+((* endif *))
+((* for equation in frame.equations *))
+  \begin{DefenseSource}
+  \begin{((( equation.env )))}((( equation.body )))\end{((( equation.env )))}
+  \end{DefenseSource}
+((* if equation.numbers *))
+  \DefenseCaption{((( equation.numbers )))}
+((* endif *))
+((* endfor *))
+((* if frame.bullets *))
+  \begin{itemize}
+((* for bullet in frame.bullets *))
+    \item ((( bullet )))
+((* endfor *))
+  \end{itemize}
+((* endif *))
+((* if frame.figure *))
+  \column{0.44\textwidth}
+  \DefenseFigure[height=0.45\textheight((* if frame.figure.width *)),width=((( frame.figure.width )))\linewidth((* endif *))]{((( frame.figure.file )))}{((( frame.figure.caption )))}
+\end{columns}
+((* endif *))
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}

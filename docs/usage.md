@@ -22,6 +22,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 | `latex-thesis-zh` | Chinese thesis `.tex` | Thesis structure, GB/T, chapters, spec and blind review | The artifact is an English paper |
 | `typst-paper` | `.typ` | Typst compile and targeted writing checks | The artifact is LaTeX |
 | `bib-search-citation` | `.bib` | Retrieval, filtering, raw entries, citation snippets | Claim support must be verified in the paper |
+| `paper-writing-studio` | prose text + optional venue, journal, or domain | Venue-profile polish and translation with protected evidence tokens | The source file needs compile, format, or structure work |
 
 ## Current Routers
 
@@ -63,6 +64,12 @@ Method-expression labels, a weakness written as an advantage, a pronoun left wit
 ### `bib-search-citation`
 
 `query`, `spec-json`, `spec-file`, `preview`.
+
+### `paper-writing-studio`
+
+`nature`, `ieee`, `elsevier`, `unspecified`.
+
+The profile precedence is explicit venue > journal allowlist > unambiguous domain > `unspecified`.
 
 ## Resource Loading
 

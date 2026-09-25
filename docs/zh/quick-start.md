@@ -10,6 +10,7 @@
 | 处理中文 LaTeX 学位论文 | `latex-thesis-zh` |
 | 处理 Typst 论文 | `typst-paper` |
 | 检索本地 `.bib` 文献库 | `bib-search-citation` |
+| 按期刊风格润色或翻译学术文本 | `paper-writing-studio` |
 
 ## 2. 运行一条真实命令
 

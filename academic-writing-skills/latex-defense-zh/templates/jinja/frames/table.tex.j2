@@ -1,0 +1,14 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+\DefenseCaption{((( frame.table.caption )))}
+\begin{DefenseSource}
+\centering
+\adjustbox{max width=\textwidth,max totalheight=0.62\textheight}{%
+((( frame.table.source )))}\par
+\end{DefenseSource}
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}

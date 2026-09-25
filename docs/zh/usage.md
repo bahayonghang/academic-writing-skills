@@ -22,6 +22,7 @@
 | `latex-thesis-zh` | 中文学位论文 `.tex` | 结构、国标、章节、规范与盲审 | 材料是英文论文 |
 | `typst-paper` | `.typ` | Typst 编译与定向写作检查 | 材料是 LaTeX |
 | `bib-search-citation` | `.bib` | 检索、过滤、原始条目与引用片段 | 需要核实论文是否支持 claim |
+| `paper-writing-studio` | 学术文本 + 可选 venue、期刊或领域 | 按 venue profile 润色与翻译，保留证据 token | 源文件需要编译、格式或结构处理 |
 
 ## 当前路由
 
@@ -63,6 +64,12 @@
 ### `bib-search-citation`
 
 `query`、`spec-json`、`spec-file`、`preview`。
+
+### `paper-writing-studio`
+
+`nature`、`ieee`、`elsevier`、`unspecified`。
+
+profile 选择优先级为显式 venue > 期刊 allowlist > 明确 domain > `unspecified`。
 
 ## 资源加载
 

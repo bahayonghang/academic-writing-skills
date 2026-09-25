@@ -1,0 +1,22 @@
+% beamerthemeGenericDefense.sty
+% Generic doctoral defense theme for latex-defense-zh: the same layout as
+% YanshanDefense, neutral colors, and no logo.
+% Color values: references/visual-spec.md.
+% Part of academic-writing-skills (latex-defense-zh). Academic use only.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeGenericDefense}[2026/09/23 v6.0.0 latex-defense-zh generic theme]
+\RequirePackage{defense-layouts}
+
+\definecolor{defenseNavy}{HTML}{1F3A5F}
+\definecolor{defenseBlue}{HTML}{2E5E8C}
+\definecolor{defenseAccent}{HTML}{2E5E8C}
+\definecolor{defenseBoxHead}{HTML}{4A6A8A}
+\definecolor{defensePaper}{HTML}{1F3A5F}
+\definecolor{defenseRed}{HTML}{C0392B}
+
+\setbeamertemplate{frametitle}[defense]
+\setbeamertemplate{defense logo}[empty]
+\setbeamercolor{defense toc current}{fg=defenseBlue}
+\DefenseSetup{logo-text={}}
+
+\endinput

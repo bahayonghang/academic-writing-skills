@@ -1,0 +1,18 @@
+\begin{frame}{((( frame.title )))}
+((* if frame.subsection *))
+\DefenseSubsection{((( frame.subsection )))}
+((* endif *))
+((* if frame.bullets *))
+\begin{itemize}
+((* for bullet in frame.bullets *))
+  \item ((( bullet )))
+((* endfor *))
+\end{itemize}
+((* endif *))
+((* if frame.paper *))
+\DefensePaperBox{((( frame.paper )))}
+((* endif *))
+((* if frame.takeaway *))
+\DefenseTakeaway{((( frame.takeaway )))}
+((* endif *))
+\end{frame}
