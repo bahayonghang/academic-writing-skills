@@ -14,6 +14,7 @@ _INSTALLER_PATH = REPO_ROOT / "scripts" / "skills_install.py"
 _SKILL_NAMES = (
     "bib-search-citation",
     "cover-letter",
+    "latex-defense-zh",
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",
@@ -48,7 +49,7 @@ def _tiny_catalog(root: Path) -> Path:
     return catalog
 
 
-def test_discover_skills_finds_seven_catalog_packages() -> None:
+def test_discover_skills_finds_eight_catalog_packages() -> None:
     skills = installer.discover_skills(SKILLS_ROOT)
     names = [skill.name for skill in skills]
     assert names == list(_SKILL_NAMES)

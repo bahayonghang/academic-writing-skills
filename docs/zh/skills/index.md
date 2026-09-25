@@ -1,6 +1,6 @@
 # 技能总览
 
-七个公开技能覆盖四类职责：源码级写作与文本润色、审稿式评估、文献库检索和投稿包装。
+八个公开技能覆盖五类职责：源码级写作与文本润色、审稿式评估、文献库检索、投稿包装和学位论文答辩展示。
 
 | 技能 | 主要材料 | 第一条有用动作 | 入口 |
 | --- | --- | --- | --- |
@@ -11,6 +11,7 @@
 | `typst-paper` | `.typ` 论文 | 编译/导出后再做定向检查 | [打开](/zh/skills/typst-paper/) |
 | `bib-search-citation` | BibTeX/BibLaTeX 文献库 | 运行紧凑查询 | [打开](/zh/skills/bib-search-citation/) |
 | `paper-writing-studio` | 学术文本与可选的 venue、期刊或领域 | 选定 profile 后润色单节 | [打开](/zh/skills/paper-writing-studio/) |
+| `latex-defense-zh` | 中文学位论文 LaTeX 仓库 | 提取清单后确认章角色 | [打开](/zh/skills/latex-defense-zh/) |
 
 ## 概览结构
 

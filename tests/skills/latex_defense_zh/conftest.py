@@ -8,6 +8,7 @@ latex-defense-zh copies win without leaking into other skills' tests.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import importlib.util
 import json
@@ -25,6 +26,11 @@ SKILL_ROOT = SKILLS_ROOT / "latex-defense-zh"
 SCRIPTS = SKILL_ROOT / "scripts"
 FIXTURE_DIR = SKILL_ROOT / "evals" / "fixtures" / "mini-thesis"
 _SHARED_MODULE_NAMES = ("tex_loader", "defense_budget", "extract_thesis")
+
+# PyMuPDF binds sys.stdout for its messages at first import. Import it here, under
+# pytest's session capture, rather than inside a capsys test whose stream closes at teardown.
+with contextlib.suppress(ImportError):
+    importlib.import_module("pymupdf")
 
 
 def load_script(name: str) -> ModuleType:

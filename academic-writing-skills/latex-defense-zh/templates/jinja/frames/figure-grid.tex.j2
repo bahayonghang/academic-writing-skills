@@ -2,12 +2,12 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
-{\centering
+\begingroup\centering
 ((* for cell in frame.grid.cells *))
 \begin{minipage}[t]{((( frame.grid.width )))\linewidth}
   \DefenseFigure[height=((( frame.grid.height )))\textheight]{((( cell.file )))}{((( cell.caption )))}
 ((* if loop.last *))
-\end{minipage}\par}
+\end{minipage}\par\endgroup
 ((* elif loop.index % frame.grid.per_row == 0 *))
 \end{minipage}\par\vspace{2pt}
 ((* else *))

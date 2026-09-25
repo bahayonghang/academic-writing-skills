@@ -131,13 +131,13 @@ When `position` is `top`, the figure is at the top and the bullets are below the
 % defense-frame: id=<id> role=experiment chapter=<n> layout=figure-grid
 \begin{frame}{<section>}
 \DefenseSubsection{<subsection>}
-{\centering
+\begingroup\centering
 \begin{minipage}[t]{0.32\linewidth}
   \DefenseFigure[height=0.21\textheight]{<file a>}{(a) <subcaption a>}
 \end{minipage}\hspace{0.08\linewidth}%
 \begin{minipage}[t]{0.32\linewidth}
   \DefenseFigure[height=0.21\textheight]{<file b>}{(b) <subcaption b>}
-\end{minipage}\par}
+\end{minipage}\par\endgroup
 \DefenseCaption{<caption>}
 \DefenseTakeaway{<takeaway>}
 \end{frame}
@@ -150,7 +150,7 @@ When `position` is `top`, the figure is at the top and the bullets are below the
 | 4               | 2                  | `0.32\linewidth` | `0.08\linewidth` | `0.21\textheight` |
 | 5 or 6          | 3                  | `0.3\linewidth`  | `0.03\linewidth` | `0.21\textheight` |
 
-Write `\par` at the end of each row, and add `\vspace{2pt}` between two rows. The subfigure letters are the same as in the thesis.
+Write `\par` at the end of each row, and add `\vspace{2pt}` between two rows. The subfigure letters are the same as in the thesis. Group the subfigure grid with `\begingroup`…`\endgroup`, not braces: without a subsection bar, a brace group right after `\begin{frame}{<section>}` is taken by Beamer as the frame subtitle, and the subfigures do not appear.
 
 ## equations-figure
 

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Academic Writing Skills"
   text: "先路由任务，再运行有证据的工作流"
-  tagline: "覆盖 LaTeX、Typst、文献库检索、论文审查、投稿信与期刊风格润色的七技能双语文档。"
+  tagline: "覆盖 LaTeX、Typst、文献库检索、论文审查、投稿信、期刊风格润色与中文学位论文答辩稿的八技能双语文档。"
   actions:
     - theme: brand
       text: 快速开始
@@ -38,6 +38,9 @@ features:
   - icon: 🖋️
     title: "`paper-writing-studio`"
     details: "按 Nature、IEEE、Elsevier 或中性 profile 润色和翻译学术文本。"
+  - icon: 🎓
+    title: "`latex-defense-zh`"
+    details: "从学位论文 LaTeX 仓库生成带讲稿的 Beamer 答辩稿，并用保真质量门检查。"
 ---
 
 ## 从手头材料开始
@@ -51,6 +54,7 @@ features:
 | Typst 论文 | [`typst-paper`](/zh/skills/typst-paper/) |
 | 本地 `.bib` 文献库 | [`bib-search-citation`](/zh/skills/bib-search-citation/) |
 | 需要按期刊风格润色或翻译的学术文本 | [`paper-writing-studio`](/zh/skills/paper-writing-studio/) |
+| 需要做答辩幻灯片的中文 LaTeX 学位论文 | [`latex-defense-zh`](/zh/skills/latex-defense-zh/) |
 
 ## 文档契约
 

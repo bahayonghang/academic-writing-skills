@@ -276,7 +276,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-defense-zh/references/content-rules.md",
       "sourceLocale": "zh",
-      "sourceSha256": "c62d70a19f84c335ce346404a6e141e48c51d7fc240523a0fd712827101d5f17",
+      "sourceSha256": "0b3b416110d693a801b5c60bbc1b0de003729b7f9242094638f507d810053caa",
       "en": "docs/skills/latex-defense-zh/resources/references/content-rules.md",
       "zh": "docs/zh/skills/latex-defense-zh/resources/references/content-rules.md"
     },
@@ -294,7 +294,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-defense-zh/references/plan-schema.md",
       "sourceLocale": "zh",
-      "sourceSha256": "119e878b8a0e78fad2f2faf51a9c5ccc12cd7a06736736dba312facf3792f3f5",
+      "sourceSha256": "bc70a2cf8e1179c0c74c15d5b84198c36983db1765f2c7d8c269869d738afc25",
       "en": "docs/skills/latex-defense-zh/resources/references/plan-schema.md",
       "zh": "docs/zh/skills/latex-defense-zh/resources/references/plan-schema.md"
     },
@@ -321,7 +321,7 @@
       "kind": "references",
       "source": "academic-writing-skills/latex-defense-zh/references/slide-layouts.md",
       "sourceLocale": "zh",
-      "sourceSha256": "98150ecb6433fdb4bb1aad478a808fc5b39fd321a1b4ea074d09b277c5347957",
+      "sourceSha256": "c1fd5c4af331ddab264a01d0cad8da56ba6ff6f5d025537108c0c6db18951470",
       "en": "docs/skills/latex-defense-zh/resources/references/slide-layouts.md",
       "zh": "docs/zh/skills/latex-defense-zh/resources/references/slide-layouts.md"
     },
@@ -351,6 +351,42 @@
       "sourceSha256": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
       "en": "docs/skills/latex-defense-zh/resources/references/visual-spec.md",
       "zh": "docs/zh/skills/latex-defense-zh/resources/references/visual-spec.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-defense-zh/examples/fix-after-check.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e1c594640a5fd6cfc4b9edac674ad232559499b6d74854ed2604c70bbc24fba2",
+      "en": "docs/skills/latex-defense-zh/resources/examples/fix-after-check.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/fix-after-check.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-defense-zh/examples/formal-defense.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "eee15606bf981294fa7cc76a28b5151594921333f492770a1c2e20fef8aeb2a6",
+      "en": "docs/skills/latex-defense-zh/resources/examples/formal-defense.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/formal-defense.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-defense-zh/examples/predefense-40min.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a41126ab212d0778ade3bd12603296632cb8fc4992eabdb1d43a99805b2cd55a",
+      "en": "docs/skills/latex-defense-zh/resources/examples/predefense-40min.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/predefense-40min.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "agents",
+      "source": "academic-writing-skills/latex-defense-zh/agents/qa-committee-agent.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "8333f5e0f4b84ec26617e8dad8845c0626927b3e8c89210ed695869f0b717340",
+      "en": "docs/skills/latex-defense-zh/resources/agents/qa-committee-agent.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/agents/qa-committee-agent.md"
     },
     {
       "skill": "latex-paper-en",

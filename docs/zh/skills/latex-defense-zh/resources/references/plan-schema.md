@@ -367,7 +367,7 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 | `build_manifest.json`                                                                   | 技能版本、主题、阶段、帧数、规划与清单的 SHA-256、其余六个文件的 SHA-256 与告警；不含时间戳 |
 | `beamerthemeYanshanDefense.sty`、`beamerthemeGenericDefense.sty`、`defense-layouts.sty` | 主题与版式宏包的副本                                                                        |
 
-这七个文件为构建脚本的自有文件。任一自有文件已存在且未加 `--force` 时，构建脚本退出 4，不写任何文件。`--force` 只覆盖自有文件，不删除输出目录中的其他文件。
+这七个文件为构建脚本的自有文件。任一自有文件已存在且未加 `--force` 时，构建脚本退出 4，不写任何文件。`--force` 只覆盖自有文件，不删除输出目录中的其他文件。内容与现有文件相同的自有文件不重写，保留修改时间：latexmk 按内容判定无需重编时，`defense.pdf` 不会早于 `defense.tex`。
 
 `defense.tex` 在每个 `\begin{frame}` 的前一行写帧标记。质量门用帧标记映射行号、页角色与页序：
 

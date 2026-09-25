@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Academic Writing Skills"
   text: "Route the task, run the evidence-backed workflow"
-  tagline: "Bilingual documentation for seven skills covering LaTeX, Typst, bibliography search, paper audit, submission cover letters, and venue-aware polishing."
+  tagline: "Bilingual documentation for eight skills covering LaTeX, Typst, bibliography search, paper audit, submission cover letters, venue-aware polishing, and Chinese thesis defense decks."
   actions:
     - theme: brand
       text: Quick Start
@@ -38,6 +38,9 @@ features:
   - icon: 🖋️
     title: "`paper-writing-studio`"
     details: "Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile."
+  - icon: 🎓
+    title: "`latex-defense-zh`"
+    details: "Build a Chinese thesis defense Beamer deck with speaker notes from a thesis LaTeX repository, then gate it for fidelity."
 ---
 
 ## Start From The Artifact
@@ -51,6 +54,7 @@ features:
 | A Typst paper | [`typst-paper`](/skills/typst-paper/) |
 | A local `.bib` library | [`bib-search-citation`](/skills/bib-search-citation/) |
 | Academic prose that needs venue-style polishing or translation | [`paper-writing-studio`](/skills/paper-writing-studio/) |
+| A Chinese LaTeX thesis that needs defense slides | [`latex-defense-zh`](/skills/latex-defense-zh/) |
 
 ## Documentation Contract
 

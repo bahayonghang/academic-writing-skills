@@ -41,6 +41,7 @@ npx skills add bahayonghang/academic-writing-skills
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。           | `.typ`                         | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。           | `.bib`                         | `bib-search-citation/SKILL.md` |
 | [`paper-writing-studio`](academic-writing-skills/paper-writing-studio/SKILL.md) | 按显式的 Nature、IEEE、Elsevier 或中性 profile 润色或翻译学术文本；venue 冲突与缺失证据只报告，不猜测。 | 学术文本，可选 venue、期刊或领域 | `paper-writing-studio/SKILL.md` |
+| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | 从已有 XeLaTeX 学位论文仓库生成博士/硕士答辩或预答辩 Beamer 幻灯片与讲稿；只读提取论文内容，并用保真质量门核对图、数字、公式、表体与成果。 | 学位论文 LaTeX 仓库 | `latex-defense-zh/SKILL.md` |
 
 
 可选检查只报告局部候选：`check_consistency.py --governance` 必须配合 `--custom-terms`，`--abbreviation-style` 独立于治理开关，`check_style_zh.py --degree-wording` 默认关闭；不传这些开关时原输出保持不变。

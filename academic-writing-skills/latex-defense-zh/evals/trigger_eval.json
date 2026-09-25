@@ -1,0 +1,85 @@
+{
+  "skill_name": "latex-defense-zh",
+  "queries": [
+    {
+      "query": "我的博士论文是 LaTeX 写的，帮我做一份预答辩的 Beamer 幻灯片。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "把论文 tex 仓库做成 40 分钟的答辩稿，用燕山主题。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "正式答辩只有 30 分钟，帮我按时长规划答辩 slides 的页数并加成果页。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "帮我写答辩讲稿，每页说什么、多少秒、怎么过渡。",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "Turn my Chinese PhD thesis LaTeX repository into thesis defense slides in Beamer.",
+      "should_trigger": true,
+      "category": "core"
+    },
+    {
+      "query": "答辩稿编译后第 17 页溢出了，质量门报 D-OVERFLOW-V，帮我修规划。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "检查一下答辩幻灯片里的数字和图是不是都来自论文。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "根据我的学位论文准备答辩委员可能问的问题和答案要点。",
+      "should_trigger": true,
+      "category": "edge"
+    },
+    {
+      "query": "帮我做一个 PowerPoint 格式的答辩 PPT，要 .pptx 文件。",
+      "should_trigger": false,
+      "category": "negative-overlap-pptx"
+    },
+    {
+      "query": "下周要在 CVPR 做口头报告，帮我准备 12 分钟的会议 slides。",
+      "should_trigger": false,
+      "category": "negative-overlap-conference-talk"
+    },
+    {
+      "query": "Prepare English thesis defense slides for my master's thesis written in Word.",
+      "should_trigger": false,
+      "category": "negative-overlap-english-defense"
+    },
+    {
+      "query": "帮我润色博士论文第三章的中文表述，去掉 AI 味。",
+      "should_trigger": false,
+      "category": "negative-overlap-latex-thesis-zh"
+    },
+    {
+      "query": "以审稿人视角给我的论文打分，看看能不能投稿。",
+      "should_trigger": false,
+      "category": "negative-overlap-paper-audit"
+    },
+    {
+      "query": "帮我做一张 A0 学术海报，展示论文的主要结果。",
+      "should_trigger": false,
+      "category": "negative-overlap-poster"
+    },
+    {
+      "query": "组会汇报本周实验进展，做几页简单的幻灯片。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    },
+    {
+      "query": "从我的 references.bib 里找 2024 年以后的图神经网络论文。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
+    }
+  ]
+}

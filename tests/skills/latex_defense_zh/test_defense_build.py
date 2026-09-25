@@ -179,6 +179,36 @@ def test_existing_output_needs_force(
     assert (built_deck / "defense.tex").read_bytes() == before
 
 
+def test_no_brace_group_follows_frame_title(
+    filled_plan: dict, tmp_path: Path, defense_scripts
+) -> None:
+    # Beamer reads a brace group right after \begin{frame}{title} as the subtitle,
+    # which swallowed the figure grid when the frame had no subsection bar.
+    for frame in filled_plan["frames"]:
+        if frame["layout"] not in ("cover", "toc", "thanks"):
+            frame["subsection"] = ""
+    assert "figure-grid" in {frame["layout"] for frame in filled_plan["frames"]}
+    assert build(defense_scripts, tmp_path, filled_plan, "bare") == 0
+    lines = read(tmp_path / "bare" / "defense.tex").splitlines()
+    for index, line in enumerate(lines):
+        if line.startswith("\\begin{frame}{"):
+            assert not lines[index + 1].lstrip().startswith("{"), lines[index + 1]
+
+
+def test_force_keeps_unchanged_files(
+    built_deck: Path, filled_plan: dict, tmp_path: Path, defense_scripts
+) -> None:
+    # latexmk skips a rebuild when defense.tex is unchanged, so its mtime must not move
+    # past defense.pdf; a notes-only edit rewrites notes.md alone.
+    old = 1_000_000_000
+    for path in built_deck.iterdir():
+        os.utime(path, (old, old))
+    filled_plan["frames"][3]["notes"]["say"] += "补充一句讲稿。"
+    assert build(defense_scripts, tmp_path, filled_plan, "deck", "--force") == 0
+    changed = sorted(p.name for p in built_deck.iterdir() if p.stat().st_mtime != old)
+    assert changed == ["build_manifest.json", "notes.md"]
+
+
 @pytest.mark.parametrize(
     ("frame_id", "field", "value"),
     [

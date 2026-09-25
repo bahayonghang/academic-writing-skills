@@ -1,7 +1,7 @@
 # Skills
 
-Seven public skills cover four distinct responsibilities: source-level writing and prose polishing, reviewer-style
-assessment, bibliography retrieval, and submission packaging.
+Eight public skills cover five distinct responsibilities: source-level writing and prose polishing, reviewer-style
+assessment, bibliography retrieval, submission packaging, and thesis defense presentation.
 
 | Skill | Primary artifact | Best first action | Entry |
 | --- | --- | --- | --- |
@@ -12,6 +12,7 @@ assessment, bibliography retrieval, and submission packaging.
 | `typst-paper` | `.typ` paper | Compile/export before targeted review | [Open](/skills/typst-paper/) |
 | `bib-search-citation` | BibTeX/BibLaTeX library | Run a compact query | [Open](/skills/bib-search-citation/) |
 | `paper-writing-studio` | Academic prose and an optional venue, journal, or domain | Select a profile, then polish one section | [Open](/skills/paper-writing-studio/) |
+| `latex-defense-zh` | Chinese thesis LaTeX repository | Extract the inventory, then confirm chapter roles | [Open](/skills/latex-defense-zh/) |
 
 ## Overview Shape
 
