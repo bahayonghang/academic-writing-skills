@@ -1,0 +1,118 @@
+{
+  "checked_at_utc": "2026-09-28T01:58:22.429918+00:00",
+  "source_base_commit": "a9d2d32cf2e51a055a70496772b10e5a314d0267",
+  "python": "3.13.14 (main, Jun 23 2026, 15:19:27) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "win32",
+  "files": [
+    {
+      "path": ".trellis/spec/academic-writing-skills/include-boundary-contract.md",
+      "sha256": "a58caeafa7ecdc598194e99c5ea7bf96e6a312ad81d04900dca08f718bb17e5c",
+      "lf_sha256": "e75f8cdc2f62807241312b33cf2e5846892a4b449f7d31ec1c83aaef66a4f446"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/index.md",
+      "sha256": "543b01e67d183b5946ffee62df5eb37143258b3cf7521001213ca0de279cfd23",
+      "lf_sha256": "13c46d5043cbbc882c1728a8e154878ce34fcebb8d3dad07396a4a3606898854"
+    },
+    {
+      "path": "README.md",
+      "sha256": "dbe4c7a0b57a851eba7530a3f58340986fe68a37dae8f69a1cc6ff1ed007a8e9",
+      "lf_sha256": "dbe4c7a0b57a851eba7530a3f58340986fe68a37dae8f69a1cc6ff1ed007a8e9"
+    },
+    {
+      "path": "README_CN.md",
+      "sha256": "c2c749caed22a331fa32b613477dd4226bc01c032d7872c3e80342f4602c8d89",
+      "lf_sha256": "c2c749caed22a331fa32b613477dd4226bc01c032d7872c3e80342f4602c8d89"
+    },
+    {
+      "path": "academic-writing-skills/cover-letter/SKILL.md",
+      "sha256": "69d9f824fa8e579fb1266bd3775e7007857bdc8bf9d3ea3c37430fab6b4a289e",
+      "lf_sha256": "53505ae4db4c801166ca58d7229a93873593539048e5c91d74f50b393894e4a8"
+    },
+    {
+      "path": "academic-writing-skills/cover-letter/scripts/tex_loader.py",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "lf_sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/extract_thesis.py",
+      "sha256": "16025a64b9c276723786c293c46a7fa551675b39ba41a38320688d8f6dcba06c",
+      "lf_sha256": "16025a64b9c276723786c293c46a7fa551675b39ba41a38320688d8f6dcba06c"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/tex_loader.py",
+      "sha256": "88a22dbbb1249a99352b8330a39e05c64b4e389357f915013cd78cea85919d62",
+      "lf_sha256": "88a22dbbb1249a99352b8330a39e05c64b4e389357f915013cd78cea85919d62"
+    },
+    {
+      "path": "academic-writing-skills/latex-paper-en/SKILL.md",
+      "sha256": "36e081ad6dfa2b70b0f78fd71296aa6a2db2fcf00ff166f0240d05cfee4f6f7f",
+      "lf_sha256": "36e081ad6dfa2b70b0f78fd71296aa6a2db2fcf00ff166f0240d05cfee4f6f7f"
+    },
+    {
+      "path": "academic-writing-skills/latex-paper-en/scripts/tex_loader.py",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "lf_sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/SKILL.md",
+      "sha256": "0305941a6b2da583bc46691f9c40d12846dfdf7b3780eec08abe44fc46aea343",
+      "lf_sha256": "167781bacf036059dbd30c171e9e748fb16179f038a3e4a50f2451ea2f1ccd8a"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/check_format.py",
+      "sha256": "431965f4e3d2b5fcb2c1aa3ee7ae8337b4207ffeaa3adb5bd4e97d61af6e19d3",
+      "lf_sha256": "5cf39368f77b2e510fa6300ac885f745a412a73f9339889ac882d7ba0dd6cddd"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/tex_loader.py",
+      "sha256": "7d96184955646e514451d1478743a26e5ff79a8686533d1ee8c02798ab0a7fec",
+      "lf_sha256": "7d96184955646e514451d1478743a26e5ff79a8686533d1ee8c02798ab0a7fec"
+    },
+    {
+      "path": "academic-writing-skills/paper-audit/SKILL.md",
+      "sha256": "577db434600313a83b084157fe498468b0589126fd8193b1d4fb5d4606f68554",
+      "lf_sha256": "1c3722d635ade9784d0484ae1defeb255d944906b2c9393d70b735d1b2dbd20f"
+    },
+    {
+      "path": "academic-writing-skills/paper-audit/scripts/prepare_review_workspace.py",
+      "sha256": "0f0e1bd8ca555cd3fb35d5577874b644fbf3a4cd8b1ca896ba767228dc0509f3",
+      "lf_sha256": "e5d378a14467fab4f30be4140c86da760a613d428ea7a86266472f155062abfe"
+    },
+    {
+      "path": "academic-writing-skills/paper-audit/scripts/tex_loader.py",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "lf_sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b"
+    },
+    {
+      "path": "docs/installation.md",
+      "sha256": "e9374ae01420144bcd4e299985cde98932678411c755454cf6126ba1b11dd265",
+      "lf_sha256": "e9374ae01420144bcd4e299985cde98932678411c755454cf6126ba1b11dd265"
+    },
+    {
+      "path": "docs/zh/installation.md",
+      "sha256": "b0ba8c05cedc88f38990bceb864c9f5e4ede5b1301fb67adb33a69768541bb61",
+      "lf_sha256": "b0ba8c05cedc88f38990bceb864c9f5e4ede5b1301fb67adb33a69768541bb61"
+    },
+    {
+      "path": "tests/contracts/test_tex_loader_alignment.py",
+      "sha256": "ddb756f61fe2fd5cdc32f64ceb921d92e77c4c00d05a31beae848f55e9023d2e",
+      "lf_sha256": "ddb756f61fe2fd5cdc32f64ceb921d92e77c4c00d05a31beae848f55e9023d2e"
+    },
+    {
+      "path": "tests/shared/test_tex_loader_security.py",
+      "sha256": "c885d0651b0a49949588311846c5d01e2c7b45bcb8b6af4880d55620c86bf347",
+      "lf_sha256": "c885d0651b0a49949588311846c5d01e2c7b45bcb8b6af4880d55620c86bf347"
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/test_defense_extract.py",
+      "sha256": "54df23354663de66bd674ead167f047bb744615c9e3e7ab4de37cde94e2590b0",
+      "lf_sha256": "54df23354663de66bd674ead167f047bb744615c9e3e7ab4de37cde94e2590b0"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_polish_unit_zh.py",
+      "sha256": "88a96d1976af201224b0a5d6dae029095b0e705a4698289a737d172b2c57b852",
+      "lf_sha256": "88a96d1976af201224b0a5d6dae029095b0e705a4698289a737d172b2c57b852"
+    }
+  ]
+}

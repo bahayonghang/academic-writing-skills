@@ -1,0 +1,18 @@
+{
+  "DEFENSE_ZH_COMPILE": null,
+  "latexmk_available": true,
+  "xelatex_available": true,
+  "pymupdf_available": false,
+  "platform": "win32",
+  "full_ci_exit": 0,
+  "full_tests": {
+    "passed": 2787,
+    "skipped": 10,
+    "seconds": 256.17
+  },
+  "skip_counts": {
+    "opt_in_defense_compilation": 5,
+    "optional_pymupdf_preview": 3,
+    "non_windows_unicode_protocol": 2
+  }
+}

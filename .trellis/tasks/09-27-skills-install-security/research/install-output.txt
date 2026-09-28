@@ -1,0 +1,86 @@
+[
+  {
+    "name": "cover-letter",
+    "status": "installed",
+    "source": "<repo>\\academic-writing-skills",
+    "ref": null,
+    "hash": "19bc55934cf0f546c544008bbe0e9a20e742527f8348643304c387be7f55783d",
+    "path": "<temp>\\project\\.agents\\skills\\cover-letter",
+    "scope": "project",
+    "agents": [
+      "Codex"
+    ],
+    "mode": "copy",
+    "security": null
+  },
+  {
+    "name": "latex-paper-en",
+    "status": "installed",
+    "source": "<repo>\\academic-writing-skills",
+    "ref": null,
+    "hash": "38b43990283c81a4ec29a88912f26c413f72f6b69caad413b79719bc3e2567f6",
+    "path": "<temp>\\project\\.agents\\skills\\latex-paper-en",
+    "scope": "project",
+    "agents": [
+      "Codex"
+    ],
+    "mode": "copy",
+    "security": null
+  },
+  {
+    "name": "latex-thesis-zh",
+    "status": "installed",
+    "source": "<repo>\\academic-writing-skills",
+    "ref": null,
+    "hash": "bd10ede8d5bedbdcf83adb0eab6df41ec5ed835c78b9b4bd02c129c445489c08",
+    "path": "<temp>\\project\\.agents\\skills\\latex-thesis-zh",
+    "scope": "project",
+    "agents": [
+      "Codex"
+    ],
+    "mode": "copy",
+    "security": null
+  },
+  {
+    "name": "paper-audit",
+    "status": "installed",
+    "source": "<repo>\\academic-writing-skills",
+    "ref": null,
+    "hash": "33750b6bb14db86b99a1d000a717ae85c37e7d2d6f8783445d406f8e12fd3311",
+    "path": "<temp>\\project\\.agents\\skills\\paper-audit",
+    "scope": "project",
+    "agents": [
+      "Codex"
+    ],
+    "mode": "copy",
+    "security": null
+  }
+]
+npm notice run npx
+npm notice run skills add <repo>\academic-writing-skills --skill latex-thesis-zh latex-paper-en paper-audit cover-letter --agent codex --copy --yes --json
+
+|
+•   codex  Agent detected — installing non-interactively
+|
+•  Selected 4 skills: cover-letter, latex-paper-en, latex-thesis-zh, paper-audit
+
+|
+o  Installation Summary -------------------------------------------------------+
+|                                                                              |
+|  ~\AppData\Local\Temp\skills-install-boundary-7q3imsr2\project\.agents\skil  |
+|  ls\cover-letter                                                             |
+|    copy → Codex                                                              |
+|                                                                              |
+|  ~\AppData\Local\Temp\skills-install-boundary-7q3imsr2\project\.agents\skil  |
+|  ls\latex-paper-en                                                           |
+|    copy → Codex                                                              |
+|                                                                              |
+|  ~\AppData\Local\Temp\skills-install-boundary-7q3imsr2\project\.agents\skil  |
+|  ls\latex-thesis-zh                                                          |
+|    copy → Codex                                                              |
+|                                                                              |
+|  ~\AppData\Local\Temp\skills-install-boundary-7q3imsr2\project\.agents\skil  |
+|  ls\paper-audit                                                              |
+|    copy → Codex                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+

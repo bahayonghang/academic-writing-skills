@@ -1,0 +1,994 @@
+{
+  "head": "a9d2d32cf2e51a055a70496772b10e5a314d0267",
+  "method": "Invoke the current rejection regression against temporary git-show HEAD modules; all input files are synthetic.",
+  "regression": "tests/shared/test_tex_loader_security.py::test_external_include_is_rejected_before_read",
+  "versions": [
+    {
+      "skill": "latex-thesis-zh",
+      "source": "academic-writing-skills/latex-thesis-zh/scripts/tex_loader.py",
+      "sha256": "a3053d93432cf9ef0fbcd320f101b2497c7ae787138eb500b0cfd5d71fb9c525"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "source": "academic-writing-skills/latex-defense-zh/scripts/tex_loader.py",
+      "sha256": "2d5c3f57c15dcbbf595d6f86c5b488149c623003cf4470ccf33eb3ac467dd765"
+    },
+    {
+      "skill": "latex-paper-en",
+      "source": "academic-writing-skills/latex-paper-en/scripts/tex_loader.py",
+      "sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    },
+    {
+      "skill": "paper-audit",
+      "source": "academic-writing-skills/paper-audit/scripts/tex_loader.py",
+      "sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    },
+    {
+      "skill": "cover-letter",
+      "source": "academic-writing-skills/cover-letter/scripts/tex_loader.py",
+      "sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    }
+  ],
+  "cases": [
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "latex-paper-en",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "paper-audit",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "assemble",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "input",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "include",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "parent",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "absolute",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "symlink",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    },
+    {
+      "skill": "cover-letter",
+      "api": "iter_files",
+      "command": "subfile",
+      "kind": "prefix",
+      "result": "expected_failure",
+      "assertion": "external read occurred before rejection"
+    }
+  ]
+}

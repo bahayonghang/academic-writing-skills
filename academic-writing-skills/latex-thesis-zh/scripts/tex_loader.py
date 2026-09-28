@@ -9,15 +9,16 @@ document while still reporting diagnostics as ``源文件:行号``.
 
 Public API:
     read_text_robust(path)  -> (text, warning | None)   # utf-8 -> GB18030 -> replace
-    iter_files(entry)       -> list[IncludeNode]        # document-order traversal
-    assemble(entry)         -> AssembledDocument        # concatenated, line-mapped
+    iter_files(entry, *, project_root=None)       -> list[IncludeNode]        # document-order traversal
+    assemble(entry, *, project_root=None)         -> AssembledDocument        # concatenated, line-mapped
 """
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 # \include{x} / \input{x} / \subfile{x} — the brace must follow immediately,
 # so \includegraphics / \inputminted are not matched.
@@ -62,31 +63,101 @@ def _display_rel(path: Path, root: Path) -> str:
         return str(path)
 
 
-def _resolve_include_target(raw: str, current_dir: Path, root: Path) -> Path:
+class IncludeBoundaryError(ValueError):
+    """An include or entry cannot be safely read within the project root."""
+
+    code = "E-INCLUDE-BOUNDARY"
+
+    def __init__(self, raw: str, source: str, line: int, reason: str) -> None:
+        self.raw = raw
+        self.source = source
+        self.line = line
+        self.reason = reason
+        # Keep the original argument available to callers without printing private paths.
+        display = "<absolute path>" if Path(raw).anchor or PureWindowsPath(raw).anchor else raw
+        super().__init__(f"{self.code}: {source}:{line}: include {display!r}: {reason}")
+
+
+def _checked_path(path: Path, root: Path, raw: str, source: str, line: int) -> Path:
+    """Check lexical containment before filesystem resolution, then check links."""
+    try:
+        lexical = Path(os.path.abspath(path))
+        if not lexical.is_relative_to(root):
+            raise IncludeBoundaryError(raw, source, line, "path is outside the project root")
+        try:
+            resolved = path.resolve(strict=True)
+        except FileNotFoundError:
+            resolved = path.resolve()
+        if not resolved.is_relative_to(root):
+            raise IncludeBoundaryError(
+                raw, source, line, "resolved path is outside the project root"
+            )
+        return resolved
+    except (OSError, RuntimeError, ValueError) as exc:
+        if isinstance(exc, IncludeBoundaryError):
+            raise
+        raise IncludeBoundaryError(raw, source, line, "path cannot be resolved safely") from None
+
+
+def _entry_and_root(entry: Path, project_root: Path | None) -> tuple[Path, Path]:
+    entry = Path(entry)
+    try:
+        if project_root is None:
+            entry = entry.resolve()
+            root = entry.parent
+        else:
+            alias = Path(project_root).absolute()
+            root = alias.resolve()
+            if entry.absolute().is_relative_to(alias):
+                entry = root / entry.absolute().relative_to(alias)
+        if not root.is_dir():
+            raise IncludeBoundaryError("<entry>", entry.name, 1, "project root is not a directory")
+        entry = _checked_path(entry, root, "<entry>", entry.name, 1)
+    except (OSError, RuntimeError, ValueError) as exc:
+        if isinstance(exc, IncludeBoundaryError):
+            raise
+        raise IncludeBoundaryError(
+            "<entry>", entry.name, 1, "invalid entry or project root"
+        ) from None
+    return entry, root
+
+
+def _resolve_include_target(
+    raw: str, current_dir: Path, root: Path, *, source: str = "<include>", line: int = 1
+) -> Path:
     name = raw.strip()
+    windows_path = PureWindowsPath(name)
+    if "\x00" in name or (os.name != "nt" and (windows_path.drive or name.startswith("\\"))):
+        raise IncludeBoundaryError(raw, source, line, "invalid or unsupported include path")
+    if windows_path.drive and not windows_path.root:
+        raise IncludeBoundaryError(
+            raw, source, line, "drive-relative include path is not supported"
+        )
     if not name.endswith(".tex"):
         name += ".tex"
-    candidate = (current_dir / name).resolve()
+    candidate = _checked_path(current_dir / name, root, raw, source, line)
     if candidate.exists():
         return candidate
-    fallback = (root / name).resolve()
+    fallback = _checked_path(root / name, root, raw, source, line)
     if fallback.exists():
         return fallback
     return candidate
 
 
-def iter_files(entry: Path) -> list[IncludeNode]:
+def iter_files(entry: Path, *, project_root: Path | None = None) -> list[IncludeNode]:
     """Traverse the include graph from ``entry`` in document order.
 
     Skips commented-out includes, guards against cycles, and records
     missing files as ``exists=False`` nodes instead of dropping them.
+    The fixed boundary is ``project_root`` or the resolved entry parent.
+    Paths outside that boundary raise ``IncludeBoundaryError`` before reading.
     """
-    entry = Path(entry).resolve()
-    root = entry.parent
+    entry, root = _entry_and_root(entry, project_root)
     nodes: list[IncludeNode] = []
     visited: set[Path] = set()
 
     def _walk(path: Path, level: int) -> None:
+        path = _checked_path(path, root, "<read>", _display_rel(path, root), 1)
         if path in visited:
             return
         visited.add(path)
@@ -106,12 +177,15 @@ def iter_files(entry: Path) -> list[IncludeNode]:
                 warning=warning,
             )
         )
-        for line in text.split("\n"):
+        for line_no, line in enumerate(text.split("\n"), 1):
             stripped = line.strip()
             if stripped.startswith("%"):
                 continue
             for match in INCLUDE_RE.finditer(COMMENT_RE.sub("", line)):
-                _walk(_resolve_include_target(match.group(1), path.parent, root), level + 1)
+                target = _resolve_include_target(
+                    match.group(1), path.parent, root, source=_display_rel(path, root), line=line_no
+                )
+                _walk(target, level + 1)
 
     _walk(entry, 0)
     return nodes
@@ -168,14 +242,13 @@ class AssembledDocument:
         return out
 
 
-def assemble(entry: Path) -> AssembledDocument:
+def assemble(entry: Path, *, project_root: Path | None = None) -> AssembledDocument:
     """Assemble the full document from ``entry``, expanding includes inline.
 
     Keeps a per-line origin map so diagnostics computed against the
     assembled content can still point at ``源文件:行号``. ``.typ`` entries
     are read as-is (Typst multi-file assembly is out of scope)."""
-    entry = Path(entry).resolve()
-    root = entry.parent
+    entry, root = _entry_and_root(entry, project_root)
     doc = AssembledDocument(entry=entry)
 
     if entry.suffix.lower() == ".typ":
@@ -197,6 +270,7 @@ def assemble(entry: Path) -> AssembledDocument:
         origins.append((rel, line_no))
 
     def _expand(path: Path) -> None:
+        path = _checked_path(path, root, "<read>", _display_rel(path, root), 1)
         if path in visited:
             return
         visited.add(path)
@@ -220,7 +294,9 @@ def assemble(entry: Path) -> AssembledDocument:
                 if prefix.strip():
                     _emit(prefix, rel, line_no)
                 cursor = match.end()
-                target = _resolve_include_target(match.group(1), path.parent, root)
+                target = _resolve_include_target(
+                    match.group(1), path.parent, root, source=rel, line=line_no
+                )
                 if not target.exists():
                     doc.missing.append((match.group(1).strip(), rel, line_no))
                     continue

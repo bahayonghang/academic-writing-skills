@@ -132,6 +132,34 @@ npm --prefix docs run docs:dev
 
 ## 常见问题
 
+### 安装器显示安全告警 {#security-assessments}
+
+`Gen`、`Socket`、`Snyk` 分别显示独立评估。一个供应商的通过结果不能消除另一个
+供应商的告警。仅凭告警数量不能判断安装失败，应同时检查安装结果和退出码。
+
+打开链接中的技能页，再进入供应商详情页。记录技能、受影响文件、发现内容、扫描日期
+和包标识，并与实际安装版本核对。源码修改不能证明供应商已扫描新包；新扫描尚未
+取得时，将扫描状态记为 pending。本地行为测试、安装验证、发布和供应商扫描分别记录。
+
+Socket 对 `latex-thesis-zh` 和 `latex-defense-zh` 的告警指出 include 路径可能读取
+项目根目录外的文件。下述 loader 边界处理这一行为，覆盖五个 LaTeX loader 副本：
+`latex-paper-en`、`latex-thesis-zh`、`paper-audit`、`cover-letter` 和
+`latex-defense-zh`。零告警标记不能代替行为测试。
+
+### loader 报告 `E-INCLUDE-BOUNDARY` {#include-boundary}
+
+默认行为已变化：项目根目录外的 LaTeX include 会在目标读取前终止加载。默认根目录为
+解析后的入口文件父目录。检查覆盖 `input`、`include`、`subfile` 及符号链接。
+包含 `..` 的相对路径和绝对路径，只要解析后的目标仍在根目录内，就继续有效。
+
+核对错误中的源文件和行号。使用正确的主文件，或将 include 路径修正为所选项目内的
+目标。不要自动扩大根目录，也不要把无关私有文件复制进项目。嵌套主文件的调用方可
+向 `assemble` 或 `iter_files` 明确传入 `project_root`；答辩提取使用已选择的
+`--thesis` 目录。其他命令行工具不会因此新增 `--project-root` 参数。
+
+无效或越界的 include 会使当前操作失败。路径位于根目录内的缺失文件沿用原有缺失
+诊断。检查不修改论文文件。include 边界不构成 TeX 执行沙箱，也不保证防护并发链接替换。
+
 ### 缺少 TeX 或 Typst 可执行文件
 
 安装对应工具链，并确认可执行文件位于 `PATH`。Python 依赖不会安装 TeX 或 Typst。

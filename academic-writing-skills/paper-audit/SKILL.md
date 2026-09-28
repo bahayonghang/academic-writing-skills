@@ -91,6 +91,12 @@ root contains exactly four reader-facing files — `review_report.md`,
   requested external verification/search or confirmed that sending title,
   abstract, citation metadata, or queries to third-party APIs is acceptable.
 
+- `tex_loader.py` expands LaTeX includes only within the project root. The default
+  root is the entry file's parent directory. An include outside that root,
+  including a symbolic link, stops loading with `E-INCLUDE-BOUNDARY` before reading
+  the target. Do not widen the root automatically. Only a caller that explicitly
+  selects a larger directory may pass `project_root`.
+
 ## Delivery Boundary
 
 Three write levels, each adding to the one before it. The user selects a level

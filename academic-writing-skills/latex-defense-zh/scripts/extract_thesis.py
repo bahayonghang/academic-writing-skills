@@ -272,10 +272,13 @@ class Source:
 
     @classmethod
     def load(cls, main: Path, root: Path) -> Source:
-        doc = tex_loader.assemble(main)
+        try:
+            doc = tex_loader.assemble(main, project_root=root)
+        except tex_loader.IncludeBoundaryError as exc:
+            raise ExtractError(str(exc)) from None
         text = "\n".join(tex_loader.COMMENT_RE.sub("", line) for line in doc.lines)
         starts = [0] + [index + 1 for index, char in enumerate(text) if char == "\n"]
-        prefix = main.parent.relative_to(root).as_posix()
+        prefix = "."  # The loader now maps sources relative to the explicit thesis root.
         return cls(doc=doc, text=text, line_starts=starts, prefix=prefix)
 
     def origin(self, offset: int) -> str:

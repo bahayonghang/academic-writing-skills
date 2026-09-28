@@ -155,6 +155,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 
 ## Safety Boundaries
 
+- `tex_loader.py` 仅展开项目根目录内的 LaTeX include；默认根目录为入口文件父目录。越界引用（含符号链接）在读取前以 `E-INCLUDE-BOUNDARY` 终止。不要自动上溯目录或放宽边界；更大的 `project_root` 只能由明确选择该目录的调用方传入。
 - 不伪造引用、基金、致谢或学术论断；`\cite{}`、`\ref{}`、`\label{}`、数学环境、参考文献键与模板宏默认不动，除非用户显式同意。
 - 标题建议、去 AI 改写、逻辑意见都是提案；保源检查（compile/structure/consistency）与改写分开交付。
 - 盲审生成只写 `*_blind` 副本、绝不改原文件；R2 成果条目不自动改写，脚本插 `TODO-BLIND` 注释，改写保持 `[LLM]` 提案直到用户确认。

@@ -249,3 +249,43 @@ def test_read_group_and_split_rows(defense_scripts) -> None:
     assert len(extract.split_rows(body)) == 3
     with pytest.raises(ValueError):
         extract.read_group("{open", 0)
+
+
+def test_nested_main_uses_thesis_root_for_includes_and_origins(tmp_path: Path) -> None:
+    root = tmp_path / "thesis"
+    (root / "nested").mkdir(parents=True)
+    (root / "nested/main.tex").write_text(
+        "\\documentclass{book}\n\\begin{document}\n\\input{../chapter}\n\\end{document}\n",
+        encoding="utf-8",
+    )
+    (root / "chapter.tex").write_text("\\chapter{绪论}\n合成正文。", encoding="utf-8")
+    out = tmp_path / "inventory.json"
+    result = run_cli("--thesis", str(root), "--main", "nested/main.tex", "--out", str(out))
+    assert result.returncode == 0, result.stderr
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["main_tex"] == "nested/main.tex"
+    assert data["chapters"][0]["source"] == "chapter.tex:1"
+
+
+@pytest.mark.parametrize("existing", [False, True])
+def test_cli_boundary_failure_preserves_output(tmp_path: Path, existing: bool) -> None:
+    root = tmp_path / "thesis"
+    root.mkdir()
+    (root / "main.tex").write_text(
+        "\\documentclass{book}\n\\begin{document}\n\\input{../outside}\n\\end{document}",
+        encoding="utf-8",
+    )
+    (tmp_path / "outside.tex").write_text("synthetic external marker", encoding="utf-8")
+    out = tmp_path / "output/inventory.json"
+    if existing:
+        out.parent.mkdir()
+        out.write_bytes(b"existing inventory")
+    result = run_cli("--thesis", str(root), "--main", "main.tex", "--out", str(out))
+    assert result.returncode == 2
+    assert "E-INCLUDE-BOUNDARY" in result.stderr
+    assert "main.tex:3" in result.stderr
+    assert "Traceback" not in result.stderr
+    if existing:
+        assert out.read_bytes() == b"existing inventory"
+    else:
+        assert not out.parent.exists()

@@ -1,0 +1,52 @@
+{
+  "id": "bahayonghang/academic-writing-skills/latex-thesis-zh",
+  "source": "bahayonghang/academic-writing-skills",
+  "slug": "latex-thesis-zh",
+  "audits": [
+    {
+      "provider": "Gen Agent Trust Hub",
+      "slug": "agent-trust-hub",
+      "status": "pass",
+      "summary": "The skill is designed to audit and improve Chinese LaTeX thesis projects. It uses Python scripts to perform static analysis on TeX and BibTeX files, checking for formatting, logic, and bibliographic compliance. While the skill processes untrusted user-supplied documents, it includes explicit safety boundaries to prevent prompt injection and requires manual confirmation before enabling potentially dangerous LaTeX features like shell-escape. It interacts with trusted academic APIs to verify bibliography metadata.",
+      "auditedAt": "2026-09-25T07:31:00.527Z",
+      "riskLevel": "SAFE",
+      "categories": [
+        "COMMAND_EXECUTION",
+        "INDIRECT_PROMPT_INJECTION",
+        "DYNAMIC_EXECUTION",
+        "EXTERNAL_DOWNLOADS"
+      ]
+    },
+    {
+      "provider": "Socket",
+      "slug": "socket",
+      "status": "warn",
+      "summary": "1 alert: gptAnomaly",
+      "auditedAt": "2026-09-25T07:31:52.299Z"
+    },
+    {
+      "provider": "Snyk",
+      "slug": "snyk",
+      "status": "pass",
+      "summary": "Risk: LOW · No issues",
+      "auditedAt": "2026-09-25T02:30:18.542261-05:00",
+      "riskLevel": "LOW"
+    },
+    {
+      "provider": "Runlayer",
+      "slug": "runlayer",
+      "status": "pass",
+      "summary": "2/34 files flagged",
+      "auditedAt": "2026-03-14T08:57:48.685Z",
+      "riskLevel": "LOW"
+    },
+    {
+      "provider": "ZeroLeaks",
+      "slug": "zeroleaks",
+      "status": "pass",
+      "summary": "Score: 93/100 · 2 sections analyzed",
+      "auditedAt": "2026-04-16T03:57:46.067Z",
+      "riskLevel": "NONE"
+    }
+  ]
+}

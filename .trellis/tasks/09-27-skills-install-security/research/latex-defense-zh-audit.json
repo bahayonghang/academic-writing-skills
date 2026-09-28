@@ -1,0 +1,35 @@
+{
+  "id": "bahayonghang/academic-writing-skills/latex-defense-zh",
+  "source": "bahayonghang/academic-writing-skills",
+  "slug": "latex-defense-zh",
+  "audits": [
+    {
+      "provider": "Gen Agent Trust Hub",
+      "slug": "agent-trust-hub",
+      "status": "pass",
+      "summary": "This skill provides a set of tools to generate XeLaTeX Beamer defense decks from existing PhD or Master thesis repositories. It includes scripts for data extraction, planning, building, and quality checking. The skill operates locally, treating thesis source files as untrusted data and adhering to safety boundaries such as read-only access to the thesis repository and no network connectivity.",
+      "auditedAt": "2026-09-26T03:45:19.085Z",
+      "riskLevel": "SAFE",
+      "categories": [
+        "COMMAND_EXECUTION",
+        "EXTERNAL_DOWNLOADS",
+        "INDIRECT_PROMPT_INJECTION"
+      ]
+    },
+    {
+      "provider": "Socket",
+      "slug": "socket",
+      "status": "warn",
+      "summary": "1 alert: gptAnomaly",
+      "auditedAt": "2026-09-26T03:46:34.166Z"
+    },
+    {
+      "provider": "Snyk",
+      "slug": "snyk",
+      "status": "pass",
+      "summary": "Risk: LOW · No issues",
+      "auditedAt": "2026-09-25T22:45:03.14947-05:00",
+      "riskLevel": "LOW"
+    }
+  ]
+}

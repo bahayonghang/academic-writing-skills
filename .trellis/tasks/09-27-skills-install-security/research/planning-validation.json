@@ -1,0 +1,36 @@
+{
+  "checked_at_utc": "2026-09-27T13:50:50.082948+00:00",
+  "status": "planning",
+  "planning_files_checked": true,
+  "context_entries_per_manifest": 5,
+  "reproduction_attack_scenarios": 15,
+  "outside_read_interface_observations": 30,
+  "normal_control_scenarios": 5,
+  "existing_TestTexLoader_tests": {
+    "passed": 6,
+    "seconds": 0.48
+  },
+  "source_hashes_unchanged": true,
+  "tracked_files_changed": [],
+  "full_ci_run": false,
+  "npx_install_run": false,
+  "post_fix_scan_run": false,
+  "files": [
+    "check.jsonl",
+    "design.md",
+    "implement.jsonl",
+    "implement.md",
+    "prd.md",
+    "research/add.ts-excerpt.txt",
+    "research/cli-audit.json",
+    "research/diagnosis.md",
+    "research/latex-defense-zh-audit.json",
+    "research/latex-defense-zh-socket.txt",
+    "research/latex-thesis-zh-audit.json",
+    "research/latex-thesis-zh-socket.txt",
+    "research/reproduce_include_boundary.py",
+    "research/reproduction.json",
+    "research/telemetry.ts-excerpt.txt",
+    "task.json"
+  ]
+}

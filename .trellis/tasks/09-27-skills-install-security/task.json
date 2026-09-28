@@ -1,0 +1,52 @@
+{
+  "id": "skills-install-security",
+  "name": "skills-install-security",
+  "title": "npx skills 安装告警诊断与安全边界优化",
+  "description": "规划修复五个 LaTeX loader 的 include 越界读取，并核验 Socket 告警、独立安装和扫描证据。",
+  "status": "in_progress",
+  "dev_type": "backend",
+  "scope": "include-boundary",
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-27",
+  "completedAt": null,
+  "branch": "dev",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    "prd.md",
+    "design.md",
+    "implement.md",
+    "research/diagnosis.md",
+    "research/reproduction.json",
+    "research/implementation-evidence.md",
+    "research/independent-review.md",
+    "research/install-evidence.md",
+    "research/final-source-manifest.json",
+    "research/ci-summary.json",
+    "research/archive-note.md"
+  ],
+  "notes": "2026-09-27 用户批准按规划实施；task.py start 已完成。defense 完整安装验证依赖既有 C4 入口集成，发布与第三方重扫尚未授权。 2026-09-28 UTC 续作完成本地实现验证：just ci 2787 passed / 10 skipped，聚焦 537 passed，四技能安装 225 passed / 54 defense deselected，资源/docs/独立检查通过。AC6/S8 的 defense 安装等待 C4；任务保持 in_progress，未提交或发布。详见 research/implementation-evidence.md。 2026-09-28 UTC 用户明确要求提交改动并归档；按请求关闭任务生命周期，AC6/S8 仍部分完成，defense 安装留待 C4，第三方重扫 pending。",
+  "meta": {
+    "archive_authorization": "explicit_user_request",
+    "acceptance_status": "partial",
+    "deferred_items": [
+      {
+        "item": "AC6/S8 defense full installation",
+        "status": "UNVERIFIED",
+        "owner_task": "09-23-defense-zh-catalog-docs"
+      },
+      {
+        "item": "provider rescan of updated package",
+        "status": "pending"
+      }
+    ]
+  }
+}

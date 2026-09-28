@@ -29,6 +29,9 @@ npx skills add bahayonghang/academic-writing-skills
 然后在你的论文项目中打开适用工具，用自然语言描述任务即可。
 根目录 README 只负责帮你选 skill；具体用法以各目录的 `SKILL.md` 和文档站为准。
 
+LaTeX loader 会拒绝项目根目录外的 include。安装告警及 `E-INCLUDE-BOUNDARY`
+的处理方法见[安装指南](docs/zh/installation.md#security-assessments)。
+
 ## 选择技能
 
 

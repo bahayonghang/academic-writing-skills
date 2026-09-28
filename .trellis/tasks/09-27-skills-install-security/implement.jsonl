@@ -1,0 +1,7 @@
+{"reason":"按技能副本加载、默认行为变化和完整质量门","file":".trellis/spec/academic-writing-skills/testing-and-tooling.md"}
+{"reason":"独立安装、UTF-8 子进程和宿主证据分层","file":".trellis/spec/academic-writing-skills/harness-workflow-contract.md"}
+{"reason":"loader 修改后的冻结哈希与单元润色回归","file":".trellis/spec/academic-writing-skills/unit-polish-contract.md"}
+{"reason":"双语文档、资源同步与构建门禁","file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md"}
+{"reason":"Socket 根因、复现证据和未验证边界","file":".trellis/tasks/09-27-skills-install-security/research/diagnosis.md"}
+{"file": ".trellis/spec/academic-writing-skills/include-boundary-contract.md", "reason": "实现同步后的 include 安全合同"}
+{"file": ".trellis/tasks/09-27-skills-install-security/research/caller-boundary-amendment.md", "reason": "用户已批准两处调用方异常传播"}

@@ -37,6 +37,9 @@ Then open an applicable tool in your manuscript project and ask for the task in
 natural language. The root README is only a routing guide; the authoritative
 usage details live in each `SKILL.md` file and in the docs site.
 
+The LaTeX loaders reject includes outside the project root. For installation
+alerts and `E-INCLUDE-BOUNDARY`, see the [installation guide](docs/installation.md#security-assessments).
+
 ## Choose A Skill
 
 
