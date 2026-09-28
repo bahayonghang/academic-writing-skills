@@ -1,0 +1,211 @@
+{
+  "sources": [
+    {
+      "skill": "latex-thesis-zh",
+      "syntax": "pass",
+      "lf_sha256": "a3053d93432cf9ef0fbcd320f101b2497c7ae787138eb500b0cfd5d71fb9c525"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "syntax": "pass",
+      "lf_sha256": "2d5c3f57c15dcbbf595d6f86c5b488149c623003cf4470ccf33eb3ac467dd765"
+    },
+    {
+      "skill": "latex-paper-en",
+      "syntax": "pass",
+      "lf_sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    },
+    {
+      "skill": "paper-audit",
+      "syntax": "pass",
+      "lf_sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    },
+    {
+      "skill": "cover-letter",
+      "syntax": "pass",
+      "lf_sha256": "a45a4f3e25db1c893c923def2400eeb858776f6ed16d8b08c56cbbb5b07bbbe0"
+    }
+  ],
+  "cases": [
+    {
+      "skill": "latex-thesis-zh",
+      "case": "parent_traversal",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "case": "absolute_path",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "case": "normal_inside",
+      "assemble_outside_read": false,
+      "iter_files_outside_read": false,
+      "assemble_inside_read": true,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-thesis-zh",
+      "case": "symlink_escape",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-defense-zh",
+      "case": "parent_traversal",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-defense-zh",
+      "case": "absolute_path",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-defense-zh",
+      "case": "normal_inside",
+      "assemble_outside_read": false,
+      "iter_files_outside_read": false,
+      "assemble_inside_read": true,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-defense-zh",
+      "case": "symlink_escape",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-paper-en",
+      "case": "parent_traversal",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-paper-en",
+      "case": "absolute_path",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-paper-en",
+      "case": "normal_inside",
+      "assemble_outside_read": false,
+      "iter_files_outside_read": false,
+      "assemble_inside_read": true,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "latex-paper-en",
+      "case": "symlink_escape",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "paper-audit",
+      "case": "parent_traversal",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "paper-audit",
+      "case": "absolute_path",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "paper-audit",
+      "case": "normal_inside",
+      "assemble_outside_read": false,
+      "iter_files_outside_read": false,
+      "assemble_inside_read": true,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "paper-audit",
+      "case": "symlink_escape",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "cover-letter",
+      "case": "parent_traversal",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "cover-letter",
+      "case": "absolute_path",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "cover-letter",
+      "case": "normal_inside",
+      "assemble_outside_read": false,
+      "iter_files_outside_read": false,
+      "assemble_inside_read": true,
+      "warning_count": 0,
+      "missing_count": 0
+    },
+    {
+      "skill": "cover-letter",
+      "case": "symlink_escape",
+      "assemble_outside_read": true,
+      "iter_files_outside_read": true,
+      "assemble_inside_read": false,
+      "warning_count": 0,
+      "missing_count": 0
+    }
+  ]
+}

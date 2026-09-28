@@ -1,0 +1,36 @@
+Source: https://github.com/vercel-labs/skills/blob/7407f3893ad4dceab546ac002c3ef806e4000c73/src/add.ts
+132: function socketLabel(audit: PartnerAudit | undefined): string {
+133:   if (!audit) return pc.dim('--');
+134:   const count = audit.alerts ?? 0;
+135:   return count > 0 ? pc.red(`${count} alert${count !== 1 ? 's' : ''}`) : pc.green('0 alerts');
+1580:     // Kick off the security audit only after GitHub has positively confirmed
+1581:     // that this is a public repository. Private and unknown repositories must
+1582:     // not send their names or skill names to the audit service.
+1583:     const ownerRepoForAudit = getOwnerRepo(parsed);
+1584:     const auditPromise = ownerRepoForAudit
+1585:       ? repoPrivacyPromise.then((isPrivate) =>
+1586:           isPrivate === false
+1587:             ? fetchAuditData(
+1588:                 ownerRepoForAudit,
+1589:                 selectedSkills.map((s) => getSkillDisplayName(s))
+1590:               )
+1591:             : null
+1592:         )
+1907:     // Await and display security audit results (started earlier in parallel)
+1908:     // Wrapped in try/catch so a failed audit fetch never blocks installation.
+1909:     let auditDataForJson: AuditResponse | null = null;
+1910:     try {
+1911:       const auditData = await auditPromise;
+1912:       auditDataForJson = auditData;
+1913:       if (auditData && ownerRepoForAudit) {
+1914:         const securityLines = buildSecurityLines(
+1915:           auditData,
+1916:           selectedSkills.map((s) => ({
+1917:             slug: getSkillDisplayName(s),
+1918:             displayName: getSkillDisplayName(s),
+1919:           })),
+1920:           ownerRepoForAudit
+1921:         );
+1922:         if (securityLines.length > 0) {
+1923:           p.note(securityLines.join('\n'), 'Security Risk Assessments');
+1924:         }

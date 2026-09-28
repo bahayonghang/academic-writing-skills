@@ -28,7 +28,7 @@ FROZEN_HASHES = {
     "parsers.py": "49dc31832a14307a6cf7ab183de793a0b0c273478e5b9375e78bef66e75bb53c",
     "check_style_zh.py": "48410bce2947d080393654e03fe67616398f6def998ed11721ce385cb8be1f26",
     "check_claim_forward.py": "f289e13e293faa57248078b7c3db88e0f659c5537058a6372abf8000826a1f72",
-    "tex_loader.py": "a3053d93432cf9ef0fbcd320f101b2497c7ae787138eb500b0cfd5d71fb9c525",
+    "tex_loader.py": "7d96184955646e514451d1478743a26e5ff79a8686533d1ee8c02798ab0a7fec",
 }
 
 

@@ -1,0 +1,129 @@
+{
+  "bib-search-citation": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-14T17:44:57.081Z"
+    },
+    "socket": {
+      "risk": "safe",
+      "alerts": 0,
+      "score": 90,
+      "analyzedAt": "2026-09-14T17:45:31.499Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-14T12:44:32.437552-05:00"
+    }
+  },
+  "latex-defense-zh": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-26T03:45:19.085Z"
+    },
+    "socket": {
+      "risk": "critical",
+      "alerts": 1,
+      "score": 90,
+      "analyzedAt": "2026-09-26T03:46:34.166Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-25T22:45:03.14947-05:00"
+    }
+  },
+  "latex-thesis-zh": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-25T07:31:00.527Z"
+    },
+    "socket": {
+      "risk": "critical",
+      "alerts": 1,
+      "score": 90,
+      "analyzedAt": "2026-09-25T07:31:52.299Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-25T02:30:18.542261-05:00"
+    },
+    "zeroleaks": {
+      "risk": "safe",
+      "score": 93,
+      "analyzedAt": "2026-04-16T03:57:46.067Z"
+    }
+  },
+  "paper-audit": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-14T14:49:44.885Z"
+    },
+    "socket": {
+      "risk": "safe",
+      "alerts": 0,
+      "score": 90,
+      "analyzedAt": "2026-09-14T14:51:36.787Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-14T09:49:01.182774-05:00"
+    },
+    "zeroleaks": {
+      "risk": "safe",
+      "score": 93,
+      "analyzedAt": "2026-04-16T01:43:45.372Z"
+    }
+  },
+  "paper-writing-studio": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-26T03:45:49.533Z"
+    },
+    "socket": {
+      "risk": "safe",
+      "alerts": 0,
+      "score": 90,
+      "analyzedAt": "2026-09-26T03:45:31.516Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-25T22:44:58.630349-05:00"
+    }
+  },
+  "latex-paper-en": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-15T14:59:28.916Z"
+    },
+    "socket": {
+      "risk": "safe",
+      "alerts": 0,
+      "score": 90,
+      "analyzedAt": "2026-09-15T15:01:18.365Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-15T09:58:43.417224-05:00"
+    },
+    "zeroleaks": {
+      "risk": "safe",
+      "score": 93,
+      "analyzedAt": "2026-04-16T08:35:05.332Z"
+    }
+  },
+  "cover-letter": {
+    "ath": {
+      "risk": "safe",
+      "analyzedAt": "2026-09-11T16:56:17.929Z"
+    },
+    "socket": {
+      "risk": "safe",
+      "alerts": 0,
+      "score": 90,
+      "analyzedAt": "2026-09-11T16:57:13.403Z"
+    },
+    "snyk": {
+      "risk": "low",
+      "analyzedAt": "2026-09-11T11:56:11.635671-05:00"
+    }
+  }
+}

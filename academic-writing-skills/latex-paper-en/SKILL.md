@@ -138,6 +138,7 @@ Keep root-cause analysis, academic judgment, severity, and final acceptance on a
 
 ## Safety Boundaries
 
+- `tex_loader.py` expands LaTeX includes only within the project root. The default root is the entry file's parent directory. An include outside that root, including a symbolic link, stops loading with `E-INCLUDE-BOUNDARY` before reading the target. Do not widen the root automatically. Only a caller that explicitly selects a larger directory may pass `project_root`.
 - Never invent citations, metrics, baselines, or experimental results.
 - Leave `\cite{}`, `\ref{}`, `\label{}`, custom macros, and math environments untouched by default; treat generated prose as proposals, not commits.
 - Plain-text tokens carry no markup and need their own guard: statistics, values with units, model/dataset names, gene and chemical names must survive polishing verbatim. Classification and the cases rules cannot detect: `references/writing/protected-tokens.md`.

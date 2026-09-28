@@ -17,11 +17,11 @@ from typing import Optional
 
 try:
     from parsers import get_parser
-    from tex_loader import assemble
+    from tex_loader import IncludeBoundaryError, assemble
 except ImportError:
     sys.path.append(str(Path(__file__).parent))
     from parsers import get_parser
-    from tex_loader import assemble
+    from tex_loader import IncludeBoundaryError, assemble
 
 
 # ── 草稿态词表（模块级，便于按院校规范配置）──────────────────────────
@@ -235,6 +235,8 @@ class FormatChecker:
 
         try:
             doc = assemble(self.tex_file)
+        except IncludeBoundaryError:
+            raise
         except Exception:
             return issues, []
 

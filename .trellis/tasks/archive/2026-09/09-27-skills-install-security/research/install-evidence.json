@@ -1,0 +1,83 @@
+{
+  "checked_at_utc": "2026-09-28T01:58:04.069187+00:00",
+  "cli": "skills@1.7.0",
+  "source": "local working tree",
+  "scope": "project",
+  "cli_evidence": {
+    "version": {
+      "command": [
+        "npx",
+        "--yes",
+        "skills@1.7.0",
+        "--version"
+      ],
+      "exit": 0
+    },
+    "help": {
+      "command": [
+        "npx",
+        "--yes",
+        "skills@1.7.0",
+        "--help"
+      ],
+      "exit": 0
+    }
+  },
+  "mode": "copy",
+  "agent_layout": "codex",
+  "source_base_commit": "a9d2d32cf2e51a055a70496772b10e5a314d0267",
+  "command": [
+    "npx",
+    "--yes",
+    "skills@1.7.0",
+    "add",
+    "<repo>/academic-writing-skills",
+    "--skill",
+    "latex-thesis-zh",
+    "latex-paper-en",
+    "paper-audit",
+    "cover-letter",
+    "--agent",
+    "codex",
+    "--copy",
+    "--yes",
+    "--json"
+  ],
+  "install_exit": 0,
+  "test_exit": 0,
+  "copies": [
+    {
+      "skill": "latex-thesis-zh",
+      "sha256": "7d96184955646e514451d1478743a26e5ff79a8686533d1ee8c02798ab0a7fec",
+      "installed_path": ".agents/skills/latex-thesis-zh/scripts/tex_loader.py"
+    },
+    {
+      "skill": "latex-paper-en",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "installed_path": ".agents/skills/latex-paper-en/scripts/tex_loader.py"
+    },
+    {
+      "skill": "paper-audit",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "installed_path": ".agents/skills/paper-audit/scripts/tex_loader.py"
+    },
+    {
+      "skill": "cover-letter",
+      "sha256": "f59025ab0c5799c5f14c331df0c095fa778f9d5c68b570c8cb2c8bbc6459d07b",
+      "installed_path": ".agents/skills/cover-letter/scripts/tex_loader.py"
+    }
+  ],
+  "caller_copies": [
+    {
+      "path": "latex-thesis-zh/scripts/check_format.py",
+      "sha256": "431965f4e3d2b5fcb2c1aa3ee7ae8337b4207ffeaa3adb5bd4e97d61af6e19d3"
+    },
+    {
+      "path": "paper-audit/scripts/prepare_review_workspace.py",
+      "sha256": "0f0e1bd8ca555cd3fb35d5577874b644fbf3a4cd8b1ca896ba767228dc0509f3"
+    }
+  ],
+  "defense": "UNVERIFIED: local SKILL.md absent; awaiting C4 integration",
+  "remote_publication": "not performed",
+  "provider_rescan": "pending"
+}

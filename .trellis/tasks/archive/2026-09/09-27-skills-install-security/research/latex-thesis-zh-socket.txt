@@ -1,0 +1,97 @@
+Skills
+Packs
+Topics
+Official
+Audits
+Docs
+Navigate
+Packs
+Topics
+Official
+Audits
+Docs
+skills
+/
+bahayonghang
+/
+academic-writing-skills
+/
+latex-thesis-zh
+/
+Socket
+latex-thesis-zh
+Warn
+Audited by
+Socket
+ on
+Sep 25, 2026
+1
+ alert
+ found:
+Anomaly
+Anomaly
+scripts/tex_loader.py
+LOW
+Anomaly
+LOW
+scripts/tex_loader.py
+The code is a local document include/assembly utility with no evident malicious payload or exfiltration mechanism. It has a path traversal/arbitrary file-read risk because include paths are not restricted to the project root. The shown fragment is also syntactically incomplete due to the trailing 'return do'.
+Confidence:
+98
+%
+Severity:
+58
+%
+Audit Metadata
+Analyzed At
+Sep 25, 2026, 07:31 AM
+Package URL
+pkg:socket/skills-sh/bahayonghang%2Facademic-writing-skills%2Flatex-thesis-zh%2F@9c8b2bd2910da7c3786270698aabaae99951c94fe5d41dea81cab9f244294691
+Browse
+All skills
+Trending
+Hot
+Official
+Packs
+Security audits
+Topics
+React
+Next.js
+Design & UI
+Mobile
+Agent workflows
+Databases
+Testing
+Marketing
+All topics →
+Agents
+Claude Code
+Cursor
+Codex
+GitHub Copilot
+Windsurf
+Gemini
+Cline
+AMP
+Antigravity
+OpenClaw
+All agents →
+Docs
+Overview
+CLI
+Customize pages
+API
+FAQ
+Project
+About
+Contact
+Privacy
+Terms
+GitHub
+Made with care by
+Vercel
+.
+Skills are open source on
+GitHub
+.
+Security Audit — socket — latex-thesis-zh

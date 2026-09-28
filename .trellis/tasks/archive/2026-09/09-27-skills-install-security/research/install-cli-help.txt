@@ -1,0 +1,99 @@
+
+[1mUsage:[0m skills <command> [options]
+
+[1mManage Skills:[0m
+  add <package>        Add a skill package (alias: a)
+                       e.g. vercel-labs/agent-skills
+                            notion
+                            https://notion.so/<skill-page>
+                            https://github.com/vercel-labs/agent-skills
+  use <package>@<skill>
+                       Generate a prompt for using one skill without installing it
+  remove [skills]      Remove installed skills
+  list, ls             List installed skills
+  find [query]         Search for skills interactively
+
+[1mFind Options:[0m
+  --owner <owner>        Search only repositories from a GitHub owner
+
+[1mUpdates:[0m
+  update [skills...]   Update skills to latest versions (alias: upgrade)
+
+[1mUpdate Options:[0m
+  -g, --global           Update global skills only
+  -p, --project          Update project skills only
+  -y, --yes              Skip scope prompt (auto-detect: project if in a project, else global)
+
+[1mProject:[0m
+  experimental_install Restore skills from skills-lock.json
+  init [name]          Initialize a skill (creates <name>/SKILL.md or ./SKILL.md)
+  experimental_sync    Sync skills from node_modules into agent directories
+
+[1mAdd Options:[0m
+  -g, --global           Install skill globally (user-level) instead of project-level
+  -a, --agent <agents>   Specify agents to install to (use '*' for all agents)
+  -s, --skill <skills>   Specify skill names to install (use '*' for all skills)
+  -l, --list             List available skills in the repository without installing
+  -y, --yes              Skip confirmation prompts
+  --copy                 Copy files instead of symlinking to agent directories
+  --metadata <json>      Attach valid JSON to the install telemetry event
+  --subagent <names>     Install to Eve subagents (use 'root' for the root agent)
+  --all                  Shorthand for --skill '*' --agent '*' -y
+  --full-depth           Search all subdirectories even when a root SKILL.md exists
+  --json                 Output results as JSON (machine-readable, no ANSI codes)
+
+[1mUse Options:[0m
+  -s, --skill <skill>    Specify the skill to use
+  -a, --agent <agent>    Start one supported agent interactively
+  --full-depth           Search all subdirectories even when a root SKILL.md exists
+
+[1mRemove Options:[0m
+  -g, --global           Remove from global scope
+  -a, --agent <agents>   Remove from specific agents (omit to clean all agent links)
+  -s, --skill <skills>   Specify skills to remove (use '*' for all skills)
+  -y, --yes              Skip confirmation prompts
+  --all                  Remove every installed skill (-y implied). Do not combine with named skills.
+
+[1mExperimental Sync Options:[0m
+  -a, --agent <agents>   Specify agents to install to (use '*' for all agents)
+  -y, --yes              Skip confirmation prompts
+
+[1mList Options:[0m
+  -g, --global           List global skills (default: project)
+  -a, --agent <agents>   Filter by specific agents
+  --json                 Output as JSON (machine-readable, no ANSI codes)
+
+[1mOptions:[0m
+  --help, -h        Show this help message
+  --version, -v     Show version number
+
+[1mExamples:[0m
+  [38;5;102m$[0m skills add vercel-labs/agent-skills
+  [38;5;102m$[0m skills use vercel-labs/agent-skills@vercel-optimize | claude
+  [38;5;102m$[0m skills use vercel-labs/agent-skills --skill vercel-optimize --agent claude-code
+  [38;5;102m$[0m skills add vercel-labs/agent-skills -g
+  [38;5;102m$[0m skills add vercel-labs/agent-skills --agent claude-code cursor
+  [38;5;102m$[0m skills add vercel-labs/agent-skills --skill pr-review commit
+  [38;5;102m$[0m skills add vercel-labs/agent-skills --json -y [38;5;102m# JSON output[0m
+  [38;5;102m$[0m skills remove                        [38;5;102m# interactive remove[0m
+  [38;5;102m$[0m skills remove web-design             [38;5;102m# remove by name[0m
+  [38;5;102m$[0m skills rm --global frontend-design
+  [38;5;102m$[0m skills list                          [38;5;102m# list project skills[0m
+  [38;5;102m$[0m skills ls -g                         [38;5;102m# list global skills[0m
+  [38;5;102m$[0m skills ls -a claude-code             [38;5;102m# filter by agent[0m
+  [38;5;102m$[0m skills ls --json                      [38;5;102m# JSON output[0m
+  [38;5;102m$[0m skills find                          [38;5;102m# interactive search[0m
+  [38;5;102m$[0m skills find typescript               [38;5;102m# search by keyword[0m
+  [38;5;102m$[0m skills find react --owner vercel     [38;5;102m# search within an owner[0m
+  [38;5;102m$[0m skills update
+  [38;5;102m$[0m skills update my-skill             [38;5;102m# update a single skill[0m
+  [38;5;102m$[0m skills update -g                    [38;5;102m# update global skills only[0m
+  [38;5;102m$[0m skills experimental_install            [38;5;102m# restore from skills-lock.json[0m
+  [38;5;102m$[0m skills init my-skill
+  [38;5;102m$[0m skills experimental_sync              [38;5;102m# sync from node_modules[0m
+  [38;5;102m$[0m skills experimental_sync -y           [38;5;102m# sync without prompts[0m
+
+Discover more skills at [38;5;145mhttps://skills.sh/[0m
+
+npm notice run npx
+npm notice run skills --help

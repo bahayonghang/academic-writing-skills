@@ -164,6 +164,45 @@ Production build: `just doc-build`, or `npm --prefix docs run docs:build`.
 
 ## Common Problems
 
+### The installer shows security alerts {#security-assessments}
+
+The `Gen`, `Socket`, and `Snyk` columns report separate assessments. A passing
+assessment does not clear another provider's alert. An alert count alone does
+not establish that installation failed; check the install result and exit code.
+
+Open the linked skill page, then the provider's detail page. Record the skill,
+affected file, finding, scan date, and package identifier. Compare those records
+with the version actually installed. A source change does not prove that the
+provider has scanned the new package. Until a new scan is available, report the
+scan status as pending. Keep local behavior tests, installation verification,
+publication, and provider scans as separate results.
+
+Socket findings for `latex-thesis-zh` and `latex-defense-zh` identified include
+paths that could read files outside the project root. The loader boundary below
+addresses that behavior. The boundary applies to the five LaTeX loader copies:
+`latex-paper-en`, `latex-thesis-zh`, `paper-audit`, `cover-letter`, and
+`latex-defense-zh`. A zero-alert badge does not replace behavior tests.
+
+### A loader reports `E-INCLUDE-BOUNDARY` {#include-boundary}
+
+The default behavior has changed: a LaTeX include outside the project root now
+stops loading before the target is read. The default root is the resolved entry
+file's parent directory. The check covers `input`, `include`, and `subfile`,
+including symbolic links. Relative paths containing `..` and absolute paths
+remain valid when the resolved target stays inside the root.
+
+Check the source file and line in the error. Use the intended main file, or
+correct the include path so the target is inside the chosen project. Do not
+automatically expand the root or copy an unrelated private file into the project.
+For a nested main file, callers of `assemble` or `iter_files` can explicitly pass
+`project_root`. Defense extraction uses its selected `--thesis` directory.
+Other command-line tools do not gain a `--project-root` option from this change.
+
+An invalid or outside-root include fails the current operation. A missing file
+whose path stays inside the root retains the existing missing-file diagnostic.
+The check does not modify manuscript files. The include boundary is not a TeX
+execution sandbox and does not claim protection against concurrent link changes.
+
 ### A TeX or Typst executable is missing
 
 Install the matching toolchain and verify the executable is on `PATH`. Python

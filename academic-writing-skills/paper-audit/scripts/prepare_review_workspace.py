@@ -21,7 +21,7 @@ from paths import WorkspaceLayout
 # Defensive source reader (utf-8 -> latin-1 -> replace); identical helper lives
 # in tex_loader / typ_loader and is format-independent.
 try:
-    from tex_loader import AssembledDocument, assemble, read_text_robust
+    from tex_loader import AssembledDocument, IncludeBoundaryError, assemble, read_text_robust
 except ImportError:  # pragma: no cover - loader always vendored alongside
     try:
         from typ_loader import read_text_robust
@@ -699,6 +699,8 @@ def prepare_subsection_artifacts(
     else:
         try:
             assembled = assemble(source)
+        except IncludeBoundaryError:
+            raise
         except (OSError, UnicodeError, ValueError):
             status = "unsupported_format"
         else:

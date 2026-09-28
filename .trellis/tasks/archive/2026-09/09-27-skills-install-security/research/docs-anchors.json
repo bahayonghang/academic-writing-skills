@@ -1,0 +1,22 @@
+[
+  {
+    "page": "docs/.vitepress/dist/installation.html",
+    "anchor": "security-assessments",
+    "exists": true
+  },
+  {
+    "page": "docs/.vitepress/dist/installation.html",
+    "anchor": "include-boundary",
+    "exists": true
+  },
+  {
+    "page": "docs/.vitepress/dist/zh/installation.html",
+    "anchor": "security-assessments",
+    "exists": true
+  },
+  {
+    "page": "docs/.vitepress/dist/zh/installation.html",
+    "anchor": "include-boundary",
+    "exists": true
+  }
+]

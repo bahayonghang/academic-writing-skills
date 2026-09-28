@@ -1,0 +1,66 @@
+Source: https://github.com/vercel-labs/skills/blob/7407f3893ad4dceab546ac002c3ef806e4000c73/src/telemetry.ts
+110: export async function fetchAuditData(
+111:   source: string,
+112:   skillSlugs: string[],
+113:   timeoutMs = 3000
+114: ): Promise<AuditResponse | null> {
+115:   if (!isEnabled()) return null;
+116:   if (skillSlugs.length === 0) return null;
+117:
+118:   try {
+119:     const params = new URLSearchParams({
+120:       source,
+121:       skills: skillSlugs.join(','),
+122:     });
+123:
+124:     const controller = new AbortController();
+125:     const timeout = setTimeout(() => controller.abort(), timeoutMs);
+126:
+127:     const response = await fetch(`${AUDIT_URL}?${params.toString()}`, {
+128:       signal: controller.signal,
+129:     });
+130:     clearTimeout(timeout);
+131:
+132:     if (!response.ok) return null;
+133:     return (await response.json()) as AuditResponse;
+134:   } catch {
+135:     return null;
+136:   }
+137: }
+138:
+139: // Pending telemetry promises — awaited before CLI exit so we don't lose data,
+140: // but never block the main workflow.
+141: const pendingTelemetry: Promise<void>[] = [];
+142:
+143: export function track(data: TelemetryData): void {
+144:   if (!isEnabled()) return;
+145:
+146:   try {
+147:     const params = new URLSearchParams();
+148:
+149:     // Add version
+150:     if (cliVersion) {
+151:       params.set('v', cliVersion);
+152:     }
+153:
+154:     // Add CI flag if running in CI
+155:     if (isCI()) {
+156:       params.set('ci', '1');
+157:     }
+158:
+159:     // Add detected AI agent name
+160:     if (detectedAgentName) {
+161:       params.set('agent', detectedAgentName);
+162:     }
+163:
+164:     // Add event data
+165:     for (const [key, value] of Object.entries(data)) {
+166:       if (value !== undefined && value !== null) {
+167:         params.set(key, String(value));
+168:       }
+169:     }
+170:
+171:     // Fire and forget during the workflow, but track the promise so
+172:     // flushTelemetry() can await it before the process exits.
+173:     const p = fetch(`${TELEMETRY_URL}?${params.toString()}`)
+174:       .catch(() => {})
