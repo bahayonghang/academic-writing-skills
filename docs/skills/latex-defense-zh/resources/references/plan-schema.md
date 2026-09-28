@@ -367,7 +367,7 @@ The preamble of `defense.tex` has one line `\DefenseDefineLabel{<label>}{<编号
 | `build_manifest.json`                                                                   | Skill version, theme, stage, frame count, SHA-256 of the plan and of the inventory, SHA-256 of the other six files, and the warnings; no timestamp |
 | `beamerthemeYanshanDefense.sty`, `beamerthemeGenericDefense.sty`, `defense-layouts.sty` | Copies of the theme and layout packages                                                                                                            |
 
-These seven files are the owned files of the build script. If an owned file exists and `--force` is absent, the build script exits with code 4 and writes no file. `--force` overwrites only the owned files. It does not delete other files in the output directory.
+These seven files are the owned files of the build script. If an owned file exists and `--force` is absent, the build script exits with code 4 and writes no file. `--force` overwrites only the owned files. It does not delete other files in the output directory. An owned file whose content equals the existing file is not rewritten and keeps its modification time: when latexmk decides by content that no rebuild is needed, `defense.pdf` does not become older than `defense.tex`.
 
 `defense.tex` has a frame marker on the line before each `\begin{frame}`. The quality gate uses the frame markers to map line numbers, page roles, and page order:
 

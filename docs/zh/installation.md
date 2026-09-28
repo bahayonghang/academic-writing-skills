@@ -48,7 +48,7 @@ just ci
 uv run --extra dev python docs/scripts/check_resource_sync.py
 ```
 
-把七个 catalog 技能安装进本 clone（或其他项目）的 agent 技能目录，使用本地安装器。这是面向本仓库 clone 的维护者辅助命令。它不替代 `npx skills add`，也不验证 `npx` 安装器、符号链接布局或五套工具运行时发现。
+把八个 catalog 技能安装进本 clone（或其他项目）的 agent 技能目录，使用本地安装器。这是面向本仓库 clone 的维护者辅助命令。它不替代 `npx skills add`，也不验证 `npx` 安装器、符号链接布局或五套工具运行时发现。
 
 ```bash
 just skills-install
@@ -74,7 +74,7 @@ npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
 npx skills add bahayonghang/academic-writing-skills/latex-defense-zh
 
-# 安装全部七个技能
+# 安装全部八个技能
 npx skills add bahayonghang/academic-writing-skills
 ```
 
@@ -94,10 +94,11 @@ npx skills add bahayonghang/academic-writing-skills
 ├── latex-thesis-zh/
 ├── typst-paper/
 ├── bib-search-citation/
-└── paper-writing-studio/
+├── paper-writing-studio/
+└── latex-defense-zh/
 ```
 
-`audit.py` 在 `paper-audit/` 旁边查找 `latex-paper-en/scripts`、`latex-thesis-zh/scripts`、`typst-paper/scripts`。推荐完整集合：全部七个技能目录作为同级目录。
+`audit.py` 在 `paper-audit/` 旁边查找 `latex-paper-en/scripts`、`latex-thesis-zh/scripts`、`typst-paper/scripts`。推荐完整集合：全部八个技能目录作为同级目录。
 
 仅复制 `paper-audit` 时为**覆盖受限**。缺失的同级脚本会被跳过。现有 exit 与 gate 语义保持不变。对 `tests/fixtures/paper_audit/sample_paper.tex` 的已记录隔离探针（`quick-audit --lang en --format json`）：单独安装 RUN=3，missing=8，exit 0。推荐完整同级布局：missing=0。
 

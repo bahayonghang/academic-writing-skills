@@ -20,6 +20,7 @@ This file specifies how to write each text field of the defense deck, the source
 - Each page has 5 bullets or fewer, and each bullet has 40 Chinese characters or fewer. Each layout has its own limits; see [Layout Catalog](slide-layouts.md).
 - Each content page has 180 visible body characters or fewer. This value is an initial threshold of the quality gate and is not calibrated.
 - One page covers one idea. When the content is too much for one page, split the page.
+- Text fields are plain text and are escaped verbatim at build time: characters such as `$`, `\`, and `%` appear as written. Do not write LaTeX commands or `$…$` inline math in text fields; when a symbol is needed, write its Chinese name (for example, 「观测集合」), or cite the thesis equation with the `equations-figure` layout.
 
 ## Font Sizes
 

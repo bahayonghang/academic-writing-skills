@@ -813,7 +813,12 @@ def main(argv: list[str] | None = None) -> int:
         return 4
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, data in files.items():
-        (out_dir / name).write_bytes(data)
+        target = out_dir / name
+        # Keep unchanged files and their mtimes: latexmk skips a rebuild when the
+        # content hashes match, and a fresh defense.tex mtime would then postdate the PDF.
+        if target.is_file() and target.read_bytes() == data:
+            continue
+        target.write_bytes(data)
     print(f"已写入 {out_dir}：帧数 {len(plan['frames'])}；warnings {len(warnings)} 条")
     for warning in warnings:
         print(f"  警告：{warning}")

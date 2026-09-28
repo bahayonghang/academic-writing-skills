@@ -276,7 +276,11 @@ class Source:
             doc = tex_loader.assemble(main, project_root=root)
         except tex_loader.IncludeBoundaryError as exc:
             raise ExtractError(str(exc)) from None
-        text = "\n".join(tex_loader.COMMENT_RE.sub("", line) for line in doc.lines)
+        # CRLF sources (Windows checkouts) keep a trailing \r on each line; drop it so
+        # equation and table sources in the inventory match an LF deck.
+        text = "\n".join(
+            tex_loader.COMMENT_RE.sub("", line.removesuffix("\r")) for line in doc.lines
+        )
         starts = [0] + [index + 1 for index, char in enumerate(text) if char == "\n"]
         prefix = "."  # The loader now maps sources relative to the explicit thesis root.
         return cls(doc=doc, text=text, line_starts=starts, prefix=prefix)

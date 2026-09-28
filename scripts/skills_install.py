@@ -21,6 +21,7 @@ import yaml
 CATALOG_SKILL_NAMES: tuple[str, ...] = (
     "bib-search-citation",
     "cover-letter",
+    "latex-defense-zh",
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",

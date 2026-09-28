@@ -10,7 +10,7 @@ Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi).
 
 ## Project Structure & Module Organization
 
-Core skill packages live under `academic-writing-skills/`. There are seven skill root directories:
+Core skill packages live under `academic-writing-skills/`. There are eight skill root directories:
 
 - `latex-paper-en/`
 - `latex-thesis-zh/`
@@ -19,6 +19,7 @@ Core skill packages live under `academic-writing-skills/`. There are seven skill
 - `paper-audit/`
 - `cover-letter/`
 - `paper-writing-studio/`
+- `latex-defense-zh/`
 
 Each skill typically contains `SKILL.md`, `scripts/`, `references/`, `examples/`, and optional `agents/`, `templates/`, or `evals/`. `SKILL.md` is the capability and routing source. Public `references/`, `templates/`, `examples/`, and Markdown `agents/` are the detailed rule sources. Automated tests live in `tests/` and in skill-local `academic-writing-skills/*/tests/`. User-facing documentation is in `docs/` with localized content under `docs/zh/`. The docs site is a bilingual mirror; do not infer skill behavior from old docs pages. Maintainer coding guidelines live under `.trellis/spec/`. Use `ref/` for supporting reference material, not product code.
 
@@ -66,7 +67,7 @@ Pyright uses `typeCheckingMode = "basic"`. Errors fail `just ci`. Existing warni
 
 ## Parser copies
 
-Five skills ship `scripts/parsers.py`: `latex-paper-en`, `latex-thesis-zh`, `typst-paper`, `paper-audit`, and `cover-letter`. `bib-search-citation` and `paper-writing-studio` do not. `DocumentParser` (ABC) → `LatexParser`, `TypstParser`. Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`. Keep copies aligned when changing shared behavior. The contract is `tests/contracts/test_parsers_alignment.py` (hash-locked `ALIGNMENTS`; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
+Five skills ship `scripts/parsers.py`: `latex-paper-en`, `latex-thesis-zh`, `typst-paper`, `paper-audit`, and `cover-letter`. `bib-search-citation`, `paper-writing-studio`, and `latex-defense-zh` do not; `latex-defense-zh` ships a `tex_loader.py` copy from `latex-thesis-zh` instead. `DocumentParser` (ABC) → `LatexParser`, `TypstParser`. Key methods: `split_sections()`, `extract_visible_text()`, `clean_text()`, `get_comment_prefix()`. Keep copies aligned when changing shared behavior. The contract is `tests/contracts/test_parsers_alignment.py` (hash-locked `ALIGNMENTS`; canonical copy = `latex-paper-en`). Per-skill divergences are intentional and documented there — e.g. `latex-thesis-zh` omits `clean_text`, `typst-paper` omits `LatexParser`. Update `ALIGNMENTS` when a divergence is deliberate.
 
 PDF audit uses lazy `pymupdf` (PyMuPDF). The enhanced path also uses optional `pymupdf4llm`.
 
@@ -74,7 +75,7 @@ PDF audit uses lazy `pymupdf` (PyMuPDF). The enhanced path also uses optional `p
 
 Pytest is the test framework. Name files `test_*.py`, test functions `test_*`, and place shared fixtures in `tests/conftest.py`. Add or update tests whenever changing parsing, validation, or report-generation scripts. Run `just test` locally before submitting; use `just ci` for broader verification when touching multiple skills or docs tooling.
 
-`tests/conftest.py` inserts `SCRIPT_DIR_EN` and `SCRIPT_DIR_AUDIT` on `sys.path`. The same file appends `SCRIPT_DIR_ZH` and `SCRIPT_DIR_COVER_LETTER` so those copies do not shadow the canonical EN/AUDIT parsers. Bare imports such as `from parsers import LatexParser` load the EN/AUDIT copies. Cover-letter tests load scripts with `importlib.util.spec_from_file_location`. Path constants live in `tests.support.paths`.
+`tests/conftest.py` inserts `SCRIPT_DIR_EN` and `SCRIPT_DIR_AUDIT` on `sys.path`. The same file appends `SCRIPT_DIR_ZH` and `SCRIPT_DIR_COVER_LETTER` so those copies do not shadow the canonical EN/AUDIT parsers. Bare imports such as `from parsers import LatexParser` load the EN/AUDIT copies. Cover-letter and latex-defense-zh tests load scripts with `importlib.util.spec_from_file_location`. latex-defense-zh compile tests run only with `DEFENSE_ZH_COMPILE=1` and XeLaTeX installed; preview tests skip without PyMuPDF. Path constants live in `tests.support.paths`.
 
 ## Commit & Pull Request Guidelines
 

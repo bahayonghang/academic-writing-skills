@@ -47,6 +47,16 @@ def test_manifest_matches_live_public_inventory() -> None:
     }
 
 
+def test_manifest_order_is_platform_independent() -> None:
+    # Path sorting is case-insensitive on Windows only; the generator pins one order.
+    entries = checker.load_manifest(MANIFEST_PATH)
+    expected = [
+        source.relative_to(REPO_ROOT).as_posix()
+        for _skill, _kind, source in checker.public_source_files(REPO_ROOT)
+    ]
+    assert [entry["source"] for entry in entries] == expected
+
+
 def test_manifest_uses_canonical_bilingual_paths() -> None:
     entries = checker.load_manifest(MANIFEST_PATH)
     for entry in entries:
@@ -183,6 +193,7 @@ def test_bilingual_usage_pages_cover_live_skill_routers() -> None:
     for skill in (
         "bib-search-citation",
         "cover-letter",
+        "latex-defense-zh",
         "latex-paper-en",
         "latex-thesis-zh",
         "paper-audit",
@@ -196,7 +207,7 @@ def test_bilingual_usage_pages_cover_live_skill_routers() -> None:
             assert not missing, f"{skill} router missing from usage page: {missing}"
 
 
-def test_bilingual_installation_pages_list_all_seven_skills() -> None:
+def test_bilingual_installation_pages_list_all_eight_skills() -> None:
     installation_pages = [
         (REPO_ROOT / "docs" / "installation.md").read_text(encoding="utf-8"),
         (REPO_ROOT / "docs" / "zh" / "installation.md").read_text(encoding="utf-8"),

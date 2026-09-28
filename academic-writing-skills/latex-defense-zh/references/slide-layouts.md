@@ -131,13 +131,13 @@
 % defense-frame: id=<id> role=experiment chapter=<n> layout=figure-grid
 \begin{frame}{<section>}
 \DefenseSubsection{<subsection>}
-{\centering
+\begingroup\centering
 \begin{minipage}[t]{0.32\linewidth}
   \DefenseFigure[height=0.21\textheight]{<file a>}{(a) <subcaption a>}
 \end{minipage}\hspace{0.08\linewidth}%
 \begin{minipage}[t]{0.32\linewidth}
   \DefenseFigure[height=0.21\textheight]{<file b>}{(b) <subcaption b>}
-\end{minipage}\par}
+\end{minipage}\par\endgroup
 \DefenseCaption{<caption>}
 \DefenseTakeaway{<takeaway>}
 \end{frame}
@@ -150,7 +150,7 @@
 | 4      | 2          | `0.32\linewidth` | `0.08\linewidth` | `0.21\textheight` |
 | 5 或 6 | 3          | `0.3\linewidth`  | `0.03\linewidth` | `0.21\textheight` |
 
-每行结束处写 `\par`，两行之间加 `\vspace{2pt}`。子图题的字母与论文一致。
+每行结束处写 `\par`，两行之间加 `\vspace{2pt}`。子图题的字母与论文一致。子图网格用 `\begingroup`…`\endgroup` 分组，不用花括号：没有小节条时，紧跟 `\begin{frame}{<section>}` 的花括号组会被 Beamer 当作帧副标题吞掉，子图不显示。
 
 ## equations-figure
 

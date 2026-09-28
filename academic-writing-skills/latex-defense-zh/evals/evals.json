@@ -1,0 +1,144 @@
+{
+  "skill_name": "latex-defense-zh",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把 evals/fixtures/mini-thesis/ 这个博士论文仓库做成 40 分钟的预答辩 Beamer 幻灯片，用燕山主题。先告诉我提取到了什么。",
+      "expected_output": "Route to extract: run extract_thesis.py read-only against the fixture, report chapter/figure/table/equation counts and the W-MAIN warning (formal document.tex chosen over document_blind.tex), list suggested chapter roles, and ask the user to confirm roles, stage, minutes, theme and output directory before planning.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "extract_thesis\\.py",
+          "description": "extract module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(intro|foundation|research|application|conclusion)",
+          "description": "chapter roles reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "(确认|confirm)",
+          "description": "checkpoint 1 asks the user"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "章角色没问题，40 分钟预答辩，生成规划并填写，然后给我看结论句串读。",
+      "expected_output": "Route to plan: run plan_deck.py with --minutes 40 --stage predefense --theme yanshan, fill every placeholder from thesis facts per content-rules (takeaway <= 40 chars, no invented numbers, innovations quoted from the conclusion chapter with chapter numbers), then run plan_deck.py --outline and ask the user to confirm the storyline before building.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "plan_deck\\.py",
+          "description": "plan module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "--outline",
+          "description": "outline shown before build"
+        },
+        {
+          "type": "not_contains",
+          "text": "build_deck.py --plan",
+          "description": "does not build before checkpoint 2"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "串读确认了，编译答辩稿并跑质量门。",
+      "expected_output": "Route to build then check: run build_deck.py --compile into the agreed output directory, then check_deck.py with --plan; report D-* results with Severity/Priority and [Script] tags, fix slide_plan.yaml (not defense.tex) and rebuild with --force for at most three rounds.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "build_deck\\.py",
+          "description": "build module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "check_deck\\.py",
+          "description": "check module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "D-[A-Z]",
+          "description": "D-* codes reported"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "质量门报了 D-NUM-SRC：结论句里写了 RMSE 降低 25%，怎么处理？",
+      "expected_output": "Treat D-NUM-SRC as NEEDS-LLM: locate the source sentence in the thesis (table 3-2), note that 25% is a self-computed percentage absent from the thesis, and rewrite the takeaway using only numbers the thesis states; never substitute another computed figure.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex",
+        "evals/fixtures/mini-thesis/chapters/chapter3.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(NEEDS-LLM|原句|source sentence)",
+          "description": "manual number review"
+        },
+        {
+          "type": "regex",
+          "pattern": "(表3-2|0\\.39)",
+          "description": "grounded in thesis table"
+        },
+        {
+          "type": "not_contains",
+          "text": "降低 22",
+          "description": "no new computed percentage"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "答辩稿编译好了，帮我出一张总览图检查版面。",
+      "expected_output": "Route to preview: run render_preview.py on defense.pdf into the preview directory, then inspect contact-sheet.png against the visual checklist (title position, figure clarity, <=3 emphasis per page, footer not covering content, chapter TOC highlight). If PyMuPDF is missing, report exit code 3 and the uv pip install pymupdf hint.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "render_preview\\.py",
+          "description": "preview module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "contact-sheet",
+          "description": "contact sheet inspected"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "直接给我生成一个 .pptx 答辩 PPT 吧，我要在 PowerPoint 里改。",
+      "expected_output": "Decline the .pptx output: explain that latex-defense-zh only produces a LaTeX Beamer deck (.tex and compiled PDF) and offer the Beamer workflow instead; do not run any script that claims to emit .pptx.",
+      "files": [],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "(Beamer|LaTeX)",
+          "description": "explains Beamer-only output"
+        },
+        {
+          "type": "not_contains",
+          "text": "defense.pptx",
+          "description": "no pptx produced"
+        }
+      ]
+    }
+  ]
+}

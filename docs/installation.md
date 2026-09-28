@@ -58,7 +58,7 @@ Docs resource gate (not part of `just ci`):
 uv run --extra dev python docs/scripts/check_resource_sync.py
 ```
 
-Install the seven catalog skills into this clone's (or another project's) agent
+Install the eight catalog skills into this clone's (or another project's) agent
 skill directories with the local installer. This is a maintainer helper for a
 clone of this repository. It does not replace `npx skills add`, and it does
 not verify the `npx` installer, symlink layout, or five-tool runtime discovery.
@@ -91,7 +91,7 @@ npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
 npx skills add bahayonghang/academic-writing-skills/latex-defense-zh
 
-# Install all seven
+# Install all eight
 npx skills add bahayonghang/academic-writing-skills
 ```
 
@@ -119,12 +119,13 @@ writing skills from the parent of the `paper-audit/` directory:
 ├── latex-thesis-zh/
 ├── typst-paper/
 ├── bib-search-citation/
-└── paper-writing-studio/
+├── paper-writing-studio/
+└── latex-defense-zh/
 ```
 
 `audit.py` looks for `latex-paper-en/scripts`, `latex-thesis-zh/scripts`, and
 `typst-paper/scripts` next to `paper-audit/`. The recommended full collection is
-all seven skill directories as siblings.
+all eight skill directories as siblings.
 
 A single `paper-audit` copy is **limited coverage**. Missing sibling scripts are
 skipped. The existing exit and gate behavior is unchanged. Recorded isolation

@@ -42,6 +42,14 @@ SKILLS = {
         "expects_uv_commands": True,
         "router_help": True,
     },
+    "latex-defense-zh": {
+        "modules": ["extract", "plan", "build", "check", "preview"],
+        "min_examples": 3,
+        "min_evals": 5,
+        "expects_uv_commands": True,
+        "enforce_command_hygiene": True,
+        "router_help": True,
+    },
     "latex-paper-en": {
         "modules": [
             "compile",
@@ -266,6 +274,9 @@ def test_skill_security_boundaries_are_declared() -> None:
     for skill_name in ("latex-paper-en", "latex-thesis-zh"):
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
         assert "--trusted-source" in skill_md
+    defense_md = (SKILLS_ROOT / "latex-defense-zh" / "SKILL.md").read_text(encoding="utf-8")
+    assert "allowed-tools: Read, Glob, Grep, Write, Edit, Bash(uv *)" in defense_md
+    assert "Bash(latexmk *)" not in defense_md
 
 
 def test_latex_reference_configs_disable_shell_escape_by_default() -> None:
@@ -634,3 +645,7 @@ def test_cover_letter_module_router_commands_match_script_help() -> None:
 
 def test_bib_search_citation_module_router_commands_match_script_help() -> None:
     _assert_module_router_commands_match_script_help("bib-search-citation")
+
+
+def test_latex_defense_zh_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("latex-defense-zh")

@@ -1,0 +1,4 @@
+interface:
+  display_name: "LaTeX Defense ZH"
+  short_description: "Build a Chinese thesis defense Beamer deck with speaker notes from an existing XeLaTeX thesis repository, then gate it for fidelity"
+  default_prompt: "Build a defense deck from my Chinese LaTeX thesis repository: extract the inventory read-only, confirm chapter roles, stage, minutes, theme and output directory with me, fill the slide plan from thesis facts only, show me the takeaway outline, then build, compile, run the D-* quality gate for up to three fix rounds, render the preview, and report remaining findings."
