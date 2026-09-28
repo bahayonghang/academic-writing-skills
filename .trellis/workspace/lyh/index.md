@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 51
-- **Last Active**: 2026-09-23
+- **Total Sessions**: 52
+- **Last Active**: 2026-09-27
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1765 | Active |
+| `journal-1.md` | ~1803 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 52 | 2026-09-27 | 提交 include 边界修复并按请求归档 | `8863c79d72f502a6c8ca83db6e2105f669f882d2` | `dev` |
 | 51 | 2026-09-23 | latex-thesis-zh 落地 2026-09-22 论文 spec 六项增量 | `0c97c57907843fe3770d5a141e7433bb69d52fe5` | `dev` |
 | 50 | 2026-09-20 | latex-thesis-zh 章引言一段式与两段式支持 | `6bb61c0` | `dev` |
 | 49 | 2026-09-20 | latex-thesis-zh 正文段落职责与 --paragraph-roles | `1c908cd`, `df84f4e` | `dev` |

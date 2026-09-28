@@ -1763,3 +1763,41 @@ A-TY-1/A-TY-2 落地：新增 _strip_typst_line_comment 单遍扫描器（URL/�
 ### Next Steps
 
 - just ci 与 just doc-build 仍未在本会话重跑；五宿主与真实论文效果继续 UNVERIFIED。
+
+
+## Session 52: 提交 include 边界修复并按请求归档
+<!-- trellis-session: v=2 fp=51c69f9588e291e4 -->
+
+**Date**: 2026-09-27
+**Task**: 提交 include 边界修复并按请求归档
+**Branch**: `dev`
+
+### Summary
+
+提交五个 LaTeX loader 的项目边界修复及验证证据，并按用户明确指示归档 skills-install-security。AC6 保留部分完成，defense 完整安装等待 C4，第三方重扫 pending。
+
+### Main Changes
+
+- 五副本读取前拒绝越界；defense 传递根目录；两处调用方传播边界异常。
+- 同步回归、安全规范、双语说明及隔离安装证据；归档记录保留未完成项。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8863c79d72f502a6c8ca83db6e2105f669f882d2` | fix!: 拒绝 LaTeX include 越界读取 |
+
+### Testing
+
+- [OK] just ci 四步通过：2787 passed、10 条件跳过；typecheck 0 errors、86 warnings。
+- [OK] 聚焦 537 passed；安装副本 225 passed、54 defense deselected；资源、docs、独立检查通过。
+- [OK] 提交前核对 22 个源码哈希未变，暂存 diff 检查通过；8 份证据文本仅规范化空白。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- C4 集成 defense 入口后补完整安装证据，原 AC6/S8 仍部分完成。
+- 发布和第三方重扫未执行，须后续明确授权。
