@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Check the rebuttal ledger and the rendered responses (latex-defense-zh).
+Check the rebuttal ledger and the rendered responses (latex-thesis-zh).
 
 The script reads workspace/concerns.yaml, workspace/rebuttal_state.json, the
 normalized reviews, and the files in responses/. It reports R-* findings in the
@@ -34,11 +34,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 try:
-    import check_deck
     import rebuttal_common as rc
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import check_deck
     import rebuttal_common as rc
 
 SEVERITY_ORDER = {severity: index for index, severity in enumerate(rc.PRIORITY)}
@@ -372,8 +370,8 @@ def check_placeholder(ctx: Context) -> None:
 
 
 def reply_numbers(text: str) -> list[str]:
-    text = check_deck.normalize_digits(text)
-    for pattern in check_deck.NUMBER_EXCLUDED_RES:
+    text = rc.normalize_digits(text)
+    for pattern in rc.NUMBER_EXCLUDED_RES:
         text = pattern.sub(" ", text)
     return list(dict.fromkeys(token.rstrip("%") for token in REPLY_NUMBER_RE.findall(text)))
 
@@ -384,7 +382,7 @@ def check_num_src(ctx: Context) -> None:
         return
     for concern in ctx.concerns:
         items = ctx.review_items.get(str(concern.get("reviewer")), [])
-        review_numbers = set(check_deck.NUMBER_RE.findall("\n".join(items)))
+        review_numbers = set(rc.NUMBER_RE.findall("\n".join(items)))
         for number in reply_numbers(str(concern.get("response") or "")):
             if number in ctx.thesis_numbers:
                 continue
@@ -561,7 +559,7 @@ def build_context(workspace: Path, thesis: Path | None) -> Context:
     ctx.changed = rc.git_changed_files(thesis, base) if base else None
     main = main_tex(ctx)
     if main:
-        ctx.thesis_numbers = check_deck.load_thesis_numbers({"main_tex": main}, thesis)
+        ctx.thesis_numbers = rc.load_thesis_numbers({"main_tex": main}, thesis)
     return ctx
 
 

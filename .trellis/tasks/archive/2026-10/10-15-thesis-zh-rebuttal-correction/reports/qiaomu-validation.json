@@ -1,0 +1,18 @@
+{
+  "ok": false,
+  "root": "academic-writing-skills/latex-thesis-zh",
+  "failures": [
+    "missing required file: README.md",
+    "missing required file: agents/interface.yaml",
+    "missing required file: manifest.json"
+  ],
+  "warnings": [
+    "evals/trigger_cases.json missing; recommended for production/library packages",
+    "script has no argparse help or internal-module marker: bib_scan.py",
+    "script has no argparse help or internal-module marker: parsers.py",
+    "script has no argparse help or internal-module marker: rebuttal_common.py",
+    "script has no argparse help or internal-module marker: tex_loader.py"
+  ],
+  "command_exit_code": 2,
+  "skill_md_sha256": "9ddd111d9b5ead762b5642753f71783af2c09f9d11a226f545a52089dad02ba5"
+}

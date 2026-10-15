@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Read thesis review reports and start the rebuttal ledger (latex-defense-zh).
+Read thesis review reports and start the rebuttal ledger (latex-thesis-zh).
 
 The script reads every review report (PDF with a text layer, TXT, or MD) in the
 review directory, removes repeated watermark and footer lines, splits the
@@ -35,6 +35,7 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import cast
 
 try:
     import rebuttal_common
@@ -178,7 +179,7 @@ def read_pages(path: Path) -> list[str]:
         except Exception as exc:  # PyMuPDF raises several error types for a bad file
             raise IntakeError(f"无法打开 PDF {path.name}：{exc}") from exc
         with document:
-            return [page.get_text("text", sort=True) for page in document]
+            return [cast(str, page.get_text("text", sort=True)) for page in document]
     text = tex_loader.read_text_robust(path)[0]
     return text.split("\f")
 

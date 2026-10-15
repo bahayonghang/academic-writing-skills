@@ -1,6 +1,6 @@
 # Example: Point-by-Point Replies to Pre-Review Comments
 
-This example uses the synthetic review reports `evals/fixtures/rebuttal/reviews/` and the synthetic thesis `evals/fixtures/mini-thesis/` to show the full process from reading the review reports to delivering the paste text. The completed ledger is `evals/fixtures/rebuttal/concerns-done.yaml`. The title, the concerns, and the page numbers are invented.
+This example uses the synthetic review reports `evals/fixtures/rebuttal/reviews/` and the synthetic thesis `evals/fixtures/rebuttal/mini-thesis/` to show the full process from reading the review reports to delivering the paste text. The completed ledger is `evals/fixtures/rebuttal/concerns-done.yaml`. The title, the concerns, and the page numbers are invented.
 
 Scenario: the thesis repository is `$THESIS`, and the submitted version is committed to git. The user put the two review reports in `$THESIS/rebuttal/pre-review/review_results/` and must fill in the 「博士生修改说明」 (revision statement).
 

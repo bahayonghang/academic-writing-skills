@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Render the rebuttal revision plan and paste-ready responses from the ledger (latex-defense-zh).
+Render the rebuttal revision plan and paste-ready responses from the ledger (latex-thesis-zh).
 
 The script validates workspace/concerns.yaml, then writes workspace/revision_plan.md.
 Without --plan-only it also resolves the modification locations against the revised

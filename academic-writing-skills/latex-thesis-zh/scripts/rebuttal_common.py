@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Shared helpers for the latex-defense-zh rebuttal scripts.
+Shared helpers for the latex-thesis-zh rebuttal scripts.
 
 rebuttal_intake.py, rebuttal_build.py, and rebuttal_check.py import this module.
 It reads aux labels with page numbers, maps bibliography numbers to keys, finds
@@ -23,13 +23,94 @@ import yaml
 
 try:
     import tex_loader
-    from extract_thesis import cn_to_int, read_group, skip_ws
 except ImportError:
     import sys
 
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import tex_loader
-    from extract_thesis import cn_to_int, read_group, skip_ws
+
+CN_DIGITS = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+
+
+def skip_ws(text: str, pos: int) -> int:
+    while pos < len(text) and text[pos] in " \t\r\n":
+        pos += 1
+    return pos
+
+
+def read_group(text: str, pos: int) -> tuple[str, int]:
+    """Read the balanced ``{...}`` group that starts at ``pos``.
+
+    Returns the inner text and the index after the closing brace. Escaped
+    braces ``\\{`` and ``\\}`` do not change the depth. Raises ValueError when
+    no group starts at ``pos`` or the group is not closed.
+    """
+    if pos >= len(text) or text[pos] != "{":
+        raise ValueError("group expected")
+    depth = 0
+    index = pos
+    while index < len(text):
+        char = text[index]
+        if char == "\\":
+            index += 2
+            continue
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[pos + 1 : index], index + 1
+        index += 1
+    raise ValueError("unclosed group")
+
+
+def cn_to_int(value: str) -> int | None:
+    """Convert 1..99 in Arabic or Chinese numerals (一 to 九十九) to int."""
+    value = value.strip()
+    if value.isdigit():
+        return int(value)
+    if value == "十":
+        return 10
+    if len(value) == 1:
+        return CN_DIGITS.get(value)
+    if len(value) == 2 and value[0] == "十" and value[1] in CN_DIGITS:
+        return 10 + CN_DIGITS[value[1]]
+    if len(value) == 2 and value[1] == "十" and value[0] in CN_DIGITS:
+        return CN_DIGITS[value[0]] * 10
+    if len(value) == 3 and value[1] == "十" and value[0] in CN_DIGITS and value[2] in CN_DIGITS:
+        return CN_DIGITS[value[0]] * 10 + CN_DIGITS[value[2]]
+    return None
+
+
+NUMBER_RE = re.compile(r"\d+(?:\.\d+)*")
+FULLWIDTH = str.maketrans("０１２３４５６７８９．", "0123456789.")
+THOUSANDS_RE = re.compile(r"(?<=\d)(?:,|\{,\})(?=\d{3}(?!\d))")
+# Structural numbers that R-NUM-SRC does not compare with the thesis.
+NUMBER_EXCLUDED_RES = (
+    re.compile(r"[图表式]\s*[（(]?\s*\d+(?:\s*[-－.．]\s*\d+)+"),
+    re.compile(r"第\s*\d+\s*章"),
+    re.compile(r"研究内容\s*\d+"),
+    re.compile(r"\d+(?:\.\d+)*\s*节"),
+)
+
+
+def normalize_digits(text: str) -> str:
+    """Full-width digits become ASCII digits; thousands separators between digits go."""
+    return THOUSANDS_RE.sub("", text.translate(FULLWIDTH))
+
+
+def load_thesis_numbers(inventory: dict, root: Path) -> set[str] | None:
+    """Numbers of the assembled thesis source; None when the thesis cannot be read."""
+    main = root / str(inventory.get("main_tex") or "")
+    if not main.is_file():
+        return None
+    try:
+        document = tex_loader.assemble(main)
+    except (OSError, ValueError):
+        return None
+    text = "\n".join(tex_loader.COMMENT_RE.sub("", line) for line in document.lines)
+    return set(NUMBER_RE.findall(normalize_digits(text)))
+
 
 LEDGER_SCHEMA = "rebuttal-ledger/1"
 STATE_SCHEMA = "rebuttal-state/1"

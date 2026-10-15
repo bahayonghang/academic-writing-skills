@@ -14,7 +14,7 @@ import yaml
 
 from tests.support.paths import SKILLS_ROOT
 
-SCRIPTS = SKILLS_ROOT / "latex-defense-zh" / "scripts"
+SCRIPTS = SKILLS_ROOT / "latex-thesis-zh" / "scripts"
 ENV = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
 PLAN_FIELDS = (
     "id",
@@ -31,9 +31,9 @@ MARKDOWN_LINE_RE = re.compile(r"^\s*(?:#+\s|>\s?|[-*+]\s|\d+[.)]\s)")
 MARKDOWN_INLINE_RE = re.compile(r"\*\*|__|`")
 
 
-def run_build(defense_scripts, capsys, case, *extra: str) -> tuple[int, str, str]:
+def run_build(thesis_rebuttal_scripts, capsys, case, *extra: str) -> tuple[int, str, str]:
     args = ["--workspace", str(case.workspace), "--thesis", str(case.thesis), *extra]
-    code = defense_scripts.rebuttal_build.main(args)
+    code = thesis_rebuttal_scripts.rebuttal_build.main(args)
     captured = capsys.readouterr()
     return code, captured.out, captured.err
 
@@ -74,7 +74,7 @@ def test_help_lists_cli_options() -> None:
             assert option in result.stdout, (script, option)
 
 
-def test_plan_only(rebuttal_case, defense_scripts, capsys) -> None:
+def test_plan_only(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
     def keep_plan_fields(ledger: dict) -> None:
         ledger["concerns"] = [
             {key: dict(concern, status="planned")[key] for key in PLAN_FIELDS}
@@ -82,7 +82,9 @@ def test_plan_only(rebuttal_case, defense_scripts, capsys) -> None:
         ]
 
     edit_ledger(rebuttal_case, keep_plan_fields)
-    code, out, err = run_build(defense_scripts, capsys, rebuttal_case, "--plan-only", "--json")
+    code, out, err = run_build(
+        thesis_rebuttal_scripts, capsys, rebuttal_case, "--plan-only", "--json"
+    )
     assert code == 0, err
     assert json.loads(out)["plan_only"] is True
     assert list((rebuttal_case.root / "responses").iterdir()) == []
@@ -94,8 +96,8 @@ def test_plan_only(rebuttal_case, defense_scripts, capsys) -> None:
     assert any(line.startswith("| R1-3a、R2-2 |") for line in rows)
 
 
-def test_full_render_structure(rebuttal_case, defense_scripts, capsys) -> None:
-    code, out, _ = run_build(defense_scripts, capsys, rebuttal_case, "--json")
+def test_full_render_structure(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
+    code, out, _ = run_build(thesis_rebuttal_scripts, capsys, rebuttal_case, "--json")
     assert code == 0
     written = json.loads(out)["written"]
     responses = rebuttal_case.root / "responses"
@@ -124,8 +126,8 @@ def test_full_render_structure(rebuttal_case, defense_scripts, capsys) -> None:
     assert "总体说明" not in single
 
 
-def test_location_renumber_and_page(rebuttal_case, defense_scripts, capsys) -> None:
-    assert run_build(defense_scripts, capsys, rebuttal_case)[0] == 0
+def test_location_renumber_and_page(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
+    assert run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)[0] == 0
     text = (rebuttal_case.root / "responses" / "response-all.md").read_text(encoding="utf-8")
     assert "（2）修改位置：原图2-1，现图2-2（第13页）" in text
     assert "修改位置：式(2-1)（第14页）" in text
@@ -137,8 +139,8 @@ def test_location_renumber_and_page(rebuttal_case, defense_scripts, capsys) -> N
     assert all(anchor["status"] == "resolved" for anchor in anchors)
 
 
-def test_plain_text_equivalent(rebuttal_case, defense_scripts, capsys) -> None:
-    assert run_build(defense_scripts, capsys, rebuttal_case)[0] == 0
+def test_plain_text_equivalent(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
+    assert run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)[0] == 0
     for path in sorted((rebuttal_case.root / "responses").glob("*.md")):
         raw = path.read_text(encoding="utf-8").splitlines()
         rendered = [MARKDOWN_INLINE_RE.sub("", MARKDOWN_LINE_RE.sub("", line)) for line in raw]
@@ -146,40 +148,40 @@ def test_plain_text_equivalent(rebuttal_case, defense_scripts, capsys) -> None:
         assert all(not line.endswith("  ") for line in raw)
 
 
-def test_hand_edit_guard(rebuttal_case, defense_scripts, capsys) -> None:
-    assert run_build(defense_scripts, capsys, rebuttal_case)[0] == 0
+def test_hand_edit_guard(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
+    assert run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)[0] == 0
     target = rebuttal_case.root / "responses" / "response-R1.md"
     target.write_text(target.read_text(encoding="utf-8") + "手改的一行\n", encoding="utf-8")
-    code, _, err = run_build(defense_scripts, capsys, rebuttal_case)
+    code, _, err = run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)
     assert code == 4
     assert "responses/response-R1.md" in err
     assert "手改的一行" in target.read_text(encoding="utf-8")
 
-    assert run_build(defense_scripts, capsys, rebuttal_case, "--force")[0] == 0
+    assert run_build(thesis_rebuttal_scripts, capsys, rebuttal_case, "--force")[0] == 0
     assert "手改的一行" not in target.read_text(encoding="utf-8")
     state = json.loads((rebuttal_case.workspace / "rebuttal_state.json").read_text("utf-8"))
     digest = hashlib.sha256(target.read_bytes()).hexdigest()
     assert state["rendered"]["responses/response-R1.md"] == digest
 
 
-def test_invalid_ledger_exit_2(rebuttal_case, defense_scripts, capsys) -> None:
+def test_invalid_ledger_exit_2(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
     def break_ledger(ledger: dict) -> None:
         del ledger["schema"]
         ledger["concerns"][0]["action"] = "fix"
 
     edit_ledger(rebuttal_case, break_ledger)
-    code, _, err = run_build(defense_scripts, capsys, rebuttal_case)
+    code, _, err = run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)
     assert code == 2
     assert "schema" in err
     assert "R1-1: action='fix'" in err
     assert not (rebuttal_case.root / "responses" / "response-all.md").exists()
 
 
-def test_readonly(rebuttal_case, defense_scripts, capsys) -> None:
+def test_readonly(rebuttal_case, thesis_rebuttal_scripts, capsys) -> None:
     before = (tree_digest(rebuttal_case.thesis, "rebuttal/"), tree_digest(rebuttal_case.reviews))
-    assert run_build(defense_scripts, capsys, rebuttal_case)[0] == 0
+    assert run_build(thesis_rebuttal_scripts, capsys, rebuttal_case)[0] == 0
     args = ["--workspace", str(rebuttal_case.workspace), "--thesis", str(rebuttal_case.thesis)]
-    assert defense_scripts.rebuttal_check.main(args) == 0
+    assert thesis_rebuttal_scripts.rebuttal_check.main(args) == 0
     capsys.readouterr()
     after = (tree_digest(rebuttal_case.thesis, "rebuttal/"), tree_digest(rebuttal_case.reviews))
     assert after == before

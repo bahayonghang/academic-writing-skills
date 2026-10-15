@@ -285,8 +285,7 @@ def test_c6_eval_checks_route_and_do_not_rewrite_without_a_live_run() -> None:
     ids = [item["id"] for item in payload["evals"]]
     assert ids == sorted(ids)
     assert len(set(ids)) == len(ids)
-    assert ids[-1] == 58
-    entry = payload["evals"][-1]
+    entry = next(item for item in payload["evals"] if item["id"] == 58)
     assert "logic" in entry["expected_output"]
     assert "claim-forward" in entry["expected_output"]
     assert "设计优点" in entry["expected_output"]

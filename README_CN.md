@@ -11,12 +11,9 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**  
-> 推荐平台：**Claude Code · Codex**
+> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
 >
-> 适用工具：Claude Code、Codex、Grok Build、Kimi Code、OMP（Oh My Pi）。
->
-> 列出工具名称不等于完成运行验收。未运行的五工具运行时验证保持 UNVERIFIED。
+> 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
 
 ## 安装
 
@@ -40,11 +37,11 @@ LaTeX loader 会拒绝项目根目录外的 include。安装告警及 `E-INCLUDE
 | [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md)               | 针对已有 LaTeX 论文生成、优化、对齐检查、投稿前检查或评估投稿信与期刊匹配度。                              | `.tex`，可选 `.md` 或 `.tex` 投稿信草稿 | `cover-letter/SKILL.md`        |
 | [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md)                 | 做审稿人式深度批评、投稿门控、阻塞项归类、修订路线图、期刊风格报告或修订后复审。                                | `.tex`、`.typ`、`.pdf`           | `paper-audit/SKILL.md`         |
 | [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md)           | 处理已有英文 LaTeX 会议或期刊论文：编译、格式、语法、逻辑、分节、引用、图表、伪代码、标题、翻译和去 AI 化润色。           | `.tex`                         | `latex-paper-en/SKILL.md`      |
-| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714、章节结构、双语题注和图表编译页版式，以及证据保真的摘要、小结、文献综合、工程应用章、结果分析、中文句间表达、去 AI 化润色和带漂移核对的段落/小节单元润色。 | `.tex`                         | `latex-thesis-zh/SKILL.md`     |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | 处理已有中文 LaTeX 学位论文：编译诊断、GB/T 7714、章节结构、双语题注和图表编译页版式，以及证据保真的摘要、小结、文献综合、工程应用章、结果分析、中文句间表达、去 AI 化润色和带漂移核对的段落/小节单元润色。 学位论文评阅书的逐条回复、修改说明与覆盖/证据核对。 | `.tex`; PDF/TXT/MD 评阅书 | `latex-thesis-zh/SKILL.md`     |
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。           | `.typ`                         | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。           | `.bib`                         | `bib-search-citation/SKILL.md` |
 | [`paper-writing-studio`](academic-writing-skills/paper-writing-studio/SKILL.md) | 按显式的 Nature、IEEE、Elsevier 或中性 profile 润色或翻译学术文本；venue 冲突与缺失证据只报告，不猜测。 | 学术文本，可选 venue、期刊或领域 | `paper-writing-studio/SKILL.md` |
-| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | 从已有 XeLaTeX 学位论文仓库生成博士/硕士答辩或预答辩 Beamer 幻灯片与讲稿；只读提取论文内容，并用保真质量门核对图、数字、公式、表体与成果；评阅书返回后，生成可粘贴的逐条回复，并核对意见覆盖与修改证据。 | 学位论文 LaTeX 仓库 | `latex-defense-zh/SKILL.md` |
+| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | 从已有 XeLaTeX 学位论文仓库生成博士/硕士答辩或预答辩 Beamer 幻灯片与讲稿；只读提取论文内容，并用保真质量门核对图、数字、公式、表体与成果。 | 学位论文 LaTeX 仓库 | `latex-defense-zh/SKILL.md` |
 
 
 可选检查只报告局部候选：`check_consistency.py --governance` 必须配合 `--custom-terms`，`--abbreviation-style` 独立于治理开关，`check_style_zh.py --degree-wording` 默认关闭；不传这些开关时原输出保持不变。

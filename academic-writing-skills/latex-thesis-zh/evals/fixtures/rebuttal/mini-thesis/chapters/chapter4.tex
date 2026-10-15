@@ -1,0 +1,57 @@
+\chapter{融合多源数据的流量预测方法研究}
+
+\section{引言}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{chapter4/route.png}
+  \bicaption{本章技术路线}{Technical route of this chapter}
+  \label{fig:c4-route}
+\end{figure}
+本章首先对齐多源特征，其次学习融合权重，最后在合成数据上验证方法。
+
+\section{问题描述}
+多源数据在时间粒度与空间覆盖上不一致，直接拼接会引入噪声。
+
+\section{多源融合预测模型}
+\subsection{多源特征对齐}
+\begin{align}
+  \vect{h}_{t} &= \sigma\left(W_{x}\vect{x}_{t} + W_{h}\vect{h}_{t-1}\right) \label{eq:c4-hidden}\\
+  \vect{z}_{t} &= \operatorname{concat}\left(\vect{h}_{t}, \vect{s}_{t}\right) \nonumber\\
+  \hat{\vect{y}}_{t+1} &= W_{o}\vect{z}_{t} + b \label{eq:c4-output}
+\end{align}
+
+\subsection{融合权重学习}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter4/fusion.png}
+  \bicaption{融合权重学习结构}{Structure of fusion weight learning}
+  \label{fig:c4-fusion}
+\end{figure}
+
+\section{实验与结果分析}
+\subsection{预测结果对比}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter4/results.png}
+  \bicaption{示例预测结果对比}{Comparison of example prediction results}
+  \label{fig:c4-results}
+\end{figure}
+
+\subsection{消融实验}
+\begin{table}[htbp]
+  \centering
+  \bicaption{示例消融实验结果}{Results of the example ablation study}
+  \label{tab:c4-ablation}
+  \begin{tabular}{lc}
+    \toprule
+    模型变体 & RMSE\\
+    \midrule
+    去掉特征对齐 & 0.51\\
+    去掉融合权重 & 0.46\\
+    完整模型 & \textbf{0.40}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{本章小结}
+本章构建了融合多源数据的流量预测模型。

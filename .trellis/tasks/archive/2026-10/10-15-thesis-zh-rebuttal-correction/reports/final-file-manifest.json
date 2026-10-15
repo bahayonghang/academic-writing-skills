@@ -1,0 +1,435 @@
+{
+  "note": "Frozen file identity before final CI. README hashes include preserved unrelated recommendation edits. Missing files are intentional migration deletions. Task-generated reports excluded to avoid recursion.",
+  "files": [
+    {
+      "path": ".trellis/spec/academic-writing-skills/defense-deck-contract.md",
+      "exists": true,
+      "sha256": "20beed24e78d49d582b792a2cfbad87aa89cec9c9b02a236e37b3bf9f7fb965f"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/defense-rebuttal-contract.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/index.md",
+      "exists": true,
+      "sha256": "ca1e732a74b0d8071349f42fb3ebeb343014f2b1a28706f0035f354d9aa4ba7f"
+    },
+    {
+      "path": ".trellis/spec/academic-writing-skills/thesis-rebuttal-contract.md",
+      "exists": true,
+      "sha256": "ce765bf67d24159522025fba663472c7a0ac2eaae36d2f0fcb32cfa3bae42735"
+    },
+    {
+      "path": "README.md",
+      "exists": true,
+      "sha256": "cb0faa23b9bc10f4aea8e865ba13eb205eabc4235aa0fee35387698eff25be01"
+    },
+    {
+      "path": "README_CN.md",
+      "exists": true,
+      "sha256": "d87599f3af81fb5985450d078bf259b7ee91df12245c980cedb50f830577b36c"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/SKILL.md",
+      "exists": true,
+      "sha256": "4d67a7986f8e7c0d2adbb2ba8958ede1a06e0fde9221d2c33d834d7e626adb3f"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/agents/openai.yaml",
+      "exists": true,
+      "sha256": "62b59b5165ff21444bfa05c15c4a1892c48abc84d0427ad67708356f677258b9"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/evals/evals.json",
+      "exists": true,
+      "sha256": "5259a67640e1059158237777fb2e6cec0028c92afe4f2591bd10eb95274b1607"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/concerns-done.yaml",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/reviews/评阅书1.txt",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/reviews/评阅书2.txt",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/evals/trigger_eval.json",
+      "exists": true,
+      "sha256": "64f80c87874b05832500de40a464a862c51da17aa669466d33728bc94d8d6375"
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/examples/review-response.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-gate.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-workflow.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-writing.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_build.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_check.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_common.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_intake.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/SKILL.md",
+      "exists": true,
+      "sha256": "9ddd111d9b5ead762b5642753f71783af2c09f9d11a226f545a52089dad02ba5"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/agents/openai.yaml",
+      "exists": true,
+      "sha256": "11e01595247c557de67ae37650627bd164d8a83054a6b83b9570474eb947ad3b"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/evals.json",
+      "exists": true,
+      "sha256": "40267c333e3a5ac716b7f508d38c45de3d07c08814194a0dfc254cfcc5e4d5c0"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/concerns-done.yaml",
+      "exists": true,
+      "sha256": "04d3545c34364fcb36f9dc15ac234bb3ff807b73851d6e3d01b2d315806559ba"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter1.tex",
+      "exists": true,
+      "sha256": "d915ab10f886c0597033ae4b9b5246b2a38edbc828a9134b85a19d60c6ce9a25"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter2.aux",
+      "exists": true,
+      "sha256": "6978e0e495f3b075efa10ad51cb38f63ee965431222ce5e72045d0be4bf65356"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter2.tex",
+      "exists": true,
+      "sha256": "7d5dfd6bd8c6b8c755baf91efd8419e11683dd7e497b742d6e97e13b4d76f53f"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter3.aux",
+      "exists": true,
+      "sha256": "e428f632a646918ae013ed49d18f19c59ed2c9660c482fbd51aba12cb5ec71bf"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter3.tex",
+      "exists": true,
+      "sha256": "f087c3a08ba143cd1c881db72b43145fb913aab548b2be39938e9d3bc6187c8a"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter4.tex",
+      "exists": true,
+      "sha256": "68a5c072242326296d5e8b06da8545fb317f9029afc485ebfe0d40feacf6c583"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter5.aux",
+      "exists": true,
+      "sha256": "f79805aea334164a80edcf7fe505f078aec2d3922792d16b634cde19657d37f2"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter5.tex",
+      "exists": true,
+      "sha256": "bb3db75fb92f00c51f382051b4765c1e12e11774432d94cdec79443e24bd4afa"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter6.tex",
+      "exists": true,
+      "sha256": "20af314edbc59f1d483fccd345539b0467a46293d7cb44d23c079a4b9ebe1b7c"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/chapters/chapter7.tex",
+      "exists": true,
+      "sha256": "9fc087a45f3b7a4580af5213b84d2b3cf4396a5c63eed4eab58f1c62d68c01e2"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/document.tex",
+      "exists": true,
+      "sha256": "71e7d092388b5cf9bdefde396f4af70ee05838538d680e5321b9648bf3aa8108"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/mini-thesis/document_blind.tex",
+      "exists": true,
+      "sha256": "946d7a2cd66abe1a5612d5576fb07bd403a88f1df8d3ecd78e8d97ad3b447acd"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/reviews/评阅书1.txt",
+      "exists": true,
+      "sha256": "e96b4d07584d344a9653bd287431b202baa07612fe019ac20522479b8c525d7f"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/fixtures/rebuttal/reviews/评阅书2.txt",
+      "exists": true,
+      "sha256": "7bfdb1e0cbe957d00789c4af425c215da5e2a4371bb2bc04e92fee8bdbb8bd9d"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/evals/trigger_eval.json",
+      "exists": true,
+      "sha256": "6bda0cc0ee62154c9930186fec90c39b6d42e712721103de33023ac37f8ff04e"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/examples/review-response.md",
+      "exists": true,
+      "sha256": "b62dc3f01e53456ede9cb92a91b536082e52facbc4e2724a8c85a336242e0d2b"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/references/rebuttal-gate.md",
+      "exists": true,
+      "sha256": "3dfa4419d330ad7e23b44edad0622b6fc86460cab52f5e45aacb644a43407bbd"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/references/rebuttal-workflow.md",
+      "exists": true,
+      "sha256": "f716f440a7de35e24de042a4614e1087d786716dcf02b0eb4942935fe10d67ec"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/references/rebuttal-writing.md",
+      "exists": true,
+      "sha256": "1ec8249c2f0ae70792a84612cb3746bcbd356be130462f9880c7257d1b156158"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/rebuttal_build.py",
+      "exists": true,
+      "sha256": "7134e8f68500221d788541dd1c579e3a6b0b205257c0a9e7ff00366bf14e2b0a"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/rebuttal_check.py",
+      "exists": true,
+      "sha256": "33bfc217cea64577fa38fad375a62d2145fd8ad97ca94e173fa481497568d32f"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/rebuttal_common.py",
+      "exists": true,
+      "sha256": "9eaefdf8a5c9e2c8fc055a9fa20ac464944333dba43a363396a830007ec976f2"
+    },
+    {
+      "path": "academic-writing-skills/latex-thesis-zh/scripts/rebuttal_intake.py",
+      "exists": true,
+      "sha256": "827cf0621d4017164bbc78656dd28faec7194c8e1bd0fbe43998f4ddbfedd1b9"
+    },
+    {
+      "path": "docs/CHANGELOG.md",
+      "exists": true,
+      "sha256": "0226218b7e6e807a666caa94cec3f6066b2c3acf4d4c3ab90eb7c467c4f89a14"
+    },
+    {
+      "path": "docs/resource-manifest.json",
+      "exists": true,
+      "sha256": "8092f337770036dae79dcb091ca2469792d634f00fbc452e0f000d5c8e1a8f93"
+    },
+    {
+      "path": "docs/skills/latex-defense-zh/index.md",
+      "exists": true,
+      "sha256": "9bfac64196e648be2dbbc68e700012569a8f34ada093cde9dff7399bd6a46cd1"
+    },
+    {
+      "path": "docs/skills/latex-defense-zh/resources/examples/review-response.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-gate.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-workflow.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-writing.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/skills/latex-thesis-zh/index.md",
+      "exists": true,
+      "sha256": "280436feed4a52410793a2cb494b4e11fcb68eff9d503e4152f6f5290205249b"
+    },
+    {
+      "path": "docs/skills/latex-thesis-zh/resources/examples/review-response.md",
+      "exists": true,
+      "sha256": "5d8aced65940881bd247f0f44b4af205934efeccfde4a26a597a62d3cfb7d144"
+    },
+    {
+      "path": "docs/skills/latex-thesis-zh/resources/references/rebuttal-gate.md",
+      "exists": true,
+      "sha256": "75bed7571f4073b770ed487b6b301549954b5c7e032b53ca8d12366bd40f47df"
+    },
+    {
+      "path": "docs/skills/latex-thesis-zh/resources/references/rebuttal-workflow.md",
+      "exists": true,
+      "sha256": "4b96bcd4eccd8b2cadc829c9034e6f12ac59b5ff282ac8d7d1ca5cb8f1266559"
+    },
+    {
+      "path": "docs/skills/latex-thesis-zh/resources/references/rebuttal-writing.md",
+      "exists": true,
+      "sha256": "4f4ef26668ab6c9332e3ef95d0155245961a257fc0e1dc7026691ab75fed28ae"
+    },
+    {
+      "path": "docs/usage.md",
+      "exists": true,
+      "sha256": "a54a781c79019116161e1ad4bd5166b5a7c2334cd79c86d1e2e6ffac15c36b43"
+    },
+    {
+      "path": "docs/zh/skills/latex-defense-zh/index.md",
+      "exists": true,
+      "sha256": "5275df28ed52f26fdfd043b97871416bb9d1c0e480160c63b518884236de669e"
+    },
+    {
+      "path": "docs/zh/skills/latex-defense-zh/resources/examples/review-response.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-gate.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-workflow.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-writing.md",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "docs/zh/skills/latex-thesis-zh/index.md",
+      "exists": true,
+      "sha256": "2fe921401b32d8deac3e73557cf7d94988a27249389ea9d0f526f9c20a5860ff"
+    },
+    {
+      "path": "docs/zh/skills/latex-thesis-zh/resources/examples/review-response.md",
+      "exists": true,
+      "sha256": "b62dc3f01e53456ede9cb92a91b536082e52facbc4e2724a8c85a336242e0d2b"
+    },
+    {
+      "path": "docs/zh/skills/latex-thesis-zh/resources/references/rebuttal-gate.md",
+      "exists": true,
+      "sha256": "3dfa4419d330ad7e23b44edad0622b6fc86460cab52f5e45aacb644a43407bbd"
+    },
+    {
+      "path": "docs/zh/skills/latex-thesis-zh/resources/references/rebuttal-workflow.md",
+      "exists": true,
+      "sha256": "f716f440a7de35e24de042a4614e1087d786716dcf02b0eb4942935fe10d67ec"
+    },
+    {
+      "path": "docs/zh/skills/latex-thesis-zh/resources/references/rebuttal-writing.md",
+      "exists": true,
+      "sha256": "1ec8249c2f0ae70792a84612cb3746bcbd356be130462f9880c7257d1b156158"
+    },
+    {
+      "path": "docs/zh/usage.md",
+      "exists": true,
+      "sha256": "8bb58a23492b30f7cc7b19d69b5b2e65b1cf725b6e8c823737ce9174bb320ec9"
+    },
+    {
+      "path": "tests/contracts/test_skill_contracts.py",
+      "exists": true,
+      "sha256": "ccaf84104fe0696ad3c202dabe4ab73dd3f4c52995c7ced1ba0e8bf7e285dd44"
+    },
+    {
+      "path": "tests/contracts/test_subsection_context_contract.py",
+      "exists": true,
+      "sha256": "f38089dfe14a6db7690e5ecb5b7db1e081564e7471973af67eafa7c6609abd9a"
+    },
+    {
+      "path": "tests/contracts/test_thesis_zh_guidance_fidelity.py",
+      "exists": true,
+      "sha256": "55b04fb37de6a8651554a41360dae4c211f7df55af86c6ccc1c4983d016c9a18"
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/conftest.py",
+      "exists": true,
+      "sha256": "e476f17d319518b3165ec9a9ac21ede926c559bbc8fed6b9808943085dcf2d81"
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_build.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_check.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_intake.py",
+      "exists": false,
+      "sha256": null
+    },
+    {
+      "path": "tests/skills/latex_defense_zh/test_defense_skill_entry.py",
+      "exists": true,
+      "sha256": "786f4c7ec54d5537fdcc6db67de574e47225e41a389b8a06bc548d40a9cf4f89"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/conftest.py",
+      "exists": true,
+      "sha256": "7ce4bff2562fdbe61d74ea505df83cc82c90b409bc42037d91b53e2e3963c512"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_latex_thesis_zh_coverage.py",
+      "exists": true,
+      "sha256": "0f2b1a164969e04e4addc8010d7ec0a32b0802faf9eadcd25885f1d4cf37660c"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_thesis_rebuttal_build.py",
+      "exists": true,
+      "sha256": "82eedfef70ff87cca04c7954f3de6fcad71fc7c1c0dae8f062bb9fefca94ef0b"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_thesis_rebuttal_check.py",
+      "exists": true,
+      "sha256": "59b90ed28f75a5064808a3435469440519834925430ea76848148eacdd7b7628"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_thesis_rebuttal_installed.py",
+      "exists": true,
+      "sha256": "67b981d950dee99f25aa43cbe2bdb8705c387bba8788ce700564ee13f4e33b5d"
+    },
+    {
+      "path": "tests/skills/latex_thesis_zh/test_thesis_rebuttal_intake.py",
+      "exists": true,
+      "sha256": "47a274c4801e2273bbbb24f3650981fcd6889cc63291a3aa81cf009d78a75741"
+    }
+  ]
+}

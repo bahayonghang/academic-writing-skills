@@ -16,14 +16,9 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**
+> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
 >
->
-> Recommended platforms: **Claude Code · Codex**
->
-> Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi).
->
-> Naming a tool here is not a runtime verification. Unrun five-tool runtime stays UNVERIFIED.
+> Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
 ## Install
 
@@ -48,11 +43,11 @@ alerts and `E-INCLUDE-BOUNDARY`, see the [installation guide](docs/installation.
 | [`cover-letter`](academic-writing-skills/cover-letter/SKILL.md)               | Generate, optimize, align-check, preflight, or journal-fit-check a submission cover letter against an existing LaTeX manuscript.                                                            | `.tex`, optional `.md` or `.tex` letter draft | `cover-letter/SKILL.md`        |
 | [`paper-audit`](academic-writing-skills/paper-audit/SKILL.md)                 | Run reviewer-style critique, submission gates, blocker triage, revision roadmaps, journal-style reports, or re-audits.                                                                      | `.tex`, `.typ`, `.pdf`                        | `paper-audit/SKILL.md`         |
 | [`latex-paper-en`](academic-writing-skills/latex-paper-en/SKILL.md)           | Work on existing English LaTeX conference or journal papers: compile, formatting, grammar, logic, sections, references, figures, tables, pseudocode, title, translation, or de-AI polish.   | `.tex`                                        | `latex-paper-en/SKILL.md`      |
-| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | Work on existing Chinese LaTeX theses: compile diagnostics, GB/T 7714 references, chapter structure, bilingual captions and rendered figure/table layout, evidence-faithful abstracts, summaries, literature synthesis, engineering-application chapters, results analysis, Chinese inter-sentence expression, de-AI polish, and paragraph/subsection polish with revision checks. | `.tex`                                        | `latex-thesis-zh/SKILL.md`     |
+| [`latex-thesis-zh`](academic-writing-skills/latex-thesis-zh/SKILL.md)         | Work on existing Chinese LaTeX theses: compile diagnostics, GB/T 7714 references, chapter structure, bilingual captions and rendered figure/table layout, evidence-faithful abstracts, summaries, literature synthesis, engineering-application chapters, results analysis, Chinese inter-sentence expression, de-AI polish, and paragraph/subsection polish with revision checks. Point-by-point thesis review responses, revision forms, and coverage/evidence checks. | `.tex`; PDF/TXT/MD review reports | `latex-thesis-zh/SKILL.md`     |
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | Work on existing English or Chinese Typst manuscripts: compile/export diagnostics, venue formatting, references, grammar, logic, tables, pseudocode, title, translation, or de-AI polish.   | `.typ`                                        | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | Search, filter, preview, export, or create LaTeX/Typst citation snippets from a local BibTeX or BibLaTeX library.                                                                           | `.bib`                                        | `bib-search-citation/SKILL.md` |
 | [`paper-writing-studio`](academic-writing-skills/paper-writing-studio/SKILL.md) | Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile; report venue conflicts and missing evidence instead of guessing. | prose text, optional venue, journal, or domain | `paper-writing-studio/SKILL.md` |
-| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | Build a Chinese PhD/master thesis defense or pre-defense Beamer deck with speaker notes from an existing XeLaTeX thesis repository; extraction is read-only, and a fidelity quality gate checks figures, numbers, equations, tables, and publications against the thesis. It also drafts point-by-point responses to thesis review reports as paste-ready Markdown, with a coverage and modification-evidence gate. | thesis LaTeX repository | `latex-defense-zh/SKILL.md` |
+| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | Build a Chinese PhD/master thesis defense or pre-defense Beamer deck with speaker notes from an existing XeLaTeX thesis repository; extraction is read-only, and a fidelity quality gate checks figures, numbers, equations, tables, and publications against the thesis. | thesis LaTeX repository | `latex-defense-zh/SKILL.md` |
 
 
 Opt-in checks only report local candidates: `check_consistency.py --governance` requires `--custom-terms`, `--abbreviation-style` is independent, and `check_style_zh.py --degree-wording` is off by default; without these flags the previous output stays unchanged.

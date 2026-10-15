@@ -15,7 +15,7 @@ import yaml
 
 from tests.support.paths import SKILLS_ROOT
 
-SCRIPT = SKILLS_ROOT / "latex-defense-zh" / "scripts" / "rebuttal_intake.py"
+SCRIPT = SKILLS_ROOT / "latex-thesis-zh" / "scripts" / "rebuttal_intake.py"
 ENV = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
 CLI_OPTIONS = (
     "--reviews",
@@ -41,8 +41,8 @@ def tree_digest(root: Path) -> str:
     return digest.hexdigest()
 
 
-def run(defense_scripts, capsys, *args: object) -> tuple[int, str, str]:
-    code = defense_scripts.rebuttal_intake.main([str(arg) for arg in args])
+def run(thesis_rebuttal_scripts, capsys, *args: object) -> tuple[int, str, str]:
+    code = thesis_rebuttal_scripts.rebuttal_intake.main([str(arg) for arg in args])
     captured = capsys.readouterr()
     return code, captured.out, captured.err
 
@@ -65,8 +65,8 @@ def test_help_lists_cli_options() -> None:
         assert option in result.stdout
 
 
-def test_txt_reviews_normalized(rebuttal_reviews: Path, defense_scripts, capsys) -> None:
-    code, out, _ = run(defense_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
+def test_txt_reviews_normalized(rebuttal_reviews: Path, thesis_rebuttal_scripts, capsys) -> None:
+    code, out, _ = run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
     assert code == 0
     summary = json.loads(out)
     reviewers = {item["id"]: item for item in summary["reviewers"]}
@@ -108,7 +108,7 @@ def write_pdf(path: Path, pages: list[list[str]]) -> None:
     document.close()
 
 
-def test_pdf_review_normalized(tmp_path: Path, defense_scripts, capsys) -> None:
+def test_pdf_review_normalized(tmp_path: Path, thesis_rebuttal_scripts, capsys) -> None:
     pytest.importorskip("pymupdf")
     reviews = tmp_path / "pre-review" / "review_results"
     write_pdf(
@@ -132,7 +132,7 @@ def test_pdf_review_normalized(tmp_path: Path, defense_scripts, capsys) -> None:
             ["2、第3章的实验设置说明不完整，建议补充参数取值与数据来源。", "示例 第3页"],
         ],
     )
-    code, out, _ = run(defense_scripts, capsys, "--reviews", reviews, "--json")
+    code, out, _ = run(thesis_rebuttal_scripts, capsys, "--reviews", reviews, "--json")
     assert code == 0
     reviewer = json.loads(out)["reviewers"][0]
     assert (reviewer["grade"], reviewer["total_score"], reviewer["items"]) == ("A", 90, 2)
@@ -143,13 +143,14 @@ def test_pdf_review_normalized(tmp_path: Path, defense_scripts, capsys) -> None:
     assert "2. 第3章的实验设置说明不完整" in text
 
 
-def test_anchor_detection(defense_scripts) -> None:
+def test_anchor_detection(thesis_rebuttal_scripts) -> None:
     text = (
         "图2-7与表3.1，式(2-1)、公式（3-2），算法5-1；第3章至第5章，第六章，"
         "2.3节与4.1.2节，文献[24]、文献[1,2]、文献[5-7]，1.5 倍"
     )
     anchors = [
-        (anchor.kind, anchor.key) for anchor in defense_scripts.rebuttal_common.find_anchors(text)
+        (anchor.kind, anchor.key)
+        for anchor in thesis_rebuttal_scripts.rebuttal_common.find_anchors(text)
     ]
     assert anchors == [
         ("figure", "2-7"),
@@ -173,10 +174,10 @@ def test_anchor_detection(defense_scripts) -> None:
 
 
 def test_anchor_mapping_with_thesis(
-    rebuttal_reviews: Path, rebuttal_thesis: Path, defense_scripts, capsys
+    rebuttal_reviews: Path, rebuttal_thesis: Path, thesis_rebuttal_scripts, capsys
 ) -> None:
     args = ("--reviews", rebuttal_reviews, "--thesis", rebuttal_thesis)
-    code, _, _ = run(defense_scripts, capsys, *args)
+    code, _, _ = run(thesis_rebuttal_scripts, capsys, *args)
     assert code == 0
     concerns = concerns_by_id(rebuttal_reviews.parent / "workspace")
 
@@ -203,12 +204,12 @@ def test_anchor_mapping_with_thesis(
 
 
 def test_directory_layout_and_readonly(
-    rebuttal_reviews: Path, rebuttal_thesis: Path, defense_scripts, capsys
+    rebuttal_reviews: Path, rebuttal_thesis: Path, thesis_rebuttal_scripts, capsys
 ) -> None:
     before = (tree_digest(rebuttal_reviews), tree_digest(rebuttal_thesis))
     names = sorted(path.name for path in rebuttal_reviews.iterdir())
     args = ("--reviews", rebuttal_reviews, "--thesis", rebuttal_thesis)
-    code, _, _ = run(defense_scripts, capsys, *args)
+    code, _, _ = run(thesis_rebuttal_scripts, capsys, *args)
     assert code == 0
     assert (tree_digest(rebuttal_reviews), tree_digest(rebuttal_thesis)) == before
     assert sorted(path.name for path in rebuttal_reviews.iterdir()) == names
@@ -230,43 +231,50 @@ def test_directory_layout_and_readonly(
 
 
 def test_exit_codes(
-    rebuttal_reviews: Path, tmp_path: Path, defense_scripts, capsys, monkeypatch
+    rebuttal_reviews: Path, tmp_path: Path, thesis_rebuttal_scripts, capsys, monkeypatch
 ) -> None:
-    assert run(defense_scripts, capsys, "--reviews", tmp_path / "missing")[0] == 2
+    assert run(thesis_rebuttal_scripts, capsys, "--reviews", tmp_path / "missing")[0] == 2
     assert (
-        run(defense_scripts, capsys, "--reviews", rebuttal_reviews, "--root", rebuttal_reviews)[0]
+        run(
+            thesis_rebuttal_scripts,
+            capsys,
+            "--reviews",
+            rebuttal_reviews,
+            "--root",
+            rebuttal_reviews,
+        )[0]
         == 2
     )
 
     blocked = tmp_path / "blocked"
     shutil.copytree(rebuttal_reviews, blocked)
     (blocked / "评阅书3.docx").write_bytes(b"PK")
-    code, _, err = run(defense_scripts, capsys, "--reviews", blocked)
+    code, _, err = run(thesis_rebuttal_scripts, capsys, "--reviews", blocked)
     assert code == 2
     assert "请导出为 PDF 或 TXT" in err
 
     with_pdf = tmp_path / "with-pdf"
     shutil.copytree(rebuttal_reviews, with_pdf)
     (with_pdf / "评阅书3.pdf").write_bytes(b"%PDF-1.4\n")
-    monkeypatch.setattr(defense_scripts.rebuttal_intake, "_PYMUPDF_AVAILABLE", False)
-    assert run(defense_scripts, capsys, "--reviews", with_pdf)[0] == 3
+    monkeypatch.setattr(thesis_rebuttal_scripts.rebuttal_intake, "_PYMUPDF_AVAILABLE", False)
+    assert run(thesis_rebuttal_scripts, capsys, "--reviews", with_pdf)[0] == 3
     monkeypatch.undo()
 
-    assert run(defense_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
-    code, _, err = run(defense_scripts, capsys, "--reviews", rebuttal_reviews)
+    assert run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
+    code, _, err = run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews)
     assert code == 4
     assert "--force" in err
 
 
 def test_same_name_pdf_and_md_count_once(
-    rebuttal_reviews: Path, defense_scripts, capsys, monkeypatch
+    rebuttal_reviews: Path, thesis_rebuttal_scripts, capsys, monkeypatch
 ) -> None:
     for name in ("评阅书1", "评阅书2"):
         txt = rebuttal_reviews / f"{name}.txt"
         txt.rename(txt.with_suffix(".md"))
         (rebuttal_reviews / f"{name}.pdf").write_bytes(b"%PDF-1.4\n")
-    monkeypatch.setattr(defense_scripts.rebuttal_intake, "_PYMUPDF_AVAILABLE", False)
-    code, out, _ = run(defense_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
+    monkeypatch.setattr(thesis_rebuttal_scripts.rebuttal_intake, "_PYMUPDF_AVAILABLE", False)
+    code, out, _ = run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
     assert code == 0
     summary = json.loads(out)
     assert [item["file"] for item in summary["reviewers"]] == ["评阅书1.md", "评阅书2.md"]
@@ -275,22 +283,24 @@ def test_same_name_pdf_and_md_count_once(
     assert any("评阅书1.pdf" in message and "评阅书1.md" in message for message in skipped)
 
 
-def test_markdown_headings_split_sections(rebuttal_reviews: Path, defense_scripts, capsys) -> None:
+def test_markdown_headings_split_sections(
+    rebuttal_reviews: Path, thesis_rebuttal_scripts, capsys
+) -> None:
     for txt in rebuttal_reviews.glob("*.txt"):
         text = txt.read_text(encoding="utf-8")
         for heading in ("对学位论文的学术评语", "论文的不足之处和建议"):
             text = text.replace(heading, f"## {heading}")
         txt.with_suffix(".md").write_text(text, encoding="utf-8")
         txt.unlink()
-    code, out, _ = run(defense_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
+    code, out, _ = run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews, "--json")
     assert code == 0
     summary = json.loads(out)
     assert [item["items"] for item in summary["reviewers"]] == [3, 2]
     assert "W-NO-SECTION" not in {w["code"] for w in summary["warnings"]}
 
 
-def test_force_keeps_ledger(rebuttal_reviews: Path, defense_scripts, capsys) -> None:
-    assert run(defense_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
+def test_force_keeps_ledger(rebuttal_reviews: Path, thesis_rebuttal_scripts, capsys) -> None:
+    assert run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
     workspace = rebuttal_reviews.parent / "workspace"
     ledger = workspace / "concerns.yaml"
     edited = ledger.read_text(encoding="utf-8").replace("status: open", "status: done", 1)
@@ -299,7 +309,9 @@ def test_force_keeps_ledger(rebuttal_reviews: Path, defense_scripts, capsys) -> 
     (workspace / "reviews" / "R1.md").write_text("旧内容\n", encoding="utf-8")
     (workspace / "reviews" / "R9.md").write_text("旧内容\n", encoding="utf-8")
 
-    code, out, _ = run(defense_scripts, capsys, "--reviews", rebuttal_reviews, "--force", "--json")
+    code, out, _ = run(
+        thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews, "--force", "--json"
+    )
     assert code == 0
     assert json.loads(out)["ledger_written"] is False
     assert ledger.read_bytes() == ledger_bytes
@@ -307,8 +319,8 @@ def test_force_keeps_ledger(rebuttal_reviews: Path, defense_scripts, capsys) -> 
     assert not (workspace / "reviews" / "R9.md").exists()
 
 
-def test_without_thesis(rebuttal_reviews: Path, defense_scripts, capsys) -> None:
-    assert run(defense_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
+def test_without_thesis(rebuttal_reviews: Path, thesis_rebuttal_scripts, capsys) -> None:
+    assert run(thesis_rebuttal_scripts, capsys, "--reviews", rebuttal_reviews)[0] == 0
     workspace = rebuttal_reviews.parent / "workspace"
     anchors = [
         anchor for concern in concerns_by_id(workspace).values() for anchor in concern["anchors"]
@@ -320,7 +332,7 @@ def test_without_thesis(rebuttal_reviews: Path, defense_scripts, capsys) -> None
 
 
 def test_base_commit_recorded(
-    rebuttal_reviews: Path, rebuttal_thesis: Path, defense_scripts, capsys
+    rebuttal_reviews: Path, rebuttal_thesis: Path, thesis_rebuttal_scripts, capsys
 ) -> None:
     git = shutil.which("git")
     if git is None:
@@ -336,12 +348,14 @@ def test_base_commit_recorded(
     ).stdout.strip()
 
     args = ("--reviews", rebuttal_reviews, "--thesis", rebuttal_thesis, "--main", "document.tex")
-    assert run(defense_scripts, capsys, *args)[0] == 0
+    assert run(thesis_rebuttal_scripts, capsys, *args)[0] == 0
     state_path = rebuttal_reviews.parent / "workspace" / "rebuttal_state.json"
     state = json.loads(state_path.read_text(encoding="utf-8"))
     assert state["thesis"]["base_commit"] == head
     assert state["thesis"]["main"] == "document.tex"
 
-    assert run(defense_scripts, capsys, *args, "--force", "--base-commit", "abc1234")[0] == 0
+    assert (
+        run(thesis_rebuttal_scripts, capsys, *args, "--force", "--base-commit", "abc1234")[0] == 0
+    )
     state = json.loads(state_path.read_text(encoding="utf-8"))
     assert state["thesis"]["base_commit"] == "abc1234"

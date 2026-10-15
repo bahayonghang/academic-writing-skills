@@ -310,6 +310,51 @@
       "query": "My English conference paper has a single-paragraph chapter introduction; please check whether it should be expanded into two paragraphs.",
       "should_trigger": false,
       "category": "negative-overlap-chapter-intro-forms"
+    },
+    {
+      "query": "博士论文预评审的评阅书回来了，帮我逐条回复评阅专家的意见，写成能粘贴到修改说明里的文字。",
+      "should_trigger": true,
+      "category": "core-rebuttal"
+    },
+    {
+      "query": "盲审意见要填评阅意见修改审查表，帮我整理每条意见的回复和修改位置。",
+      "should_trigger": true,
+      "category": "core-rebuttal"
+    },
+    {
+      "query": "检查一下我的博士生修改说明是不是覆盖了全部评阅意见，页码对不对。",
+      "should_trigger": true,
+      "category": "edge-rebuttal"
+    },
+    {
+      "query": "Respond to my Chinese PhD thesis review reports point by point for the revision form.",
+      "should_trigger": true,
+      "category": "edge-rebuttal"
+    },
+    {
+      "query": "期刊审稿意见回来了，帮我写 response to reviewers 的回复信。",
+      "should_trigger": false,
+      "category": "negative-overlap-journal-rebuttal"
+    },
+    {
+      "query": "按评阅意见帮我改论文第三章的实验部分，不需要写回复。",
+      "should_trigger": true,
+      "category": "edge-review-source-edit"
+    },
+    {
+      "query": "用我的中文博士论文生成 Beamer 预答辩幻灯片与讲稿。",
+      "should_trigger": false,
+      "category": "negative-overlap-latex-defense-zh"
+    },
+    {
+      "query": "只给你评阅书 TXT，没有论文源文件，先整理学位论文意见台账。",
+      "should_trigger": true,
+      "category": "edge-review-only"
+    },
+    {
+      "query": "给我的学位论文打分并出多维度审稿总评。",
+      "should_trigger": false,
+      "category": "negative-overlap-paper-audit"
     }
   ]
 }
