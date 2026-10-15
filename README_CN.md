@@ -11,12 +11,9 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**  
-> 推荐平台：**Claude Code · Codex**
+> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
 >
-> 适用工具：Claude Code、Codex、Grok Build、Kimi Code、OMP（Oh My Pi）。
->
-> 列出工具名称不等于完成运行验收。未运行的五工具运行时验证保持 UNVERIFIED。
+> 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
 
 ## 安装
 

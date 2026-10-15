@@ -16,14 +16,9 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 3.8 Flash · Kimi K3 · DeepSeek V4 Pro**
+> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
 >
->
-> Recommended platforms: **Claude Code · Codex**
->
-> Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi).
->
-> Naming a tool here is not a runtime verification. Unrun five-tool runtime stays UNVERIFIED.
+> Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
 ## Install
 
