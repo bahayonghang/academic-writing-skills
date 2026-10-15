@@ -1,0 +1,221 @@
+{
+  "base": "53c2ab5",
+  "misplaced_commits": [
+    "791f4fd",
+    "b5c47d3",
+    "340cc70"
+  ],
+  "changed_files": [
+    {
+      "status": "M",
+      "path": ".trellis/spec/academic-writing-skills/defense-deck-contract.md"
+    },
+    {
+      "status": "A",
+      "path": ".trellis/spec/academic-writing-skills/defense-rebuttal-contract.md"
+    },
+    {
+      "status": "M",
+      "path": ".trellis/spec/academic-writing-skills/index.md"
+    },
+    {
+      "status": "M",
+      "path": "README.md"
+    },
+    {
+      "status": "M",
+      "path": "README_CN.md"
+    },
+    {
+      "status": "M",
+      "path": "academic-writing-skills/latex-defense-zh/SKILL.md"
+    },
+    {
+      "status": "M",
+      "path": "academic-writing-skills/latex-defense-zh/agents/openai.yaml"
+    },
+    {
+      "status": "M",
+      "path": "academic-writing-skills/latex-defense-zh/evals/evals.json"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/concerns-done.yaml"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/reviews/评阅书1.txt"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/evals/fixtures/rebuttal/reviews/评阅书2.txt"
+    },
+    {
+      "status": "M",
+      "path": "academic-writing-skills/latex-defense-zh/evals/trigger_eval.json"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/examples/review-response.md"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-gate.md"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-workflow.md"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/references/rebuttal-writing.md"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_build.py"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_check.py"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_common.py"
+    },
+    {
+      "status": "A",
+      "path": "academic-writing-skills/latex-defense-zh/scripts/rebuttal_intake.py"
+    },
+    {
+      "status": "M",
+      "path": "docs/CHANGELOG.md"
+    },
+    {
+      "status": "M",
+      "path": "docs/resource-manifest.json"
+    },
+    {
+      "status": "M",
+      "path": "docs/skills/latex-defense-zh/index.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/skills/latex-defense-zh/resources/examples/review-response.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-gate.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-workflow.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/skills/latex-defense-zh/resources/references/rebuttal-writing.md"
+    },
+    {
+      "status": "M",
+      "path": "docs/usage.md"
+    },
+    {
+      "status": "M",
+      "path": "docs/zh/skills/latex-defense-zh/index.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/zh/skills/latex-defense-zh/resources/examples/review-response.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-gate.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-workflow.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-writing.md"
+    },
+    {
+      "status": "M",
+      "path": "docs/zh/usage.md"
+    },
+    {
+      "status": "M",
+      "path": "tests/skills/latex_defense_zh/conftest.py"
+    },
+    {
+      "status": "A",
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_build.py"
+    },
+    {
+      "status": "A",
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_check.py"
+    },
+    {
+      "status": "A",
+      "path": "tests/skills/latex_defense_zh/test_defense_rebuttal_intake.py"
+    },
+    {
+      "status": "M",
+      "path": "tests/skills/latex_defense_zh/test_defense_skill_entry.py"
+    }
+  ],
+  "defense_lf_sha256": {
+    "academic-writing-skills/latex-defense-zh/SKILL.md": "4d67a7986f8e7c0d2adbb2ba8958ede1a06e0fde9221d2c33d834d7e626adb3f",
+    "academic-writing-skills/latex-defense-zh/agents/openai.yaml": "62b59b5165ff21444bfa05c15c4a1892c48abc84d0427ad67708356f677258b9",
+    "academic-writing-skills/latex-defense-zh/agents/qa-committee-agent.md": "8333f5e0f4b84ec26617e8dad8845c0626927b3e8c89210ed695869f0b717340",
+    "academic-writing-skills/latex-defense-zh/evals/evals.json": "5259a67640e1059158237777fb2e6cec0028c92afe4f2591bd10eb95274b1607",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter1.tex": "ab214d802e1e8a7121f213ce208144e6d137dcb954cfe91a4632dfff0b2ef7c3",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter2.aux": "a5294298a759a2e0d9433e004e327e9adef04bbf57ce2fc4f6f9811bdd20e54b",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter2.tex": "3f641a45bdb0ef6d11a3bf025fad551c1a497513e79ba9484fac8e1ed9ea0cb4",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter3.aux": "89866fdd743518aaf1728b4f79d31f6fb42555cbb319b4c4f71e5d34ffeb7d56",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter3.tex": "1524ac389831a86201f5d2bc95618f08bae8d15d86f768a4772dd89725b8ec7d",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter4.tex": "af82e0bc9f189eb00b6bd71f642bf019465c92c9a603b6539e3059375ea6a76e",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter5.aux": "1c6f602e8c4104e8fcb2c0a307add3940e5da6e4bfb7a60ca98306ecdfd3cad9",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter5.tex": "b8687d3ae6ae35465700bfc595b0dc504c30eaf499ddffa4f583201e0ef4a1ba",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter6.tex": "fe79e8670d0b53f6492ba77bde4cefca8bf271c12baba16ee291a740c4ed9726",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/chapters/chapter7.tex": "191d7d3489c69a6e3516440f8a94cfe51570167da56f139970cda39fe74e6112",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/document.tex": "6509b02126a75153cd5e132884befe61746e0bda1f7f8aee556e58753dd39550",
+    "academic-writing-skills/latex-defense-zh/evals/fixtures/mini-thesis/document_blind.tex": "9bbb6cdbd9bc17bad93cc0ab115d2181a7b627d47da7ef6d40159e8b174692f2",
+    "academic-writing-skills/latex-defense-zh/evals/trigger_eval.json": "64f80c87874b05832500de40a464a862c51da17aa669466d33728bc94d8d6375",
+    "academic-writing-skills/latex-defense-zh/examples/fix-after-check.md": "e1c594640a5fd6cfc4b9edac674ad232559499b6d74854ed2604c70bbc24fba2",
+    "academic-writing-skills/latex-defense-zh/examples/formal-defense.md": "eee15606bf981294fa7cc76a28b5151594921333f492770a1c2e20fef8aeb2a6",
+    "academic-writing-skills/latex-defense-zh/examples/predefense-40min.md": "a41126ab212d0778ade3bd12603296632cb8fc4992eabdb1d43a99805b2cd55a",
+    "academic-writing-skills/latex-defense-zh/references/content-rules.md": "0b3b416110d693a801b5c60bbc1b0de003729b7f9242094638f507d810053caa",
+    "academic-writing-skills/latex-defense-zh/references/defense-framework.md": "66db8afc809e7ddc155526615c0db4876b66a5ee4de5d1c0309e26f8daea627e",
+    "academic-writing-skills/latex-defense-zh/references/plan-schema.md": "bc70a2cf8e1179c0c74c15d5b84198c36983db1765f2c7d8c269869d738afc25",
+    "academic-writing-skills/latex-defense-zh/references/qa-prep.md": "f71c81c23b79991644cdcffcfc8e03156cc8b9ec9684649b290082b0c845cdbd",
+    "academic-writing-skills/latex-defense-zh/references/quality-gate.md": "20ae583bdc27a4b2b6c3ff779bb736a02e9bfe251c2bae5a4f0ba99bb65c1d7b",
+    "academic-writing-skills/latex-defense-zh/references/slide-layouts.md": "c1fd5c4af331ddab264a01d0cad8da56ba6ff6f5d025537108c0c6db18951470",
+    "academic-writing-skills/latex-defense-zh/references/speaker-notes.md": "c678e00440cb2410e2412aed6276c50ddf0fbcface28c22d32c93ad3845c5a55",
+    "academic-writing-skills/latex-defense-zh/references/time-budget.md": "21b904e61e6a093a285a648f982270d915f1a9b8f8900b9be6987812ae5c7944",
+    "academic-writing-skills/latex-defense-zh/references/visual-spec.md": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
+    "academic-writing-skills/latex-defense-zh/scripts/build_deck.py": "8d3f8cb51382379a6548bea0d10862469ed2f1a4b10b244001d8bcb77b156b3b",
+    "academic-writing-skills/latex-defense-zh/scripts/check_deck.py": "3ca9521aded333b7524fd671d9c2df944220a5a75dcdf2c83b880a97c14e1e84",
+    "academic-writing-skills/latex-defense-zh/scripts/defense_budget.py": "99e5e501fdf262a6c6e35c0d4b301617ce53ca0ea51126dd07855c844a12efe1",
+    "academic-writing-skills/latex-defense-zh/scripts/extract_thesis.py": "fc14e9abeb7d210d663e33f062b53283290a60509d16be8cf7b516423fdb467e",
+    "academic-writing-skills/latex-defense-zh/scripts/plan_deck.py": "2fd25bcc40f35d84a8dba07b228cdec402cd4c81986f0ea191b84e66f4133f12",
+    "academic-writing-skills/latex-defense-zh/scripts/render_preview.py": "408feefdcd37fa0853ac17de966601e57396de047d8a8366485c4872cc5716a3",
+    "academic-writing-skills/latex-defense-zh/scripts/tex_loader.py": "88a22dbbb1249a99352b8330a39e05c64b4e389357f915013cd78cea85919d62",
+    "academic-writing-skills/latex-defense-zh/templates/beamer/beamerthemeGenericDefense.sty": "401c8b2be15d9c3ae0df1daf8a2b9a0678f025d7212948328a2ae422eaab7652",
+    "academic-writing-skills/latex-defense-zh/templates/beamer/beamerthemeYanshanDefense.sty": "772699bfb041dcdd6cb8b2eed27cd79bcb3f4a2db92191d2c2fb1d7bf97acc5c",
+    "academic-writing-skills/latex-defense-zh/templates/beamer/defense-layouts.sty": "654aee3af7fb993ee3fca98707d1f56c9716bc5731e773b24d7d48a49e21331e",
+    "academic-writing-skills/latex-defense-zh/templates/beamer/demo-deck.tex": "4876ee1a44e1dc9935ceb9789dff318d85c6adb1be24f54d28cac787dd89da3c",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/deck.tex.j2": "af3944052beb4f5c68f8d6fcffaa9b9767173f053cd762c71c3d823ea4bdb6c8",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/bullets.tex.j2": "22a9c04ab5723b4a19f3c4fe932263b59604295a759f06a99ae280217efaaf2d",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/cards.tex.j2": "ab3a98c38e1bf24f012dd664806d8d2b23902a732734e52ee73439cd1529216a",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/cover.tex.j2": "1fa1da2a4ac8c5593e7ca4d08a9931c4d8a117d626e36eb9dd4459f42d2869e9",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/equations-figure.tex.j2": "59430b35d023fe99b7683d75366b277db8c9f5ecfa0cb1ac9f0ccfc7a929c2d6",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/figure-bullets.tex.j2": "62e469d17c36d54e6daa3f9921f308de8f8fc4bf98c83f48a43617430721ece0",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/figure-grid.tex.j2": "0de69b379640bc6d49322ac78a218ca24e76a47349e7f788a86723c17fc1c3c9",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/figure.tex.j2": "c87150fb14fcc32dc19b502bc6d95bbeb34e71789fa8341ae96ce113c75e8430",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/outlook.tex.j2": "1b0c59fcfbe6e7d5a4a78fd35dfa62bf3a918a072c488f37814c08dd4c3c3406",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/paper-summary.tex.j2": "b0dbe467d4a3ab01040aee0080d7a8e7f778cfad738788649828da2d0fdeab35",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/table.tex.j2": "a523a5e2c92d18592dfdda535c6201dd9998f91535498ad0a63176020fadedd3",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/thanks.tex.j2": "e0a215871bd56691910595e7b2cf70aad6d32b68a4946b5830665ef204c7129a",
+    "academic-writing-skills/latex-defense-zh/templates/jinja/frames/toc.tex.j2": "b8adc5b465465c65adc2a975bf99ce10e08e67e93a5e61d86f28523adb191a88"
+  }
+}

@@ -1,0 +1,11 @@
+warning: in the working copy of '.trellis/spec/academic-writing-skills/defense-deck-contract.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'academic-writing-skills/latex-defense-zh/SKILL.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'academic-writing-skills/latex-defense-zh/agents/openai.yaml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'academic-writing-skills/latex-defense-zh/evals/evals.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'academic-writing-skills/latex-defense-zh/evals/trigger_eval.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/skills/latex-defense-zh/index.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/zh/skills/latex-defense-zh/index.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/contracts/test_thesis_zh_guidance_fidelity.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/skills/latex_defense_zh/conftest.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/skills/latex_defense_zh/test_defense_skill_entry.py', LF will be replaced by CRLF the next time Git touches it
+git diff --check exit=0

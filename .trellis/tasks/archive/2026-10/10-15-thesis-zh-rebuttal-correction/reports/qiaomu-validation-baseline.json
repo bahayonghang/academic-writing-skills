@@ -1,0 +1,17 @@
+{
+  "ok": false,
+  "root": "academic-writing-skills/latex-thesis-zh",
+  "failures": [
+    "missing required file: README.md",
+    "missing required file: agents/interface.yaml",
+    "missing required file: manifest.json"
+  ],
+  "warnings": [
+    "evals/trigger_cases.json missing; recommended for production/library packages",
+    "script has no argparse help or internal-module marker: bib_scan.py",
+    "script has no argparse help or internal-module marker: parsers.py",
+    "script has no argparse help or internal-module marker: tex_loader.py"
+  ],
+  "exit_code": 2,
+  "evidence_note": "Pre-migration structural baseline only; qiaomu package layout differs from existing repository conventions."
+}

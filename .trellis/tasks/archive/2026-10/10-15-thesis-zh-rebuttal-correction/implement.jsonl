@@ -1,0 +1,8 @@
+{"reason":"本次迁移的依赖解耦、路由和回滚设计","file":".trellis/tasks/10-15-thesis-zh-rebuttal-correction/design.md"}
+{"reason":"当前提交和导入依赖证据、qiaomu 适用性","file":".trellis/tasks/10-15-thesis-zh-rebuttal-correction/research/migration-findings.md"}
+{"reason":"迁移后归属、CLI/schema/R-* 与独立安装契约","file":".trellis/spec/academic-writing-skills/thesis-rebuttal-contract.md"}
+{"reason":"必须保留的答辩五模块契约","file":".trellis/spec/academic-writing-skills/defense-deck-contract.md"}
+{"reason":"按技能加载、测试与工具约定","file":".trellis/spec/academic-writing-skills/testing-and-tooling.md"}
+{"reason":"双语源资源、manifest 与构建门","file":".trellis/spec/academic-writing-skills/docs-bilingual-resources.md"}
+{"reason":"保留已有 include 安全边界","file":".trellis/spec/academic-writing-skills/include-boundary-contract.md"}
+{"reason":"独立安装、UTF-8 与运行证据边界","file":".trellis/spec/academic-writing-skills/harness-workflow-contract.md"}

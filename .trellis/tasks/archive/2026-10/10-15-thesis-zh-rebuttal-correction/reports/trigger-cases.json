@@ -1,0 +1,74 @@
+{
+  "evidence_kind": "heuristic-smoke-only; manually scoped migration cases, not provider routing",
+  "recommended_threshold": 0.34,
+  "positive_concepts": {
+    "thesis": [
+      "学位论文",
+      "博士论文",
+      "硕士论文",
+      "毕业论文"
+    ],
+    "review": [
+      "评阅",
+      "预评审",
+      "修改审查表",
+      "修改说明"
+    ],
+    "response": [
+      "回复",
+      "逐条",
+      "修改说明",
+      "修改审查表"
+    ]
+  },
+  "description_required_concepts": [
+    "thesis",
+    "review",
+    "response"
+  ],
+  "negative_patterns": [
+    "Beamer",
+    "期刊",
+    "会议审稿",
+    "审稿评分",
+    "paper-audit"
+  ],
+  "should_trigger": [
+    {
+      "text": "博士论文评阅意见返回了，请写逐条回复。",
+      "family": "rebuttal"
+    },
+    {
+      "text": "请根据学位论文预评审意见准备修改说明。",
+      "family": "rebuttal"
+    },
+    {
+      "text": "硕士论文需要填写评阅意见修改审查表。",
+      "family": "rebuttal"
+    },
+    {
+      "text": "只有评阅书 PDF，帮我整理逐条意见，不核对论文。",
+      "family": "intake-without-thesis"
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "text": "给期刊编辑写一封审稿意见回复信。",
+      "family": "journal"
+    },
+    {
+      "text": "请对我的论文做审稿评分。",
+      "family": "audit"
+    }
+  ],
+  "near_neighbor": [
+    {
+      "text": "用中文博士学位论文制作 Beamer 答辩稿。",
+      "family": "defense"
+    },
+    {
+      "text": "整理会议审稿回复与补充材料。",
+      "family": "conference"
+    }
+  ]
+}

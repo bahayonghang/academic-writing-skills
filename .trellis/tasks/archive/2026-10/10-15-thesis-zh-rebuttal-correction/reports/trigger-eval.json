@@ -1,0 +1,129 @@
+{
+  "ok": true,
+  "threshold": 0.34,
+  "description_concepts": [
+    "response",
+    "review",
+    "thesis"
+  ],
+  "missing_description_concepts": [],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "false_positive": 0,
+    "false_negative": 0,
+    "pass_rate": 1.0
+  },
+  "failures": [],
+  "results": {
+    "should_trigger": [
+      {
+        "prompt": "博士论文评阅意见返回了，请写逐条回复。",
+        "family": "rebuttal",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 1.0,
+        "matched_concepts": [
+          "response",
+          "review",
+          "thesis"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "请根据学位论文预评审意见准备修改说明。",
+        "family": "rebuttal",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 1.0,
+        "matched_concepts": [
+          "response",
+          "review",
+          "thesis"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "硕士论文需要填写评阅意见修改审查表。",
+        "family": "rebuttal",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 1.0,
+        "matched_concepts": [
+          "response",
+          "review",
+          "thesis"
+        ],
+        "negative_pattern": null
+      },
+      {
+        "prompt": "只有评阅书 PDF，帮我整理逐条意见，不核对论文。",
+        "family": "intake-without-thesis",
+        "expected_trigger": true,
+        "predicted_trigger": true,
+        "passed": true,
+        "score": 0.667,
+        "matched_concepts": [
+          "response",
+          "review"
+        ],
+        "negative_pattern": null
+      }
+    ],
+    "should_not_trigger": [
+      {
+        "prompt": "给期刊编辑写一封审稿意见回复信。",
+        "family": "journal",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.333,
+        "matched_concepts": [
+          "response"
+        ],
+        "negative_pattern": "期刊"
+      },
+      {
+        "prompt": "请对我的论文做审稿评分。",
+        "family": "audit",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.0,
+        "matched_concepts": [],
+        "negative_pattern": "审稿评分"
+      }
+    ],
+    "near_neighbor": [
+      {
+        "prompt": "用中文博士学位论文制作 Beamer 答辩稿。",
+        "family": "defense",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.333,
+        "matched_concepts": [
+          "thesis"
+        ],
+        "negative_pattern": "Beamer"
+      },
+      {
+        "prompt": "整理会议审稿回复与补充材料。",
+        "family": "conference",
+        "expected_trigger": false,
+        "predicted_trigger": false,
+        "passed": true,
+        "score": 0.333,
+        "matched_concepts": [
+          "response"
+        ],
+        "negative_pattern": "会议审稿"
+      }
+    ]
+  },
+  "command_exit_code": 0,
+  "skill_md_sha256": "9ddd111d9b5ead762b5642753f71783af2c09f9d11a226f545a52089dad02ba5"
+}
