@@ -1,0 +1,35 @@
+\chapter{稀疏观测下交通流量预测的理论基础与问题框架}
+
+\section{引言}
+本章给出交通流量数据的特性分析、问题形式化与总体研究框架。
+
+\section{交通流量数据特性分析}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{chapter2/data-profile.png}
+  \bicaption{示例检测器流量的日变化曲线}{Daily profile of example detector flow}
+  \label{fig:c2-profile}
+\end{figure}
+
+\section{问题形式化}
+记路网为图 $G=(V,E)$，时刻 $t$ 的观测为 $\vect{x}_t$。预测目标为
+\begin{equation}
+  \hat{\vect{y}}_{t+1} = f_{\theta}\left(\vect{x}_{t-T+1:t}, G\right)
+  \label{eq:c2-target}
+\end{equation}
+训练目标为
+\begin{equation}
+  \theta^{*} = \argmin_{\theta} \Loss(\theta)
+  \label{eq:c2-objective}
+\end{equation}
+
+\section{总体研究框架}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter2/framework.png}
+  \bicaption{总体研究框架}{Overall research framework}
+  \label{fig:c2-framework}
+\end{figure}
+
+\section{本章小结}
+本章给出了问题形式化与总体研究框架。

@@ -98,6 +98,9 @@ SKILLS = {
             "abstract",
             "spec-check",
             "blind-review",
+            "rebuttal-intake",
+            "rebuttal-build",
+            "rebuttal-check",
         ],
         "min_examples": 3,
         "min_evals": 5,
@@ -268,7 +271,12 @@ def test_skill_security_boundaries_are_declared() -> None:
     ).read_text(encoding="utf-8")
     for skill_name in ("latex-paper-en", "latex-thesis-zh", "typst-paper"):
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
-        assert "allowed-tools: Read, Glob, Grep, Bash(uv *)" in skill_md
+        expected_tools = (
+            "allowed-tools: Read, Glob, Grep, Write, Edit, Bash(uv *)"
+            if skill_name == "latex-thesis-zh"
+            else "allowed-tools: Read, Glob, Grep, Bash(uv *)"
+        )
+        assert expected_tools in skill_md.splitlines()
         assert "Bash(latexmk *)" not in skill_md
         assert "Bash(typst *)" not in skill_md
     for skill_name in ("latex-paper-en", "latex-thesis-zh"):
@@ -294,9 +302,18 @@ def test_latex_reference_layout_is_discoverable_and_kebab_case() -> None:
     violations: list[str] = []
     for skill_name, allowed_dirs in REFERENCE_LAYOUTS.items():
         references_dir = SKILLS_ROOT / skill_name / "references"
-        top_files = [path.name for path in references_dir.iterdir() if path.is_file()]
-        if top_files:
-            violations.append(f"{skill_name}: top-level reference files: {sorted(top_files)}")
+        top_files = {path.name for path in references_dir.iterdir() if path.is_file()}
+        # The migrated review-response workflow keeps its three public reference paths.
+        expected_files = (
+            {"rebuttal-workflow.md", "rebuttal-writing.md", "rebuttal-gate.md"}
+            if skill_name == "latex-thesis-zh"
+            else set()
+        )
+        if top_files != expected_files:
+            violations.append(
+                f"{skill_name}: top-level reference files: {sorted(top_files)}, "
+                f"expected {sorted(expected_files)}"
+            )
 
         top_dirs = {path.name for path in references_dir.iterdir() if path.is_dir()}
         unexpected_dirs = top_dirs - allowed_dirs

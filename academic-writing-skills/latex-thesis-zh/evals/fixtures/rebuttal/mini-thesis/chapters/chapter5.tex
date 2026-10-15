@@ -1,0 +1,65 @@
+\chapter{面向模型更新的在线预测方法研究}
+
+\section{引言}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{chapter5/route.png}
+  \bicaption{本章技术路线}{Technical route of this chapter}
+  \label{fig:c5-route}
+\end{figure}
+本章首先检测数据漂移，其次增量更新模型，最后在合成数据上验证方法。
+
+\section{问题描述}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{chapter5/drift.png}
+  \bicaption{示例数据漂移过程}{Example data drift process}
+  \label{fig:c5-drift}
+\end{figure}
+
+\section{在线更新方法}
+\subsection{漂移检测}
+\begin{equation}
+  D_{t} = \left\| \mu_{t} - \mu_{0} \right\|_{2}
+  \label{eq:c5-drift}
+\end{equation}
+
+\subsection{增量更新}
+\begin{equation}
+  \theta_{t+1} = \theta_{t} - \eta \nabla_{\theta}\Loss_{t}
+  \label{eq:c5-update}
+\end{equation}
+\begin{algorithm}[htbp]
+  \caption{示例增量更新算法}
+  \label{alg:c5-update}
+  \begin{algorithmic}[1]
+    \STATE 输入：模型参数 $\theta_{0}$
+  \end{algorithmic}
+\end{algorithm}
+
+\section{实验与结果分析}
+\subsection{在线预测结果}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{chapter5/在线结果/在线预测结果.png}
+  \bicaption{示例在线预测结果}{Example online prediction results}
+  \label{fig:c5-online}
+\end{figure}
+
+\subsection{更新耗时分析}
+\begin{table}[htbp]
+  \centering
+  \bicaption{示例更新耗时}{Example update cost}
+  \label{tab:c5-cost}
+  \begin{tabular}{lc}
+    \toprule
+    方法 & 耗时 (s)\\
+    \midrule
+    全量重训练 & 120.0\\
+    本章方法 & \textbf{8.5}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{本章小结}
+本章提出了面向模型更新的在线预测方法。

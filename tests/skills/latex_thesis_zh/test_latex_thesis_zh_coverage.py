@@ -116,6 +116,11 @@ SMOKE_COMMANDS = [
     ),
     ("blind_review.py", ["main.tex", "--check"], {1}, "盲审匿名化检查报告"),
     ("check_style_zh.py", ["main.tex"], {0}, "中文表达检查（expression）"),
+    # Response commands need writable workspaces; their full pipeline is exercised
+    # by test_thesis_rebuttal_installed.py rather than writing into this fixture.
+    ("rebuttal_intake.py", ["--help"], {0}, "--reviews"),
+    ("rebuttal_build.py", ["--help"], {0}, "--workspace"),
+    ("rebuttal_check.py", ["--help"], {0}, "--workspace"),
 ]
 
 
