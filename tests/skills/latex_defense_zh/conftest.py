@@ -1,9 +1,9 @@
 """Shared fixtures for the latex-defense-zh script tests.
 
 Scripts load by file path. The sibling modules that the scripts import
-(``tex_loader``, ``defense_budget``, ``extract_thesis``) are evicted from
-``sys.modules`` before each load and restored afterward, so the
-latex-defense-zh copies win without leaking into other skills' tests.
+(``tex_loader``, ``defense_budget``, ``extract_thesis``, ``rebuttal_common``)
+are evicted from ``sys.modules`` before each load and restored afterward, so
+the latex-defense-zh copies win without leaking into other skills' tests.
 """
 
 from __future__ import annotations
@@ -25,7 +25,8 @@ from tests.support.paths import SKILLS_ROOT
 SKILL_ROOT = SKILLS_ROOT / "latex-defense-zh"
 SCRIPTS = SKILL_ROOT / "scripts"
 FIXTURE_DIR = SKILL_ROOT / "evals" / "fixtures" / "mini-thesis"
-_SHARED_MODULE_NAMES = ("tex_loader", "defense_budget", "extract_thesis")
+REBUTTAL_REVIEWS = SKILL_ROOT / "evals" / "fixtures" / "rebuttal" / "reviews"
+_SHARED_MODULE_NAMES = ("tex_loader", "defense_budget", "extract_thesis", "rebuttal_common")
 
 # PyMuPDF binds sys.stdout for its messages at first import. Import it here, under
 # pytest's session capture, rather than inside a capsys test whose stream closes at teardown.
@@ -159,3 +160,30 @@ def built_deck(filled_plan: dict, tmp_path: Path, defense_scripts: _Scripts) -> 
     )
     assert code == 0
     return out
+
+
+REBUTTAL_DOCUMENT_AUX = r"""\relax
+\bibcite{zhang2020flow}{{1}{2020}{{Zhang}}{{}}}
+\bibcite{li2021graph}{{2}{2021}{{Li}}{{}}}
+\bibcite{wang2019survey}{{3}{2019}{{Wang}}{{}}}
+\newlabel{chap:c2}{{2}{11}{问题形式化}{chapter.2}{}}
+\newlabel{sec:c2-3}{{2.3}{13}{问题形式化}{section.2.3}{}}
+\newlabel{chap:c3}{{3}{19}{时空补全方法}{chapter.3}{}}
+"""
+
+
+@pytest.fixture
+def rebuttal_thesis(tmp_path: Path) -> Path:
+    """Copy of the mini-thesis with a document.aux that adds bibcites and chapter/section labels."""
+    root = tmp_path / "thesis"
+    shutil.copytree(FIXTURE_DIR, root)
+    (root / "document.aux").write_text(REBUTTAL_DOCUMENT_AUX, encoding="utf-8")
+    return root
+
+
+@pytest.fixture
+def rebuttal_reviews(tmp_path: Path) -> Path:
+    """Copy of the synthetic review reports at ``tmp_path/pre-review/review_results``."""
+    reviews = tmp_path / "pre-review" / "review_results"
+    shutil.copytree(REBUTTAL_REVIEWS, reviews)
+    return reviews
