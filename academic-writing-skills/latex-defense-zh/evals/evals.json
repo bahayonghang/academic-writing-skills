@@ -139,6 +139,58 @@
           "description": "no pptx produced"
         }
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "预评审的两份评阅书在 evals/fixtures/rebuttal/reviews/ 里，论文仓库是 evals/fixtures/mini-thesis/。帮我整理评阅意见，准备逐条回复。",
+      "expected_output": "Route to rebuttal-intake: run rebuttal_intake.py with --reviews and --thesis, report per reviewer the total score, grade, item count, anchor count and warnings, explain that responses/ and workspace/ were created next to the review directory, and ask the user to confirm the reviewer order and the base commit (checkpoint R1) before splitting concerns.",
+      "files": [
+        "evals/fixtures/rebuttal/reviews/评阅书1.txt",
+        "evals/fixtures/rebuttal/reviews/评阅书2.txt",
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "rebuttal_intake\\.py",
+          "description": "intake module invoked"
+        },
+        {
+          "type": "regex",
+          "pattern": "(responses|workspace)",
+          "description": "output directories reported"
+        },
+        {
+          "type": "regex",
+          "pattern": "(确认|confirm)",
+          "description": "checkpoint R1 asks the user"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "回复生成了，但 rebuttal_check 报了 R-COMMIT 和 R-CLAIM：评阅人2意见1我写了不采纳，回复里却写着已补充运行时间。怎么处理？",
+      "expected_output": "Explain both codes from references/rebuttal-gate.md: R-CLAIM means a decline or clarify reply uses a completion word, so remove the completion word or, if the thesis really changed, switch the action to add or revise with locations and git evidence; R-COMMIT means a done modifying concern has no changed file since the base commit. Edit the ledger concerns.yaml, rerun rebuttal_build.py and rebuttal_check.py, and do not claim experiments that the thesis does not contain.",
+      "files": [
+        "evals/fixtures/rebuttal/concerns-done.yaml"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "concerns\\.yaml",
+          "description": "fix goes into the ledger"
+        },
+        {
+          "type": "regex",
+          "pattern": "rebuttal_(build|check)\\.py",
+          "description": "rebuild and recheck"
+        },
+        {
+          "type": "not_contains",
+          "text": "responses/response-all.md 中直接修改",
+          "description": "does not hand-edit responses"
+        }
+      ]
     }
   ]
 }

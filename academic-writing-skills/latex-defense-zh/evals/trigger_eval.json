@@ -80,6 +80,36 @@
       "query": "从我的 references.bib 里找 2024 年以后的图神经网络论文。",
       "should_trigger": false,
       "category": "negative-unrelated"
+    },
+    {
+      "query": "博士论文预评审的评阅书回来了，帮我逐条回复评阅专家的意见，写成能粘贴到修改说明里的文字。",
+      "should_trigger": true,
+      "category": "core-rebuttal"
+    },
+    {
+      "query": "盲审意见要填评阅意见修改审查表，帮我整理每条意见的回复和修改位置。",
+      "should_trigger": true,
+      "category": "core-rebuttal"
+    },
+    {
+      "query": "检查一下我的博士生修改说明是不是覆盖了全部评阅意见，页码对不对。",
+      "should_trigger": true,
+      "category": "edge-rebuttal"
+    },
+    {
+      "query": "Respond to my Chinese PhD thesis review reports point by point for the revision form.",
+      "should_trigger": true,
+      "category": "edge-rebuttal"
+    },
+    {
+      "query": "期刊审稿意见回来了，帮我写 response to reviewers 的回复信。",
+      "should_trigger": false,
+      "category": "negative-overlap-journal-rebuttal"
+    },
+    {
+      "query": "按评阅意见帮我改论文第三章的实验部分，不需要写回复。",
+      "should_trigger": false,
+      "category": "negative-overlap-latex-thesis-zh"
     }
   ]
 }

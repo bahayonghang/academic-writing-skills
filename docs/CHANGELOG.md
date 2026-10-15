@@ -10,6 +10,10 @@
 
 ### Added
 
+- `latex-defense-zh` 新增评阅意见回复：`rebuttal_intake.py` 读取评阅书（PDF、TXT、MD），在评阅书目录同级建
+  `responses/` 与 `workspace/` 并写台账骨架；`rebuttal_build.py` 生成修改计划与可粘贴到 Word 修改说明的纯文本等价 Markdown；
+  `rebuttal_check.py` 以 16 个 R-* 码核对意见覆盖、原文引用、git 修改证据、修改位置与页码。新增三份 rebuttal 参考、
+  一份示例、合成评阅书 fixture、evals 与双语资源页，以及 `.trellis/spec/academic-writing-skills/defense-rebuttal-contract.md`。
 - `paper-writing-studio` 登记为第七个公开 catalog 技能：`SKILL.md` 改为仓库技能契约结构，版本对齐 `6.0.0`；
   新增三份示例、`evals/evals.json` 与 `evals/trigger_eval.json`；进入安装器、契约测试列表与双语文档。
 - `latex-defense-zh` 登记为第八个公开 catalog 技能：从中文学位论文 XeLaTeX 仓库只读提取清单，按时长与阶段规划页面，

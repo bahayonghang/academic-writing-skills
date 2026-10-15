@@ -23,7 +23,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 | `typst-paper` | `.typ` | Typst compile and targeted writing checks | The artifact is LaTeX |
 | `bib-search-citation` | `.bib` | Retrieval, filtering, raw entries, citation snippets | Claim support must be verified in the paper |
 | `paper-writing-studio` | prose text + optional venue, journal, or domain | Venue-profile polish and translation with protected evidence tokens | The source file needs compile, format, or structure work |
-| `latex-defense-zh` | Chinese thesis LaTeX repository | Beamer defense deck, speaker notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
+| `latex-defense-zh` | Chinese thesis LaTeX repository; thesis review reports | Beamer defense deck, speaker notes, fidelity quality gate, and preview; paste-ready point-by-point replies to review reports with a coverage and evidence gate | The user needs `.pptx`, a conference talk, a journal rebuttal letter, or edits to the thesis text |
 
 ## Current Routers
 
@@ -74,9 +74,9 @@ The profile precedence is explicit venue > journal allowlist > unambiguous domai
 
 ### `latex-defense-zh`
 
-`extract`, `plan`, `build`, `check`, `preview`.
+`extract`, `plan`, `build`, `check`, `preview`, `rebuttal-intake`, `rebuttal-build`, `rebuttal-check`.
 
-The workflow has three user checkpoints: chapter roles after `extract`, the takeaway outline before `build`, and the delivery list after `preview`.
+The workflow has three user checkpoints: chapter roles after `extract`, the takeaway outline before `build`, and the delivery list after `preview`. The review response workflow has three checkpoints too: the reviewer order and the base commit after `rebuttal-intake`, the revision plan from `rebuttal-build --plan-only`, and the paste text after `rebuttal-check`.
 
 ## Resource Loading
 

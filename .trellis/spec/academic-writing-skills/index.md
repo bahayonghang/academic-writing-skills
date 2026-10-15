@@ -29,6 +29,7 @@
 | [paragraph-roles-contract.md](./paragraph-roles-contract.md) | 中文学位论文正文各级段落职责与结构去重 PR-* 判据、阈值、报告与回滚承诺；删预告后的指代桥接不新增码 | 改 --paragraph-roles、PR-* 词表/判据、相关 fixture 或路由资源之前 |
 | [chapter-intro-style-contract.md](./chapter-intro-style-contract.md) | 中文学位论文章引言一段式与两段式 CI-* 判据、阈值、默认行为变化与回滚承诺 | 改 --chapter-intro-style、CI-* 词表/判据、正文章引言指南或路由之前 |
 | [defense-deck-contract.md](./defense-deck-contract.md) | latex-defense-zh 五脚本 CLI 与退出码、帧标记、清单与规划契约、D-* 码集合、只读与覆盖边界、测试开关 | 改 latex-defense-zh 的脚本、帧模板、主题宏、D-* 判据、规划字段或对应公开资源之前 |
+| [defense-rebuttal-contract.md](./defense-rebuttal-contract.md) | latex-defense-zh 评阅意见回复三脚本 CLI 与退出码、目录与台账契约、R-* 码集合、只读边界、done-only 与 git 证据口径 | 改 latex-defense-zh 的 rebuttal 脚本、台账字段、R-* 判据、responses 格式或对应公开资源之前 |
 
 ## 背景速览
 
