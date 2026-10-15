@@ -1,0 +1,30 @@
+{
+  "id": "defense-zh-rebuttal",
+  "name": "defense-zh-rebuttal",
+  "title": "latex-defense-zh：评阅意见回复（rebuttal）模块",
+  "description": "为 latex-defense-zh 新增 rebuttal 模块：读取评阅书，建立意见台账，在评阅书目录同级生成 responses/（可粘贴到 Word 的修改说明 md）与 workspace/（中间产物），并以 R-* 质量门核对覆盖、位置与修改证据",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-10-15",
+  "completedAt": "2026-10-15",
+  "branch": "dev",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-15-defense-zh-rebuttal-intake",
+    "10-15-defense-zh-rebuttal-response",
+    "10-15-defense-zh-rebuttal-docs"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
