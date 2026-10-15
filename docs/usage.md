@@ -19,11 +19,11 @@ and a source-level writing check is not a reviewer-style submission decision.
 | `cover-letter` | manuscript + optional letter | Submission-letter generation and evidence alignment | The manuscript itself needs editing or audit |
 | `paper-audit` | `.tex`, `.typ`, `.pdf` | Critique, blockers, readiness, re-audit | Source changes or compile repair are required |
 | `latex-paper-en` | English `.tex` | Source compile and targeted writing checks | A global reviewer report is required |
-| `latex-thesis-zh` | Chinese thesis `.tex` | Thesis structure, GB/T, chapters, spec and blind review | The artifact is an English paper |
+| `latex-thesis-zh` | Chinese thesis `.tex` ; thesis review reports | Thesis structure, GB/T, chapters, spec and blind review ; point-by-point replies, revision forms, and coverage/evidence checks | The artifact is an English paper ; Beamer decks or journal/conference rebuttal letters |
 | `typst-paper` | `.typ` | Typst compile and targeted writing checks | The artifact is LaTeX |
 | `bib-search-citation` | `.bib` | Retrieval, filtering, raw entries, citation snippets | Claim support must be verified in the paper |
 | `paper-writing-studio` | prose text + optional venue, journal, or domain | Venue-profile polish and translation with protected evidence tokens | The source file needs compile, format, or structure work |
-| `latex-defense-zh` | Chinese thesis LaTeX repository; thesis review reports | Beamer defense deck, speaker notes, fidelity quality gate, and preview; paste-ready point-by-point replies to review reports with a coverage and evidence gate | The user needs `.pptx`, a conference talk, a journal rebuttal letter, or edits to the thesis text |
+| `latex-defense-zh` | Chinese thesis LaTeX repository | Beamer defense deck, speaker notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
 
 ## Current Routers
 
@@ -56,6 +56,10 @@ Same-chapter table, body, and chapter-summary final values are compared only by 
 The graduate-school checklist is `--template yanshan`. The 2025 college checklist is `--template yanshan-ee-2025`. The two coexist. 111 statuses are not 111 compliant items. A partial checker does not PASS a compound item, and MODULE or NEEDS-LLM still needs human review.
 Method-expression labels, a weakness written as an advantage, a pronoun left without an antecedent after a deleted preview, abstract quotation marks, and formula symbols in a title or chapter-arrangement line are LLM-only readings on the existing `logic`, `claim-forward`, `abstract`, and `structure` modules. They add no script code, no threshold, and no new module.
 
+Review response modules: `rebuttal-intake`, `rebuttal-build`, `rebuttal-check`. Review reports alone can start a ledger; checks lacking thesis evidence are skipped.
+
+The review response workflow has three checkpoints too: the reviewer order and the base commit after `rebuttal-intake`, the revision plan from `rebuttal-build --plan-only`, and the paste text after `rebuttal-check`.
+
 ### `typst-paper`
 
 `compile`, `format`, `bibliography`, `grammar`, `sentences`, `logic`,
@@ -74,9 +78,9 @@ The profile precedence is explicit venue > journal allowlist > unambiguous domai
 
 ### `latex-defense-zh`
 
-`extract`, `plan`, `build`, `check`, `preview`, `rebuttal-intake`, `rebuttal-build`, `rebuttal-check`.
+`extract`, `plan`, `build`, `check`, `preview`.
 
-The workflow has three user checkpoints: chapter roles after `extract`, the takeaway outline before `build`, and the delivery list after `preview`. The review response workflow has three checkpoints too: the reviewer order and the base commit after `rebuttal-intake`, the revision plan from `rebuttal-build --plan-only`, and the paste text after `rebuttal-check`.
+The workflow has three user checkpoints: chapter roles after `extract`, the takeaway outline before `build`, and the delivery list after `preview`.
 
 ## Resource Loading
 

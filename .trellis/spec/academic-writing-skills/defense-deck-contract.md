@@ -5,7 +5,6 @@
 修改 `academic-writing-skills/latex-defense-zh/` 的脚本（extract、plan、build、check、preview）、Jinja2 帧模板、
 Beamer 主题与版式宏、D-* 判据、清单或规划字段，以及对应公开资源时适用。
 五个脚本通过清单 JSON、规划 YAML、帧标记与结果行串成一条流水线；任一环节改名或改格式，下游会静默失配。
-评阅意见回复的三个 rebuttal 脚本不属于这条流水线，契约见 [defense-rebuttal-contract.md](./defense-rebuttal-contract.md)。
 详细字段以技能内 `references/plan-schema.md` 与 `references/quality-gate.md` 为准，本文件只锁跨脚本的接口。
 
 ## 2. Signatures

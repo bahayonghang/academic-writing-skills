@@ -1,6 +1,6 @@
 # 示例：预评审意见的逐条回复
 
-本示例用合成评阅书 `evals/fixtures/rebuttal/reviews/` 与合成论文 `evals/fixtures/mini-thesis/` 演示从读取评阅书到交付粘贴文本的全过程。完成后的台账为 `evals/fixtures/rebuttal/concerns-done.yaml`。题目、意见与页码均为虚构。
+本示例用合成评阅书 `evals/fixtures/rebuttal/reviews/` 与合成论文 `evals/fixtures/rebuttal/mini-thesis/` 演示从读取评阅书到交付粘贴文本的全过程。完成后的台账为 `evals/fixtures/rebuttal/concerns-done.yaml`。题目、意见与页码均为虚构。
 
 场景：论文仓库为 `$THESIS`，送审版本已提交到 git。用户把两份评阅书放在 `$THESIS/rebuttal/pre-review/review_results/`，需要填写「博士生修改说明」。
 

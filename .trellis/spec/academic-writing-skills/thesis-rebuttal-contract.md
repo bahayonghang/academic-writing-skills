@@ -1,12 +1,12 @@
-# latex-defense-zh 评阅意见回复契约
+# latex-thesis-zh 评阅意见回复契约
 
 ## 1. Scope / Trigger
 
-修改 `academic-writing-skills/latex-defense-zh/` 的 rebuttal 脚本（`rebuttal_intake.py`、`rebuttal_build.py`、`rebuttal_check.py`、
+修改 `academic-writing-skills/latex-thesis-zh/` 的 rebuttal 脚本（`rebuttal_intake.py`、`rebuttal_build.py`、`rebuttal_check.py`、
 `rebuttal_common.py`）、台账字段、R-* 判据、responses 渲染格式，以及对应公开资源时适用。
 三个脚本通过状态文件、意见台账与 responses 串成一条流水线；任一环节改名或改格式，下游会静默失配。
 详细字段以技能内 `references/rebuttal-workflow.md`、`references/rebuttal-writing.md` 与 `references/rebuttal-gate.md` 为准，
-本文件只锁跨脚本的接口。答辩稿流水线见 [defense-deck-contract.md](./defense-deck-contract.md)。
+本文件只锁跨脚本的接口。评阅回复属于中文学位论文工作流；Beamer 答辩稿仍归 latex-defense-zh，见 [defense-deck-contract.md](./defense-deck-contract.md)。
 
 ## 2. Signatures
 
@@ -26,6 +26,11 @@ rebuttal_check.py --workspace DIR [--thesis DIR] [--json]
 | check  | 0 无 Critical/Major；1 有；2 输入错误                                                                                                                                     |
 
 ## 3. Contracts
+
+- 包归属：三条 rebuttal 入口仅由 `latex-thesis-zh` 提供；仅整理评阅书允许不提供论文源，不能被正文模块的 LaTeX 输入要求拦截。
+- 独立安装：回复脚本仅依赖本技能脚本和声明的运行依赖，不导入 `latex-defense-zh` 的 `extract_thesis` / `check_deck`，也不访问其 fixture。
+- 回复模块与正文修改模块分离：回复脚本不改、提交或编译论文；正文修改按用户批准的计划走已有写作模块，不因归属相同而扩大授权。
+- Claude 兼容 `allowed-tools` 应包含填写台账所需的 Write/Edit；回复场景的写入范围仍仅为用户指定的 responses/workspace，不因此授权修改论文。其他平台按真实能力映射，不能把元数据声明当作运行验证。
 
 - 目录：`$ROOT` 缺省为评阅书目录的父目录；脚本只写 `$ROOT/responses/` 与 `$ROOT/workspace/`。
   评阅书目录不能等于或位于这两个目录内部。
@@ -67,11 +72,14 @@ rebuttal_check.py --workspace DIR [--thesis DIR] [--json]
 
 ## 6. Tests Required
 
-- `tests/skills/latex_defense_zh/`：`test_defense_rebuttal_intake.py`（归一化、锚点、退出码、`--force`）、
-  `test_defense_rebuttal_build.py`（渲染格式、位置与页码、手改保护）、`test_defense_rebuttal_check.py`（16 码正反例、git 口径、skip 规则）、
-  `test_defense_skill_entry.py`（八个模块路由）。
+- `tests/skills/latex_thesis_zh/`：`test_thesis_rebuttal_intake.py`（归一化、锚点、退出码、`--force`）、
+  `test_thesis_rebuttal_build.py`（渲染格式、位置与页码、手改保护）、`test_thesis_rebuttal_check.py`（16 码正反例、git 口径、skip 规则）、
+  `test_thesis_rebuttal_installed.py`（独立安装），入口归属回归（三个回复模块归 thesis，defense 保持五个原模块）。
 - 契约测试：`tests/contracts/test_skill_contracts.py`、`test_trigger_evals.py`、`test_docs_bilingual_resources.py`；
   资源门 `uv run python docs/scripts/check_resource_sync.py`。
+
+- 隔离安装回归：只复制 thesis 技能，移除仓库 PYTHONPATH，从包外 cwd 通过三个 CLI 跑合成评阅书与有真实 git 修改证据的论文；核对回复输出、R-* 结果和输入哈希不变。
+- 触发边界：中文学位论文评阅回复为正例；Beamer、期刊/会议回复和审稿评分不由此模块接管。静态 fixture 通过不等于 provider 触发通过。
 
 ## 7. Wrong vs Correct
 

@@ -19,11 +19,11 @@
 | `cover-letter` | 论文 + 可选投稿信 | 投稿信生成与证据对齐 | 论文自身需要修改或审查 |
 | `paper-audit` | `.tex`、`.typ`、`.pdf` | 批评、阻塞项、投稿判断与复审 | 需要改源码或修编译 |
 | `latex-paper-en` | 英文 `.tex` | 源码编译与定向写作检查 | 需要全局审稿报告 |
-| `latex-thesis-zh` | 中文学位论文 `.tex` | 结构、国标、章节、规范与盲审 | 材料是英文论文 |
+| `latex-thesis-zh` | 中文学位论文 `.tex` ；评阅书 | 结构、国标、章节、规范与盲审 ；逐条回复、修改说明与覆盖/证据核对 | 材料是英文论文 ；Beamer 答辩稿或期刊/会议回复信 |
 | `typst-paper` | `.typ` | Typst 编译与定向写作检查 | 材料是 LaTeX |
 | `bib-search-citation` | `.bib` | 检索、过滤、原始条目与引用片段 | 需要核实论文是否支持 claim |
 | `paper-writing-studio` | 学术文本 + 可选 venue、期刊或领域 | 按 venue profile 润色与翻译，保留证据 token | 源文件需要编译、格式或结构处理 |
-| `latex-defense-zh` | 中文学位论文 LaTeX 仓库；学位论文评阅书 | Beamer 答辩稿、讲稿、保真质量门与预览；可粘贴的评阅意见逐条回复与覆盖、证据质量门 | 需要 `.pptx`、会议报告、期刊审稿回复信或修改论文正文 |
+| `latex-defense-zh` | 中文学位论文 LaTeX 仓库 | Beamer 答辩稿、讲稿、保真质量门与预览 | 需要 `.pptx`、会议报告或修改论文正文 |
 
 ## 当前路由
 
@@ -56,6 +56,10 @@
 研究生院清单用 `--template yanshan`。学院 2025 清单用 `--template yanshan-ee-2025`。二者并存。111 个状态不是 111 项已合规。局部 checker 不把复合项判为 PASS，MODULE 与 NEEDS-LLM 仍须人工复核。
 方法表达标签、把弱点写成优点、预告删除后失去先行词的代词、摘要引号，以及标题或章节安排句中的公式符号，只在既有 `logic`、`claim-forward`、`abstract`、`structure` 上做 LLM 判读。不新增脚本码、阈值或模块。
 
+回复模块：`rebuttal-intake`、`rebuttal-build`、`rebuttal-check`。只有评阅书也可先建台账；缺少论文证据的检查标为 skipped。
+
+评阅意见回复流程也有三个检查点：`rebuttal-intake` 后确认评阅人顺序与基线提交，`rebuttal-build --plan-only` 后批准修改计划，`rebuttal-check` 后交付粘贴文本。
+
 ### `typst-paper`
 
 `compile`、`format`、`bibliography`、`grammar`、`sentences`、`logic`、
@@ -74,9 +78,9 @@ profile 选择优先级为显式 venue > 期刊 allowlist > 明确 domain > `uns
 
 ### `latex-defense-zh`
 
-`extract`、`plan`、`build`、`check`、`preview`、`rebuttal-intake`、`rebuttal-build`、`rebuttal-check`。
+`extract`、`plan`、`build`、`check`、`preview`。
 
-流程有三个用户检查点：`extract` 后确认章角色，`build` 前确认结论句串读，`preview` 后确认交付清单。评阅意见回复流程也有三个检查点：`rebuttal-intake` 后确认评阅人顺序与基线提交，`rebuttal-build --plan-only` 后批准修改计划，`rebuttal-check` 后交付粘贴文本。
+流程有三个用户检查点：`extract` 后确认章角色，`build` 前确认结论句串读，`preview` 后确认交付清单。
 
 ## 资源加载
 

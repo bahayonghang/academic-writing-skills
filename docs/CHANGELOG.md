@@ -22,6 +22,9 @@
 
 ### Fixed
 
+- 纠正评阅回复能力归属：将三条 rebuttal CLI、台账、16 个 R-* 码、测试与双语资源迁入 `latex-thesis-zh`；
+  `latex-defense-zh` 恢复为 Beamer 答辩稿五模块。原台账 schema 不变，回复命令须从 thesis 安装目录运行；新增独立复制安装回归，回复无需安装 defense 包。
+
 - `latex-defense-zh`：`figure-grid` 帧没有小节条时，子图网格被 Beamer 当作帧副标题吞掉而不显示，改用 `\begingroup` 分组；
   `build_deck.py --force` 不再重写内容未变的文件，避免 latexmk 跳过重编后 `defense.pdf` 早于 `defense.tex` 而误报 D-COMPILE。
 - `docs/scripts/check_resource_sync.py` 的资源清单排序改为与平台无关（按路径分段不区分大小写），Linux 与 Windows 生成同一清单。
