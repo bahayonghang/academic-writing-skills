@@ -1870,3 +1870,39 @@ C3 端到端证据与归档；C4 SKILL.md、示例、evals、agents、第八个 
 ### Status
 
 [OK] **Completed**
+
+
+## Session 55: 纠正中文学位论文评阅回复能力归属
+<!-- trellis-session: v=2 fp=91d060adcef5cabf -->
+
+**Date**: 2026-10-15
+**Task**: 纠正中文学位论文评阅回复能力归属
+**Branch**: `dev`
+
+### Summary
+
+将中文学位论文评阅意见回复能力从 latex-defense-zh 迁移至 latex-thesis-zh，恢复 defense 答辩基线并同步双语文档与契约
+
+### Main Changes
+
+- 从 latex-defense-zh 中移除误加的评阅意见提取、回复生成及质量门能力，恢复至 53c2ab5 基线
+- 在 latex-thesis-zh 中实现完整的评阅意见回复功能（intake/build/check）、参考文档、示例及配套测试
+- 更新中英文 README、使用文档、技能首页、资源清单与规格契约
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9a22fa5` | refactor(latex-defense-zh): 移除误加的评阅回复能力并恢复答辩稿基线 |
+| `4935fb7` | feat(latex-thesis-zh): 迁入中文学位论文评阅意见回复能力及配套测试 |
+| `4946cd2` | docs: 纠正评阅回复在双语文档、规格契约与资源清单中的归属 |
+
+### Testing
+
+- [OK] check-versions、lint、typecheck 全部通过
+- [OK] latex_thesis_zh、latex_defense_zh 与契约测试全部通过（1619 passed, 9 skipped）
+- [OK] check_resource_sync（305 项资源）与 just doc-build 通过
+
+### Status
+
+[OK] **Completed**
