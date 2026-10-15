@@ -319,6 +319,33 @@
     {
       "skill": "latex-defense-zh",
       "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/rebuttal-gate.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "408e9ce5f2b771de45fa07cc85447077c0205117d2f6e44df5ee3b7d05bae19d",
+      "en": "docs/skills/latex-defense-zh/resources/references/rebuttal-gate.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-gate.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/rebuttal-workflow.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "cb8b57273fe4de51c64f5e936fad40edf171efc45bed447be2a8a15ff76e89aa",
+      "en": "docs/skills/latex-defense-zh/resources/references/rebuttal-workflow.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-workflow.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
+      "source": "academic-writing-skills/latex-defense-zh/references/rebuttal-writing.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "72665b3c8189be89bbcb2c538a77b9d7515813435288aacb1e9ea2c901ddf634",
+      "en": "docs/skills/latex-defense-zh/resources/references/rebuttal-writing.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/references/rebuttal-writing.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "references",
       "source": "academic-writing-skills/latex-defense-zh/references/slide-layouts.md",
       "sourceLocale": "zh",
       "sourceSha256": "c1fd5c4af331ddab264a01d0cad8da56ba6ff6f5d025537108c0c6db18951470",
@@ -378,6 +405,15 @@
       "sourceSha256": "a41126ab212d0778ade3bd12603296632cb8fc4992eabdb1d43a99805b2cd55a",
       "en": "docs/skills/latex-defense-zh/resources/examples/predefense-40min.md",
       "zh": "docs/zh/skills/latex-defense-zh/resources/examples/predefense-40min.md"
+    },
+    {
+      "skill": "latex-defense-zh",
+      "kind": "examples",
+      "source": "academic-writing-skills/latex-defense-zh/examples/review-response.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "48adb2991f762ec292dd96e1c2c8823bc38e016053e87526dff8b154f9bfd0c2",
+      "en": "docs/skills/latex-defense-zh/resources/examples/review-response.md",
+      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/review-response.md"
     },
     {
       "skill": "latex-defense-zh",

@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/10-15-defense-zh-rebuttal/design.md", "reason": "父任务契约：目录、台账、R-* 码、CLI 与退出码"}
+{"file": ".trellis/tasks/10-15-defense-zh-rebuttal/research/review-format-facts.md", "reason": "评阅书结构、水印页脚、aux 与 git 事实（已脱敏）"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试、lint、pyright 与 Windows 编码约定"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "新增 references/examples 须同步双语资源页与 manifest"}
+{"file": ".trellis/spec/academic-writing-skills/harness-workflow-contract.md", "reason": "UTF-8 子进程协议与证据分层"}

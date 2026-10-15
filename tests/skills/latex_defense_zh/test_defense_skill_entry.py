@@ -9,7 +9,16 @@ from tests.support.paths import SKILLS_ROOT
 
 SKILL_ROOT = SKILLS_ROOT / "latex-defense-zh"
 SKILL_MD = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
-MODULES = {"extract", "plan", "build", "check", "preview"}
+MODULES = {
+    "extract",
+    "plan",
+    "build",
+    "check",
+    "preview",
+    "rebuttal-intake",
+    "rebuttal-build",
+    "rebuttal-check",
+}
 
 
 def _section(name: str) -> str:

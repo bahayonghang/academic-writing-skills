@@ -1,0 +1,226 @@
+# Synthetic completed ledger for the rebuttal C2 tests. All content is invented.
+# It matches reviews/评阅书1.txt and reviews/评阅书2.txt. Paths are relative to the thesis root.
+schema: rebuttal-ledger/1
+reviewers:
+  - id: R1
+    total_score: 88
+    grade: A
+    agree_defense: 同意答辩
+    praise: 论文围绕示例路网交通流量预测问题，提出了时空融合预测方法，实验较为充分，结构完整，同意参加答辩。
+  - id: R2
+    total_score: 85
+    grade: B
+    agree_defense: 同意答辩
+    praise: 论文选题具有工程应用价值，对比实验较为充分。
+concerns:
+  - id: R1-1
+    reviewer: R1
+    item: 1
+    quote: 验证数据仅来自单一示例路网，跨路网迁移能力缺乏实证，建议补充讨论。
+    quote_short: null
+    category: generalization
+    severity: Major
+    priority: P1
+    shared_with: []
+    anchors: []
+    action: future_work
+    status: done
+    owner: none
+    plan: 列为后续工作，在回复中说明数据条件。
+    response: 跨路网迁移的实证需要第二个具有同类检测器布设的路网数据，目前尚不具备该条件，本文将其列为后续工作。
+    locations: []
+    evidence:
+      kind: none
+      files: []
+      note: ""
+    source: "[LLM]"
+  - id: R1-2
+    reviewer: R1
+    item: 2
+    quote: 第2章问题形式化中式(2-1)的符号定义不完整，建议补充说明。
+    quote_short: null
+    category: writing
+    severity: Minor
+    priority: P2
+    shared_with: []
+    anchors:
+      - text: 式(2-1)
+        kind: equation
+        label: eq:c2-target
+        base_number: 2-1
+        base_page: 13
+    action: add
+    status: done
+    owner: latex-thesis-zh
+    plan: 在式(2-1)后补充全部符号的定义。
+    response: 已在式(2-1)之后补充预测函数、历史窗口长度与路网图各符号的定义。
+    locations:
+      - label: eq:c2-target
+    evidence:
+      kind: git_diff
+      files:
+        - chapters/chapter2.tex
+      note: ""
+    source: "[LLM]"
+  - id: R1-3a
+    reviewer: R1
+    item: 3
+    quote: 自定义缩写较多，影响可读性
+    quote_short: null
+    category: writing
+    severity: Minor
+    priority: P2
+    shared_with:
+      - R2-2
+    anchors: []
+    action: revise
+    status: done
+    owner: latex-thesis-zh
+    plan: 精简自定义缩写，首次出现时给出全称。
+    response: 已删除不常用的自定义缩写，其余缩写在首次出现处给出中文全称。
+    locations:
+      - file: chapters/chapter2.tex
+        section: "2.3"
+    evidence:
+      kind: git_diff
+      files:
+        - chapters/chapter2.tex
+      note: ""
+    source: "[LLM]"
+  - id: R1-3b
+    reviewer: R1
+    item: 3
+    quote: 图2-1文字过于密集
+    quote_short: null
+    category: figure
+    severity: Minor
+    priority: P2
+    shared_with: []
+    anchors:
+      - text: 图2-1
+        kind: figure
+        label: fig:c2-profile
+        base_number: 2-1
+        base_page: 12
+    action: revise
+    status: done
+    owner: drawio
+    plan: 重绘该图，减少图中文字。
+    response: 已重绘该图，删去图中重复的说明文字并放大坐标轴标注。
+    locations:
+      - label: fig:c2-profile
+    evidence:
+      kind: git_diff
+      files:
+        - chapters/chapter2.tex
+      note: ""
+    source: "[LLM]"
+  - id: R1-3c
+    reviewer: R1
+    item: 3
+    quote: 文献[3]著录信息不完整
+    quote_short: null
+    category: reference
+    severity: Minor
+    priority: P2
+    shared_with: []
+    anchors:
+      - text: 文献[3]
+        kind: reference
+        label: wang2019survey
+        base_number: "3"
+        base_page: null
+    action: revise
+    status: done
+    owner: manual
+    plan: 补全该文献的卷期与页码。
+    response: 已补全该文献的卷号、期号与起止页码。
+    locations:
+      - label: wang2019survey
+    evidence:
+      kind: git_diff
+      files:
+        - references.bib
+      note: ""
+    source: "[LLM]"
+  - id: R1-3d
+    reviewer: R1
+    item: 3
+    quote: 第2章与第3章衔接不足
+    quote_short: null
+    category: structure
+    severity: Minor
+    priority: P2
+    shared_with: []
+    anchors:
+      - text: 第2章
+        kind: chapter
+        label: chap:c2
+        base_number: "2"
+        base_page: 11
+      - text: 第3章
+        kind: chapter
+        label: chap:c3
+        base_number: "3"
+        base_page: 19
+    action: clarify
+    status: done
+    owner: none
+    plan: 在回复中说明两章的承接关系。
+    response: 第2章给出问题形式化与总体框架，第3章引言说明了本章方法对应框架中的补全环节，两章的承接关系在原文中有交代，此处在回复中加以说明。
+    locations: []
+    evidence:
+      kind: none
+      files: []
+      note: ""
+    source: "[LLM]"
+  - id: R2-1
+    reviewer: R2
+    item: 1
+    quote: 第3章至第5章的模型复杂度分析偏少，建议补充计算开销与1.5 倍数据规模下的运行时间。
+    quote_short: null
+    category: complexity
+    severity: Major
+    priority: P1
+    shared_with: []
+    anchors: []
+    action: decline
+    status: done
+    owner: none
+    plan: 说明各章已给出网络结构与参数规模。
+    response: 第3章至第5章的方法在离线阶段训练，在线阶段只执行一次前向计算，计算量由网络层数与节点数决定，各章给出了网络结构与参数规模；不同硬件平台上的开销评测超出本文的问题范围。
+    locations: []
+    evidence:
+      kind: none
+      files: []
+      note: ""
+    source: "[LLM]"
+  - id: R2-2
+    reviewer: R2
+    item: 2
+    quote: 2.3节的数据切分说明与文献[1,2]的做法差异未说明，建议补充。
+    quote_short: null
+    category: experiment
+    severity: Minor
+    priority: P2
+    shared_with:
+      - R1-3a
+    anchors:
+      - text: 2.3节
+        kind: section
+        label: sec:c2-3
+        base_number: "2.3"
+        base_page: 13
+    action: add
+    status: done
+    owner: latex-thesis-zh
+    plan: 在该节补充与对比文献数据切分方式的差异。
+    response: 已在该节补充本文按日期切分训练集与测试集的理由，并说明与对比文献随机切分方式的差异。
+    locations:
+      - label: sec:c2-3
+    evidence:
+      kind: git_diff
+      files:
+        - chapters/chapter2.tex
+      note: ""
+    source: "[LLM]"
