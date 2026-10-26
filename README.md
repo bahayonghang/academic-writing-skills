@@ -16,7 +16,7 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
+> Recommended models (highlighted are most recommended): **<mark>Claude Opus 5.5</mark> · Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · <mark>Gemini 4 Argon</mark> · <mark>Gemini 3.8 Flash</mark> · DeepSeek V4 Pro**
 >
 > Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
