@@ -65,6 +65,7 @@ Following `agents/qa-committee-agent.md`, take the inventory and the plan as inp
 ```
 
 Write the 1–2 most likely questions of each page into `notes.questions` of the plan; after the rebuild they appear in the "可能提问" (possible questions) field of `notes.md`.
+"可能提问" does not go into the presenter build `defense-notes.pdf`: on stage, the presenter screen shows only the key point, the speech, the transition, and the seconds.
 
 ## 5. Out of Scope for This Skill
 

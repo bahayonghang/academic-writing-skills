@@ -343,4 +343,14 @@
       (defense-card-label.east) -- (defense-card.west);
   \end{tikzpicture}\par\vspace{0.12cm}}
 
+% Speaker note of the frame, placed before \end{frame}. Only the presenter build
+% (defense-notes.tex, second screen on the right) shows it.
+% #1 key point, #2 script, #3 transition, #4 seconds.
+\newcommand\DefenseNote[4]{%
+  \note{\textbf{#1}\par\medskip
+    #2\par\medskip
+    {\color{gray}→ #3}\hfill{\scriptsize #4 秒}}}
+\setbeamerfont{note page}{size=\small}
+\setbeamertemplate{note page}[plain]
+
 \endinput

@@ -3,16 +3,20 @@
 Build the Beamer defense deck for academic-defense-beamer.
 
 The script checks slide_plan.yaml against inventory.json, then writes defense.tex,
-notes.md, thesis-macros.tex, build_manifest.json, and the three theme files into
-the output directory. Figures stay in the thesis repository: the deck finds them
-through a relative graphicspath. Equation and table bodies come from the
-inventory source text. The script escapes all plain text fields.
+defense-notes.tex, notes.md, thesis-macros.tex, build_manifest.json, and the three
+theme files into the output directory. Figures stay in the thesis repository: the
+deck finds them through a relative graphicspath. Equation and table bodies come
+from the inventory source text. The script escapes all plain text fields. Each
+frame carries its speaker note (\\DefenseNote); defense-notes.tex compiles the
+presenter build defense-notes.pdf with the notes on the right half of each page.
 
-Field and transformation rules: references/plan-schema.md.
+Field and transformation rules: references/plan-schema.md; presenting:
+references/presenting.md.
 
 Usage:
     uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml \
-        --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile]
+        --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] \
+        [--no-notes-pdf]
 
 Exit codes: 0 success; 2 input error; 4 an output file exists and --force is
 absent; 5 compile failure.
@@ -49,7 +53,16 @@ THEME_FILES = (
     "beamerthemeGenericDefense.sty",
     "defense-layouts.sty",
 )
-OWNED_FILES = ("defense.tex", "notes.md", "build_manifest.json", "thesis-macros.tex", *THEME_FILES)
+NOTES_TEX = "defense-notes.tex"
+NOTES_PDF = "defense-notes.pdf"
+OWNED_FILES = (
+    "defense.tex",
+    NOTES_TEX,
+    "notes.md",
+    "build_manifest.json",
+    "thesis-macros.tex",
+    *THEME_FILES,
+)
 THEMES = {"yanshan": "YanshanDefense", "generic": "GenericDefense"}
 STAGES = ("predefense", "defense")
 ROLES = (
@@ -160,8 +173,8 @@ def escape_plain(text: str) -> str:
     return "".join(ESCAPES.get(char, char) for char in text)
 
 
-def tex_escape(value: object) -> str:
-    """Escape a plan text field; ``**word**`` becomes ``\\DefenseHighlight{word}``."""
+def tex_escape(value: object, emphasis: str = "DefenseHighlight") -> str:
+    """Escape a plan text field; ``**word**`` becomes ``\\<emphasis>{word}``."""
     if value is None:
         return ""
     text = re.sub(r"\s+", " ", str(value)).strip()
@@ -169,7 +182,7 @@ def tex_escape(value: object) -> str:
     pos = 0
     for match in EMPHASIS_RE.finditer(text):
         parts.append(escape_plain(text[pos : match.start()]))
-        parts.append("\\DefenseHighlight{" + escape_plain(match.group(1)) + "}")
+        parts.append(f"\\{emphasis}{{" + escape_plain(match.group(1)) + "}")
         pos = match.end()
     parts.append(escape_plain(text[pos:]))
     return "".join(parts)
@@ -435,6 +448,20 @@ def figure_file(figure: dict, name: str, warnings: list[str]) -> str:
     return figure["files"][0]["path"]
 
 
+def frame_note(frame: dict) -> dict:
+    """Arguments of \\DefenseNote: key point, script, transition, seconds (no questions).
+
+    Empty fields stay empty; ``**word**`` becomes bold without the highlight color.
+    """
+    notes = frame.get("notes") or {}
+    return {
+        "key": tex_escape(notes.get("key"), "textbf"),
+        "say": tex_escape(notes.get("say"), "textbf"),
+        "transition": tex_escape(notes.get("transition"), "textbf"),
+        "seconds": notes.get("seconds") or 0,
+    }
+
+
 def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -> dict:
     layout = frame["layout"]
     chapter = frame.get("chapter")
@@ -443,6 +470,7 @@ def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -
         "role": frame["role"],
         "layout": layout,
         "chapter": "-" if chapter is None else str(chapter),
+        "note": frame_note(frame),
     }
     if layout == "toc":
         context["toc"] = chapter
@@ -644,6 +672,7 @@ def render(
     logo: str | None,
     digests: tuple[str, str],
     warnings: list[str],
+    notes_pdf: bool = True,
 ) -> dict[str, bytes]:
     meta = plan["meta"]
     if meta.get("inventory_sha256") not in (None, digests[1]):
@@ -706,6 +735,7 @@ def render(
     )
     files = {
         "defense.tex": deck.encode("utf-8"),
+        NOTES_TEX: env.get_template("defense-notes.tex.j2").render().encode("utf-8"),
         "notes.md": render_notes(plan).encode("utf-8"),
         "thesis-macros.tex": render_macros(inventory, plan, lookup).encode("utf-8"),
     }
@@ -714,6 +744,8 @@ def render(
     manifest = {
         "skill": "academic-defense-beamer",
         "version": skill_version(),
+        "backend": "beamer",
+        "notes_pdf": NOTES_PDF if notes_pdf else None,
         "theme": theme,
         "stage": meta["stage"],
         "frames": len(plan["frames"]),
@@ -728,20 +760,29 @@ def render(
     return files
 
 
-def compile_deck(out_dir: Path) -> int:
+def compile_deck(out_dir: Path, notes_pdf: bool = True) -> int:
+    """Compile defense.tex, then defense-notes.tex unless ``notes_pdf`` is false."""
     latexmk = shutil.which("latexmk")
     if latexmk is None:
         print(
             "错误：未找到 latexmk；请安装 TeX Live（含 XeLaTeX 与 latexmk）后重试", file=sys.stderr
         )
         return 5
+    code = compile_file(latexmk, out_dir, "defense.tex")
+    if code == 0 and notes_pdf:
+        code = compile_file(latexmk, out_dir, NOTES_TEX)
+    return code
+
+
+def compile_file(latexmk: str, out_dir: Path, name: str) -> int:
+    stem = Path(name).stem
     command = [
         latexmk,
         "-xelatex",
         "-interaction=nonstopmode",
         "-halt-on-error",
         "-file-line-error",
-        "defense.tex",
+        name,
     ]
     try:
         result = subprocess.run(
@@ -756,18 +797,18 @@ def compile_deck(out_dir: Path) -> int:
         failed = result.returncode != 0
     except subprocess.TimeoutExpired:
         failed = True
-    if failed or not (out_dir / "defense.pdf").is_file():
-        log = out_dir / "defense.log"
+    if failed or not (out_dir / f"{stem}.pdf").is_file():
+        log = out_dir / f"{stem}.log"
         tail = (
             log.read_text(encoding="utf-8", errors="replace").splitlines()[-40:]
             if log.is_file()
             else []
         )
-        print("错误：编译失败；defense.log 末 40 行：", file=sys.stderr)
+        print(f"错误：{name} 编译失败；{stem}.log 末 40 行：", file=sys.stderr)
         for line in tail:
             print(line, file=sys.stderr)
         return 5
-    print(f"已编译 {out_dir / 'defense.pdf'}")
+    print(f"已编译 {out_dir / f'{stem}.pdf'}")
     return 0
 
 
@@ -781,9 +822,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--out", required=True, help="输出目录（不存在时创建）")
     parser.add_argument("--logo", help="校徽图片路径；优先于规划与清单中的 logo")
-    parser.add_argument("--force", action="store_true", help="覆盖输出目录中由本脚本生成的七个文件")
-    parser.add_argument("--compile", action="store_true", help="生成后用 latexmk -xelatex 编译")
+    parser.add_argument("--force", action="store_true", help="覆盖输出目录中由本脚本生成的八个文件")
+    parser.add_argument(
+        "--compile",
+        action="store_true",
+        help="生成后用 latexmk -xelatex 编译投屏版 defense.pdf 与备注版 defense-notes.pdf",
+    )
+    parser.add_argument(
+        "--no-notes-pdf",
+        action="store_true",
+        help="不编译备注版 defense-notes.pdf；build_manifest.json 的 notes_pdf 记为 null",
+    )
     args = parser.parse_args(argv)
+    notes_pdf = not args.no_notes_pdf
 
     warnings: list[str] = []
     try:
@@ -799,7 +850,7 @@ def main(argv: list[str] | None = None) -> int:
         if errors:
             raise BuildError("规划校验未通过：\n" + "\n".join(f"  - {error}" for error in errors))
         digests = (sha256(plan_bytes), sha256(inventory_bytes))
-        files = render(plan, inventory, lookup, out_dir, args.logo, digests, warnings)
+        files = render(plan, inventory, lookup, out_dir, args.logo, digests, warnings, notes_pdf)
     except BuildError as exc:
         print(f"错误：{exc}", file=sys.stderr)
         return 2
@@ -807,7 +858,7 @@ def main(argv: list[str] | None = None) -> int:
     existing = [name for name in OWNED_FILES if (out_dir / name).exists()]
     if existing and not args.force:
         print(
-            f"错误：输出目录已有 {'、'.join(existing)}；确认覆盖时加 --force（只覆盖本脚本生成的七个文件）",
+            f"错误：输出目录已有 {'、'.join(existing)}；确认覆盖时加 --force（只覆盖本脚本生成的八个文件）",
             file=sys.stderr,
         )
         return 4
@@ -822,7 +873,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"已写入 {out_dir}：帧数 {len(plan['frames'])}；warnings {len(warnings)} 条")
     for warning in warnings:
         print(f"  警告：{warning}")
-    return compile_deck(out_dir) if args.compile else 0
+    return compile_deck(out_dir, notes_pdf) if args.compile else 0
 
 
 if __name__ == "__main__":

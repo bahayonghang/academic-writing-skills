@@ -9,6 +9,7 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 - Plan page counts and seconds per page for a 15–90 minute talk; the default is 40 minutes.
 - Write five-field speaker notes (what to say, key point, seconds, transition, possible questions) and prepare the questions the committee may ask.
 - Check a built deck for compilation, overflow, density, time budget, and the thesis source of its facts.
+- Put the speaker notes into a presenter PDF (`defense-notes.pdf`) for two-screen presenting in FerroStage or pympress.
 
 ## Do Not Use It For
 
@@ -23,8 +24,8 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 | --------- | -------------------------------------------------------------------------- | --------------------------- |
 | `extract` | Read-only extraction of metadata, chapter tree, figures, tables, equations, publications, and conclusions | `scripts/extract_thesis.py` |
 | `plan`    | Generate the plan skeleton; after filling, print the takeaway outline      | `scripts/plan_deck.py`      |
-| `build`   | Render `defense.tex`, speaker notes, and themes, then compile              | `scripts/build_deck.py`     |
-| `check`   | Quality gate with 21 D-* codes                                             | `scripts/check_deck.py`     |
+| `build`   | Render `defense.tex`, speaker notes, and themes, then compile the slide and presenter PDFs | `scripts/build_deck.py`     |
+| `check`   | Quality gate with 22 D-* codes                                             | `scripts/check_deck.py`     |
 | `preview` | Page PNGs and a contact sheet                                              | `scripts/render_preview.py` |
 
 ## Workflow
@@ -33,6 +34,7 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 2. `plan` generates the skeleton; the LLM fills takeaways, bullets, and notes from thesis facts only; `--outline` prints the takeaways in page order (checkpoint 2).
 3. `build --compile` compiles, and `check` reports D-* results; change only the plan and rebuild, at most 3 rounds.
 4. `preview` renders the contact sheet for visual review; deliver the file list, quality-gate counts, and open items (checkpoint 3).
+5. Present: open `defense-notes.pdf` in FerroStage or pympress; submit and print `defense.pdf`.
 
 ## Minimum Inputs
 
@@ -44,9 +46,17 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 ## Output Artifacts
 
 - `inventory.json` and `slide_plan.yaml`.
-- In the output directory: `defense.tex`, `thesis-macros.tex`, `notes.md`, `build_manifest.json`, and copies of the theme packages; `defense.pdf` after compilation.
+- In the output directory: `defense.tex`, `defense-notes.tex`, `thesis-macros.tex`, `notes.md`, `build_manifest.json`, and copies of the theme packages; after compilation, the slide PDF `defense.pdf` and the presenter PDF `defense-notes.pdf` (slide on the left, speaker note on the right).
 - D-* result lines (Severity, Priority, and the `[Script]` tag), or `findings`, `summary`, and `skipped` with `--json`.
 - `preview/page-NNN.png` and `contact-sheet.png`.
+
+## Presenting and Speaker Notes
+
+Each frame carries its speaker note (key point, what to say, transition, seconds; possible questions stay in `notes.md`). `build --compile` also compiles `defense-notes.pdf`, where each 32:9 page shows the slide on the left and its note on the right.
+
+- [FerroStage](https://github.com/bahayonghang/ferrostage) (recommended, Windows x64): open `defense-notes.pdf`; it proposes the `Right` layout from the page ratio, or choose `Right` in the layout menu. The presenter window shows the notes and the audience window shows only the slide. There is no GitHub Release yet: build the installer from source with `just release`.
+- pympress (Linux, macOS, Windows) reads the same right-side Beamer notes.
+- `check` verifies the presenter PDF with D-NOTES-PDF (same page size, W/H in [3.1, 3.6], page count equal to `defense.pdf`, distinct adjacent page labels).
 
 ## Academic Fact Protection
 
@@ -62,6 +72,7 @@ The thesis repository is read-only; figures reference only the original thesis i
 - [Visual Specification](./resources/references/visual-spec.md)
 - [Time Budget](./resources/references/time-budget.md)
 - [Speaker Notes Format](./resources/references/speaker-notes.md)
+- [Presenting and Speaker Notes](./resources/references/presenting.md)
 - [Defense Question Preparation](./resources/references/qa-prep.md)
 - [Inventory and Plan Fields](./resources/references/plan-schema.md)
 - [Quality Gate](./resources/references/quality-gate.md)

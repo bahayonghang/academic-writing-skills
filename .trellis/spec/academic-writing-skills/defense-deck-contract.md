@@ -13,8 +13,8 @@ Beamer 主题与版式宏、D-* 判据、清单或规划字段，以及对应公
 extract_thesis.py --thesis DIR [--main FILE] --out inventory.json [--json]
 plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic]
 plan_deck.py --plan slide_plan.yaml --outline
-build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile]
-check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--minutes 40] [--json]
+build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf]
+check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 ```
 
@@ -24,8 +24,8 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 | --- | --- |
 | extract | 0 成功；2 主文件缺失或多个非盲审候选且无 `--main` |
 | plan | 0；2 参数或输入错误（`--minutes` 范围 15–90） |
-| build | 0；2 规划校验失败（含 `longtable`/`xltabular` 表体）；4 自有文件已存在且无 `--force`；5 编译失败或无 latexmk |
-| check | 0 无 Critical/Major；1 有；2 输入错误 |
+| build | 0；2 规划校验失败（含 `longtable`/`xltabular` 表体）；4 自有文件已存在且无 `--force`；5 投屏版或备注版编译失败，或无 latexmk |
+| check | 0 无 Critical/Major；1 有；2 输入错误（含 `--notes-pdf` 文件不存在） |
 | preview | 0；2 输入错误；3 缺 PyMuPDF（提示 `uv pip install pymupdf`） |
 
 ## 3. Contracts
@@ -40,15 +40,27 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 - 公式：清单 `tex` 的 `\label{x}` 变为 `\tag*{(编号)}`，其余字符不变，放在 `DefenseSource` 中；
   D-EQ-SRC 去掉 `\label`/`\tag`/`\notag`/`\nonumber` 与空白后与清单逐字比较。
 - 表体：`tabular_source` 原文放在 `DefenseSource` 与 `\adjustbox` 中；D-TAB-SRC 去掉空白后逐字比较。
-- 模板只调用主题宏 API（`\Defense*` 与 `DefenseSource`），`templates/jinja/` 中不定义宏。
+- 模板只调用主题宏 API（`\Defense*` 与 `DefenseSource`），`templates/jinja/` 中不定义宏。唯一例外是 `defense-notes.tex.j2`
+  的构建开关 `\def\DefenseNotesPDF{}`：它不是版式宏，只让 `deck.tex.j2` 导言区启用 second-screen 备注与页标签语句。
+- 演讲备注：每帧在 `\end{frame}` 前恰有一个 `\DefenseNote{要点}{说什么}{过渡}{秒数}`（`frames/_note.tex.j2`），宏定义在
+  `defense-layouts.sty`。文字按普通字段转义，`**关键词**` 变为 `\textbf`（不着色）；空栏为空串；可能提问不进入 PDF。
+  `\note` 必须在帧内：帧外 `\note` 会生成独立备注页，破坏「帧数 = PDF 页数」。
+- 备注版：`defense-notes.tex` 定义 `\DefenseNotesPDF` 后 `\input{defense.tex}`；导言区据此启用
+  `show notes on second screen=right`，并以 `\special{pdf:put @catalog <</PageLabels<</Nums[0<</S/D>>]>>>>}` 覆盖页标签。
+  不覆盖时 hyperref 为每个逻辑页（幻灯片与备注）各写一条标签，物理页标签变成 `1,1,2,2,…`，FerroStage 会把相邻两帧并成一组；
+  `\hypersetup{pdfpagelabels=false}` 不能阻止这些记录。备注版页数 = 投屏版页数，16:9 下 W/H ≈ 3.56。
 - 帧模板中，`\begin{frame}{<title>}` 之后不得直接跟花括号组：Beamer 把它当作帧副标题吞掉。分组一律用 `\begingroup … \endgroup`。
-- 自有文件七个：`defense.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json`、两个主题 `.sty` 与 `defense-layouts.sty`。
+- 自有文件八个：`defense.tex`、`defense-notes.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json`、两个主题 `.sty` 与
+  `defense-layouts.sty`。`build_manifest.json` 含 `backend: "beamer"` 与 `notes_pdf`（`defense-notes.pdf`，`--no-notes-pdf` 时为 `null`）。
   `--force` 只覆盖自有文件；内容未变的自有文件不重写，保留 mtime（latexmk 按内容哈希决定是否重编，
   重写同内容的 `defense.tex` 会让 PDF 早于答辩稿而误报 D-COMPILE）。
 - 只读：extract 与 check 不写论文仓库、答辩稿、清单与规划；preview 只写 `--out` 下的 `page-NNN.png` 与 `contact-sheet.png`。
-- D-* 码集合固定为 21 个：D-MARKER、D-COVERAGE、D-TOC、D-CHAIN、D-PLACEHOLDER、D-FIG-ALLOW、D-FIG-MISSING、D-FIG-NUMBER、
+- D-* 码集合固定为 22 个：D-MARKER、D-COVERAGE、D-TOC、D-CHAIN、D-PLACEHOLDER、D-FIG-ALLOW、D-FIG-MISSING、D-FIG-NUMBER、
   D-FIG-ASPECT、D-EQ-SRC、D-TAB-SRC、D-NUM-SRC、D-PAPER、D-META、D-STAGE、D-DENSITY、D-BUDGET、D-NOTES、D-COMPILE、
-  D-OVERFLOW-V、D-OVERFLOW-H。结果行：
+  D-OVERFLOW-V、D-OVERFLOW-H、D-NOTES-PDF（最后运行，`skipped` 中排在日志三码之后）。
+  `\DefenseNote` 的四个参数是隐藏参数：不计可见字符，不参与答辩稿侧的 D-NUM-SRC / D-FIG-NUMBER（讲稿侧由 `notes.md` 覆盖）；
+  D-PLACEHOLDER 的答辩稿扫描跳过 `\DefenseNote` 行。D-NOTES-PDF 用惰性导入的 PyMuPDF 读页尺寸与页标签，
+  `page.get_label()` 返回未解码的 `<FEFF…>` 十六进制串，必须按 UTF-16BE 解码后比较。结果行：
   `% D-CODE (frame=<id>, <file>:<行>) [Severity: …] [Priority: …]: [Script] message`；`--json` 含 `findings`、`summary`、`skipped`。
 
 ## 4. Validation & Error Matrix
@@ -59,24 +71,32 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 | 两个非盲审主文件且无 `--main` | extract 退出 2 |
 | 规划字段类型错误（例如 `figures` 为字符串列表） | build 列出全部错误并退出 2，不抛异常 |
 | 输出目录已有任一自有文件、无 `--force` | build 退出 4，不写任何文件 |
-| 只改讲稿后 `--force --compile` | 只重写 `notes.md` 与 `build_manifest.json`；check 不报 D-COMPILE |
+| 只改讲稿后 `--force --compile` | 重写 `defense.tex`（备注在其中）、`notes.md` 与 `build_manifest.json`，两份 PDF 都重编；check 不报 D-COMPILE |
+| 不改规划再 `--force` | 不重写任何自有文件，保留 mtime |
 | `figure-grid` 帧无小节条 | 子图网格仍显示（不被当作副标题） |
 | 无编译日志 | D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H 记入 `skipped` |
+| 未编译（无 `defense.pdf`）、manifest `notes_pdf: null`、缺 PyMuPDF | D-NOTES-PDF 记入 `skipped` |
+| 已编译投屏版但缺 `defense-notes.pdf` | D-NOTES-PDF Minor |
+| 备注版比例出带、尺寸不一、页数不等、无法读取 | D-NOTES-PDF Major；相邻页标签相同为 Minor，帧数等于页数时定位到后一页的帧 |
+| 帧内 `\DefenseNote` 不是恰好 1 次 | D-NOTES Minor |
 | 缺 `notes.md` | D-NOTES Major |
 | 清单外图片、论文外数字、改写公式 | 分别报 D-FIG-ALLOW、D-NUM-SRC（NEEDS-LLM）、D-EQ-SRC |
 
 ## 5. Good / Base / Bad Cases
 
 - Good：修改一个 D-* 判据时，同时改 `check_deck.py`、`references/quality-gate.md`（含双语资源页与 manifest 散列）与该码的正反例测试。
-- Base：只改讲稿文字后重建，`defense.tex` 字节与 mtime 不变，latexmk 不重编，check 零结果。
+- Base：规划不变时重建，全部自有文件字节与 mtime 不变，latexmk 不重编，check 零结果；只改讲稿时 `defense.tex` 随备注重写，两份 PDF 重编。
 - Bad：在帧模板里写 `{\centering …}` 紧跟帧标题；在文字字段里写 `$…$` 期望渲染数学；为消除 D-NUM-SRC 把数字换成另一个自算的数字。
 
 ## 6. Tests Required
 
 - `tests/skills/academic_defense_beamer/`：`test_defense_theme_assets.py`（主题常量、宏 API、演示稿编译）、`test_defense_budget.py`、
   `test_defense_extract.py`、`test_defense_plan.py`、`test_defense_build.py`（帧标记序列、转义、公式与表体还原、`--force`、
-  帧标题后无花括号组、未变文件保留 mtime）、`test_defense_check.py`（21 码正反例与输出契约）、`test_defense_preview.py`。
-- 编译用例只在 `DEFENSE_COMPILE=1` 且有 xelatex/latexmk 时运行；预览用例在无 PyMuPDF 时 skip。
+  帧标题后无花括号组、未变文件保留 mtime、每帧一个 `\DefenseNote`、备注转义、`--no-notes-pdf`）、
+  `test_defense_check.py`（22 码正反例与输出契约；D-NOTES-PDF 用 PyMuPDF 合成 PDF 覆盖比例、页数、重复标签、缺文件，
+  另有 manifest 关闭与缺 PyMuPDF 两个 skip 用例）、`test_defense_preview.py`。
+- 编译用例只在 `DEFENSE_COMPILE=1` 且有 xelatex/latexmk 时运行，并断言备注版 54 页、W/H 3.56、页标签 `1…54`；
+  预览与 D-NOTES-PDF 用例在无 PyMuPDF 时 skip（项目依赖不含 PyMuPDF，验证时用 `uv run --with pymupdf pytest …`）。
   `conftest.py` 在收集阶段预导入 PyMuPDF：它在首次导入时绑定 `sys.stdout`，若首次导入发生在 `capsys` 测试内，后续用例会写入已关闭的流。
 - 契约测试：`tests/contracts/test_skill_contracts.py`（路由命令参数出现在 `--help`、命令卫生、`allowed-tools`）、
   `test_skill_versions.py`、`test_skills_install.py`、`test_trigger_evals.py`、`test_docs_bilingual_resources.py`。

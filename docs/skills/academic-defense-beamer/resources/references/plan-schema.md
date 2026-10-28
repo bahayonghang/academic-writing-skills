@@ -8,19 +8,19 @@ This file specifies the fields, types, and values of the extraction inventory `i
 uv run python -B $SKILL_DIR/scripts/extract_thesis.py --thesis <THESIS_REPO> --out inventory.json [--main FILE] [--json]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan slide_plan.yaml --outline
-uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile]
+uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf]
 ```
 
 1. `extract_thesis.py` reads the thesis repository in read-only mode and writes the inventory.
 2. `plan_deck.py` makes the plan skeleton from the inventory. It writes a placeholder into each field to fill.
 3. The LLM fills the placeholders as [Content Rules](content-rules.md) specifies. `--outline` prints the frame titles and the takeaway sentences in page order for user confirmation.
-4. `build_deck.py` validates the plan and writes the defense deck, the speaker notes, and the theme files. With `--compile`, it compiles the deck with latexmk.
+4. `build_deck.py` validates the plan and writes the defense deck, the presenter build wrapper, the speaker notes, and the theme files. With `--compile`, it uses latexmk to compile the slide build `defense.pdf` first and then the presenter build `defense-notes.pdf`. With `--no-notes-pdf`, it compiles only the slide build.
 
 | Script              | Exit codes                                                                                                                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `extract_thesis.py` | 0: success, also when there are warnings; 2: the thesis directory does not exist, the main file is missing, or there are two or more main file candidates and the user did not specify one |
 | `plan_deck.py`      | 0: success; 2: an argument error, an input file that the script cannot read, or minutes and chapter roles outside the scope of [Time Budget](time-budget.md)                               |
-| `build_deck.py`     | 0: success; 2: an input error or a validation failure; 4: the output directory already contains an owned file and `--force` is absent; 5: latexmk is not found, or the compilation fails   |
+| `build_deck.py`     | 0: success; 2: an input error or a validation failure; 4: the output directory already contains an owned file and `--force` is absent; 5: latexmk is not found, or either compilation fails (the error message names which one)   |
 
 ## Inventory
 
@@ -361,13 +361,14 @@ The preamble of `defense.tex` has one line `\DefenseDefineLabel{<label>}{<编号
 
 | File                                                                                    | Content                                                                                                                                            |
 | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `defense.tex`                                                                           | Defense deck                                                                                                                                       |
+| `defense.tex`                                                                           | Defense deck; each frame has one `\DefenseNote` speaker note                                                                                       |
+| `defense-notes.tex`                                                                     | Presenter build wrapper: it defines `\DefenseNotesPDF`, then loads `defense.tex`, and compiles to `defense-notes.pdf`                              |
 | `thesis-macros.tex`                                                                     | Thesis macros                                                                                                                                      |
 | `notes.md`                                                                              | Speaker notes; for the format, see [Speaker Notes Format](speaker-notes.md)                                                                        |
-| `build_manifest.json`                                                                   | Skill version, theme, stage, frame count, SHA-256 of the plan and of the inventory, SHA-256 of the other six files, and the warnings; no timestamp |
+| `build_manifest.json`                                                                   | Skill version, backend (`backend: beamer`), presenter build file name (`notes_pdf`; with `--no-notes-pdf` it is `null`), theme, stage, frame count, SHA-256 of the plan and of the inventory, SHA-256 of the other seven files, and the warnings; no timestamp |
 | `beamerthemeYanshanDefense.sty`, `beamerthemeGenericDefense.sty`, `defense-layouts.sty` | Copies of the theme and layout packages                                                                                                            |
 
-These seven files are the owned files of the build script. If an owned file exists and `--force` is absent, the build script exits with code 4 and writes no file. `--force` overwrites only the owned files. It does not delete other files in the output directory. An owned file whose content equals the existing file is not rewritten and keeps its modification time: when latexmk decides by content that no rebuild is needed, `defense.pdf` does not become older than `defense.tex`.
+These eight files are the owned files of the build script. When only the speaker notes change, the notes in `defense.tex` change with them, so `defense.tex` is rewritten and triggers a recompilation. This is expected. If an owned file exists and `--force` is absent, the build script exits with code 4 and writes no file. `--force` overwrites only the owned files. It does not delete other files in the output directory. An owned file whose content equals the existing file is not rewritten and keeps its modification time: when latexmk decides by content that no rebuild is needed, `defense.pdf` does not become older than `defense.tex`.
 
 `defense.tex` has a frame marker on the line before each `\begin{frame}`. The quality gate uses the frame markers to map line numbers, page roles, and page order:
 

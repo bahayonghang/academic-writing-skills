@@ -57,6 +57,7 @@ LAYOUT_API = (
     "DefenseCaption",
     "DefensePaperBox",
     "DefenseCard",
+    "DefenseNote",
     "DefenseSource",
 )
 

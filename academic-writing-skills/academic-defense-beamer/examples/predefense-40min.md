@@ -101,3 +101,5 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf defense-work/deck/de
 
 > 答辩稿 54 页，编译通过；质量门 Critical 0、Major 0、Minor 0。需要您确认：封面上的导师职称与答辩日期；
 > 第 6 章应用效果页的数字与论文表6-1一致。讲稿在 `defense-work/deck/notes.md`。
+> 双屏放映请用 FerroStage（或 pympress）打开 `defense-work/deck/defense-notes.pdf`：演讲者屏显示讲稿，投影只显示幻灯片；
+> 提交与打印用 `defense.pdf`。

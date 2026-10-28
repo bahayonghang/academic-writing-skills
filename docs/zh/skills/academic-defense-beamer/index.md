@@ -9,6 +9,7 @@
 - 按 15–90 分钟的汇报时长规划页数与每页秒数，默认 40 分钟。
 - 写五栏讲稿（说什么、关键点、秒数、过渡、可能提问），准备答辩委员可能提出的问题。
 - 检查已生成答辩稿的编译、溢出、密度、时长与论文事实来源。
+- 把讲稿写进备注版 PDF（`defense-notes.pdf`），用 FerroStage 或 pympress 双屏放映。
 
 ## 不适用场景
 
@@ -23,8 +24,8 @@
 | --------- | -------------------------------------------- | --------------------------- |
 | `extract` | 只读提取元数据、章节树、图表公式、成果与结论 | `scripts/extract_thesis.py` |
 | `plan`    | 生成规划骨架；填写后输出结论句串读           | `scripts/plan_deck.py`      |
-| `build`   | 渲染 `defense.tex`、讲稿与主题并编译         | `scripts/build_deck.py`     |
-| `check`   | 21 个 D-* 码的质量门                         | `scripts/check_deck.py`     |
+| `build`   | 渲染 `defense.tex`、讲稿与主题，编译投屏版与备注版 PDF | `scripts/build_deck.py`     |
+| `check`   | 22 个 D-* 码的质量门                         | `scripts/check_deck.py`     |
 | `preview` | 逐页 PNG 与总览图                            | `scripts/render_preview.py` |
 
 ## 工作流
@@ -33,6 +34,7 @@
 2. `plan` 生成骨架，LLM 只用论文事实填写结论句、要点与讲稿；`--outline` 串读结论句（检查点 2）。
 3. `build --compile` 编译，`check` 报告 D-* 结果；只改规划并重建，最多 3 轮。
 4. `preview` 目视总览图，交付文件清单、质量门计数与遗留项（检查点 3）。
+5. 放映：用 FerroStage 或 pympress 打开 `defense-notes.pdf`；提交与打印用 `defense.pdf`。
 
 ## 最小输入
 
@@ -44,9 +46,17 @@
 ## 输出产物
 
 - `inventory.json` 与 `slide_plan.yaml`。
-- 输出目录中的 `defense.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json` 与主题宏包副本；编译后得到 `defense.pdf`。
+- 输出目录中的 `defense.tex`、`defense-notes.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json` 与主题宏包副本；编译后得到投屏版 `defense.pdf` 与备注版 `defense-notes.pdf`（左幻灯片、右演讲备注）。
 - D-* 结果行（Severity、Priority 与 `[Script]` 标记），或 `--json` 的 `findings`、`summary` 与 `skipped`。
 - `preview/page-NNN.png` 与 `contact-sheet.png`。
+
+## 放映与演讲备注
+
+每帧带一段演讲备注（要点、说什么、过渡、秒数；可能提问只在 `notes.md`）。`build --compile` 另外编译 `defense-notes.pdf`，每页 32:9，左半为幻灯片，右半为该帧备注。
+
+- [FerroStage](https://github.com/bahayonghang/ferrostage)（推荐，Windows x64）：打开 `defense-notes.pdf`，按页面比例自动给出 `Right` 布局，或在布局菜单手动选 `Right`；演讲者窗口显示备注，观众窗口只显示幻灯片。目前没有 GitHub Release，需从源码 `just release` 生成安装包。
+- pympress（Linux、macOS、Windows）同样识别 Beamer 右侧备注。
+- `check` 用 D-NOTES-PDF 核对备注版：页面同尺寸、W/H 在 [3.1, 3.6]、页数等于 `defense.pdf`、相邻页标签互不相同。
 
 ## 学术事实保护
 
@@ -62,6 +72,7 @@
 - [视觉规格](./resources/references/visual-spec.md)
 - [时长预算](./resources/references/time-budget.md)
 - [讲稿格式](./resources/references/speaker-notes.md)
+- [放映与演讲备注](./resources/references/presenting.md)
 - [答辩提问准备](./resources/references/qa-prep.md)
 - [清单与规划字段](./resources/references/plan-schema.md)
 - [质量门](./resources/references/quality-gate.md)

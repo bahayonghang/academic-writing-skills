@@ -34,13 +34,14 @@ LLM 按内容规范填写结论句、要点与讲稿，再渲染、编译并用�
 
 ## Capability Summary
 
-- 五个模块：`extract`（只读提取清单）、`plan`（按时长与阶段生成规划骨架、串读大纲）、`build`（渲染 `defense.tex`、讲稿与主题并编译）、
-  `check`（21 个 D-* 码的质量门）、`preview`（逐页 PNG 与总览图）。
+- 五个模块：`extract`（只读提取清单）、`plan`（按时长与阶段生成规划骨架、串读大纲）、`build`（渲染 `defense.tex`、讲稿与主题并编译投屏版与备注版 PDF）、
+  `check`（22 个 D-* 码的质量门）、`preview`（逐页 PNG 与总览图）。
 - 页序遵循博士预答辩框架：封面 → 总目录 → 绪论 → 每章前目录（当前章高亮）→ 研究章（引言、问题、方法、实验、小结与「论文」框）→
   应用章 → 结论（创新点、展望）→ 致谢；章角色 `intro`、`foundation`、`research`、`application`、`conclusion` 可在规划中覆盖。
 - 两套主题：`yanshan`（复刻参考框架的颜色、版位与字号层级）与 `generic`（同版式、中性配色、无校徽）；校徽只从论文仓库读取。
 - 保真：图只引用论文原图，公式与表体逐字取自论文源，数字、成果与创新点只取自论文；质量门报告清单外的图、数字、公式、表体与成果。
 - 讲稿五栏（说什么、关键点、秒数、过渡、可能提问）与答辩提问准备（`agents/qa-committee-agent.md`）。
+- 讲稿写入 PDF：备注版 `defense-notes.pdf` 每页左幻灯片、右备注，推荐用 FerroStage（Windows）或 pympress 双屏放映。
 
 ## Triggering
 
@@ -65,16 +66,16 @@ LLM 按内容规范填写结论句、要点与讲稿，再渲染、编译并用�
 | --------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `extract` | 只读提取元数据、章节树与章角色建议、图表、公式、成果与结论条目 | `uv run python -B $SKILL_DIR/scripts/extract_thesis.py --thesis $THESIS --out $OUT/inventory.json --json`                                                                  | `references/plan-schema.md`                                                            |
 | `plan`    | 按时长与阶段生成规划骨架；填写后输出串读大纲                 | `uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory $OUT/inventory.json --out $OUT/slide_plan.yaml --minutes 40 --stage predefense --theme yanshan`            | `references/defense-framework.md`、`references/time-budget.md`、`references/content-rules.md` |
-| `build`   | 校验规划，渲染答辩稿、讲稿与主题，并编译                   | `uv run python -B $SKILL_DIR/scripts/build_deck.py --plan $OUT/slide_plan.yaml --inventory $OUT/inventory.json --out $OUT/deck --compile`                                   | `references/slide-layouts.md`、`references/visual-spec.md`、`references/speaker-notes.md` |
-| `check`   | D-* 质量门：结构、图、源文本、密度、时长、讲稿、编译         | `uv run python -B $SKILL_DIR/scripts/check_deck.py --deck $OUT/deck/defense.tex --inventory $OUT/inventory.json --plan $OUT/slide_plan.yaml --json`                        | `references/quality-gate.md`                                                           |
+| `build`   | 校验规划，渲染答辩稿、讲稿与主题，并编译                   | `uv run python -B $SKILL_DIR/scripts/build_deck.py --plan $OUT/slide_plan.yaml --inventory $OUT/inventory.json --out $OUT/deck --compile`                                   | `references/slide-layouts.md`、`references/visual-spec.md`、`references/speaker-notes.md`、`references/presenting.md` |
+| `check`   | D-* 质量门：结构、图、源文本、密度、时长、讲稿、编译、备注版 PDF | `uv run python -B $SKILL_DIR/scripts/check_deck.py --deck $OUT/deck/defense.tex --inventory $OUT/inventory.json --plan $OUT/slide_plan.yaml --json`                        | `references/quality-gate.md`                                                           |
 | `preview` | 逐页 PNG 与带页码的总览图，供目视检查                       | `uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf $OUT/deck/defense.pdf --out $OUT/deck/preview --cols 4`                                                       | `references/quality-gate.md`（预览与目视检查）                                         |
 
 串读大纲：`uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan $OUT/slide_plan.yaml --outline`。
 主文件有多个候选（例如正式版与盲审版并存）时，`extract` 加 `--main document.tex`。重建已有输出时 `build` 加 `--force`；
-`--logo PATH` 覆盖规划与清单中的校徽。
+`--logo PATH` 覆盖规划与清单中的校徽；`--no-notes-pdf` 只编译投屏版。`check` 默认读同目录的 `defense-notes.pdf`，可用 `--notes-pdf` 指定。
 
 退出码：`extract` 2 = 主文件缺失或多候选未指定；`plan` 2 = 参数或输入错误；`build` 2 = 规划校验失败，4 = 目标文件已存在且无 `--force`，
-5 = 编译失败；`check` 1 = 有 Critical 或 Major，2 = 输入错误；`preview` 3 = 缺少 PyMuPDF（运行 `uv pip install pymupdf`）。
+5 = 投屏版或备注版编译失败；`check` 1 = 有 Critical 或 Major，2 = 输入错误；`preview` 3 = 缺少 PyMuPDF（运行 `uv pip install pymupdf`）。
 
 ## Required Inputs
 
@@ -88,8 +89,8 @@ LLM 按内容规范填写结论句、要点与讲稿，再渲染、编译并用�
 ## Output Contract
 
 - `$OUT/inventory.json`（清单）与 `$OUT/slide_plan.yaml`（规划），字段见 `references/plan-schema.md`。
-- `$OUT/deck/` 下七个自有文件：`defense.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json`、
-  `beamerthemeYanshanDefense.sty`、`beamerthemeGenericDefense.sty`、`defense-layouts.sty`；编译后另有 `defense.pdf` 与 `defense.log`。
+- `$OUT/deck/` 下八个自有文件：`defense.tex`、`defense-notes.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json`、
+  `beamerthemeYanshanDefense.sty`、`beamerthemeGenericDefense.sty`、`defense-layouts.sty`；编译后另有投屏版 `defense.pdf`、备注版 `defense-notes.pdf` 与两份 `.log`。
 - 质量门结果行：`% D-CODE (frame=<id>, defense.tex:<行>) [Severity: Critical|Major|Minor|Info] [Priority: P0|P1|P2|P3]: [Script] message`；
   `--json` 含 `findings[]`、`summary`、`skipped`。LLM 的判断另标 `[LLM]`。
 - `$OUT/deck/preview/page-NNN.png` 与 `contact-sheet.png`。
@@ -106,8 +107,9 @@ LLM 按内容规范填写结论句、要点与讲稿，再渲染、编译并用�
 5. `check`：按 `references/quality-gate.md` 修规划并 `build --force --compile` 重建，**最多 3 轮**；
    溢出与过密按「删减文字 → 拆页 → 换版式 → 缩小图宽」处理；D-NUM-SRC 逐条回到论文原句复核（NEEDS-LLM）。
 6. `preview`：生成总览图并逐页目视（标题位置、图清晰度、强调色不超过 3 处、页脚不遮挡、章前目录高亮）。
-7. 可选：按 `agents/qa-committee-agent.md` 为每个研究章准备 3–5 个答辩提问与答案骨架。
-8. **检查点 3**：交付文件清单、质量门计数与遗留项，由用户决定是否继续修改。
+7. 放映：告知用户用 FerroStage 或 pympress 打开 `defense-notes.pdf` 双屏放映，提交与打印用 `defense.pdf`（`references/presenting.md`）。
+8. 可选：按 `agents/qa-committee-agent.md` 为每个研究章准备 3–5 个答辩提问与答案骨架。
+9. **检查点 3**：交付文件清单、质量门计数与遗留项，由用户决定是否继续修改。
 
 脚本失败时停止当前步骤，报告命令与退出码，再给出最小的下一步。
 
@@ -133,12 +135,13 @@ If this session has no native delegate, run the question-preparation agent seque
 - `references/content-rules.md`：帧标题、结论句、要点字数、图表与数字、公式、强调、创新点与展望写法、溢出处置顺序。
 - `references/visual-spec.md`：两主题颜色、版位、字号层级、字体回退与校徽规则。
 - `references/time-budget.md`：分钟→页数与秒数公式、参考区间。
-- `references/speaker-notes.md`：讲稿五栏与 `notes.md` 格式。
+- `references/speaker-notes.md`：讲稿五栏、`notes.md` 格式与进入 PDF 的备注。
+- `references/presenting.md`：投屏版与备注版、备注页内容、FerroStage 与 pympress 放映方法。
 - `references/qa-prep.md`：答辩提问类别与答案骨架。
 - `references/plan-schema.md`：清单与规划字段、骨架预填规则、构建转义与变换规则、已知限制。
 - `references/quality-gate.md`：D-* 码表、阈值、修复循环、NEEDS-LLM 复核、预览目视清单。
 - `templates/beamer/`：`beamerthemeYanshanDefense.sty`、`beamerthemeGenericDefense.sty`、`defense-layouts.sty`（页型宏）与 `demo-deck.tex`（全版式演示稿）。
-- `templates/jinja/`：`deck.tex.j2` 与 `frames/<layout>.tex.j2` 帧模板，由 `build_deck.py` 使用，不手改。
+- `templates/jinja/`：`deck.tex.j2`、`defense-notes.tex.j2`、`frames/<layout>.tex.j2` 帧模板与 `frames/_note.tex.j2`，由 `build_deck.py` 使用，不手改。
 - `agents/qa-committee-agent.md`：答辩委员会提问准备 agent。
 
 只读当前步骤需要的文件。

@@ -101,3 +101,5 @@ Example delivery note:
 
 > The deck has 54 pages and compiles; quality gate Critical 0, Major 0, Minor 0. Please confirm: the supervisor title and the defense date on the cover;
 > the numbers on the Chapter 6 application-effect page match Table 6-1 of the thesis. The speaker notes are in `defense-work/deck/notes.md`.
+> For two-screen presenting, open `defense-work/deck/defense-notes.pdf` with FerroStage (or pympress): the presenter screen shows the speaker notes, and the projector shows only the slides;
+> use `defense.pdf` for submission and printing.

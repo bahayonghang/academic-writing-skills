@@ -5,18 +5,19 @@ This file specifies the D-* codes, criteria, thresholds, severities, and fixes o
 ## Usage
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--minutes 40] [--json]
+uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 ```
 
-- `check_deck.py` reads the defense deck, the `notes.md` and the `defense.log` in the same directory, the inventory, and the thesis source files. It does not write files.
+- `check_deck.py` reads the defense deck, the `notes.md`, `defense.log`, `build_manifest.json`, and the presenter build `defense-notes.pdf` in the same directory, the inventory, and the thesis source files. It does not write files.
 - When `--log` is absent, the script uses the `defense.log` in the deck directory. When that file does not exist, D-COMPILE, D-OVERFLOW-V, and D-OVERFLOW-H go into `skipped`.
 - With `--plan`, the chapter roles and the stage come from the plan. Without a plan, the script infers the chapter roles from the page roles in the frame markers. The minutes come from `--minutes`, then from the plan `meta.minutes`, then from the default 40.
+- D-NOTES-PDF goes into `skipped` in these cases: `build_manifest.json` records `notes_pdf` as `null` (a `--no-notes-pdf` build); `--notes-pdf` is absent and the deck directory has no `defense.pdf` (the deck is not compiled yet); PyMuPDF is not installed. When the file that `--notes-pdf` gives does not exist, the script exits with 2.
 - When the script cannot read the thesis repository, D-NUM-SRC goes into `skipped`. When the script cannot find the role of each chapter, it does not do the content frame count check of D-BUDGET, and D-BUDGET goes into `skipped`. The check of the total notes seconds runs in all cases.
 
 | Script              | Exit codes                                                                                                                                                                                                                                     |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `check_deck.py`     | 0: no Critical or Major finding; 1: one or more Critical or Major findings; 2: the deck does not exist, the script cannot read the inventory or the plan, the file that `--log` gives does not exist, or `--minutes` is not in the range 15–90 |
+| `check_deck.py`     | 0: no Critical or Major finding; 1: one or more Critical or Major findings; 2: the deck does not exist, the script cannot read the inventory or the plan, the file that `--log` or `--notes-pdf` gives does not exist, or `--minutes` is not in the range 15–90 |
 | `render_preview.py` | 0: success; 2: the PDF does not exist or the script cannot open it, or `--dpi` or `--cols` is not a positive integer; 3: PyMuPDF is not installed                                                                                              |
 
 ## Output Format
@@ -25,11 +26,11 @@ In text mode, each finding is one line. The last line is the summary:
 
 ```text
 % D-NUM-SRC (frame=c3-experiment-2, defense.tex:271) [Severity: Major] [Priority: P1]: [Script] Meaning-Check: NEEDS-LLM：数字 37.25 在论文全文中没有同形数字；回到论文原句核对
-% 汇总：Critical 0，Major 1，Minor 0，Info 0；skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H
+% 汇总：Critical 0，Major 1，Minor 0，Info 0；skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H、D-NOTES-PDF
 ```
 
 - `frame` is the id in the frame marker. For a frame without a marker, the value is `#` and the frame index, for example `#17`. For preamble fields, whole-deck counts, and log lines that do not map to a frame, the value is `-`.
-- The location has the form “file:line”. A finding in the speaker notes gives `notes.md`. A log finding that does not map to a deck line gives `defense.log`. A missing or old PDF gives `defense.pdf`. When there is no line number, the line is `-`.
+- The location has the form “file:line”. A finding in the speaker notes gives `notes.md`. A log finding that does not map to a deck line gives `defense.log`. A missing or old PDF gives `defense.pdf`. A finding in the presenter build gives `defense-notes.pdf`, and its line is the page number. When there is no line number, the line is `-`.
 - A log finding that maps to a frame gives the log line number at the end of the message, for example “（defense.log:1234）”.
 - A NEEDS-LLM finding has `Meaning-Check: NEEDS-LLM：` before the message.
 - The findings are in frame order, and the findings with `frame=-` come first. In one frame, the order is by code, file, and line.
@@ -53,7 +54,7 @@ In text mode, each finding is one line. The last line is the summary:
     }
   ],
   "summary": { "Critical": 0, "Major": 1, "Minor": 0, "Info": 0 },
-  "skipped": ["D-COMPILE", "D-OVERFLOW-V", "D-OVERFLOW-H"]
+  "skipped": ["D-COMPILE", "D-OVERFLOW-V", "D-OVERFLOW-H", "D-NOTES-PDF"]
 }
 ```
 
@@ -68,7 +69,7 @@ In text mode, each finding is one line. The last line is the summary:
 
 ## Code Table
 
-In this section, “visible characters” are the characters that stay in a frame after the script removes comments, `DefenseSource` environments, the frame title, figure file arguments, and environment arguments, and then deletes command names and braces. Whitespace does not count. A “content frame” is a frame whose page role is not cover, toc, thanks, or backup.
+In this section, “visible characters” are the characters that stay in a frame after the script removes comments, `DefenseSource` environments, the frame title, figure file arguments, the four arguments of `\DefenseNote`, and environment arguments, and then deletes command names and braces. Whitespace does not count. A “content frame” is a frame whose page role is not cover, toc, thanks, or backup.
 
 ### Structure
 
@@ -79,7 +80,7 @@ In this section, “visible characters” are the characters that stay in a fram
 | D-COVERAGE    | Complete framework                                 | The first frame (backup pages excluded) is not cover, or the last frame is not thanks; the introduction chapter does not have one of background, status, challenges, organization; the foundation chapter does not have foundation; a research chapter does not have one of intro, problem, method, experiment, summary; the application chapter does not have one of intro, architecture, application; the conclusion chapter does not have one of innovation, outlook | Major / P1 | Add the missing page roles in the plan                                                                                                         |
 | D-TOC         | Table of contents                                  | The second frame is not `\DefenseTocFrame{0}`; from chapter 2 on, a chapter has no chapter TOC, the argument of the chapter TOC is not the chapter number, or the chapter TOC is not immediately before the first frame of the chapter                                                                                                                                                                                                                                  | Major / P1 | Put the toc frame of the chapter back into the plan, immediately before the first frame of the chapter                                         |
 | D-CHAIN       | Problems, research chapters, and innovations match | The card count of the challenges frame or of the innovation frame is not equal to the count of research chapter intro frames; the subsection bar of a research chapter intro frame is not “研究内容 i：章题” (research item i: chapter title), where i is the position of the chapter among the research chapters                                                                                                                                                       | Major / P1 | Make the problem cards, the research chapters, and the innovation cards match one to one; change the subsection bars in research chapter order |
-| D-PLACEHOLDER | Placeholders                                       | The deck or the notes contain `〔待填写〕`, `TODO`, `TBD`, or `XXX`                                                                                                                                                                                                                                                                                                                                                                                                     | Major / P1 | Fill the field in the plan, then build again                                                                                                   |
+| D-PLACEHOLDER | Placeholders                                       | The deck (except the `\DefenseNote` lines, whose content comes from the notes) or the notes contain `〔待填写〕`, `TODO`, `TBD`, or `XXX`                                                                                                                                                                                                                                                                                                                                                                                                     | Major / P1 | Fill the field in the plan, then build again                                                                                                   |
 
 ### Figures
 
@@ -117,6 +118,7 @@ In this section, “visible characters” are the characters that stay in a fram
 | D-BUDGET  | Page budget   | The total of the “时长” (duration) fields in the notes (backup pages excluded) is different from 60 × minutes by more than 10%                                                                      | Minor / P2 | Adjust `notes.seconds` of the frames in the plan                                                                                                      |
 | D-NOTES   | Speaker notes | The deck directory has no `notes.md`                                                                                                                                                                | Major / P1 | Run `build_deck.py` again                                                                                                                             |
 | D-NOTES   | Speaker notes | A frame has no notes section, or its notes section does not have one of the five fields; the “说什么” field of a content frame is not 150–250 characters                                            | Minor / P2 | Complete the `notes` fields of the frame in the plan                                                                                                  |
+| D-NOTES   | Speaker notes | A frame does not have exactly one `\DefenseNote` call                                                                                                                                               | Minor / P2 | Run `build_deck.py` again; do not edit `defense.tex` by hand                                                                                          |
 
 ### Compilation
 
@@ -127,6 +129,15 @@ In this section, “visible characters” are the characters that stay in a fram
 | D-OVERFLOW-V | Vertical overflow   | The log has `Overfull \vbox`                                                                                                                                                       | Major / P1    | Use the overflow handling order in [Content Rules](content-rules.md)                                                            |
 | D-OVERFLOW-H | Horizontal overflow | The log has `Overfull \hbox` with an overflow of more than 20pt                                                                                                                    | Major / P1    | The same                                                                                                                        |
 | D-OVERFLOW-H | Horizontal overflow | The overflow is more than 5pt and not more than 20pt. The script does not report an overflow of 5pt or less                                                                        | Minor / P2    | The same                                                                                                                        |
+
+### Presenter PDF
+
+| Code        | Meaning       | Criterion                                                                                                                         | Severity   | Fix                                                                                                                       |
+| ----------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| D-NOTES-PDF | Presenter PDF | The page sizes differ; a page width-to-height ratio is not in [3.1, 3.6]; the page count is not that of `defense.pdf`; the script cannot read the PDF | Major / P1 | Compile both PDFs again with `build_deck.py --force --compile`; do not edit `defense-notes.tex` by hand                   |
+| D-NOTES-PDF | Presenter PDF | The presenter build is expected but the file does not exist; two adjacent pages have the same page label (FerroStage merges them into one page) | Minor / P2 | The same. When adjacent page labels are the same, make sure that the page label statement of the presenter build is still in the `defense.tex` preamble |
+
+The ratio band comes from the same-page split rule of FerroStage: when all pages of a PDF have the same size and W/H is in the band, it splits each page into “slide on the left, notes on the right”. A 16:9 slide with notes on the right is 32:9 (about 3.56). The script decodes page labels as the PDF specification specifies before the comparison, and empty labels do not count as the same. When the frame count equals the page count of the presenter build, a label finding maps to the frame of the second page. For how to present, see [Presenting and Speaker Notes](presenting.md).
 
 The script maps a log finding to a frame with these line numbers: the `l.` line number or the “file:line” of an error line, the line number after `detected at line` and `at lines`, and the `on input line` number of an undefined reference. When the line number is in no frame, the finding has `frame=-`.
 
@@ -148,6 +159,7 @@ Exclusions and matching rules of D-NUM-SRC:
 | Horizontal overflow (Minor, Major)            | 5pt, 20pt | D-OVERFLOW-H |
 | Bitmap height-to-width ratio                  | 1.6       | D-FIG-ASPECT |
 | Bitmap width-to-height ratio                  | 3         | D-FIG-ASPECT |
+| Page width-to-height ratio of the presenter build | 3.1–3.6 | D-NOTES-PDF |
 
 The thresholds above are initial values and are not calibrated. The values 180 and 260 and the range 150–250 did not come from a calibration on a corpus of defense decks. Do not adjust the thresholds for one thesis. The layout limits come from [Layout Catalog](slide-layouts.md).
 
@@ -155,7 +167,7 @@ The thresholds above are initial values and are not calibrated. The values 180 a
 
 1. Run `check_deck.py`.
 2. Change `slide_plan.yaml` as each code specifies. Do not edit `defense.tex` directly.
-3. Build the deck again with `build_deck.py --force --compile`.
+3. Build the deck again with `build_deck.py --force --compile`. This compiles the slide build and the presenter build again.
 4. Run `check_deck.py` again.
 
 Do a maximum of 3 rounds. If Critical or Major findings stay after round 3, list the remaining findings and let the user decide.

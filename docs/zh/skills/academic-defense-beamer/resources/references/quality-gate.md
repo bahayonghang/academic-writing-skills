@@ -5,18 +5,19 @@
 ## 用法
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--minutes 40] [--json]
+uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 ```
 
-- `check_deck.py` 读取答辩稿、同目录的 `notes.md` 与 `defense.log`、清单与论文源文件，不写文件。
+- `check_deck.py` 读取答辩稿、同目录的 `notes.md`、`defense.log`、`build_manifest.json` 与备注版 `defense-notes.pdf`、清单与论文源文件，不写文件。
 - `--log` 缺省时使用答辩稿目录中的 `defense.log`。该文件不存在时，D-COMPILE、D-OVERFLOW-V 与 D-OVERFLOW-H 记入 `skipped`。
 - 提供 `--plan` 时，章角色与阶段取自规划。未提供时，章角色按帧标记中的页角色推断。分钟数依次取 `--minutes`、规划 `meta.minutes`、40。
+- D-NOTES-PDF 在以下情况记入 `skipped`：`build_manifest.json` 的 `notes_pdf` 为 `null`（`--no-notes-pdf` 构建）；未指定 `--notes-pdf` 且答辩稿目录中没有 `defense.pdf`（尚未编译）；未安装 PyMuPDF。`--notes-pdf` 指定的文件不存在时退出 2。
 - 论文仓库不可读时，D-NUM-SRC 记入 `skipped`。章角色不能全部确定时，D-BUDGET 的内容帧数检查不执行，D-BUDGET 记入 `skipped`；讲稿秒数合计检查照常执行。
 
 | 脚本                | 退出码                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `check_deck.py`     | 0：没有 Critical 与 Major 结果；1：至少一条 Critical 或 Major 结果；2：答辩稿不存在，清单或规划无法读取，`--log` 指定的文件不存在，或 `--minutes` 不在 15–90 |
+| `check_deck.py`     | 0：没有 Critical 与 Major 结果；1：至少一条 Critical 或 Major 结果；2：答辩稿不存在，清单或规划无法读取，`--log` 或 `--notes-pdf` 指定的文件不存在，或 `--minutes` 不在 15–90 |
 | `render_preview.py` | 0：成功；2：PDF 不存在或无法打开，或 `--dpi`、`--cols` 不是正整数；3：未安装 PyMuPDF                                                                         |
 
 ## 输出格式
@@ -25,11 +26,11 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 
 ```text
 % D-NUM-SRC (frame=c3-experiment-2, defense.tex:271) [Severity: Major] [Priority: P1]: [Script] Meaning-Check: NEEDS-LLM：数字 37.25 在论文全文中没有同形数字；回到论文原句核对
-% 汇总：Critical 0，Major 1，Minor 0，Info 0；skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H
+% 汇总：Critical 0，Major 1，Minor 0，Info 0；skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H、D-NOTES-PDF
 ```
 
 - `frame` 为帧标记中的 id。缺少帧标记的帧写 `#` 加帧序号，例如 `#17`。导言区字段、全稿统计与不能映射到帧的日志行写 `-`。
-- 位置写「文件:行号」。讲稿中的结果写 `notes.md`，不能映射到答辩稿行的日志结果写 `defense.log`，PDF 缺失或过期写 `defense.pdf`。没有行号时写 `-`。
+- 位置写「文件:行号」。讲稿中的结果写 `notes.md`，不能映射到答辩稿行的日志结果写 `defense.log`，PDF 缺失或过期写 `defense.pdf`，备注版的结果写 `defense-notes.pdf`，行号位置为页码。没有行号时写 `-`。
 - 映射到帧的日志结果在消息末尾注明日志行号，例如「（defense.log:1234）」。
 - NEEDS-LLM 结果在消息前加 `Meaning-Check: NEEDS-LLM：`。
 - 结果按帧序排序，`frame=-` 的结果在最前；同一帧内按码名、文件与行号排序。
@@ -53,7 +54,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
     }
   ],
   "summary": { "Critical": 0, "Major": 1, "Minor": 0, "Info": 0 },
-  "skipped": ["D-COMPILE", "D-OVERFLOW-V", "D-OVERFLOW-H"]
+  "skipped": ["D-COMPILE", "D-OVERFLOW-V", "D-OVERFLOW-H", "D-NOTES-PDF"]
 }
 ```
 
@@ -68,7 +69,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 
 ## 码表
 
-本节的「可见字符」指帧内去掉注释、`DefenseSource` 环境、帧标题、图文件参数与环境参数，再删去命令名与花括号后剩余的字符，空白不计。「内容帧」指页角色不是 cover、toc、thanks、backup 的帧。
+本节的「可见字符」指帧内去掉注释、`DefenseSource` 环境、帧标题、图文件参数、`\DefenseNote` 的四个参数与环境参数，再删去命令名与花括号后剩余的字符，空白不计。「内容帧」指页角色不是 cover、toc、thanks、backup 的帧。
 
 ### 结构
 
@@ -79,7 +80,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 | D-COVERAGE    | 框架完整                 | 首帧（备用页除外）不是 cover，或末帧不是 thanks；绪论章缺 background、status、challenges、organization 之一；基础章缺 foundation；研究章缺 intro、problem、method、experiment、summary 之一；应用章缺 intro、architecture、application 之一；结论章缺 innovation、outlook 之一 | Major / P1 | 在规划中补齐缺少的页角色                                             |
 | D-TOC         | 目录                     | 第二帧不是 `\DefenseTocFrame{0}`；第 2 章起某章缺少章前目录，章前目录的参数不等于章号，或章前目录不紧接在该章首帧之前                                                                                                                                                          | Major / P1 | 在规划中恢复该章的 toc 帧，放在该章首帧之前                          |
 | D-CHAIN       | 问题、研究章与创新点对应 | challenges 帧的卡片数或 innovation 帧的卡片数不等于研究章 intro 帧数；研究章 intro 帧的小节条不是「研究内容 i：章题」，i 为该章在研究章中的序号                                                                                                                                | Major / P1 | 使问题卡片、研究章与创新点卡片一一对应；按研究章顺序改小节条         |
-| D-PLACEHOLDER | 占位符                   | 答辩稿或讲稿含 `〔待填写〕`、`TODO`、`TBD` 或 `XXX`                                                                                                                                                                                                                            | Major / P1 | 在规划中填写该字段后重建                                             |
+| D-PLACEHOLDER | 占位符                   | 答辩稿（`\DefenseNote` 行除外，其内容来自讲稿）或讲稿含 `〔待填写〕`、`TODO`、`TBD` 或 `XXX`                                                                                                                                                                                                                            | Major / P1 | 在规划中填写该字段后重建                                             |
 
 ### 图
 
@@ -117,6 +118,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 | D-BUDGET  | 页数预算 | 讲稿各节（备用页除外）「时长」合计与 60 × 分钟数相差超过 10%                                  | Minor / P2 | 调整规划中各帧的 `notes.seconds`                                                             |
 | D-NOTES   | 讲稿     | 答辩稿目录中没有 `notes.md`                                                                   | Major / P1 | 重新运行 `build_deck.py`                                                                     |
 | D-NOTES   | 讲稿     | 某帧没有讲稿节，或讲稿节缺少五栏之一；内容帧的「说什么」不在 150–250 字                       | Minor / P2 | 补写规划中该帧的 `notes` 字段                                                                |
+| D-NOTES   | 讲稿     | 某帧内 `\DefenseNote` 调用不是恰好 1 次                                                     | Minor / P2 | 重新运行 `build_deck.py`，不手改 `defense.tex`                                               |
 
 ### 编译
 
@@ -127,6 +129,15 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 | D-OVERFLOW-V | 纵向溢出 | 日志含 `Overfull \vbox`                                                                                                              | Major / P1    | 按 [内容规范](content-rules.md) 的溢出处置顺序处理                       |
 | D-OVERFLOW-H | 横向溢出 | 日志含 `Overfull \hbox`，超出量大于 20pt                                                                                             | Major / P1    | 同上                                                                     |
 | D-OVERFLOW-H | 横向溢出 | 超出量大于 5pt、不大于 20pt。不大于 5pt 时不报告                                                                                     | Minor / P2    | 同上                                                                     |
+
+### 备注版 PDF
+
+| 码          | 含义       | 判据                                                                                       | 严重度     | 处置                                                                         |
+| ----------- | ---------- | ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------- |
+| D-NOTES-PDF | 备注版 PDF | 页面尺寸不一致；页宽高比不在 [3.1, 3.6]；页数不等于 `defense.pdf`；PDF 无法读取             | Major / P1 | `build_deck.py --force --compile` 重编两份 PDF；不手改 `defense-notes.tex`   |
+| D-NOTES-PDF | 备注版 PDF | 应有备注版而文件不存在；相邻两页的页标签相同（FerroStage 会并成一页）                      | Minor / P2 | 同上。相邻页标签相同时，确认 `defense.tex` 导言区的备注版页标签语句仍在     |
+
+页宽高比带取自 FerroStage 的同页拼合规则：整份 PDF 同尺寸且 W/H 在带内时自动按「左幻灯片、右备注」拆分。16:9 幻灯片加右侧备注为 32:9（约 3.56）。页标签按 PDF 规范解码后比较，空标签不算相同。帧数等于备注版页数时，标签结果映射到后一页所属的帧。放映方法见 [放映与演讲备注](presenting.md)。
 
 日志结果按以下行号映射到帧：错误行的 `l.` 行号或「文件:行号」、`detected at line` 与 `at lines` 后的行号、未定义引用的 `on input line` 行号。行号不在任何帧内时，结果写 `frame=-`。
 
@@ -148,6 +159,7 @@ D-NUM-SRC 的排除项与匹配规则：
 | 横向溢出（Minor、Major） | 5pt、20pt | D-OVERFLOW-H |
 | 位图高宽比               | 1.6       | D-FIG-ASPECT |
 | 位图宽高比               | 3         | D-FIG-ASPECT |
+| 备注版页宽高比           | 3.1–3.6   | D-NOTES-PDF  |
 
 以上阈值为初始值，未标定。180 字、260 字与 150–250 字的区间没有经过答辩稿语料标定。不按单篇论文调整阈值。版式上限取自 [版式目录](slide-layouts.md)。
 
@@ -155,7 +167,7 @@ D-NUM-SRC 的排除项与匹配规则：
 
 1. 运行 `check_deck.py`。
 2. 按码修改 `slide_plan.yaml`，不直接改 `defense.tex`。
-3. 用 `build_deck.py --force --compile` 重建答辩稿。
+3. 用 `build_deck.py --force --compile` 重建答辩稿，同时重编投屏版与备注版。
 4. 再次运行 `check_deck.py`。
 
 最多 3 轮。第 3 轮后仍有 Critical 或 Major 结果时，列出剩余结果，交用户决定。

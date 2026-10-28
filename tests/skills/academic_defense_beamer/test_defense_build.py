@@ -138,8 +138,10 @@ def test_macros_notes_and_manifest(built_deck: Path) -> None:
     manifest = json.loads(read(built_deck / "build_manifest.json"))
     assert manifest["frames"] == 54
     assert manifest["theme"] == "YanshanDefense"
+    assert (manifest["backend"], manifest["notes_pdf"]) == ("beamer", "defense-notes.pdf")
     assert set(manifest["files"]) == {
         "defense.tex",
+        "defense-notes.tex",
         "notes.md",
         "thesis-macros.tex",
         "beamerthemeYanshanDefense.sty",
@@ -149,6 +151,46 @@ def test_macros_notes_and_manifest(built_deck: Path) -> None:
     for name, digest in manifest["files"].items():
         assert hashlib.sha256((built_deck / name).read_bytes()).hexdigest() == digest
     assert manifest["warnings"] == []
+
+
+def test_every_frame_has_one_speaker_note(built_deck: Path, filled_plan: dict) -> None:
+    tex = read(built_deck / "defense.tex")
+    frames = re.findall(r"\\begin\{frame\}.*?\\end\{frame\}", tex, re.S)
+    assert len(frames) == len(filled_plan["frames"]) == 54
+    for body, frame in zip(frames, filled_plan["frames"], strict=True):
+        assert body.count("\\DefenseNote{") == 1
+        lines = body.splitlines()
+        assert lines[-2].startswith("\\DefenseNote{") and lines[-1] == "\\end{frame}"
+        notes = frame["notes"]
+        assert lines[-2].endswith(f"{{{notes['transition']}}}{{{notes['seconds']}}}")
+    assert "可能提问" not in tex and "合成提问" not in tex
+    assert "\\ifdefined\\DefenseNotesPDF" in tex
+    assert "\\setbeameroption{show notes on second screen=right}" in tex
+    assert "/PageLabels<</Nums[0<</S/D>>]>>" in tex
+
+
+def test_speaker_note_escapes_text_and_bolds_emphasis(
+    filled_plan: dict, tmp_path: Path, defense_scripts
+) -> None:
+    frame = next(frame for frame in filled_plan["frames"] if frame["id"] == "c1-background-2")
+    frame["notes"].update(
+        {"key": "误差下降 **50%**", "say": "成本 $1_000 & 更多", "transition": "", "seconds": 45}
+    )
+    assert build(defense_scripts, tmp_path, filled_plan, "noted") == 0
+    tex = read(tmp_path / "noted" / "defense.tex")
+    assert "\\DefenseNote{误差下降 \\textbf{50\\%}}{成本 \\$1\\_000 \\& 更多}{}{45}" in tex
+
+
+def test_presenter_wrapper_and_no_notes_pdf(
+    built_deck: Path, filled_plan: dict, tmp_path: Path, defense_scripts
+) -> None:
+    wrapper = read(built_deck / "defense-notes.tex").splitlines()
+    assert wrapper[-2:] == ["\\def\\DefenseNotesPDF{}", "\\input{defense.tex}"]
+    assert build(defense_scripts, tmp_path, filled_plan, "slides-only", "--no-notes-pdf") == 0
+    manifest = json.loads(read(tmp_path / "slides-only" / "build_manifest.json"))
+    assert manifest["notes_pdf"] is None
+    assert (tmp_path / "slides-only" / "defense-notes.tex").is_file()
+    assert len(defense_scripts.build_deck.OWNED_FILES) == 8
 
 
 def test_select_macros_follows_macro_use(defense_scripts) -> None:
@@ -199,14 +241,17 @@ def test_force_keeps_unchanged_files(
     built_deck: Path, filled_plan: dict, tmp_path: Path, defense_scripts
 ) -> None:
     # latexmk skips a rebuild when defense.tex is unchanged, so its mtime must not move
-    # past defense.pdf; a notes-only edit rewrites notes.md alone.
+    # past defense.pdf. A notes-only edit changes the \DefenseNote in defense.tex too;
+    # the other files keep their mtimes.
     old = 1_000_000_000
     for path in built_deck.iterdir():
         os.utime(path, (old, old))
+    assert build(defense_scripts, tmp_path, filled_plan, "deck", "--force") == 0
+    assert [p.name for p in built_deck.iterdir() if p.stat().st_mtime != old] == []
     filled_plan["frames"][3]["notes"]["say"] += "补充一句讲稿。"
     assert build(defense_scripts, tmp_path, filled_plan, "deck", "--force") == 0
     changed = sorted(p.name for p in built_deck.iterdir() if p.stat().st_mtime != old)
-    assert changed == ["build_manifest.json", "notes.md"]
+    assert changed == ["build_manifest.json", "defense.tex", "notes.md"]
 
 
 @pytest.mark.parametrize(
@@ -278,5 +323,13 @@ def test_fixture_deck_compiles(
 ) -> None:
     filled_plan["meta"]["theme"] = theme
     assert build(defense_scripts, tmp_path, filled_plan, f"deck-{theme}", "--compile") == 0
-    log = read(tmp_path / f"deck-{theme}" / "defense.log")
-    assert "(54 pages" in log
+    out = tmp_path / f"deck-{theme}"
+    assert "(54 pages" in read(out / "defense.log")
+    # Presenter build: one physical page per frame, slide left and note right (32:9).
+    assert "(54 pages" in read(out / "defense-notes.log")
+    pymupdf = pytest.importorskip("pymupdf")
+    with pymupdf.open(out / "defense-notes.pdf") as document:
+        ratios = {round(page.rect.width / page.rect.height, 2) for page in document}
+        labels = [page.get_label() for page in document]
+    assert ratios == {3.56}
+    assert labels == [str(number) for number in range(1, 55)]

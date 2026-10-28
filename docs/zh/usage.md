@@ -23,7 +23,7 @@
 | `typst-paper` | `.typ` | Typst 编译与定向写作检查 | 材料是 LaTeX |
 | `bib-search-citation` | `.bib` | 检索、过滤、原始条目与引用片段 | 需要核实论文是否支持 claim |
 | `paper-writing-studio` | 学术文本 + 可选 venue、期刊或领域 | 按 venue profile 润色与翻译，保留证据 token | 源文件需要编译、格式或结构处理 |
-| `academic-defense-beamer` | 中文学位论文 LaTeX 仓库 | Beamer 答辩稿、讲稿、保真质量门与预览 | 需要 `.pptx`、会议报告或修改论文正文 |
+| `academic-defense-beamer` | 中文学位论文 LaTeX 仓库 | Beamer 答辩稿、讲稿、带备注的演讲者 PDF、保真质量门与预览 | 需要 `.pptx`、会议报告或修改论文正文 |
 
 ## 当前路由
 
@@ -81,6 +81,8 @@ profile 选择优先级为显式 venue > 期刊 allowlist > 明确 domain > `uns
 `extract`、`plan`、`build`、`check`、`preview`。
 
 流程有三个用户检查点：`extract` 后确认章角色，`build` 前确认结论句串读，`preview` 后确认交付清单。
+
+`build --compile` 生成投屏版 `defense.pdf` 与备注版 `defense-notes.pdf`（左幻灯片、右演讲备注）。用 FerroStage（Windows）或 pympress 放映 `defense-notes.pdf`。
 
 ## 资源加载
 

@@ -39,3 +39,8 @@ The build script writes one section for each frame, in frame order. The section 
 
 - When “可能提问” has two items, a full-width semicolon “；” separates the items.
 - A field that the plan file does not fill yet keeps the placeholder “〔待填写〕” (to be filled). The quality gate reports the remaining placeholders.
+
+## Notes in the PDF
+
+The speaker notes also go into the defense deck: before `\end{frame}`, each frame has one `\DefenseNote{要点}{说什么}{过渡}{秒数}`, and the presenter build `defense-notes.pdf` shows it on the right of the slide.
+“可能提问” (possible questions) does not go into the PDF. The presenter tool reads only the notes in the PDF, not `notes.md`. For how to present, see [Presenting and Speaker Notes](presenting.md).

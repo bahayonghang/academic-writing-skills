@@ -8,19 +8,19 @@
 uv run python -B $SKILL_DIR/scripts/extract_thesis.py --thesis <THESIS_REPO> --out inventory.json [--main FILE] [--json]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan slide_plan.yaml --outline
-uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile]
+uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf]
 ```
 
 1. `extract_thesis.py` 只读论文仓库，写出清单。
 2. `plan_deck.py` 由清单生成规划骨架，待填字段写占位符。
 3. LLM 按 [内容规范](content-rules.md) 填写占位符。`--outline` 按页序输出帧标题与结论句，交用户确认。
-4. `build_deck.py` 校验规划，写出答辩稿、讲稿与主题文件。加 `--compile` 时用 latexmk 编译。
+4. `build_deck.py` 校验规划，写出答辩稿、备注版包装文件、讲稿与主题文件。加 `--compile` 时用 latexmk 先编译投屏版 `defense.pdf`，再编译备注版 `defense-notes.pdf`；加 `--no-notes-pdf` 时只编译投屏版。
 
 | 脚本                | 退出码                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------- |
 | `extract_thesis.py` | 0：成功，有告警时也为 0；2：论文目录不存在、主文件缺失，或有多个主文件候选且未指定                      |
 | `plan_deck.py`      | 0：成功；2：参数错误、输入文件无法读取，或分钟数与章角色不在 [时长预算](time-budget.md) 的适用范围内    |
-| `build_deck.py`     | 0：成功；2：输入错误或校验未通过；4：输出目录已有自有文件且未加 `--force`；5：未找到 latexmk 或编译失败 |
+| `build_deck.py`     | 0：成功；2：输入错误或校验未通过；4：输出目录已有自有文件且未加 `--force`；5：未找到 latexmk，或任一份编译失败（错误信息指明是哪一份） |
 
 ## 清单
 
@@ -361,13 +361,14 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 
 | 文件                                                                                    | 内容                                                                                        |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `defense.tex`                                                                           | 答辩稿                                                                                      |
+| `defense.tex`                                                                           | 答辩稿；每帧含一个 `\DefenseNote` 演讲备注                                                 |
+| `defense-notes.tex`                                                                     | 备注版包装文件：定义 `\DefenseNotesPDF` 后载入 `defense.tex`，编译为 `defense-notes.pdf`  |
 | `thesis-macros.tex`                                                                     | 论文宏                                                                                      |
 | `notes.md`                                                                              | 讲稿，格式见 [讲稿格式](speaker-notes.md)                                                   |
-| `build_manifest.json`                                                                   | 技能版本、主题、阶段、帧数、规划与清单的 SHA-256、其余六个文件的 SHA-256 与告警；不含时间戳 |
+| `build_manifest.json`                                                                   | 技能版本、后端（`backend: beamer`）、备注版文件名（`notes_pdf`，`--no-notes-pdf` 时为 `null`）、主题、阶段、帧数、规划与清单的 SHA-256、其余七个文件的 SHA-256 与告警；不含时间戳 |
 | `beamerthemeYanshanDefense.sty`、`beamerthemeGenericDefense.sty`、`defense-layouts.sty` | 主题与版式宏包的副本                                                                        |
 
-这七个文件为构建脚本的自有文件。任一自有文件已存在且未加 `--force` 时，构建脚本退出 4，不写任何文件。`--force` 只覆盖自有文件，不删除输出目录中的其他文件。内容与现有文件相同的自有文件不重写，保留修改时间：latexmk 按内容判定无需重编时，`defense.pdf` 不会早于 `defense.tex`。
+这八个文件为构建脚本的自有文件。只改讲稿时，`defense.tex` 中的备注随之改变，`defense.tex` 会重写并触发重编，属预期行为。任一自有文件已存在且未加 `--force` 时，构建脚本退出 4，不写任何文件。`--force` 只覆盖自有文件，不删除输出目录中的其他文件。内容与现有文件相同的自有文件不重写，保留修改时间：latexmk 按内容判定无需重编时，`defense.pdf` 不会早于 `defense.tex`。
 
 `defense.tex` 在每个 `\begin{frame}` 的前一行写帧标记。质量门用帧标记映射行号、页角色与页序：
 

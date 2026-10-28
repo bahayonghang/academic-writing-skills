@@ -274,4 +274,5 @@
 | `\DefenseCaption{…}`                                               | 题注行，用于子图组总题注与表题                                                 |
 | `\DefensePaperBox{…}`                                              | 「论文」框                                                                     |
 | `\DefenseCard{标签}{正文}`                                         | 带标签与箭头的卡片                                                             |
+| `\DefenseNote{要点}{说什么}{过渡}{秒数}`                           | 帧内演讲备注，写在 `\end{frame}` 前；只在备注版 `defense-notes.pdf` 中显示      |
 | `DefenseSource`                                                    | 包住逐字复制的公式与表体；环境内 `\ref`、`\eqref` 输出论文编号，引文命令不输出 |

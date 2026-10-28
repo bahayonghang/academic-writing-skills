@@ -2,16 +2,17 @@
 """
 Quality gate for the academic-defense-beamer defense deck.
 
-The script reads defense.tex, notes.md, and defense.log in the build output
-directory, compares them with inventory.json and the thesis source, and prints
-D-* findings. It does not write files.
+The script reads defense.tex, notes.md, defense.log, and the presenter build
+defense-notes.pdf in the build output directory, compares them with
+inventory.json and the thesis source, and prints D-* findings. It does not write
+files. The PDF check imports PyMuPDF lazily and skips without it.
 
 Codes, criteria, thresholds, and fixes: references/quality-gate.md.
 
 Usage:
     uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex \
         --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] \
-        [--minutes 40] [--json]
+        [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 
 Exit codes: 0 no Critical or Major finding; 1 at least one Critical or Major
 finding; 2 input error.
@@ -26,6 +27,8 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 import yaml
 
@@ -126,6 +129,10 @@ BITMAP_SUFFIXES = (".png", ".jpg", ".jpeg")
 TALL_LAYOUTS = ("figure", "figure-grid", "equations-figure")
 NOTES_NAME = "notes.md"
 LOG_NAME = "defense.log"
+NOTES_PDF_NAME = "defense-notes.pdf"
+MANIFEST_NAME = "build_manifest.json"
+# FerroStage reads a same-size document with W/H in this band as slide left, notes right.
+NOTES_PDF_RATIO = (3.1, 3.6)
 LOG_WIDTH = 79  # TeX max_print_line: a longer message continues on the next log line
 
 MARKER_RE = re.compile(
@@ -143,6 +150,7 @@ HIDDEN_ARGS = {
     "hspace": 1,
     "vspace": 1,
     "label": 1,
+    "DefenseNote": 4,
 }
 HIDDEN_COMMAND_RE = re.compile(r"\\(" + "|".join(HIDDEN_ARGS) + r")(?![A-Za-z@])\*?")
 # Brace arguments after \begin{env} that are not visible text; the frame title is excluded.
@@ -165,6 +173,8 @@ RESEARCH_ITEM_RE = re.compile(r"研究内容\s*(\d+)")
 COLUMNS_RE = re.compile(r"\\begin\s*\{columns\}")
 TAKEAWAY_RE = re.compile(r"\\DefenseTakeaway(?![A-Za-z@])")
 PAPER_BOX_RE = re.compile(r"\\DefensePaperBox(?![A-Za-z@])")
+NOTE_CALL_RE = re.compile(r"\\DefenseNote(?![A-Za-z@])")
+HEX_LABEL_RE = re.compile(r"<([0-9A-Fa-f]*)>")
 COUNT_RES = {
     "item": re.compile(r"\\item(?![A-Za-z@])"),
     "card": re.compile(r"\\DefenseCard(?![A-Za-z@])"),
@@ -554,6 +564,8 @@ class Context:
     notes_lines: list[str] | None
     log_name: str
     log: list[tuple[int, str]] | None
+    notes_pdf: Path | None = None  # --notes-pdf; None means the deck directory default
+    manifest: dict | None = None  # build_manifest.json beside the deck, when readable
     notes: list[NoteSection] = field(default_factory=list)
     chapters: list[int] = field(default_factory=list)
     roles: dict[int, str | None] = field(default_factory=dict)
@@ -863,6 +875,8 @@ def check_chain(ctx: Context) -> None:
 
 def check_placeholder(ctx: Context) -> None:
     for number, line in enumerate(ctx.deck.lines, 1):
+        if NOTE_CALL_RE.match(line):
+            continue  # the speaker note repeats notes.md, which the second loop reports
         tokens = unique(PLACEHOLDER_RE.findall(line))
         if tokens:
             frame = ctx.deck.frame_at(number)
@@ -1203,6 +1217,11 @@ def check_budget(ctx: Context) -> None:
 
 
 def check_notes(ctx: Context) -> None:
+    for frame in ctx.deck.frames:
+        count = len(NOTE_CALL_RE.findall(frame.text))
+        if count != 1:
+            message = f"帧内 \\DefenseNote 调用 {count} 次，应恰为 1 次；重新运行 build_deck.py"
+            ctx.add("D-NOTES", "Minor", frame, message)
     if ctx.notes_lines is None:
         ctx.add("D-NOTES", "Major", None, "缺少 notes.md；重新运行 build_deck.py", file=NOTES_NAME)
         return
@@ -1297,6 +1316,92 @@ def check_overflow_h(ctx: Context) -> None:
         place(ctx, "D-OVERFLOW-H", severity, int(found) if found else None, number, message)
 
 
+# ---------------------------------------------------------------------------
+# Presenter PDF check
+# ---------------------------------------------------------------------------
+
+
+def load_pymupdf() -> ModuleType | None:
+    """PyMuPDF, or None when it is not installed."""
+    try:
+        import pymupdf
+    except ImportError:
+        return None
+    return pymupdf
+
+
+def page_label(page: Any) -> str:
+    """Page label with a PDF hex string (``<FEFF0031>``) decoded; PyMuPDF returns it raw."""
+    label = page.get_label() or ""
+    match = HEX_LABEL_RE.fullmatch(label)
+    if not match or len(match.group(1)) % 2:
+        return label
+    data = bytes.fromhex(match.group(1))
+    if data.startswith(b"\xfe\xff"):
+        return data[2:].decode("utf-16-be", errors="replace")
+    return data.decode("latin-1")
+
+
+def check_notes_pdf(ctx: Context) -> None:
+    """Presenter build: same-size pages in the FerroStage right-notes band, one per slide."""
+    manifest = ctx.manifest or {}
+    if ctx.notes_pdf is None and "notes_pdf" in manifest and manifest["notes_pdf"] is None:
+        ctx.skip("D-NOTES-PDF")  # built with --no-notes-pdf
+        return
+    slides = ctx.deck.path.with_suffix(".pdf")
+    if ctx.notes_pdf is None and not slides.is_file():
+        ctx.skip("D-NOTES-PDF")  # not compiled yet
+        return
+    pymupdf = load_pymupdf()
+    if pymupdf is None:
+        ctx.skip("D-NOTES-PDF")
+        return
+    path = ctx.notes_pdf or ctx.deck.path.parent / str(manifest.get("notes_pdf") or NOTES_PDF_NAME)
+    if not path.is_file():
+        message = f"缺少备注版 {path.name}；运行 build_deck.py --force --compile"
+        ctx.add("D-NOTES-PDF", "Minor", None, message, file=path.name)
+        return
+    try:
+        with pymupdf.open(path) as document:
+            sizes = [(page.rect.width, page.rect.height) for page in document]
+            labels = [page_label(page) for page in document]
+        slide_count = None
+        if slides.is_file():
+            with pymupdf.open(slides) as document:
+                slide_count = document.page_count
+    except Exception as exc:  # PyMuPDF raises several error types for a bad file
+        ctx.add("D-NOTES-PDF", "Major", None, f"无法读取 PDF：{exc}", file=path.name)
+        return
+    if not sizes:
+        ctx.add("D-NOTES-PDF", "Major", None, f"{path.name} 没有页面", file=path.name)
+        return
+    rounded = {(round(width, 1), round(height, 1)) for width, height in sizes}
+    low, high = NOTES_PDF_RATIO
+    if len(rounded) > 1:
+        message = f"页面尺寸不一致（{len(rounded)} 种）；FerroStage 不对混合尺寸拼合备注"
+        ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    else:
+        width, height = sizes[0]
+        ratio = width / height if height else 0.0
+        if not low <= ratio <= high:
+            message = (
+                f"页宽高比 {ratio:.2f} 不在 [{low}, {high}]；不是右侧备注的 second-screen 版式"
+            )
+            ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    if slide_count is not None and slide_count != len(sizes):
+        message = f"备注版 {len(sizes)} 页，投屏版 {slides.name} {slide_count} 页；两者应相等"
+        ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    frames = ctx.deck.frames if len(ctx.deck.frames) == len(sizes) else None
+    for index in range(1, len(labels)):
+        if labels[index] and labels[index] == labels[index - 1]:
+            message = (
+                f"第 {index} 页与第 {index + 1} 页页标签同为「{labels[index]}」；"
+                "FerroStage 会把它们并成一页"
+            )
+            frame = frames[index] if frames else None
+            ctx.add("D-NOTES-PDF", "Minor", frame, message, line=index + 1, file=path.name)
+
+
 # The order of this mapping is the order in which the checks run.
 CHECKS = {
     "D-MARKER": check_marker,
@@ -1320,6 +1425,7 @@ CHECKS = {
     "D-COMPILE": check_compile,
     "D-OVERFLOW-V": check_overflow_v,
     "D-OVERFLOW-H": check_overflow_h,
+    "D-NOTES-PDF": check_notes_pdf,
 }
 CODES = tuple(CHECKS)
 
@@ -1327,6 +1433,15 @@ CODES = tuple(CHECKS)
 # ---------------------------------------------------------------------------
 # Input, output, and main
 # ---------------------------------------------------------------------------
+
+
+def read_manifest(path: Path) -> dict | None:
+    """build_manifest.json as a mapping; None when it is absent or unreadable."""
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return value if isinstance(value, dict) else None
 
 
 def load_context(args: argparse.Namespace) -> Context:
@@ -1350,6 +1465,8 @@ def load_context(args: argparse.Namespace) -> Context:
         minutes = planned if isinstance(planned, int) and not isinstance(planned, bool) else 40
     if args.log and not Path(args.log).is_file():
         raise CheckError(f"日志不存在：{args.log}")
+    if args.notes_pdf and not Path(args.notes_pdf).is_file():
+        raise CheckError(f"备注版 PDF 不存在：{args.notes_pdf}")
     log_path = Path(args.log) if args.log else deck_path.parent / LOG_NAME
     notes_path = deck_path.parent / NOTES_NAME
 
@@ -1357,6 +1474,8 @@ def load_context(args: argparse.Namespace) -> Context:
     notes_lines = read_lines(notes_path) if notes_path.is_file() else None
     log = log_entries(read_lines(log_path)) if log_path.is_file() else None
     ctx = Context(deck, inventory, plan, plan_meta, minutes, notes_lines, log_path.name, log)
+    ctx.notes_pdf = Path(args.notes_pdf) if args.notes_pdf else None
+    ctx.manifest = read_manifest(deck_path.parent / MANIFEST_NAME)
     ctx.notes = parse_notes(notes_lines) if notes_lines is not None else []
     ctx.chapters = deck_chapters(deck, plan_meta, inventory)
     ctx.roles = chapter_roles(ctx.chapters, deck.frames, plan_meta)
@@ -1398,7 +1517,9 @@ def render_text(findings: list[Finding], summary: dict[str, int], skipped: list[
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="答辩稿质量门：按 D-* 码检查 defense.tex、notes.md 与编译日志，不写文件。"
+        description=(
+            "答辩稿质量门：按 D-* 码检查 defense.tex、notes.md、编译日志与备注版 PDF，不写文件。"
+        )
     )
     parser.add_argument("--deck", required=True, help="build_deck.py 输出目录中的 defense.tex")
     parser.add_argument(
@@ -1406,6 +1527,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--plan", help="slide_plan.yaml；提供时按规划取章角色、阶段与分钟数")
     parser.add_argument("--log", help="编译日志；缺省时使用答辩稿目录中的 defense.log（存在时）")
+    parser.add_argument(
+        "--notes-pdf",
+        help="备注版 PDF；缺省时使用答辩稿目录中的 defense-notes.pdf（D-NOTES-PDF 需要 PyMuPDF）",
+    )
     parser.add_argument(
         "--minutes", type=int, help="汇报时长（分钟）；缺省取规划 meta.minutes，再缺省 40"
     )

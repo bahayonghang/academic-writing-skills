@@ -17,8 +17,12 @@
 - `paper-writing-studio` 登记为第七个公开 catalog 技能：`SKILL.md` 改为仓库技能契约结构，版本对齐 `6.0.0`；
   新增三份示例、`evals/evals.json` 与 `evals/trigger_eval.json`；进入安装器、契约测试列表与双语文档。
 - `academic-defense-beamer` 登记为第八个公开 catalog 技能：从中文学位论文 XeLaTeX 仓库只读提取清单，按时长与阶段规划页面，
-  渲染燕山或通用主题的 Beamer 答辩稿与讲稿，并以 21 个 D-* 码的质量门与逐页预览检查；新增 `SKILL.md`、三份示例、
+  渲染燕山或通用主题的 Beamer 答辩稿与讲稿，并以 D-* 码质量门与逐页预览检查；新增 `SKILL.md`、三份示例、
   evals、答辩提问准备 agent、双语技能页与 `.trellis/spec/academic-writing-skills/defense-deck-contract.md`。
+- `academic-defense-beamer` 把讲稿写进 PDF：每帧在 `\end{frame}` 前带 `\DefenseNote`（要点、说什么、过渡、秒数），新增自有文件
+  `defense-notes.tex`，`build_deck.py --compile` 另外编译 second-screen 备注版 `defense-notes.pdf`（每页左幻灯片、右备注，32:9，
+  页标签逐页唯一），`--no-notes-pdf` 只编译投屏版；`build_manifest.json` 增加 `backend` 与 `notes_pdf`。质量门新增 D-NOTES-PDF
+  （共 22 个 D-* 码），D-NOTES 增加帧内备注宏计数。新增 `references/presenting.md`，推荐用 FerroStage（Windows）或 pympress 双屏放映。
 
 ### Fixed
 

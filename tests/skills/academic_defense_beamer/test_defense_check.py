@@ -22,6 +22,8 @@ SCRIPT = SKILL_ROOT / "scripts" / "check_deck.py"
 QUALITY_GATE = SKILL_ROOT / "references" / "quality-gate.md"
 ENV = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
 LOG_CODES = ["D-COMPILE", "D-OVERFLOW-V", "D-OVERFLOW-H"]
+# A deck that is not compiled yet skips the log codes and the presenter PDF check.
+UNCOMPILED = [*LOG_CODES, "D-NOTES-PDF"]
 LINE_RE = re.compile(
     r"^% (D-[A-Z]+(?:-[A-Z]+)*) \(frame=(\S+), ([\w.-]+):(\d+|-)\) "
     r"\[Severity: (Critical|Major|Minor|Info)\] \[Priority: (P[0-3])\]: \[Script\] (.+)$"
@@ -137,6 +139,29 @@ def log(template: str, pdf: bool = True) -> Mutation:
     return mutate
 
 
+def drop_note(frame_id: str) -> Mutation:
+    """Delete the \\DefenseNote line of a frame (its key point is ``合成要点 <id>``)."""
+
+    def mutate(deck: Path, root: Path) -> list[str]:
+        path = deck / "defense.tex"
+        lines = path.read_text(encoding="utf-8").split("\n")
+        prefix = f"\\DefenseNote{{合成要点 {frame_id}}}"
+        kept = [line for line in lines if not line.startswith(prefix)]
+        assert len(kept) == len(lines) - 1, prefix
+        path.write_text("\n".join(kept), encoding="utf-8")
+        return []
+
+    return mutate
+
+
+def set_notes_pdf(deck: Path, value: str | None) -> None:
+    """Rewrite build_manifest.json ``notes_pdf`` (None means a --no-notes-pdf build)."""
+    path = deck / "build_manifest.json"
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    manifest["notes_pdf"] = value
+    path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+
 def cli_args(*extra: str) -> Mutation:
     def mutate(deck: Path, root: Path) -> list[str]:
         return list(extra)
@@ -189,6 +214,7 @@ NUMBER_BULLET = "误差下降 37.25\\%"
 BACKUP_FRAME = (
     "% defense-frame: id=backup-1 role=backup chapter=3 layout=bullets\n"
     "\\begin{frame}{备用页}\n\\begin{itemize}\n  \\item 合成要点 backup-1\n\\end{itemize}\n"
+    "\\DefenseNote{合成要点 backup-1}{合成讲稿 backup-1。}{}{900}\n"
     "\\end{frame}\n\n\\end{document}"
 )
 BACKUP_NOTES = (
@@ -311,6 +337,13 @@ CASES: list[tuple[str, str, str, str, Mutation]] = [
         replace_notes(r"^- 说什么：合成讲稿 c3-problem。.*$", "- 说什么：太短。"),
     ),
     (
+        "notes-macro",
+        "D-NOTES",
+        "Minor",
+        "c3-problem",
+        drop_note("c3-problem"),
+    ),
+    (
         "compile-error",
         "D-COMPILE",
         "Critical",
@@ -365,11 +398,11 @@ def test_baseline_deck_has_no_findings(
     built_deck: Path, tmp_path: Path, defense_scripts, capsys
 ) -> None:
     code, result = run_check(defense_scripts, capsys, tmp_path)
-    assert (code, result["findings"], result["skipped"]) == (0, [], LOG_CODES)
+    assert (code, result["findings"], result["skipped"]) == (0, [], UNCOMPILED)
     code, result = run_check(
         defense_scripts, capsys, tmp_path, "--plan", str(tmp_path / "slide_plan.yaml")
     )
-    assert (code, result["findings"], result["skipped"]) == (0, [], LOG_CODES)
+    assert (code, result["findings"], result["skipped"]) == (0, [], UNCOMPILED)
 
 
 def test_clean_log_has_no_findings(
@@ -381,8 +414,9 @@ def test_clean_log_has_no_findings(
         f"Overfull \\hbox (3.0pt too wide) in paragraph at lines {line}--{line}\n"
         "Output written on defense.xdv (54 pages).\n",
     )
+    set_notes_pdf(built_deck, None)  # a slides-only build: no presenter PDF to check
     code, result = run_check(defense_scripts, capsys, tmp_path)
-    assert (code, result["findings"], result["skipped"]) == (0, [], [])
+    assert (code, result["findings"], result["skipped"]) == (0, [], ["D-NOTES-PDF"])
 
 
 def test_backup_frame_is_outside_the_time_budget(
@@ -397,8 +431,9 @@ def test_backup_frame_is_outside_the_time_budget(
 
 def test_cases_cover_every_code(defense_scripts) -> None:
     codes = defense_scripts.check_deck.CODES
-    assert len(codes) == 21
-    assert {case[1] for case in CASES} == set(codes)
+    assert len(codes) == 22
+    # D-NOTES-PDF needs real PDFs; its cases are the notes-pdf tests below.
+    assert {case[1] for case in CASES} | {"D-NOTES-PDF"} == set(codes)
     table = re.findall(r"^\|\s*(D-[A-Z]+(?:-[A-Z]+)*)\s*\|", QUALITY_GATE.read_text("utf-8"), re.M)
     assert set(table) == set(codes)
 
@@ -479,7 +514,7 @@ def test_text_and_json_output_contract(
     assert defense_scripts.check_deck.main(args) == 1
     lines = capsys.readouterr().out.strip().split("\n")
     assert SUMMARY_RE.match(lines[-1]), lines[-1]
-    assert lines[-1].endswith("skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H")
+    assert lines[-1].endswith("skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H、D-NOTES-PDF")
     matches = [LINE_RE.match(line) for line in lines[:-1]]
     assert lines[:-1] and all(matches), lines
     assert any("[Script] Meaning-Check: NEEDS-LLM：数字 37.25" in line for line in lines)
@@ -532,7 +567,7 @@ def test_unreadable_thesis_skips_number_check(
     data["thesis_root"] = (tmp_path / "missing-thesis").as_posix()
     path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     code, result = run_check(defense_scripts, capsys, tmp_path)
-    assert (code, result["findings"], result["skipped"]) == (0, [], ["D-NUM-SRC", *LOG_CODES])
+    assert (code, result["findings"], result["skipped"]) == (0, [], ["D-NUM-SRC", *UNCOMPILED])
 
 
 def test_check_does_not_write(built_deck: Path, tmp_path: Path, defense_scripts, capsys) -> None:
@@ -573,5 +608,118 @@ def test_cli_prints_utf8(built_deck: Path, tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == (
-        "% 汇总：Critical 0，Major 0，Minor 0，Info 0；skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H"
+        "% 汇总：Critical 0，Major 0，Minor 0，Info 0；"
+        "skipped：D-COMPILE、D-OVERFLOW-V、D-OVERFLOW-H、D-NOTES-PDF"
     )
+
+
+# ---------------------------------------------------------------------------
+# D-NOTES-PDF: presenter build of the deck
+# ---------------------------------------------------------------------------
+
+SLIDE_SIZE = (453.5, 255.1)
+NOTES_SIZE = (907.1, 255.1)
+
+
+def write_pdf(path: Path, pages: int, size: tuple[float, float], repeat_label: bool = False):
+    """Synthetic PDF with decimal page labels; ``repeat_label`` labels pages 1 and 2 both "1"."""
+    pymupdf = pytest.importorskip("pymupdf")
+    document = pymupdf.open()
+    for _ in range(pages):
+        document.new_page(width=size[0], height=size[1])
+    rules = [{"startpage": 0, "prefix": "", "style": "D", "firstpagenum": 1}]
+    if repeat_label:
+        rules.append({"startpage": 1, "prefix": "", "style": "D", "firstpagenum": 1})
+    document.set_page_labels(rules)
+    document.save(path)
+    document.close()
+
+
+def notes_pdf_findings(defense_scripts, capsys, tmp_path: Path) -> tuple[int, dict]:
+    code, result = run_check(defense_scripts, capsys, tmp_path)
+    found = [f for f in result["findings"] if f["code"] == "D-NOTES-PDF"]
+    return code, {"findings": found, "skipped": result["skipped"]}
+
+
+def test_notes_pdf_matching_presenter_build_passes(
+    built_deck: Path, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    write_pdf(built_deck / "defense.pdf", 54, SLIDE_SIZE)
+    write_pdf(built_deck / "defense-notes.pdf", 54, NOTES_SIZE)
+    code, result = run_check(defense_scripts, capsys, tmp_path)
+    assert (code, result["findings"], result["skipped"]) == (0, [], LOG_CODES)
+
+
+@pytest.mark.parametrize(
+    ("pages", "size", "repeat", "severity", "frame", "needle"),
+    [
+        (54, SLIDE_SIZE, False, "Major", "-", "宽高比 1.78"),
+        (53, NOTES_SIZE, False, "Major", "-", "备注版 53 页"),
+        (54, NOTES_SIZE, True, "Minor", "toc", "页标签同为「1」"),
+    ],
+    ids=["ratio", "page-count", "repeated-label"],
+)
+def test_notes_pdf_defect_is_reported(
+    built_deck: Path,
+    tmp_path: Path,
+    defense_scripts,
+    capsys,
+    pages: int,
+    size: tuple[float, float],
+    repeat: bool,
+    severity: str,
+    frame: str,
+    needle: str,
+) -> None:
+    write_pdf(built_deck / "defense.pdf", 54, SLIDE_SIZE)
+    write_pdf(built_deck / "defense-notes.pdf", pages, size, repeat)
+    code, result = notes_pdf_findings(defense_scripts, capsys, tmp_path)
+    assert [(f["severity"], f["frame"], f["file"]) for f in result["findings"]] == [
+        (severity, frame, "defense-notes.pdf")
+    ]
+    assert needle in result["findings"][0]["message"]
+    assert code == (1 if severity == "Major" else 0)
+
+
+def test_notes_pdf_missing_file_is_minor(
+    built_deck: Path, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    write_pdf(built_deck / "defense.pdf", 54, SLIDE_SIZE)
+    code, result = notes_pdf_findings(defense_scripts, capsys, tmp_path)
+    assert code == 0
+    assert [(f["severity"], f["frame"]) for f in result["findings"]] == [("Minor", "-")]
+    assert "缺少备注版 defense-notes.pdf" in result["findings"][0]["message"]
+
+
+def test_notes_pdf_skipped_when_manifest_disables_it(
+    built_deck: Path, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    (built_deck / "defense.pdf").write_bytes(b"%PDF-1.5\n")
+    set_notes_pdf(built_deck, None)
+    code, result = notes_pdf_findings(defense_scripts, capsys, tmp_path)
+    assert (code, result["findings"]) == (0, [])
+    assert "D-NOTES-PDF" in result["skipped"]
+
+
+def test_notes_pdf_skipped_without_pymupdf(
+    built_deck: Path, tmp_path: Path, defense_scripts, capsys, monkeypatch
+) -> None:
+    (built_deck / "defense.pdf").write_bytes(b"%PDF-1.5\n")
+    monkeypatch.setattr(defense_scripts.check_deck, "load_pymupdf", lambda: None)
+    code, result = notes_pdf_findings(defense_scripts, capsys, tmp_path)
+    assert (code, result["findings"]) == (0, [])
+    assert "D-NOTES-PDF" in result["skipped"]
+
+
+def test_page_label_decodes_pdf_hex_strings(defense_scripts) -> None:
+    class Page:
+        def __init__(self, label: str) -> None:
+            self.label = label
+
+        def get_label(self) -> str:
+            return self.label
+
+    page_label = defense_scripts.check_deck.page_label
+    assert page_label(Page("<FEFF00310032>")) == "12"
+    assert page_label(Page("notes:3")) == "notes:3"
+    assert page_label(Page("")) == ""
