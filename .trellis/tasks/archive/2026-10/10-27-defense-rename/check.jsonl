@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "academic-writing-skills 规格索引"}
+{"file": ".trellis/spec/academic-writing-skills/defense-deck-contract.md", "reason": "答辩稿流水线跨脚本契约"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语资源页与 manifest 同步规则"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试、uv、just ci 约定"}
+{"file": ".trellis/tasks/10-27-academic-defense-beamer/research/source-analysis.md", "reason": "改名波及面、Touying 主题与 FerroStage 事实"}
