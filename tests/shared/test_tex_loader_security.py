@@ -14,7 +14,13 @@ import pytest
 
 from tests.support.paths import SKILLS_ROOT
 
-SKILLS = ("latex-thesis-zh", "latex-defense-zh", "latex-paper-en", "paper-audit", "cover-letter")
+SKILLS = (
+    "latex-thesis-zh",
+    "academic-defense-beamer",
+    "latex-paper-en",
+    "paper-audit",
+    "cover-letter",
+)
 
 
 @pytest.fixture(params=SKILLS)

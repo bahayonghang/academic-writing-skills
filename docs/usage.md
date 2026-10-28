@@ -23,7 +23,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 | `typst-paper` | `.typ` | Typst compile and targeted writing checks | The artifact is LaTeX |
 | `bib-search-citation` | `.bib` | Retrieval, filtering, raw entries, citation snippets | Claim support must be verified in the paper |
 | `paper-writing-studio` | prose text + optional venue, journal, or domain | Venue-profile polish and translation with protected evidence tokens | The source file needs compile, format, or structure work |
-| `latex-defense-zh` | Chinese thesis LaTeX repository | Beamer defense deck, speaker notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
+| `academic-defense-beamer` | Chinese thesis LaTeX repository | Beamer defense deck, speaker notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
 
 ## Current Routers
 
@@ -76,7 +76,7 @@ The review response workflow has three checkpoints too: the reviewer order and t
 
 The profile precedence is explicit venue > journal allowlist > unambiguous domain > `unspecified`.
 
-### `latex-defense-zh`
+### `academic-defense-beamer`
 
 `extract`, `plan`, `build`, `check`, `preview`.
 

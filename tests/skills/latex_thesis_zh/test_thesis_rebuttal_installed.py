@@ -42,7 +42,7 @@ def test_standalone_completed_pipeline(tmp_path: Path, rebuttal_case) -> None:
     shutil.copytree(SKILL, installed, ignore=shutil.ignore_patterns("__pycache__"))
     cwd = tmp_path / "outside"
     cwd.mkdir()
-    assert not (installed.parent / "latex-defense-zh").exists()
+    assert not (installed.parent / "academic-defense-beamer").exists()
     thesis = tmp_path / "submitted"
     shutil.copytree(installed / "evals/fixtures/rebuttal/mini-thesis", thesis)
     # The fixture holds an actual submitted/revised git history, not user_confirmed evidence.
@@ -136,7 +136,7 @@ def test_standalone_review_only_reports_skips(tmp_path: Path) -> None:
 
 def test_thesis_owns_response_routes_and_local_fixtures() -> None:
     text = (SKILL / "SKILL.md").read_text("utf-8")
-    defense = (SKILLS_ROOT / "latex-defense-zh/SKILL.md").read_text("utf-8")
+    defense = (SKILLS_ROOT / "academic-defense-beamer/SKILL.md").read_text("utf-8")
     for name in ("intake", "build", "check"):
         assert f"| `rebuttal-{name}` |" in text
         assert f"rebuttal-{name}" not in defense
@@ -146,7 +146,7 @@ def test_thesis_owns_response_routes_and_local_fixtures() -> None:
     cases = json.loads((SKILL / "evals/trigger_eval.json").read_text("utf-8"))["queries"]
     assert any(c["category"] == "edge-review-only" and c["should_trigger"] for c in cases)
     assert any(
-        c["category"] == "negative-overlap-latex-defense-zh" and not c["should_trigger"]
+        c["category"] == "negative-overlap-academic-defense-beamer" and not c["should_trigger"]
         for c in cases
     )
 

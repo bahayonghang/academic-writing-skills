@@ -39,7 +39,7 @@ features:
     title: "`paper-writing-studio`"
     details: "Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile."
   - icon: 🎓
-    title: "`latex-defense-zh`"
+    title: "`academic-defense-beamer`"
     details: "Build a Chinese thesis defense Beamer deck with speaker notes from a thesis LaTeX repository, then gate it for fidelity."
 ---
 
@@ -54,7 +54,7 @@ features:
 | A Typst paper | [`typst-paper`](/skills/typst-paper/) |
 | A local `.bib` library | [`bib-search-citation`](/skills/bib-search-citation/) |
 | Academic prose that needs venue-style polishing or translation | [`paper-writing-studio`](/skills/paper-writing-studio/) |
-| A Chinese LaTeX thesis that needs defense slides | [`latex-defense-zh`](/skills/latex-defense-zh/) |
+| A Chinese LaTeX thesis that needs defense slides | [`academic-defense-beamer`](/skills/academic-defense-beamer/) |
 
 ## Documentation Contract
 

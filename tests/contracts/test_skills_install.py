@@ -12,9 +12,9 @@ from tests.support.paths import REPO_ROOT, SKILLS_ROOT
 
 _INSTALLER_PATH = REPO_ROOT / "scripts" / "skills_install.py"
 _SKILL_NAMES = (
+    "academic-defense-beamer",
     "bib-search-citation",
     "cover-letter",
-    "latex-defense-zh",
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",

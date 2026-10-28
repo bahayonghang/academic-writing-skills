@@ -39,7 +39,7 @@ features:
     title: "`paper-writing-studio`"
     details: "按 Nature、IEEE、Elsevier 或中性 profile 润色和翻译学术文本。"
   - icon: 🎓
-    title: "`latex-defense-zh`"
+    title: "`academic-defense-beamer`"
     details: "从学位论文 LaTeX 仓库生成带讲稿的 Beamer 答辩稿，并用保真质量门检查。"
 ---
 
@@ -54,7 +54,7 @@ features:
 | Typst 论文 | [`typst-paper`](/zh/skills/typst-paper/) |
 | 本地 `.bib` 文献库 | [`bib-search-citation`](/zh/skills/bib-search-citation/) |
 | 需要按期刊风格润色或翻译的学术文本 | [`paper-writing-studio`](/zh/skills/paper-writing-studio/) |
-| 需要做答辩幻灯片的中文 LaTeX 学位论文 | [`latex-defense-zh`](/zh/skills/latex-defense-zh/) |
+| 需要做答辩幻灯片的中文 LaTeX 学位论文 | [`academic-defense-beamer`](/zh/skills/academic-defense-beamer/) |
 
 ## 文档契约
 

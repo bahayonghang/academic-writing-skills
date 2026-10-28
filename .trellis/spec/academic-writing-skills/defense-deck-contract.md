@@ -1,8 +1,8 @@
-# latex-defense-zh 答辩稿契约
+# academic-defense-beamer 答辩稿契约
 
 ## 1. Scope / Trigger
 
-修改 `academic-writing-skills/latex-defense-zh/` 的脚本（extract、plan、build、check、preview）、Jinja2 帧模板、
+修改 `academic-writing-skills/academic-defense-beamer/` 的脚本（extract、plan、build、check、preview）、Jinja2 帧模板、
 Beamer 主题与版式宏、D-* 判据、清单或规划字段，以及对应公开资源时适用。
 五个脚本通过清单 JSON、规划 YAML、帧标记与结果行串成一条流水线；任一环节改名或改格式，下游会静默失配。
 详细字段以技能内 `references/plan-schema.md` 与 `references/quality-gate.md` 为准，本文件只锁跨脚本的接口。
@@ -73,10 +73,10 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 
 ## 6. Tests Required
 
-- `tests/skills/latex_defense_zh/`：`test_defense_theme_assets.py`（主题常量、宏 API、演示稿编译）、`test_defense_budget.py`、
+- `tests/skills/academic_defense_beamer/`：`test_defense_theme_assets.py`（主题常量、宏 API、演示稿编译）、`test_defense_budget.py`、
   `test_defense_extract.py`、`test_defense_plan.py`、`test_defense_build.py`（帧标记序列、转义、公式与表体还原、`--force`、
   帧标题后无花括号组、未变文件保留 mtime）、`test_defense_check.py`（21 码正反例与输出契约）、`test_defense_preview.py`。
-- 编译用例只在 `DEFENSE_ZH_COMPILE=1` 且有 xelatex/latexmk 时运行；预览用例在无 PyMuPDF 时 skip。
+- 编译用例只在 `DEFENSE_COMPILE=1` 且有 xelatex/latexmk 时运行；预览用例在无 PyMuPDF 时 skip。
   `conftest.py` 在收集阶段预导入 PyMuPDF：它在首次导入时绑定 `sys.stdout`，若首次导入发生在 `capsys` 测试内，后续用例会写入已关闭的流。
 - 契约测试：`tests/contracts/test_skill_contracts.py`（路由命令参数出现在 `--help`、命令卫生、`allowed-tools`）、
   `test_skill_versions.py`、`test_skills_install.py`、`test_trigger_evals.py`、`test_docs_bilingual_resources.py`。

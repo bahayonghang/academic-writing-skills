@@ -2,6 +2,123 @@
   "version": 1,
   "resources": [
     {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/content-rules.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0b3b416110d693a801b5c60bbc1b0de003729b7f9242094638f507d810053caa",
+      "en": "docs/skills/academic-defense-beamer/resources/references/content-rules.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/content-rules.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/defense-framework.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "66db8afc809e7ddc155526615c0db4876b66a5ee4de5d1c0309e26f8daea627e",
+      "en": "docs/skills/academic-defense-beamer/resources/references/defense-framework.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/defense-framework.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/plan-schema.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "bc70a2cf8e1179c0c74c15d5b84198c36983db1765f2c7d8c269869d738afc25",
+      "en": "docs/skills/academic-defense-beamer/resources/references/plan-schema.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/plan-schema.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/qa-prep.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "f71c81c23b79991644cdcffcfc8e03156cc8b9ec9684649b290082b0c845cdbd",
+      "en": "docs/skills/academic-defense-beamer/resources/references/qa-prep.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/qa-prep.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/quality-gate.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "20ae583bdc27a4b2b6c3ff779bb736a02e9bfe251c2bae5a4f0ba99bb65c1d7b",
+      "en": "docs/skills/academic-defense-beamer/resources/references/quality-gate.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/quality-gate.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/slide-layouts.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "c1fd5c4af331ddab264a01d0cad8da56ba6ff6f5d025537108c0c6db18951470",
+      "en": "docs/skills/academic-defense-beamer/resources/references/slide-layouts.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/slide-layouts.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/speaker-notes.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "c678e00440cb2410e2412aed6276c50ddf0fbcface28c22d32c93ad3845c5a55",
+      "en": "docs/skills/academic-defense-beamer/resources/references/speaker-notes.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/speaker-notes.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/time-budget.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "21b904e61e6a093a285a648f982270d915f1a9b8f8900b9be6987812ae5c7944",
+      "en": "docs/skills/academic-defense-beamer/resources/references/time-budget.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/time-budget.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/visual-spec.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
+      "en": "docs/skills/academic-defense-beamer/resources/references/visual-spec.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/visual-spec.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "examples",
+      "source": "academic-writing-skills/academic-defense-beamer/examples/fix-after-check.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "e1c594640a5fd6cfc4b9edac674ad232559499b6d74854ed2604c70bbc24fba2",
+      "en": "docs/skills/academic-defense-beamer/resources/examples/fix-after-check.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/examples/fix-after-check.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "examples",
+      "source": "academic-writing-skills/academic-defense-beamer/examples/formal-defense.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "eee15606bf981294fa7cc76a28b5151594921333f492770a1c2e20fef8aeb2a6",
+      "en": "docs/skills/academic-defense-beamer/resources/examples/formal-defense.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/examples/formal-defense.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "examples",
+      "source": "academic-writing-skills/academic-defense-beamer/examples/predefense-40min.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "a41126ab212d0778ade3bd12603296632cb8fc4992eabdb1d43a99805b2cd55a",
+      "en": "docs/skills/academic-defense-beamer/resources/examples/predefense-40min.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/examples/predefense-40min.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "agents",
+      "source": "academic-writing-skills/academic-defense-beamer/agents/qa-committee-agent.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "8333f5e0f4b84ec26617e8dad8845c0626927b3e8c89210ed695869f0b717340",
+      "en": "docs/skills/academic-defense-beamer/resources/agents/qa-committee-agent.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/agents/qa-committee-agent.md"
+    },
+    {
       "skill": "bib-search-citation",
       "kind": "references",
       "source": "academic-writing-skills/bib-search-citation/references/limitations-and-errors.md",
@@ -270,123 +387,6 @@
       "sourceSha256": "305510e2b635c54919d1aef6ba0556d3652921d47f7fb33f14e201d6dc6f8beb",
       "en": "docs/skills/cover-letter/resources/agents/committee_editor_agent.md",
       "zh": "docs/zh/skills/cover-letter/resources/agents/committee_editor_agent.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/content-rules.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "0b3b416110d693a801b5c60bbc1b0de003729b7f9242094638f507d810053caa",
-      "en": "docs/skills/latex-defense-zh/resources/references/content-rules.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/content-rules.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/defense-framework.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "66db8afc809e7ddc155526615c0db4876b66a5ee4de5d1c0309e26f8daea627e",
-      "en": "docs/skills/latex-defense-zh/resources/references/defense-framework.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/defense-framework.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/plan-schema.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "bc70a2cf8e1179c0c74c15d5b84198c36983db1765f2c7d8c269869d738afc25",
-      "en": "docs/skills/latex-defense-zh/resources/references/plan-schema.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/plan-schema.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/qa-prep.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "f71c81c23b79991644cdcffcfc8e03156cc8b9ec9684649b290082b0c845cdbd",
-      "en": "docs/skills/latex-defense-zh/resources/references/qa-prep.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/qa-prep.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/quality-gate.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "20ae583bdc27a4b2b6c3ff779bb736a02e9bfe251c2bae5a4f0ba99bb65c1d7b",
-      "en": "docs/skills/latex-defense-zh/resources/references/quality-gate.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/quality-gate.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/slide-layouts.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "c1fd5c4af331ddab264a01d0cad8da56ba6ff6f5d025537108c0c6db18951470",
-      "en": "docs/skills/latex-defense-zh/resources/references/slide-layouts.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/slide-layouts.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/speaker-notes.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "c678e00440cb2410e2412aed6276c50ddf0fbcface28c22d32c93ad3845c5a55",
-      "en": "docs/skills/latex-defense-zh/resources/references/speaker-notes.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/speaker-notes.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/time-budget.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "21b904e61e6a093a285a648f982270d915f1a9b8f8900b9be6987812ae5c7944",
-      "en": "docs/skills/latex-defense-zh/resources/references/time-budget.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/time-budget.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "references",
-      "source": "academic-writing-skills/latex-defense-zh/references/visual-spec.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
-      "en": "docs/skills/latex-defense-zh/resources/references/visual-spec.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/references/visual-spec.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "examples",
-      "source": "academic-writing-skills/latex-defense-zh/examples/fix-after-check.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "e1c594640a5fd6cfc4b9edac674ad232559499b6d74854ed2604c70bbc24fba2",
-      "en": "docs/skills/latex-defense-zh/resources/examples/fix-after-check.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/fix-after-check.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "examples",
-      "source": "academic-writing-skills/latex-defense-zh/examples/formal-defense.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "eee15606bf981294fa7cc76a28b5151594921333f492770a1c2e20fef8aeb2a6",
-      "en": "docs/skills/latex-defense-zh/resources/examples/formal-defense.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/formal-defense.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "examples",
-      "source": "academic-writing-skills/latex-defense-zh/examples/predefense-40min.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "a41126ab212d0778ade3bd12603296632cb8fc4992eabdb1d43a99805b2cd55a",
-      "en": "docs/skills/latex-defense-zh/resources/examples/predefense-40min.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/examples/predefense-40min.md"
-    },
-    {
-      "skill": "latex-defense-zh",
-      "kind": "agents",
-      "source": "academic-writing-skills/latex-defense-zh/agents/qa-committee-agent.md",
-      "sourceLocale": "zh",
-      "sourceSha256": "8333f5e0f4b84ec26617e8dad8845c0626927b3e8c89210ed695869f0b717340",
-      "en": "docs/skills/latex-defense-zh/resources/agents/qa-committee-agent.md",
-      "zh": "docs/zh/skills/latex-defense-zh/resources/agents/qa-committee-agent.md"
     },
     {
       "skill": "latex-paper-en",

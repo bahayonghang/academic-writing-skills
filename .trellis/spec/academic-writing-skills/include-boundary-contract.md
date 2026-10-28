@@ -3,7 +3,7 @@
 ## 适用范围
 
 五个独立安装副本：`latex-paper-en`、`latex-thesis-zh`、`paper-audit`、`cover-letter`、
-`latex-defense-zh` 的 `scripts/tex_loader.py`。论文中的 include 参数是不可信数据。
+`academic-defense-beamer` 的 `scripts/tex_loader.py`。论文中的 include 参数是不可信数据。
 宿主明确选择的入口和项目目录决定读取边界。
 
 ## 接口

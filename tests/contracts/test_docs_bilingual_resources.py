@@ -36,9 +36,9 @@ def test_manifest_matches_live_public_inventory() -> None:
     entries = checker.load_manifest(MANIFEST_PATH)
     assert not checker.validate_inventory(entries, REPO_ROOT)
     assert {entry["skill"] for entry in entries} == {
+        "academic-defense-beamer",
         "bib-search-citation",
         "cover-letter",
-        "latex-defense-zh",
         "latex-paper-en",
         "latex-thesis-zh",
         "paper-audit",
@@ -191,9 +191,9 @@ def test_bilingual_usage_pages_cover_live_skill_routers() -> None:
         (REPO_ROOT / "docs" / "zh" / "usage.md").read_text(encoding="utf-8"),
     ]
     for skill in (
+        "academic-defense-beamer",
         "bib-search-citation",
         "cover-letter",
-        "latex-defense-zh",
         "latex-paper-en",
         "latex-thesis-zh",
         "paper-audit",

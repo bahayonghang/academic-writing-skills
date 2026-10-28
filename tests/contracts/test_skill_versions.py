@@ -14,9 +14,9 @@ from tests.support.paths import REPO_ROOT, SKILLS_ROOT
 
 PYPROJECT = REPO_ROOT / "pyproject.toml"
 SKILL_NAMES = (
+    "academic-defense-beamer",
     "bib-search-citation",
     "cover-letter",
-    "latex-defense-zh",
     "latex-paper-en",
     "latex-thesis-zh",
     "paper-audit",

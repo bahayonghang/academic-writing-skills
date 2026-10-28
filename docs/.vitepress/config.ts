@@ -232,10 +232,10 @@ function buildSidebar(prefix: string): SidebarItem[] {
     },
     {
       text: isZh
-        ? "中文答辩稿 (latex-defense-zh)"
-        : "Thesis Defense Decks (latex-defense-zh)",
+        ? "学位论文答辩稿 (academic-defense-beamer)"
+        : "Thesis Defense Decks (academic-defense-beamer)",
       collapsed: false,
-      items: skillItems(prefix, "latex-defense-zh"),
+      items: skillItems(prefix, "academic-defense-beamer"),
     },
     {
       text: isZh ? "Typst 论文 (typst-paper)" : "Typst Papers (typst-paper)",

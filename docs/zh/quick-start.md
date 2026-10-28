@@ -11,7 +11,7 @@
 | 处理 Typst 论文 | `typst-paper` |
 | 检索本地 `.bib` 文献库 | `bib-search-citation` |
 | 按期刊风格润色或翻译学术文本 | `paper-writing-studio` |
-| 从中文 LaTeX 学位论文生成答辩幻灯片 | `latex-defense-zh` |
+| 从中文 LaTeX 学位论文生成答辩幻灯片 | `academic-defense-beamer` |
 
 ## 2. 运行一条真实命令
 
@@ -60,8 +60,8 @@ uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.
 ### 学位论文答辩稿
 
 ```bash
-uv run python -B academic-writing-skills/latex-defense-zh/scripts/extract_thesis.py --thesis thesis-repo --out defense-work/inventory.json --json
-uv run python -B academic-writing-skills/latex-defense-zh/scripts/plan_deck.py --inventory defense-work/inventory.json --out defense-work/slide_plan.yaml --minutes 40
+uv run python -B academic-writing-skills/academic-defense-beamer/scripts/extract_thesis.py --thesis thesis-repo --out defense-work/inventory.json --json
+uv run python -B academic-writing-skills/academic-defense-beamer/scripts/plan_deck.py --inventory defense-work/inventory.json --out defense-work/slide_plan.yaml --minutes 40
 ```
 
 ## 3. 按技能路由继续

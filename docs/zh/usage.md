@@ -23,7 +23,7 @@
 | `typst-paper` | `.typ` | Typst 编译与定向写作检查 | 材料是 LaTeX |
 | `bib-search-citation` | `.bib` | 检索、过滤、原始条目与引用片段 | 需要核实论文是否支持 claim |
 | `paper-writing-studio` | 学术文本 + 可选 venue、期刊或领域 | 按 venue profile 润色与翻译，保留证据 token | 源文件需要编译、格式或结构处理 |
-| `latex-defense-zh` | 中文学位论文 LaTeX 仓库 | Beamer 答辩稿、讲稿、保真质量门与预览 | 需要 `.pptx`、会议报告或修改论文正文 |
+| `academic-defense-beamer` | 中文学位论文 LaTeX 仓库 | Beamer 答辩稿、讲稿、保真质量门与预览 | 需要 `.pptx`、会议报告或修改论文正文 |
 
 ## 当前路由
 
@@ -76,7 +76,7 @@
 
 profile 选择优先级为显式 venue > 期刊 allowlist > 明确 domain > `unspecified`。
 
-### `latex-defense-zh`
+### `academic-defense-beamer`
 
 `extract`、`plan`、`build`、`check`、`preview`。
 

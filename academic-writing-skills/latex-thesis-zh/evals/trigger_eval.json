@@ -344,7 +344,7 @@
     {
       "query": "用我的中文博士论文生成 Beamer 预答辩幻灯片与讲稿。",
       "should_trigger": false,
-      "category": "negative-overlap-latex-defense-zh"
+      "category": "negative-overlap-academic-defense-beamer"
     },
     {
       "query": "只给你评阅书 TXT，没有论文源文件，先整理学位论文意见台账。",

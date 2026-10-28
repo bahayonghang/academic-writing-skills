@@ -72,7 +72,7 @@ npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
-npx skills add bahayonghang/academic-writing-skills/latex-defense-zh
+npx skills add bahayonghang/academic-writing-skills/academic-defense-beamer
 
 # 安装全部八个技能
 npx skills add bahayonghang/academic-writing-skills
@@ -81,6 +81,8 @@ npx skills add bahayonghang/academic-writing-skills
 八条 `npx skills add bahayonghang/academic-writing-skills/<skill>` 命令字符串是文档中的安装器界面。`npx` 安装器、安装器可能创建的符号链接布局、以及五套工具运行时发现均保持 **UNVERIFIED**。本轮没有已授权的真实运行记录。
 
 手动安装时，将 `academic-writing-skills/` 下所需技能的完整目录复制到 agent runtime 使用的技能目录。复制完整技能目录。每个技能都依赖本地 scripts、references、templates、examples 与 metadata。若当前工具没有自动加载该技能，打开该技能的 `SKILL.md`，再打开被路由到的 `references/` 文件。
+
+答辩稿技能已更名为 `academic-defense-beamer`，本机旧的 `latex-defense-zh` 安装目录可以删除。
 
 ### paper-audit 同级布局 {#paper-audit-layout}
 
@@ -95,7 +97,7 @@ npx skills add bahayonghang/academic-writing-skills
 ├── typst-paper/
 ├── bib-search-citation/
 ├── paper-writing-studio/
-└── latex-defense-zh/
+└── academic-defense-beamer/
 ```
 
 `audit.py` 在 `paper-audit/` 旁边查找 `latex-paper-en/scripts`、`latex-thesis-zh/scripts`、`typst-paper/scripts`。推荐完整集合：全部八个技能目录作为同级目录。
@@ -142,10 +144,10 @@ npm --prefix docs run docs:dev
 和包标识，并与实际安装版本核对。源码修改不能证明供应商已扫描新包；新扫描尚未
 取得时，将扫描状态记为 pending。本地行为测试、安装验证、发布和供应商扫描分别记录。
 
-Socket 对 `latex-thesis-zh` 和 `latex-defense-zh` 的告警指出 include 路径可能读取
+Socket 对 `latex-thesis-zh` 和 `academic-defense-beamer` 的告警指出 include 路径可能读取
 项目根目录外的文件。下述 loader 边界处理这一行为，覆盖五个 LaTeX loader 副本：
 `latex-paper-en`、`latex-thesis-zh`、`paper-audit`、`cover-letter` 和
-`latex-defense-zh`。零告警标记不能代替行为测试。
+`academic-defense-beamer`。零告警标记不能代替行为测试。
 
 ### loader 报告 `E-INCLUDE-BOUNDARY` {#include-boundary}
 
