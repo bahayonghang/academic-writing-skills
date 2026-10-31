@@ -18,5 +18,5 @@ this file is the authoritative map.
 | `scripts/diff_review_issues.py`          | compare old vs new issue bundles                                                                                                                         |
 | `scripts/scholar_eval.py`                | nine-dimension ScholarEval scoring (`--scholar-eval`)                                                                                                    |
 | `scripts/scoring_model.py`               | weighted-plus overall score for `--regression` (hand-tuned weights + interaction/penalty terms, not a trained regression) with weighted-average fallback |
-| `scripts/literature_search.py`           | optional external literature search backend (`--literature-search`; Tavily via `--tavily-key` / Semantic Scholar via `--s2-key`, or env keys)            |
+| `scripts/literature_search.py`           | optional external literature search backend (`--literature-search`; Tavily via `--tavily-key` / Firecrawl via `--firecrawl-key` / Semantic Scholar via `--s2-key`, or env keys) |
 | `scripts/literature_compare.py`          | compare manuscript citations against external literature evidence                                                                                        |

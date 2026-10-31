@@ -18,5 +18,5 @@
 | `scripts/diff_review_issues.py`          |比较新旧发行捆绑包|
 | `scripts/scholar_eval.py`                |九维 ScholarEval 评分（`--scholar-eval`)                                                                                                    |
 | `scripts/scoring_model.py`               |加权加总分`--regression`（手动调整权重+交互/惩罚项，而不是经过训练的回归）具有加权平均回退|
-| `scripts/literature_search.py`           |可选的外部文献搜索后端（`--literature-search`;塔维利通过`--tavily-key`/语义学者来自`--s2-key`，或 env 键）|
+| `scripts/literature_search.py`           |可选的外部文献搜索后端（`--literature-search`;塔维利通过`--tavily-key`/Firecrawl 通过`--firecrawl-key`/语义学者来自`--s2-key`，或 env 键）|
 | `scripts/literature_compare.py`          |将论文稿件引用与外部文献证据进行比较|
