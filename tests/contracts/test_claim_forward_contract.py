@@ -181,7 +181,7 @@ def test_no_new_module_named_defensive() -> None:
 # sha256 of git-canonical LF bytes. Normalize CRLF before hashing so Windows
 # working trees match CI. Update only through a task that changes the files.
 AUDIT_FROZEN_SHA256: dict[str, str] = {
-    "scripts/audit.py": "80fdbd78a72c68d85f98915732e6e6aa1de033cc3ffb5a0339b65724423055cc",
+    "scripts/audit.py": "b6b8f77169b2ec87946476ad337179d900aa9f9caf24ec49acdefb14ada0ff34",
     "scripts/scholar_eval.py": "402a054fc87d5024b7e65b01d82cede5d65e671d04a48f90480d12dcbde70ad9",
     "scripts/zh_check_adapters.py": "8af2cdb59cc0e6024e7da898a994482d746ac1153b0cfba7b18137cbdcce3077",
     "references/quality_rubrics.md": "bba8d125a77fdbfbd7aa94a9f9f7a687fcc3303c05007d85b0fcddb2f3f91154",

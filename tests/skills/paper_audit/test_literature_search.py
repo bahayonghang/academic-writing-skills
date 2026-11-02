@@ -359,6 +359,92 @@ class TestArxivHttpsClient:
         assert results[0].title == "Secure Academic Search"
 
 
+class TestFirecrawlClient:
+    """Tests for the Firecrawl search client contract."""
+
+    def test_firecrawl_without_key_skips_request(self) -> None:
+        from literature_search import FirecrawlClient
+
+        with patch("literature_search.urllib.request.urlopen") as mock_urlopen:
+            assert FirecrawlClient().search("mamba forecasting") == []
+        mock_urlopen.assert_not_called()
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_firecrawl_search_parses_web_results(self, mock_urlopen) -> None:
+        from literature_search import FirecrawlClient
+
+        body = {
+            "success": True,
+            "data": {
+                "web": [
+                    {
+                        "url": "https://openreview.net/forum?id=abc",
+                        "title": "MambaTS: Improved Selective State Space Models",
+                        "description": "Long-term time series forecasting with Mamba.",
+                    },
+                    {"url": "https://example.com/untitled", "title": ""},
+                ]
+            },
+        }
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = json.dumps(body).encode("utf-8")
+        mock_urlopen.return_value = response
+
+        results = FirecrawlClient(api_key="fc-test").search("mamba forecasting", max_results=50)
+
+        request = mock_urlopen.call_args.args[0]
+        payload = json.loads(request.data.decode("utf-8"))
+        assert request.full_url == "https://api.firecrawl.dev/v2/search"
+        assert request.get_header("Authorization") == "Bearer fc-test"
+        assert payload["query"] == "academic paper: mamba forecasting"
+        assert payload["limit"] == 20
+        assert payload["origin"] == "academic-writing-skills"
+        assert len(results) == 1
+        assert results[0].source == "firecrawl"
+        assert results[0].url == "https://openreview.net/forum?id=abc"
+        assert results[0].abstract == "Long-term time series forecasting with Mamba."
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_firecrawl_auth_error_returns_empty(self, mock_urlopen, capsys) -> None:
+        import urllib.error
+        from email.message import Message
+
+        from literature_search import FirecrawlClient
+
+        mock_urlopen.side_effect = urllib.error.HTTPError(
+            "https://api.firecrawl.dev/v2/search", 401, "Unauthorized", Message(), None
+        )
+
+        assert FirecrawlClient(api_key="fc-bad").search("mamba forecasting") == []
+        assert "FIRECRAWL_API_KEY" in capsys.readouterr().err
+
+    @patch("literature_search.FirecrawlClient")
+    @patch("literature_search.SemanticScholarClient")
+    @patch("literature_search.ArxivClient")
+    def test_search_literature_uses_firecrawl_when_key_set(
+        self, mock_arxiv_cls, mock_s2_cls, mock_firecrawl_cls
+    ) -> None:
+        from literature_search import SearchResult, search_literature
+
+        mock_s2_cls.return_value.search.return_value = []
+        mock_arxiv_cls.return_value.search.return_value = []
+        mock_firecrawl_cls.return_value.search.return_value = [
+            SearchResult(
+                title="MambaTS: Improved Selective State Space Models",
+                authors=[],
+                year=None,
+                abstract="Long-term time series forecasting with Mamba.",
+                url="https://openreview.net/forum?id=abc",
+                source="firecrawl",
+            )
+        ]
+
+        results = search_literature(queries=["mamba forecasting"], firecrawl_key="fc-test")
+
+        mock_firecrawl_cls.assert_called_once_with(api_key="fc-test")
+        assert [r.source for r in results] == ["firecrawl"]
+
+
 # ============================================================
 # literature_compare tests
 # ============================================================
@@ -829,6 +915,15 @@ class TestAuditNewFlags:
         args = parser.parse_args(["test.tex", "--literature-search", "--regression"])
         assert args.literature_search is True
         assert args.regression is True
+
+    def test_firecrawl_key_is_appended_after_existing_parameters(self) -> None:
+        import inspect
+
+        from audit import run_audit, run_deep_review
+
+        for func in (run_audit, run_deep_review):
+            params = list(inspect.signature(func).parameters)
+            assert params.index("firecrawl_key") > params.index("overwrite_workspace")
 
     def test_report_generator_has_literature_context(self) -> None:
         from report_generator import AuditResult
