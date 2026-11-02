@@ -163,3 +163,81 @@ def test_filled_plan_has_no_placeholders(filled_plan: dict, defense_scripts) -> 
     assert defense_scripts.plan_deck.count_placeholders(filled_plan) == 0
     say = by_id(filled_plan)["c3-method-1"]["notes"]["say"]
     assert 150 <= len(say) <= 250
+
+
+def touying(inventory: dict, defense_scripts) -> dict:
+    return defense_scripts.plan_deck.build_plan(
+        inventory, 40, "predefense", "yanshan", "0", "touying"
+    )
+
+
+def test_touying_plan_records_backend_and_nav_labels(inventory: dict, defense_scripts) -> None:
+    plan = touying(inventory, defense_scripts)
+    assert plan["deck"] == {"backend": "touying"}
+    labels = [chapter["nav_label"] for chapter in plan["meta"]["chapters"]]
+    assert labels[0] == "绪论"
+    assert labels[1] == "第2章"
+    assert labels[6] == "总结与展望"
+    frames = by_id(plan)
+    assert any("nav_label" in hint for hint in frames["c2-toc"]["hints"])
+    assert not any("nav_label" in hint for hint in frames["c1-background-1"].get("hints", []))
+    other = [h for f in plan["frames"] for h in f.get("hints", []) if h.startswith("Touying：")]
+    assert other == []
+
+
+def test_beamer_plan_has_backend_but_no_nav_label(inventory: dict, defense_scripts) -> None:
+    plan = defense_scripts.plan_deck.build_plan(inventory, 40, "predefense", "yanshan", "0")
+    assert plan["deck"] == {"backend": "beamer"}
+    assert all("nav_label" not in chapter for chapter in plan["meta"]["chapters"])
+    hints = [h for f in plan["frames"] for h in f.get("hints", [])]
+    assert not any(h.startswith("Touying") for h in hints)
+
+
+def test_touying_needs_yanshan_theme(inventory: dict, defense_scripts, tmp_path: Path) -> None:
+    plan_deck = defense_scripts.plan_deck
+    with pytest.raises(plan_deck.PlanError, match="yanshan"):
+        plan_deck.build_plan(inventory, 40, "predefense", "generic", "0", "touying")
+    with pytest.raises(plan_deck.PlanError):
+        plan_deck.build_plan(inventory, 40, "predefense", "yanshan", "0", "slidev")
+    out = tmp_path / "p.yaml"
+    args = ("--inventory", str(tmp_path / "inventory.json"), "--out", str(out))
+    result = run_cli(*args, "--backend", "touying", "--theme", "generic")
+    assert result.returncode == 2 and "yanshan" in result.stderr
+    assert not out.exists()
+    result = run_cli(*args, "--backend", "touying")
+    assert result.returncode == 0, result.stderr
+    assert yaml.safe_load(out.read_text(encoding="utf-8"))["deck"] == {"backend": "touying"}
+    assert "提示（c2-toc）：" in result.stdout
+
+
+def first_with(plan: dict, key: str) -> dict:
+    return next(frame for frame in content_frames(plan) if frame.get(key))
+
+
+def test_touying_hints_unrenderable_inputs(inventory: dict, defense_scripts) -> None:
+    plan = touying(inventory, defense_scripts)
+    figure_frame = first_with(plan, "figures")
+    table_frame = first_with(plan, "table")
+    equation_frame = first_with(plan, "equations")
+    figures = {figure["label"]: figure for figure in inventory["figures"]}
+    for item in figures[figure_frame["figures"][0]["label"]]["files"]:
+        item["resolved"] = item["resolved"].rsplit(".", 1)[0] + ".eps"
+    tables = {table["label"]: table for table in inventory["tables"]}
+    tables[table_frame["table"]]["tabular_source"] = (
+        "\\begin{tabular}{cc}\n\\multirow{2}{*}{a} & b \\\\\n & c \\\\\n\\end{tabular}"
+    )
+    label = equation_frame["equations"][0]["label"]
+    equation = next(
+        eq for eq in inventory["equations"] if label in [item["label"] for item in eq["labels"]]
+    )
+    equation["tex"] += " + \\Loss{x}"
+    loss = next(macro for macro in inventory["macros"] if macro["name"] == "Loss")
+    loss["definition"] = "\\def\\Loss#1{\\mathcal{L}(#1)}"
+    frames = by_id(touying(inventory, defense_scripts))
+
+    def touying_hints(frame_id: str) -> str:
+        return " ".join(h for h in frames[frame_id].get("hints", []) if h.startswith("Touying："))
+
+    assert "eps" in touying_hints(figure_frame["id"]).lower()
+    assert "multirow" in touying_hints(table_frame["id"])
+    assert "Loss" in touying_hints(equation_frame["id"])

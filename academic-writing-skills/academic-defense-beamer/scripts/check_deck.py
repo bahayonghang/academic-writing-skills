@@ -2,15 +2,16 @@
 """
 Quality gate for the academic-defense-beamer defense deck.
 
-The script reads defense.tex, notes.md, defense.log, and the presenter build
-defense-notes.pdf in the build output directory, compares them with
-inventory.json and the thesis source, and prints D-* findings. It does not write
-files. The PDF check imports PyMuPDF lazily and skips without it.
+The script reads defense.tex (Beamer) or defense.typ (Touying), notes.md,
+defense.log, and the presenter build defense-notes.pdf in the build output
+directory, compares them with inventory.json and the thesis source, and prints
+D-* findings. The suffix of --deck selects the backend. It does not write files.
+The PDF checks import PyMuPDF lazily and skip without it.
 
 Codes, criteria, thresholds, and fixes: references/quality-gate.md.
 
 Usage:
-    uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex \
+    uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex|DIR/defense.typ \
         --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] \
         [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 
@@ -33,14 +34,18 @@ from typing import Any
 import yaml
 
 try:
+    import check_typst
     import defense_budget
     import extract_thesis
     import tex_loader
+    import typst_backend
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import check_typst
     import defense_budget
     import extract_thesis
     import tex_loader
+    import typst_backend
 
 PRIORITY = {"Critical": "P0", "Major": "P1", "Minor": "P2", "Info": "P3"}
 STAGES = ("predefense", "defense")
@@ -133,6 +138,13 @@ NOTES_PDF_NAME = "defense-notes.pdf"
 MANIFEST_NAME = "build_manifest.json"
 # FerroStage reads a same-size document with W/H in this band as slide left, notes right.
 NOTES_PDF_RATIO = (3.1, 3.6)
+# Touying notes page: same width as the slide, height = width x 13.5/16 (1 % tolerance).
+TOUYING_NOTES_RATIO = 13.5 / 16
+TOUYING_NOTES_TOLERANCE = 0.01
+NOTES_PREFIX = "notes:"
+SUFFIX_BACKENDS = {".tex": "beamer", ".typ": "touying"}
+TYPST_ERROR_RE = re.compile(r"^error:\s*(.*)$")
+TYPST_LOCATION_RE = re.compile(r"[┌╭]─\s*(.+?):(\d+):\d+\s*$")
 LOG_WIDTH = 79  # TeX max_print_line: a longer message continues on the next log line
 
 MARKER_RE = re.compile(
@@ -387,6 +399,8 @@ class Frame:
     text: str  # comment-free source of lines start..end
     outside: str = ""  # text with the DefenseSource environments blanked
     masked: str = ""  # text with every part that is not visible text blanked
+    typst: Any = None  # check_typst.TypstFrame of a Touying deck
+    plain: list[tuple[int, str]] | None = None  # visible text of a Touying frame
 
     @property
     def content(self) -> bool:
@@ -396,6 +410,8 @@ class Frame:
         return self.start + self.text.count("\n", 0, offset)
 
     def visible_lines(self, masked: str | None = None) -> list[tuple[int, str]]:
+        if masked is None and self.plain is not None:
+            return self.plain
         source = self.masked if masked is None else masked
         return [(self.start + i, visible(line)) for i, line in enumerate(source.split("\n"))]
 
@@ -408,6 +424,16 @@ class Deck:
     starts: list[int]
     body: int  # offset of \begin{document}; the length of code when it is absent
     frames: list[Frame]
+    backend: str = "beamer"
+    typst: Any = None  # check_typst.TypstDeck of a Touying deck
+
+    @property
+    def touying(self) -> bool:
+        return self.backend == "touying"
+
+    @property
+    def marker_prefix(self) -> str:
+        return "// defense-frame" if self.touying else "% defense-frame"
 
     @property
     def name(self) -> str:
@@ -482,6 +508,42 @@ def parse_deck(path: Path) -> Deck:
         frames.append(make_frame(lines, code_lines, first, len(lines) - 1, len(frames) + 1))
     begin = re.search(r"\\begin\s*\{document\}", code)
     return Deck(path, lines, code, starts, begin.start() if begin else len(code), frames)
+
+
+def parse_typst_deck(path: Path) -> Deck:
+    """Touying deck: frames from the frame markers and structure lines of defense.typ."""
+    try:
+        text = tex_loader.read_text_robust(path)[0].replace("\r\n", "\n")
+    except OSError as exc:
+        raise CheckError(f"无法读取答辩稿 {path}：{exc}") from exc
+    parsed = check_typst.parse_deck(path, text)
+    frames = []
+    for item in parsed.frames:
+        frame = Frame(
+            item.order,
+            item.id,
+            item.role,
+            item.chapter,
+            item.chapter_text,
+            item.layout,
+            item.marker,
+            item.start,
+            item.end,
+            check_typst.frame_text(parsed, item),
+        )
+        frame.typst = item
+        frame.plain = check_typst.visible_lines(parsed, item)
+        frames.append(frame)
+    return Deck(
+        path,
+        parsed.lines,
+        parsed.code,
+        parsed.starts,
+        parsed.preamble_end,
+        frames,
+        backend="touying",
+        typst=parsed,
+    )
 
 
 @dataclass
@@ -721,8 +783,35 @@ def figure_uses(deck: Deck, inventory: dict, root: Path) -> list[FigureUse]:
     return uses
 
 
+def typst_figure_uses(deck: Deck, inventory: dict) -> list[FigureUse]:
+    """Images of a Touying deck (``image("img/...")``) with their inventory figure."""
+    by_name: dict[str, dict] = {}
+    for figure in inventory.get("figures") or []:
+        for item in figure.get("files") or []:
+            if item.get("resolved"):
+                by_name.setdefault(typst_backend.image_target(item["resolved"]), figure)
+    uses = []
+    for frame in deck.frames:
+        for ref in check_typst.figures(deck.typst, frame.typst):
+            name = normalize_path(ref.file)
+            target = deck.path.parent / name
+            path = target.resolve() if name and target.is_file() else None
+            owner = by_name.get(name)
+            uses.append(FigureUse(frame, ref.line, ref.file, ref.caption, path, owner, bool(owner)))
+    return uses
+
+
 def deck_chapters(deck: Deck, plan_meta: dict, inventory: dict) -> list[int]:
     """Chapter numbers of \\DefenseAddChapter; else of the plan meta or the inventory."""
+    if deck.touying:
+        source = plan_meta.get("chapters")
+        if not isinstance(source, list):
+            source = inventory.get("chapters") or []
+        planned = [
+            c["number"] for c in source if isinstance(c, dict) and isinstance(c.get("number"), int)
+        ]
+        count = deck.typst.headings
+        return planned if len(planned) == count else list(range(1, count + 1))
     numbers = [
         int(groups[0].strip())
         for _, groups in deck.commands("DefenseAddChapter", 2)
@@ -758,6 +847,10 @@ def chapter_roles(
 
 def deck_stage(deck: Deck) -> tuple[str, int | None]:
     """Last stage setting of the preamble; predefense (the theme default) without one."""
+    if deck.touying:
+        line, text = check_typst.config_info(deck.typst)["stage-en"]
+        stages = {label: stage for stage, label in typst_backend.STAGE_EN.items()}
+        return stages.get(text.strip(), text.strip() or "predefense"), line
     settings: list[tuple[int, str]] = []
     for line, groups in deck.commands("DefenseSetup", 1):
         match = STAGE_KEY_RE.search(groups[0]) if groups else None
@@ -781,7 +874,8 @@ def check_marker(ctx: Context) -> None:
     seen: dict[str, int] = {}
     for frame in ctx.deck.frames:
         if frame.marker is None:
-            ctx.add("D-MARKER", "Minor", frame, "缺少帧标记 % defense-frame；按帧序号定位")
+            message = f"缺少帧标记 {ctx.deck.marker_prefix}；按帧序号定位"
+            ctx.add("D-MARKER", "Minor", frame, message)
             continue
         invalid = []
         if frame.role not in ROLES:
@@ -817,15 +911,19 @@ def check_coverage(ctx: Context) -> None:
 
 
 def toc_argument(frame: Frame) -> int | None:
+    if frame.typst is not None:
+        return frame.typst.toc
     match = TOC_ARG_RE.search(frame.text)
     return int(match.group(1)) if match else None
 
 
 def check_toc(ctx: Context) -> None:
     frames = ctx.deck.frames
+    touying = ctx.deck.touying
     if len(frames) < 2 or toc_argument(frames[1]) != 0:
         target = frames[1] if len(frames) > 1 else None
-        ctx.add("D-TOC", "Major", target, "第二帧应为总目录 \\DefenseTocFrame{0}")
+        expected = "#outline-slide" if touying else "\\DefenseTocFrame{0}"
+        ctx.add("D-TOC", "Major", target, f"第二帧应为总目录 {expected}")
     for number in ctx.chapters[1:]:
         tocs = [f for f in frames if f.role == "toc" and f.chapter == number]
         if not tocs:
@@ -838,15 +936,26 @@ def check_toc(ctx: Context) -> None:
         toc = tocs[0]
         argument = toc_argument(toc)
         if argument != number:
-            found = "未调用 \\DefenseTocFrame" if argument is None else f"参数为 {argument}"
-            message = f"第 {number} 章的章前目录{found}，应为 \\DefenseTocFrame{{{number}}}"
+            if touying:
+                found = "不是章标题（=）" if argument is None else f"是第 {argument} 个章标题"
+                message = f"第 {number} 章的章前目录{found}，应为第 {number} 个章标题（=）"
+            else:
+                found = "未调用 \\DefenseTocFrame" if argument is None else f"参数为 {argument}"
+                message = f"第 {number} 章的章前目录{found}，应为 \\DefenseTocFrame{{{number}}}"
             ctx.add("D-TOC", "Major", toc, message)
         if body and body[0].order != toc.order + 1:
             message = f"第 {number} 章的章前目录应紧接在该章首帧 {body[0].id} 之前"
             ctx.add("D-TOC", "Major", toc, message)
 
 
-def subsection_text(frame: Frame) -> str:
+def typst_calls(ctx: Context, frame: Frame, name: str) -> list:
+    return check_typst.frame_calls(ctx.deck.typst, frame.typst, name)
+
+
+def subsection_text(frame: Frame, ctx: Context | None = None) -> str:
+    if ctx is not None and frame.typst is not None:
+        found = typst_calls(ctx, frame, "sub")
+        return check_typst.call_plain(ctx.deck.typst, found[0]) if found else ""
     match = SUBSECTION_RE.search(frame.outside)
     group = group_after(frame.text, match.end()) if match else None
     return visible(group) if group is not None else ""
@@ -859,13 +968,13 @@ def check_chain(ctx: Context) -> None:
         frames = [frame for frame in ctx.deck.frames if frame.role == role]
         if not frames:
             continue
-        cards = sum(len(COUNT_RES["card"].findall(frame.outside)) for frame in frames)
+        cards = sum(count_items(ctx, frame, "card") for frame in frames)
         if cards != len(intros):
             message = f"{label} {cards} 张，研究章引言页 {len(intros)} 个；两者应相等"
             ctx.add("D-CHAIN", "Major", frames[0], message)
     for frame in intros:
         expected = research.index(frame.chapter) + 1 if frame.chapter in research else 0
-        match = RESEARCH_ITEM_RE.search(subsection_text(frame))
+        match = RESEARCH_ITEM_RE.search(subsection_text(frame, ctx))
         found = int(match.group(1)) if match else None
         if found != expected:
             current = f"当前为「研究内容 {found}」" if found else "当前缺少「研究内容 i」"
@@ -877,6 +986,8 @@ def check_placeholder(ctx: Context) -> None:
     for number, line in enumerate(ctx.deck.lines, 1):
         if NOTE_CALL_RE.match(line):
             continue  # the speaker note repeats notes.md, which the second loop reports
+        if ctx.deck.touying and check_typst.note_line(ctx.deck.typst, number):
+            continue
         tokens = unique(PLACEHOLDER_RE.findall(line))
         if tokens:
             frame = ctx.deck.frame_at(number)
@@ -904,7 +1015,10 @@ def check_fig_allow(ctx: Context) -> None:
 def check_fig_missing(ctx: Context) -> None:
     for use in ctx.uses:
         if use.allowed and use.path is None:
-            message = f"图片 {use.file} 按 \\graphicspath 与扩展名回退找不到文件"
+            if ctx.deck.touying:
+                message = f"输出目录中没有复制的图片 {use.file}；重新运行 build_deck.py --force"
+            else:
+                message = f"图片 {use.file} 按 \\graphicspath 与扩展名回退找不到文件"
             ctx.add("D-FIG-MISSING", "Major", use.frame, message, line=use.line)
 
 
@@ -946,6 +1060,12 @@ def check_fig_number(ctx: Context) -> None:
             for use in ctx.uses
             if use.frame is frame and use.owner is not None
         }
+        if frame.typst is not None:
+            if owners:
+                for line, caption in check_typst.captions(ctx.deck.typst, frame.typst):
+                    if not caption.lstrip().startswith("表"):
+                        captions.append((frame, line, caption, owners))
+            continue
         for match in CAPTION_CALL_RE.finditer(frame.outside):
             group = group_after(frame.text, match.end())
             if group is not None and owners:
@@ -975,7 +1095,11 @@ def check_fig_aspect(ctx: Context) -> None:
         if use.path is None or use.path.suffix.lower() not in BITMAP_SUFFIXES:
             continue
         layout = use.frame.layout
-        left = layout == "figure-bullets" and bool(COLUMNS_RE.search(use.frame.outside))
+        if use.frame.typst is not None:
+            columns = bool(typst_calls(ctx, use.frame, "grid"))
+        else:
+            columns = bool(COLUMNS_RE.search(use.frame.outside))
+        left = layout == "figure-bullets" and columns
         if layout not in TALL_LAYOUTS and not left:
             continue
         size = image_size(use.path)
@@ -1030,6 +1154,9 @@ def check_eq_src(ctx: Context) -> None:
     known = {
         normalize_equation(str(eq.get("tex") or "")) for eq in ctx.inventory.get("equations") or []
     }
+    if ctx.deck.touying:
+        check_eq_src_typst(ctx, known)
+        return
     for frame in ctx.deck.frames:
         for env in source_blocks(frame.text, EQUATION_NAMES):
             if normalize_equation(frame.text[env.body_start : env.body_end]) not in known:
@@ -1038,7 +1165,49 @@ def check_eq_src(ctx: Context) -> None:
         report_outside(ctx, "D-EQ-SRC", frame, OUTSIDE_MATH_RE, "数学公式")
 
 
+def report_outside_typst(
+    ctx: Context, code: str, frame: Frame, lines: list[int], kind: str
+) -> None:
+    for line in lines:
+        message = (
+            f"源区（{typst_backend.REGION_BEGIN} … {typst_backend.REGION_END}）外出现{kind}；"
+            "放入源区并逐字取自论文"
+        )
+        ctx.add(code, "Major", frame, message, line=line)
+
+
+def check_eq_src_typst(ctx: Context, known: set[str]) -> None:
+    """Touying: mitex source in the source regions equals an inventory equation."""
+    for frame in ctx.deck.frames:
+        for line, body, inside in check_typst.equations(ctx.deck.typst, frame.typst):
+            if inside and normalize_equation(body) not in known:
+                message = "源区中的 mitex 公式与清单中任一公式不同；按论文逐字复制"
+                ctx.add("D-EQ-SRC", "Critical", frame, message, line=line)
+        outside = check_typst.outside_source(ctx.deck.typst, frame.typst)["math"]
+        report_outside_typst(ctx, "D-EQ-SRC", frame, outside, "数学公式")
+
+
+def check_tab_src_typst(ctx: Context) -> None:
+    """Touying: the cell text sequence of each result-table equals an inventory table."""
+    numbers = typst_backend.label_numbers(ctx.inventory)
+    known = set()
+    for table in ctx.inventory.get("tables") or []:
+        cells = typst_backend.table_plain(str(table.get("tabular_source") or ""), numbers)
+        if cells is not None:
+            known.add(tuple(compact(cell) for cell in cells))
+    for frame in ctx.deck.frames:
+        for line, cells, inside in check_typst.tables(ctx.deck.typst, frame.typst):
+            if inside and tuple(compact(cell) for cell in cells) not in known:
+                message = "源区中的 result-table 单元格与清单中任一表体不同；表体逐字取自论文"
+                ctx.add("D-TAB-SRC", "Critical", frame, message, line=line)
+        outside = check_typst.outside_source(ctx.deck.typst, frame.typst)["table"]
+        report_outside_typst(ctx, "D-TAB-SRC", frame, outside, "表格")
+
+
 def check_tab_src(ctx: Context) -> None:
+    if ctx.deck.touying:
+        check_tab_src_typst(ctx)
+        return
     known = {compact(str(t.get("tabular_source") or "")) for t in ctx.inventory.get("tables") or []}
     for frame in ctx.deck.frames:
         for env in source_blocks(frame.text, TABLE_NAMES):
@@ -1063,10 +1232,14 @@ def check_num_src(ctx: Context) -> None:
             ctx.add("D-NUM-SRC", "Major", frame, message, line=line, file=file, meaning="NEEDS-LLM")
 
     for frame in ctx.deck.frames:
-        masked = SUBSECTION_NUMBER_RE.sub(
-            lambda m: m.group(1) + " " * len(m.group(2)), frame.masked
-        )
-        for line, text in frame.visible_lines(masked):
+        if frame.typst is not None:
+            lines = check_typst.visible_lines(ctx.deck.typst, frame.typst, numbers=True)
+        else:
+            masked = SUBSECTION_NUMBER_RE.sub(
+                lambda m: m.group(1) + " " * len(m.group(2)), frame.masked
+            )
+            lines = frame.visible_lines(masked)
+        for line, text in lines:
             report(frame, line, text, None)
     for section in ctx.notes:
         for name in NOTES_TEXT_FIELDS:
@@ -1075,16 +1248,27 @@ def check_num_src(ctx: Context) -> None:
                 report(ctx.section_frame(section), line, value, NOTES_NAME)
 
 
+def paper_boxes(ctx: Context, frame: Frame) -> list[tuple[int, str]]:
+    """Line and visible text of each publication box of a frame."""
+    if frame.typst is not None:
+        return [
+            (ctx.deck.typst.line_of(call.start), check_typst.call_plain(ctx.deck.typst, call))
+            for call in typst_calls(ctx, frame, "paper-box")
+        ]
+    found = []
+    for match in PAPER_BOX_RE.finditer(frame.outside):
+        group = group_after(frame.text, match.end())
+        if group is not None:
+            found.append((frame.line_at(match.start()), visible(group)))
+    return found
+
+
 def check_paper(ctx: Context) -> None:
     publications = ctx.inventory.get("publications") or []
     by_text = {compact(str(p.get("text") or "")): p for p in publications}
     for frame in ctx.deck.frames:
-        for match in PAPER_BOX_RE.finditer(frame.outside):
-            group = group_after(frame.text, match.end())
-            if group is None:
-                continue
-            line = frame.line_at(match.start())
-            publication = by_text.get(compact(visible(group)))
+        for line, shown in paper_boxes(ctx, frame):
+            publication = by_text.get(compact(shown))
             if publication is None:
                 message = "「论文」框文本与清单成果列表中任一条目不同；著录文本逐字取自成果列表"
                 ctx.add("D-PAPER", "Critical", frame, message, line=line)
@@ -1101,7 +1285,7 @@ def check_paper(ctx: Context) -> None:
         if role != "research" or not any(number in (p.get("chapters") or []) for p in publications):
             continue
         summaries = [f for f in ctx.deck.frames if f.role == "summary" and f.chapter == number]
-        if summaries and not any(PAPER_BOX_RE.search(f.outside) for f in summaries):
+        if summaries and not any(paper_boxes(ctx, f) for f in summaries):
             message = f"第 {number} 章在成果列表中有对应成果，小结页没有「论文」框"
             ctx.add("D-PAPER", "Minor", summaries[0], message)
 
@@ -1116,15 +1300,31 @@ COVER_FIELDS = (
 )
 
 
+TYPST_COVER_KEYS = {
+    "title": "title",
+    "author": "author",
+    "DefenseSupervisor": "supervisor",
+    "DefenseSchool": "school",
+    "DefenseSubject": "subject",
+    "date": "date",
+}
+
+
 def check_meta(ctx: Context) -> None:
     values: dict[str, tuple[int | None, str]] = {}
+    info = check_typst.config_info(ctx.deck.typst) if ctx.deck.touying else {}
     for command, label in COVER_FIELDS:
-        found = ctx.deck.commands(command, 1)
-        line, groups = found[-1] if found else (None, [])
-        text = compact(visible(groups[0])) if groups else ""
+        if ctx.deck.touying:
+            key = TYPST_COVER_KEYS[command]
+            line, shown = info[key]
+            text, where = compact(shown), f"config-info {key}"
+        else:
+            found = ctx.deck.commands(command, 1)
+            line, groups = found[-1] if found else (None, [])
+            text, where = (compact(visible(groups[0])) if groups else ""), f"\\{command}"
         values[command] = (line, text)
         if not text:
-            ctx.add("D-META", "Major", None, f"封面字段「{label}」为空（\\{command}）", line=line)
+            ctx.add("D-META", "Major", None, f"封面字段「{label}」为空（{where}）", line=line)
     meta = ctx.inventory.get("meta") or {}
     for command, key, label in (("title", "title_zh", "题目"), ("author", "author", "作者")):
         line, text = values[command]
@@ -1162,6 +1362,9 @@ def check_density(ctx: Context) -> None:
     for frame in ctx.deck.frames:
         if not frame.content:
             continue
+        if frame.typst is not None:
+            check_density_typst(ctx, frame)
+            continue
         count = sum(len(compact(text)) for _, text in frame.visible_lines())
         if count > DENSITY_MAJOR:
             ctx.add("D-DENSITY", "Major", frame, f"可见字符 {count} 个，超过 {DENSITY_MAJOR} 个")
@@ -1183,6 +1386,40 @@ def check_density(ctx: Context) -> None:
             if length > TAKEAWAY_MAX:
                 message = f"结论句 {length} 字，超过 {TAKEAWAY_MAX} 字"
                 ctx.add("D-DENSITY", "Minor", frame, message, line=frame.line_at(match.start()))
+
+
+def count_items(ctx: Context, frame: Frame, item: str) -> int:
+    """Counted items of LAYOUT_LIMITS in a frame (Beamer macros or Touying calls)."""
+    if frame.typst is None:
+        if item == "equation":
+            return len(source_blocks(frame.text, EQUATION_NAMES))
+        return len(COUNT_RES[item].findall(frame.outside))
+    deck = ctx.deck.typst
+    if item == "item":
+        return check_typst.point_count(deck, frame.typst)
+    if item == "equation":
+        return sum(inside for _, _, inside in check_typst.equations(deck, frame.typst))
+    name = {"card": "side-card", "box": "label-row", "figure": "image"}[item]
+    return len(typst_calls(ctx, frame, name))
+
+
+def check_density_typst(ctx: Context, frame: Frame) -> None:
+    count = sum(len(compact(text)) for _, text in frame.visible_lines())
+    if count > DENSITY_MAJOR:
+        ctx.add("D-DENSITY", "Major", frame, f"可见字符 {count} 个，超过 {DENSITY_MAJOR} 个")
+    elif count > DENSITY_MINOR:
+        ctx.add("D-DENSITY", "Minor", frame, f"可见字符 {count} 个，超过 {DENSITY_MINOR} 个")
+    for layout, item, limit in LAYOUT_LIMITS:
+        found = count_items(ctx, frame, item) if frame.layout == layout else 0
+        if found > limit:
+            message = f"版式 {layout} 的{ITEM_NAMES[item]} {found} 个，上限 {limit} 个"
+            ctx.add("D-DENSITY", "Minor", frame, message)
+    for call in typst_calls(ctx, frame, "takeaway"):
+        length = len(compact(check_typst.call_plain(ctx.deck.typst, call)))
+        if length > TAKEAWAY_MAX:
+            message = f"结论句 {length} 字，超过 {TAKEAWAY_MAX} 字"
+            line = ctx.deck.typst.line_of(call.start)
+            ctx.add("D-DENSITY", "Minor", frame, message, line=line)
 
 
 def check_budget(ctx: Context) -> None:
@@ -1218,9 +1455,13 @@ def check_budget(ctx: Context) -> None:
 
 def check_notes(ctx: Context) -> None:
     for frame in ctx.deck.frames:
-        count = len(NOTE_CALL_RE.findall(frame.text))
+        if frame.typst is not None:
+            count = check_typst.note_count(ctx.deck.typst, frame.typst)
+            call = "#note / note:"
+        else:
+            count, call = len(NOTE_CALL_RE.findall(frame.text)), "\\DefenseNote"
         if count != 1:
-            message = f"帧内 \\DefenseNote 调用 {count} 次，应恰为 1 次；重新运行 build_deck.py"
+            message = f"帧内 {call} 调用 {count} 次，应恰为 1 次；重新运行 build_deck.py"
             ctx.add("D-NOTES", "Minor", frame, message)
     if ctx.notes_lines is None:
         ctx.add("D-NOTES", "Major", None, "缺少 notes.md；重新运行 build_deck.py", file=NOTES_NAME)
@@ -1262,6 +1503,9 @@ def check_compile(ctx: Context) -> None:
     if ctx.log is None:
         ctx.skip("D-COMPILE")
         return
+    if ctx.deck.touying:
+        check_compile_typst(ctx)
+        return
     for index, (number, text) in enumerate(ctx.log):
         error = LOG_ERROR_RE.match(text)
         if error:
@@ -1282,6 +1526,28 @@ def check_compile(ctx: Context) -> None:
             kind = "交叉引用" if undefined.group(1) == "Reference" else "文献引用"
             message = f"{kind} {undefined.group(2)} 未定义"
             place(ctx, "D-COMPILE", "Major", int(undefined.group(3)), number, message)
+    check_pdf_age(ctx)
+
+
+def check_compile_typst(ctx: Context) -> None:
+    """Touying: ``error:`` messages of the typst stderr in defense.log, at their deck line."""
+    log = ctx.log or []
+    for index, (number, text) in enumerate(log):
+        error = TYPST_ERROR_RE.match(text)
+        if not error:
+            continue
+        source = None
+        for _, following in log[index + 1 : index + 6]:
+            found = TYPST_LOCATION_RE.search(following)
+            if found:
+                if Path(found.group(1)).name == ctx.deck.name:
+                    source = int(found.group(2))
+                break
+        place(ctx, "D-COMPILE", "Critical", source, number, f"编译错误：{error.group(1).strip()}")
+    check_pdf_age(ctx)
+
+
+def check_pdf_age(ctx: Context) -> None:
     pdf = ctx.deck.path.with_suffix(".pdf")
     if not pdf.is_file():
         ctx.add("D-COMPILE", "Critical", None, f"缺少 {pdf.name}；编译没有生成 PDF", file=pdf.name)
@@ -1291,6 +1557,9 @@ def check_compile(ctx: Context) -> None:
 
 
 def check_overflow_v(ctx: Context) -> None:
+    if ctx.deck.touying:
+        check_overflow_v_typst(ctx)
+        return
     if ctx.log is None:
         ctx.skip("D-OVERFLOW-V")
         return
@@ -1303,7 +1572,7 @@ def check_overflow_v(ctx: Context) -> None:
 
 
 def check_overflow_h(ctx: Context) -> None:
-    if ctx.log is None:
+    if ctx.log is None or ctx.deck.touying:  # typst does not report horizontal overflow
         ctx.skip("D-OVERFLOW-H")
         return
     for number, text in ctx.log:
@@ -1342,6 +1611,112 @@ def page_label(page: Any) -> str:
     return data.decode("latin-1")
 
 
+def pdf_page_count(path: Path) -> int | None:
+    pymupdf = load_pymupdf()
+    if pymupdf is None or not path.is_file():
+        return None
+    try:
+        with pymupdf.open(path) as document:
+            return document.page_count
+    except Exception:  # PyMuPDF raises several error types for a bad file
+        return None
+
+
+def check_overflow_v_typst(ctx: Context) -> None:
+    """Touying continues an overflowing slide on extra pages; each frame should be one page.
+
+    The ``<ysu-note>`` records give the first page of each frame; a frame spans up to
+    the next frame's page (the last frame up to the end of defense.pdf). Without
+    typst only the page total is compared with the frame count.
+    """
+    pdf = ctx.deck.path.with_suffix(".pdf")
+    if not pdf.is_file():
+        ctx.skip("D-OVERFLOW-V")
+        return
+    total = pdf_page_count(pdf)
+    records = check_typst.note_records(ctx.deck.path)
+    frames = ctx.deck.frames
+    if records is None:
+        if total is None:
+            ctx.skip("D-OVERFLOW-V")
+        elif total > len(frames):
+            message = (
+                f"投屏版 {total} 页，多于帧数 {len(frames)}；有帧内容溢出续页"
+                "（未找到 typst，无法定位到帧）"
+            )
+            ctx.add("D-OVERFLOW-V", "Major", None, message, file=pdf.name)
+        return
+    starts: dict[int, int] = {}
+    for record in records:
+        frame, page = record.get("frame"), record.get("page")
+        if isinstance(frame, int) and isinstance(page, int):
+            starts.setdefault(frame, page)
+    for order in sorted(starts):
+        if order + 1 in starts:
+            following = starts[order + 1]
+        elif order == len(frames) and total is not None:
+            following = total + 1
+        else:
+            continue
+        extra = following - starts[order] - 1
+        if extra > 0 and 1 <= order <= len(frames):
+            frame = frames[order - 1]
+            message = f"帧内容溢出，自动续出 {extra} 页（第 {starts[order]} 页起）；精简内容或拆页"
+            ctx.add("D-OVERFLOW-V", "Major", frame, message, line=frame.marker or frame.start)
+
+
+def check_notes_pdf_typst(ctx: Context, path: Path, pymupdf: ModuleType) -> None:
+    """Touying presenter build: a notes:N page after each frame (FerroStage pairs them)."""
+    try:
+        with pymupdf.open(path) as document:
+            sizes = [(page.rect.width, page.rect.height) for page in document]
+            labels = check_typst.page_labels(document)
+    except Exception as exc:  # PyMuPDF raises several error types for a bad file
+        ctx.add("D-NOTES-PDF", "Major", None, f"无法读取 PDF：{exc}", file=path.name)
+        return
+    if not sizes:
+        ctx.add("D-NOTES-PDF", "Major", None, f"{path.name} 没有页面", file=path.name)
+        return
+    notes = [index for index, label in enumerate(labels) if label.startswith(NOTES_PREFIX)]
+    content = [index for index in range(len(labels)) if index not in set(notes)]
+    frames = len(ctx.deck.frames)
+    if len(notes) != frames:
+        message = f"备注页 {len(notes)} 个，帧数 {frames}；每帧之后应有一个 notes:N 备注页"
+        ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    if notes and notes[-1] != len(labels) - 1:
+        message = "末页不是备注页；最后一帧缺少 notes:N 备注页"
+        ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    for index in notes:
+        expected = NOTES_PREFIX + labels[index - 1] if index > 0 else None
+        if index == 0 or labels[index - 1].startswith(NOTES_PREFIX) or labels[index] != expected:
+            before = labels[index - 1] if index > 0 else "（无）"
+            message = (
+                f"第 {index + 1} 页备注页标签「{labels[index]}」与前一页「{before}」不配对；"
+                "FerroStage 按 notes:<前一页标签> 配对"
+            )
+            ctx.add("D-NOTES-PDF", "Major", None, message, line=index + 1, file=path.name)
+            break
+    slide_sizes = {(round(sizes[i][0], 1), round(sizes[i][1], 1)) for i in content}
+    if len(slide_sizes) > 1:
+        message = f"幻灯片页尺寸不一致（{len(slide_sizes)} 种）"
+        ctx.add("D-NOTES-PDF", "Major", None, message, file=path.name)
+    width = sizes[content[0]][0] if content else None
+    for index in notes:
+        note_width, note_height = sizes[index]
+        ratio = note_height / note_width if note_width else 0.0
+        wrong_width = width is not None and abs(note_width - width) > 0.5
+        if (
+            wrong_width
+            or abs(ratio - TOUYING_NOTES_RATIO) > TOUYING_NOTES_TOLERANCE * TOUYING_NOTES_RATIO
+        ):
+            message = (
+                f"第 {index + 1} 页备注页尺寸 {note_width:.1f}×{note_height:.1f}，"
+                "应与幻灯片同宽、高为宽的 13.5/16"
+            )
+            ctx.add("D-NOTES-PDF", "Major", None, message, line=index + 1, file=path.name)
+            break
+
+
 def check_notes_pdf(ctx: Context) -> None:
     """Presenter build: same-size pages in the FerroStage right-notes band, one per slide."""
     manifest = ctx.manifest or {}
@@ -1360,6 +1735,9 @@ def check_notes_pdf(ctx: Context) -> None:
     if not path.is_file():
         message = f"缺少备注版 {path.name}；运行 build_deck.py --force --compile"
         ctx.add("D-NOTES-PDF", "Minor", None, message, file=path.name)
+        return
+    if ctx.deck.touying:
+        check_notes_pdf_typst(ctx, path, pymupdf)
         return
     try:
         with pymupdf.open(path) as document:
@@ -1448,6 +1826,13 @@ def load_context(args: argparse.Namespace) -> Context:
     deck_path = Path(args.deck)
     if not deck_path.is_file():
         raise CheckError(f"答辩稿不存在：{args.deck}")
+    backend = SUFFIX_BACKENDS.get(deck_path.suffix.lower())
+    if backend is None:
+        raise CheckError(f"--deck 应为 defense.tex（Beamer）或 defense.typ（Touying）：{args.deck}")
+    manifest = read_manifest(deck_path.parent / MANIFEST_NAME)
+    built = (manifest or {}).get("backend")
+    if built in SUFFIX_BACKENDS.values() and built != backend:
+        raise CheckError(f"--deck 的后缀表示 {backend} 后端，build_manifest.json 记录为 {built}")
     inventory_path = Path(args.inventory)
     inventory = read_mapping(inventory_path, "json")
     plan = read_mapping(Path(args.plan), "yaml") if args.plan else None
@@ -1470,19 +1855,24 @@ def load_context(args: argparse.Namespace) -> Context:
     log_path = Path(args.log) if args.log else deck_path.parent / LOG_NAME
     notes_path = deck_path.parent / NOTES_NAME
 
-    deck = parse_deck(deck_path)
+    deck = parse_typst_deck(deck_path) if backend == "touying" else parse_deck(deck_path)
     notes_lines = read_lines(notes_path) if notes_path.is_file() else None
-    log = log_entries(read_lines(log_path)) if log_path.is_file() else None
+    log = None
+    if log_path.is_file():
+        lines = read_lines(log_path)
+        log = list(enumerate(lines, 1)) if backend == "touying" else log_entries(lines)
     ctx = Context(deck, inventory, plan, plan_meta, minutes, notes_lines, log_path.name, log)
     ctx.notes_pdf = Path(args.notes_pdf) if args.notes_pdf else None
-    ctx.manifest = read_manifest(deck_path.parent / MANIFEST_NAME)
+    ctx.manifest = manifest
     ctx.notes = parse_notes(notes_lines) if notes_lines is not None else []
     ctx.chapters = deck_chapters(deck, plan_meta, inventory)
     ctx.roles = chapter_roles(ctx.chapters, deck.frames, plan_meta)
     ctx.stage, ctx.stage_line = deck_stage(deck)
     root = thesis_root(inventory, inventory_path)
     ctx.thesis_numbers = load_thesis_numbers(inventory, root)
-    ctx.uses = figure_uses(deck, inventory, root)
+    ctx.uses = (
+        typst_figure_uses(deck, inventory) if deck.touying else figure_uses(deck, inventory, root)
+    )
     return ctx
 
 
@@ -1521,7 +1911,11 @@ def main(argv: list[str] | None = None) -> int:
             "答辩稿质量门：按 D-* 码检查 defense.tex、notes.md、编译日志与备注版 PDF，不写文件。"
         )
     )
-    parser.add_argument("--deck", required=True, help="build_deck.py 输出目录中的 defense.tex")
+    parser.add_argument(
+        "--deck",
+        required=True,
+        help="build_deck.py 输出目录中的 defense.tex（Beamer）或 defense.typ（Touying）",
+    )
     parser.add_argument(
         "--inventory", required=True, help="extract_thesis.py 输出的 inventory.json"
     )

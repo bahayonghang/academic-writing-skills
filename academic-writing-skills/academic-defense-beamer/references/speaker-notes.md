@@ -42,5 +42,5 @@
 
 ## 进入 PDF 的备注
 
-讲稿同时写进答辩稿：每帧在 `\end{frame}` 前有一个 `\DefenseNote{要点}{说什么}{过渡}{秒数}`，备注版 `defense-notes.pdf` 把它显示在幻灯片右侧。
+讲稿同时写进答辩稿：每帧在 `\end{frame}` 前有一个 `\DefenseNote{要点}{说什么}{过渡}{秒数}`，备注版 `defense-notes.pdf` 把它显示在幻灯片右侧。Touying 后端写成每帧一段 `#note[…]`（结构页为 `note:` 参数），备注版在每帧之后加一页 `notes:N` 备注页，见 [Typst Touying 后端](touying-backend.md)。
 「可能提问」不进入 PDF。演示器只读 PDF 中的备注，不读 `notes.md`。放映方法见 [放映与演讲备注](presenting.md)。

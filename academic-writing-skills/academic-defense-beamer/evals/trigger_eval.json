@@ -42,6 +42,21 @@
       "category": "edge"
     },
     {
+      "query": "我的博士论文是 LaTeX 写的，想用 Typst Touying 和 simply-ysu-touying 主题做预答辩幻灯片。",
+      "should_trigger": true,
+      "category": "core-touying"
+    },
+    {
+      "query": "答辩稿想换成 Typst 版，要能在 FerroStage 里显示 notes:N 备注页。",
+      "should_trigger": true,
+      "category": "edge-touying"
+    },
+    {
+      "query": "Build Typst Touying defense slides from my Chinese LaTeX thesis repository.",
+      "should_trigger": true,
+      "category": "core-touying"
+    },
+    {
       "query": "帮我做一个 PowerPoint 格式的答辩 PPT，要 .pptx 文件。",
       "should_trigger": false,
       "category": "negative-overlap-pptx"
@@ -80,6 +95,16 @@
       "query": "从我的 references.bib 里找 2024 年以后的图神经网络论文。",
       "should_trigger": false,
       "category": "negative-unrelated"
+    },
+    {
+      "query": "帮我把 Typst 写的期刊论文排版成双栏模板，并检查参考文献格式。",
+      "should_trigger": false,
+      "category": "negative-overlap-typst-paper"
+    },
+    {
+      "query": "我的学位论文是用 Typst 写的，帮我润色第二章的英文摘要。",
+      "should_trigger": false,
+      "category": "negative-overlap-typst-paper"
     }
   ]
 }

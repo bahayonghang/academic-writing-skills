@@ -1,6 +1,6 @@
 # `academic-defense-beamer`
 
-中文学位论文答辩稿技能。它从已有的 XeLaTeX 学位论文仓库只读提取清单，按汇报时长与阶段规划页面，渲染 Beamer 答辩稿与讲稿，
+中文学位论文答辩稿技能。它从已有的 XeLaTeX 学位论文仓库只读提取清单，按汇报时长与阶段规划页面，渲染 Beamer 或 Typst Touying 答辩稿与讲稿，
 再用保真质量门核对图、数字、公式、表体与成果是否来自论文，最后逐页预览。
 
 ## 适用场景
@@ -10,11 +10,13 @@
 - 写五栏讲稿（说什么、关键点、秒数、过渡、可能提问），准备答辩委员可能提出的问题。
 - 检查已生成答辩稿的编译、溢出、密度、时长与论文事实来源。
 - 把讲稿写进备注版 PDF（`defense-notes.pdf`），用 FerroStage 或 pympress 双屏放映。
+- 规划时选 `--backend touying`，用 simply-ysu-touying 主题生成 Typst 答辩稿 `defense.typ`，备注版每帧后跟一页 `notes:N` 备注页。
 
 ## 不适用场景
 
-- 需要 `.pptx` 或 Keynote 文件；本技能只输出 LaTeX Beamer 与编译得到的 PDF。
-- 期刊或会议报告、组会汇报、海报、英文答辩、Typst 论文。
+- 需要 `.pptx` 或 Keynote 文件；本技能只输出 LaTeX Beamer 或 Typst Touying 答辩稿与编译得到的 PDF。
+- 期刊或会议报告、组会汇报、海报、英文答辩。
+- 用 Typst 写的论文，或 Typst 论文排版；请用 `typst-paper`。
 - 只有 PDF 或 DOCX、没有 LaTeX 源；要求新画图或重绘数据图。
 - 修改论文正文或格式；请用 `latex-thesis-zh`。审稿式评价或评分；请用 `paper-audit`。
 
@@ -24,7 +26,7 @@
 | --------- | -------------------------------------------- | --------------------------- |
 | `extract` | 只读提取元数据、章节树、图表公式、成果与结论 | `scripts/extract_thesis.py` |
 | `plan`    | 生成规划骨架；填写后输出结论句串读           | `scripts/plan_deck.py`      |
-| `build`   | 渲染 `defense.tex`、讲稿与主题，编译投屏版与备注版 PDF | `scripts/build_deck.py`     |
+| `build`   | 渲染 `defense.tex` 或 `defense.typ`、讲稿与主题，编译投屏版与备注版 PDF | `scripts/build_deck.py`     |
 | `check`   | 22 个 D-* 码的质量门                         | `scripts/check_deck.py`     |
 | `preview` | 逐页 PNG 与总览图                            | `scripts/render_preview.py` |
 
@@ -42,11 +44,13 @@
 - 汇报时长、阶段（`predefense` 或 `defense`）与主题（`yanshan` 或 `generic`）。
 - 用户同意的输出目录。
 - 编译需要 TeX Live（XeLaTeX、latexmk、ctex、beamer）；预览需要 PyMuPDF。
+- Touying 后端需要 Typst 0.15.1 或更高版本，以及本机已安装的 `@preview/simply-ysu-touying:0.2.0`、`@preview/touying:0.8.0` 与 `@preview/mitex:0.2.6`；构建脚本不下载包，缺包时退出 6。
 
 ## 输出产物
 
 - `inventory.json` 与 `slide_plan.yaml`。
 - 输出目录中的 `defense.tex`、`defense-notes.tex`、`thesis-macros.tex`、`notes.md`、`build_manifest.json` 与主题宏包副本；编译后得到投屏版 `defense.pdf` 与备注版 `defense-notes.pdf`（左幻灯片、右演讲备注）。
+- Touying 后端输出 `defense.typ`、`notes.md`、`build_manifest.json` 与 `img/`（论文原图副本）；编译后得到 `defense.pdf` 与 `defense-notes.pdf`（每帧后一页 `notes:N` 备注页）。
 - D-* 结果行（Severity、Priority 与 `[Script]` 标记），或 `--json` 的 `findings`、`summary` 与 `skipped`。
 - `preview/page-NNN.png` 与 `contact-sheet.png`。
 
@@ -57,6 +61,7 @@
 - [FerroStage](https://github.com/bahayonghang/ferrostage)（推荐，Windows x64）：打开 `defense-notes.pdf`，按页面比例自动给出 `Right` 布局，或在布局菜单手动选 `Right`；演讲者窗口显示备注，观众窗口只显示幻灯片。目前没有 GitHub Release，需从源码 `just release` 生成安装包。
 - pympress（Linux、macOS、Windows）同样识别 Beamer 右侧备注。
 - `check` 用 D-NOTES-PDF 核对备注版：页面同尺寸、W/H 在 [3.1, 3.6]、页数等于 `defense.pdf`、相邻页标签互不相同。
+- Touying 备注版：FerroStage 与 pympress 按 `notes:N` 页标签自动配对幻灯片与备注，不需要选择拼合布局；D-NOTES-PDF 核对备注页数、配对标签与 16:13.5 的备注页尺寸。
 
 ## 学术事实保护
 
@@ -76,12 +81,14 @@
 - [答辩提问准备](./resources/references/qa-prep.md)
 - [清单与规划字段](./resources/references/plan-schema.md)
 - [质量门](./resources/references/quality-gate.md)
+- [Typst Touying 后端](./resources/references/touying-backend.md)
 
 ### 示例
 
 - [40 分钟预答辩稿](./resources/examples/predefense-40min.md)
 - [30 分钟正式答辩稿与提问准备](./resources/examples/formal-defense.md)
 - [按质量门结果修改答辩稿](./resources/examples/fix-after-check.md)
+- [Typst Touying 预答辩稿与 FerroStage 备注](./resources/examples/touying-defense.md)
 
 ### Agent
 
@@ -99,4 +106,8 @@
 
 ```text
 答辩稿检查报了 D-DENSITY、D-NUM-SRC 和 D-OVERFLOW-V，帮我修。
+```
+
+```text
+用 Typst Touying 和 simply-ysu-touying 主题做预答辩稿，要能在 FerroStage 里看备注。
 ```

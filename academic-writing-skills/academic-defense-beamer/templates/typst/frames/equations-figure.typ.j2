@@ -1,0 +1,18 @@
+{% include "frames/_head.typ.j2" %}
+{% if frame.figure %}
+#grid(
+  columns: (1.15fr, 1fr),
+  column-gutter: 0.5cm,
+  align: horizon,
+  [
+{% include "frames/_equations.typ.j2" %}
+{% include "frames/_points.typ.j2" %}
+  ],
+  [
+{% include "frames/_figure.typ.j2" %}
+  ],
+)
+{% else %}
+{% include "frames/_equations.typ.j2" %}
+{% include "frames/_points.typ.j2" %}
+{% endif %}

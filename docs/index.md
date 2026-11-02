@@ -40,7 +40,7 @@ features:
     details: "Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile."
   - icon: 🎓
     title: "`academic-defense-beamer`"
-    details: "Build a Chinese thesis defense Beamer deck with speaker notes from a thesis LaTeX repository, then gate it for fidelity."
+    details: "Build a Chinese thesis defense deck in Beamer or Typst Touying with speaker notes from a thesis LaTeX repository, then gate it for fidelity."
 ---
 
 ## Start From The Artifact

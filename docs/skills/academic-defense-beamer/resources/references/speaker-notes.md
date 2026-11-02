@@ -42,5 +42,5 @@ The build script writes one section for each frame, in frame order. The section 
 
 ## Notes in the PDF
 
-The speaker notes also go into the defense deck: before `\end{frame}`, each frame has one `\DefenseNote{要点}{说什么}{过渡}{秒数}`, and the presenter build `defense-notes.pdf` shows it on the right of the slide.
+The speaker notes also go into the defense deck: before `\end{frame}`, each frame has one `\DefenseNote{要点}{说什么}{过渡}{秒数}`, and the presenter build `defense-notes.pdf` shows it on the right of the slide. The Touying backend writes one `#note[…]` per frame (the `note:` parameter on structure pages), and its presenter build adds a `notes:N` notes page after each frame; see [Typst Touying Backend](touying-backend.md).
 “可能提问” (possible questions) does not go into the PDF. The presenter tool reads only the notes in the PDF, not `notes.md`. For how to present, see [Presenting and Speaker Notes](presenting.md).

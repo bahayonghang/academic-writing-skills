@@ -23,6 +23,14 @@
   `defense-notes.tex`，`build_deck.py --compile` 另外编译 second-screen 备注版 `defense-notes.pdf`（每页左幻灯片、右备注，32:9，
   页标签逐页唯一），`--no-notes-pdf` 只编译投屏版；`build_manifest.json` 增加 `backend` 与 `notes_pdf`。质量门新增 D-NOTES-PDF
   （共 22 个 D-* 码），D-NOTES 增加帧内备注宏计数。新增 `references/presenting.md`，推荐用 FerroStage（Windows）或 pympress 双屏放映。
+- `academic-defense-beamer` 新增 Typst Touying 后端：`plan_deck.py --backend beamer|touying` 写入 `deck.backend`（Beamer 规划也写，
+  旧规划缺该键时按 Beamer 构建），Touying 只支持 `yanshan` 主题，并新增可选字段 `meta.chapters[].nav_label`（页脚短名，Beamer 忽略）
+  与 EPS 图、复杂表、不能翻译的宏提示。`build_deck.py` 按规划生成 `defense.typ`（simply-ysu-touying 0.2.0、touying 0.8.0、mitex 0.2.6），
+  把引用的论文原图复制到 `img/`，`--compile` 编译投屏版与 `notes:N` 备注版 `defense-notes.pdf`；新增 `--typst-package`、
+  `--typst-package-path`、`--font-path` 与退出码 6（Typst 包未安装，不联网下载）。`check_deck.py` 按 `--deck` 后缀选后端，
+  22 个 D-* 码映射到 Touying：D-OVERFLOW-V 按 `<ysu-note>` 记录的帧起始页定位续页，D-OVERFLOW-H 记入 `skipped`，
+  D-NOTES-PDF 核对 `notes:N` 配对与 16:13.5 备注页并自行解析页标签。新增 `references/touying-backend.md`、
+  `examples/touying-defense.md`、Typst 帧模板、evals 与双语资源页；`typst-paper` 的不适用场景指向本技能。
 
 ### Fixed
 

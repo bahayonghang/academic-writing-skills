@@ -5,10 +5,11 @@
 ## 用法
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
+uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex|DIR/defense.typ --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 ```
 
+- `--deck` 的后缀选择后端：`.tex` 为 Beamer，`.typ` 为 Touying。后缀与 `build_manifest.json` 的 `backend` 不符时退出 2。Touying 后端的码映射见本文「Touying 后端」一节。
 - `check_deck.py` 读取答辩稿、同目录的 `notes.md`、`defense.log`、`build_manifest.json` 与备注版 `defense-notes.pdf`、清单与论文源文件，不写文件。
 - `--log` 缺省时使用答辩稿目录中的 `defense.log`。该文件不存在时，D-COMPILE、D-OVERFLOW-V 与 D-OVERFLOW-H 记入 `skipped`。
 - 提供 `--plan` 时，章角色与阶段取自规划。未提供时，章角色按帧标记中的页角色推断。分钟数依次取 `--minutes`、规划 `meta.minutes`、40。
@@ -17,7 +18,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 
 | 脚本                | 退出码                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `check_deck.py`     | 0：没有 Critical 与 Major 结果；1：至少一条 Critical 或 Major 结果；2：答辩稿不存在，清单或规划无法读取，`--log` 或 `--notes-pdf` 指定的文件不存在，或 `--minutes` 不在 15–90 |
+| `check_deck.py`     | 0：没有 Critical 与 Major 结果；1：至少一条 Critical 或 Major 结果；2：答辩稿不存在，`--deck` 后缀不是 `.tex` 或 `.typ`，或与 `build_manifest.json` 的 `backend` 不符，清单或规划无法读取，`--log` 或 `--notes-pdf` 指定的文件不存在，或 `--minutes` 不在 15–90 |
 | `render_preview.py` | 0：成功；2：PDF 不存在或无法打开，或 `--dpi`、`--cols` 不是正整数；3：未安装 PyMuPDF                                                                         |
 
 ## 输出格式
@@ -147,6 +148,46 @@ D-NUM-SRC 的排除项与匹配规则：
 - 年份不排除，必须在论文中出现。
 - 数字按最长的「数字.数字」串切分，全角数字转为半角，去掉数字间的千位逗号后比较。小数位不同（例如 12.3 与 12.30）按不匹配报告，由复核决定。
 
+## Touying 后端
+
+`--deck DIR/defense.typ` 时，22 个码不变，判据按下表映射。表中没有列出的码（D-COVERAGE、D-CHAIN、D-PLACEHOLDER、D-FIG-NUMBER、D-FIG-ASPECT、D-NUM-SRC、D-PAPER、D-STAGE、D-BUDGET 与 D-NOTES 的讲稿项）按上文判据执行，只是从 `defense.typ` 读取帧与文字。
+
+| 码           | Touying 判据                                                                                                                                                                                                                                                   |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-MARKER     | 帧标记为 `// defense-frame: id=… role=… chapter=… layout=…`，字段与严重度同 Beamer                                                                                                                                                                             |
+| D-TOC        | 第二帧应为 `#outline-slide`；第 k 章的章前目录应为第 k 个一级标题 `=`（`<touying:skip>` 标题也计数）                                                                                                                                                            |
+| D-FIG-ALLOW  | `image("img/…")` 的路径去掉 `img/` 后不是清单图片文件的 `resolved` 路径                                                                                                                                                                                        |
+| D-FIG-MISSING | 允许使用的 `image("img/…")` 在答辩稿目录中没有对应文件（复制的图被删除或移动）；`build_deck.py` 在论文图片缺失时已退出 2，因此只在构建之后改动 `img/` 时出现 |
+| D-EQ-SRC     | 源区（`// defense-source-begin` 与 `// defense-source-end` 之间）内 `mitex` 的 LaTeX 源与清单公式的比较规则同 Beamer（Critical）；源区外出现 `$`、`mitex`、`mi` 或 `mimath` 为 Major                                                                             |
+| D-TAB-SRC    | 源区内 `result-table` 各单元格的文字按行序去掉空白后，不等于清单中任一简单表的单元格文字序列（Critical）；源区外出现 `result-table` 或 `table` 为 Major。Typst 中不保留 `tabular` 源，比较的是单元格转换后的文字；`~` 转成的不换行空格按空白处理            |
+| D-META       | 封面字段取自导言区 `config-info` 的 `title`、`author`、`supervisor`、`school`、`subject` 与 `date`                                                                                                                                                              |
+| D-STAGE      | 阶段取自 `config-info` 的 `stage-en`：`Pre-defense` 为 predefense，`Defense` 为 defense                                                                                                                                                                         |
+| D-DENSITY    | 可见字符为帧内字符串字面量的字符，不含帧标题、备注、`image` 路径与源区；要点数为 `points` 的参数数，卡片为 `side-card`，展望条目为 `label-row`，公式为源区内 `mitex`                                                                                              |
+| D-NOTES      | 帧内 `#note[…]` 与 `note:` 参数合计不是恰好 1 次时为 Minor                                                                                                                                                                                                     |
+| D-COMPILE    | `defense.log` 中以 `error:` 开头的行为 Critical，按其后的 `┌─ defense.typ:行:列` 或 `╭─` 定位到帧；`defense.pdf` 不存在或早于 `defense.typ` 为 Critical                                                                                                         |
+| D-OVERFLOW-V | 见下文                                                                                                                                                                                                                                                         |
+| D-OVERFLOW-H | 始终记入 `skipped`：typst 不报告横向溢出                                                                                                                                                                                                                       |
+| D-NOTES-PDF  | 见下文                                                                                                                                                                                                                                                         |
+
+D-OVERFLOW-V（Major）：Touying 主题在帧内容超出页面时自动续页，不裁切，因此按页数判断。
+
+1. 没有 `defense.pdf` 时记入 `skipped`。
+2. 本机有 typst，且答辩稿导入的包与 `@preview/touying:0.8.0` 都已安装时，读取 `<ysu-note>` 记录：先运行 `typst eval 'query(<ysu-note>).map(it => it.value)' --root DIR --in DIR/defense.typ`，失败时改用已弃用的 `typst query`。每条记录给出帧序号 `frame` 与起始页 `page`。帧 i 的页数为下一帧起始页减本帧起始页；末帧用 `defense.pdf` 总页数加 1 代替下一帧起始页。页数大于 1 时报告，定位到该帧的帧标记，消息写出续出的页数与起始页。
+3. 末帧的总页数需要 PyMuPDF；缺 PyMuPDF 时不检查末帧，其余帧照常检查。
+4. 读不到记录时（没有 typst，或有包未安装），退化为比较总数：`defense.pdf` 页数多于帧数时报告一条，不定位到帧，位置写 `defense.pdf`。缺 PyMuPDF、无法计数时记入 `skipped`。
+5. 不读取 `defense.log`，因此没有编译日志时 D-OVERFLOW-V 不因此跳过。
+
+D-NOTES-PDF：跳过条件与缺文件的 Minor 同 Beamer。备注版存在时（均为 Major，同类问题只报第一处）：
+
+- 标签以 `notes:` 开头的备注页数不等于帧数。
+- 末页不是备注页。
+- 备注页标签不等于 `notes:` 加紧邻前一页的标签，或前一页也是备注页。
+- 幻灯片页尺寸不一致。
+- 备注页宽与幻灯片不同（相差超过 0.5 pt），或高宽比不在 13.5/16 的 ±1% 内。
+- PDF 无法读取或没有页面。
+
+总页数等于 2 × 帧数只在没有溢出时成立。溢出续页使总页数增加，这种差异由 D-OVERFLOW-V 报告，D-NOTES-PDF 不重复报告。Typst 写出的 `/PageLabels` 每项含 `/Type /PageLabel`，PyMuPDF 2.0 的 `page.get_label()` 会把它误读为前缀（返回 `ageLabel1`），因此 Touying 分支不使用 `get_label()`，而是自行读取文档目录 `/PageLabels` 的 `/Nums`，按 `/P` 前缀、`/S` 样式与 `/St` 起始值组装标签；Beamer 分支的读法不变。
+
 ## 阈值
 
 | 阈值                     | 值        | 码           |
@@ -160,6 +201,7 @@ D-NUM-SRC 的排除项与匹配规则：
 | 位图高宽比               | 1.6       | D-FIG-ASPECT |
 | 位图宽高比               | 3         | D-FIG-ASPECT |
 | 备注版页宽高比           | 3.1–3.6   | D-NOTES-PDF  |
+| Touying 备注页高宽比     | 13.5/16 ±1% | D-NOTES-PDF |
 
 以上阈值为初始值，未标定。180 字、260 字与 150–250 字的区间没有经过答辩稿语料标定。不按单篇论文调整阈值。版式上限取自 [版式目录](slide-layouts.md)。
 

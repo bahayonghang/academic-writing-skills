@@ -6,21 +6,21 @@
 
 ```bash
 uv run python -B $SKILL_DIR/scripts/extract_thesis.py --thesis <THESIS_REPO> --out inventory.json [--main FILE] [--json]
-uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic]
+uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic] [--backend beamer|touying]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan slide_plan.yaml --outline
-uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf]
+uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf] [--typst-package SPEC] [--typst-package-path DIR] [--font-path DIR]
 ```
 
 1. `extract_thesis.py` 只读论文仓库，写出清单。
 2. `plan_deck.py` 由清单生成规划骨架，待填字段写占位符。
 3. LLM 按 [内容规范](content-rules.md) 填写占位符。`--outline` 按页序输出帧标题与结论句，交用户确认。
-4. `build_deck.py` 校验规划，写出答辩稿、备注版包装文件、讲稿与主题文件。加 `--compile` 时用 latexmk 先编译投屏版 `defense.pdf`，再编译备注版 `defense-notes.pdf`；加 `--no-notes-pdf` 时只编译投屏版。
+4. `build_deck.py` 校验规划，写出答辩稿、备注版包装文件、讲稿与主题文件。加 `--compile` 时用 latexmk 先编译投屏版 `defense.pdf`，再编译备注版 `defense-notes.pdf`；加 `--no-notes-pdf` 时只编译投屏版。规划的 `deck.backend` 为 `touying` 时，改为写出 `defense.typ` 并用 typst 编译，见 [Typst Touying 后端](touying-backend.md)；`--typst-package`、`--typst-package-path` 与 `--font-path` 只对 Touying 后端生效，Beamer 后端收到时给出提示。
 
 | 脚本                | 退出码                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------- |
 | `extract_thesis.py` | 0：成功，有告警时也为 0；2：论文目录不存在、主文件缺失，或有多个主文件候选且未指定                      |
-| `plan_deck.py`      | 0：成功；2：参数错误、输入文件无法读取，或分钟数与章角色不在 [时长预算](time-budget.md) 的适用范围内    |
-| `build_deck.py`     | 0：成功；2：输入错误或校验未通过；4：输出目录已有自有文件且未加 `--force`；5：未找到 latexmk，或任一份编译失败（错误信息指明是哪一份） |
+| `plan_deck.py`      | 0：成功；2：参数错误、输入文件无法读取，分钟数与章角色不在 [时长预算](time-budget.md) 的适用范围内，或 `--backend touying` 与 `yanshan` 以外的主题同用 |
+| `build_deck.py`     | 0：成功；2：输入错误或校验未通过；4：输出目录已有自有文件且未加 `--force`；5：未找到 latexmk（Touying：未找到 typst 或版本低于 0.15.1），或任一份编译失败（错误信息指明是哪一份）；6：Touying 后端所需的 Typst 包未安装在本机 |
 
 ## 清单
 
@@ -206,11 +206,23 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 | `logo`                                                                  | 字符串或 null | 校徽文件，相对论文根                       |
 | `inventory_sha256`                                                      | 字符串        | 生成骨架时清单文件的 SHA-256               |
 | `extra_packages`                                                        | 字符串列表    | 追加的宏包名                               |
-| `chapters`                                                              | 列表          | 每章一项：`number`、`title`、`role`        |
+| `chapters`                                                              | 列表          | 每章一项：`number`、`title`、`role`；Touying 规划另有 `nav_label` |
 
 - `stage` 与 `minutes` 在生成骨架时决定页序与每页秒数。生成后修改这两个字段不增删帧；需要改阶段或时长时，重新运行 `plan_deck.py`。`defense` 阶段在展望页之后加成果页 `achievements`。`stage` 另决定封面的阶段字样。
 - `extra_packages` 的每项须匹配 `^[A-Za-z0-9-]+$`，在固定宏包之后逐个 `\usepackage`。固定宏包为 amsmath、amssymb、mathtools、bm、booktabs、multirow、makecell、tabularx、array、threeparttable、siunitx 与 adjustbox。
 - `chapters` 的 `title` 优先取短题。构建脚本用 `chapters` 生成目录页的章表。
+- `chapters[].nav_label` 为 Touying 页脚导航栏中的章短名，可选，字符串。`plan_deck.py --backend touying` 预填：章题不超过 6 个字符时为章题，否则为「第k章」，并在该章第一帧的 `hints` 中提示改成不超过 6 字的短名。章全名过长会让页脚重叠折行。规划缺少该字段时，`build_deck.py` 按同一规则补上。Beamer 后端忽略该字段。
+
+### 后端 deck
+
+| 字段      | 类型   | 说明                                                                 |
+| --------- | ------ | -------------------------------------------------------------------- |
+| `backend` | 字符串 | `beamer`（默认）或 `touying`；由 `plan_deck.py --backend` 写入        |
+
+- `plan_deck.py` 对两个后端都写 `deck.backend`。没有 `deck` 键或 `deck.backend` 为空的旧规划按 `beamer` 构建。
+- `build_deck.py` 只从规划读取后端，没有 `--backend` 参数，避免规划与构建不一致。
+- `touying` 只支持 `meta.theme: yanshan`；其他主题时 `plan_deck.py` 与 `build_deck.py` 都退出 2。
+- `--backend touying` 时，`plan_deck.py` 在各内容帧的 `hints` 中加入以「Touying」开头的提示：EPS 或不支持格式的图、复杂表、不能翻译为 mitex 写法的宏。这些输入在构建时退出 2，见 [Typst Touying 后端](touying-backend.md) 的保真限制。
 
 ### 帧序列与 id
 
@@ -278,7 +290,7 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 
 以下任一项不满足时，`build_deck.py` 列出全部错误并退出 2，不写任何文件：
 
-- 规划：`meta` 为映射；`meta.stage` 与 `meta.theme` 取值合法；`meta.minutes` 为正整数；`meta.title_lines` 为列表；`meta.chapters` 的每项为含 `number` 与 `title` 的映射；`meta.extra_packages` 的每项符合宏包名规则；`frames` 为非空列表；帧 id 符合 id 规则且不重复。
+- 规划：`meta` 为映射；`meta.stage` 与 `meta.theme` 取值合法；`deck.backend` 为 `beamer` 或 `touying`，`touying` 时主题为 `yanshan`；`meta.chapters[].nav_label` 为字符串或缺省；`meta.minutes` 为正整数；`meta.title_lines` 为列表；`meta.chapters` 的每项为含 `number` 与 `title` 的映射；`meta.extra_packages` 的每项符合宏包名规则；`frames` 为非空列表；帧 id 符合 id 规则且不重复。
 - 帧：`role` 与 `layout` 在允许集合内；目录帧的 `chapter` 为 0 或章号；`notes` 为映射，`notes.seconds` 为整数，`notes.questions` 为列表；`bullets` 为列表。
 - 引用：`figures` 的每项为含 `label` 的映射，标签在清单中；所选子图字母存在，且该子图有图片文件；`width` 大于 0 且不大于 1；`figure-grid` 以外版式的图至少有一个图片文件；`equations`、`table` 与 `paper` 引用的标签或 id 在清单中。
 - 版式：`figure`、`figure-bullets`、`figure-grid` 恰有 1 幅图；`figure-grid` 选 2–6 个子图字母；`equations-figure` 有 1–4 个公式，至多 1 幅图；`table` 版式有 `table` 字段，所引用的表有表体，且表体不是 `longtable` 或 `xltabular` 环境。
@@ -379,6 +391,10 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 `chapter` 为 null 时写 `-`。
 
 加 `--compile` 时，构建脚本在输出目录运行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error defense.tex`，时限 600 秒。编译失败时，构建脚本在标准错误输出 `defense.log` 的末 40 行，并退出 5。
+
+### Touying 后端
+
+`deck.backend: touying` 时，校验规则同上，另按 [Typst Touying 后端](touying-backend.md) 检查图片格式与文件、表格是否为简单表、宏能否翻译；文字字段输出为 Typst 字符串字面量，不用本节的 LaTeX 转义表。输出文件为 `defense.typ`、`notes.md`、`build_manifest.json` 与 `img/`，`build_manifest.json` 记 `backend: touying`、`typst_package`、`typst_version` 与 `copied_images`。
 
 ## 已知限制
 

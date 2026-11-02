@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build the Beamer defense deck for academic-defense-beamer.
+Build the defense deck for academic-defense-beamer (Beamer or Typst Touying).
 
 The script checks slide_plan.yaml against inventory.json, then writes defense.tex,
 defense-notes.tex, notes.md, thesis-macros.tex, build_manifest.json, and the three
@@ -10,16 +10,21 @@ from the inventory source text. The script escapes all plain text fields. Each
 frame carries its speaker note (\\DefenseNote); defense-notes.tex compiles the
 presenter build defense-notes.pdf with the notes on the right half of each page.
 
+When the plan sets deck.backend: touying, the script writes defense.typ for the
+simply-ysu-touying theme instead, copies the planned thesis images into img/,
+and compiles with typst (defense-notes.pdf adds a notes:N page after each slide).
+
 Field and transformation rules: references/plan-schema.md; presenting:
-references/presenting.md.
+references/presenting.md; Touying: references/touying-backend.md.
 
 Usage:
     uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml \
         --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] \
-        [--no-notes-pdf]
+        [--no-notes-pdf] [--typst-package SPEC] [--typst-package-path DIR] \
+        [--font-path DIR]
 
 Exit codes: 0 success; 2 input error; 4 an output file exists and --force is
-absent; 5 compile failure.
+absent; 5 compile failure; 6 a Typst package is not installed.
 """
 
 from __future__ import annotations
@@ -40,13 +45,16 @@ import yaml
 try:
     import extract_thesis
     import tex_loader
+    import typst_backend
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import extract_thesis
     import tex_loader
+    import typst_backend
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
 JINJA_DIR = SKILL_DIR / "templates" / "jinja"
+TYPST_DIR = SKILL_DIR / "templates" / "typst"
 BEAMER_DIR = SKILL_DIR / "templates" / "beamer"
 THEME_FILES = (
     "beamerthemeYanshanDefense.sty",
@@ -63,7 +71,9 @@ OWNED_FILES = (
     "thesis-macros.tex",
     *THEME_FILES,
 )
+TYPST_OWNED_FILES = ("defense.typ", "notes.md", "build_manifest.json")
 THEMES = {"yanshan": "YanshanDefense", "generic": "GenericDefense"}
+BACKENDS = ("beamer", "touying")
 STAGES = ("predefense", "defense")
 ROLES = (
     "cover",
@@ -143,7 +153,6 @@ LONG_TABLE_RE = re.compile(r"\\begin\s*\{(?:longtable|xltabular)\}")
 PACKAGE_RE = re.compile(r"^[A-Za-z0-9-]+$")
 FRAME_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 EMPHASIS_RE = re.compile(r"\*\*(.+?)\*\*")
-MACRO_NAME_RE = re.compile(r"\\([A-Za-z@]+)")
 ESCAPES = {
     "\\": r"\textbackslash{}",
     "{": r"\{",
@@ -225,25 +234,7 @@ def transform_equation(equation: dict) -> str:
     return "\\\\".join(result)
 
 
-def macro_names(text: str, known: set[str]) -> set[str]:
-    return {name for name in MACRO_NAME_RE.findall(text) if name in known}
-
-
-def select_macros(macros: list[dict], texts: list[str]) -> list[dict]:
-    """Thesis macros that the texts use, directly or through other macros, in preamble order."""
-    known = {macro["name"] for macro in macros}
-    definitions: dict[str, str] = {}
-    for macro in macros:
-        definitions[macro["name"]] = definitions.get(macro["name"], "") + macro["definition"]
-    needed: set[str] = set()
-    for text in texts:
-        needed |= macro_names(text, known)
-    frontier = list(needed)
-    while frontier:
-        for name in macro_names(definitions[frontier.pop()], known) - needed:
-            needed.add(name)
-            frontier.append(name)
-    return [macro for macro in macros if macro["name"] in needed]
+select_macros = typst_backend.select_macros
 
 
 def macro_line(macro: dict) -> str:
@@ -373,8 +364,19 @@ def validate_frame(frame: dict, name: str, lookup: Lookup) -> list[str]:
     return errors
 
 
+def plan_backend(plan: dict) -> object:
+    """deck.backend of the plan; a plan without it builds the Beamer deck."""
+    deck = plan.get("deck")
+    if isinstance(deck, dict):
+        return deck.get("backend") or "beamer"
+    return "beamer" if deck is None else f"deck={deck!r}（deck 应为含 backend 的映射）"
+
+
 def validate(plan: dict, lookup: Lookup) -> list[str]:
     errors = []
+    backend = plan_backend(plan)
+    if backend not in BACKENDS:
+        errors.append(f"deck.backend 应为 beamer 或 touying，当前 {backend!r}")
     meta = plan.get("meta")
     if not isinstance(meta, dict):
         errors.append("规划缺少 meta 映射")
@@ -394,6 +396,10 @@ def validate(plan: dict, lookup: Lookup) -> list[str]:
         and all(isinstance(c, dict) and "number" in c and "title" in c for c in chapters)
     ):
         errors.append("meta.chapters 应为映射列表，每项含 number 与 title")
+    elif chapters and any(not isinstance(c.get("nav_label"), (str, type(None))) for c in chapters):
+        errors.append("meta.chapters[].nav_label 应为字符串")
+    if backend == "touying" and meta.get("theme") not in (None, "yanshan"):
+        errors.append("Touying 后端只支持 meta.theme: yanshan")
     packages = meta.get("extra_packages") or []
     if not isinstance(packages, list):
         errors.append("meta.extra_packages 应为列表")
@@ -564,21 +570,15 @@ def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -
     return context
 
 
+label_numbers = typst_backend.label_numbers
+
+
 def deck_labels(inventory: dict) -> list[dict]:
     """Every thesis label with its number, for \\DefenseDefineLabel."""
-    pairs: list[tuple[str, str]] = []
-    for figure in inventory.get("figures", []):
-        pairs.append((figure["label"], figure["number"]))
-        pairs += [(sub["label"], sub["number"]) for sub in figure["subfigures"] if sub.get("label")]
-    for kind in ("tables", "algorithms"):
-        pairs += [(item["label"], item["number"]) for item in inventory.get(kind, [])]
-    for equation in inventory.get("equations", []):
-        pairs += [(item["label"], item["number"]) for item in equation["labels"]]
-    labels: dict[str, str] = {}
-    for label, number in pairs:
-        if label and number and not label.startswith("auto:"):
-            labels.setdefault(label, number)
-    return [{"label": label, "number": escape_plain(number)} for label, number in labels.items()]
+    return [
+        {"label": label, "number": escape_plain(number)}
+        for label, number in label_numbers(inventory).items()
+    ]
 
 
 def frame_heading(frame: dict) -> str:
@@ -760,6 +760,439 @@ def render(
     return files
 
 
+# ---------------------------------------------------------------------------
+# Touying rendering (deck.backend: touying)
+# ---------------------------------------------------------------------------
+
+# Image height per layout when the plan gives no width; the slide body is 6.45 cm high.
+TYPST_HEIGHTS = {
+    "figure": "4.2cm",
+    "figure-bullets-top": "2.3cm",
+    "figure-bullets": "3.2cm",
+    "equations-figure": "2.9cm",
+}
+TYPST_GRID_HEIGHTS = {"0.45": "2.9cm", "0.21": "1.35cm"}
+RECAP_MAX = 3
+
+
+def plain_text(value: object) -> str:
+    return re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
+
+
+def optional_text(value: object, emphasis: str = "hl") -> str:
+    """Typst expression of a text field; an empty string when the field is empty."""
+    return typst_backend.ty_text(value, emphasis) if plain_text(value) else ""
+
+
+def typst_note(frame: dict) -> str:
+    """Markup of the speaker note: key point (bold), script, transition, and seconds.
+
+    The questions stay in notes.md; ``**word**`` becomes bold without the highlight color.
+    """
+    notes = frame.get("notes") or {}
+    parts = []
+    if plain_text(notes.get("key")):
+        parts.append(f"#strong({typst_backend.ty_text(notes['key'], 'strong')})")
+    if plain_text(notes.get("say")):
+        parts.append("#" + typst_backend.ty_text(notes["say"], "strong"))
+    tail = ""
+    if plain_text(notes.get("transition")):
+        tail = "#" + typst_backend.ty_text(notes["transition"], "strong")
+    seconds = int(notes.get("seconds") or 0)
+    parts.append(tail + f'#h(1fr)#text(size: 12pt, "{seconds} 秒")')
+    return "#parbreak()".join(parts)
+
+
+def typst_math_texts(plan: dict, lookup: Lookup) -> list[str]:
+    """LaTeX math that the Touying deck passes to mitex, for the macro selection."""
+    texts: list[str] = []
+    for frame in plan["frames"]:
+        layout = frame["layout"]
+        if layout in FRAME_ONLY_LAYOUTS:
+            continue
+        refs = frame.get("figures") or []
+        if refs and layout in SHOWN_BY["figures"]:
+            figure = lookup.figures[refs[0]["label"]]
+            for caption in [figure["caption"]] + [s["caption"] for s in figure["subfigures"]]:
+                texts += typst_backend.math_segments(caption or "")
+        if layout == "equations-figure":
+            for ref in frame.get("equations") or []:
+                label = ref["label"] if isinstance(ref, dict) else ref
+                texts.append(lookup.equations[label]["tex"])
+        if layout == "table" and frame.get("table"):
+            table = lookup.tables[frame["table"]]
+            for text in (table["caption"], table.get("tabular_source")):
+                texts += typst_backend.math_segments(text or "")
+    return texts
+
+
+class TypstRender:
+    """State of one Touying render: thesis numbers, macro use, copied images, and errors."""
+
+    def __init__(self, inventory: dict, lookup: Lookup, macros: bool, warnings: list[str]):
+        self.inventory = inventory
+        self.lookup = lookup
+        self.macros = macros
+        self.warnings = warnings
+        self.numbers = label_numbers(inventory)
+        self.images: dict[str, Path] = {}
+        self.errors: list[str] = []
+        meta_chapters = inventory.get("chapters", [])
+        self.chapters = [
+            {"number": c["number"], "title": c.get("short_title") or c["title"]}
+            for c in meta_chapters
+        ]
+
+    def image(self, figure: dict, path: str, name: str) -> str:
+        """String literal of the copied image path; records the copy and any problem."""
+        item = next((f for f in figure["files"] if f.get("path") == path), None)
+        resolved = str(item.get("resolved") or "") if item else ""
+        if not resolved:
+            self.errors.append(f"{name}：图 {figure['label']} 的图片 {path} 没有对应的论文文件")
+            return typst_backend.ty_literal("")
+        problem = typst_backend.image_problem(resolved)
+        source = Path(self.inventory["thesis_root"]) / resolved
+        if problem:
+            self.errors.append(f"{name}：{problem}")
+        elif not source.is_file():
+            self.errors.append(f"{name}：图片文件不存在：{source.as_posix()}")
+        target = typst_backend.image_target(resolved)
+        self.images[target] = source
+        return typst_backend.ty_literal(target)
+
+    def caption(self, prefix: str, source: str | None, name: str, what: str) -> dict:
+        """Number prefix (plain text) and caption source markup of a figure or table."""
+        pieces, missing = typst_backend.latex_inline(source or "", self.numbers)
+        if missing:
+            self.warnings.append(
+                f"{name}：{what}的题注含 Touying 后端不能转换的命令 "
+                f"{'、'.join(dict.fromkeys(missing))}，按原文显示"
+            )
+        gap = "0.5em" if prefix.startswith("(") else "1em"
+        return {
+            "prefix": "#" + typst_backend.ty_literal(prefix) + f"#h({gap})",
+            "caption": typst_backend.render_pieces(pieces, self.macros),
+        }
+
+    def cell(self, pieces: list) -> str:
+        return "[" + typst_backend.render_pieces(pieces, self.macros) + "]"
+
+
+def typst_size(ref: dict, height: str) -> str:
+    width = ref.get("width")
+    return f"width: {round(width * 100)}%" if width else f"height: {height}"
+
+
+def typst_frame_context(
+    frame: dict, name: str, render: TypstRender, chapters: list[dict], plan: dict
+) -> dict:
+    layout = frame["layout"]
+    chapter = frame.get("chapter")
+    context: dict = {
+        "id": frame["id"],
+        "role": frame["role"],
+        "layout": layout,
+        "chapter": "-" if chapter is None else str(chapter),
+        "note": typst_note(frame),
+        "skip_headings": [],
+    }
+    if layout == "toc":
+        context["toc"] = chapter
+        if chapter == 0:
+            context["groups"] = outline_groups(chapters)
+        else:
+            title = next((c["title"] for c in chapters if c["number"] == chapter), None)
+            context["heading"] = typst_backend.ty_text(title or f"第{chapter}章")
+            args = []
+            if plain_text(frame.get("takeaway")):
+                args.append("question: " + typst_backend.ty_text(frame["takeaway"]))
+            keywords = [b for b in frame.get("bullets") or [] if plain_text(b)][:3]
+            if keywords:
+                items = "".join(typst_backend.ty_text(k) + ", " for k in keywords)
+                args.append(f"keywords: ({items})")
+            context["opener"] = ", ".join(args)
+    if layout == "thanks":
+        innovation = next((f for f in plan["frames"] if f.get("role") == "innovation"), None)
+        bullets = [b for b in (innovation or {}).get("bullets") or [] if plain_text(b)]
+        context["recap"] = []
+        if 1 <= len(bullets) <= RECAP_MAX:
+            context["recap"] = [
+                {"title": typst_backend.ty_str(f"创新点 {i}"), "body": typst_backend.ty_text(b)}
+                for i, b in enumerate(bullets, 1)
+            ]
+    if layout in FRAME_ONLY_LAYOUTS:
+        return context
+    for field_name, layouts in SHOWN_BY.items():
+        if frame.get(field_name) and layout not in layouts:
+            render.warnings.append(f"{name}：版式 {layout} 不显示 {field_name} 字段")
+
+    lookup = render.lookup
+    bullets = list(frame.get("bullets") or [])
+    position = "top" if frame.get("position") == "top" else "left"
+    context.update(
+        {
+            "title": typst_backend.ty_text(frame.get("section")),
+            "subsection": optional_text(frame.get("subsection")),
+            "takeaway": optional_text(frame.get("takeaway")),
+            "bullets": [typst_backend.ty_text(bullet) for bullet in bullets],
+            "position": position,
+            "figure": None,
+            "grid": None,
+            "equations": [],
+            "table": None,
+            "paper": None,
+            "cards": [],
+            "outlook": [],
+        }
+    )
+    refs = frame.get("figures") or []
+    if refs and layout in SHOWN_BY["figures"]:
+        ref = refs[0]
+        figure = lookup.figures[ref["label"]]
+        context["figure"] = render.caption(f"图{figure['number']}", figure["caption"], name, "图")
+        if layout == "figure-grid":
+            letters = {sub["letter"]: sub for sub in figure["subfigures"] if sub.get("letter")}
+            selected = [letters[letter] for letter in ref["subfigures"]]
+            per_row, _, _, height = GRID[len(selected)]
+            cells = []
+            for sub in selected:
+                cell = render.caption(f"({sub['letter']})", sub["caption"], name, "子图")
+                cell["path"] = render.image(figure, sub["file"], name)
+                cell["size"] = f"height: {TYPST_GRID_HEIGHTS[height]}"
+                cells.append(cell)
+            context["grid"] = {"cells": cells, "columns": per_row}
+        else:
+            path = figure_file(figure, name, render.warnings)
+            key = f"{layout}-top" if layout == "figure-bullets" and position == "top" else layout
+            context["figure"]["path"] = render.image(figure, path, name)
+            context["figure"]["size"] = typst_size(ref, TYPST_HEIGHTS[key])
+    if layout == "equations-figure":
+        for ref in frame.get("equations") or []:
+            equation = lookup.equations[ref["label"] if isinstance(ref, dict) else ref]
+            numbers = " ".join(
+                f"({item['number']})" for item in equation["labels"] if item["number"]
+            )
+            raw = typst_backend.raw_block(typst_backend.equation_body(equation))
+            context["equations"].append(
+                {
+                    "number": typst_backend.ty_literal(numbers) if numbers else "none",
+                    "source": f"thesis-macros + {raw}.text" if render.macros else raw,
+                }
+            )
+    if layout == "table":
+        table = lookup.tables[frame["table"]]
+        try:
+            grid = typst_backend.table_grid(table["tabular_source"], render.numbers)
+        except typst_backend.TypstBackendError as exc:
+            render.errors.append(f"{name}：表 {table['label']} {exc}；可换版式或改用 Beamer 后端")
+            grid = [[[]]]
+        context["table"] = render.caption(f"表{table['number']}", table["caption"], name, "表")
+        context["table"]["header"] = [render.cell(cell) for cell in grid[0]]
+        context["table"]["rows"] = [[render.cell(cell) for cell in row] for row in grid[1:]]
+    if layout == "paper-summary" and frame.get("paper"):
+        context["paper"] = typst_backend.ty_str(lookup.papers[frame["paper"]]["text"])
+    if layout == "cards":
+        for index, bullet in enumerate(bullets, 1):
+            if frame["role"] == "challenges":
+                label = "问题" + CN_NUMERALS[index - 1] if index <= 10 else f"问题 {index}"
+            else:
+                label = f"创新点 {index}"
+            context["cards"].append(
+                {"label": typst_backend.ty_str(label), "text": typst_backend.ty_text(bullet)}
+            )
+    if layout == "outlook":
+        context["outlook"] = [
+            {
+                "label": typst_backend.ty_str(
+                    "其" + CN_NUMERALS[index] if index < 10 else f"其 {index + 1}"
+                ),
+                "text": typst_backend.ty_text(item),
+            }
+            for index, item in enumerate(bullets)
+        ]
+    return context
+
+
+def outline_groups(chapters: list[dict]) -> str:
+    """``outline-slide(groups:)``: each run of consecutive research chapters, by heading index."""
+    runs: list[list[int]] = []
+    for index, chapter in enumerate(chapters, 1):
+        if chapter.get("role") != "research":
+            continue
+        if runs and runs[-1][1] == index - 1:
+            runs[-1][1] = index
+        else:
+            runs.append([index, index])
+    if not runs:
+        return ""
+    return "(" + "".join(f"(from: {first}, to: {last}), " for first, last in runs) + ")"
+
+
+def typst_headings(frames: list[dict], chapters: list[dict]) -> list[list[str]]:
+    """Level-1 headings without a chapter opener (``<touying:skip>``) to write before each frame.
+
+    Every chapter gets one level-1 heading so that the outline, the footer, and the
+    opener numbers follow the thesis. A chapter-contents frame writes its own heading.
+    """
+    titles = {c["number"]: typst_backend.ty_text(c["title"]) for c in chapters}
+    done: set[int] = set()
+    result = []
+    for frame in frames:
+        pending: list[str] = []
+        chapter = frame.get("chapter")
+        if frame["layout"] == "thanks":
+            pending = [titles[n] for n in titles if n not in done]
+            done |= set(titles)
+        elif isinstance(chapter, int) and chapter in titles and chapter not in done:
+            for number in titles:
+                if number < chapter and number not in done:
+                    pending.append(titles[number])
+                    done.add(number)
+            if frame["layout"] != "toc":
+                pending.append(titles[chapter])
+            done.add(chapter)
+        result.append(pending)
+    return result
+
+
+def render_typst(
+    plan: dict,
+    inventory: dict,
+    lookup: Lookup,
+    digests: tuple[str, str],
+    warnings: list[str],
+    notes_pdf: bool,
+    package: str,
+    version: str | None,
+) -> tuple[dict[str, bytes], dict[str, Path]]:
+    """defense.typ, notes.md, build_manifest.json, and the images to copy into img/."""
+    meta = plan["meta"]
+    if meta.get("inventory_sha256") not in (None, digests[1]):
+        warnings.append("规划的 inventory_sha256 与当前清单不一致；清单在规划后已更新")
+    if typst_backend.parse_spec(package) is None:
+        raise BuildError(f"--typst-package 应为 @namespace/name:x.y.z，当前 {package!r}")
+    selected = select_macros(inventory.get("macros", []), typst_math_texts(plan, lookup))
+    errors: list[str] = []
+    translated = []
+    for macro in selected:
+        try:
+            translated.append(typst_backend.translate_macro(macro))
+        except typst_backend.TypstBackendError as exc:
+            errors.append(f"{exc}；可改用 Beamer 后端")
+    render = TypstRender(inventory, lookup, bool(translated), warnings)
+    render.errors += errors
+    chapters = []
+    for chapter in meta.get("chapters") or render.chapters:
+        entry = {"number": chapter["number"], "title": str(chapter["title"])}
+        entry["role"] = chapter.get("role")
+        label = chapter.get("nav_label")
+        if not (isinstance(label, str) and label.strip()):
+            label = typst_backend.default_nav_label(entry["number"], entry["title"])[0]
+        entry["nav_label"] = label
+        chapters.append(entry)
+    frames = [
+        typst_frame_context(frame, f"第 {index} 帧（{frame['id']}）", render, chapters, plan)
+        for index, frame in enumerate(plan["frames"], 1)
+    ]
+    for context, headings in zip(frames, typst_headings(plan["frames"], chapters)):
+        context["skip_headings"] = headings
+    if render.errors:
+        raise BuildError(
+            "Touying 后端无法渲染：\n" + "\n".join(f"  - {error}" for error in render.errors)
+        )
+
+    lines = [str(line) for line in meta.get("title_lines") or [] if str(line).strip()]
+    title = "[" + "#linebreak()".join("#" + typst_backend.ty_text(line) for line in lines) + "]"
+    supervisor = typst_backend.ty_text(meta.get("supervisor"))
+    if plain_text(meta.get("supervisor_title")):
+        supervisor = f"[#{supervisor}#h(1em)#{typst_backend.ty_text(meta['supervisor_title'])}]"
+    stage, stage_en = typst_backend.stage_labels(meta["stage"], inventory.get("degree"))
+    nav = "".join(typst_backend.ty_str(c["nav_label"]) + ", " for c in chapters)
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(str(TYPST_DIR), encoding="utf-8"),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        autoescape=False,
+        keep_trailing_newline=True,
+        undefined=jinja2.StrictUndefined,
+    )
+    deck = env.get_template("deck.typ.j2").render(
+        package=package,
+        macros=typst_backend.raw_block("\n".join(translated)) if translated else "",
+        nav_labels=f"({nav})" if nav else "auto",
+        title=title if lines else '""',
+        author=typst_backend.ty_text(meta.get("author")),
+        supervisor=supervisor,
+        subject=typst_backend.ty_text(meta.get("subject")),
+        school=typst_backend.ty_text(meta.get("school")),
+        date=typst_backend.ty_text(meta.get("date")),
+        stage=typst_backend.ty_str(stage),
+        stage_en=typst_backend.ty_str(stage_en),
+        region_begin=typst_backend.REGION_BEGIN,
+        region_end=typst_backend.REGION_END,
+        frames=frames,
+    )
+    files = {
+        "defense.typ": deck.encode("utf-8"),
+        "notes.md": render_notes(plan).encode("utf-8"),
+    }
+    manifest = {
+        "skill": "academic-defense-beamer",
+        "version": skill_version(),
+        "backend": "touying",
+        "notes_pdf": NOTES_PDF if notes_pdf else None,
+        "theme": "yanshan",
+        "stage": meta["stage"],
+        "frames": len(plan["frames"]),
+        "typst_package": package,
+        "typst_version": version,
+        "plan_sha256": digests[0],
+        "inventory_sha256": digests[1],
+        "files": {name: sha256(data) for name, data in files.items()},
+        "copied_images": sorted(render.images),
+        "warnings": warnings,
+    }
+    files["build_manifest.json"] = (
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+    ).encode("utf-8")
+    return files, render.images
+
+
+def previous_images(out_dir: Path) -> set[str]:
+    """copied_images of the build_manifest.json that an earlier build wrote."""
+    try:
+        manifest = json.loads((out_dir / "build_manifest.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    images = manifest.get("copied_images") if isinstance(manifest, dict) else None
+    return {str(item) for item in images or [] if isinstance(item, str)}
+
+
+def write_images(out_dir: Path, images: dict[str, Path], previous: set[str]) -> None:
+    """Copy the planned images (bytes unchanged); delete earlier copies that left the plan.
+
+    Only files that build_manifest.json lists as copied are deleted; unchanged
+    copies keep their mtimes.
+    """
+    for target, source in images.items():
+        path = out_dir / target
+        data = source.read_bytes()
+        if path.is_file() and path.read_bytes() == data:
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+    root = (out_dir / typst_backend.IMAGE_DIR).resolve()
+    for target in sorted(previous - set(images)):
+        path = (out_dir / target).resolve()
+        if root not in path.parents or not path.is_file():
+            continue
+        path.unlink()
+        parent = path.parent
+        while parent != root and not any(parent.iterdir()):
+            parent.rmdir()
+            parent = parent.parent
+
+
 def compile_deck(out_dir: Path, notes_pdf: bool = True) -> int:
     """Compile defense.tex, then defense-notes.tex unless ``notes_pdf`` is false."""
     latexmk = shutil.which("latexmk")
@@ -814,7 +1247,10 @@ def compile_file(latexmk: str, out_dir: Path, name: str) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="校验答辩稿规划并渲染 Beamer 答辩稿（defense.tex）、讲稿与主题文件。"
+        description=(
+            "校验答辩稿规划并渲染答辩稿（Beamer 的 defense.tex 或 Touying 的 defense.typ）、"
+            "讲稿与主题文件。"
+        )
     )
     parser.add_argument("--plan", required=True, help="已填写的 slide_plan.yaml")
     parser.add_argument(
@@ -833,8 +1269,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="不编译备注版 defense-notes.pdf；build_manifest.json 的 notes_pdf 记为 null",
     )
+    parser.add_argument(
+        "--typst-package",
+        default=typst_backend.DEFAULT_THEME_PACKAGE,
+        help=f"Touying 主题包（默认 {typst_backend.DEFAULT_THEME_PACKAGE}；仅 Touying 后端）",
+    )
+    parser.add_argument(
+        "--typst-package-path", help="传给 typst --package-path 的本地包目录（仅 Touying 后端）"
+    )
+    parser.add_argument("--font-path", help="传给 typst --font-path 的字体目录（仅 Touying 后端）")
     args = parser.parse_args(argv)
     notes_pdf = not args.no_notes_pdf
+    notices: list[str] = []
+    touying = False
 
     warnings: list[str] = []
     try:
@@ -850,18 +1297,52 @@ def main(argv: list[str] | None = None) -> int:
         if errors:
             raise BuildError("规划校验未通过：\n" + "\n".join(f"  - {error}" for error in errors))
         digests = (sha256(plan_bytes), sha256(inventory_bytes))
-        files = render(plan, inventory, lookup, out_dir, args.logo, digests, warnings, notes_pdf)
+        touying = plan_backend(plan) == "touying"
+        images: dict[str, Path] = {}
+        if touying:
+            if args.logo:
+                notices.append("Touying 后端不使用 --logo；主题包自带校标")
+            executable = shutil.which("typst")
+            version = typst_backend.typst_version(executable) if executable else None
+            files, images = render_typst(
+                plan,
+                inventory,
+                lookup,
+                digests,
+                warnings,
+                notes_pdf,
+                args.typst_package,
+                typst_backend.version_text(version),
+            )
+        else:
+            if (
+                args.typst_package != typst_backend.DEFAULT_THEME_PACKAGE
+                or args.typst_package_path
+                or args.font_path
+            ):
+                notices.append(
+                    "--typst-package、--typst-package-path 与 --font-path 只对 Touying 后端生效"
+                )
+            files = render(
+                plan, inventory, lookup, out_dir, args.logo, digests, warnings, notes_pdf
+            )
     except BuildError as exc:
         print(f"错误：{exc}", file=sys.stderr)
         return 2
 
-    existing = [name for name in OWNED_FILES if (out_dir / name).exists()]
+    owned = TYPST_OWNED_FILES if touying else OWNED_FILES
+    existing = [name for name in owned if (out_dir / name).exists()]
+    image_dir = out_dir / typst_backend.IMAGE_DIR
+    if touying and image_dir.is_dir() and any(image_dir.iterdir()):
+        existing.append(f"{typst_backend.IMAGE_DIR}/")
     if existing and not args.force:
+        scope = "defense.typ、notes.md、build_manifest.json 与复制的图" if touying else "八个文件"
         print(
-            f"错误：输出目录已有 {'、'.join(existing)}；确认覆盖时加 --force（只覆盖本脚本生成的八个文件）",
+            f"错误：输出目录已有 {'、'.join(existing)}；确认覆盖时加 --force（只覆盖本脚本生成的{scope}）",
             file=sys.stderr,
         )
         return 4
+    previous = previous_images(out_dir) if touying else set()
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, data in files.items():
         target = out_dir / name
@@ -870,10 +1351,22 @@ def main(argv: list[str] | None = None) -> int:
         if target.is_file() and target.read_bytes() == data:
             continue
         target.write_bytes(data)
+    if touying:
+        write_images(out_dir, images, previous)
     print(f"已写入 {out_dir}：帧数 {len(plan['frames'])}；warnings {len(warnings)} 条")
-    for warning in warnings:
+    for warning in warnings + notices:
         print(f"  警告：{warning}")
-    return compile_deck(out_dir, notes_pdf) if args.compile else 0
+    if not args.compile:
+        return 0
+    if touying:
+        return typst_backend.compile_deck(
+            out_dir,
+            theme_package=args.typst_package,
+            notes_pdf=notes_pdf,
+            package_path=args.typst_package_path,
+            font_path=args.font_path,
+        )
+    return compile_deck(out_dir, notes_pdf)
 
 
 if __name__ == "__main__":

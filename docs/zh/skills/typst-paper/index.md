@@ -17,6 +17,7 @@
 - 没有 Typst 源码的 DOCX/PDF-only 编辑。
 - 审稿式打分或投稿门禁；请用 `paper-audit`。
 - 投稿信任务。
+- 学位论文答辩幻灯片（含 Typst Touying 答辩稿）；请用 `academic-defense-beamer`。
 
 ## 模块路由
 

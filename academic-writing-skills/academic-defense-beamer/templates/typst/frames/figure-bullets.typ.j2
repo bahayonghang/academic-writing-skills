@@ -1,0 +1,17 @@
+{% include "frames/_head.typ.j2" %}
+{% if frame.position == "top" %}
+{% include "frames/_figure.typ.j2" %}
+{% include "frames/_points.typ.j2" %}
+{% else %}
+#grid(
+  columns: (1.25fr, 1fr),
+  column-gutter: 0.5cm,
+  align: horizon,
+  [
+{% include "frames/_figure.typ.j2" %}
+  ],
+  [
+{% include "frames/_points.typ.j2" %}
+  ],
+)
+{% endif %}

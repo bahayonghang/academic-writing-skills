@@ -80,3 +80,10 @@ Beamer 正文 11 pt 在 16 cm 宽页面上等效于 pptx 中的 23.3 pt。pptx �
 - 内容页校徽高 0.76 cm，封面与致谢页校徽高 1.23 cm，宽度按原图比例。
 - `yanshan` 主题：校徽路径为空或文件不存在时，显示文字标识，默认「燕山大学」，粗体，颜色 `defenseNavy`。`\DefenseSetup{logo-text=<文字>}` 可以修改文字标识。
 - `generic` 主题：不显示校徽，也不显示文字标识。
+
+## Touying 后端
+
+- Touying 后端的颜色、版位、字号、字体回退与校标全部来自已安装的主题包 simply-ysu-touying，本技能不定义，也不复制主题源码与校标位图。本文件上述各节只适用于 Beamer 主题。
+- 页面为 16:9（16 cm × 9 cm）；备注版的备注页为 16 cm × 13.5 cm，见 [放映与演讲备注](presenting.md)。
+- 构建脚本只设置 `aspect-ratio: "16-9"`、`nav-labels` 与 `config-info`，不传颜色、字体或 `icon:` 参数。图的默认高度见 [Typst Touying 后端](touying-backend.md) 的版式映射。
+- 只有 `yanshan` 一个主题；`generic` 主题只用于 Beamer 后端。

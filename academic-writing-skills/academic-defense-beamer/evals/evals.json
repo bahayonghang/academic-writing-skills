@@ -139,6 +139,36 @@
           "description": "no pptx produced"
         }
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "把 evals/fixtures/mini-thesis/ 做成 40 分钟的预答辩稿，但要用 Typst Touying（simply-ysu-touying 主题），放映时用 FerroStage 看备注。",
+      "expected_output": "Route through the Touying backend: run plan_deck.py with --backend touying --theme yanshan (deck.backend: touying, nav_label hints for long chapter titles), fill the plan from thesis facts, confirm the outline, then run build_deck.py --compile (Typst >= 0.15.1 and the simply-ysu-touying 0.2.0, touying 0.8.0 and mitex 0.2.6 packages must already be installed; exit 6 means a package is missing and nothing is downloaded), run check_deck.py --deck .../defense.typ, and tell the user to open defense-notes.pdf in FerroStage, which pairs each notes:N page with its slide automatically.",
+      "files": [
+        "evals/fixtures/mini-thesis/document.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "--backend touying",
+          "description": "Touying backend selected at plan time"
+        },
+        {
+          "type": "regex",
+          "pattern": "defense\\.typ",
+          "description": "Typst deck built and checked"
+        },
+        {
+          "type": "regex",
+          "pattern": "notes:N|notes:\\d",
+          "description": "notes:N presenter pages explained"
+        },
+        {
+          "type": "not_contains",
+          "text": "build_deck.py --backend",
+          "description": "build takes the backend from the plan only"
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 # `academic-defense-beamer`
 
 Chinese thesis defense deck skill. It extracts an inventory read-only from an existing XeLaTeX thesis repository, plans pages by talk length and stage,
-renders a Beamer defense deck with speaker notes, runs a fidelity quality gate that checks figures, numbers, equations, table bodies, and publications against the thesis, and renders page previews.
+renders a Beamer or Typst Touying defense deck with speaker notes, runs a fidelity quality gate that checks figures, numbers, equations, table bodies, and publications against the thesis, and renders page previews.
 
 ## Use It For
 
@@ -10,11 +10,13 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 - Write five-field speaker notes (what to say, key point, seconds, transition, possible questions) and prepare the questions the committee may ask.
 - Check a built deck for compilation, overflow, density, time budget, and the thesis source of its facts.
 - Put the speaker notes into a presenter PDF (`defense-notes.pdf`) for two-screen presenting in FerroStage or pympress.
+- Choose `--backend touying` at plan time to build a Typst deck `defense.typ` with the simply-ysu-touying theme; its presenter PDF follows each slide with a `notes:N` notes page.
 
 ## Do Not Use It For
 
-- `.pptx` or Keynote files; this skill outputs only LaTeX Beamer and the compiled PDF.
-- Journal or conference talks, group meetings, posters, English defenses, or Typst papers.
+- `.pptx` or Keynote files; this skill outputs only LaTeX Beamer or Typst Touying decks and the compiled PDF.
+- Journal or conference talks, group meetings, posters, or English defenses.
+- Theses written in Typst, or Typst paper formatting; use `typst-paper`.
 - PDF or DOCX without LaTeX source, or requests to draw new figures or redraw data figures.
 - Editing the thesis text or format; use `latex-thesis-zh`. Reviewer-style critique or scoring; use `paper-audit`.
 
@@ -24,7 +26,7 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 | --------- | -------------------------------------------------------------------------- | --------------------------- |
 | `extract` | Read-only extraction of metadata, chapter tree, figures, tables, equations, publications, and conclusions | `scripts/extract_thesis.py` |
 | `plan`    | Generate the plan skeleton; after filling, print the takeaway outline      | `scripts/plan_deck.py`      |
-| `build`   | Render `defense.tex`, speaker notes, and themes, then compile the slide and presenter PDFs | `scripts/build_deck.py`     |
+| `build`   | Render `defense.tex` or `defense.typ`, speaker notes, and themes, then compile the slide and presenter PDFs | `scripts/build_deck.py`     |
 | `check`   | Quality gate with 22 D-* codes                                             | `scripts/check_deck.py`     |
 | `preview` | Page PNGs and a contact sheet                                              | `scripts/render_preview.py` |
 
@@ -42,11 +44,13 @@ renders a Beamer defense deck with speaker notes, runs a fidelity quality gate t
 - Talk length, stage (`predefense` or `defense`), and theme (`yanshan` or `generic`).
 - An output directory the user agrees to.
 - Compilation needs TeX Live (XeLaTeX, latexmk, ctex, beamer); preview needs PyMuPDF.
+- The Touying backend needs Typst 0.15.1 or later and locally installed `@preview/simply-ysu-touying:0.2.0`, `@preview/touying:0.8.0`, and `@preview/mitex:0.2.6`; the build script never downloads packages and exits 6 when one is missing.
 
 ## Output Artifacts
 
 - `inventory.json` and `slide_plan.yaml`.
 - In the output directory: `defense.tex`, `defense-notes.tex`, `thesis-macros.tex`, `notes.md`, `build_manifest.json`, and copies of the theme packages; after compilation, the slide PDF `defense.pdf` and the presenter PDF `defense-notes.pdf` (slide on the left, speaker note on the right).
+- The Touying backend writes `defense.typ`, `notes.md`, `build_manifest.json`, and `img/` (copies of the thesis images); compilation produces `defense.pdf` and `defense-notes.pdf` (a `notes:N` notes page after each slide).
 - D-* result lines (Severity, Priority, and the `[Script]` tag), or `findings`, `summary`, and `skipped` with `--json`.
 - `preview/page-NNN.png` and `contact-sheet.png`.
 
@@ -57,6 +61,7 @@ Each frame carries its speaker note (key point, what to say, transition, seconds
 - [FerroStage](https://github.com/bahayonghang/ferrostage) (recommended, Windows x64): open `defense-notes.pdf`; it proposes the `Right` layout from the page ratio, or choose `Right` in the layout menu. The presenter window shows the notes and the audience window shows only the slide. There is no GitHub Release yet: build the installer from source with `just release`.
 - pympress (Linux, macOS, Windows) reads the same right-side Beamer notes.
 - `check` verifies the presenter PDF with D-NOTES-PDF (same page size, W/H in [3.1, 3.6], page count equal to `defense.pdf`, distinct adjacent page labels).
+- Touying presenter PDF: FerroStage and pympress pair each slide with its notes page by the `notes:N` page labels, so no split layout needs to be chosen; D-NOTES-PDF checks the notes page count, the label pairing, and the 16:13.5 notes page size.
 
 ## Academic Fact Protection
 
@@ -76,12 +81,14 @@ The thesis repository is read-only; figures reference only the original thesis i
 - [Defense Question Preparation](./resources/references/qa-prep.md)
 - [Inventory and Plan Fields](./resources/references/plan-schema.md)
 - [Quality Gate](./resources/references/quality-gate.md)
+- [Typst Touying Backend](./resources/references/touying-backend.md)
 
 ### Examples
 
 - [40-minute pre-defense deck](./resources/examples/predefense-40min.md)
 - [30-minute formal defense deck and question preparation](./resources/examples/formal-defense.md)
 - [Revise the deck from quality-gate results](./resources/examples/fix-after-check.md)
+- [Typst Touying pre-defense deck with FerroStage notes](./resources/examples/touying-defense.md)
 
 ### Agents
 
@@ -99,4 +106,8 @@ The formal defense has only 30 minutes. Add the achievements page and help me pr
 
 ```text
 The deck check reported D-DENSITY, D-NUM-SRC, and D-OVERFLOW-V. Please fix them.
+```
+
+```text
+Build the pre-defense deck with Typst Touying and the simply-ysu-touying theme, and let me read the notes in FerroStage.
 ```

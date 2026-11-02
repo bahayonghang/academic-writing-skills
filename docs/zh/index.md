@@ -40,7 +40,7 @@ features:
     details: "按 Nature、IEEE、Elsevier 或中性 profile 润色和翻译学术文本。"
   - icon: 🎓
     title: "`academic-defense-beamer`"
-    details: "从学位论文 LaTeX 仓库生成带讲稿的 Beamer 答辩稿，并用保真质量门检查。"
+    details: "从学位论文 LaTeX 仓库生成带讲稿的 Beamer 或 Typst Touying 答辩稿，并用保真质量门检查。"
 ---
 
 ## 从手头材料开始

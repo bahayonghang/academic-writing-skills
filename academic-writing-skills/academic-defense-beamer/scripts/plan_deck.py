@@ -12,7 +12,7 @@ Field details: references/plan-schema.md.
 Usage:
     uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json \
         --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] \
-        [--theme yanshan|generic]
+        [--theme yanshan|generic] [--backend beamer|touying]
     uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan slide_plan.yaml --outline
 
 Exit codes: 0 success; 2 argument or input error.
@@ -33,13 +33,16 @@ import yaml
 try:
     import defense_budget
     import tex_loader
+    import typst_backend
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import defense_budget
     import tex_loader
+    import typst_backend
 
 PLACEHOLDER = "〔待填写〕"
 THEMES = ("yanshan", "generic")
+BACKENDS = ("beamer", "touying")
 NON_CONTENT_ROLES = ("cover", "toc", "thanks", "backup")
 FIGURE_ROLES = (
     "background",
@@ -384,7 +387,40 @@ class Planner:
         return frame
 
 
-def build_plan(inventory: dict, minutes: int, stage: str, theme: str, digest: str) -> dict:
+def touying_hints(inventory: dict, frame: dict) -> list[str]:
+    """Inputs of a frame that the Touying backend cannot render (build_deck.py exits 2)."""
+    figures = {item["label"]: item for item in inventory.get("figures", [])}
+    tables = {item["label"]: item for item in inventory.get("tables", [])}
+    equations = {
+        item["label"]: equation
+        for equation in inventory.get("equations", [])
+        for item in equation["labels"]
+    }
+    hints = []
+    for ref in frame.get("figures") or []:
+        for item in figures[ref["label"]].get("files") or []:
+            problem = typst_backend.image_problem(str(item.get("resolved") or item["path"]))
+            if problem:
+                hints.append(f"Touying：{problem}")
+    if frame.get("table"):
+        try:
+            typst_backend.tabular_rows(tables[frame["table"]].get("tabular_source") or "")
+        except typst_backend.TypstBackendError as exc:
+            hints.append(f"Touying：表 {frame['table']} {exc}；可换版式或改用 Beamer 后端")
+    texts = [equations[ref["label"]]["tex"] for ref in frame.get("equations") or []]
+    used = typst_backend.select_macros(inventory.get("macros", []), texts)
+    for message in typst_backend.unsupported_macros(used):
+        hints.append(f"Touying：{message}；可改用 Beamer 后端")
+    return hints
+
+
+def build_plan(
+    inventory: dict, minutes: int, stage: str, theme: str, digest: str, backend: str = "beamer"
+) -> dict:
+    if backend not in BACKENDS:
+        raise PlanError(f"--backend 应为 beamer 或 touying，当前 {backend!r}")
+    if backend == "touying" and theme != "yanshan":
+        raise PlanError("Touying 后端只支持 --theme yanshan")
     chapters = inventory.get("chapters") or []
     roles = [chapter.get("role") or chapter.get("role_suggestion") for chapter in chapters]
     try:
@@ -442,6 +478,24 @@ def build_plan(inventory: dict, minutes: int, stage: str, theme: str, digest: st
         }
     )
     meta = inventory.get("meta") or {}
+    chapter_entries = [
+        {"number": c["number"], "title": chapter_title(c), "role": role}
+        for c, role in zip(chapters, roles)
+    ]
+    if backend == "touying":
+        for entry in chapter_entries:
+            label, long = typst_backend.default_nav_label(entry["number"], entry["title"])
+            entry["nav_label"] = label
+            first = next((f for f in frames if f.get("chapter") == entry["number"]), None)
+            if long and first is not None:
+                first.setdefault("hints", []).append(
+                    f"Touying 页脚导航：章题超过 {typst_backend.NAV_LABEL_MAX} 字，"
+                    f"nav_label 暂写「{label}」；建议改成不超过 "
+                    f"{typst_backend.NAV_LABEL_MAX} 字的短名"
+                )
+        for frame in frames:
+            if frame["layout"] not in ("cover", "toc", "thanks"):
+                frame["hints"] = list(frame.get("hints") or []) + touying_hints(inventory, frame)
     return {
         "meta": {
             "stage": stage,
@@ -457,11 +511,9 @@ def build_plan(inventory: dict, minutes: int, stage: str, theme: str, digest: st
             "logo": inventory.get("logo"),
             "inventory_sha256": digest,
             "extra_packages": [],
-            "chapters": [
-                {"number": c["number"], "title": chapter_title(c), "role": role}
-                for c, role in zip(chapters, roles)
-            ],
+            "chapters": chapter_entries,
         },
+        "deck": {"backend": backend},
         "frames": frames,
     }
 
@@ -512,6 +564,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--minutes", type=int, default=40, help="汇报分钟数（默认 40，范围 15–90）")
     parser.add_argument("--stage", choices=defense_budget.STAGES, default="predefense", help="阶段")
     parser.add_argument("--theme", choices=THEMES, default="yanshan", help="主题")
+    parser.add_argument(
+        "--backend",
+        choices=BACKENDS,
+        default="beamer",
+        help="答辩稿后端（写入 deck.backend）：beamer 或 touying（Touying 只支持 yanshan 主题）",
+    )
     parser.add_argument("--plan", help="已有的 slide_plan.yaml（与 --outline 同用）")
     parser.add_argument("--outline", action="store_true", help="按页序输出帧标题与结论句")
     args = parser.parse_args(argv)
@@ -527,7 +585,7 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("生成骨架需要 --inventory 与 --out")
         inventory, data = read_json(Path(args.inventory))
         digest = hashlib.sha256(data).hexdigest()
-        plan = build_plan(inventory, args.minutes, args.stage, args.theme, digest)
+        plan = build_plan(inventory, args.minutes, args.stage, args.theme, digest, args.backend)
     except PlanError as exc:
         print(f"错误：{exc}", file=sys.stderr)
         return 2
@@ -541,6 +599,11 @@ def main(argv: list[str] | None = None) -> int:
         f"已写入 {out}：帧数 {len(plan['frames'])}，内容页数 {content}，"
         f"占位符 {count_placeholders(plan)}"
     )
+    if args.backend == "touying":
+        for frame in plan["frames"]:
+            for hint in frame.get("hints") or []:
+                if hint.startswith("Touying"):
+                    print(f"  提示（{frame['id']}）：{hint}")
     return 0
 
 

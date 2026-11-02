@@ -1,0 +1,16 @@
+{% include "frames/_head.typ.j2" %}
+#fig-caption([{{ frame.table.prefix }}
+{{ region_begin }}
+{{ frame.table.caption }}
+{{ region_end }}
+])
+{{ region_begin }}
+#result-table(
+  header: ({% for cell in frame.table.header %}{{ cell }}, {% endfor %}),
+  rows: (
+{% for row in frame.table.rows %}
+    ({% for cell in row %}{{ cell }}, {% endfor %}),
+{% endfor %}
+  ),
+)
+{{ region_end }}

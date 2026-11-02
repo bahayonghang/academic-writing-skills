@@ -6,21 +6,21 @@ This file specifies the fields, types, and values of the extraction inventory `i
 
 ```bash
 uv run python -B $SKILL_DIR/scripts/extract_thesis.py --thesis <THESIS_REPO> --out inventory.json [--main FILE] [--json]
-uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic]
+uv run python -B $SKILL_DIR/scripts/plan_deck.py --inventory inventory.json --out slide_plan.yaml [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic] [--backend beamer|touying]
 uv run python -B $SKILL_DIR/scripts/plan_deck.py --plan slide_plan.yaml --outline
-uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf]
+uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inventory inventory.json --out DIR [--logo PATH] [--force] [--compile] [--no-notes-pdf] [--typst-package SPEC] [--typst-package-path DIR] [--font-path DIR]
 ```
 
 1. `extract_thesis.py` reads the thesis repository in read-only mode and writes the inventory.
 2. `plan_deck.py` makes the plan skeleton from the inventory. It writes a placeholder into each field to fill.
 3. The LLM fills the placeholders as [Content Rules](content-rules.md) specifies. `--outline` prints the frame titles and the takeaway sentences in page order for user confirmation.
-4. `build_deck.py` validates the plan and writes the defense deck, the presenter build wrapper, the speaker notes, and the theme files. With `--compile`, it uses latexmk to compile the slide build `defense.pdf` first and then the presenter build `defense-notes.pdf`. With `--no-notes-pdf`, it compiles only the slide build.
+4. `build_deck.py` validates the plan and writes the defense deck, the presenter build wrapper, the speaker notes, and the theme files. With `--compile`, it uses latexmk to compile the slide build `defense.pdf` first and then the presenter build `defense-notes.pdf`. With `--no-notes-pdf`, it compiles only the slide build. When `deck.backend` of the plan is `touying`, it writes `defense.typ` instead and compiles with typst; see [Typst Touying Backend](touying-backend.md). `--typst-package`, `--typst-package-path`, and `--font-path` take effect only for the Touying backend; the Beamer backend prints a notice when it receives them.
 
 | Script              | Exit codes                                                                                                                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `extract_thesis.py` | 0: success, also when there are warnings; 2: the thesis directory does not exist, the main file is missing, or there are two or more main file candidates and the user did not specify one |
-| `plan_deck.py`      | 0: success; 2: an argument error, an input file that the script cannot read, or minutes and chapter roles outside the scope of [Time Budget](time-budget.md)                               |
-| `build_deck.py`     | 0: success; 2: an input error or a validation failure; 4: the output directory already contains an owned file and `--force` is absent; 5: latexmk is not found, or either compilation fails (the error message names which one)   |
+| `plan_deck.py`      | 0: success; 2: an argument error, an input file that the script cannot read, minutes and chapter roles outside the scope of [Time Budget](time-budget.md), or `--backend touying` with a theme other than `yanshan` |
+| `build_deck.py`     | 0: success; 2: an input error or a validation failure; 4: the output directory already contains an owned file and `--force` is absent; 5: latexmk is not found (Touying: typst is not found or is older than 0.15.1), or either compilation fails (the error message names which one); 6: a Typst package that the Touying backend needs is not installed on this machine |
 
 ## Inventory
 
@@ -206,11 +206,23 @@ The last line of `--outline` gives the frame count, the content page count, and 
 | `logo`                                                                  | string or null   | School logo file, relative to the thesis root                   |
 | `inventory_sha256`                                                      | string           | SHA-256 of the inventory file when the script made the skeleton |
 | `extra_packages`                                                        | list of strings  | Names of additional packages                                    |
-| `chapters`                                                              | list             | One item for each chapter: `number`, `title`, `role`            |
+| `chapters`                                                              | list             | One item for each chapter: `number`, `title`, `role`; a Touying plan also has `nav_label` |
 
 - `stage` and `minutes` set the page order and the seconds for each page when the script makes the skeleton. A change to these two fields after that does not add or remove frames. To change the stage or the duration, run `plan_deck.py` again. The `defense` stage adds the achievements page `achievements` after the outlook page. `stage` also sets the stage text on the cover.
 - Each item of `extra_packages` must match `^[A-Za-z0-9-]+$`. The deck loads each item with `\usepackage` after the fixed packages. The fixed packages are amsmath, amssymb, mathtools, bm, booktabs, multirow, makecell, tabularx, array, threeparttable, siunitx, and adjustbox.
 - In `chapters`, `title` uses the short title first. The build script makes the chapter list of the TOC pages from `chapters`.
+- `chapters[].nav_label` is the short chapter name in the footer navigation bar of the Touying deck; optional, a string. `plan_deck.py --backend touying` prefills it: the chapter title when the title has 6 characters or fewer, otherwise “第k章” (Chapter k), with a hint in `hints` of the first frame of that chapter to change it to a short name of 6 characters or fewer. Long full chapter titles make the footer overlap and wrap. When the plan lacks the field, `build_deck.py` adds it by the same rule. The Beamer backend ignores the field.
+
+### Backend deck
+
+| Field     | Type   | Description                                                          |
+| --------- | ------ | -------------------------------------------------------------------- |
+| `backend` | string | `beamer` (default) or `touying`; written by `plan_deck.py --backend` |
+
+- `plan_deck.py` writes `deck.backend` for both backends. An old plan without the `deck` key, or with an empty `deck.backend`, builds as `beamer`.
+- `build_deck.py` reads the backend only from the plan and has no `--backend` option, so the plan and the build cannot disagree.
+- `touying` supports only `meta.theme: yanshan`; with another theme, both `plan_deck.py` and `build_deck.py` exit 2.
+- With `--backend touying`, `plan_deck.py` adds hints that start with “Touying” to `hints` of the content frames: EPS figures or figures in an unsupported format, complex tables, and macros that cannot be translated to the mitex form. These inputs make the build exit 2; see the fidelity limits in [Typst Touying Backend](touying-backend.md).
 
 ### Frame Sequence and IDs
 
@@ -278,7 +290,7 @@ Frames with the `cover`, `toc`, and `thanks` layouts use only `id`, `role`, `lay
 
 If any of these conditions is not true, `build_deck.py` lists all errors, exits with code 2, and writes no file:
 
-- Plan: `meta` is a mapping; `meta.stage` and `meta.theme` have valid values; `meta.minutes` is a positive integer; `meta.title_lines` is a list; each item of `meta.chapters` is a mapping that contains `number` and `title`; each item of `meta.extra_packages` obeys the package name rule; `frames` is a nonempty list; each frame ID obeys the ID rule and is unique.
+- Plan: `meta` is a mapping; `meta.stage` and `meta.theme` have valid values; `deck.backend` is `beamer` or `touying`, and with `touying` the theme is `yanshan`; `meta.chapters[].nav_label` is a string or absent; `meta.minutes` is a positive integer; `meta.title_lines` is a list; each item of `meta.chapters` is a mapping that contains `number` and `title`; each item of `meta.extra_packages` obeys the package name rule; `frames` is a nonempty list; each frame ID obeys the ID rule and is unique.
 - Frame: `role` and `layout` are in the permitted sets; the `chapter` of a TOC frame is 0 or a chapter number; `notes` is a mapping, `notes.seconds` is an integer, and `notes.questions` is a list; `bullets` is a list.
 - References: each item of `figures` is a mapping that contains `label`, and the label is in the inventory; each selected subfigure letter exists, and that subfigure has an image file; `width` is greater than 0 and not greater than 1; in layouts other than `figure-grid`, the figure has at least one image file; the labels or IDs that `equations`, `table`, and `paper` refer to are in the inventory.
 - Layouts: `figure`, `figure-bullets`, and `figure-grid` have exactly 1 figure; `figure-grid` selects 2–6 subfigure letters; `equations-figure` has 1–4 equations and 1 figure at most; the `table` layout has the `table` field, the referenced table has a table body, and the table body is not a `longtable` or `xltabular` environment.
@@ -379,6 +391,10 @@ These eight files are the owned files of the build script. When only the speaker
 When `chapter` is null, the marker has `-`.
 
 With `--compile`, the build script runs `latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error defense.tex` in the output directory, with a time limit of 600 seconds. When the compilation fails, the build script writes the last 40 lines of `defense.log` to standard error and exits with code 5.
+
+### Touying Backend
+
+With `deck.backend: touying`, the validation rules above apply, and [Typst Touying Backend](touying-backend.md) adds checks of the image formats and files, of whether each table is a simple table, and of whether the macros can be translated. Text fields are written as Typst string literals, not with the LaTeX escape table of this section. The output files are `defense.typ`, `notes.md`, `build_manifest.json`, and `img/`; `build_manifest.json` records `backend: touying`, `typst_package`, `typst_version`, and `copied_images`.
 
 ## Known Limitations
 

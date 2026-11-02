@@ -24,7 +24,7 @@
       "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/plan-schema.md",
       "sourceLocale": "zh",
-      "sourceSha256": "8ad423402bf7a75cf2d08980159d0539017f29ffc98e9629fb94cfcfbb4ae9f4",
+      "sourceSha256": "c9a4c9f851f0b944ad153d92b7c91926419ad4933a6ae2c579335d1922310f63",
       "en": "docs/skills/academic-defense-beamer/resources/references/plan-schema.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/plan-schema.md"
     },
@@ -33,7 +33,7 @@
       "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/presenting.md",
       "sourceLocale": "zh",
-      "sourceSha256": "31b6b2b0b1499aecdc6b41cd9180d04def424122a9a25d7fa2800f354a0c0307",
+      "sourceSha256": "275fdb647a1b2db90946c19bf8c2645c4407957bb6612c71d88712829792f691",
       "en": "docs/skills/academic-defense-beamer/resources/references/presenting.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/presenting.md"
     },
@@ -51,7 +51,7 @@
       "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/quality-gate.md",
       "sourceLocale": "zh",
-      "sourceSha256": "f09c5e0b41ca92b9b1296e3becbef5f3bd95561a38fdb070cf4e46d27d71e69d",
+      "sourceSha256": "529565ecae64a97624835d7ab5d777f6be110723def0ead4199f04540dab7b32",
       "en": "docs/skills/academic-defense-beamer/resources/references/quality-gate.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/quality-gate.md"
     },
@@ -60,7 +60,7 @@
       "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/slide-layouts.md",
       "sourceLocale": "zh",
-      "sourceSha256": "88a2a098f9a4f57b7ca74538fec8dcd50ea1ac5c0c3f822642c6a9ea97240feb",
+      "sourceSha256": "c92eee2b55fc439eab3e2810b01b70bffc2539c87369c201e137c10d5de47ca2",
       "en": "docs/skills/academic-defense-beamer/resources/references/slide-layouts.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/slide-layouts.md"
     },
@@ -69,7 +69,7 @@
       "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/speaker-notes.md",
       "sourceLocale": "zh",
-      "sourceSha256": "128b6716285c694adaef93e3112f857b110c550fd9f8ebc04d6bb63bc48698fe",
+      "sourceSha256": "594e8ce7133b332b06ff7e100f19cc112611bc9e8df4b1c4fd2aa2079bb709ee",
       "en": "docs/skills/academic-defense-beamer/resources/references/speaker-notes.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/speaker-notes.md"
     },
@@ -85,9 +85,18 @@
     {
       "skill": "academic-defense-beamer",
       "kind": "references",
+      "source": "academic-writing-skills/academic-defense-beamer/references/touying-backend.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "086c090f439df9c40fb67a60d237058e86fa93f72cbb6e7ec7fc96c5be90e35e",
+      "en": "docs/skills/academic-defense-beamer/resources/references/touying-backend.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/references/touying-backend.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "references",
       "source": "academic-writing-skills/academic-defense-beamer/references/visual-spec.md",
       "sourceLocale": "zh",
-      "sourceSha256": "0cb5e03b17a7fa12e56f92682f8b3f93e19e02dca2ba7aed675e5696c4eff255",
+      "sourceSha256": "87a9cb128db5f5cedec728b8e92eaa07d658a87c3ddcac94a29f90f26f7d2737",
       "en": "docs/skills/academic-defense-beamer/resources/references/visual-spec.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/references/visual-spec.md"
     },
@@ -117,6 +126,15 @@
       "sourceSha256": "26d0f3310c1c46d7bd144ec23dc1de712f8c778ecec57a1f693c3fb8ce18877a",
       "en": "docs/skills/academic-defense-beamer/resources/examples/predefense-40min.md",
       "zh": "docs/zh/skills/academic-defense-beamer/resources/examples/predefense-40min.md"
+    },
+    {
+      "skill": "academic-defense-beamer",
+      "kind": "examples",
+      "source": "academic-writing-skills/academic-defense-beamer/examples/touying-defense.md",
+      "sourceLocale": "zh",
+      "sourceSha256": "13a5c5ba3e932fc859d5b93a4e2ae7eb15e8f480d2b8dc601a6bffa90cf91afb",
+      "en": "docs/skills/academic-defense-beamer/resources/examples/touying-defense.md",
+      "zh": "docs/zh/skills/academic-defense-beamer/resources/examples/touying-defense.md"
     },
     {
       "skill": "academic-defense-beamer",

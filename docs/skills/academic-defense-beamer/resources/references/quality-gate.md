@@ -5,10 +5,11 @@ This file specifies the D-* codes, criteria, thresholds, severities, and fixes o
 ## Usage
 
 ```bash
-uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
+uv run python -B $SKILL_DIR/scripts/check_deck.py --deck DIR/defense.tex|DIR/defense.typ --inventory inventory.json [--plan slide_plan.yaml] [--log DIR/defense.log] [--notes-pdf DIR/defense-notes.pdf] [--minutes 40] [--json]
 uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 ```
 
+- The suffix of `--deck` selects the backend: `.tex` is Beamer and `.typ` is Touying. When the suffix does not match the `build_manifest.json` field `backend`, the script exits with 2. For the code mapping of the Touying backend, see the “Touying Backend” section of this file.
 - `check_deck.py` reads the defense deck, the `notes.md`, `defense.log`, `build_manifest.json`, and the presenter build `defense-notes.pdf` in the same directory, the inventory, and the thesis source files. It does not write files.
 - When `--log` is absent, the script uses the `defense.log` in the deck directory. When that file does not exist, D-COMPILE, D-OVERFLOW-V, and D-OVERFLOW-H go into `skipped`.
 - With `--plan`, the chapter roles and the stage come from the plan. Without a plan, the script infers the chapter roles from the page roles in the frame markers. The minutes come from `--minutes`, then from the plan `meta.minutes`, then from the default 40.
@@ -17,7 +18,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 
 | Script              | Exit codes                                                                                                                                                                                                                                     |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `check_deck.py`     | 0: no Critical or Major finding; 1: one or more Critical or Major findings; 2: the deck does not exist, the script cannot read the inventory or the plan, the file that `--log` or `--notes-pdf` gives does not exist, or `--minutes` is not in the range 15–90 |
+| `check_deck.py`     | 0: no Critical or Major finding; 1: one or more Critical or Major findings; 2: the deck does not exist, the suffix of `--deck` is not `.tex` or `.typ` or does not match the `build_manifest.json` field `backend`, the script cannot read the inventory or the plan, the file that `--log` or `--notes-pdf` gives does not exist, or `--minutes` is not in the range 15–90 |
 | `render_preview.py` | 0: success; 2: the PDF does not exist or the script cannot open it, or `--dpi` or `--cols` is not a positive integer; 3: PyMuPDF is not installed                                                                                              |
 
 ## Output Format
@@ -147,6 +148,46 @@ Exclusions and matching rules of D-NUM-SRC:
 - Years are not excluded. A year must occur in the thesis.
 - The script splits the text into the longest “digits.digits” strings. Before the comparison, it changes full-width digits to ASCII digits and removes thousands commas between digits. Numbers with different decimal places (for example 12.3 and 12.30) do not match, and the script reports them. The review decides.
 
+## Touying Backend
+
+With `--deck DIR/defense.typ`, the 22 codes stay the same, and the criteria map as in the table below. The codes that the table does not list (D-COVERAGE, D-CHAIN, D-PLACEHOLDER, D-FIG-NUMBER, D-FIG-ASPECT, D-NUM-SRC, D-PAPER, D-STAGE, D-BUDGET, and the notes items of D-NOTES) follow the criteria above; only the frames and the text come from `defense.typ`.
+
+| Code         | Touying criterion                                                                                                                                                                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-MARKER     | The frame marker is `// defense-frame: id=… role=… chapter=… layout=…`; the fields and severities are as in Beamer                                                                                                                                             |
+| D-TOC        | The second frame must be `#outline-slide`; the chapter contents frame of chapter k must be the k-th level-1 heading `=` (`<touying:skip>` headings count too)                                                                                                    |
+| D-FIG-ALLOW  | The path of `image("img/…")`, without `img/`, is not the `resolved` path of an inventory image file                                                                                                                                                            |
+| D-FIG-MISSING | An allowed `image("img/…")` has no file in the deck directory (a copied image was deleted or moved); `build_deck.py` already exits with 2 when a thesis image is missing, so this code appears only when `img/` changes after the build |
+| D-EQ-SRC     | Inside a source region (between `// defense-source-begin` and `// defense-source-end`), the LaTeX source of `mitex` is compared with the inventory equations by the Beamer rule (Critical); `$`, `mitex`, `mi`, or `mimath` outside a source region is Major      |
+| D-TAB-SRC    | The cell texts of a `result-table` inside a source region, in row order with all whitespace removed, differ from the cell text sequence of every simple inventory table (Critical); `result-table` or `table` outside a source region is Major. Typst does not keep the `tabular` source, so the check compares the converted cell texts; the no-break space that `~` becomes counts as whitespace |
+| D-META       | The cover fields come from `config-info` in the preamble: `title`, `author`, `supervisor`, `school`, `subject`, and `date`                                                                                                                                    |
+| D-STAGE      | The stage comes from the `config-info` field `stage-en`: `Pre-defense` is predefense and `Defense` is defense                                                                                                                                                          |
+| D-DENSITY    | Visible characters are the characters of the string literals in the frame, excluding the frame title, the note, `image` paths, and the source regions; bullets are the arguments of `points`, cards are `side-card`, outlook items are `label-row`, and equations are `mitex` inside source regions |
+| D-NOTES      | Minor when `#note[…]` and `note:` parameters in a frame are not exactly 1 in total                                                                                                                                                                            |
+| D-COMPILE    | A line in `defense.log` that starts with `error:` is Critical and maps to a frame through the following `┌─ defense.typ:行:列` or `╭─`; a missing `defense.pdf`, or one older than `defense.typ`, is Critical                                                      |
+| D-OVERFLOW-V | See below                                                                                                                                                                                                                                                      |
+| D-OVERFLOW-H | Always goes into `skipped`: typst does not report horizontal overflow                                                                                                                                                                                          |
+| D-NOTES-PDF  | See below                                                                                                                                                                                                                                                      |
+
+D-OVERFLOW-V (Major): the Touying theme continues an overflowing frame on extra pages and does not clip it, so the check counts pages.
+
+1. Without `defense.pdf`, the code goes into `skipped`.
+2. When typst is on this machine, and every package that the deck imports and `@preview/touying:0.8.0` are installed, the script reads the `<ysu-note>` records: it first runs `typst eval 'query(<ysu-note>).map(it => it.value)' --root DIR --in DIR/defense.typ`, and on failure uses the deprecated `typst query`. Each record gives the frame number `frame` and the first page `page`. The page count of frame i is the first page of the next frame minus the first page of this frame; for the last frame, the total page count of `defense.pdf` plus 1 replaces the first page of the next frame. A page count above 1 is reported at the frame marker of that frame, and the message gives the number of continuation pages and the first page.
+3. The total page count for the last frame needs PyMuPDF; without PyMuPDF the last frame is not checked, and the other frames are checked as usual.
+4. When no records can be read (no typst, or a package is not installed), the check falls back to the totals: when `defense.pdf` has more pages than frames, it reports one finding that does not map to a frame, at `defense.pdf`. When PyMuPDF is missing and the pages cannot be counted, the code goes into `skipped`.
+5. The check does not read `defense.log`, so D-OVERFLOW-V is not skipped for lack of a compile log.
+
+D-NOTES-PDF: the skip conditions and the Minor finding for a missing file are as in Beamer. When the presenter build exists (all Major; for each kind of problem only the first occurrence is reported):
+
+- The number of notes pages, whose labels start with `notes:`, differs from the number of frames.
+- The last page is not a notes page.
+- The label of a notes page is not `notes:` plus the label of the page just before it, or the page before it is also a notes page.
+- The slide pages differ in size.
+- A notes page differs in width from the slides (by more than 0.5 pt), or its height-to-width ratio is not within ±1% of 13.5/16.
+- The PDF cannot be read or has no pages.
+
+A total page count of 2 × frames holds only without overflow. Continuation pages raise the total; D-OVERFLOW-V reports that difference, and D-NOTES-PDF does not report it again. Each entry of the `/PageLabels` that Typst writes contains `/Type /PageLabel`, and `page.get_label()` of PyMuPDF 2.0 misreads it as a prefix (it returns `ageLabel1`). The Touying branch therefore does not use `get_label()`: it reads `/PageLabels` in the document catalog itself, takes its `/Nums`, and builds each label from the `/P` prefix, the `/S` style, and the `/St` start value. The Beamer branch reads labels as before.
+
 ## Thresholds
 
 | Threshold                                     | Value     | Code         |
@@ -160,6 +201,7 @@ Exclusions and matching rules of D-NUM-SRC:
 | Bitmap height-to-width ratio                  | 1.6       | D-FIG-ASPECT |
 | Bitmap width-to-height ratio                  | 3         | D-FIG-ASPECT |
 | Page width-to-height ratio of the presenter build | 3.1–3.6 | D-NOTES-PDF |
+| Height-to-width ratio of a Touying notes page | 13.5/16 ±1% | D-NOTES-PDF |
 
 The thresholds above are initial values and are not calibrated. The values 180 and 260 and the range 150–250 did not come from a calibration on a corpus of defense decks. Do not adjust the thresholds for one thesis. The layout limits come from [Layout Catalog](slide-layouts.md).
 

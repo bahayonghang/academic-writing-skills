@@ -80,3 +80,10 @@ The package uses `\IfFontExistsTF` to select the first available font in this or
 - The logo is 0.76 cm high on content pages and 1.23 cm high on the cover and the thanks page. The width keeps the aspect ratio of the source image.
 - `yanshan` theme: when the logo path is empty or the file does not exist, the deck shows a text mark. The default text mark is “燕山大学” (Yanshan University), in bold and in the color `defenseNavy`. `\DefenseSetup{logo-text=<文字>}` changes the text mark.
 - `generic` theme: the deck shows no logo and no text mark.
+
+## Touying Backend
+
+- In the Touying backend, the colors, positions, font sizes, font fallback, and school logo all come from the installed theme package simply-ysu-touying. This skill does not define them and copies neither the theme source nor its logo bitmaps. The sections above apply only to the Beamer themes.
+- The page is 16:9 (16 cm × 9 cm); a notes page of the presenter build is 16 cm × 13.5 cm, see [Presenting and Speaker Notes](presenting.md).
+- The build script sets only `aspect-ratio: "16-9"`, `nav-labels`, and `config-info`, and passes no color, font, or `icon:` parameter. For the default figure heights, see the layout mapping in [Typst Touying Backend](touying-backend.md).
+- There is only one theme, `yanshan`; the `generic` theme is only for the Beamer backend.

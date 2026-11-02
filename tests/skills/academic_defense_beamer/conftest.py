@@ -12,6 +12,7 @@ import contextlib
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -25,7 +26,15 @@ from tests.support.paths import SKILLS_ROOT
 SKILL_ROOT = SKILLS_ROOT / "academic-defense-beamer"
 SCRIPTS = SKILL_ROOT / "scripts"
 FIXTURE_DIR = SKILL_ROOT / "evals" / "fixtures" / "mini-thesis"
-_SHARED_MODULE_NAMES = ("tex_loader", "defense_budget", "extract_thesis")
+_SHARED_MODULE_NAMES = (
+    "tex_loader",
+    "defense_budget",
+    "extract_thesis",
+    "typst_backend",
+    "check_typst",
+)
+# Typst compile tests run only with DEFENSE_TYPST_COMPILE=1 (and typst plus its packages).
+TYPST_COMPILE = os.environ.get("DEFENSE_TYPST_COMPILE") == "1"
 
 # PyMuPDF binds sys.stdout for its messages at first import. Import it here, under
 # pytest's session capture, rather than inside a capsys test whose stream closes at teardown.
@@ -159,3 +168,56 @@ def built_deck(filled_plan: dict, tmp_path: Path, defense_scripts: _Scripts) -> 
     )
     assert code == 0
     return out
+
+
+def typst_ready(defense_scripts: _Scripts) -> bool:
+    """typst on PATH with the theme, touying, and mitex packages installed locally."""
+    backend = defense_scripts.typst_backend
+    if shutil.which("typst") is None:
+        return False
+    specs = [backend.DEFAULT_THEME_PACKAGE, backend.TOUYING_PACKAGE, backend.MITEX_PACKAGE]
+    return not backend.missing_packages(specs)
+
+
+def write_plan(plan: dict, path: Path) -> None:
+    path.write_text(
+        yaml.safe_dump(plan, allow_unicode=True, sort_keys=False, width=1000), encoding="utf-8"
+    )
+
+
+@pytest.fixture
+def touying_plan(inventory: dict, tmp_path: Path, defense_scripts: _Scripts) -> dict:
+    """Touying plan of ``inventory`` with synthetic text, written to ``tmp_path/slide_plan.yaml``."""
+    plan_deck = defense_scripts.plan_deck
+    digest = hashlib.sha256((tmp_path / "inventory.json").read_bytes()).hexdigest()
+    plan = plan_deck.build_plan(inventory, 40, "predefense", "yanshan", digest, "touying")
+    plan = fill_plan(plan, plan_deck.PLACEHOLDER)
+    write_plan(plan, tmp_path / "slide_plan.yaml")
+    return plan
+
+
+@pytest.fixture
+def built_typst(touying_plan: dict, tmp_path: Path, defense_scripts: _Scripts) -> Path:
+    """Output directory of build_deck.py for ``touying_plan`` (no compile)."""
+    out = tmp_path / "deck"
+    code = defense_scripts.build_deck.main(
+        [
+            "--plan",
+            str(tmp_path / "slide_plan.yaml"),
+            "--inventory",
+            str(tmp_path / "inventory.json"),
+            "--out",
+            str(out),
+        ]
+    )
+    assert code == 0
+    return out
+
+
+@pytest.fixture
+def typst_compile(defense_scripts: _Scripts) -> None:
+    """Skip unless DEFENSE_TYPST_COMPILE=1 and typst with its packages is installed."""
+    if not TYPST_COMPILE:
+        pytest.skip("set DEFENSE_TYPST_COMPILE=1 to compile the Touying deck")
+    if not typst_ready(defense_scripts):
+        pytest.skip("typst 0.15.1+ or a Typst package is not installed locally")

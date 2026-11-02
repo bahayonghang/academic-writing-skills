@@ -1,0 +1,4 @@
+{% include "frames/_head.typ.j2" %}
+{% for card in frame.cards %}
+#side-card(label: {{ card.label }})[#{{ card.text }}]
+{% endfor %}
