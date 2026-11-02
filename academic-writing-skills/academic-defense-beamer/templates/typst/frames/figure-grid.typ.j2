@@ -1,0 +1,20 @@
+{% include "frames/_head.typ.j2" %}
+#grid(
+  columns: {{ frame.grid.columns }},
+  column-gutter: 0.4cm,
+  row-gutter: 0.15cm,
+{% for cell in frame.grid.cells %}
+  [
+#figure-box(caption: [{{ cell.prefix }}
+{{ region_begin }}
+{{ cell.caption }}
+{{ region_end }}
+])[#image({{ cell.path }}, {{ cell.size }})]
+  ],
+{% endfor %}
+)
+#fig-caption([{{ frame.figure.prefix }}
+{{ region_begin }}
+{{ frame.figure.caption }}
+{{ region_end }}
+])

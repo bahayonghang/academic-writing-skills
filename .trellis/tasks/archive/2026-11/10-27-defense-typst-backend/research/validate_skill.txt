@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "root": "D:\\Documents\\Code\\Agents\\academic-writing-skills\\academic-writing-skills\\academic-defense-beamer",
+  "failures": [
+    "missing required file: README.md",
+    "missing required file: agents/interface.yaml",
+    "missing required file: manifest.json"
+  ],
+  "warnings": [
+    "evals/trigger_cases.json missing; recommended for production/library packages",
+    "script has no argparse help or internal-module marker: check_typst.py",
+    "script has no argparse help or internal-module marker: tex_loader.py",
+    "script has no argparse help or internal-module marker: typst_backend.py"
+  ]
+}

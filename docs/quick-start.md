@@ -11,7 +11,7 @@
 | Work on a Typst paper | `typst-paper` |
 | Search a local `.bib` library | `bib-search-citation` |
 | Polish or translate academic prose for a venue | `paper-writing-studio` |
-| Build defense slides from a Chinese LaTeX thesis | `latex-defense-zh` |
+| Build defense slides from a Chinese LaTeX thesis | `academic-defense-beamer` |
 
 ## 2. Run One Real Command
 
@@ -60,8 +60,8 @@ uv run python -B academic-writing-skills/bib-search-citation/scripts/search_bib.
 ### Thesis defense deck
 
 ```bash
-uv run python -B academic-writing-skills/latex-defense-zh/scripts/extract_thesis.py --thesis thesis-repo --out defense-work/inventory.json --json
-uv run python -B academic-writing-skills/latex-defense-zh/scripts/plan_deck.py --inventory defense-work/inventory.json --out defense-work/slide_plan.yaml --minutes 40
+uv run python -B academic-writing-skills/academic-defense-beamer/scripts/extract_thesis.py --thesis thesis-repo --out defense-work/inventory.json --json
+uv run python -B academic-writing-skills/academic-defense-beamer/scripts/plan_deck.py --inventory defense-work/inventory.json --out defense-work/slide_plan.yaml --minutes 40
 ```
 
 ## 3. Follow The Skill Router

@@ -23,7 +23,7 @@ and a source-level writing check is not a reviewer-style submission decision.
 | `typst-paper` | `.typ` | Typst compile and targeted writing checks | The artifact is LaTeX |
 | `bib-search-citation` | `.bib` | Retrieval, filtering, raw entries, citation snippets | Claim support must be verified in the paper |
 | `paper-writing-studio` | prose text + optional venue, journal, or domain | Venue-profile polish and translation with protected evidence tokens | The source file needs compile, format, or structure work |
-| `latex-defense-zh` | Chinese thesis LaTeX repository | Beamer defense deck, speaker notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
+| `academic-defense-beamer` | Chinese thesis LaTeX repository | Beamer or Typst Touying defense deck, speaker notes, presenter PDF with notes, fidelity quality gate, and preview | The user needs `.pptx`, a conference talk, or edits to the thesis text |
 
 ## Current Routers
 
@@ -76,11 +76,15 @@ The review response workflow has three checkpoints too: the reviewer order and t
 
 The profile precedence is explicit venue > journal allowlist > unambiguous domain > `unspecified`.
 
-### `latex-defense-zh`
+### `academic-defense-beamer`
 
 `extract`, `plan`, `build`, `check`, `preview`.
 
 The workflow has three user checkpoints: chapter roles after `extract`, the takeaway outline before `build`, and the delivery list after `preview`.
+
+`build --compile` produces the slide PDF `defense.pdf` and the presenter PDF `defense-notes.pdf` (slide left, speaker note right). Present `defense-notes.pdf` with FerroStage (Windows) or pympress.
+
+With `plan --backend touying`, `build` writes the Typst deck `defense.typ` for the simply-ysu-touying theme instead, and `defense-notes.pdf` follows each slide with a `notes:N` notes page that FerroStage pairs automatically. The Typst packages must already be installed locally; a missing package makes `build` exit 6.
 
 ## Resource Loading
 

@@ -1,0 +1,4 @@
+{% include "frames/_head.typ.j2" %}
+{% for item in frame.outlook %}
+#label-row(label: {{ item.label }})[#{{ item.text }}]
+{% endfor %}

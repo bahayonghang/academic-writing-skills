@@ -89,7 +89,7 @@ npx skills add bahayonghang/academic-writing-skills/latex-thesis-zh
 npx skills add bahayonghang/academic-writing-skills/typst-paper
 npx skills add bahayonghang/academic-writing-skills/bib-search-citation
 npx skills add bahayonghang/academic-writing-skills/paper-writing-studio
-npx skills add bahayonghang/academic-writing-skills/latex-defense-zh
+npx skills add bahayonghang/academic-writing-skills/academic-defense-beamer
 
 # Install all eight
 npx skills add bahayonghang/academic-writing-skills
@@ -106,6 +106,9 @@ Copy the complete skill directory. Each package depends on its local scripts,
 references, templates, examples, and metadata. If the tool does not auto-load
 the skill, open that skill's `SKILL.md`, then the routed `references/` file.
 
+The defense-deck skill was renamed to `academic-defense-beamer`. An older local
+install directory named `latex-defense-zh` can be deleted.
+
 ### paper-audit sibling layout {#paper-audit-layout}
 
 Full `paper-audit` script-backed checks for `.tex` and `.typ` resolve sibling
@@ -120,7 +123,7 @@ writing skills from the parent of the `paper-audit/` directory:
 ├── typst-paper/
 ├── bib-search-citation/
 ├── paper-writing-studio/
-└── latex-defense-zh/
+└── academic-defense-beamer/
 ```
 
 `audit.py` looks for `latex-paper-en/scripts`, `latex-thesis-zh/scripts`, and
@@ -177,11 +180,11 @@ provider has scanned the new package. Until a new scan is available, report the
 scan status as pending. Keep local behavior tests, installation verification,
 publication, and provider scans as separate results.
 
-Socket findings for `latex-thesis-zh` and `latex-defense-zh` identified include
+Socket findings for `latex-thesis-zh` and `academic-defense-beamer` identified include
 paths that could read files outside the project root. The loader boundary below
 addresses that behavior. The boundary applies to the five LaTeX loader copies:
 `latex-paper-en`, `latex-thesis-zh`, `paper-audit`, `cover-letter`, and
-`latex-defense-zh`. A zero-alert badge does not replace behavior tests.
+`academic-defense-beamer`. A zero-alert badge does not replace behavior tests.
 
 ### A loader reports `E-INCLUDE-BOUNDARY` {#include-boundary}
 

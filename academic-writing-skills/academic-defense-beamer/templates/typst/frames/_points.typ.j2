@@ -1,0 +1,7 @@
+{% if frame.bullets %}
+#points(
+{% for bullet in frame.bullets %}
+  {{ bullet }},
+{% endfor %}
+)
+{% endif %}

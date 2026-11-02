@@ -11,7 +11,7 @@
 | `typst-paper` | `.typ` 论文 | 编译/导出后再做定向检查 | [打开](/zh/skills/typst-paper/) |
 | `bib-search-citation` | BibTeX/BibLaTeX 文献库 | 运行紧凑查询 | [打开](/zh/skills/bib-search-citation/) |
 | `paper-writing-studio` | 学术文本与可选的 venue、期刊或领域 | 选定 profile 后润色单节 | [打开](/zh/skills/paper-writing-studio/) |
-| `latex-defense-zh` | 中文学位论文 LaTeX 仓库 | 提取清单后确认章角色 | [打开](/zh/skills/latex-defense-zh/) |
+| `academic-defense-beamer` | 中文学位论文 LaTeX 仓库 | 提取清单后确认章角色 | [打开](/zh/skills/academic-defense-beamer/) |
 
 ## 概览结构
 

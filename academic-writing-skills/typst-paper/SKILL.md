@@ -49,7 +49,7 @@ Use this skill when the user has an existing `.typ` paper project and wants: com
 
 ## Do Not Use
 
-Not for: LaTeX-first projects; DOCX/PDF-only editing without Typst source; thesis template detection or GB/T 7714 thesis workflows; from-scratch paper planning or literature research; multi-perspective review/scoring/gate decisions (use `paper-audit`); standalone pseudocode drafting without a paper context.
+Not for: LaTeX-first projects; DOCX/PDF-only editing without Typst source; thesis template detection or GB/T 7714 thesis workflows; from-scratch paper planning or literature research; multi-perspective review/scoring/gate decisions (use `paper-audit`); standalone pseudocode drafting without a paper context; thesis defense slides, including Typst Touying decks built from a Chinese LaTeX thesis (use `academic-defense-beamer`).
 
 ## Module Router
 

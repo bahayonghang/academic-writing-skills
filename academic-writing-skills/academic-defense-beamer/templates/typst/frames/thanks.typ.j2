@@ -1,0 +1,10 @@
+#ending-slide(
+{% if frame.recap %}
+  recap: (
+{% for item in frame.recap %}
+    (title: {{ item.title }}, body: {{ item.body }}),
+{% endfor %}
+  ),
+{% endif %}
+  note: [{{ frame.note }}],
+)

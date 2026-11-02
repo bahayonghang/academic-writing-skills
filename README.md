@@ -16,7 +16,7 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models: **Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
+> Recommended models (highlighted are most recommended): **<mark>Claude Opus 5.5</mark> · Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · <mark>Gemini 4 Argon</mark> · <mark>Gemini 3.8 Flash</mark> · DeepSeek V4 Pro**
 >
 > Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
@@ -47,7 +47,7 @@ alerts and `E-INCLUDE-BOUNDARY`, see the [installation guide](docs/installation.
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | Work on existing English or Chinese Typst manuscripts: compile/export diagnostics, venue formatting, references, grammar, logic, tables, pseudocode, title, translation, or de-AI polish.   | `.typ`                                        | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | Search, filter, preview, export, or create LaTeX/Typst citation snippets from a local BibTeX or BibLaTeX library.                                                                           | `.bib`                                        | `bib-search-citation/SKILL.md` |
 | [`paper-writing-studio`](academic-writing-skills/paper-writing-studio/SKILL.md) | Polish or translate academic prose with an explicit Nature, IEEE, Elsevier, or neutral profile; report venue conflicts and missing evidence instead of guessing. | prose text, optional venue, journal, or domain | `paper-writing-studio/SKILL.md` |
-| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | Build a Chinese PhD/master thesis defense or pre-defense Beamer deck with speaker notes from an existing XeLaTeX thesis repository; extraction is read-only, and a fidelity quality gate checks figures, numbers, equations, tables, and publications against the thesis. | thesis LaTeX repository | `latex-defense-zh/SKILL.md` |
+| [`academic-defense-beamer`](academic-writing-skills/academic-defense-beamer/SKILL.md) | Build a Chinese PhD/master thesis defense or pre-defense deck in Beamer or Typst Touying (simply-ysu-touying theme) with speaker notes, plus a presenter PDF for FerroStage or pympress, from an existing XeLaTeX thesis repository; extraction is read-only, and a fidelity quality gate checks figures, numbers, equations, tables, and publications against the thesis. | thesis LaTeX repository | `academic-defense-beamer/SKILL.md` |
 
 
 Opt-in checks only report local candidates: `check_consistency.py --governance` requires `--custom-terms`, `--abbreviation-style` is independent, and `check_style_zh.py --degree-wording` is off by default; without these flags the previous output stays unchanged.

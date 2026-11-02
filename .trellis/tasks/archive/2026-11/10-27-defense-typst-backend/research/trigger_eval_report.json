@@ -1,0 +1,24 @@
+{
+  "ok": false,
+  "threshold": 0.34,
+  "description_concepts": [
+    "source_material"
+  ],
+  "missing_description_concepts": [
+    "authoring_action",
+    "skill"
+  ],
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "false_positive": 0,
+    "false_negative": 0,
+    "pass_rate": 0
+  },
+  "failures": [],
+  "results": {
+    "should_trigger": [],
+    "should_not_trigger": [],
+    "near_neighbor": []
+  }
+}

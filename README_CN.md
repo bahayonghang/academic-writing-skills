@@ -11,7 +11,7 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型：**Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · Gemini 4 Argon · Gemini 3.8 Flash · DeepSeek V4 Pro**
+> 推荐模型（高亮为最推荐）：**<mark>Claude Opus 5.5</mark> · Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · <mark>Gemini 4 Argon</mark> · <mark>Gemini 3.8 Flash</mark> · DeepSeek V4 Pro**
 >
 > 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
 
@@ -41,7 +41,7 @@ LaTeX loader 会拒绝项目根目录外的 include。安装告警及 `E-INCLUDE
 | [`typst-paper`](academic-writing-skills/typst-paper/SKILL.md)                 | 处理已有中英文 Typst 论文：编译/导出诊断、期刊格式、引用、语法、逻辑、表格、伪代码、标题、翻译和去 AI 化润色。           | `.typ`                         | `typst-paper/SKILL.md`         |
 | [`bib-search-citation`](academic-writing-skills/bib-search-citation/SKILL.md) | 从本地 BibTeX 或 BibLaTeX 文献库中检索、过滤、预览、导出条目，或生成 LaTeX/Typst 引用片段。           | `.bib`                         | `bib-search-citation/SKILL.md` |
 | [`paper-writing-studio`](academic-writing-skills/paper-writing-studio/SKILL.md) | 按显式的 Nature、IEEE、Elsevier 或中性 profile 润色或翻译学术文本；venue 冲突与缺失证据只报告，不猜测。 | 学术文本，可选 venue、期刊或领域 | `paper-writing-studio/SKILL.md` |
-| [`latex-defense-zh`](academic-writing-skills/latex-defense-zh/SKILL.md) | 从已有 XeLaTeX 学位论文仓库生成博士/硕士答辩或预答辩 Beamer 幻灯片与讲稿；只读提取论文内容，并用保真质量门核对图、数字、公式、表体与成果。 | 学位论文 LaTeX 仓库 | `latex-defense-zh/SKILL.md` |
+| [`academic-defense-beamer`](academic-writing-skills/academic-defense-beamer/SKILL.md) | 从已有 XeLaTeX 学位论文仓库生成博士/硕士答辩或预答辩幻灯片（Beamer，或 simply-ysu-touying 主题的 Typst Touying）与讲稿，另出可用 FerroStage 或 pympress 放映的备注版 PDF；只读提取论文内容，并用保真质量门核对图、数字、公式、表体与成果。 | 学位论文 LaTeX 仓库 | `academic-defense-beamer/SKILL.md` |
 
 
 可选检查只报告局部候选：`check_consistency.py --governance` 必须配合 `--custom-terms`，`--abbreviation-style` 独立于治理开关，`check_style_zh.py --degree-wording` 默认关闭；不传这些开关时原输出保持不变。

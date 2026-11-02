@@ -23,7 +23,7 @@ checks without silently changing citations, labels, mathematics, or template mac
 - Typst projects; use `typst-paper`.
 - Multi-dimensional manuscript audit and scoring; use `paper-audit`.
 - Pure literature discovery, DOCX-only source editing, or writing a thesis from scratch.
-- Use `latex-defense-zh` for Beamer decks; journal or conference rebuttal letters are outside scope.
+- Use `academic-defense-beamer` for Beamer decks; journal or conference rebuttal letters are outside scope.
 - Source editing requires LaTeX; review intake also accepts PDF/TXT/MD reports alone, with thesis-dependent checks reported as skipped.
 
 ## Module Router

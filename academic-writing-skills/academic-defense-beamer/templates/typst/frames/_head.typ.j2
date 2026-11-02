@@ -1,0 +1,8 @@
+== #{{ frame.title }}
+#note[{{ frame.note }}]
+{% if frame.subsection %}
+#sub({{ frame.subsection }})
+{% endif %}
+{% if frame.takeaway %}
+#takeaway({{ frame.takeaway }})
+{% endif %}

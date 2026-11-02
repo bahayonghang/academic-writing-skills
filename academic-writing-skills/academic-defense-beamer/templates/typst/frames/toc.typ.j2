@@ -1,0 +1,12 @@
+{% if frame.toc == 0 %}
+#outline-slide(
+{% if frame.groups %}
+  groups: {{ frame.groups }},
+{% endif %}
+  note: [{{ frame.note }}],
+)
+{% else %}
+= #{{ frame.heading }}
+#note[{{ frame.note }}]
+#chapter-opener({{ frame.opener }})
+{% endif %}

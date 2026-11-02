@@ -10,22 +10,34 @@
 
 ### Added
 
-- `latex-defense-zh` 新增评阅意见回复：`rebuttal_intake.py` 读取评阅书（PDF、TXT、MD），在评阅书目录同级建
+- `academic-defense-beamer` 新增评阅意见回复：`rebuttal_intake.py` 读取评阅书（PDF、TXT、MD），在评阅书目录同级建
   `responses/` 与 `workspace/` 并写台账骨架；`rebuttal_build.py` 生成修改计划与可粘贴到 Word 修改说明的纯文本等价 Markdown；
   `rebuttal_check.py` 以 16 个 R-* 码核对意见覆盖、原文引用、git 修改证据、修改位置与页码。新增三份 rebuttal 参考、
   一份示例、合成评阅书 fixture、evals 与双语资源页，以及 `.trellis/spec/academic-writing-skills/defense-rebuttal-contract.md`。
 - `paper-writing-studio` 登记为第七个公开 catalog 技能：`SKILL.md` 改为仓库技能契约结构，版本对齐 `6.0.0`；
   新增三份示例、`evals/evals.json` 与 `evals/trigger_eval.json`；进入安装器、契约测试列表与双语文档。
-- `latex-defense-zh` 登记为第八个公开 catalog 技能：从中文学位论文 XeLaTeX 仓库只读提取清单，按时长与阶段规划页面，
-  渲染燕山或通用主题的 Beamer 答辩稿与讲稿，并以 21 个 D-* 码的质量门与逐页预览检查；新增 `SKILL.md`、三份示例、
+- `academic-defense-beamer` 登记为第八个公开 catalog 技能：从中文学位论文 XeLaTeX 仓库只读提取清单，按时长与阶段规划页面，
+  渲染燕山或通用主题的 Beamer 答辩稿与讲稿，并以 D-* 码质量门与逐页预览检查；新增 `SKILL.md`、三份示例、
   evals、答辩提问准备 agent、双语技能页与 `.trellis/spec/academic-writing-skills/defense-deck-contract.md`。
+- `academic-defense-beamer` 把讲稿写进 PDF：每帧在 `\end{frame}` 前带 `\DefenseNote`（要点、说什么、过渡、秒数），新增自有文件
+  `defense-notes.tex`，`build_deck.py --compile` 另外编译 second-screen 备注版 `defense-notes.pdf`（每页左幻灯片、右备注，32:9，
+  页标签逐页唯一），`--no-notes-pdf` 只编译投屏版；`build_manifest.json` 增加 `backend` 与 `notes_pdf`。质量门新增 D-NOTES-PDF
+  （共 22 个 D-* 码），D-NOTES 增加帧内备注宏计数。新增 `references/presenting.md`，推荐用 FerroStage（Windows）或 pympress 双屏放映。
+- `academic-defense-beamer` 新增 Typst Touying 后端：`plan_deck.py --backend beamer|touying` 写入 `deck.backend`（Beamer 规划也写，
+  旧规划缺该键时按 Beamer 构建），Touying 只支持 `yanshan` 主题，并新增可选字段 `meta.chapters[].nav_label`（页脚短名，Beamer 忽略）
+  与 EPS 图、复杂表、不能翻译的宏提示。`build_deck.py` 按规划生成 `defense.typ`（simply-ysu-touying 0.2.0、touying 0.8.0、mitex 0.2.6），
+  把引用的论文原图复制到 `img/`，`--compile` 编译投屏版与 `notes:N` 备注版 `defense-notes.pdf`；新增 `--typst-package`、
+  `--typst-package-path`、`--font-path` 与退出码 6（Typst 包未安装，不联网下载）。`check_deck.py` 按 `--deck` 后缀选后端，
+  22 个 D-* 码映射到 Touying：D-OVERFLOW-V 按 `<ysu-note>` 记录的帧起始页定位续页，D-OVERFLOW-H 记入 `skipped`，
+  D-NOTES-PDF 核对 `notes:N` 配对与 16:13.5 备注页并自行解析页标签。新增 `references/touying-backend.md`、
+  `examples/touying-defense.md`、Typst 帧模板、evals 与双语资源页；`typst-paper` 的不适用场景指向本技能。
 
 ### Fixed
 
 - 纠正评阅回复能力归属：将三条 rebuttal CLI、台账、16 个 R-* 码、测试与双语资源迁入 `latex-thesis-zh`；
-  `latex-defense-zh` 恢复为 Beamer 答辩稿五模块。原台账 schema 不变，回复命令须从 thesis 安装目录运行；新增独立复制安装回归，回复无需安装 defense 包。
+  `academic-defense-beamer` 恢复为 Beamer 答辩稿五模块。原台账 schema 不变，回复命令须从 thesis 安装目录运行；新增独立复制安装回归，回复无需安装 defense 包。
 
-- `latex-defense-zh`：`figure-grid` 帧没有小节条时，子图网格被 Beamer 当作帧副标题吞掉而不显示，改用 `\begingroup` 分组；
+- `academic-defense-beamer`：`figure-grid` 帧没有小节条时，子图网格被 Beamer 当作帧副标题吞掉而不显示，改用 `\begingroup` 分组；
   `build_deck.py --force` 不再重写内容未变的文件，避免 latexmk 跳过重编后 `defense.pdf` 早于 `defense.tex` 而误报 D-COMPILE。
 - `docs/scripts/check_resource_sync.py` 的资源清单排序改为与平台无关（按路径分段不区分大小写），Linux 与 Windows 生成同一清单。
 

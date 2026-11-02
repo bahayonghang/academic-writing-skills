@@ -17,6 +17,7 @@ Typst academic paper assistant for existing `.typ` manuscripts in English or Chi
 - DOCX/PDF-only edits without Typst source.
 - Reviewer-style scoring or gate decisions; use `paper-audit`.
 - Cover-letter tasks.
+- Thesis defense slides, including Typst Touying decks; use `academic-defense-beamer`.
 
 ## Module Router
 

@@ -42,7 +42,7 @@ SKILLS = {
         "expects_uv_commands": True,
         "router_help": True,
     },
-    "latex-defense-zh": {
+    "academic-defense-beamer": {
         "modules": ["extract", "plan", "build", "check", "preview"],
         "min_examples": 3,
         "min_evals": 5,
@@ -282,7 +282,7 @@ def test_skill_security_boundaries_are_declared() -> None:
     for skill_name in ("latex-paper-en", "latex-thesis-zh"):
         skill_md = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
         assert "--trusted-source" in skill_md
-    defense_md = (SKILLS_ROOT / "latex-defense-zh" / "SKILL.md").read_text(encoding="utf-8")
+    defense_md = (SKILLS_ROOT / "academic-defense-beamer" / "SKILL.md").read_text(encoding="utf-8")
     assert "allowed-tools: Read, Glob, Grep, Write, Edit, Bash(uv *)" in defense_md
     assert "Bash(latexmk *)" not in defense_md
 
@@ -664,5 +664,5 @@ def test_bib_search_citation_module_router_commands_match_script_help() -> None:
     _assert_module_router_commands_match_script_help("bib-search-citation")
 
 
-def test_latex_defense_zh_module_router_commands_match_script_help() -> None:
-    _assert_module_router_commands_match_script_help("latex-defense-zh")
+def test_academic_defense_beamer_module_router_commands_match_script_help() -> None:
+    _assert_module_router_commands_match_script_help("academic-defense-beamer")

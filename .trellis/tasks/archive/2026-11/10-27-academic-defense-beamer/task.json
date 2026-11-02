@@ -1,0 +1,30 @@
+{
+  "id": "academic-defense-beamer",
+  "name": "academic-defense-beamer",
+  "title": "答辩稿技能统一为 academic-defense-beamer（Beamer + Touying + 演讲备注）",
+  "description": "将 latex-defense-zh 更名为 academic-defense-beamer，新增 Typst/Touying(simply-ysu-touying) 后端与演讲备注 PDF，并在文档推荐 FerroStage 读取备注",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-10-27",
+  "completedAt": "2026-11-01",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-27-defense-rename",
+    "10-27-defense-beamer-notes",
+    "10-27-defense-typst-backend"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

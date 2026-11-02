@@ -60,7 +60,7 @@ SKILL_NAMES = (
     "paper-audit",
     "cover-letter",
     "paper-writing-studio",
-    "latex-defense-zh",
+    "academic-defense-beamer",
 )
 
 MIN_QUERIES = 12

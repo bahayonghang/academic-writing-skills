@@ -19,7 +19,7 @@
 - Typst 工程；请用 `typst-paper`。
 - 多维度论文审稿与评分；请用 `paper-audit`。
 - 纯文献发现、只有 DOCX 的正文编辑，或从零代写学位论文。
-- Beamer 答辩稿用 `latex-defense-zh`；期刊或会议审稿回复信不在范围内。
+- Beamer 答辩稿用 `academic-defense-beamer`；期刊或会议审稿回复信不在范围内。
 - 无 LaTeX 源只限制正文编辑；评阅回复允许仅有 PDF/TXT/MD 评阅书，缺少论文证据的检查标为 skipped。
 
 ## 模块路由
