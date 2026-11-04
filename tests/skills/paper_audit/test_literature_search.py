@@ -445,6 +445,90 @@ class TestFirecrawlClient:
         assert [r.source for r in results] == ["firecrawl"]
 
 
+class TestOutcrawlClient:
+    """Tests for the Outcrawl search client contract."""
+
+    def test_outcrawl_without_key_skips_request(self) -> None:
+        from literature_search import OutcrawlClient
+
+        with patch("literature_search.urllib.request.urlopen") as mock_urlopen:
+            assert OutcrawlClient().search("mamba forecasting") == []
+        mock_urlopen.assert_not_called()
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_outcrawl_search_parses_hits(self, mock_urlopen) -> None:
+        from literature_search import OutcrawlClient
+
+        body = {
+            "hits": [
+                {
+                    "url": "https://openreview.net/forum?id=abc",
+                    "title": "MambaTS: Improved Selective State Space Models",
+                    "snippet": "Long-term time series forecasting with Mamba.",
+                    "rank": 1,
+                },
+                {"url": "https://example.com/untitled", "title": "", "rank": 2},
+            ],
+            "usage": {"credits": "0.5"},
+        }
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = json.dumps(body).encode("utf-8")
+        mock_urlopen.return_value = response
+
+        results = OutcrawlClient(api_key="oc-test").search("mamba forecasting", max_results=50)
+
+        request = mock_urlopen.call_args.args[0]
+        payload = json.loads(request.data.decode("utf-8"))
+        assert request.full_url == "https://api.outcrawl.ai/v1/search"
+        assert request.get_header("Authorization") == "Bearer oc-test"
+        assert request.get_header("User-agent") == "academic-writing-skills"
+        assert payload == {"query": "academic paper: mamba forecasting", "limit": 20}
+        assert len(results) == 1
+        assert results[0].source == "outcrawl"
+        assert results[0].url == "https://openreview.net/forum?id=abc"
+        assert results[0].abstract == "Long-term time series forecasting with Mamba."
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_outcrawl_auth_error_returns_empty(self, mock_urlopen, capsys) -> None:
+        import urllib.error
+        from email.message import Message
+
+        from literature_search import OutcrawlClient
+
+        mock_urlopen.side_effect = urllib.error.HTTPError(
+            "https://api.outcrawl.ai/v1/search", 401, "Unauthorized", Message(), None
+        )
+
+        assert OutcrawlClient(api_key="oc-bad").search("mamba forecasting") == []
+        assert "OUTCRAWL_API_KEY" in capsys.readouterr().err
+
+    @patch("literature_search.OutcrawlClient")
+    @patch("literature_search.SemanticScholarClient")
+    @patch("literature_search.ArxivClient")
+    def test_search_literature_uses_outcrawl_when_key_set(
+        self, mock_arxiv_cls, mock_s2_cls, mock_outcrawl_cls
+    ) -> None:
+        from literature_search import SearchResult, search_literature
+
+        mock_s2_cls.return_value.search.return_value = []
+        mock_arxiv_cls.return_value.search.return_value = []
+        mock_outcrawl_cls.return_value.search.return_value = [
+            SearchResult(
+                title="MambaTS: Improved Selective State Space Models",
+                authors=[],
+                year=None,
+                abstract="Long-term time series forecasting with Mamba.",
+                url="https://openreview.net/forum?id=abc",
+                source="outcrawl",
+            )
+        ]
+
+        results = search_literature(queries=["mamba forecasting"], outcrawl_key="oc-test")
+
+        mock_outcrawl_cls.assert_called_once_with(api_key="oc-test")
+        assert [r.source for r in results] == ["outcrawl"]
+
+
 # ============================================================
 # literature_compare tests
 # ============================================================
@@ -924,6 +1008,15 @@ class TestAuditNewFlags:
         for func in (run_audit, run_deep_review):
             params = list(inspect.signature(func).parameters)
             assert params.index("firecrawl_key") > params.index("overwrite_workspace")
+
+    def test_outcrawl_key_is_appended_after_existing_parameters(self) -> None:
+        import inspect
+
+        from audit import run_audit, run_deep_review
+
+        for func in (run_audit, run_deep_review):
+            params = list(inspect.signature(func).parameters)
+            assert params.index("outcrawl_key") > params.index("firecrawl_key")
 
     def test_report_generator_has_literature_context(self) -> None:
         from report_generator import AuditResult

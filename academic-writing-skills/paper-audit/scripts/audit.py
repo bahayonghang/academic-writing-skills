@@ -1959,6 +1959,7 @@ def run_deep_review(
     no_resume: bool = False,
     overwrite_workspace: bool = False,
     firecrawl_key: str = "",
+    outcrawl_key: str = "",
 ) -> AuditResult:
     """Run the end-to-end deep-review workflow with deterministic fallback lanes."""
     source_path = str(Path(file_path).resolve())
@@ -2013,6 +2014,7 @@ def run_deep_review(
             tavily_key=tavily_key,
             s2_key=s2_key,
             firecrawl_key=firecrawl_key,
+            outcrawl_key=outcrawl_key,
             regression=regression,
         )
         layout.phase0_context.write_text(
@@ -2669,6 +2671,7 @@ def run_audit(
     no_resume: bool = False,
     overwrite_workspace: bool = False,
     firecrawl_key: str = "",
+    outcrawl_key: str = "",
 ) -> AuditResult:
     """
     Run a complete paper audit.
@@ -2683,6 +2686,7 @@ def run_audit(
         tavily_key: API key for Tavily search (or env TAVILY_API_KEY).
         s2_key: API key for Semantic Scholar (or env S2_API_KEY).
         firecrawl_key: API key for Firecrawl search (or env FIRECRAWL_API_KEY).
+        outcrawl_key: API key for Outcrawl search (or env OUTCRAWL_API_KEY).
         regression: Use the weighted-plus scoring model (weighted average +
             interaction/penalty adjustments) instead of a plain weighted average.
         overwrite_workspace: Replace an existing auto-created deep-review workspace.
@@ -2724,6 +2728,7 @@ def run_audit(
             tavily_key=tavily_key,
             s2_key=s2_key,
             firecrawl_key=firecrawl_key,
+            outcrawl_key=outcrawl_key,
             regression=regression,
             review_dir=review_dir,
             no_resume=no_resume,
@@ -2855,6 +2860,7 @@ def run_audit(
             t_key = tavily_key or os.environ.get("TAVILY_API_KEY", "")
             s_key = s2_key or os.environ.get("S2_API_KEY", "")
             f_key = firecrawl_key or os.environ.get("FIRECRAWL_API_KEY", "")
+            o_key = outcrawl_key or os.environ.get("OUTCRAWL_API_KEY", "")
             literature_context = build_literature_context(
                 file_path=str(path),
                 content=content,
@@ -2862,6 +2868,7 @@ def run_audit(
                 tavily_key=t_key,
                 s2_key=s_key,
                 firecrawl_key=f_key,
+                outcrawl_key=o_key,
             )
             print(
                 f"[audit] Literature search: {len(literature_context.filtered_results)} "
@@ -3452,7 +3459,7 @@ Examples:
         action="store_true",
         help=(
             "Enable external literature search and comparison "
-            "(Tavily + Firecrawl + Semantic Scholar + arXiv)"
+            "(Tavily + Firecrawl + Outcrawl + Semantic Scholar + arXiv)"
         ),
     )
     parser.add_argument(
@@ -3469,6 +3476,11 @@ Examples:
         "--firecrawl-key",
         default="",
         help="API key for Firecrawl search (or set FIRECRAWL_API_KEY env var)",
+    )
+    parser.add_argument(
+        "--outcrawl-key",
+        default="",
+        help="API key for Outcrawl search (or set OUTCRAWL_API_KEY env var)",
     )
     parser.add_argument(
         "--regression",
@@ -3545,6 +3557,7 @@ Examples:
                 tavily_key=getattr(args, "tavily_key", ""),
                 s2_key=getattr(args, "s2_key", ""),
                 firecrawl_key=getattr(args, "firecrawl_key", ""),
+                outcrawl_key=getattr(args, "outcrawl_key", ""),
                 regression=getattr(args, "regression", False),
                 review_dir=getattr(args, "review_dir", None),
                 no_resume=getattr(args, "no_resume", False),
