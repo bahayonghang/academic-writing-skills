@@ -1,8 +1,9 @@
 [project]
 name = "academic-writing-skills"
 version = "6.0.0"
-description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers. Academic Use Only — Not for commercial use. Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi). Tool names in this description are not runtime verification."
+description = "Dedicated to post-writing formatting, validation, and deep polishing of academic papers. PolyForm Noncommercial 1.0.0 — not for commercial use. Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi). Tool names in this description are not runtime verification."
 readme = "README.md"
+license = { text = "PolyForm-Noncommercial-1.0.0" }
 requires-python = ">=3.10"
 dependencies = ["Pillow>=12.1.0", "PyYAML>=6.0.2", "Jinja2>=3.1.0"]
 authors = [{ name = "bahayonghang" }]
@@ -17,6 +18,8 @@ keywords = [
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "License :: Free For Educational Use",
+    "License :: Free for non-commercial use",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
     "Topic :: Text Processing :: Markup :: LaTeX",
