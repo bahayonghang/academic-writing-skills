@@ -16,7 +16,11 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models (highlighted are most recommended): **<mark>Claude Opus 5.5</mark> · Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · <mark>Gemini 4 Argon</mark> · <mark>Gemini 3.8 Flash</mark> · DeepSeek V4 Pro**
+> Recommended models (★ is most recommended): **★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
+>
+> GPT models do not write like a person, and the defensive hedging is serious.
+> If you use one, watch both. After GPT has revised the text, scan it again
+> with another model, and read it yourself.
 >
 > Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
@@ -166,4 +170,8 @@ when feasible.
 
 ## License
 
-Academic Use Only — Not for commercial use.
+[PolyForm Noncommercial License 1.0.0](LICENSE).
+Academic research, teaching, personal study, and other noncommercial use are permitted.
+Commercial use is not permitted.
+
+Third-party material keeps the license named in its own source note.

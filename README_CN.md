@@ -11,7 +11,10 @@
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型（高亮为最推荐）：**<mark>Claude Opus 5.5</mark> · Claude Opus 4.6 · Fable 5.1 · GPT 6 Astra · <mark>Gemini 4 Argon</mark> · <mark>Gemini 3.8 Flash</mark> · DeepSeek V4 Pro**
+> 推荐模型（★ 为最推荐）：**★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
+>
+> GPT 系列模型不说人话，防御性描述的问题很严重。如果使用，要特别注意这两点。
+> 用 GPT 优化过后，最好再用其他模型重新扫描检查一遍，自己也要读一遍。
 >
 > 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
 
@@ -152,4 +155,7 @@ just doc-build
 
 ## 许可证
 
-仅限学术用途 — 不得用于商业用途。
+[PolyForm Noncommercial License 1.0.0](LICENSE)。
+允许学术研究、教学、个人学习和其他非商业使用，不允许商业使用。
+
+第三方材料仍适用其来源说明中的许可证，本文件不改变那些部分的许可。
