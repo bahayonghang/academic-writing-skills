@@ -13,6 +13,9 @@
 >
 > 推荐模型（★ 为最推荐）：**★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
 >
+> GPT 系列模型不说人话，防御性描述的问题很严重。如果使用，要特别注意这两点。
+> 用 GPT 优化过后，最好再用其他模型重新扫描检查一遍，自己也要读一遍。
+>
 > 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
 
 ## 安装

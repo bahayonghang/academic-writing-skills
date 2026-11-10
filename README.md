@@ -18,6 +18,10 @@ edges; if needed, please fork it and adapt it yourself.
 >
 > Recommended models (★ is most recommended): **★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
 >
+> GPT models do not write like a person, and the defensive hedging is serious.
+> If you use one, watch both. After GPT has revised the text, scan it again
+> with another model, and read it yourself.
+>
 > Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
 
 ## Install
