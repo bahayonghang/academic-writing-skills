@@ -166,4 +166,8 @@ when feasible.
 
 ## License
 
-Academic Use Only — Not for commercial use.
+[PolyForm Noncommercial License 1.0.0](LICENSE).
+Academic research, teaching, personal study, and other noncommercial use are permitted.
+Commercial use is not permitted.
+
+Third-party material keeps the license named in its own source note.

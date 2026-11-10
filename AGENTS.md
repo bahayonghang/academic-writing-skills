@@ -4,7 +4,7 @@ Shared maintainer facts for this repository live in this file.
 
 Claude Code loads this file through the `@AGENTS.md` import in `CLAUDE.md`. Codex, Grok Build, Kimi Code, and OMP (Oh My Pi) discover `AGENTS.md` natively or through an explicit read path. Do not treat the Claude `@AGENTS.md` import syntax as universal.
 
-Project version: **6.0.0** (`pyproject.toml`). Academic Use Only — Not for commercial use.
+Project version: **6.0.0** (`pyproject.toml`). License: PolyForm Noncommercial 1.0.0 (`LICENSE`). Noncommercial use only, including academic research and teaching — not for commercial use.
 
 Applicable tools: Claude Code, Codex, Grok Build, Kimi Code, and OMP (Oh My Pi). Naming a tool here is not a runtime verification. Unrun five-tool runtime stays UNVERIFIED.
 
