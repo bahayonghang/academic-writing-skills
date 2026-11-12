@@ -57,7 +57,7 @@ After `### Notes` the script appends a `### Contract` block, using the same fiel
 - Envelope: goal=grammar strength=minimal
 ```
 
-The Typst copy performs **no syntax masking** (a deliberate difference from the EN copy, not covered by the byte lock): a glossary substitution may land inside `@cite`, `<label>`, or a math block, so check before applying. A rule-based draft is never a finished translation — `Meaning-Check` stays `NEEDS-LLM`, and raising claim strength while translating is likewise an over-claim; criteria in [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md). Field definitions: [skill-routing-notes.md](../skill-routing-notes.md).
+The Typst copy performs **no syntax masking** (a deliberate difference from the EN copy, not covered by the byte lock): a glossary substitution may land inside `@cite`, `<label>`, or a math block, so check before applying. A rule-based draft is never a finished translation — `Meaning-Check` stays `NEEDS-LLM`, and raising claim strength while translating is likewise an over-claim (`Risk-Flags: overstatement`); criteria in [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md). Lowering claim strength is equally out of bounds: rendering a firm source claim with an added hedge, a subjectless possibility, or a narrower scope is silent weakening; keep the source strength, or set `Risk-Flags: understatement` (LLM layer only) and state the evidence reason. A source claim stronger than its evidence is reported as an over-claim finding, not softened in translation. Field definitions and the full silent-weakening list: [skill-routing-notes.md](../skill-routing-notes.md) (Layer rules).
 
 Reference: [STYLE_GUIDE.md](../STYLE_GUIDE.md),[COMMON_ERRORS.md](../COMMON_ERRORS.md)
 

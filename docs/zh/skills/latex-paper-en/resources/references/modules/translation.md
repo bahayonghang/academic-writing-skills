@@ -30,7 +30,7 @@ uv run python -B scripts/translate_academic.py input_zh.txt --domain industrial-
 - Envelope: goal=grammar strength=minimal
 ```
 
-规则草稿永远不是成品译文：`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度（例如把留有余地的中文动词译成 `demonstrates`）同样属于过度声称——见 [over-claim-guard.md](../evidence/over-claim-guard.md)。字段定义见 [routing-rules.md](routing-rules.md)。
+规则草稿永远不是成品译文：`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度（例如把留有余地的中文动词译成 `demonstrates`）同样属于过度声称（`Risk-Flags: overstatement`）——见 [over-claim-guard.md](../evidence/over-claim-guard.md)。降低措辞强度同样越界：把原文确定的主张译成加了 hedge、无主语的可能性表述或更窄的范围，属于静默削弱——保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并给出证据理由。原文主张强于证据时作为过度声称 finding 报告，不在翻译中软化。字段定义与完整静默削弱清单见 [routing-rules.md](routing-rules.md)（分层规则）。
 
 ## 技能层响应
 

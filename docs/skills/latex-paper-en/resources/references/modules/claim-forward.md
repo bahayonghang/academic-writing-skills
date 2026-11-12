@@ -1,6 +1,6 @@
 # Module: Claim-Forward Check
 
-**Trigger**: claim-forward, self-weakening, defensive tone, under-claiming, "sounds apologetic", "leads with what we don't do", hedge stacking, weak closing paragraph
+**Trigger**: claim-forward, self-weakening, defensive tone, under-claiming, "sounds apologetic", "leads with what we don't do", hedge stacking, weak closing paragraph, defensive writing, pre-emptive rebuttal, over-hedged, concession that dismisses a confound, "polish flattened the argument". Several specific mechanisms followed by "the data cannot verify this" is defensive speculation and goes to `deai`, not here.
 
 **Purpose**: Detect prose that postpones or weakens the paper's own claims (disclaimers before the claim, limitation sentences ahead of the claim, self-weakening collocations, stacked hedges, negative closing paragraphs) and propose minimal reorderings or substitutions. The module never removes a limitation, an unfavorable comparison, or a non-mainline result; it changes order and wording only.
 
@@ -43,10 +43,17 @@ Summary line: `% CLAIM-FORWARD: <n> finding(s) (CF-...=k, ...)`.
 3. Before strengthening any wording, check the evidence rung in [over-claim-guard.md](../evidence/over-claim-guard.md) ("Upward calibration"). The ladder is the ceiling; claim-forward moves wording up to the rung the evidence already earns, never past it.
 4. Emit the rewrite as an `[LLM]`-layer block with the four contract fields (`Changed`, `Protected`, `Meaning-Check`, `Risk-Flags`); the `[Script]` block itself stays `NEEDS-LLM`.
 5. Also apply the `[LLM]`-only judgment `CF-LOSS-FRAME` (process chronology such as "We first tried X, which failed, then ...") from the writing guide; the script does not emit it.
+6. Apply the LLM-only dispositions in [claim-forward.md](../writing/claim-forward.md): the three for necessary caveats (keep a real evidence boundary, turn a negation into a positive statement, write a weakness as a trade-off) and the four for rebuttal and concession shells (pre-emptive rebuttal shell, concession that dismisses a confound, over-strong claim with a vague concession, empty modesty). They are named by section heading only: no new observation code and no term list, and the script does not detect them.
+7. Zero findings is a valid result. Accurate and clear source text stays as it is; do not produce findings to reach a count, and do not write what the manuscript leaves unknown as certain.
+
+## Direction check for concession shells
+
+A concession that dismisses a confound, and an over-strong claim paired with a vague concession, are wording **stronger** than the evidence, the opposite of the rest of this module. They follow the downward calibration in [over-claim-guard.md](../evidence/over-claim-guard.md): never delete a concession that points to a real difference or confound, bind the conclusion to an existing analysis or pull it back to what the data support (otherwise mark `needs evidence`), and never invent a control, a stratified analysis, or a significance result. The revised claim is never stronger than the source.
 
 ## Boundaries with other modules
 
-- `deai`: `not X but Y` contrast shells and "It is worth noting" throat-clearing stay in `deai`; they are not in this module's term table. Hedge counting here is independent of `deai_check.py`, which by contract carries no hedge regex.
+- `deai`: `not X but Y` contrast shells and "It is worth noting" throat-clearing stay in `deai`; they are not in this module's term table. Hedge counting here is independent of `deai_check.py`, which by contract carries no hedge regex. A pre-emptive rebuttal shell or a concession that dismisses a confound is handled here and in the over-claim guard, not in `deai`; several mechanisms with a blanket retraction stay in `deai`.
+- over-claim guard: claims stronger than their evidence, including a concession that dismisses a confound, are calibrated downward with [over-claim-guard.md](../evidence/over-claim-guard.md); this module adds the shell dispositions and makes sure no edit deletes a concession that points to a real difference or confound.
 - `abstract`: opening-structure diagnosis (five elements) belongs to `abstract`; this module only reports a disclaimer that precedes the abstract's first claim.
 - `expression`: lexical tone polish; claim-forward output is not a lexical substitution list and is not run through `--goal`/`--strength`.
 - `experiment` / paper-audit claim-evidence map: whether a claim has evidence is theirs; this module assumes the evidence exists and only fixes where the claim sits and how it is worded.

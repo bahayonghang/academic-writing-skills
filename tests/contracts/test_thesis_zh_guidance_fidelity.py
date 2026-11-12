@@ -206,6 +206,29 @@ def test_claim_forward_three_dispositions_keep_and_reject_examples() -> None:
     assert "[Severity:" in text and "[LLM]" in text
 
 
+def test_claim_forward_four_dispositions_keep_concessions_and_bind_evidence() -> None:
+    text = _read("references/writing/claim-forward-zh.md")
+    section = text.split("## 预设反驳与让步壳的四类处置（仅 LLM）", 1)[1]
+    for heading in ("### 预设反驳壳", "### 让步后否定", "### 断言与让步壳共现", "### 空泛谦辞"):
+        assert heading in section
+    assert section.count("可保留：") >= 4
+    assert section.count("不可改：") >= 4
+    assert "不得删除让步句" in section
+    assert "不得补造" in section
+    assert "【待补证】" in section
+    assert "不新增观察码，不建词表" in section
+    assert "CC-OUTLOOK-TRANS" in section
+    assert "修复顺序" in section and "去重" in section
+    assert "不高于原文" in section
+    assert "只由 LLM" in section
+    assert "[Severity:" in section and "[LLM]" in section
+    # The older disposition text stays untouched.
+    assert "## 防御性说明的三类处置（仅 LLM）" in text
+    assert text.index("## 防御性说明的三类处置（仅 LLM）") < text.index(
+        "## 预设反驳与让步壳的四类处置（仅 LLM）"
+    )
+
+
 def test_deleted_preview_keeps_an_antecedent_and_legal_sequence_words() -> None:
     text = _read("references/writing/paragraph-roles-zh.md")
     assert "上述" in text and "先行词" in text and "最短" in text

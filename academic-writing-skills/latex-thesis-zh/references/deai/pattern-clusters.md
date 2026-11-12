@@ -100,7 +100,8 @@ prose。
 
 改写前逐项登记 claim、evidence anchor、数字、引用、标签、公式、实体、canonical term、
 hedge、limitation 与 scope。可调整局部句法和修辞壳；未经另行授权，不重排段落或章节。改写
-后核对每项是否丢失、新增、提高 certainty 或扩大 scope，并显式报告风险。
+后核对每项是否丢失、新增、提高或降低 certainty、扩大或缩窄 scope，并显式报告风险。删除修辞壳
+不得顺带新增 hedge 或弱化作者判断；降低 certainty 置 `understatement`，提高置 `overstatement`。
 
 复用既有 `[LLM]` proposal 契约：
 
@@ -108,7 +109,7 @@ hedge、limitation 与 scope。可调整局部句法和修辞壳；未经另行�
 Changed: <局部重组及删除的修辞壳>
 Protected: <保留的主张、证据、锚点、术语、确定性与范围>
 Meaning-Check: PRESERVED | NEEDS-LLM
-Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim
+Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim
 ```
 
 `PRESERVED` 仍是供作者复核的提案，不是工具保证。

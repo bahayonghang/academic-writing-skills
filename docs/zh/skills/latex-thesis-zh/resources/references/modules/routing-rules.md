@@ -21,8 +21,11 @@ SKILL.md 的「路由规则」节给出串行顺序与指针；本文件保留�
 
 - `[Script]` 层只能置 `Meaning-Check: NEEDS-LLM`，且只能置 `none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized` 四个规则可确定的标记。规则脚本若肯定式声称 `PRESERVED`，等于制造虚假保证，比没有契约更糟。
 - `[LLM]` 层可置 `PRESERVED` 与 `Risk-Flags` 闭集内任一取值，但 `PRESERVED` 始终是待作者核对的提案。
-- `Risk-Flags` 是闭集：`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`、`overstatement`、`ambiguity`、`terminology-drift`、`invented-claim`。不得发明新取值。
-- 改写不得升高措辞强度。强度发生变化时置 `Risk-Flags: overstatement`，判据引用 `references/writing/over-claim-guard.md`，不新建替换表。
+- `Risk-Flags` 是闭集：`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`、`overstatement`、`understatement`、`ambiguity`、`terminology-drift`、`invented-claim`。不得发明新取值。`understatement` 只能由 LLM 层置。
+- 改写不得升高也不得降低措辞强度。强度发生变化时置 `Risk-Flags: overstatement`（升高）或 `Risk-Flags: understatement`（降低）并说明证据依据，判据引用 `references/writing/over-claim-guard.md`，不新建替换表。
+- 没有证据理由时保持原强度。润色、去 AI 味与翻译改写不得静默削弱作者的立场。静默削弱至少包括：新增原文没有的 hedge；把作者的第一人称判断改成无主语的可能性表述；把范围缩得比原文窄；把具体陈述换成空泛评价；插入原文没有的预设让步。
+- 原文断言强于证据时，输出过度声称 finding（判据见 `references/writing/over-claim-guard.md`），改写块保持原强度；只有用户明确要求校准时才给降强度的改写，并置 `Risk-Flags: understatement`。立场保真管的是静默改动，不是抬高未经证据支撑的断言的许可。
+- `deai` 的 hedge 建议只对缺少证据等级的断言生效；断言落在 `references/writing/over-claim-guard.md`「反向校准：什么时候不该保守」清单内时保持原样。
 - 原文含义确实不清时，置 `ambiguity` 并给出保守版本，绝不静默选择更强的那一种读法。
 - `NEEDS-LLM` 沿用 `check_spec.py` 既有语义（`PASS | FAIL | NEEDS-LLM | MODULE | MANUAL | SKIP`）：本层无判定能力，需上层 LLM 或人工复核。
 

@@ -91,7 +91,7 @@ B 档（无「建议」行，只有「候选」）：
 
 本模块产出可直接替换原文的文本，适用改写契约。`[Script]` 层输出恒为 `Meaning-Check: NEEDS-LLM`，且只允许置规则可确定的标记（`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`）；只有 `[LLM]` 层可提出 `PRESERVED`，且仍是待作者核对的提案。字段定义与 `Risk-Flags` 闭集见 `references/modules/routing-rules.md`。
 
-改写不得升高措辞强度。把留有余地的表述换成更强的断言（「可能」→「能够」、「有助于」→「显著提升」）是过度声称，不是表达改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../writing/over-claim-guard.md)——本模块只做词汇层替换建议，强度分级不在此重复实现。
+改写不得升高也不得降低措辞强度。把留有余地的表述换成更强的断言（「可能」→「能够」、「有助于」→「显著提升」）是过度声称，不是表达改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../writing/over-claim-guard.md)——本模块只做词汇层替换建议，强度分级不在此重复实现。反方向同样禁止：表达润色时新增原文没有的 hedge、把作者的第一人称判断改成无主语的可能性表述、缩窄范围或换成空泛评价，都是静默削弱；保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并说明证据依据。原文断言强于证据时报过度声称 finding，不在此处软化。完整清单与例外见 [routing-rules.md](routing-rules.md)「分层规则」。
 
 对自身结果的自我削弱搭配（「遗憾的是」「仍明显落后于」「效果有限」）与写在 caveat 之后的主张不是表达问题，也与 `E-ABSOLUTE` 方向相反；交给 [claim-forward.md](claim-forward.md)。
 

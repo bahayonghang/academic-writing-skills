@@ -26,7 +26,7 @@ metadata:
       algpseudocodex,
     ]
   version: "6.0.0"
-  last_updated: "2026-09-13"
+  last_updated: "2026-11-11"
 argument-hint: "[main.tex] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -67,7 +67,7 @@ Not for: drafting a paper from scratch; literature research without a paper proj
 | `figures`         | Figure existence, extension, DPI, or caption review                                                            | `uv run python -B $SKILL_DIR/scripts/check_figures.py main.tex`                              | `references/review/reviewer-perspective.md`                                                                                           |
 | `pseudocode`      | IEEE-safe pseudocode review, `algorithm2e` cleanup, caption/label/reference checks, and comment-length review  | `uv run python -B $SKILL_DIR/scripts/check_pseudocode.py main.tex --venue ieee`              | `references/modules/pseudocode.md`                                                                                                    |
 | `deai`            | Reduce AI-writing traces while preserving LaTeX syntax                                                         | `uv run python -B $SKILL_DIR/scripts/deai_check.py main.tex --section introduction`          | `references/modules/deai.md`                                                                                                          |
-| `claim-forward`   | Claims placed after disclaimers or caveats, self-weakening wording on own results, stacked hedges, or a negative closing paragraph | `uv run python -B $SKILL_DIR/scripts/check_claim_forward.py main.tex --section introduction` | `references/modules/claim-forward.md`                                                                                                 |
+| `claim-forward`   | Claims placed after disclaimers or caveats, self-weakening wording on own results, stacked hedges, or a negative closing paragraph; defensive writing, pre-emptive rebuttals, over-hedged prose | `uv run python -B $SKILL_DIR/scripts/check_claim_forward.py main.tex --section introduction` | `references/modules/claim-forward.md`                                                                                                 |
 | `experiment`      | Inspect experiment design/write-up quality, discussion depth, discussion layering, and conclusion completeness | `uv run python -B $SKILL_DIR/scripts/analyze_experiment.py main.tex --section experiments`   | `references/modules/experiment.md`                                                                                                    |
 | `tables`          | Table structure validation, three-line table generation, or booktabs review                                    | `uv run python -B $SKILL_DIR/scripts/check_tables.py main.tex`                               | `references/modules/tables.md`                                                                                                        |
 | `caption`         | Figure/table caption wording and evidence-boundary review                                                      | (LLM-driven workflow)                                                                        | references/modules/caption.md                                                                                                         |
@@ -79,7 +79,7 @@ Not for: drafting a paper from scratch; literature research without a paper proj
 - Infer the module from the request; ask only when two or more modules are equally plausible. Run 2-3 compatible checks sequentially in this order: `compile` -> `bibliography` -> `format` -> `figures` / `tables` / `caption` / `pseudocode` -> `grammar` / `sentences` / `deai` / `claim-forward` -> `logic` / `literature` / `experiment` / `abstract` -> `section-writing` -> `title` / `expression` / `translation` / `adapt`. Polish coarse-to-fine (logic -> sentences -> lexical); never reverse.
 - `logic` for cross-section alignment / funnel / contribution drift (add `--motivation-thread` for whole-paper promise/closure maps); `literature` only for Related Work organization or gap derivation; `experiment` for results/discussion/baseline/ablation concerns even when phrased as "logic"; `section-writing` for drafting/rewrite plans (load its module doc plus exactly one guide from `references/writing/section-writing/`).
 - `deai --tier light|medium|heavy` gives graded D1-D5 dimension analysis; omit `--tier` for defaults.
-- `claim-forward` for under-claiming (claim after caveat, self-weakening words, hedge stacks, negative close); it reorders and rewords only and never deletes a limitation — strengthen wording only up to the evidence rung in `references/evidence/over-claim-guard.md`.
+- `claim-forward` for under-claiming (claim after caveat, self-weakening words, hedge stacks, negative close); it reorders and rewords only and never deletes a limitation — strengthen wording only up to the evidence rung in `references/evidence/over-claim-guard.md`. Requests to remove defensive writing, pre-emptive rebuttals ("this does not mean that ..."), empty modesty, or hedges that polishing added also route here (LLM-only dispositions in `references/writing/claim-forward.md`, no new script code). A concession that dismisses a confound is an over-claim: keep the concession and calibrate the claim down. Several mechanisms followed by "the data cannot verify this" (defensive speculative explanation) stays in `deai`.
 - On script failure: stop, report the exact command and exit code, and suggest the smallest fallback — do not silently switch modules.
 - Full decision notes: `references/modules/routing-rules.md`.
 
@@ -113,12 +113,12 @@ Append these four fields to every rewrite block:
 % Changed:       <verifiable edit facts, or none>
 % Protected:     <protected tokens skipped on this line, or none>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
 - `[Script]` layer: `Meaning-Check` is always `NEEDS-LLM`. A rule engine cannot judge meaning, so `[Script]` must never emit `Meaning-Check: PRESERVED`. It may set only the rule-determinable flags `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, and falls back to `not-assessed` when nothing else is determinable.
 - `[LLM]` layer: may set `Meaning-Check: PRESERVED` and any flag in the closed set, but `PRESERVED` is a proposal the author must still verify, never a verified fact.
-- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement`; the judgement criteria live in `references/evidence/over-claim-guard.md`, linked from each polish module doc.
+- A rewrite must never raise or lower claim strength. When strength changes, set `Risk-Flags: overstatement` (raised) or `Risk-Flags: understatement` (lowered, LLM layer only) and state the evidence reason; the judgement criteria live in `references/evidence/over-claim-guard.md`, linked from each polish module doc. A claim stronger than its evidence is reported as an over-claim finding, not silently softened in the rewrite. The silent-weakening list and its exceptions live in `references/modules/routing-rules.md` (Layer rules).
 - `deai` emits behavioural instructions, not replacement text; a rewrite the LLM derives from them falls under the `[LLM]` layer.
 
 ## Workflow
@@ -153,7 +153,7 @@ Read only the file matching the active module.
 
 - `references/modules/`: per-module commands and decision notes; `routing-rules.md` (full routing/output/safety detail), `section-writing.md`, `caption.md`, `pseudocode.md`.
 - `references/writing/style-guide.md`: tone/style defaults; `references/writing/section-writing/`: per-section writing guides.
-- `references/writing/claim-forward.md`: claim-first rewrite rules, preferred/discouraged patterns, and the rejected selective-presentation edits; term table in `references/writing/claim-forward-terms.yaml`.
+- `references/writing/claim-forward.md`: claim-first rewrite rules, preferred/discouraged patterns, and the rejected selective-presentation edits; term table in `references/writing/claim-forward-terms.yaml`. Also holds the LLM-only caveat and shell dispositions; synthetic walkthrough in `examples/claim-forward-shells.md`.
 - Method interfaces: load `references/writing/section-writing/method.md` for module flow, equation closure, or run-in headings in a Methods section.
 - `references/venues/catalog.md`: venue index — prefer `templates/<venue>.md` (`ieee`, `acm`, `neurips`, `icml`, `springer-lncs`) when a venue is named.
 - `references/citations/verification.md`: citation verification workflow.

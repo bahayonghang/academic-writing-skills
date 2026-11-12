@@ -35,7 +35,7 @@ Rules match case-insensitively so acronyms elsewhere in the line (`BERT`) keep t
 
 This module emits replacement text, so the rewrite contract applies. `[Script]` output always carries `Meaning-Check: NEEDS-LLM` and only the rule-determinable flags (`none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`); only the `[LLM]` layer may propose `PRESERVED`, and even then it is a proposal for the author to verify. Field definitions and the full `Risk-Flags` closed set: `references/modules/routing-rules.md`.
 
-A grammar fix must never raise claim strength. Repairing a hedge into an assertion (`the results may indicate` -> `the results indicate`) is an over-claim disguised as a grammar fix: keep the original strength, or flag `Risk-Flags: overstatement`. Criteria: [over-claim-guard.md](../evidence/over-claim-guard.md); reporting-verb ladder in [style-guide.md](../writing/style-guide.md).
+A grammar fix must never raise or lower claim strength. Repairing a hedge into an assertion (`the results may indicate` -> `the results indicate`) is an over-claim disguised as a grammar fix: keep the original strength, or flag `Risk-Flags: overstatement`. Criteria: [over-claim-guard.md](../evidence/over-claim-guard.md); reporting-verb ladder in [style-guide.md](../writing/style-guide.md). The rule runs both ways: adding a hedge, softening the author's own judgement, or narrowing the scope while fixing grammar is silent weakening — keep the original strength, or flag `Risk-Flags: understatement` (LLM layer only) and give the evidence reason. A claim stronger than its evidence is reported as an over-claim finding, not softened here. Full list and exceptions: [routing-rules.md](routing-rules.md) (Layer rules).
 
 ## Skill-Layer Response
 

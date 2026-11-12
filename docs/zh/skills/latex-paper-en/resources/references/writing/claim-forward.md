@@ -36,6 +36,8 @@ Claim-forward 改的是**顺序与措辞**。内容不动。
 4. **每条限制只放一处。** 若同一 caveat 出现在摘要、引言和结果中，保留在讨论证据处以及已有 Limitations 段的位置。要删的是其余副本，不是限制本身。
 5. **最小改动并复核。** 重读：每个数字、对比、caveat 是否都还在？是否有动词已高于其证据档？若有，退回一档。
 
+**补充：修复顺序。** 五步本身不变。同一段既有过强主张又有模糊让步时（见下文 "Over-strong claim with a vague concession"），固定按三步修复：(1) 证据前置：先写支撑主张的数字、表、图或材料；(2) 按 `over-claim-guard.md` 的确定性阶梯校准主张，降到证据支撑的那一档为止；(3) 把模糊让步换成一条说明原因的具体边界。只做第 (3) 步会删掉让步而留下过强主张，不要这样改。
+
 ## 优选与不推荐句式
 
 | 不推荐 | 优选 | 原因 |
@@ -78,3 +80,121 @@ Claim-forward 改的是**顺序与措辞**。内容不动。
 
 - Kiterlin, *anti-defensive-writing* — https://github.com/Kiterlin/anti-defensive-writing（句子功能分类、五步改写、优选/不推荐句式、"限制只写一次"）。
 - Adkid-Zephyr, *anti-defensive-writing-Skill* — https://github.com/Adkid-Zephyr/anti-defensive-writing-Skill（主张先于限制的顺序、自我削弱词表、"结论不新增自我否定"、最小改动提示词、自查问题）。其关于选择性呈现的规则（只围绕优势组织、避开赢不了的对比、删除非主线结果）不予采纳；见"本指南不允许的做法"。
+
+## 必要限制的三类仅 LLM 处置
+
+这三类只由 LLM 判断。不新增观察码，不建词表；不得删除不利结果。强度上限仍是上文"与过度声明保护的关系"所述。未经验证的弱点不得写成设计优势。
+
+### 保留真实证据边界
+
+范围：删掉该句会让读者质疑方法的合法性或证据层级。
+可保留："We report agreement with expert labels on the held-out clinic only; we do not treat this agreement as evidence of diagnostic benefit."
+不可改：删掉该句，只留下 "Our classifier improves diagnosis."
+
+### 否定转为正面陈述
+
+范围：仅当原文已支持正面说法时适用。区分必须保留。
+可保留："The survey measures self-reported study time. Logged study time is analysed separately in Section 5."
+不可改：把 "We do not equate self-reported and logged study time" 改写为 "Self-reported study time accurately reflects actual effort."
+
+### 弱点写成取舍
+
+范围：仅当稿件已把该弱点写成真实设计选择时适用。
+可保留："Recall on rare classes is lower than the baseline. Section 3.4 states that the loss weights frequent classes to bound annotation cost, and rare-class recall is not a design target."
+不可改：把 "rare-class recall is lower" 改写为 "the model effectively avoids over-fitting to rare classes"。未经验证的弱点不得写成设计优势。高于基线的误报率不得删除，也不得改写为 "therefore more conservative"。
+
+### 语境词只是例子，不是词表
+
+"Gatekeeper"、"bulletproof"、"inherently safe" 与 "theoretical upper bound" 是语境例子，不是禁词正则。上下文若已写明校验、阻断或回退，就写那个可观察机制。不要据此编制禁词表。
+
+### 建议块
+
+```latex
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Keep a real evidence boundary
+% Problem: a limitation reads as self-weakening, but the boundary is the evidence level
+% Original: We report agreement with expert labels on the held-out clinic only; we do not treat this agreement as evidence of diagnostic benefit.
+% Revised: keep the sentence unchanged.
+% Rationale: removing the boundary would turn label agreement into a diagnostic-benefit claim. LLM-only judgment.
+
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Unverified weakness written as a design strength
+% Problem: lower rare-class recall became a claimed benefit, and the unfavorable number was dropped
+% Original: Rare-class recall is lower than the baseline. The false-alarm rate is higher than the baseline.
+% Revised: keep both observations. Add "the loss weights frequent classes to bound annotation cost" only if the manuscript already states that design choice.
+% Rationale: unverified weaknesses must not be written as design strengths; unfavorable results must not be deleted.
+```
+
+## 反驳与让步壳的四类仅 LLM 处置
+
+这四类只由 LLM 按语境判断。不新增观察码，不建词表，也不写正则：下文的说法是语境例子，同样的词在别处可能是合理的。上面的三类处置保持不变。
+
+四类中有两类与本指南其余内容方向相反。"Concession that dismisses a confound" 与 "Over-strong claim with a vague concession" 处理的是*强于*证据的措辞，属于过度声明保护的向下校准。凭"去掉对冲"的直觉删掉让步，会留下更强的主张。因此四类都遵守三条约束：
+
+- 让步指向稿件中真实存在的差异或混杂因素时，绝不删除该让步。
+- 改后主张不强于原文。四类都不授权抬高未经支撑的主张，也不授权删除限制、不利对比或非主线结果。
+- 绝不补造对照、分层分析、显著性检验、限制或数字。稿件没有可写内容时，标 `needs evidence`。
+
+### 预设反驳壳
+
+范围：该句回应的异议既不来自稿件数据，也不来自所引文献，且回应本身没有带来证据、条件或范围。典型形态："This does not mean that ..."、"One should not simply conclude that ..."、"Admittedly, some may argue that ..."。壳中若带条件、范围或证据，它就是真实边界，按"保留真实证据边界"处理。
+去向：存在真实混杂因素或备选解释时，把壳改写为一条说明原因的具体边界；不存在真实异议时，删去壳，保留主张且动词不变；属于定义性区分时保留（见"否定转为正面陈述"）。
+可保留："In this paper, latency is the interval from request submission to the first returned result; queueing time is excluded."（定义性区分）
+不可改：删壳的同时把 "reduces latency" 抬成 "substantially improves system performance"；把 "The interviews cannot tell us how often teachers actually use the tool" 当作壳删掉。该句是证据边界。
+
+### 让步后否定
+
+范围：让步从句指出稿件中真实存在的差异或混杂因素（分母变化、样本构成变化、测量口径变化），主句却不做分析就否定其影响。典型形态："Although X changed, this does not affect the conclusion that ..."。这是过度声称，不是自我削弱。
+去向：绝不删除该让步。稿件已有分析（分层、调整、共同样本比较）时，把结论绑定到该分析并注明位置；没有分析时，把结论收回到数据支持的范围，或标 `needs evidence`。计数、比例与分母变化交给 `experiment` 模块与 `references/evidence/claim-evidence-contract.md`。
+可保留："Enrolment rose from 200 to 250 and completions from 150 to 175, so the completion rate fell from 75.0% to 70.0%. All 50 new enrollees joined the part-time track; within each track the completion rate did not fall (Table 4)."（让步已由稿件中的分析回答）
+不可改：删掉 "although enrolment changed" 而保留 "the redesign improved completion"；稿件未报告分层检验时补写 "stratified tests showed no significant difference"。
+
+### 过强主张与模糊让步共现
+
+范围：同一段既有高于其证据档的动词（"conclusively proves"、"the decisive factor"），又有模糊让步（"of course this may not hold everywhere, but overall it plays a key role to some extent"）。
+去向：按五步改写之后的修复顺序处理：证据前置，按确定性阶梯校准主张，再把模糊让步换成一条说明原因的具体边界。整段报告为一条 finding。
+可保留："Nine of the 14 interviewed nurses named missing handover templates as the main obstacle (Table 2). All interviewees work in one hospital, so the result reports what the nurses said, not the measured effect of each obstacle."（主张已校准，边界带原因）
+不可改：只删模糊让步而保留 "conclusively proves"；把主张与让步报告为两条 finding。
+
+### 空泛谦辞
+
+范围：限制句既不指明对象，也不给条件或量值（"there remain certain limitations"、"there is still room for improvement"、"this work offers some reference value"），且不是已写出具体限制的收尾承接句。
+去向：从稿件补出对象与条件或量值；稿件没有可写内容时标 `needs evidence`，不替作者编造限制；与已有限制重复时删去副本，保留讨论证据处或 Limitations 节中的那一份。
+可保留：在展望之前写出具体限制的收尾承接句，例如 "Generalisation to multi-site deployments remains limited because all data come from one hospital; Section 6 outlines the multi-site study."
+不可改：删掉唯一一处限制；写出稿件中没有的限制（例如 "the sample is small"）；把 "there is still room for improvement" 改写为 "the method is optimal"。
+
+### 去重
+
+- 清嗓子开头（"It is worth noting that"、"It should be emphasized that"）仍归 `deai`。同一句同时含开头语和预设反驳壳时，`deai` 只报开头语，壳由 claim-forward 处理。
+- 脚本已在某主张句上报告 `CF-HEDGE-STACK`、且该句同时是让步壳时，合并为一条 finding：以壳的处置为主，hedge 计数作为佐证。
+- 一个证据缺口对应一条 finding。过强主张与模糊让步共现只算一次；不要拆成一条过度声称 finding 和一条壳 finding。
+- 多个具体机制后接整体撤回（"it may be A, or B; the current data cannot verify this"）仍属 `deai` 的防御性推测解释规则；不要在这里重复报告。
+
+准确清楚的原文保持原样。零发现是合法结果；不为凑数量输出 finding，也不把稿件中未知的内容写成确定。
+
+### 建议块
+
+```latex
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Over-strong claim with a vague concession
+% Problem: an over-strong claim and a vague concession share one paragraph; deleting only the concession would keep "conclusively proves"
+% Context: Table 2 already lists the 14 nurse interviews from one hospital and the obstacle each nurse named first.
+% Original: The interviews conclusively prove that missing handover templates are the decisive obstacle. Of course, this may not hold in every ward, but overall the templates play a key role to some extent.
+% Revised: Nine of the 14 interviewed nurses named missing handover templates as the main obstacle (Table 2). All interviewees work in one hospital, so the result reports what the nurses said, not the measured effect of each obstacle.
+% Rationale: evidence first; "conclusively prove ... decisive" pulled back to the count in Table 2; the vague concession replaced by a boundary with its reason. The revised claim is no stronger than the source; numbers and table come from the manuscript.
+
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Concession that dismisses a confound
+% Problem: the concession admits a denominator change, and the main clause dismisses it without analysis
+% Original: Although enrolment rose from 200 to 250 and the completion rate fell from 75.0% to 70.0%, this does not affect the conclusion that the redesign improved completion.
+% Revised: Enrolment rose from 200 to 250 and the completion rate fell from 75.0% to 70.0%. The manuscript does not compare new and returning enrollees, so the current data cannot show whether the redesign improved completion (needs evidence: completion rates reported separately for new and returning enrollees).
+% Rationale: the denominator change is a real confound, so the concession's content stays; with no analysis in the manuscript, the conclusion is pulled back to what the data support. No stratified result was invented. Denominator checks go to the experiment module.
+
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Pre-emptive rebuttal shell
+% Problem: the sentence answers an objection nobody raised and adds no evidence, condition, or scope
+% Original: Our method reduces mean latency from 420 ms to 310 ms. This does not mean that it suits every workload.
+% Revised: Our method reduces mean latency from 420 ms to 310 ms.
+% Rationale: shell deleted; claim and numbers unchanged. If the manuscript names the evaluated workloads, attach them as positive scope; if it names workloads it did not evaluate, keep that as a real boundary after the claim.
+
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Empty modesty
+% Context: Section 5.3 already reports a higher mean error at night than in daytime.
+% Original: Our method still has certain limitations and room for improvement.
+% Revised: Our method has a higher mean error at night than in daytime (Section 5.3).
+% Rationale: object and condition come from the result in Section 5.3. When the manuscript has nothing to write, keep the sentence and mark it `needs evidence`; do not invent a limitation and do not delete this one.
+```

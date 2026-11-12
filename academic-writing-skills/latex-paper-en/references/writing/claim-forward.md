@@ -36,6 +36,8 @@ Claim-forward changes **order and wording**. Content stays.
 4. **Place each limitation once.** If the same caveat appears in Abstract, Introduction, and Results, keep it where the evidence is discussed and where a Limitations paragraph exists. The other copies are the ones to remove, not the limitation itself.
 5. **Minimal edit and check.** Re-read: is every number, comparison, and caveat still present? Does any verb now sit above its evidence rung? If yes, step back down.
 
+**Supplement: repair order.** The five steps are unchanged. When one paragraph holds both an over-strong claim and a vague concession (see "Over-strong claim with a vague concession" below), repair it in three fixed steps: (1) put the evidence first: the number, table, figure, or material that supports the claim; (2) calibrate the claim on the certainty ladder in `over-claim-guard.md`, down to the rung the evidence supports and no further; (3) replace the vague concession with one concrete boundary that states its reason. Doing step (3) alone removes the concession and leaves the over-strong claim in place; do not edit that way.
+
 ## Preferred and discouraged patterns
 
 | Discouraged                                                                                  | Preferred                                                                                                                                         | Why                                                            |
@@ -78,3 +80,121 @@ Adapted, with the rejections noted above, from two MIT-licensed skills:
 
 - Kiterlin, _anti-defensive-writing_ — https://github.com/Kiterlin/anti-defensive-writing (sentence-function classification, five-step rewrite, preferred/discouraged patterns, "write limitations once").
 - Adkid-Zephyr, _anti-defensive-writing-Skill_ — https://github.com/Adkid-Zephyr/anti-defensive-writing-Skill (claim-before-limitation ordering, self-weakening word list, "no new self-negation in the conclusion", minimal-edit prompt, self-check questions). Its rules on selective presentation (organize only around strengths, avoid comparisons you cannot win, delete non-mainline results) are not adopted; see "What this guide does not permit".
+
+## Three LLM-only dispositions for necessary caveats
+
+These three are judged by the LLM only. No new observation code and no term list; unfavorable results must not be deleted. The strength ceiling is still the one in "Interaction with the over-claim guard" above. Unverified weaknesses must not be written as design strengths.
+
+### Keep a real evidence boundary
+
+Scope: removing the sentence would make a reader question the method's validity or the level of evidence.
+May keep: "We report agreement with expert labels on the held-out clinic only; we do not treat this agreement as evidence of diagnostic benefit."
+Must not: delete that sentence and leave only "Our classifier improves diagnosis."
+
+### Turn a negation into a positive statement
+
+Scope: only when the source already supports the positive wording. The distinction must survive.
+May keep: "The survey measures self-reported study time. Logged study time is analysed separately in Section 5."
+Must not: rewrite "We do not equate self-reported and logged study time" as "Self-reported study time accurately reflects actual effort."
+
+### Write a weakness as a trade-off
+
+Scope: only when the manuscript already presents the weakness as a real design choice.
+May keep: "Recall on rare classes is lower than the baseline. Section 3.4 states that the loss weights frequent classes to bound annotation cost, and rare-class recall is not a design target."
+Must not: rewrite "rare-class recall is lower" as "the model effectively avoids over-fitting to rare classes". Unverified weaknesses must not be written as design strengths. A false-alarm rate above the baseline must not be deleted, and must not be rewritten as "therefore more conservative".
+
+### Context words are examples, not a word list
+
+"Gatekeeper", "bulletproof", "inherently safe", and "theoretical upper bound" are context examples, not a banned-word regex. If the context already names a check, a block, or a fallback, write that observable mechanism. Do not build a banned-word list from them.
+
+### Suggestion blocks
+
+```latex
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Keep a real evidence boundary
+% Problem: a limitation reads as self-weakening, but the boundary is the evidence level
+% Original: We report agreement with expert labels on the held-out clinic only; we do not treat this agreement as evidence of diagnostic benefit.
+% Revised: keep the sentence unchanged.
+% Rationale: removing the boundary would turn label agreement into a diagnostic-benefit claim. LLM-only judgment.
+
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Unverified weakness written as a design strength
+% Problem: lower rare-class recall became a claimed benefit, and the unfavorable number was dropped
+% Original: Rare-class recall is lower than the baseline. The false-alarm rate is higher than the baseline.
+% Revised: keep both observations. Add "the loss weights frequent classes to bound annotation cost" only if the manuscript already states that design choice.
+% Rationale: unverified weaknesses must not be written as design strengths; unfavorable results must not be deleted.
+```
+
+## Four LLM-only dispositions for rebuttal and concession shells
+
+These four are judged by the LLM only, in context. No new observation code and no term list, and no regex: the phrasings below are context examples, and the same words can be legitimate elsewhere. The three dispositions above stay as they are.
+
+Two of the four run in the opposite direction from the rest of this guide. "Concession that dismisses a confound" and "Over-strong claim with a vague concession" deal with wording that is *stronger* than the evidence, which is the over-claim guard's downward calibration. Deleting the concession on the instinct to "remove hedging" leaves a stronger claim behind. All four therefore obey three constraints:
+
+- Never delete the concession when it points to a real difference or confound in the manuscript.
+- The revised claim is no stronger than the source. None of the four licenses raising an unsupported claim, and none licenses deleting a limitation, an unfavorable comparison, or a non-mainline result.
+- Never invent a control, a stratified analysis, a significance test, a limitation, or a number. When the manuscript has nothing to write, mark `needs evidence`.
+
+### Pre-emptive rebuttal shell
+
+Scope: the sentence answers an objection that neither the manuscript's data nor the cited literature raises, and the answer itself adds no evidence, condition, or scope. Typical shapes: "This does not mean that ...", "One should not simply conclude that ...", "Admittedly, some may argue that ...". If the shell carries a condition, a scope, or evidence, it is a real boundary; handle it under "Keep a real evidence boundary".
+Destination: when a real confound or alternative explanation exists, rewrite the shell as one concrete boundary that states its reason; when no real objection exists, delete the shell and keep the claim with its verb unchanged; when it is a definitional distinction, keep it (see "Turn a negation into a positive statement").
+May keep: "In this paper, latency is the interval from request submission to the first returned result; queueing time is excluded." (definitional distinction)
+Must not: delete the shell and at the same time upgrade "reduces latency" to "substantially improves system performance"; delete "The interviews cannot tell us how often teachers actually use the tool" as a shell. That sentence is an evidence boundary.
+
+### Concession that dismisses a confound
+
+Scope: the concession clause names a real difference or confound in the manuscript (a changed denominator, a shift in sample composition, a change in measurement), and the main clause dismisses its effect without analysis. Typical shape: "Although X changed, this does not affect the conclusion that ...". This is an over-claim, not self-weakening.
+Destination: never delete the concession. When the manuscript already has an analysis (stratification, adjustment, a common-sample comparison), bind the conclusion to that analysis and cite where it is; when it has none, pull the conclusion back to what the data support, or mark `needs evidence`. Counts, proportions, and denominator changes go to the `experiment` module and `references/evidence/claim-evidence-contract.md`.
+May keep: "Enrolment rose from 200 to 250 and completions from 150 to 175, so the completion rate fell from 75.0% to 70.0%. All 50 new enrollees joined the part-time track; within each track the completion rate did not fall (Table 4)." (the concession is answered by an analysis in the manuscript)
+Must not: delete "although enrolment changed" and keep "the redesign improved completion"; add "stratified tests showed no significant difference" when the manuscript reports no such test.
+
+### Over-strong claim with a vague concession
+
+Scope: one paragraph holds both a verb above its evidence rung ("conclusively proves", "the decisive factor") and a vague concession ("of course this may not hold everywhere, but overall it plays a key role to some extent").
+Destination: follow the repair order after the five-step rewrite: evidence first, calibrate the claim on the certainty ladder, then replace the vague concession with one concrete boundary that states its reason. Report the paragraph as one finding.
+May keep: "Nine of the 14 interviewed nurses named missing handover templates as the main obstacle (Table 2). All interviewees work in one hospital, so the result reports what the nurses said, not the measured effect of each obstacle." (claim calibrated, boundary with its reason)
+Must not: delete only the vague concession and keep "conclusively proves"; report the claim and the concession as two findings.
+
+### Empty modesty
+
+Scope: a limitation sentence names neither an object nor a condition or magnitude ("there remain certain limitations", "there is still room for improvement", "this work offers some reference value"), and it is not a closing transition that already names the concrete limitation.
+Destination: fill in the object and the condition or magnitude from the manuscript; when the manuscript has nothing to write, mark `needs evidence` and do not make up a limitation for the authors; when it repeats an existing limitation, delete the duplicate and keep the copy where the evidence is discussed or in the Limitations section.
+May keep: a closing transition that names the limitation before the outlook, such as "Generalisation to multi-site deployments remains limited because all data come from one hospital; Section 6 outlines the multi-site study."
+Must not: delete the only limitation; write a limitation the manuscript does not contain (such as "the sample is small"); rewrite "there is still room for improvement" as "the method is optimal".
+
+### Deduplication
+
+- Throat-clearing openers ("It is worth noting that", "It should be emphasized that") stay in `deai`. When one sentence holds both an opener and a pre-emptive rebuttal shell, `deai` reports the opener only and claim-forward handles the shell.
+- When the script has already reported `CF-HEDGE-STACK` on a claim sentence that is also a concession shell, merge them into one finding: the shell's disposition leads, and the hedge count is supporting evidence.
+- One evidence gap yields one finding. An over-strong claim with a vague concession counts once; do not split it into an over-claim finding and a shell finding.
+- Several specific mechanisms followed by a blanket retraction ("it may be A, or B; the current data cannot verify this") still belong to the `deai` defensive-speculation rule; do not report them here again.
+
+Accurate and clear source text stays as it is. Zero findings is a valid result; do not produce findings to reach a count, and do not write what the manuscript leaves unknown as certain.
+
+### Suggestion blocks
+
+```latex
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Over-strong claim with a vague concession
+% Problem: an over-strong claim and a vague concession share one paragraph; deleting only the concession would keep "conclusively proves"
+% Context: Table 2 already lists the 14 nurse interviews from one hospital and the obstacle each nurse named first.
+% Original: The interviews conclusively prove that missing handover templates are the decisive obstacle. Of course, this may not hold in every ward, but overall the templates play a key role to some extent.
+% Revised: Nine of the 14 interviewed nurses named missing handover templates as the main obstacle (Table 2). All interviewees work in one hospital, so the result reports what the nurses said, not the measured effect of each obstacle.
+% Rationale: evidence first; "conclusively prove ... decisive" pulled back to the count in Table 2; the vague concession replaced by a boundary with its reason. The revised claim is no stronger than the source; numbers and table come from the manuscript.
+
+% CLAIM-FORWARD (synthetic) [Severity: Major] [Priority: P1]: [LLM] Concession that dismisses a confound
+% Problem: the concession admits a denominator change, and the main clause dismisses it without analysis
+% Original: Although enrolment rose from 200 to 250 and the completion rate fell from 75.0% to 70.0%, this does not affect the conclusion that the redesign improved completion.
+% Revised: Enrolment rose from 200 to 250 and the completion rate fell from 75.0% to 70.0%. The manuscript does not compare new and returning enrollees, so the current data cannot show whether the redesign improved completion (needs evidence: completion rates reported separately for new and returning enrollees).
+% Rationale: the denominator change is a real confound, so the concession's content stays; with no analysis in the manuscript, the conclusion is pulled back to what the data support. No stratified result was invented. Denominator checks go to the experiment module.
+
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Pre-emptive rebuttal shell
+% Problem: the sentence answers an objection nobody raised and adds no evidence, condition, or scope
+% Original: Our method reduces mean latency from 420 ms to 310 ms. This does not mean that it suits every workload.
+% Revised: Our method reduces mean latency from 420 ms to 310 ms.
+% Rationale: shell deleted; claim and numbers unchanged. If the manuscript names the evaluated workloads, attach them as positive scope; if it names workloads it did not evaluate, keep that as a real boundary after the claim.
+
+% CLAIM-FORWARD (synthetic) [Severity: Minor] [Priority: P2]: [LLM] Empty modesty
+% Context: Section 5.3 already reports a higher mean error at night than in daytime.
+% Original: Our method still has certain limitations and room for improvement.
+% Revised: Our method has a higher mean error at night than in daytime (Section 5.3).
+% Rationale: object and condition come from the result in Section 5.3. When the manuscript has nothing to write, keep the sentence and mark it `needs evidence`; do not invent a limitation and do not delete this one.
+```

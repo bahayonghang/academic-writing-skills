@@ -27,7 +27,7 @@ uv run python $SKILL_DIR/scripts/check_claim_forward.py main.tex --section intro
 
 - 专有名词、理论名、变量名；不为“高级表达”更换术语。
 - 数字、单位、实验参数、引文编号与图表编号。
-- 因果与相关关系，以及显著、不显著、可能等结论强度，不得抬升也不得擅自削弱。
+- 因果与相关关系，以及显著、不显著、可能等结论强度，不得抬升也不得擅自削弱。抬升置 `overstatement`，削弱置 `understatement`（仅 LLM 层），并说明证据依据；静默削弱清单见 [routing-rules.md](../modules/routing-rules.md)「分层规则」。
 - 研究对象、时间范围、方法步骤、样本参数；不新增数据、文献、概念、机制或结论，不扩大适用范围。
 - `\cite{}`、`\ref{}`、`\label{}`、数学环境和模板宏原样保留；不伪造文献或实验结果，不改变受保护术语。脚本对数学空白的规范化不构成改写数学的许可。
 
@@ -52,7 +52,7 @@ uv run python $SKILL_DIR/scripts/check_claim_forward.py main.tex --section intro
 % Changed:       <实际改动，或 none>
 % Protected:     <受保护内容，或 none>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
 最后附准确核对命令、退出码、各核对码命中数、`BLOCK` 或 `PASS-SCRIPT` 及未决语义问题。`[Script]` 恒为 `Meaning-Check: NEEDS-LLM`，不输出 `Risk-Flags`；`[LLM]` 的 `PRESERVED` 是待作者核对的提案。

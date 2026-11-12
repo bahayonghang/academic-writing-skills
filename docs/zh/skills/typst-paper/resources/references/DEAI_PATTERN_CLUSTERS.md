@@ -101,7 +101,8 @@ prose。改写前逐项登记 claim、evidence、数字、引用、标签、公�
 与 scope。保护 `@cite`、`<label>`、公式、代码、`#set`、`#show`、`#let`、宏和 source layout。
 
 可调整局部句法和修辞壳；跨段或章节重排需要另行授权。改写后核对受保护单元是否丢失或新增、
-certainty 是否提高、scope 是否扩大。
+certainty 是否提高或降低、scope 是否扩大或缩窄。删除修辞壳不得新增 hedge 或弱化作者判断；
+降低的 certainty 标为 `understatement`，提高的标为 `overstatement`。
 
 复用既有 `[LLM]` proposal 契约：
 
@@ -109,7 +110,7 @@ certainty 是否提高、scope 是否扩大。
 Changed: <local restructuring and rhetorical shells removed>
 Protected: <claims, evidence, Typst anchors, terminology, certainty, and scope retained>
 Meaning-Check: PRESERVED | NEEDS-LLM
-Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim
+Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim
 ```
 
 `PRESERVED` 仍是供作者复核的提案，不是工具保证。

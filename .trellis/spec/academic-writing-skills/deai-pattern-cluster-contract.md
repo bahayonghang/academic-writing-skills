@@ -59,7 +59,7 @@ prose proposal 复用既有四字段和闭集：
 Changed: <what changed>
 Protected: <anchors and academic payload kept>
 Meaning-Check: PRESERVED | NEEDS-LLM
-Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim
+Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim
 ```
 
 `PRESERVED` 是 `[LLM]` 提案，不是工具证明或作者批准。

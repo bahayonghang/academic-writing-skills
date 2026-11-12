@@ -38,6 +38,8 @@ uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introdu
 
 **Never raise claim strength or invent a connective**: turning a plain sequence into a causal chain (`we did X; Y improved` → `Y improved because of X`) adds a claim. Keep the original relation, or set `Risk-Flags: overstatement`. Criteria: [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md).
 
+**Do not lower claim strength either**: adding a hedge the source does not have, softening the author's own judgement, or narrowing the scope while splitting is silent weakening. Keep the original strength, or set `Risk-Flags: understatement` (LLM layer only) and state the evidence reason. A claim stronger than its evidence is reported as an over-claim finding, not softened here. Full list and exceptions: [skill-routing-notes.md](../skill-routing-notes.md) (Layer rules).
+
 **Split Strategy**:
 
 1. Identify the backbone structure

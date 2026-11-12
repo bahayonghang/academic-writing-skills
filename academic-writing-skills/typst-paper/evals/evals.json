@@ -525,6 +525,46 @@
           "description": "no unsupported evidence is invented"
         }
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "Polish the four labeled Typst cases with --goal clarity --strength minimal and return a rewrite block with Changed:, Protected:, Meaning-Check:, and Risk-Flags: for each. Keep the authors' stance: do not add hedges, do not narrow the stated scope, and do not replace a concrete statement with a vague evaluation. Preserve @tab:tail and every number. For Case B, also state which Risk-Flags value a calibrated (weaker) rewrite would carry.",
+      "expected_output": "Cases A, C, and D keep the source strength: no added may/might/could, the first-person 'We find' stays, 'all four traces' stays, and 'from 2.1 GB to 2.6 GB' is not turned into a vague cost remark. Case B is stronger than its evidence: report it as an over-claim finding with criteria from references/OVER_CLAIM_GUARD.md and keep the rewrite block at the source strength; give a weaker rewrite only if the user explicitly asks for calibration, and then set Risk-Flags: understatement. Any lowered strength is flagged understatement and any raised strength overstatement. The rewrite contract follows references/skill-routing-notes.md (Layer rules). typst-paper has no claim-forward module, so no CF-* code is used.",
+      "files": [
+        "evals/fixtures/stance_fidelity_cases.typ"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "Risk-Flags:",
+          "description": "rewrite contract fields are emitted"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(over-claim|overclaim|OVER_CLAIM_GUARD)",
+          "description": "Case B is reported as an over-claim finding"
+        },
+        {
+          "type": "regex",
+          "pattern": "understatement",
+          "description": "lowered strength is named with the understatement flag"
+        },
+        {
+          "type": "not_contains",
+          "text": "may reduce 99th-percentile latency",
+          "description": "no hedge added to the firm Case A finding"
+        },
+        {
+          "type": "not_contains",
+          "text": "on some traces",
+          "description": "the stated scope is not narrowed"
+        },
+        {
+          "type": "not_contains",
+          "text": "check_claim_forward",
+          "description": "no claim-forward script on a skill without that module"
+        }
+      ]
     }
   ]
 }

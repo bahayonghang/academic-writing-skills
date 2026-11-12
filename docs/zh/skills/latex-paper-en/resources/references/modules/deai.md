@@ -19,7 +19,7 @@ uv run python -B scripts/deai_batch.py main.tex --all-sections
 - 这`tense`类别 （`[Script]`低）标记方法/实验/结果中的现在时报告动词，门控到这些部分；参见[时态指南.md](tense-guide.md).
 - 这`overclaim`类别 （`[Script]`低）标记明确的因果/第一性/普遍性措辞；参见 [over-claim-guard.md](../evidence/over-claim-guard.md).
 
-- hedge 堆叠、首个主张前的免责声明和自我削弱搭配**不是** de-AI 痕迹，且本脚本按契约不含 hedge 正则；请路由到 [claim-forward.md](claim-forward.md)。`not X but Y` 壳与 "It is worth noting" 留在这里。
+- hedge 堆叠、首个主张前的免责声明和自我削弱搭配**不是** de-AI 痕迹，且本脚本按契约不含 hedge 正则；请路由到 [claim-forward.md](claim-forward.md)。预设反驳壳和否定混杂因素的让步同样交给 claim-forward 与 [over-claim guard](../evidence/over-claim-guard.md)，不在这里处理。`not X but Y` 壳与 "It is worth noting" 留在这里。
 
 ## 密度与预算语义
 

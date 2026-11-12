@@ -185,6 +185,26 @@
       "query": "The conclusion of my .tex paper ends on a negative note with no future work; flag hedge stacking and under-claiming.",
       "should_trigger": true,
       "category": "edge"
+    },
+    {
+      "query": "My co-author says the discussion in our LaTeX paper is defensive writing: every claim is followed by 'this does not mean that...'. Can you strip the pre-emptive rebuttals without deleting real limitations?",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "After an AI polish pass my .tex results section is over-hedged and polishing flattened my argument; restore the original claim strength where the evidence supports it.",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "In my LaTeX paper's discussion I list three possible mechanisms for the gain and then say the current data cannot verify any of them; how should I fix that paragraph?",
+      "should_trigger": true,
+      "category": "edge-deai-speculation"
+    },
+    {
+      "query": "Make my LinkedIn post less defensive and more opinionated; it keeps saying 'this does not mean' before every point.",
+      "should_trigger": false,
+      "category": "negative-unrelated"
     }
   ]
 }

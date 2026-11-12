@@ -21,6 +21,7 @@ RISK_FLAGS = {
     "lexical-substitution",
     "whitespace-normalized",
     "overstatement",
+    "understatement",
     "ambiguity",
     "terminology-drift",
     "invented-claim",
@@ -77,6 +78,71 @@ OVER_CLAIM_GUARD = {
     "latex-paper-en": "../evidence/over-claim-guard.md",
     "latex-thesis-zh": "../writing/over-claim-guard.md",
     "typst-paper": "../OVER_CLAIM_GUARD.md",
+}
+
+# Every doc that governs a rewrite-producing module must state that strength is
+# preserved in both directions and name the `understatement` flag.
+STANCE_FIDELITY_DOCS = {
+    "latex-paper-en": [
+        *POLISH_MODULE_DOCS["latex-paper-en"],
+        SKILLS_ROOT / "latex-paper-en" / "references" / "modules" / "translation.md",
+    ],
+    "latex-thesis-zh": [
+        *POLISH_MODULE_DOCS["latex-thesis-zh"],
+        SKILLS_ROOT / "latex-thesis-zh" / "references" / "writing" / "unit-polish-zh.md",
+    ],
+    "typst-paper": [
+        *POLISH_MODULE_DOCS["typst-paper"],
+        SKILLS_ROOT / "typst-paper" / "references" / "modules" / "TRANSLATION.md",
+    ],
+}
+
+# (raise, lower) wording that a bidirectional strength rule must carry.
+STRENGTH_DIRECTIONS = {
+    "latex-paper-en": ("raise", "lower"),
+    "latex-thesis-zh": ("升高", "降低"),
+    "typst-paper": ("raise", "lower"),
+}
+
+# The canonical stance-fidelity rule in each routing doc names the five silent
+# weakening changes, the over-claim exception, and the deai hedge boundary.
+STANCE_FIDELITY_TOKENS = {
+    "latex-paper-en": (
+        "adding a hedge",
+        "first-person",
+        "narrower scope",
+        "vague evaluation",
+        "pre-emptive concession",
+        "over-claim finding",
+        "explicitly asks",
+        "Reverse calibration",
+    ),
+    "latex-thesis-zh": (
+        "新增原文没有的 hedge",
+        "第一人称",
+        "范围缩",
+        "空泛评价",
+        "预设让步",
+        "过度声称 finding",
+        "明确要求",
+        "反向校准",
+    ),
+    "typst-paper": (
+        "adding a hedge",
+        "first-person",
+        "narrower scope",
+        "vague evaluation",
+        "pre-emptive concession",
+        "over-claim finding",
+        "explicitly asks",
+        "Reverse calibration",
+    ),
+}
+
+LAYER_RULES_HEADING = {
+    "latex-paper-en": "### Layer rules",
+    "latex-thesis-zh": "### 分层规则",
+    "typst-paper": "### Layer rules",
 }
 
 BACKTICKED = re.compile(r"`([^`]+)`")
@@ -234,6 +300,58 @@ def test_polish_module_docs_carry_the_contract_and_guard_pointer() -> None:
         assert OVER_CLAIM_GUARD[skill] in text, (
             f"{path.name}: missing pointer to {OVER_CLAIM_GUARD[skill]}"
         )
+
+
+def _subsection(text: str, heading: str) -> str:
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        if line.strip() == heading:
+            rest = lines[index + 1 :]
+            for offset, candidate in enumerate(rest):
+                if candidate.startswith("## ") or candidate.startswith("### "):
+                    return "\n".join(rest[:offset])
+            return "\n".join(rest)
+    raise AssertionError(f"subsection {heading!r} not found")
+
+
+def test_rewrite_contract_forbids_strength_change_in_both_directions() -> None:
+    for docs in (SKILL_MD, ROUTING_DOC):
+        for skill, path in docs.items():
+            raise_word, lower_word = STRENGTH_DIRECTIONS[skill]
+            rules = [
+                line
+                for line in _lines_with(
+                    _read(path), "overstatement", "understatement", raise_word, lower_word
+                )
+                if any(negation in line for negation in NEGATIONS)
+            ]
+            assert rules, f"{skill} ({path.name}): no bidirectional strength rule"
+
+
+def test_routing_docs_name_silent_weakening_and_its_exceptions() -> None:
+    for skill, path in ROUTING_DOC.items():
+        layer_rules = _subsection(_read(path), LAYER_RULES_HEADING[skill])
+        for token in STANCE_FIDELITY_TOKENS[skill]:
+            assert token in layer_rules, f"{skill}: stance-fidelity rule is missing {token!r}"
+
+
+def test_understatement_is_never_script_settable() -> None:
+    assert "understatement" in RISK_FLAGS
+    assert "understatement" not in SCRIPT_SETTABLE_FLAGS
+    for docs in (SKILL_MD, ROUTING_DOC):
+        for skill, path in docs.items():
+            for line in _lines_with(_read(path), "[Script]"):
+                assert "`understatement`" not in line, (
+                    f"{skill} ({path.name}): [Script] line grants understatement"
+                )
+
+
+def test_rewrite_module_docs_preserve_strength_in_both_directions() -> None:
+    for paths in STANCE_FIDELITY_DOCS.values():
+        for path in paths:
+            text = _read(path)
+            assert "overstatement" in text, f"{path.name}: missing the overstatement flag"
+            assert "understatement" in text, f"{path.name}: missing the understatement flag"
 
 
 def test_over_claim_guard_stays_out_of_the_top_level_reference_map() -> None:

@@ -30,7 +30,7 @@ Protected fragments such as `\cite{...}`, `\ref{...}`, and `$...$` are masked be
 - Envelope: goal=grammar strength=minimal
 ```
 
-A rule-based draft is never a finished translation: `Meaning-Check` stays `NEEDS-LLM`, and raising claim strength while translating (e.g. rendering a hedged Chinese verb as `demonstrates`) is an over-claim — see [over-claim-guard.md](../evidence/over-claim-guard.md). Field definitions: [routing-rules.md](routing-rules.md).
+A rule-based draft is never a finished translation: `Meaning-Check` stays `NEEDS-LLM`, and raising claim strength while translating (e.g. rendering a hedged Chinese verb as `demonstrates`) is an over-claim (`Risk-Flags: overstatement`) — see [over-claim-guard.md](../evidence/over-claim-guard.md). Lowering it is equally out of bounds: rendering a firm source claim with an added hedge, a subjectless possibility, or a narrower scope is silent weakening — keep the source strength, or flag `Risk-Flags: understatement` (LLM layer only) with the evidence reason. A source claim stronger than its evidence is reported as an over-claim finding, not softened in translation. Field definitions and the full silent-weakening list: [routing-rules.md](routing-rules.md) (Layer rules).
 
 ## Skill-Layer Response
 

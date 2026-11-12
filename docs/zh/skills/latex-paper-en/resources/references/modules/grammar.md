@@ -35,7 +35,7 @@ uv run python -B scripts/analyze_grammar.py main.tex --section introduction
 
 本模块产出可直接替换原文的文本，适用改写契约。`[Script]` 层输出恒为 `Meaning-Check: NEEDS-LLM`，且只允许置规则可确定的标记（`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`）；只有 `[LLM]` 层可提出 `PRESERVED`，且仍是待作者核对的提案。字段定义与 `Risk-Flags` 闭集见 `references/modules/routing-rules.md`。
 
-语法修复不得升高措辞强度。把留有余地的表述"修"成断言（`the results may indicate` -> `the results indicate`）是披着语法修复外衣的过度声称：保持原强度，或置 `Risk-Flags: overstatement`。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)；报告动词阶梯见 [style-guide.md](../writing/style-guide.md)。
+语法修复不得升高或降低措辞强度。把留有余地的表述"修"成断言（`the results may indicate` -> `the results indicate`）是披着语法修复外衣的过度声称：保持原强度，或置 `Risk-Flags: overstatement`。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)；报告动词阶梯见 [style-guide.md](../writing/style-guide.md)。该规则双向适用：修语法时新增 hedge、弱化作者自己的判断或缩窄范围都属于静默削弱——保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并给出证据理由。强于证据的主张作为过度声称 finding 报告，不在这里软化。完整清单与例外见 [routing-rules.md](routing-rules.md)（分层规则）。
 
 ## 技能层响应
 
