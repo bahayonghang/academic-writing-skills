@@ -6,8 +6,9 @@ This collection of skills grew out of my day-to-day paper-writing workflow and
 has been iteratively refined over time. It may still have shortcomings or rough
 edges; if needed, please fork it and adapt it yourself.
 
-> I have recently been writing my dissertation, so I will keep improving
-> `latex-thesis-zh` based on actual usage.
+> I have recently been writing my dissertation and revising English papers,
+> so I will keep improving `latex-thesis-zh` and `latex-paper-en` based on
+> actual usage.
 > Note: `paper-audit` review reports are for reference only; please verify and
 > evaluate them yourself.
 >
@@ -16,13 +17,16 @@ edges; if needed, please fork it and adapt it yourself.
 > experiment narrative review. Focused on improving existing drafts, not writing
 > papers from scratch.
 >
-> Recommended models (★ is most recommended): **★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
+> Recommended models (★ is most recommended): **★ Gemini 4 Carbon / Gemini 4 Argon · Claude Opus 5.5**
+>
+> Google's models have a good writing style, but they may have some
+> hallucinations when writing science and engineering papers. Review carefully.
 >
 > GPT models do not write like a person, and the defensive hedging is serious.
 > If you use one, watch both. After GPT has revised the text, scan it again
 > with another model, and read it yourself.
 >
-> Recommended platforms: **Claude Code · Codex · OMP (Oh My Pi)**
+> Recommended platforms: **Claude Code · Pi · OMP (Oh My Pi)**
 
 ## Install
 
