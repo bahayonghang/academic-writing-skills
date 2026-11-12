@@ -53,6 +53,7 @@ LaTeX loader 会拒绝项目根目录外的 include。安装告警及 `E-INCLUDE
 同章结果表、正文和本章小结的终值只由 `analyze_experiment.py --cross-surface` 核对。`--section` 可缩小章节。`--cross-surface-terms FILE` 只能与该开关同时使用，且只替换指标或评价集词表。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字。不传 `--cross-surface` 时原输出不变，`--results-analysis` 的既有检查码保持独立。
 研究生院清单用 `--template yanshan`。学院 2025 清单用 `--template yanshan-ee-2025`。二者并存。111 个状态不是 111 项已合规。局部 checker 不把复合项判为 PASS，MODULE 与 NEEDS-LLM 仍须人工复核。
 方法表达标签、把弱点写成优点、预告删除后失去先行词的代词、摘要引号，以及标题或章节安排句中的公式符号，只在既有 `logic`、`claim-forward`、`abstract`、`structure` 上做 LLM 判读。不新增脚本码、阈值或模块。
+`claim-forward` 指南新增预设反驳壳、让步后否定、断言与让步壳共现、空泛谦辞四类仅 LLM 处置；`latex-paper-en`、`latex-thesis-zh`、`typst-paper` 的改写契约改为既不得升高也不得降低措辞强度，并新增仅 LLM 层可置的 `understatement` 标记。不新增脚本码、阈值或模块。
 
 需要改写或润色源码时，使用对应格式的写作类 skill。需要审稿式诊断但不改源码时，
 使用 `paper-audit`。目标是文献库本身时，使用 `bib-search-citation`。
