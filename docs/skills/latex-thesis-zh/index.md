@@ -184,6 +184,7 @@ Frontmatter `allowed-tools` is Claude-compatible metadata. It is not a mandatory
 - [Literature-review rewrite](./resources/examples/literature-review-rewrite.md)
 - [Bibliography and de-AI](./resources/examples/bibliography-and-deai.md)
 - [Unit polishing and verification](./resources/examples/unit-polish.md)
+- [Pre-emptive rebuttal and concession shells](./resources/examples/claim-forward-shells.md)
 
 ## Common Requests And Handoffs
 

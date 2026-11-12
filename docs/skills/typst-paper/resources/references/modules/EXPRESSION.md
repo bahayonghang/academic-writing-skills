@@ -80,4 +80,6 @@ Protected tokens (statistics, values with units, model/dataset/gene names) are m
 
 **Never raise claim strength**: swapping a hedged statement for a stronger assertion (`suggests` → `demonstrates`, `可能` → `能够`) is an over-claim, not a tone improvement. Keep the original strength, or set `Risk-Flags: overstatement` and say so explicitly. Criteria: [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md).
 
+**Do not lower claim strength either**: adding a hedge the source does not have, softening the author's own judgement, or narrowing the scope while polishing is silent weakening. Keep the original strength, or set `Risk-Flags: understatement` (LLM layer only) and state the evidence reason. A claim stronger than its evidence is reported as an over-claim finding, not softened here. Full list and exceptions: [skill-routing-notes.md](../skill-routing-notes.md) (Layer rules).
+
 Reference: [STYLE_GUIDE.md](../STYLE_GUIDE.md)

@@ -21,7 +21,7 @@
 | [subsection-context-contract.md](./subsection-context-contract.md)       | 中文学位论文 depth-3 小节游标、三元窗口、S-CTX 观察与只读边界                    | 改 `--subsection-context`、`--emit-window`、小节编号、窗口 schema 或 S-CTX 资源之前       |
 | [paragraph-arc-en-contract.md](./paragraph-arc-en-contract.md)           | 英文论文 P-ARC 差异、5000 词密度换算、序列词边界与 synthetic-only 证据边界          | 改 EN `--paragraph-arc`、英文密度阈值或三副本序列词计数之前                              |
 | [paragraph-arc-audit-contract.md](./paragraph-arc-audit-contract.md)     | paper-audit Clarity 五档、lane/agent 四项观察、评分隔离与证据边界                    | 改审稿侧段落弧线 rubric、lane、agent、psychology 或对应双语资源之前                       |
-| [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合；三类处置不新增码 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
+| [claim-forward-contract.md](./claim-forward-contract.md)                 | claim-forward（主张前置/自我削弱）五码语义、输出格式、词表回退、禁改清单与 paper-audit 码集合；七类文档层处置（三类必要限制 + 四类预设反驳与让步壳）不新增码 | 改 EN/ZH `check_claim_forward.py`、claim-forward 词表/参考文档、over-claim 向上校准节或 audit 侧 `CF-*` 之前 |
 | [unit-polish-contract.md](./unit-polish-contract.md) | `polish` 单元边界、`UP-*` 核对、冻结脚本和验证入口 | 改单元润色脚本、协议、路由、fixture 或公开镜像之前 |
 | [term-governance-contract.md](./term-governance-contract.md) | 中文学位论文可选术语治理、缩写体例与程度词的输入、扫描边界和报告契约 | 改 `--governance`、`--abbreviation-style`、`--degree-wording` 或对应公开资源之前 |
 | [numeric-equation-table-contract.md](./numeric-equation-table-contract.md) | 中文学位论文可选学院数字、公式、表身和中文题注的学校开关、扫描边界和报告契约 | 改 `--school`、NUM/EQ/TB/CAP 候选或对应公开资源之前 |

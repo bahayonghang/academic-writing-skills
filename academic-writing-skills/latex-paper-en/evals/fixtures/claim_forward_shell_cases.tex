@@ -1,0 +1,51 @@
+\documentclass{article}
+% Synthetic fixture for the four LLM-only claim-forward dispositions
+% (latex-paper-en). Cases A-D are positives (pre-emptive rebuttal shell,
+% concession that dismisses a confound, over-strong claim with a vague
+% concession, empty modesty); Cases E-H are boundaries that must stay
+% unchanged. Written for evals/evals.json id 25. The dispositions have no
+% CF-* code, and the script tests do not read this file.
+\begin{document}
+
+\section{Introduction}
+We study how a sample-reception protocol affects turnaround in a regional clinical laboratory network.
+
+% Case A: pre-emptive rebuttal shell; it answers an objection that neither the data nor the cited work raises.
+The reception protocol reduces median turnaround time from 96 to 71 minutes (Table~\ref{tab:turnaround}).
+This does not mean that the protocol solves every delay in the laboratory.
+
+\section{Data}
+We interviewed 18 laboratory managers; Table~\ref{tab:interviews} lists their answers.
+Eleven of the 18 managers named unclear reagent labelling as the main cause of sample rejection.
+Table~\ref{tab:error} reports a labelling error of 4.2\% for night-shift samples and 2.1\% for day-shift samples.
+
+% Case F: boundary; a definitional negation that keeps two quantities apart.
+In this paper, turnaround time is the interval from sample receipt to result release; it does not include transport time.
+
+\section{Results}
+% Case B: concession that dismisses a confound; the denominator changed and no analysis is given.
+Although monthly sample volume rose from 1,600 to 2,000 and the share of samples released on time fell from 90.0\% to 86.0\%, this does not affect the conclusion that the protocol improved on-time release.
+
+% Case C: over-strong claim with a vague concession, on qualitative evidence.
+The interviews conclusively prove that unclear reagent labelling is the decisive cause of sample rejection.
+Admittedly, one cannot simply generalise this to every laboratory, but overall labelling plays a key role to some extent.
+
+% Case E: boundary; a real evidence boundary that states its reason.
+The interviews record the causes that managers report.
+Because all 18 managers work in one regional network, the interviews do not measure how often each cause leads to a rejection elsewhere.
+
+\section{Discussion}
+% Case G: boundary; a concession about cited prior work, with the reason for the difference.
+Although earlier audits~\cite{audit2019} report lower rejection rates, they counted only samples rejected at the bench, not samples returned at reception.
+
+% Case D: empty modesty; no object, condition, or magnitude.
+Our protocol still has certain limitations, and there is room for improvement.
+
+\section{Conclusion}
+The reception protocol reduced median turnaround time from 96 to 71 minutes across the network.
+
+% Case H: boundary; a closing transition that names the concrete limitation, followed by the outlook.
+Generalisation to multi-site networks remains limited because all interviews come from one regional network.
+A multi-site survey with the same interview guide is the next step.
+
+\end{document}

@@ -1906,3 +1906,26 @@ C3 端到端证据与归档；C4 SKILL.md、示例、evals、agents、第八个 
 ### Status
 
 [OK] **Completed**
+
+
+## Session 56: claim-forward 预设反驳与立场保真
+<!-- trellis-session: v=2 fp=f967afad79484248 -->
+
+**Date**: 2026-11-11
+**Task**: claim-forward 预设反驳与立场保真
+**Branch**: `dev`
+
+### Summary
+
+为中英文 claim-forward 增加四类仅 LLM 处置，并在三个写作 skill 中禁止改写时静默降低措辞强度。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `112c876aa3e1b6f1cc52384a1c4c3e36e765a497` | feat(claim-forward): 补充预设反驳处置与改写立场保真 |
+| `ec9108d5398731ced5be53d747e09f54150ba761` | docs: 补充四类处置与 understatement 说明 |
+
+### Status
+
+[OK] **Completed**

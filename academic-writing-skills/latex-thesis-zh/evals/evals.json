@@ -1912,6 +1912,66 @@
           "description": "does not hand-edit responses"
         }
       ]
+    },
+    {
+      "id": 61,
+      "prompt": "按 claim-forward 写作指南逐个处置附带合成 fixture 中的八个样例。Case A 按预设反驳壳、Case B 按让步后否定、Case C 按断言与让步壳共现、Case D 按空泛谦辞处理；说明 Case E、Case F、Case G、Case H 为何保持不动。每条发现给一个 [LLM] 建议块，不得补造分析、数字或局限。",
+      "expected_output": "路由到 claim-forward，按 references/writing/claim-forward-zh.md 的四类仅 LLM 处置判断，以小节标题称呼，不新增观察码（CF-* 只有既有五个码与 CF-LOSS-FRAME）。Case A：删去壳，候诊时间主张与动词不动。Case B：不得删除让步句；稿件没有分层分析，把结论收回到数据支持的范围或标【待补证】，分母变化交给 experiment --results-analysis 核对。Case C：只输出一条 finding，按修复顺序处理——证据前置（16 名医生中 10 名，表 tab:interview），按确定性阶梯把“充分证明……决定性因素”收回，再把模糊让步换成带原因的边界。Case D：用数据与方法章已有的 80 岁以上居民随访比例补出对象与条件，或标【待补证】；结论章 Case H 已写出同一局限，把 Case D 判为重复并删去副本也可接受，但须说明该局限在 Case H 保留。不得把稿件中唯一一处限制删掉，也不得替作者编一个局限。Case E–H 保持不动：E 是带原因的真实证据边界，F 是定义性否定，G 是对带引用前人工作的让步，H 是写出具体局限的承接句加展望，符合 CC-OUTLOOK-TRANS。改后断言强度不高于原文；不补造对照、分层、显著性结论、数字或局限。E–H 零发现是正确结果。",
+      "files": [
+        "evals/fixtures/claim_forward_shell_cases_zh.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "claim-forward",
+          "description": "claim-forward module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "预设反驳壳",
+          "description": "Case A disposition named"
+        },
+        {
+          "type": "regex",
+          "pattern": "让步后否定",
+          "description": "Case B disposition named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(保留让步|不得删除让步|不删除让步|让步句保留|让步内容保留|(不得|不能|不应|不要|勿)删(除|去|掉)?(该|这条|此)?让步|让步[^。\n]{0,20}(须|必须|应|仍)?保留|让步[^。\n]{0,20}(不得|不能|不应)删)",
+          "description": "the concession pointing to a real confound is kept"
+        },
+        {
+          "type": "regex",
+          "pattern": "(待补证|收回|数据支持的范围)",
+          "description": "Case B conclusion is bound or pulled back, not defended"
+        },
+        {
+          "type": "regex",
+          "pattern": "Case E.{0,120}(不动|保留|不报|边界)",
+          "description": "Case E kept as a real evidence boundary"
+        },
+        {
+          "type": "regex",
+          "pattern": "Case H.{0,120}(不动|保留|不报|承接)",
+          "description": "Case H kept as a concrete closing transition"
+        },
+        {
+          "type": "regex",
+          "pattern": "(阶梯|过度声称|过度声明|over-claim)",
+          "description": "Case C claim is calibrated down the certainty ladder"
+        },
+        {
+          "type": "not_contains",
+          "text": "经分层检验",
+          "description": "no invented stratified analysis"
+        },
+        {
+          "type": "not_contains",
+          "text": "CF-PREEMPT",
+          "description": "no new observation code is invented"
+        }
+      ]
     }
   ]
 }

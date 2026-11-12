@@ -34,16 +34,33 @@
 
 `CF-LOSS-FRAME`（过程编年 / 输者叙事）只在参考文档中定义，属 `[LLM]` 判断，脚本不发。
 
-### 3.1 文档层三类处置（非新码）
+### 3.1 文档层七类处置（非新码）
 
-`claim-forward-zh.md` 的三类处置只由 LLM 判断，不进入上面的脚本码集合：
+EN `claim-forward.md` 与 ZH `claim-forward-zh.md` 的七类处置只由 LLM 判断，以小节标题称呼，不进入上面的脚本码集合。
+
+三类处置（必要限制，2026-09-22 ZH；2026-11-11 EN 补齐）：
 
 - 保留真实证据边界。
 - 仅当原文支持时，把否定改成正面陈述。
 - 仅当它已是真实设计选择时，把弱点写成取舍。
 
-未验证的弱点不得写成设计优点。不得删除不利结果。比喻词只是语境例子，不是禁词正则。
-不新增观察码，不建词表。脚本码集合仍是上表五个码。
+四类处置（预设反驳与让步壳，2026-11-11，EN/ZH 同义）：
+
+| ZH 小节 | EN 小节 | 方向 | 要点 |
+|---|---|---|---|
+| 预设反驳壳 | Pre-emptive rebuttal shell | 措辞弱于证据 | 无真实异议删壳留主张、动词不动；有真实混杂改为带原因的边界；定义性区分保留 |
+| 让步后否定 | Concession that dismisses a confound | **措辞强于证据** | 让步句指向真实差异或混杂时不得删除；绑定已有分析，或收回结论 / 标【待补证】（EN `needs evidence`）；计数与比例转结果分析 |
+| 断言与让步壳共现 | Over-strong claim with a vague concession | **措辞强于证据** | 修复顺序：证据前置 → 按阶梯校准断言 → 模糊让步换成带原因的边界；一条 finding |
+| 空泛谦辞 | Empty modesty | 措辞无内容 | 从稿件补对象与条件或量值；无则【待补证】；重复则删副本；写出具体局限的结论承接句合法（不与 `CC-OUTLOOK-TRANS` 冲突） |
+
+修复顺序写在两份指南"五步改写"之后的补充说明，五步本身不变。去重：清嗓子引导语仍归 `deai`；
+与 `CF-HEDGE-STACK` 同句时合并为一条；同一证据缺口一条 finding；多机制堆叠加末尾统一撤回仍归 `deai`。
+两份模块文档写明零发现是合法结果。
+
+未验证的弱点不得写成设计优点。不得删除不利结果。改后断言强度不高于原文；不得补造对照、分层、
+显著性结论或局限。比喻词与上述句式只是语境例子，不是禁词正则。
+不新增观察码，不建词表。脚本码集合仍是上表五个码；指南中出现的 `CF-*` 只能是这五个码与 `CF-LOSS-FRAME`
+（`test_claim_forward_contract.py::test_guides_carry_four_llm_only_dispositions_without_new_codes` 锁定）。
 
 ## 4. 输出格式
 
@@ -137,3 +154,13 @@ CLOSE-NEG）与 `claim_accuracy`（SELFWEAK / HEDGE-STACK）。审稿侧不得�
   routing-rules 分组、禁改文件哈希不变、paper-audit 码集合闭合。
 - `tests/skills/latex_paper_en/test_claim_forward.py`、`tests/skills/latex_thesis_zh/test_claim_forward_zh.py`：
   每码正例 + 反例、引用豁免、Limitations 豁免、YAML 回退。
+- 文档层七类处置（2026-11-11）：`test_claim_forward_contract.py` 的
+  `test_en_guide_carries_the_three_caveat_dispositions`、
+  `test_guides_carry_four_llm_only_dispositions_without_new_codes[en|zh]`（小节标题、不删让步句、不补造、
+  修复顺序、去重、`needs evidence` / 【待补证】、指南内 `CF-*` 只能是五码与 `CF-LOSS-FRAME`）、
+  `test_module_docs_state_zero_findings_and_route_the_concession_boundary`；
+  `test_thesis_zh_guidance_fidelity.py::test_claim_forward_four_dispositions_keep_concessions_and_bind_evidence`。
+- 合成 fixture 与 eval（不接入脚本测试）：EN `evals/fixtures/claim_forward_shell_cases.tex` + eval id 25，
+  ZH `evals/fixtures/claim_forward_shell_cases_zh.tex` + eval id 61；Case A–D 为四类处置正例，E–H 为保持不动的
+  边界。Typst 只有立场保真 eval id 17（`evals/fixtures/stance_fidelity_cases.typ`），不引入 claim-forward 模块。
+  静态 fixture 与 eval 只证明契约存在；模型效果未经 provider 实跑，记 UNVERIFIED。

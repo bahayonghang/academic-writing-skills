@@ -61,6 +61,6 @@ uv run python -B scripts/improve_expression.py main.tex --goal clarity --strengt
 
 本模块产出可直接替换原文的文本，适用改写契约。`[Script]` 层输出恒为 `Meaning-Check: NEEDS-LLM`，且只允许置规则可确定的标记（`none`、`not-assessed`、`lexical-substitution`、`whitespace-normalized`）；只有 `[LLM]` 层可提出 `PRESERVED`。字段定义与 `Risk-Flags` 闭集见 `references/modules/routing-rules.md`。
 
-润色时不得升高措辞强度。把留有余地的报告换成更强的断言（`suggests` -> `demonstrates`、`may` -> `does`）是过度声称，不是语气改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)；报告动词四级阶梯见 [style-guide.md](../writing/style-guide.md)。
+润色时不得升高或降低措辞强度。把留有余地的报告换成更强的断言（`suggests` -> `demonstrates`、`may` -> `does`）是过度声称，不是语气改善：保持原强度，或置 `Risk-Flags: overstatement` 并明确说明。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)；报告动词四级阶梯见 [style-guide.md](../writing/style-guide.md)。该规则双向适用：润色时新增 hedge、弱化作者自己的判断或缩窄范围都属于静默削弱——保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并给出证据理由。强于证据的主张作为过度声称 finding 报告，不在这里软化。完整清单与例外见 [routing-rules.md](routing-rules.md)（分层规则）。
 
 风格指南：[style-guide.md](../writing/style-guide.md)

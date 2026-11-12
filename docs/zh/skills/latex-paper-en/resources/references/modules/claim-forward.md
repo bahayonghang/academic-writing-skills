@@ -1,6 +1,6 @@
 # 模块：主张前置检查（Claim-Forward）
 
-**触发**：claim-forward、主张前置、自我削弱、防御性语气、under-claiming、"读起来像在道歉"、"先说我们不做什么"、hedge 堆叠、结尾段乏力
+**触发**：claim-forward、主张前置、自我削弱、防御性语气、under-claiming、"读起来像在道歉"、"先说我们不做什么"、hedge 堆叠、结尾段乏力、防御性写作、预设反驳、过度对冲、否定混杂因素的让步、"润色把论点磨平了"。多个具体机制后接 "the data cannot verify this" 属于防御性推测解释，归 `deai`，不在这里处理。
 
 **目的**：检出把论文自身主张后置或削弱的表述（主张前的免责声明、主张前的限制句、自我削弱搭配、hedge 堆叠、以负面判定收尾的结论段），并给出最小的重排或替换建议。本模块绝不删除任何限制、不利对比或非主线结果；只改顺序与措辞。
 
@@ -43,10 +43,17 @@ uv run python -B scripts/check_claim_forward.py main.tex --section conclusion --
 3. 加强任何措辞之前，先核对 [over-claim-guard.md](../evidence/over-claim-guard.md)（"向上校准"节）中的证据档。阶梯是上限；claim-forward 只把措辞抬到证据已支撑的那一档，绝不越过。
 4. 以 `[LLM]` 层块输出改写，带契约四字段（`Changed`、`Protected`、`Meaning-Check`、`Risk-Flags`）；`[Script]` 块本身保持 `NEEDS-LLM`。
 5. 同时应用写作指南中仅属 `[LLM]` 的判断 `CF-LOSS-FRAME`（过程编年，如 "We first tried X, which failed, then ..."）；脚本不发该码。
+6. 应用 [claim-forward.md](../writing/claim-forward.md) 中仅 LLM 的处置：必要限制的三类（保留真实证据边界、否定转为正面陈述、弱点写成取舍）与反驳和让步壳的四类（预设反驳壳、让步后否定、过强主张与模糊让步共现、空泛谦辞）。它们只以小节标题称呼：不新增观察码，不建词表，脚本不检测。
+7. 零发现是合法结果。准确清楚的原文保持原样；不为凑数量输出 finding，也不把稿件中未知的内容写成确定。
+
+## 让步壳的方向核对
+
+否定混杂因素的让步，以及与模糊让步同段出现的过强主张，都是措辞**强于**证据，方向与本模块其余内容相反。它们遵循 [over-claim-guard.md](../evidence/over-claim-guard.md) 的向下校准：绝不删除指向真实差异或混杂因素的让步，把结论绑定到已有分析或收回到数据支持的范围（否则标 `needs evidence`），绝不补造对照、分层分析或显著性结果。改后主张绝不强于原文。
 
 ## 与其他模块的边界
 
-- `deai`：`not X but Y` 对比壳与 "It is worth noting" 类空转留在 `deai`；它们不在本模块词表内。这里的 hedge 计数与 `deai_check.py` 无关，后者按契约不含任何 hedge 正则。
+- `deai`：`not X but Y` 对比壳与 "It is worth noting" 类空转留在 `deai`；它们不在本模块词表内。这里的 hedge 计数与 `deai_check.py` 无关，后者按契约不含任何 hedge 正则。预设反驳壳或否定混杂因素的让步在本模块与过度声明保护中处理，不归 `deai`；多个机制加末尾统一撤回仍归 `deai`。
+- 过度声明保护：强于证据的主张（含否定混杂因素的让步）按 [over-claim-guard.md](../evidence/over-claim-guard.md) 向下校准；本模块给出让步壳的处置，并确保任何改写都不删除指向真实差异或混杂因素的让步。
 - `abstract`：开头结构诊断（五要素）属于 `abstract`；本模块只报告位于摘要首个主张之前的免责声明。
 - `expression`：词汇层语气润色；claim-forward 输出不是词汇替换表，也不经 `--goal`/`--strength` 处理。
 - `experiment` / paper-audit 的 claim-evidence map：主张是否有证据归它们管；本模块假定证据存在，只修主张的位置与措辞。

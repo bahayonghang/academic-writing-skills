@@ -57,7 +57,7 @@ uv run python ../scripts/translate_academic.py input_zh.txt --domain deep-learni
 - Envelope: goal=grammar strength=minimal
 ```
 
-Typst 副本**不做语法遮蔽**（与 EN 副本的差异，未纳入字节锁）：术语替换有可能碰到 `@cite`、`<label>` 或数学块，应用前必须人工核对。规则草稿永远不是成品译文，`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度同样属于过度声称，判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。字段定义见 [skill-routing-notes.md](../skill-routing-notes.md)。
+Typst 副本**不做语法遮蔽**（与 EN 副本的差异，未纳入字节锁）：术语替换有可能碰到 `@cite`、`<label>` 或数学块，应用前必须人工核对。规则草稿永远不是成品译文，`Meaning-Check` 恒为 `NEEDS-LLM`；翻译时升高措辞强度同样属于过度声称（`Risk-Flags: overstatement`），判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。降低措辞强度同样越界：把原文确定的主张译成带 hedge、无主语的可能性表述或更窄的范围，属于静默削弱；保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并说明证据依据。原文断言强于证据时报过度声称 finding，不在翻译中软化。字段定义与完整静默削弱清单见 [skill-routing-notes.md](../skill-routing-notes.md)（Layer rules）。
 
 参考：[STYLE_GUIDE.md](../STYLE_GUIDE.md)、[COMMON_ERRORS.md](../COMMON_ERRORS.md)
 

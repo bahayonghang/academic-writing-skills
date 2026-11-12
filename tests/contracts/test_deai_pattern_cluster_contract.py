@@ -28,6 +28,7 @@ RISK_FLAGS = {
     "lexical-substitution",
     "whitespace-normalized",
     "overstatement",
+    "understatement",
     "ambiguity",
     "terminology-drift",
     "invented-claim",
@@ -213,6 +214,21 @@ def test_each_surface_binds_a_local_eight_case_fixture_and_append_only_eval(
         assert f"{case_prefix} {label}" in eval_contract
     assert "AI authorship" in eval_contract or "AI 作者身份" in eval_contract
     assert "invent" in eval_contract or "虚构" in eval_contract or "补造" in eval_contract
+
+
+@pytest.mark.parametrize(
+    ("path", "token"),
+    (
+        (DETAILED_REFERENCES[0][1], "less certain"),
+        (DETAILED_REFERENCES[1][1], "降低 certainty"),
+        (DETAILED_REFERENCES[2][1], "certainty did not fall"),
+    ),
+    ids=[skill for skill, _, _ in DETAILED_REFERENCES],
+)
+def test_fidelity_audit_checks_certainty_in_both_directions(path: Path, token: str) -> None:
+    text = _read(path)
+    assert token in text, f"{path}: fidelity audit does not check lowered certainty"
+    assert "understatement" in text
 
 
 def test_llm_only_clusters_do_not_expand_checker_or_tone_configuration() -> None:

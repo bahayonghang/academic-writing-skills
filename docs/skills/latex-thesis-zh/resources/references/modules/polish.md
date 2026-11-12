@@ -54,10 +54,10 @@ The four-field contract applies only to this module's `[LLM]` rewrites. `[Script
 % Changed:       <实际改动>
 % Protected:     <受保护内容>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
-Use the strength ladder in [over-claim-guard.md](../writing/over-claim-guard.md) to preserve the original claim strength without unauthorized strengthening or weakening. A script candidate does not authorize stronger wording.
+Use the strength ladder in [over-claim-guard.md](../writing/over-claim-guard.md) to preserve the original claim strength without unauthorized strengthening or weakening. Strengthening is flagged `overstatement`, weakening `understatement` (LLM layer only), with the evidence reason. A script candidate does not authorize stronger wording, nor silent weakening; a claim stronger than its evidence is reported as an over-claim finding, not softened in the polished draft. Silent-weakening list: the "Layer rules" section of [routing-rules.md](routing-rules.md).
 
 ## Boundaries with Existing Modules
 

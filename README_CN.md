@@ -5,18 +5,20 @@
 这些 skills 是我在日常写论文的过程中不断迭代优化出来的，可能仍有不足和缺陷。
 如果有需要，请自行 fork 和修改。
 
-> 近期正在写大论文，所一会根据使用情况优化 latex-thesis-zh 中的内容。
-> 注意：paper audit的审查报告仅供参考，还要自行验证和鉴别！
+> 近期正在写大论文，也在修改英文小论文，所以会根据使用情况优化 latex-thesis-zh 和 latex-paper-en。
+> 注意：paper audit 的审查报告仅供参考，还要自行验证和鉴别！
 
 > 专注于学术论文后期精修与验证：格式检查、文献检索与校验、语法分析、去 AI 化编辑、
 > 实验叙事审查。它们用于改进已有稿件，不用于从零代写论文。
 >
-> 推荐模型（★ 为最推荐）：**★ Gemini 4 Argon · Claude Opus 5.5 · Gemini 3.8 Flash**
+> 推荐模型（★ 为最推荐）：**★ Gemini 4 Carbon / Gemini 4 Argon · Claude Opus 5.5**
+>
+> 谷歌的模型文风很好，但是写理工类论文的时候可能会有一些幻觉，需要仔细审查。
 >
 > GPT 系列模型不说人话，防御性描述的问题很严重。如果使用，要特别注意这两点。
 > 用 GPT 优化过后，最好再用其他模型重新扫描检查一遍，自己也要读一遍。
 >
-> 推荐平台：**Claude Code · Codex · OMP（Oh My Pi）**
+> 推荐平台：**Claude Code · Pi · OMP（Oh My Pi）**
 
 ## 安装
 
@@ -53,6 +55,7 @@ LaTeX loader 会拒绝项目根目录外的 include。安装告警及 `E-INCLUDE
 同章结果表、正文和本章小结的终值只由 `analyze_experiment.py --cross-surface` 核对。`--section` 可缩小章节。`--cross-surface-terms FILE` 只能与该开关同时使用，且只替换指标或评价集词表。候选为 `[Script]`、Info/P3、`Meaning-Check: NEEDS-LLM`，只给局部位置，不输出修正数字。不传 `--cross-surface` 时原输出不变，`--results-analysis` 的既有检查码保持独立。
 研究生院清单用 `--template yanshan`。学院 2025 清单用 `--template yanshan-ee-2025`。二者并存。111 个状态不是 111 项已合规。局部 checker 不把复合项判为 PASS，MODULE 与 NEEDS-LLM 仍须人工复核。
 方法表达标签、把弱点写成优点、预告删除后失去先行词的代词、摘要引号，以及标题或章节安排句中的公式符号，只在既有 `logic`、`claim-forward`、`abstract`、`structure` 上做 LLM 判读。不新增脚本码、阈值或模块。
+`claim-forward` 指南新增预设反驳壳、让步后否定、断言与让步壳共现、空泛谦辞四类仅 LLM 处置；`latex-paper-en`、`latex-thesis-zh`、`typst-paper` 的改写契约改为既不得升高也不得降低措辞强度，并新增仅 LLM 层可置的 `understatement` 标记。不新增脚本码、阈值或模块。
 
 需要改写或润色源码时，使用对应格式的写作类 skill。需要审稿式诊断但不改源码时，
 使用 `paper-audit`。目标是文献库本身时，使用 `bib-search-citation`。

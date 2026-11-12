@@ -44,8 +44,11 @@ The single test is: **does the module emit text that can directly replace the so
 
 - `[Script]` may emit `Meaning-Check: NEEDS-LLM` only, and may set only `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`. A rule engine that claims `PRESERVED` manufactures a false guarantee, which is worse than no contract at all.
 - `[LLM]` may emit `PRESERVED` plus the full `Risk-Flags` closed set, but `PRESERVED` stays a proposal for the author to verify.
-- `Risk-Flags` is a closed set: `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, `overstatement`, `ambiguity`, `terminology-drift`, `invented-claim`. Do not invent new values.
-- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement` and cite `references/evidence/over-claim-guard.md` plus the four-level reporting-verb ladder in `references/writing/style-guide.md`.
+- `Risk-Flags` is a closed set: `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, `overstatement`, `understatement`, `ambiguity`, `terminology-drift`, `invented-claim`. Do not invent new values. Only the LLM layer may set `understatement`.
+- A rewrite must never raise or lower claim strength. When strength changes, set `Risk-Flags: overstatement` (raised) or `Risk-Flags: understatement` (lowered) and state the evidence reason; cite `references/evidence/over-claim-guard.md` plus the four-level reporting-verb ladder in `references/writing/style-guide.md`.
+- Without an evidence reason, keep the source strength. Polishing, de-AI, and translation rewrites must not silently weaken the author's stance. Silent weakening includes at least: adding a hedge the source does not have; turning the author's first-person judgement into a subjectless possibility; a narrower scope than the source states; replacing a concrete statement with a vague evaluation; and inserting a pre-emptive concession the source does not make.
+- When the source claim is stronger than its evidence, report an over-claim finding (criteria in `references/evidence/over-claim-guard.md`) and keep the rewrite block at the source strength. Give a weaker rewrite only when the user explicitly asks for calibration, and set `Risk-Flags: understatement` on it. Stance fidelity governs silent edits; it never licenses an unearned strong claim.
+- `deai` hedge suggestions apply only to a claim that lacks an evidence rung. A claim that falls under "Reverse calibration: when NOT to hedge" in `references/evidence/over-claim-guard.md` keeps its wording.
 - When the source meaning is genuinely unclear, flag `ambiguity` and offer the conservative reading — never silently pick the stronger one.
 
 ### Edit axes and asking boundary

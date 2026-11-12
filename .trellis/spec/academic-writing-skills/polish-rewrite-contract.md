@@ -12,7 +12,7 @@
 % Changed:       <脚本可验证的变更事实，或 none>
 % Protected:     <本行内被识别并跳过的受保护 token，或 none>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
 分层规则：
@@ -20,7 +20,7 @@
 | 层         | `Meaning-Check`            | `Risk-Flags`                                                                                           |
 | ---------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `[Script]` | **只能** `NEEDS-LLM`       | 只能置 `none` / `not-assessed` / `lexical-substitution` / `whitespace-normalized`，兜底 `not-assessed` |
-| `[LLM]`    | `PRESERVED` 或 `NEEDS-LLM` | 全闭集；`PRESERVED` 是提案不是事实                                                                     |
+| `[LLM]`    | `PRESERVED` 或 `NEEDS-LLM` | 全闭集（九值，含 `understatement`）；`PRESERVED` 是提案不是事实                                         |
 
 **Why**：规则脚本没有语义判定能力。让它输出肯定式的「语义已保全」，等于用契约的形式生产假保证，比没有契约更糟。`NEEDS-LLM` 复用 `latex-thesis-zh/scripts/check_spec.py` 的既有状态枚举（`PASS | FAIL | NEEDS-LLM | MODULE | MANUAL | SKIP`），语义是「本层无判定能力，需上层复核」——**不要发明 `requires-review` 等新词**。
 
@@ -31,6 +31,27 @@
 - **排除**：全部纯诊断模块（compile / format / bibliography / references / tables / figures / pseudocode / logic / literature / experiment / abstract / conclusion / title / spec-check / blind-review / structure / consistency / template）。给它们加字段只是噪音。
 
 **Tests Required**：`tests/contracts/test_polish_contract_alignment.py` 同时断言三方文档的字段名、`Risk-Flags` 闭集、`[Script]` 禁 `PRESERVED` 规则与排除清单。**该测试只断言文档**——脚本输出的断言归各技能自己的测试（`tests/skills/latex_paper_en/test_polish_pipeline.py`、`tests/skills/latex_thesis_zh/test_check_style_zh.py`）。排除清单的锚点是粗体标记 `**排除` / `**Excluded`，不是裸词「排除」——裸词会把逐检查器排除说明里的反引号名误纳入。
+
+---
+
+## Contract: 改写不得升高也不得降低措辞强度（立场保真）
+
+> 来源：11-11-claim-forward-preemptive-stance P1，2026-11-11。
+
+**What**：三方改写契约对强度是**对称**的。`understatement` 排在 `overstatement` 之后，闭集为九值，**仅 `[LLM]` 层可置**；`[Script]` 可置集合仍是四值，不扩权。规则四点三方同义：
+
+1. 改写不得升高也不得降低措辞强度；强度变化时置 `overstatement`（升高）或 `understatement`（降低）并说明证据依据。
+2. 没有证据理由时保持原强度。
+3. 原文断言强于证据时，输出过度声称 finding（判据见各技能 over-claim-guard），改写块保持原强度；只有用户明确要求校准时才给降强度改写，并置 `understatement`。
+4. `deai` 的 hedge 建议只对缺少证据等级的断言生效；落在 over-claim-guard「反向校准」清单内的断言保持原样。
+
+静默削弱清单（至少五种）：新增原文没有的 hedge；把作者第一人称判断改成无主语的可能性表述；把范围缩得比原文窄；把具体陈述换成空泛评价；插入原文没有的预设让步。
+
+**单点定义**：清单与例外只写在各技能路由文档的分层规则节——EN `references/modules/routing-rules.md`「Layer rules」、Typst `references/skill-routing-notes.md`「Layer rules」、ZH `references/modules/routing-rules.md`「分层规则」。SKILL.md、润色/翻译模块文档与三份 pattern-clusters 文档只写一句双向规则加指针，不复制清单。
+
+**Why**：原契约只防升高，润色、去 AI 味、翻译可以静默加 hedge、缩范围，把作者判断磨平，契约不拦。第 3 条防止"立场保真"反过来变成保留过度声称的许可：它管的是**静默**改动，不管该不该校准。
+
+**Tests Required**：`test_polish_contract_alignment.py` 断言 SKILL.md 与路由文档含双向规则行（同一行含两个标记、升/降两词与否定词）、路由文档的分层规则节逐项写出五种静默削弱与两条例外、`[Script]` 行不出现反引号 `understatement`、全部改写模块文档（含 EN/Typst `translation`、ZH `polish` 与 `unit-polish-zh.md`）提到两个标记；`test_deai_pattern_cluster_contract.py` 断言三份 pattern-clusters 的保真复核同时检查 certainty 的升与降。`SCRIPT_SETTABLE_FLAGS` 不随之改变。
 
 ---
 

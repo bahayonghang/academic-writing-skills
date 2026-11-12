@@ -119,7 +119,9 @@ explicit prose request.
 Before rewriting, inventory every claim, evidence anchor, number, citation, label, formula, entity,
 canonical term, hedge, limitation, and scope boundary. Local syntax and rhetorical shells may change;
 paragraph and section layout remain unchanged unless separately authorized. After rewriting, verify
-that no item disappeared, appeared, became more certain, or expanded in scope without being flagged.
+that no item disappeared, appeared, became more or less certain, or expanded or narrowed in scope
+without being flagged. Removing a rhetorical shell must not add a hedge or soften the author's
+judgement along the way; lowered certainty is flagged `understatement`, raised certainty `overstatement`.
 
 Use the existing `[LLM]` proposal contract:
 
@@ -127,7 +129,7 @@ Use the existing `[LLM]` proposal contract:
 Changed: <局部重组及删除的修辞壳>
 Protected: <保留的主张、证据、锚点、术语、确定性与范围>
 Meaning-Check: PRESERVED | NEEDS-LLM
-Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim
+Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim
 ```
 
 `PRESERVED` remains a proposal for author review, not a tool guarantee.

@@ -135,6 +135,8 @@ hint at / point toward                      ← very weak signal or hypothesis
 - 每条限制只在讨论证据的地方写一次。删除*重复的* caveat 是校准；删除*唯一的*副本是过度声明。
 - 把差距写成测量值（"trails the oracle by 4.1 points"），而不是致歉（"regrettably still lags far behind"）。
 
+否定混杂因素的让步（"Although enrolment changed, this does not affect the conclusion that ..."）看似对冲，实为过度声称：它不做分析就把真实差异带过去。按本指南向下校准，而不是向上校准。保留让步，把结论绑定到已有分析或收回到数据支持的范围，绝不补造缺失的分析。过强主张与模糊让步同段出现时同样适用。处置与修复顺序见 `references/writing/claim-forward.md` 中的 "Four LLM-only dispositions for rebuttal and concession shells"。
+
 ## 自检（起草一段后扫描）
 
 - [ ] 用过的`first` / `novel`？您是否真的搜索过文献，或者添加了“据我们所知”？

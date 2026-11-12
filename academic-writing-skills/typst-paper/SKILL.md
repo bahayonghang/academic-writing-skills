@@ -26,7 +26,7 @@ metadata:
       lovelace,
     ]
   version: "6.0.0"
-  last_updated: "2026-08-29"
+  last_updated: "2026-11-11"
 argument-hint: "[main.typ] [--section SECTION] [--module MODULE]"
 allowed-tools: Read, Glob, Grep, Bash(uv *)
 ---
@@ -118,12 +118,12 @@ Append these four fields to every rewrite block:
 // Changed:       <verifiable edit facts, or none>
 // Protected:     <protected tokens skipped on this line, or none>
 // Meaning-Check: <PRESERVED | NEEDS-LLM>
-// Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+// Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
 - `[Script]` layer: `Meaning-Check` is always `NEEDS-LLM`. A rule engine cannot judge meaning, so `[Script]` must never emit `Meaning-Check: PRESERVED`. It may set only the rule-determinable flags `none`, `not-assessed`, `lexical-substitution`, `whitespace-normalized`, and falls back to `not-assessed` when nothing else is determinable.
 - `[LLM]` layer: may set `Meaning-Check: PRESERVED` and any flag in the closed set, but `PRESERVED` is a proposal the author must still verify, never a verified fact.
-- A rewrite must never raise claim strength. When strength changes, set `Risk-Flags: overstatement`; the judgement criteria live in `references/OVER_CLAIM_GUARD.md`, linked from each polish module doc.
+- A rewrite must never raise or lower claim strength. When strength changes, set `Risk-Flags: overstatement` (raised) or `Risk-Flags: understatement` (lowered, LLM layer only) and state the evidence reason; the judgement criteria live in `references/OVER_CLAIM_GUARD.md`, linked from each polish module doc. A claim stronger than its evidence is reported as an over-claim finding, not silently softened in the rewrite. The silent-weakening list and its exceptions live in `references/skill-routing-notes.md` (Layer rules).
 - `deai` emits behavioural instructions, not replacement text; a rewrite the LLM derives from them falls under the `[LLM]` layer.
 
 ## Workflow

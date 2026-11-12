@@ -34,6 +34,8 @@ uv run python ../scripts/analyze_grammar.py main.typ --section introduction
 
 **不得升高措辞强度**：把留有余地的表述"修"成断言（`the results may indicate` → `the results indicate`）是披着语法修复外衣的过度声称。保持原强度，或置 `Risk-Flags: overstatement`。判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。
 
+**也不得降低措辞强度**：修语法时新增原文没有的 hedge、弱化作者自己的判断或缩窄范围都是静默削弱。保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并说明证据依据。原文断言强于证据时报过度声称 finding，不在此处软化。完整清单与例外见 [skill-routing-notes.md](../skill-routing-notes.md)（Layer rules）。
+
 **常见语法错误**:
 | 错误类型 | 示例 | 修正 |
 |----------|------|------|

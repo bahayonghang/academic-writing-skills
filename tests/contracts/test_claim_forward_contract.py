@@ -163,6 +163,114 @@ def test_en_reference_docs_carry_attribution_and_rejections() -> None:
     assert (EN / "references" / "writing" / "claim-forward-terms.yaml").is_file()
 
 
+EN_GUIDE = EN / "references" / "writing" / "claim-forward.md"
+ZH_GUIDE = ZH / "references" / "writing" / "claim-forward-zh.md"
+
+EN_THREE_DISPOSITIONS: tuple[str, ...] = (
+    "### Keep a real evidence boundary",
+    "### Turn a negation into a positive statement",
+    "### Write a weakness as a trade-off",
+)
+
+# Document-layer dispositions (LLM only): headings, no observation code.
+FOUR_DISPOSITIONS: dict[str, tuple[str, ...]] = {
+    "en": (
+        "### Pre-emptive rebuttal shell",
+        "### Concession that dismisses a confound",
+        "### Over-strong claim with a vague concession",
+        "### Empty modesty",
+    ),
+    "zh": (
+        "### 预设反驳壳",
+        "### 让步后否定",
+        "### 断言与让步壳共现",
+        "### 空泛谦辞",
+    ),
+}
+
+# (guide, keep label, reject label, required tokens) per language.
+FOUR_DISPOSITION_TOKENS: dict[str, tuple[Path, str, str, tuple[str, ...]]] = {
+    "en": (
+        EN_GUIDE,
+        "May keep:",
+        "Must not:",
+        (
+            "No new observation code and no term list",
+            "Never delete the concession",
+            "Never invent",
+            "repair order",
+            "Deduplication",
+            "`needs evidence`",
+            "no stronger than the source",
+            "LLM only",
+        ),
+    ),
+    "zh": (
+        ZH_GUIDE,
+        "可保留：",
+        "不可改：",
+        (
+            "不新增观察码，不建词表",
+            "不得删除让步句",
+            "不得补造",
+            "修复顺序",
+            "去重",
+            "【待补证】",
+            "不高于原文",
+            "CC-OUTLOOK-TRANS",
+            "只由 LLM",
+        ),
+    ),
+}
+
+
+def test_en_guide_carries_the_three_caveat_dispositions() -> None:
+    guide = EN_GUIDE.read_text(encoding="utf-8")
+    for heading in EN_THREE_DISPOSITIONS:
+        assert heading in guide, heading
+    for needle in (
+        "Unverified weaknesses must not be written as design strengths",
+        "must not be deleted",
+        "not a banned-word regex",
+    ):
+        assert needle in guide, needle
+
+
+@pytest.mark.parametrize("lang", sorted(FOUR_DISPOSITION_TOKENS))
+def test_guides_carry_four_llm_only_dispositions_without_new_codes(lang: str) -> None:
+    guide_path, keep_label, reject_label, tokens = FOUR_DISPOSITION_TOKENS[lang]
+    guide = guide_path.read_text(encoding="utf-8")
+    for heading in FOUR_DISPOSITIONS[lang]:
+        assert heading in guide, heading
+    for token in tokens:
+        assert token in guide, token
+    # Three older dispositions plus four new ones, each with keep and reject rows.
+    assert guide.count(keep_label) >= 7, keep_label
+    assert guide.count(reject_label) >= 7, reject_label
+    assert set(CF_CODE_RE.findall(guide)) <= set(CF_CODES | LLM_ONLY_CODES)
+    for heading in FOUR_DISPOSITIONS[lang]:
+        assert "defensive" not in heading.lower()
+
+
+def test_module_docs_state_zero_findings_and_route_the_concession_boundary() -> None:
+    en_module = (EN / "references" / "modules" / "claim-forward.md").read_text(encoding="utf-8")
+    zh_module = (ZH / "references" / "modules" / "claim-forward.md").read_text(encoding="utf-8")
+    assert "Zero findings is a valid result" in en_module
+    assert "零发现是合法结果" in zh_module
+    assert "pre-emptive rebuttal" in en_module and "over-claim-guard.md" in en_module
+    assert "预设反驳壳" in zh_module and "over-claim-guard.md" in zh_module
+    en_deai = (EN / "references" / "modules" / "deai.md").read_text(encoding="utf-8")
+    zh_deai = (ZH / "references" / "modules" / "deai.md").read_text(encoding="utf-8")
+    assert "pre-emptive rebuttal shells" in en_deai.lower()
+    assert "预设反驳壳" in zh_deai and "让步后否定" in zh_deai
+    en_guard = (EN / "references" / "evidence" / "over-claim-guard.md").read_text(encoding="utf-8")
+    zh_guard = (ZH / "references" / "writing" / "over-claim-guard.md").read_text(encoding="utf-8")
+    en_after = en_guard.split("## Upward calibration (claim-forward)", 1)[1]
+    zh_after = zh_guard.split("## 向上校准（claim-forward）", 1)[1]
+    assert "concession that dismisses a confound" in en_after
+    assert "让步后否定" in zh_after
+
+
 def test_no_new_module_named_defensive() -> None:
     """The 08-05 'defensive speculative explanation' concept keeps that word; this feature does not."""
     for root in (EN, ZH, AUDIT):

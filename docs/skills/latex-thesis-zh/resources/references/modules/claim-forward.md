@@ -1,6 +1,6 @@
 # Module: Claim-Forward Check
 
-**Trigger**: claim-forward, self-weakening, "reads too modest / apologetic", "says what the thesis does not do first", hedge stacking, negative closing paragraph in the conclusion, "本文不试图", "遗憾的是".
+**Trigger**: claim-forward, self-weakening, "reads too modest / apologetic", "says what the thesis does not do first", hedge stacking, negative closing paragraph in the conclusion, "本文不试图", "遗憾的是", removing defensive wording, defensive writing, pre-emptive excuses, concede-then-explain, "polishing flattened my argument". Several specific mechanisms followed by "the current data cannot verify this" is defensive speculative explanation and goes to `deai`, not this module.
 
 **Purpose**: Detect prose that postpones or weakens the thesis's own claims (a disclaimer before the claim, a limitation sentence ahead of the claim, self-weakening collocations, stacked hedges on one claim, a conclusion whose last paragraph ends on a negative judgment with no direction) and propose minimal reorderings or collocation substitutions. The module never deletes a limitation, an unfavorable comparison, or a non-mainline result; it changes order and wording only.
 
@@ -45,10 +45,17 @@ Summary line: `% CLAIM-FORWARD: <n> finding(s) (CF-...=k, ...)`.
 3. Before strengthening any wording, check the "Upward calibration" section of [over-claim-guard.md](../writing/over-claim-guard.md). The ladder is the ceiling: claim-forward moves wording up to the rung the evidence already earns, never past it.
 4. Emit the rewrite as an `[LLM]`-layer block with the four contract fields (`Changed`, `Protected`, `Meaning-Check`, `Risk-Flags`); the `[Script]` block itself stays `NEEDS-LLM`.
 5. Also apply the `[LLM]`-only judgment `CF-LOSS-FRAME` from the writing guide (process chronology such as "起初尝试 X，失败后改用 ..."); the script does not emit it.
+6. Apply the LLM-only dispositions in [claim-forward-zh.md](../writing/claim-forward-zh.md): the three dispositions (keep a real evidence boundary, turn a negation into a positive statement, present a weakness as a trade-off) and the four dispositions (pre-emptive rebuttal shell, concession that dismisses a confound, over-strong claim with a vague concession, empty modesty). They are named by section heading only: no new observation code, no term list, and the script does not detect them.
+7. Zero findings is a valid result. Accurate and clear source text stays; do not output findings to reach a count, and do not write what the manuscript leaves unknown as certain.
+
+## Direction check for concession shells
+
+A concession that dismisses a confound and an over-strong claim with a vague concession are wording **stronger** than the evidence, the opposite of the rest of this module. Calibrate them downward with [over-claim-guard.md](../writing/over-claim-guard.md): when the concession points to a real difference or confound, it must not be deleted; bind the conclusion to an existing analysis in the manuscript, or pull it back to what the data support, or mark it 【待补证】; never invent a control, a stratification, or a significance result. The revised claim is no stronger than the source.
 
 ## Boundaries with other modules
 
-- `deai`: `不是 X 而是 Y` contrast shells and the throat-clearing "值得注意的是 / 需要指出的是" stay in `deai` and are not in this module's term table. Hedge counting here is independent of `deai_check.py`, which by contract carries no hedge regex.
+- `deai`: `不是 X 而是 Y` contrast shells and the throat-clearing "值得注意的是 / 需要指出的是" stay in `deai` and are not in this module's term table. Hedge counting here is independent of `deai_check.py`, which by contract carries no hedge regex. Pre-emptive rebuttal shells and concessions that dismiss a confound are handled by this module and the over-claim guard, not by `deai`; several mechanisms followed by a blanket retraction stay in `deai`.
+- Over-claim guard: a claim stronger than its evidence (including a concession that dismisses a confound) is calibrated downward with [over-claim-guard.md](../writing/over-claim-guard.md); this module gives the shell dispositions and makes sure no rewrite deletes a concession that points to a real difference or confound.
 - `abstract`: abstract skeleton and pain-point words (T-PAIN / T-OPEN / T-VOICE) belong to `abstract`; in the abstract this module only reports a disclaimer that precedes the first claim, not pain-point statements.
 - `conclusion`: `CC-OUTLOOK-TRANS` checks "a transition sentence before the outlook", `CF-CLOSE-NEG` checks "no direction after a negative judgment"; they do not conflict — negative judgment + transition + outlook passes both. The three-part conclusion structure, contribution verbs, and empty outlook wording stay with `conclusion`.
 - `expression`: `E-ABSOLUTE` handles absolute wording (the opposite direction: over-claiming vs self-weakening) and the two term tables have no overlap; claim-forward output is not a lexical substitution list and is not run through `--goal` / `--strength`.

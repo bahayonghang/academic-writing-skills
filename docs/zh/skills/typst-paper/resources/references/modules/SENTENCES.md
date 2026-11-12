@@ -38,6 +38,8 @@ uv run python $SKILL_DIR/scripts/analyze_sentences.py main.typ --section introdu
 
 **不得升高措辞强度或凭空补连接关系**：把并列陈述拆成因果链（`we did X; Y improved` → `Y improved because of X`）等于新增论断。保持原有关系，或置 `Risk-Flags: overstatement`。判据见 [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md)。
 
+**也不得降低措辞强度**：拆句时新增原文没有的 hedge、弱化作者自己的判断或缩窄范围都是静默削弱。保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并说明证据依据。原文断言强于证据时报过度声称 finding，不在此处软化。完整清单与例外见 [skill-routing-notes.md](../skill-routing-notes.md)（Layer rules）。
+
 **拆分策略**:
 
 1. 识别主干结构

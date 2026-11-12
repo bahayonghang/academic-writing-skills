@@ -756,6 +756,66 @@
           "description": "script layer never claims PRESERVED"
         }
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "Review the eight labeled cases in the attached synthetic fixture with the claim-forward writing guide. Treat Case A as a pre-emptive rebuttal shell, Case B as a concession that dismisses a confound, Case C as an over-strong claim with a vague concession, and Case D as empty modesty. Explain why Case E, Case F, Case G, and Case H stay unchanged. Give one [LLM] block per finding with a proposed revision, and do not invent analyses, numbers, or limitations.",
+      "expected_output": "Route to claim-forward and apply the four LLM-only dispositions from references/writing/claim-forward.md; name them by section heading and add no new observation code (no CF-* code beyond the existing five and CF-LOSS-FRAME). Case A: delete the shell and keep the turnaround claim and its verb unchanged. Case B: never delete the concession about the volume and on-time share; the manuscript has no stratified analysis, so pull the conclusion back to what the data support or mark needs evidence, and route the denominator check to the experiment module. Case C: one finding, repaired in order: evidence first (11 of 18 managers, Table tab:interviews), calibrate 'conclusively prove ... decisive cause' down the certainty ladder, then replace the vague concession with a boundary that states its reason. Case D: fill the object and condition from the night-shift labelling error already in the Data section, or mark needs evidence; do not delete the limitation. Cases E-H stay unchanged: E is a real evidence boundary with its reason, F is a definitional negation, G is a concession about cited prior work, H is a closing transition naming the concrete limitation before the outlook. Every revised claim is no stronger than the source; no control, stratification, significance result, number, or limitation is invented. Zero findings on E-H is the correct result.",
+      "files": [
+        "evals/fixtures/claim_forward_shell_cases.tex"
+      ],
+      "assertions": [
+        {
+          "type": "regex",
+          "pattern": "claim-forward",
+          "description": "claim-forward module routed"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(pre-emptive rebuttal|rebuttal shell)",
+          "description": "Case A disposition named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(concession that dismisses|dismisses a confound)",
+          "description": "Case B disposition named"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(keep the concession|never delete the concession|concession stays|do not delete the concession|(keeps?|retains?|preserves?) the concession|concession[^.\n]{0,40}(is kept|is retained|is preserved|stays|must not be deleted|cannot be deleted))",
+          "description": "the concession pointing to a real confound is kept"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(needs evidence|pull(ed)? the conclusion back|what the data support)",
+          "description": "Case B conclusion is bound or pulled back, not defended"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)Case E.{0,200}(unchanged|keep|no finding|boundary)",
+          "description": "Case E kept as a real evidence boundary"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)Case H.{0,200}(unchanged|keep|no finding|transition|boundary)",
+          "description": "Case H kept as a concrete closing transition"
+        },
+        {
+          "type": "regex",
+          "pattern": "(?i)(certainty ladder|over-claim|evidence rung)",
+          "description": "Case C claim is calibrated down the certainty ladder"
+        },
+        {
+          "type": "not_contains",
+          "text": "stratified tests showed",
+          "description": "no invented stratified analysis"
+        },
+        {
+          "type": "not_contains",
+          "text": "CF-PREEMPT",
+          "description": "no new observation code is invented"
+        }
+      ]
     }
   ]
 }

@@ -135,6 +135,8 @@ Rules that keep the two directions consistent:
 - Write each limitation once, where the evidence is discussed. Removing a *duplicate* caveat is calibration; removing the *only* copy is an over-claim.
 - Report a gap as a measurement ("trails the oracle by 4.1 points"), not as an apology ("regrettably still lags far behind").
 
+A concession that dismisses a confound ("Although enrolment changed, this does not affect the conclusion that ...") looks like hedging but is an over-claim: it waves away a real difference without analysis. Calibrate it downward with this guide, not upward. Keep the concession, bind the conclusion to an existing analysis or pull it back to what the data support, and never invent the missing analysis. The same applies when an over-strong claim shares a paragraph with a vague concession. Dispositions and repair order: "Four LLM-only dispositions for rebuttal and concession shells" in `references/writing/claim-forward.md`.
+
 ## Self-check (scan after drafting a paragraph)
 
 - [ ] Used `first` / `novel`? Did you actually search the literature, or add "to our knowledge"?

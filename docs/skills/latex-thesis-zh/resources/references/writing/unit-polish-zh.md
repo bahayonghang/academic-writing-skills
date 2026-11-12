@@ -27,7 +27,7 @@ Use `--terms` to supply an existing term file when verifying. Explicitly listed 
 
 - Proper names, theory names, and variable names; never substitute terminology merely to sound more sophisticated.
 - Numbers, units, experimental parameters, citation numbers, and figure/table numbers.
-- Causal and correlational relationships and claim strength, including significant, nonsignificant, and possible findings; neither strengthen nor weaken them without authorization.
+- Causal and correlational relationships and claim strength, including significant, nonsignificant, and possible findings; neither strengthen nor weaken them without authorization. Strengthening is flagged `overstatement`, weakening `understatement` (LLM layer only), with the evidence reason; silent-weakening list: the "Layer rules" section of [routing-rules.md](../modules/routing-rules.md).
 - Research objects, time scope, method steps, and sample parameters; add no data, references, concepts, mechanisms, or conclusions and do not broaden applicability.
 - Preserve `\cite{}`, `\ref{}`, `\label{}`, math environments, and template macros verbatim. Fabricate no bibliography or experimental results and do not change protected terminology. The script's math-whitespace normalization is not permission to edit mathematics.
 
@@ -52,7 +52,7 @@ Then provide the `[LLM]` four-field block, using the fields and closed risk set 
 % Changed:       <实际改动，或 none>
 % Protected:     <受保护内容，或 none>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
 Finally include the exact verification command, exit code, counts for each code, `BLOCK` or `PASS-SCRIPT`, and unresolved semantic issues. `[Script]` always uses `Meaning-Check: NEEDS-LLM` and emits no `Risk-Flags`; `[LLM]`'s `PRESERVED` remains a proposal for author review.

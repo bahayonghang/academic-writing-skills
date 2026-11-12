@@ -54,10 +54,10 @@ A 档报告确定的差异项；B 档只给复核候选，不给替换文本。�
 % Changed:       <实际改动>
 % Protected:     <受保护内容>
 % Meaning-Check: <PRESERVED | NEEDS-LLM>
-% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim>
+% Risk-Flags:    <none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim>
 ```
 
-按 [over-claim-guard.md](../writing/over-claim-guard.md) 对照强度阶梯，保持原文结论强度，不得擅自抬升或削弱。脚本候选不授权加强表述。
+按 [over-claim-guard.md](../writing/over-claim-guard.md) 对照强度阶梯，保持原文结论强度，不得擅自抬升或削弱。抬升置 `overstatement`，削弱置 `understatement`（仅 LLM 层），并说明证据依据。脚本候选不授权加强表述，也不授权静默削弱；原文断言强于证据时报过度声称 finding，不在润色稿中软化。静默削弱清单见 [routing-rules.md](routing-rules.md)「分层规则」。
 
 ## 与既有模块的边界
 

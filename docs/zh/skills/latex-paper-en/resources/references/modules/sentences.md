@@ -30,4 +30,4 @@ uv run python -B scripts/analyze_sentences.py main.tex --strength moderate
 
 本模块产出具体的 `Suggested:` 句子，适用改写契约。字段名保持 `Suggested:`（它是提案而非已应用的编辑），四个契约字段追加其后。`[Script]` 层恒为 `Meaning-Check: NEEDS-LLM`，而 `not-assessed` 是它常态的 `Risk-Flags` 取值——拆句正是语义最容易悄悄漂移的地方。只有 `[LLM]` 层可提出 `PRESERVED`。字段定义与 `Risk-Flags` 闭集见 `references/modules/routing-rules.md`。
 
-拆句不得升高措辞强度，也不得凭空补上原文不支持的连接关系。把并列陈述变成因果链（`we did X; Y improved` -> `Y improved because of X`）等于新增论断：保持原有关系，或置 `Risk-Flags: overstatement`。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)。
+拆句不得升高或降低措辞强度，也不得凭空补上原文不支持的连接关系。把并列陈述变成因果链（`we did X; Y improved` -> `Y improved because of X`）等于新增论断：保持原有关系，或置 `Risk-Flags: overstatement`。判据见 [over-claim-guard.md](../evidence/over-claim-guard.md)。该规则双向适用：拆句时新增 hedge、弱化作者自己的判断或缩窄范围都属于静默削弱——保持原强度，或置 `Risk-Flags: understatement`（仅 LLM 层）并给出证据理由。强于证据的主张作为过度声称 finding 报告，不在这里软化。完整清单与例外见 [routing-rules.md](routing-rules.md)（分层规则）。

@@ -140,6 +140,8 @@ Rules that keep the two directions consistent:
 - Write each limitation once, where the evidence is discussed. Removing a *duplicate* caveat is calibration; removing the *only* copy is an over-claim.
 - Report a gap as a measurement ("落后理想上界 4.1 个百分点"), not as an apology ("遗憾的是仍明显落后").
 
+A concession that dismisses a confound ("虽然登记人数有变化，但这并不影响 … 的判断") looks cautious but is an over-claim: it waves away a real difference without analysis. Calibrate it downward with this guide; it is not upward calibration. Keep the concession; bind the conclusion to an existing analysis in the manuscript, or pull it back to what the data support, and never invent the missing analysis. The same applies when an over-strong claim shares a paragraph with a vague concession. Dispositions and repair order: "Four dispositions for pre-emptive rebuttal and concession shells (LLM only)" in `references/writing/claim-forward-zh.md`.
+
 ## Self-Check After Each Paragraph
 
 - [ ] Used “首次/新颖”? Without a search, remove the priority claim or mark it for verification, rather than just adding “据我们所知”

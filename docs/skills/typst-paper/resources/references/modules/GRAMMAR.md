@@ -38,6 +38,8 @@ Rules match case-insensitively so acronyms elsewhere in the line (`BERT`) keep t
 
 **Never raise claim strength**: "repairing" a hedge into an assertion (`the results may indicate` → `the results indicate`) is an over-claim wearing a grammar-fix disguise. Keep the original strength, or set `Risk-Flags: overstatement`. Criteria: [OVER_CLAIM_GUARD.md](../OVER_CLAIM_GUARD.md).
 
+**Do not lower claim strength either**: adding a hedge the source does not have, softening the author's own judgement, or narrowing the scope while fixing grammar is silent weakening. Keep the original strength, or set `Risk-Flags: understatement` (LLM layer only) and state the evidence reason. A claim stronger than its evidence is reported as an over-claim finding, not softened here. Full list and exceptions: [skill-routing-notes.md](../skill-routing-notes.md) (Layer rules).
+
 **Common Grammar Errors**:
 
 | error type                 | Example                          | Correction                      |

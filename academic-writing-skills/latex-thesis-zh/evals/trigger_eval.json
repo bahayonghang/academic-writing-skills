@@ -355,6 +355,26 @@
       "query": "给我的学位论文打分并出多维度审稿总评。",
       "should_trigger": false,
       "category": "negative-overlap-paper-audit"
+    },
+    {
+      "query": "导师说我博士论文讨论部分是防御性写作，满篇“这并不意味着”“不能简单地认为”。帮我去除防御性表述和预设辩解，但真实的局限要留着。",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "学位论文第4章用 AI 润色后观点被磨平了，到处加了“在一定程度上”“具有一定参考价值”。帮我按证据把原来的判断找回来。",
+      "should_trigger": true,
+      "category": "claim-forward"
+    },
+    {
+      "query": "我的学位论文结果讨论列了好几个可能的机制，最后说现有数据无法验证，这段该怎么改？",
+      "should_trigger": true,
+      "category": "edge-deai-speculation"
+    },
+    {
+      "query": "帮我把这篇公众号推文里的防御性表述删掉，让语气更有态度。",
+      "should_trigger": false,
+      "category": "negative-unrelated"
     }
   ]
 }

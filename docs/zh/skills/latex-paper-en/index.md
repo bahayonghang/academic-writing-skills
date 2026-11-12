@@ -141,6 +141,7 @@ frontmatter 中的 `allowed-tools` 是 Claude 兼容元数据，不是其他平�
 - [文献综述重写](./resources/examples/literature-review-rewrite.md)
 - [示例：多模块序列](./resources/examples/multi-module-sequence.md)
 - [示例：翻译与去AI](./resources/examples/translation-and-deai.md)
+- [示例：反驳与让步壳](./resources/examples/claim-forward-shells.md)
 
 ## 常见请求
 

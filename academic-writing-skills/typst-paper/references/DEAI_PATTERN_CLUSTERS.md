@@ -114,7 +114,9 @@ code, `#set`, `#show`, `#let`, macros, and source layout.
 
 Local syntax and rhetorical shells may change; paragraph and section layout require separate
 authorization. After rewriting, verify that no protected item disappeared or appeared, certainty
-did not rise, and scope did not expand.
+did not rise, certainty did not fall, and scope neither expanded nor narrowed. Removing a rhetorical
+shell must not add a hedge or soften the author's judgement; a lowered certainty is flagged
+`understatement`, a raised one `overstatement`.
 
 Use the existing `[LLM]` proposal contract:
 
@@ -122,7 +124,7 @@ Use the existing `[LLM]` proposal contract:
 Changed: <local restructuring and rhetorical shells removed>
 Protected: <claims, evidence, Typst anchors, terminology, certainty, and scope retained>
 Meaning-Check: PRESERVED | NEEDS-LLM
-Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | ambiguity | terminology-drift | invented-claim
+Risk-Flags: none | not-assessed | lexical-substitution | whitespace-normalized | overstatement | understatement | ambiguity | terminology-drift | invented-claim
 ```
 
 `PRESERVED` remains a proposal for author review, not a tool guarantee.

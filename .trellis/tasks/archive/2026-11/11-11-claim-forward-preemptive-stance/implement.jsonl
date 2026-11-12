@@ -1,0 +1,10 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "仓库规范索引与按技能副本的锁说明"}
+{"file": ".trellis/spec/academic-writing-skills/claim-forward-contract.md", "reason": "CF 五码、文档层处置不新增码、禁改清单；P2 需更新 §3.1"}
+{"file": ".trellis/spec/academic-writing-skills/polish-rewrite-contract.md", "reason": "四字段与 Risk-Flags 闭集、分层规则；P1 需更新"}
+{"file": ".trellis/spec/academic-writing-skills/defensive-ai-rhetoric-contract.md", "reason": "防御性推测解释归 deai 的边界与 deai 禁加 hedge 正则"}
+{"file": ".trellis/spec/academic-writing-skills/deai-pattern-cluster-contract.md", "reason": "模式簇文档的 Risk-Flags 行与保真复核契约"}
+{"file": ".trellis/spec/academic-writing-skills/unit-polish-contract.md", "reason": "ZH 单元润色已有的双向强度规则与冻结脚本"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语镜像、manifest 与译文契约；P3 需遵守"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "按技能副本测试加载、指南保真与 evals 约定"}
+{"file": ".trellis/tasks/11-11-claim-forward-preemptive-stance/research/source-article.md", "reason": "来源文章的事实记录与证据边界"}
+{"file": ".trellis/tasks/11-11-claim-forward-preemptive-stance/research/gap-matrix.md", "reason": "G1-G16 逐条判定、既有契约限制与外部先例检索"}
