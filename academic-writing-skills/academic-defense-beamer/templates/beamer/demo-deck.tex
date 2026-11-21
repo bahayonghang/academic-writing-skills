@@ -46,9 +46,9 @@
 \begin{frame}{1.1 研究背景与意义}
 \DefenseSubsection{1.1.1 示例任务背景}
 \begin{itemize}
-  \item 示例任务的数据规模持续增长，人工分析的成本随之上升。
-  \item 现有流程依赖人工经验，分析结果的\DefenseHighlight{一致性}不足。
-  \item 示例任务需要一种可复现、可更新的自动建模方法。
+  \item \DefenseLead{规模增长}示例任务的数据规模持续增长，人工分析的成本随之上升。
+  \item \DefenseLead{经验依赖}现有流程依赖\DefenseTerm{人工经验}，分析结果的\DefenseHighlight{一致性}不足。
+  \item \DefenseLead{核心需求}示例任务需要一种可复现、可更新的\DefenseTerm{自动建模方法}。
 \end{itemize}
 \DefenseTakeaway{示例任务需要可复现、可更新的自动建模方法}
 \end{frame}
@@ -141,10 +141,17 @@
 % layout: table
 \begin{frame}{3.4 案例研究与结果分析}
 \DefenseSubsection{3.4.2 示例指标对比}
+\begingroup\noindent
+\begin{minipage}[t]{0.48\linewidth}
+  \DefenseKPI{RMSE 降幅}{25.0\%}{相对方法 A（0.52 → 0.39）}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \DefenseKPI{MAE 指标}{0.30}{合成数据最优值}
+\end{minipage}\par\endgroup\vspace{0.12cm}
 \DefenseCaption{表3-1\quad 示例方法指标对比}
 \begin{DefenseSource}
 \centering
-\adjustbox{max width=\textwidth,max totalheight=0.62\textheight}{%
+\adjustbox{max width=\textwidth,max totalheight=0.45\textheight}{%
 \begin{tabular}{lccc}
   \toprule
   \multirow{2}{*}{方法} & \multicolumn{2}{c}{误差指标} & \multirow{2}{*}{\makecell{耗时\\(s)}}\\
@@ -174,9 +181,16 @@
 % layout: cards
 \begin{frame}{总结与展望}
 \DefenseSubsection{01\quad 主要创新点}
-\DefenseCard{创新点 1}{针对示例数据的\DefenseHighlight{分布差异}问题，提出示例方法一，实现跨场景建模。（第 3 章）}
-\DefenseCard{创新点 2}{针对标注样本\DefenseHighlight{稀缺}问题，构建示例方法二，降低标注需求。（第 4 章）}
-\DefenseCard{创新点 3}{针对模型\DefenseHighlight{在线更新}问题，设计示例更新机制，保持部署精度。（第 5 章）}
+\begingroup\noindent
+\begin{minipage}[t]{0.315\linewidth}
+  \DefenseGridCard{创新点 1}{针对示例数据的\DefenseHighlight{分布差异}问题，提出示例方法一，实现跨场景建模。（第 3 章）}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\linewidth}
+  \DefenseGridCard{创新点 2}{针对标注样本\DefenseHighlight{稀缺}问题，构建示例方法二，降低标注需求。（第 4 章）}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\linewidth}
+  \DefenseGridCard{创新点 3}{针对模型\DefenseHighlight{在线更新}问题，设计示例更新机制，保持部署精度。（第 5 章）}
+\end{minipage}\par\endgroup
 \end{frame}
 
 % layout: outlook

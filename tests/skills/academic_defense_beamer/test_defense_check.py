@@ -319,6 +319,17 @@ CASES: list[tuple[str, str, str, str, Mutation]] = [
         "c1-background-2",
         replace("合成结论 c1-background-2}", "测" * 45 + "}"),
     ),
+    (
+        "density-emphasis",
+        "D-DENSITY",
+        "Minor",
+        "c1-background-2",
+        replace(
+            BULLET,
+            "\\DefenseHighlight{一}、\\DefenseHighlight{二}、"
+            "\\DefenseHighlight{三}、\\DefenseHighlight{四}",
+        ),
+    ),
     ("budget", "D-BUDGET", "Major", "-", cli_args("--minutes", "60")),
     ("budget-notes", "D-BUDGET", "Minor", "-", replace_notes(r"^- 时长：50 秒$", "- 时长：500 秒")),
     ("notes-missing", "D-NOTES", "Major", "-", delete_notes),
@@ -723,3 +734,46 @@ def test_page_label_decodes_pdf_hex_strings(defense_scripts) -> None:
     assert page_label(Page("<FEFF00310032>")) == "12"
     assert page_label(Page("notes:3")) == "notes:3"
     assert page_label(Page("")) == ""
+
+
+def test_grid_cards_and_metrics_pass_chain_and_check_num_src(
+    filled_plan: dict, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    challenges = next(f for f in filled_plan["frames"] if f["id"] == "c1-challenges")
+    challenges["columns"] = 3
+    bg = next(f for f in filled_plan["frames"] if f["id"] == "c1-background-1")
+    bg["bullets"] = ["精度对比｜采用 *时空卷积*、*门控融合*、*自适应权重* 与 *局部残差*"]
+    bg["metrics"] = [{"label": "虚构指标", "value": "37.25%", "basis": "相对基线"}]
+    plan_path = tmp_path / "grid_plan.yaml"
+    plan_path.write_text(
+        yaml.safe_dump(filled_plan, allow_unicode=True, sort_keys=False), encoding="utf-8"
+    )
+    out = tmp_path / "grid_deck"
+    assert (
+        defense_scripts.build_deck.main(
+            [
+                "--plan",
+                str(plan_path),
+                "--inventory",
+                str(tmp_path / "inventory.json"),
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    code = defense_scripts.check_deck.main(
+        [
+            "--deck",
+            str(out / "defense.tex"),
+            "--inventory",
+            str(tmp_path / "inventory.json"),
+            "--json",
+        ]
+    )
+    result = json.loads(capsys.readouterr().out)
+    assert code == 1
+    assert not [f for f in result["findings"] if f["code"] in ("D-CHAIN", "D-DENSITY")]
+    num_findings = [f for f in result["findings"] if f["code"] == "D-NUM-SRC"]
+    assert len(num_findings) == 1 and "37.25" in num_findings[0]["message"]

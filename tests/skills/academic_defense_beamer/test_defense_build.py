@@ -76,11 +76,19 @@ def test_frame_markers_follow_framework(built_deck: Path) -> None:
 
 def test_tex_escape_table(defense_scripts) -> None:
     escape = defense_scripts.build_deck.tex_escape
+    item_text = defense_scripts.build_deck.item_text
     assert escape("a%b&c_d#e$f{g}h~i^j\\k") == (
         "a\\%b\\&c\\_d\\#e\\$f\\{g\\}h\\textasciitilde{}i\\textasciicircum{}j\\textbackslash{}k"
     )
     assert escape("提升 **50%** 精度") == "提升 \\DefenseHighlight{50\\%} 精度"
+    assert escape("构建 *自动建模* 与 **低误差**") == (
+        "构建 \\DefenseTerm{自动建模} 与 \\DefenseHighlight{低误差}"
+    )
     assert escape("**a** 与 **b") == "\\DefenseHighlight{a} 与 **b"
+    assert escape("*a* 与 **b**", "textbf") == "\\textbf{a} 与 \\textbf{b}"
+    assert item_text("瓶颈问题｜主流 *经验* 的 **一致性** 不足") == (
+        "\\DefenseLead{瓶颈问题}主流 \\DefenseTerm{经验} 的 \\DefenseHighlight{一致性} 不足"
+    )
     assert escape(None) == ""
 
 
@@ -266,6 +274,15 @@ def test_force_keeps_unchanged_files(
         ("c3-summary", "paper", "P9"),
         ("c3-method-3", "figures", ["fig:c3-compare"]),
         ("c3-experiment-1", "table", ["tab:c3-datasets"]),
+        ("c1-challenges", "columns", 4),
+        ("c1-challenges", "columns", True),
+        ("c3-experiment-1", "metrics", [{"label": "RMSE", "value": "0.39"}]),
+        (
+            "c3-experiment-1",
+            "metrics",
+            [{"label": "A", "value": "1", "basis": "x"}] * 4,
+        ),
+        ("c3-experiment-1", "highlight_rows", [-1]),
         ("cover", "notes", "说明"),
     ],
 )
@@ -311,6 +328,27 @@ def test_plan_text_is_escaped_in_deck(filled_plan: dict, tmp_path: Path, defense
     assert build(defense_scripts, tmp_path, filled_plan, "escaped") == 0
     tex = read(tmp_path / "escaped" / "defense.tex")
     assert "\\item 误差下降 \\DefenseHighlight{50\\%}，成本 \\$1\\_000 \\& 更多" in tex
+
+
+def test_structured_grid_cards_lead_items_and_metrics_render_in_beamer(
+    filled_plan: dict, tmp_path: Path, defense_scripts
+) -> None:
+    cards_frame = next(f for f in filled_plan["frames"] if f["id"] == "c1-challenges")
+    cards_frame["bullets"] = ["问题 A", "问题 B", "问题 C", "问题 D"]
+    bullet_frame = next(f for f in filled_plan["frames"] if f["id"] == "c1-background-1")
+    bullet_frame["bullets"] = ["瓶颈问题｜现有 *人工流程* 的 **一致性** 不足"]
+    bullet_frame["metrics"] = [
+        {"label": "RMSE 降幅", "value": "25.0%", "basis": "相对基线 A"},
+        {"label": "MAE 指标", "value": "0.30", "basis": "合成测试集"},
+    ]
+    assert build(defense_scripts, tmp_path, filled_plan, "structured") == 0
+    tex = read(tmp_path / "structured" / "defense.tex")
+    assert tex.count("\\DefenseGridCard{问题") == 4
+    assert (
+        "\\DefenseLead{瓶颈问题}现有 \\DefenseTerm{人工流程} 的 \\DefenseHighlight{一致性} 不足"
+        in tex
+    )
+    assert "\\DefenseKPI{RMSE 降幅}{25.0\\%}{相对基线 A}" in tex
 
 
 @pytest.mark.skipif(

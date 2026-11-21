@@ -13,13 +13,13 @@ This file lists the twelve layouts of the defense deck. For each layout, this fi
 | `figure-bullets`   | `intro`, `background`, `problem`, `method`, `foundation`              | `figures` (1 figure), `bullets`, `position` (`left` or `top`)            | 4 bullets or fewer                         | `\DefenseSubsection`, `\DefenseFigure`, `\DefenseTakeaway` | `grid` (`left`), `figure-box`, `points` |
 | `figure-grid`      | `experiment`                                                          | `figures` (1 figure with 2–6 subfigures), `takeaway`                     | 6 subfigures or fewer                      | `\DefenseFigure`, `\DefenseCaption`, `\DefenseTakeaway`    | `grid`, `figure-box`, `fig-caption` |
 | `equations-figure` | `method`, `foundation`                                                | `equations` (4 or fewer), `figures` (1 or fewer), `bullets` (3 or fewer) | 4 equations or fewer                       | `DefenseSource`, `\DefenseFigure`, `\DefenseTakeaway`      | `eq-block`, `mitex`, `figure-box` |
-| `table`            | `experiment`, `application`                                           | `table`, `takeaway`                                                      | Word-for-word copy of the table body       | `\DefenseCaption`, `DefenseSource`, `\DefenseTakeaway`     | `fig-caption`, `result-table` |
-| `cards`            | `challenges`, `innovation`                                            | `bullets` (one card for each bullet)                                     | 5 cards or fewer                           | `\DefenseSubsection`, `\DefenseCard`                       | `side-card` |
+| `table`            | `experiment`, `application`                                           | `table`, `highlight_rows` (optional), `takeaway`                         | Word-for-word copy of the table body       | `\DefenseCaption`, `DefenseSource`, `\DefenseTakeaway`               | `fig-caption`, `result-table` |
+| `cards`            | `challenges`, `innovation`                                            | `bullets` (one card per bullet), `columns` (optional)                    | 5 cards or fewer                           | `\DefenseSubsection`, `\DefenseCard`, `\DefenseGridCard`             | `side-card`, `title-box` |
 | `paper-summary`    | `summary`                                                             | `bullets`, `paper`                                                       | 4 bullets or fewer                         | `\DefensePaperBox`, `\DefenseTakeaway`                     | `points`, `paper-box` |
 | `outlook`          | `outlook`                                                             | `bullets`                                                                | 3 items or fewer                           | `\DefenseSubsection`, `\DefenseBoxTitle`                   | `label-row` |
 | `thanks`           | `thanks`                                                              | `meta`                                                                   | None                                       | `\DefenseThanksFrame`                                      | `ending-slide` |
 
-Except for `cover`, `toc`, and `thanks`, the frame title of each layout comes from the `section` field. When the `subsection` field is empty, the frame has no subsection bar. All content layouts accept the `takeaway` field. The deck shows the field as the takeaway box at the page bottom.
+Except for `cover`, `toc`, and `thanks`, the frame title of each layout comes from the `section` field. When the `subsection` field is empty, the frame has no subsection bar. All content layouts accept the `takeaway` field, rendered as the takeaway banner at the page bottom. In addition, `bullets`, `figure`, `figure-bullets`, `figure-grid`, `equations-figure`, `table`, and `paper-summary` accept the optional `metrics` field (up to 3 key metric blocks via `\DefenseKPI` or Touying `kpi`).
 
 The build script writes a frame marker on the line before each `\begin{frame}`. In the skeletons below, the names in angle brackets are the values of plan fields.
 
@@ -200,6 +200,7 @@ Write `\par` at the end of each row, and add `\vspace{2pt}` between two rows. Th
 - Copy the table body word for word, from `\begin{tabular}` to `\end{tabular}`. `\adjustbox` only shrinks the table and never enlarges the table.
 - Put `\par` inside the `DefenseSource` environment, so that `\centering` takes effect.
 - When the shrunk table body has text smaller than `\scriptsize`, use a thesis figure that shows the same result, or cite the table in the speaker notes.
+- The optional field `highlight_rows` (0-based data-row index list) passes to `result-table(mark:)` in the Touying backend to highlight those data rows; the Beamer backend keeps the verbatim table source inside `DefenseSource` unchanged.
 
 ## cards
 
@@ -214,6 +215,7 @@ Write `\par` at the end of each row, and add `\vspace{2pt}` between two rows. Th
 
 - `challenges` page: the card labels are “问题一” (problem 1), “问题二” (problem 2), and so on. The card count equals the research chapter count.
 - `innovation` page: the subsection bar is “01　主要创新点” (01 main innovations), and the card labels are “创新点 1” (innovation 1), “创新点 2” (innovation 2), and so on. The card count equals the research chapter count.
+- The optional field `columns` takes `1`, `2`, or `3`: when omitted, 4 cards default to `2` (a `2×2` grid), and other card counts default to `1`. When `columns` is greater than `1`, Beamer uses `minipage` to place `\DefenseGridCard` blocks side by side, and Touying uses `#grid` to place `#title-box` blocks side by side.
 
 ## paper-summary
 
@@ -267,12 +269,16 @@ The thanks page uses the cover layout. The band text is “敬请各位老师批
 | `\DefenseDefineLabel{label}{编号}`                                 | Registers the thesis number of a thesis label (编号: number)                                                                                                              |
 | `\DefenseCoverFrame`, `\DefenseTocFrame{k}`, `\DefenseThanksFrame` | Output the in-frame layout of the cover, the TOC pages, and the thanks page                                                                                               |
 | `\DefenseSubsection{…}`                                            | Subsection bar                                                                                                                                                            |
-| `\DefenseTakeaway{…}`                                              | Takeaway box at the page bottom                                                                                                                                           |
-| `\DefenseHighlight{…}`                                             | Red bold emphasis                                                                                                                                                         |
+| `\DefenseTakeaway{…}`                                              | Bottom takeaway banner                                                                                                                                                    |
+| `\DefenseHighlight{…}`                                             | Brick-red bold key emphasis (`**…**`, at most 3 per page)                                                                                                                 |
+| `\DefenseTerm{…}`                                                  | Deep-navy bold structural term emphasis (`*…*`)                                                                                                                           |
+| `\DefenseLead{…}`                                                  | Tinted dimension badge (used for `短签｜正文` micro-typography items)                                                                                                     |
 | `\DefenseBoxTitle{…}`                                              | Box title with a filled background                                                                                                                                        |
-| `\DefenseFigure[选项]{文件}{题注}`                                 | Thesis figure and caption (选项: options; 文件: file; 题注: caption); the options come after the default options of `\includegraphics`                                    |
+| `\DefenseFigure[选项]{文件}{题注}`                                 | Framed thesis figure with a muted caption; options come after the default options of `\includegraphics`                                                                   |
 | `\DefenseCaption{…}`                                               | Caption line for the overall caption of a subfigure group and for a table caption                                                                                         |
 | `\DefensePaperBox{…}`                                              | “论文” (paper) box                                                                                                                                                        |
-| `\DefenseCard{标签}{正文}`                                         | Card with a label and an arrow (标签: label; 正文: body text)                                                                                                             |
+| `\DefenseCard{标签}{正文}`                                         | Single-column side-labeled tinted card                                                                                                                                    |
+| `\DefenseGridCard{标签}{正文}`                                     | Multi-column grid/pillar header card (used when `columns` is `2` or `3`)                                                                                                  |
+| `\DefenseKPI{名称}{数值}{基准}`                                    | Key metric callout with a top deep-navy rule, showing the value and the thesis comparison basis                                                                           |
 | `\DefenseNote{要点}{说什么}{过渡}{秒数}`                           | Speaker note in the frame, written before `\end{frame}`; shown only in the presenter build `defense-notes.pdf` (要点: key point; 说什么: what to say; 过渡: transition; 秒数: seconds) |
 | `DefenseSource`                                                    | Wraps the equations and table bodies that are word-for-word copies; in the environment, `\ref` and `\eqref` print the thesis numbers, and citation commands print nothing |

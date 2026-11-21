@@ -111,13 +111,14 @@ The line before each frame holds the frame marker `// defense-frame: id=<id> rol
 | `figure-bullets`   | `position: left`: `#grid(columns: (1.25fr, 1fr))`, the left cell a `figure-box` (3.2 cm high) and the right cell `points`; `position: top`: the `figure-box` (2.3 cm high) above and `points` below |
 | `figure-grid`      | The frame head plus `#grid(columns: n)` (n subfigures per row), one subfigure `figure-box` per cell (2.9 cm or 1.35 cm high), followed by `#fig-caption(…)` as the overall caption |
 | `equations-figure` | One `#eq-block(number: "(3-1)")[#mitex(…)]` per equation, followed by `points`; with a figure, wrapped in `#grid(columns: (1.15fr, 1fr))` with the figure in the right cell (2.9 cm high) |
-| `table`            | The frame head plus `#fig-caption(…)` (table caption above the table), then `#result-table(header: (…), rows: (…))`                                   |
-| `cards`            | One `#side-card(label: "问题一")[…]` per bullet; on the `innovation` page the labels are “创新点 1” (innovation 1) and so on                          |
+| `table`            | The frame head plus `#fig-caption(…)` (table caption above the table), then `#result-table(header: (…), rows: (…))`; when the plan sets `highlight_rows`, passes `mark: (…)` |
+| `cards`            | When `columns` is `1`, one `#side-card(label: "问题一")[…]` per bullet; when `columns` is `2` or `3`, `#grid(columns: k)` placing `#title-box(title: "问题一")[…]` side by side |
 | `paper-summary`    | `points` plus `#paper-box[…]`                                                                                                                        |
 | `outlook`          | One `#label-row(label: "其一")[…]` per item                                                                                                          |
 | `thanks`           | `#ending-slide(recap: (…), note: […])`; when the `innovation` frame has 1–3 bullets, `recap` lists “创新点 k” (innovation k) with that bullet, otherwise it is not passed |
 
-- When the plan gives `width`, the image is written with `width: N%` (N is `width` times 100), otherwise with the height in the table above.
+- When the plan gives `width`, the image is written with `width: N%` (N is `width` times 100), otherwise with the height in the table above; when the `figure` layout also sets `metrics`, the default figure height drops to `3.0cm`.
+- When a content frame sets optional `metrics` (1–3 items), `#grid` renders `#kpi(label: "…", value: "…", basis: "…")` side by side after the frame head (with brick-red value text when `key: true`).
 - The frame title corresponds to the Touying page heading `== 页` (page), the subsection bar to `sub`, and the takeaway to `takeaway`. The Touying theme shows the takeaway at the main title position of the page header, while the Beamer theme shows it at the page bottom; the meaning is the same, and the length rules are in [Content Rules](content-rules.md).
 - Each chapter has one level-1 heading `=`, so that the outline, the footer navigation, and the chapter opener numbers follow the thesis chapter numbers. From chapter 2 on, the chapter contents frame writes `= 章题`; chapter 1, chapters whose first frame is not a chapter contents frame, and chapters with no frame in the plan (added before the thanks frame) are written as `= #"章题" <touying:skip>`, which only registers the chapter and makes no chapter opener.
 - Backup pages follow the thanks frame and also carry frame markers and notes.
@@ -138,7 +139,7 @@ The footer navigation bar gets the short name of each chapter explicitly through
 - On a content page the note goes after the `== 标题` (title) line, as `#note[…]`. `#note[…]` can appear several times, and the parts on one page join as paragraphs; the build script writes one part per frame.
 - Structure pages (cover, overview, thanks) use the `note:` parameter of their function, for example `#title-slide(note: […])`.
 - The note of a chapter opener goes after `= 章名` (chapter name) and before `#chapter-opener`, and belongs to that chapter opener.
-- The note text is also a string literal; `**关键词**` (keyword) is only bold in the note (`#strong`), with no color. The placeholder “〔待填写〕” (to be filled) appears on the notes page as is.
+- The note text is also a string literal; both `**关键词**` and `*结构术语*` are only bold in the note (`#strong`), with no color. The placeholder “〔待填写〕” (to be filled) appears on the notes page as is.
 
 ### Presenter Build
 
@@ -165,7 +166,8 @@ The older form `typst query --root DIR DIR/defense.typ "<ysu-note>" --field valu
 
 - All text fields of the plan are written as Typst string literals `"…"`; only `\` becomes `\\` and `"` becomes `\"`. Runs of whitespace merge into one space.
 - The text never enters Typst markup mode, so `#`, `$`, `*`, `_`, `@`, `<`, `` ` ``, `//`, `=`, and `]` all show as written. `$…$` in a text field does not render as math.
-- `**关键词**` (keyword) splits into `[#"前"#hl("关键词")#"后"]` (before, keyword, after); an unpaired `**` is output as ordinary characters.
+- `**关键词**` splits into `[#"前"#key("关键词")#"后"]` (brick-red bold) and `*结构术语*` splits into `[#"前"#hl("结构术语")#"后"]` (deep-navy bold); an unpaired `**` or `*` is output as ordinary characters.
+- When an item of `bullets` has the form `短签｜正文` (or `短签 :: 正文`, with a 2–8 character tag), it renders as `[#tag("短签")#h(0.45em)#"正文"]` (relying on the theme default `kind: "navy"` so no extra configuration string literal is emitted).
 - Captions and table cells come from the LaTeX source of the thesis and convert by these rules: `\ref` and `\eqref` output the thesis number (`??` for an unknown label); citation commands output nothing; `\textbf` and `\emph`, `\textit` keep their emphasis; `$…$` goes to mitex for inline rendering; `~` becomes a no-break space (U+00A0); `--` and `---` become an en dash and an em dash; commands that cannot be converted show as written, with a warning.
 
 ## Fidelity Limits

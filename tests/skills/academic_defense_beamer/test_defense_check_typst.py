@@ -261,6 +261,13 @@ CASES: list[tuple[str, str, str, str, Mutation]] = [
         "c1-background-2",
         replace('#takeaway("合成结论 c1-background-2")', f'#takeaway("{"测" * 45}")'),
     ),
+    (
+        "density-emphasis",
+        "D-DENSITY",
+        "Minor",
+        "c1-background-2",
+        replace(BULLET, '[#key("一")#key("二")#key("三")#key("四")]'),
+    ),
     ("budget", "D-BUDGET", "Major", "-", cli_args("--minutes", "60")),
     ("notes-missing", "D-NOTES", "Major", "-", delete_notes),
     ("notes-call", "D-NOTES", "Minor", "c3-problem", drop_note("c3-problem")),
@@ -554,3 +561,49 @@ def test_tilde_in_table_cell_is_a_no_break_space(
     assert '"示例数据集\u00a0A"' in typ
     code, result = run_check(defense_scripts, capsys, tmp_path)
     assert (code, result["findings"]) == (0, [])
+
+
+def test_grid_cards_table_mark_and_metrics_check_in_touying(
+    touying_plan: dict, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    challenges = next(f for f in touying_plan["frames"] if f["id"] == "c1-challenges")
+    challenges["columns"] = 3
+    table_frame = next(f for f in touying_plan["frames"] if f["layout"] == "table")
+    table_frame["highlight_rows"] = [0]
+    bg = next(f for f in touying_plan["frames"] if f["id"] == "c1-background-1")
+    bg["bullets"] = ["精度对比｜采用 *时空卷积*、*门控融合*、*自适应权重* 与 *局部残差*"]
+    bg["metrics"] = [{"label": "虚构指标", "value": "37.25%", "basis": "相对基线", "key": True}]
+    plan_path = tmp_path / "slide_plan.yaml"
+    plan_path.write_text(
+        yaml.safe_dump(touying_plan, allow_unicode=True, sort_keys=False, width=1000),
+        encoding="utf-8",
+    )
+    out = tmp_path / "deck2"
+    assert (
+        defense_scripts.build_deck.main(
+            [
+                "--plan",
+                str(plan_path),
+                "--inventory",
+                str(tmp_path / "inventory.json"),
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    code = defense_scripts.check_deck.main(
+        [
+            "--deck",
+            str(out / "defense.typ"),
+            "--inventory",
+            str(tmp_path / "inventory.json"),
+            "--json",
+        ]
+    )
+    result = json.loads(capsys.readouterr().out)
+    assert code == 1
+    assert not [f for f in result["findings"] if f["code"] in ("D-CHAIN", "D-TAB-SRC", "D-DENSITY")]
+    num_findings = [f for f in result["findings"] if f["code"] == "D-NUM-SRC"]
+    assert len(num_findings) == 1 and "37.25" in num_findings[0]["message"]

@@ -24,11 +24,27 @@ def test_string_literals_escape_only_backslash_and_quote(backend) -> None:
     assert backend.ty_str(None) == '""'
 
 
-def test_emphasis_splits_into_hl_calls(backend) -> None:
-    assert backend.ty_text("提升 **50%** 精度") == '[#"提升 "#hl("50%")#" 精度"]'
-    assert backend.ty_text("**关键**") == '[#hl("关键")]'
-    assert backend.ty_text("要点 **a** 与 **b", "strong") == '[#"要点 "#strong("a")#" 与 **b"]'
+def test_emphasis_splits_into_key_and_hl_calls(backend) -> None:
+    assert backend.ty_text("提升 **50%** 精度") == '[#"提升 "#key("50%")#" 精度"]'
+    assert backend.ty_text("**关键**") == '[#key("关键")]'
+    assert backend.ty_text("采用 *静电纺丝* 实现 **低载量**") == (
+        '[#"采用 "#hl("静电纺丝")#" 实现 "#key("低载量")]'
+    )
+    assert backend.ty_text("要点 **a** 与 *b* 及 **c", "strong") == (
+        '[#"要点 "#strong("a")#" 与 "#strong("b")#" 及 **c"]'
+    )
     assert backend.ty_text("无强调") == '"无强调"'
+
+
+def test_ty_bullet_splits_lead_tag_without_extra_literals(backend) -> None:
+    assert backend.ty_bullet("瓶颈问题｜主流 *PEM* 成本 **极高**") == (
+        '[#tag("瓶颈问题")#h(0.45em)#"主流 "#hl("PEM")#" 成本 "#key("极高")]'
+    )
+    assert backend.ty_bullet('短签 "a" :: 正文 # $ ]') == (
+        '[#tag("短签 \\"a\\"")#h(0.45em)#"正文 # $ ]"]'
+    )
+    assert '"navy"' not in backend.ty_bullet("瓶颈问题｜纯文本说明")
+    assert backend.ty_bullet("普通要点无短签") == '"普通要点无短签"'
 
 
 def test_raw_block_fence_outgrows_backticks(backend) -> None:

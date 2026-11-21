@@ -125,6 +125,17 @@ SHOWN_BY = {
     "equations": ("equations-figure",),
     "table": ("table",),
     "paper": ("paper-summary",),
+    "columns": ("cards",),
+    "metrics": (
+        "bullets",
+        "figure",
+        "figure-bullets",
+        "figure-grid",
+        "equations-figure",
+        "table",
+        "paper-summary",
+    ),
+    "highlight_rows": ("table",),
 }
 FIXED_PACKAGES = (
     "amsmath",
@@ -148,11 +159,14 @@ GRID = {
     5: (3, "0.3", "0.03", "0.21"),
     6: (3, "0.3", "0.03", "0.21"),
 }
+CARD_COLUMNS = {1: ("1.0", "0"), 2: ("0.485", "0.03"), 3: ("0.315", "0.0275")}
+METRIC_COLUMNS = {1: ("1.0", "0"), 2: ("0.485", "0.03"), 3: ("0.315", "0.0275")}
 # longtable and xltabular do not compile inside \adjustbox (plan_deck.py skips them too).
 LONG_TABLE_RE = re.compile(r"\\begin\s*\{(?:longtable|xltabular)\}")
 PACKAGE_RE = re.compile(r"^[A-Za-z0-9-]+$")
 FRAME_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
-EMPHASIS_RE = re.compile(r"\*\*(.+?)\*\*")
+EMPHASIS_RE = re.compile(r"\*\*(.+?)\*\*|(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
+LEAD_RE = re.compile(r"^([^｜:\r\n]{2,8}?)\s*(?:｜|::)\s*(.+)$")
 ESCAPES = {
     "\\": r"\textbackslash{}",
     "{": r"\{",
@@ -182,24 +196,36 @@ def escape_plain(text: str) -> str:
     return "".join(ESCAPES.get(char, char) for char in text)
 
 
-def tex_escape(value: object, emphasis: str = "DefenseHighlight") -> str:
-    """Escape a plan text field; ``**word**`` becomes ``\\<emphasis>{word}``."""
+def tex_escape(value: object, emphasis: str = "DefenseHighlight", term: str | None = None) -> str:
+    """Escape a plan text field; ``**word**`` -> ``\\<emphasis>``, ``*word*`` -> ``\\<term>``."""
     if value is None:
         return ""
     text = re.sub(r"\s+", " ", str(value)).strip()
+    term_cmd = (
+        ("DefenseTerm" if emphasis == "DefenseHighlight" else emphasis) if term is None else term
+    )
     parts: list[str] = []
     pos = 0
     for match in EMPHASIS_RE.finditer(text):
         parts.append(escape_plain(text[pos : match.start()]))
-        parts.append(f"\\{emphasis}{{" + escape_plain(match.group(1)) + "}")
+        if match.group(1) is not None:
+            parts.append(f"\\{emphasis}{{" + escape_plain(match.group(1)) + "}")
+        else:
+            parts.append(f"\\{term_cmd}{{" + escape_plain(match.group(2) or "") + "}")
         pos = match.end()
     parts.append(escape_plain(text[pos:]))
     return "".join(parts)
 
 
 def item_text(value: object) -> str:
-    """Escaped list item text; ``{}`` keeps a leading ``[`` or ``<`` out of ``\\item`` options."""
-    text = tex_escape(value)
+    """Escaped list item text; splits optional ``短签｜正文`` and guards leading ``[``/``<``."""
+    raw = re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
+    match = LEAD_RE.match(raw)
+    if match:
+        lead = tex_escape(match.group(1).strip())
+        body = tex_escape(match.group(2).strip())
+        return f"\\DefenseLead{{{lead}}}{body}"
+    text = tex_escape(raw)
     return "{}" + text if text.startswith(("[", "<")) else text
 
 
@@ -361,6 +387,32 @@ def validate_frame(frame: dict, name: str, lookup: Lookup) -> list[str]:
             errors.append(f"{name}：版式 equations-figure 至多 1 幅图")
     if layout == "table" and table is None:
         errors.append(f"{name}：版式 table 需要 table 字段")
+    columns = frame.get("columns")
+    if columns is not None and (isinstance(columns, bool) or columns not in (1, 2, 3)):
+        errors.append(f"{name}：columns 应为 1、2 或 3，当前 {columns!r}")
+    metrics = frame.get("metrics")
+    if metrics is not None:
+        if not isinstance(metrics, list) or len(metrics) > 3:
+            errors.append(f"{name}：metrics 应为不超过 3 项的列表")
+        else:
+            for m_idx, metric in enumerate(metrics, 1):
+                if not isinstance(metric, dict) or not all(
+                    isinstance(metric.get(k), str) and metric[k].strip()
+                    for k in ("label", "value", "basis")
+                ):
+                    errors.append(
+                        f"{name}：metrics 第 {m_idx} 项须含非空字符串 label、value、basis"
+                    )
+                elif "key" in metric and not isinstance(metric["key"], bool):
+                    errors.append(f"{name}：metrics 第 {m_idx} 项的 key 应为布尔值")
+    highlight_rows = frame.get("highlight_rows")
+    if highlight_rows is not None and (
+        not isinstance(highlight_rows, list)
+        or any(
+            not isinstance(row, int) or isinstance(row, bool) or row < 0 for row in highlight_rows
+        )
+    ):
+        errors.append(f"{name}：highlight_rows 应为非负整数列表")
     return errors
 
 
@@ -487,6 +539,8 @@ def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -
             warnings.append(f"{name}：版式 {layout} 不显示 {field_name} 字段")
 
     bullets = list(frame.get("bullets") or [])
+    raw_metrics = (frame.get("metrics") or []) if layout in SHOWN_BY["metrics"] else []
+    metric_width, metric_gap = METRIC_COLUMNS.get(len(raw_metrics), ("1.0", "0"))
     context.update(
         {
             "title": tex_escape(frame.get("section")),
@@ -500,6 +554,19 @@ def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -
             "table": None,
             "paper": None,
             "cards": [],
+            "card_columns": 1,
+            "card_width": "1.0",
+            "card_gap": "0",
+            "metrics": [
+                {
+                    "label": tex_escape(m["label"]),
+                    "value": tex_escape(m["value"]),
+                    "basis": tex_escape(m["basis"]),
+                }
+                for m in raw_metrics
+            ],
+            "metric_width": metric_width,
+            "metric_gap": metric_gap,
             "outlook": [],
         }
     )
@@ -553,12 +620,17 @@ def frame_context(frame: dict, name: str, lookup: Lookup, warnings: list[str]) -
     if layout == "paper-summary" and frame.get("paper"):
         context["paper"] = tex_escape(lookup.papers[frame["paper"]]["text"])
     if layout == "cards":
+        cols = frame.get("columns") or (2 if len(bullets) == 4 else 1)
+        c_width, c_gap = CARD_COLUMNS[cols]
+        context["card_columns"] = cols
+        context["card_width"] = c_width
+        context["card_gap"] = c_gap
         for index, bullet in enumerate(bullets, 1):
             if frame["role"] == "challenges":
                 label = "问题" + CN_NUMERALS[index - 1] if index <= 10 else f"问题 {index}"
             else:
                 label = f"创新点 {index}"
-            context["cards"].append({"label": label, "text": tex_escape(bullet)})
+            context["cards"].append({"label": label, "text": item_text(bullet)})
     if layout == "outlook":
         context["outlook"] = [
             {
@@ -779,7 +851,7 @@ def plain_text(value: object) -> str:
     return re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
 
 
-def optional_text(value: object, emphasis: str = "hl") -> str:
+def optional_text(value: object, emphasis: str = "key") -> str:
     """Typst expression of a text field; an empty string when the field is empty."""
     return typst_backend.ty_text(value, emphasis) if plain_text(value) else ""
 
@@ -929,12 +1001,13 @@ def typst_frame_context(
     lookup = render.lookup
     bullets = list(frame.get("bullets") or [])
     position = "top" if frame.get("position") == "top" else "left"
+    raw_metrics = (frame.get("metrics") or []) if layout in SHOWN_BY["metrics"] else []
     context.update(
         {
             "title": typst_backend.ty_text(frame.get("section")),
             "subsection": optional_text(frame.get("subsection")),
             "takeaway": optional_text(frame.get("takeaway")),
-            "bullets": [typst_backend.ty_text(bullet) for bullet in bullets],
+            "bullets": [typst_backend.ty_bullet(bullet) for bullet in bullets],
             "position": position,
             "figure": None,
             "grid": None,
@@ -942,6 +1015,16 @@ def typst_frame_context(
             "table": None,
             "paper": None,
             "cards": [],
+            "card_columns": 1,
+            "metrics": [
+                {
+                    "label": typst_backend.ty_str(m["label"]),
+                    "value": typst_backend.ty_str(m["value"]),
+                    "basis": typst_backend.ty_str(m["basis"]),
+                    "key": bool(m.get("key", False)),
+                }
+                for m in raw_metrics
+            ],
             "outlook": [],
         }
     )
@@ -964,8 +1047,9 @@ def typst_frame_context(
         else:
             path = figure_file(figure, name, render.warnings)
             key = f"{layout}-top" if layout == "figure-bullets" and position == "top" else layout
+            default_height = "3.0cm" if layout == "figure" and raw_metrics else TYPST_HEIGHTS[key]
             context["figure"]["path"] = render.image(figure, path, name)
-            context["figure"]["size"] = typst_size(ref, TYPST_HEIGHTS[key])
+            context["figure"]["size"] = typst_size(ref, default_height)
     if layout == "equations-figure":
         for ref in frame.get("equations") or []:
             equation = lookup.equations[ref["label"] if isinstance(ref, dict) else ref]
@@ -989,16 +1073,24 @@ def typst_frame_context(
         context["table"] = render.caption(f"表{table['number']}", table["caption"], name, "表")
         context["table"]["header"] = [render.cell(cell) for cell in grid[0]]
         context["table"]["rows"] = [[render.cell(cell) for cell in row] for row in grid[1:]]
+        marks = frame.get("highlight_rows") or []
+        data_count = len(grid) - 1
+        if marks and any(r >= data_count for r in marks):
+            render.errors.append(f"{name}：highlight_rows 索引超出数据行数 {data_count}")
+        context["table"]["mark"] = ", ".join(str(r) for r in marks) + (
+            "," if len(marks) == 1 else ""
+        )
     if layout == "paper-summary" and frame.get("paper"):
         context["paper"] = typst_backend.ty_str(lookup.papers[frame["paper"]]["text"])
     if layout == "cards":
+        context["card_columns"] = frame.get("columns") or (2 if len(bullets) == 4 else 1)
         for index, bullet in enumerate(bullets, 1):
             if frame["role"] == "challenges":
                 label = "问题" + CN_NUMERALS[index - 1] if index <= 10 else f"问题 {index}"
             else:
                 label = f"创新点 {index}"
             context["cards"].append(
-                {"label": typst_backend.ty_str(label), "text": typst_backend.ty_text(bullet)}
+                {"label": typst_backend.ty_str(label), "text": typst_backend.ty_bullet(bullet)}
             )
     if layout == "outlook":
         context["outlook"] = [

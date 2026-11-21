@@ -2,6 +2,7 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
+((* include "frames/_metrics.tex.j2" *))
 \begingroup\centering
 ((* for cell in frame.grid.cells *))
 \begin{minipage}[t]{((( frame.grid.width )))\linewidth}

@@ -1,69 +1,65 @@
 # Visual Specification
 
-This file gives the colors, positions, font size levels, font fallback, and logo rules of the two themes `yanshan` and `generic`. The `yanshan` theme copies the measured values of the reference predefense pptx. The `generic` theme uses the same positions with neutral colors and shows no logo. The theme files are `templates/beamer/beamerthemeYanshanDefense.sty` and `templates/beamer/beamerthemeGenericDefense.sty`. The shared package is `templates/beamer/defense-layouts.sty`.
+This file gives the colors, positions, font size levels, font fallback, and logo rules of the two themes `yanshan` and `generic`. The `yanshan` theme uses a modern deep-navy, muted brick-red, and soft surface-tint palette aligned with the Touying backend (`simply-ysu-touying`); the `generic` theme uses the same positions with neutral academic colors and shows no logo. The theme files are `templates/beamer/beamerthemeYanshanDefense.sty` and `templates/beamer/beamerthemeGenericDefense.sty`, and the shared package is `templates/beamer/defense-layouts.sty`.
 
 ## Page
 
-- Document class: `\documentclass[aspectratio=169,11pt]{ctexbeamer}`; the page is 16 cm × 9 cm.
-- The left and right text margins are 1 cm each. The footer reserves 0.3 cm. Frame content aligns to the top.
-- The deck shows no Beamer navigation symbols.
+- Document class: `\documentclass[aspectratio=169,11pt]{ctexbeamer}`, with a 16 cm × 9 cm page.
+- The left and right text margins are 1 cm each; the footer reserves 0.3 cm; frame content aligns to the top.
+- No Beamer navigation symbols are shown; body text uses restrained dark ink (`black!88!defenseNavy`), and plain list items use small rounded-square bullets.
 
 ## Colors
 
-| Color name       | `yanshan` | `generic` | Use                                                                                                           |
-| ---------------- | --------- | --------- | ------------------------------------------------------------------------------------------------------------- |
-| `defenseNavy`    | `#1F296A` | `#1F3A5F` | Title band of the cover and the thanks page, double lines of the frame title, text mark when there is no logo |
-| `defenseBlue`    | `#2F5597` | `#2E5E8C` | TOC ellipse, end color of the page number gradient, current chapter on the `generic` TOC                      |
-| `defenseAccent`  | `#4472C4` | `#2E5E8C` | Subsection bar text and dot, bullet symbols, card borders, start color of the page number gradient            |
-| `defenseBoxHead` | `#376092` | `#4A6A8A` | Box title background, card label background                                                                   |
-| `defensePaper`   | `#002060` | `#1F3A5F` | Border and label of the “论文” (paper) box                                                                    |
-| `defenseRed`     | `#FF0000` | `#C0392B` | Emphasized words, border of the takeaway box                                                                  |
+| Color name       | `yanshan` | `generic` | Use                                                                                                 |
+| ---------------- | --------- | --------- | --------------------------------------------------------------------------------------------------- |
+| `defenseNavy`    | `#1F296A` | `#1F3A5F` | Cover plinth and title plaque top bar, frame titles, structural term bolding, KPI metric top bar    |
+| `defenseBlue`    | `#2F5597` | `#2E5E8C` | End color of the page number parallelogram gradient                                                 |
+| `defenseAccent`  | `#2F5597` | `#2E5E8C` | Subsection vertical bar, list bullets, single-column card left bar, cover plinth top trim           |
+| `defenseBoxHead` | `#1F296A` | `#1F3A5F` | Box title background, header bar background of single-column and multi-column cards                 |
+| `defensePaper`   | `#162052` | `#182D4A` | Left label background of the “论文” (paper) box, end color of the cover plinth gradient             |
+| `defenseRed`     | `#B42318` | `#A93226` | Key conclusion emphasis (`**…**`), header anchor bar, left accent bar of the takeaway banner        |
+| `defenseTint`    | `#F2F4F9` | `#F4F6F9` | Tinted surface of cards, takeaway banners, dimension lead tags, KPI blocks, and the “论文” box      |
+| `defenseLine`    | `#D9DCE5` | `#D5DCE4` | Header divider hairline, figure mat frame, soft thin borders of cards and takeaway banners          |
+| `defenseMuted`   | `#5A6072` | `#5D6773` | Figure and table captions, TOC index badges, KPI metric labels and comparison basis text            |
 
-Current chapter on the TOC: `yanshan` uses black bold text; `generic` uses bold text in `defenseBlue`.
+Current chapter on the TOC: both themes highlight the active chapter with a `defenseTint` bar, a left `defenseRed` bar, and bold `defenseNavy` text.
 
-## Conversion
+## Conversion and Minimum Font Size
 
-The reference pptx page is 33.867 cm × 19.05 cm. The Beamer page is 16 cm wide, so the scale factor is 16 / 33.867 = 0.4724. Multiply positions, sizes, and font sizes by this factor.
-
-Beamer body text at 11 pt on a 16 cm wide page is equivalent to 23.3 pt in pptx. The pptx body text minimum of 16 pt corresponds to 7.6 pt in Beamer. This skill uses 8 pt (`\scriptsize`) as the Beamer text minimum and recommends `\small` (10 pt) for body text.
+The page is 16 cm wide (corresponding to a 16:9 widescreen pptx of 33.867 cm × 19.05 cm, scale factor 0.4724). Beamer body text at 11 pt corresponds to 23.3 pt in pptx. This skill sets the Beamer text minimum to 8 pt (`\scriptsize`) and recommends `\small` (10 pt) for body text.
 
 ## Positions
 
-The coordinate origin is the top-left corner of the page. The unit is cm. (x, y) is the top-left corner of the element.
+The coordinate origin is the top-left corner of the page, in cm. The content area aligns strictly to the 1.0 cm left and right grid (x = 1.0 cm to 15.0 cm).
 
-| Element                             | pptx measurement                               | Beamer implementation                                                                                    | Font size                                    |
-| ----------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| Content page logo                   | (0.6, 0.1), 5.4 × 1.6                          | (0.28, 0.05), height 0.76                                                                                | None                                         |
-| Frame title                         | Centered horizontally, y 1.0, height 1.4       | Center (8.0, 0.80)                                                                                       | 28 pt → 13.2 pt                              |
-| Double lines beside the frame title | y 1.8 and 1.9                                  | y 0.85 and 0.90, line width 0.6 pt                                                                       | None                                         |
-| Page number parallelogram           | (32.0, 0.5), 1.2 × 1.0                         | (15.12, 0.24), 0.57 × 0.47                                                                               | Page number in `\scriptsize` bold white text |
-| Subsection bar                      | (2.1, 2.3), height 1.3, round icon on the left | At the left margin, on the first body line, dot diameter 0.42                                            | 24 pt → 11.3 pt                              |
-| Cover title band                    | (0, 4.9), 33.9 × 6.8                           | (0, 2.31), 16 × 3.21                                                                                     | 48 pt → 22.7 pt                              |
-| Cover stage text                    | (18.2, 1.1)                                    | (8.6, 0.52)                                                                                              | 32 pt → 15.1 pt                              |
-| Cover logo                          | (0.5, 0.5), 8.9 × 2.6                          | (0.24, 0.24), height 1.23                                                                                | None                                         |
-| Cover info table                    | (8.2, 12.9), 18.0 × 4.6                        | Top edge at y 6.09, centered horizontally                                                                | 24 pt → 11.3 pt                              |
-| Cover date                          | Below the info table                           | Top edge at y 8.33, centered horizontally                                                                | 24 pt → 11.3 pt                              |
-| TOC ellipse                         | (14.8, 0.3), 6.8 × 2.8                         | Center (8.0, 0.80), 3.21 × 1.32                                                                          | 54 pt → 25.5 pt                              |
-| TOC lines                           | Centered horizontally, line spacing 2.1        | Left-aligned lines in a block that is centered horizontally, line spacing min(0.99, 6.9 / chapter count) | 24 pt → 11.3 pt                              |
+| Element                         | Beamer implementation                                                                  | Font size                                    |
+| ------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Frame title                     | Left-aligned at (1.0, 0.42), height 0.80                                               | `\Large` bold `defenseNavy`                  |
+| Header divider and red bar      | Hairline (1.0, 0.77)–(15.0, 0.77), left red bar 0.95 wide                              | None                                         |
+| Content page logo               | Right-aligned at (14.12, 0.42), height 0.52                                            | None                                         |
+| Page number parallelogram       | (14.30, 0.21)–(15.00, 0.63), deep-navy gradient                                        | Page number in `\scriptsize` bold white text |
+| Subsection bar                  | At the left margin on the first body line, rounded vertical bar 0.12 × 0.36            | `\normalsize` bold                           |
+| Cover stage capsule             | Right-aligned at (15.0, 0.92), `defenseTint` surface                                   | `\small` bold                                |
+| Cover logo                      | (1.0, 0.48), height 0.92                                                               | None                                         |
+| Cover floating title plaque     | (1.0, 1.70)–(15.0, 5.00), white framed card with subtle shadow and two-tone top bar    | `\huge` bold `defenseNavy`                   |
+| Cover deep-navy plinth          | (0, 5.75)–(16.0, 9.00), straddled at the boundary by a white “汇报人” capsule          | Info table in `\small`                       |
+| TOC page                        | Left 0.32 wide deep-navy strip, “目录 / CONTENTS” header, two-digit chapter badges     | `\normalsize`                                |
 
-- The frame title area is 0.8 cm high. The frame title is at most about 9.4 cm wide, which is about 18 Chinese characters in `\Large` bold. For a longer section title, use the short title from the thesis TOC.
-- The converted position of the TOC ellipse is (6.99, 0.14). The TOC ellipse in the reference pptx looks centered, so the implementation centers the ellipse horizontally.
-- The TOC lines are centered vertically in the range from y 1.9 to y 8.8.
+- The frame title area has a total height of 0.80 cm and a maximum title width of about 11.5 cm; when a section title is longer, prefer the short title from the thesis TOC.
 
 ## Font Size Levels
 
-| Level                                              | pptx size | Converted value | Beamer implementation    |
-| -------------------------------------------------- | --------- | --------------- | ------------------------ |
-| TOC ellipse text                                   | 54 pt     | 25.5 pt         | `\Huge` bold (24.88 pt)  |
-| Cover title band, main sentence on the thanks page | 48 pt     | 22.7 pt         | `\huge` bold (20.74 pt)  |
-| Cover stage text                                   | 32 pt     | 15.1 pt         | `\Large` bold (14.4 pt)  |
-| Frame title                                        | 28 pt     | 13.2 pt         | `\Large` bold (14.4 pt)  |
-| Subsection bar, TOC lines, cover info table        | 24 pt     | 11.3 pt         | `\normalsize` (10.95 pt) |
-| Body text, bullets, box titles, cards              | 16–18 pt  | 7.6–8.5 pt      | `\small` (10 pt)         |
-| Captions, citation text in the “论文” (paper) box  | None      | None            | `\footnotesize` (9 pt)   |
-| Text minimum                                       | 16.9 pt   | 8 pt            | `\scriptsize` (8 pt)     |
+| Level                                                    | Beamer implementation    |
+| -------------------------------------------------------- | ------------------------ |
+| TOC main heading                                         | `\Huge` bold (24.88 pt)  |
+| Cover title plaque, main sentence on the thanks page     | `\huge` bold (20.74 pt)  |
+| Frame title                                              | `\Large` bold (14.4 pt)  |
+| Subsection bar, TOC lines, straddling presenter capsule  | `\normalsize` (10.95 pt) |
+| Body text, bullets, single-column cards, takeaway banner | `\small` (10 pt)         |
+| Dimension lead tags, multi-column grid cards, captions   | `\footnotesize` (9 pt)   |
+| KPI comparison basis, text minimum                       | `\scriptsize` (8 pt)     |
 
-Subsection bars and emphasized words are bold. The color of emphasized words is `defenseRed`.
+Dual-layer emphasis rules: `**关键结论词**` renders as bold `defenseRed` (`\DefenseHighlight`, at most 3 per page); `*结构术语*` renders as bold `defenseNavy` (`\DefenseTerm`).
 
 ## Font Fallback
 
@@ -77,13 +73,13 @@ The package uses `\IfFontExistsTF` to select the first available font in this or
 ## Logo
 
 - The logo file comes from the thesis repository. Write the logo path in `\DefenseSetup{logo=<path>}`. The skill package contains no logo file.
-- The logo is 0.76 cm high on content pages and 1.23 cm high on the cover and the thanks page. The width keeps the aspect ratio of the source image.
-- `yanshan` theme: when the logo path is empty or the file does not exist, the deck shows a text mark. The default text mark is “燕山大学” (Yanshan University), in bold and in the color `defenseNavy`. `\DefenseSetup{logo-text=<文字>}` changes the text mark.
+- The logo is 0.52 cm high on content pages and 0.92 cm high on the cover and the thanks page, preserving the source aspect ratio.
+- `yanshan` theme: when the logo path is empty or the file does not exist, the deck shows a text mark. The default text mark is “燕山大学” (Yanshan University), in bold and in `defenseNavy`. `\DefenseSetup{logo-text=<文字>}` changes the text mark.
 - `generic` theme: the deck shows no logo and no text mark.
 
 ## Touying Backend
 
-- In the Touying backend, the colors, positions, font sizes, font fallback, and school logo all come from the installed theme package simply-ysu-touying. This skill does not define them and copies neither the theme source nor its logo bitmaps. The sections above apply only to the Beamer themes.
+- In the Touying backend, the colors, positions, font sizes, font fallback, and school logo all come from the installed theme package simply-ysu-touying. This skill does not define them and copies neither the theme source nor its logo bitmaps. The positions above apply only to the Beamer themes, while the color hierarchy and dual-layer emphasis semantics align with simply-ysu-touying.
 - The page is 16:9 (16 cm × 9 cm); a notes page of the presenter build is 16 cm × 13.5 cm, see [Presenting and Speaker Notes](presenting.md).
 - The build script sets only `aspect-ratio: "16-9"`, `nav-labels`, and `config-info`, and passes no color, font, or `icon:` parameter. For the default figure heights, see the layout mapping in [Typst Touying Backend](touying-backend.md).
 - There is only one theme, `yanshan`; the `generic` theme is only for the Beamer backend.

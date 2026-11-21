@@ -2,10 +2,11 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
+((* include "frames/_metrics.tex.j2" *))
 \DefenseCaption{((( frame.table.caption )))}
 \begin{DefenseSource}
 \centering
-\adjustbox{max width=\textwidth,max totalheight=0.62\textheight}{%
+\adjustbox{max width=\textwidth,max totalheight=((* if frame.metrics *))0.45((* else *))0.62((* endif *))\textheight}{%
 ((( frame.table.source )))}\par
 \end{DefenseSource}
 ((* if frame.takeaway *))

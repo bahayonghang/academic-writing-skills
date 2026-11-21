@@ -24,7 +24,7 @@ metadata:
       quality-gate,
     ]
   version: "6.0.0"
-  last_updated: "2026-09-25"
+  last_updated: "2026-11-21"
 argument-hint: "--thesis <论文仓库> [--minutes 40] [--stage predefense|defense] [--theme yanshan|generic] [--backend beamer|touying] [--module extract|plan|build|check|preview]"
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash(uv *)
 ---

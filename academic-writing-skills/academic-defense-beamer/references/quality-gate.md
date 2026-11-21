@@ -114,7 +114,7 @@ uv run python -B $SKILL_DIR/scripts/render_preview.py --pdf DIR/defense.pdf --ou
 | 码        | 含义     | 判据                                                                                          | 严重度     | 处置                                                                                         |
 | --------- | -------- | --------------------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | D-DENSITY | 页面密度 | 内容帧可见字符超过 260 个                                                                     | Major / P1 | 按 [内容规范](content-rules.md) 的溢出处置顺序处理                                           |
-| D-DENSITY | 页面密度 | 内容帧可见字符为 181–260 个；要点、卡片、展望条目、子图或公式数超过版式上限；结论句超过 40 字 | Minor / P2 | 同上。版式上限见 [版式目录](slide-layouts.md)                                                |
+| D-DENSITY | 页面密度 | 内容帧可见字符为 181–260 个；要点、卡片、展望条目、子图或公式数超过版式上限；结论句超过 40 字；单帧关键强调（`**…**`）超过 3 处 | Minor / P2 | 同上。版式上限见 [版式目录](slide-layouts.md)                                                |
 | D-BUDGET  | 页数预算 | 内容帧数不在时长预算的页数区间内                                                              | Major / P1 | 按 [时长预算](time-budget.md) 增删内容帧；时长改变时用 `plan_deck.py --minutes` 重新生成规划 |
 | D-BUDGET  | 页数预算 | 讲稿各节（备用页除外）「时长」合计与 60 × 分钟数相差超过 10%                                  | Minor / P2 | 调整规划中各帧的 `notes.seconds`                                                             |
 | D-NOTES   | 讲稿     | 答辩稿目录中没有 `notes.md`                                                                   | Major / P1 | 重新运行 `build_deck.py`                                                                     |
@@ -162,7 +162,7 @@ D-NUM-SRC 的排除项与匹配规则：
 | D-TAB-SRC    | 源区内 `result-table` 各单元格的文字按行序去掉空白后，不等于清单中任一简单表的单元格文字序列（Critical）；源区外出现 `result-table` 或 `table` 为 Major。Typst 中不保留 `tabular` 源，比较的是单元格转换后的文字；`~` 转成的不换行空格按空白处理            |
 | D-META       | 封面字段取自导言区 `config-info` 的 `title`、`author`、`supervisor`、`school`、`subject` 与 `date`                                                                                                                                                              |
 | D-STAGE      | 阶段取自 `config-info` 的 `stage-en`：`Pre-defense` 为 predefense，`Defense` 为 defense                                                                                                                                                                         |
-| D-DENSITY    | 可见字符为帧内字符串字面量的字符，不含帧标题、备注、`image` 路径与源区；要点数为 `points` 的参数数，卡片为 `side-card`，展望条目为 `label-row`，公式为源区内 `mitex`                                                                                              |
+| D-DENSITY    | 可见字符为帧内字符串字面量的字符，不含帧标题、备注、`image` 路径与源区；要点数为 `points` 的参数数，卡片为 `side-card` 与 `title-box` 之和，展望条目为 `label-row`，公式为源区内 `mitex`，关键强调为源区与备注外的 `key` 调用数 |
 | D-NOTES      | 帧内 `#note[…]` 与 `note:` 参数合计不是恰好 1 次时为 Minor                                                                                                                                                                                                     |
 | D-COMPILE    | `defense.log` 中以 `error:` 开头的行为 Critical，按其后的 `┌─ defense.typ:行:列` 或 `╭─` 定位到帧；`defense.pdf` 不存在或早于 `defense.typ` 为 Critical                                                                                                         |
 | D-OVERFLOW-V | 见下文                                                                                                                                                                                                                                                         |
@@ -195,6 +195,7 @@ D-NOTES-PDF：跳过条件与缺文件的 Minor 同 Beamer。备注版存在时�
 | 内容帧可见字符（Minor）  | 180       | D-DENSITY    |
 | 内容帧可见字符（Major）  | 260       | D-DENSITY    |
 | 结论句字数               | 40        | D-DENSITY    |
+| 单帧关键强调数           | 3         | D-DENSITY    |
 | 内容帧「说什么」字数     | 150–250   | D-NOTES      |
 | 讲稿秒数合计的容差       | ±10%      | D-BUDGET     |
 | 横向溢出（Minor、Major） | 5pt、20pt | D-OVERFLOW-H |

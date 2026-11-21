@@ -111,13 +111,14 @@ typst compile --root DIR [--package-path P] [--font-path F] --input notes=on DIR
 | `figure-bullets`   | `position: left`：`#grid(columns: (1.25fr, 1fr))`，左格为 `figure-box`（高 3.2 cm），右格为 `points`；`position: top`：`figure-box`（高 2.3 cm）在上，`points` 在下 |
 | `figure-grid`      | 帧头加 `#grid(columns: n)`（n 为每行子图数），每格一个子图 `figure-box`（高 2.9 cm 或 1.35 cm），其后 `#fig-caption(…)` 为总题注                             |
 | `equations-figure` | 每个公式一个 `#eq-block(number: "(3-1)")[#mitex(…)]`，其后为 `points`；有图时外包 `#grid(columns: (1.15fr, 1fr))`，图在右格（高 2.9 cm）               |
-| `table`            | 帧头加 `#fig-caption(…)`（表题在表上方），再加 `#result-table(header: (…), rows: (…))`                                                                |
-| `cards`            | 每条要点一个 `#side-card(label: "问题一")[…]`；`innovation` 页的标签为「创新点 1」等                                                                  |
+| `table`            | 帧头加 `#fig-caption(…)`（表题在表上方），再加 `#result-table(header: (…), rows: (…))`；规划含 `highlight_rows` 时传入 `mark: (…)`                      |
+| `cards`            | `columns` 为 `1` 时每条要点一个 `#side-card(label: "问题一")[…]`；`columns` 为 `2` 或 `3` 时用 `#grid(columns: k)` 并排输出 `#title-box(title: "问题一")[…]` |
 | `paper-summary`    | `points` 加 `#paper-box[…]`                                                                                                                          |
 | `outlook`          | 每条一个 `#label-row(label: "其一")[…]`                                                                                                              |
 | `thanks`           | `#ending-slide(recap: (…), note: […])`；`innovation` 帧有 1–3 条要点时，`recap` 依次为「创新点 k」与该要点，否则不传                                  |
 
-- 规划给出 `width` 时，图写 `width: N%`（N 为 `width` 乘以 100），否则按上表的高度。
+- 规划给出 `width` 时，图写 `width: N%`（N 为 `width` 乘以 100），否则按上表的高度；`figure` 版式同时配置 `metrics` 时默认图高减至 `3.0cm`。
+- 内容帧配置可选 `metrics`（1–3 项）时，在帧头之后输出 `#grid` 并排调用 `#kpi(label: "…", value: "…", basis: "…")`（`key: true` 时数值标砖红）。
 - 帧标题对应 Touying 的 `== 页`，小节条对应 `sub`，结论句对应 `takeaway`。Touying 主题把结论句显示在页眉主标题位置，Beamer 主题显示在页底；两者语义相同，字数规则见 [内容规范](content-rules.md)。
 - 每章有一个一级标题 `=`，使目录、页脚导航与章扉页编号与论文章号一致。第 2 章起由章前目录帧写出 `= 章题`；第 1 章、首帧不是章前目录的章，以及规划中没有帧的章（在致谢之前补齐）写成 `= #"章题" <touying:skip>`，只登记该章，不生成章扉页。
 - 备用页在致谢之后，同样带帧标记与备注。
@@ -138,7 +139,7 @@ typst compile --root DIR [--package-path P] [--font-path F] --input notes=on DIR
 - 内容页的备注写在 `== 标题` 之后的 `#note[…]`。`#note[…]` 可以写多次，同页的多段按段落拼接；构建脚本每帧只写一段。
 - 结构页（封面、总目录、致谢）用函数的 `note:` 参数，例如 `#title-slide(note: […])`。
 - 章扉页的备注写在 `= 章名` 之后、`#chapter-opener` 之前，归属于该章扉页。
-- 备注文字同样是字符串字面量；`**关键词**` 在备注中只加粗（`#strong`），不着色。占位符「〔待填写〕」原样出现在备注页。
+- 备注文字同样是字符串字面量；`**关键词**` 与 `*结构术语*` 在备注中都只加粗（`#strong`），不着色。占位符「〔待填写〕」原样出现在备注页。
 
 ### 备注版
 
@@ -165,7 +166,8 @@ typst eval 'query(<ysu-note>).map(it => it.value)' --root DIR --in DIR/defense.t
 
 - 规划中的全部文字字段输出为 Typst 字符串字面量 `"…"`，只把 `\` 转为 `\\`、`"` 转为 `\"`；连续空白合并为一个空格。
 - 文字不进入 Typst 标记模式，因此 `#`、`$`、`*`、`_`、`@`、`<`、`` ` ``、`//`、`=` 与 `]` 都按原文显示。文字字段中的 `$…$` 不渲染为数学。
-- `**关键词**` 拆分为 `[#"前"#hl("关键词")#"后"]`；未配对的 `**` 按普通字符输出。
+- `**关键词**` 拆分为 `[#"前"#key("关键词")#"后"]`（砖红粗体），`*结构术语*` 拆分为 `[#"前"#hl("结构术语")#"后"]`（深蓝粗体）；未配对的 `**` 或 `*` 按普通字符输出。
+- `bullets` 条目若为 `短签｜正文`（或 `短签 :: 正文`，短签 2–8 个字符），输出为 `[#tag("短签")#h(0.45em)#"正文"]`（沿用主题默认 `kind: "navy"`，不额外写出配置字符串字面量）。
 - 题注与表格单元格取自论文 LaTeX 源，转换规则：`\ref` 与 `\eqref` 输出论文编号（未知标签为 `??`）；引文命令不输出；`\textbf` 与 `\emph`、`\textit` 保留强调；`$…$` 交给 mitex 行内渲染；`~` 输出为不换行空格（U+00A0）；`--` 与 `---` 输出为短横与长横；不能转换的命令按原文显示，并给出告警。
 
 ## 保真限制

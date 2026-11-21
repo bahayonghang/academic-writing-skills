@@ -1,4 +1,17 @@
 {% include "frames/_head.typ.j2" %}
+{% if frame.card_columns > 1 and frame.cards %}
+#grid(
+  columns: {{ frame.card_columns }},
+  column-gutter: 0.35cm,
+  row-gutter: 0.28cm,
+{% for card in frame.cards %}
+  [
+#title-box(title: {{ card.label }})[#{{ card.text }}]
+  ],
+{% endfor %}
+)
+{% else %}
 {% for card in frame.cards %}
 #side-card(label: {{ card.label }})[#{{ card.text }}]
 {% endfor %}
+{% endif %}

@@ -78,8 +78,34 @@ def test_plan_text_is_written_as_string_literals(
     write_plan(touying_plan, tmp_path / "slide_plan.yaml")
     assert build(defense_scripts, tmp_path) == 0
     typ = (tmp_path / "deck" / "defense.typ").read_text(encoding="utf-8")
-    assert '[#"Injection # $ ] // \\" \\\\ 与 "#hl("强调")#" 结束"]' in typ
+    assert '[#"Injection # $ ] // \\" \\\\ 与 "#key("强调")#" 结束"]' in typ
     assert '#takeaway("takeaway # $x$ ] // \\"q\\"")' in typ
+
+
+def test_structured_grid_cards_metrics_and_table_mark_in_touying(
+    touying_plan: dict, tmp_path: Path, defense_scripts, capsys
+) -> None:
+    cards_frame = next(f for f in touying_plan["frames"] if f["id"] == "c1-challenges")
+    cards_frame["columns"] = 3
+    bullet_frame = next(f for f in touying_plan["frames"] if f["id"] == "c1-background-1")
+    bullet_frame["bullets"] = ["瓶颈问题｜现有 *人工流程* 的 **一致性** 不足"]
+    bullet_frame["metrics"] = [
+        {"label": "RMSE 降幅", "value": "25.0%", "basis": "相对基线", "key": True}
+    ]
+    table_frame = next(f for f in touying_plan["frames"] if f["layout"] == "table")
+    table_frame["highlight_rows"] = [0]
+    write_plan(touying_plan, tmp_path / "slide_plan.yaml")
+    assert build(defense_scripts, tmp_path) == 0
+    typ = (tmp_path / "deck" / "defense.typ").read_text(encoding="utf-8")
+    assert '#title-box(title: "问题一")' in typ
+    assert '[#tag("瓶颈问题")#h(0.45em)#"现有 "#hl("人工流程")#" 的 "#key("一致性")#" 不足"]' in typ
+    assert '#kpi(label: "RMSE 降幅", value: "25.0%", basis: "相对基线", key: true)' in typ
+    assert "mark: (0,)," in typ
+
+    table_frame["highlight_rows"] = [99]
+    write_plan(touying_plan, tmp_path / "slide_plan.yaml")
+    assert build(defense_scripts, tmp_path, "--force") == 2
+    assert "highlight_rows" in capsys.readouterr().err
 
 
 def test_images_are_copied_unchanged(

@@ -42,7 +42,8 @@ REGION_END = "// defense-source-end"
 
 SPEC_RE = re.compile(r"^@([a-z0-9_-]+)/([A-Za-z0-9_-]+):(\d+)\.(\d+)\.(\d+)$")
 VERSION_RE = re.compile(r"typst\s+(\d+)\.(\d+)\.(\d+)")
-EMPHASIS_RE = re.compile(r"\*\*(.+?)\*\*")
+EMPHASIS_RE = re.compile(r"\*\*(.+?)\*\*|(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
+LEAD_RE = re.compile(r"^([^｜:\r\n]{2,8}?)\s*(?:｜|::)\s*(.+)$")
 COMMENT_RE = re.compile(r"(?<!\\)%.*")
 COMMAND_RE = re.compile(r"\\([A-Za-z@]+)\*?|\\(.)", re.S)
 TABULAR_BEGIN_RE = re.compile(r"\s*\\begin\s*\{(tabular\*?|tabularx|longtable|xltabular)\}")
@@ -97,24 +98,46 @@ def ty_str(value: object) -> str:
     return ty_literal(re.sub(r"\s+", " ", "" if value is None else str(value)).strip())
 
 
-def ty_text(value: object, emphasis: str = "hl") -> str:
-    """Code expression of a plan text field: a string, or content with ``#<emphasis>(...)``.
+def ty_text(value: object, emphasis: str = "key", term: str | None = None) -> str:
+    """Code expression of a plan text field: a string, or content with ``#key`` / ``#hl``.
 
-    Plan text never enters markup mode, so ``#``, ``$``, ``]`` and ``//`` show as written.
+    ``**word**`` becomes ``#<emphasis>("word")`` (brick-red key emphasis by default) and
+    ``*word*`` becomes ``#<term>("word")`` (navy bold ``hl`` by default). Plan text never
+    enters markup mode, so ``#``, ``$``, ``]`` and ``//`` show as written.
     """
     text = re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
     if not EMPHASIS_RE.search(text):
         return ty_str(text)
+    term_fn = ("hl" if emphasis == "key" else emphasis) if term is None else term
     parts: list[str] = []
     pos = 0
     for match in EMPHASIS_RE.finditer(text):
         if match.start() > pos:
             parts.append("#" + ty_literal(text[pos : match.start()]))
-        parts.append(f"#{emphasis}({ty_literal(match.group(1))})")
+        if match.group(1) is not None:
+            parts.append(f"#{emphasis}({ty_literal(match.group(1))})")
+        else:
+            parts.append(f"#{term_fn}({ty_literal(match.group(2) or '')})")
         pos = match.end()
     if pos < len(text):
         parts.append("#" + ty_literal(text[pos:]))
     return "[" + "".join(parts) + "]"
+
+
+def ty_bullet(value: object) -> str:
+    """Code expression of a bullet item, splitting optional ``短签｜正文`` micro-typography.
+
+    Uses ``#tag("...")`` without passing ``kind: "navy"`` (already the theme default) so
+    that no configuration string literal leaks into ``check_typst.visible_lines``.
+    """
+    text = re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
+    match = LEAD_RE.match(text)
+    if not match:
+        return ty_text(text)
+    lead, body = match.group(1).strip(), match.group(2).strip()
+    body_expr = ty_text(body)
+    tail = body_expr[1:-1] if body_expr.startswith("[") else "#" + body_expr
+    return f"[#tag({ty_literal(lead)})#h(0.45em){tail}]"
 
 
 def raw_block(text: str) -> str:

@@ -240,10 +240,13 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 | `subsection` | 字符串        | 小节条；空串时不输出                                                                               |
 | `position`   | 字符串        | 只用于 `figure-bullets`：`left`（默认）或 `top`                                                    |
 | `takeaway`   | 字符串        | 结论句                                                                                             |
-| `bullets`    | 字符串列表    | 要点；`cards` 版式每条一张卡片，`outlook` 版式每条一项                                             |
-| `figures`    | 映射列表      | 每项含 `label`，可带 `subfigures`（子图字母列表）与 `width`（图宽占行宽的比例，大于 0 且不大于 1） |
-| `equations`  | 映射列表      | 每项含 `label`，取公式的任一标签                                                                   |
-| `table`      | 字符串或 null | 表标签                                                                                             |
+| `bullets`        | 字符串列表    | 要点；支持可选 `短签｜正文` 微排版；`cards` 版式每条一张卡片，`outlook` 版式每条一项               |
+| `columns`        | 整数，可选    | 只用于 `cards`：`1`、`2` 或 `3`；缺省时 4 张卡为 `2`（`2×2` 宫格），其余为 `1`                     |
+| `metrics`        | 映射列表，可选| 关键指标块（至多 3 项），每项含非空字符串 `label`、`value`、`basis` 及可选布尔 `key`               |
+| `figures`        | 映射列表      | 每项含 `label`，可带 `subfigures`（子图字母列表）与 `width`（图宽占行宽的比例，大于 0 且不大于 1） |
+| `equations`      | 映射列表      | 每项含 `label`，取公式的任一标签                                                                   |
+| `table`          | 字符串或 null | 表标签                                                                                             |
+| `highlight_rows` | 整数列表，可选| 只用于 `table`：高亮的数据行 0 基索引列表（Touying 传入 `result-table(mark:)`）                    |
 | `paper`      | 字符串或 null | 成果 id，渲染为「论文」框                                                                          |
 | `notes`      | 映射          | 讲稿：`say`、`key`、`seconds`（整数）、`transition`、`questions`（字符串列表）                     |
 | `source`     | 字符串列表    | 所映射节与所选图表的源位置；只读，不渲染                                                           |
@@ -293,7 +296,7 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 - 规划：`meta` 为映射；`meta.stage` 与 `meta.theme` 取值合法；`deck.backend` 为 `beamer` 或 `touying`，`touying` 时主题为 `yanshan`；`meta.chapters[].nav_label` 为字符串或缺省；`meta.minutes` 为正整数；`meta.title_lines` 为列表；`meta.chapters` 的每项为含 `number` 与 `title` 的映射；`meta.extra_packages` 的每项符合宏包名规则；`frames` 为非空列表；帧 id 符合 id 规则且不重复。
 - 帧：`role` 与 `layout` 在允许集合内；目录帧的 `chapter` 为 0 或章号；`notes` 为映射，`notes.seconds` 为整数，`notes.questions` 为列表；`bullets` 为列表。
 - 引用：`figures` 的每项为含 `label` 的映射，标签在清单中；所选子图字母存在，且该子图有图片文件；`width` 大于 0 且不大于 1；`figure-grid` 以外版式的图至少有一个图片文件；`equations`、`table` 与 `paper` 引用的标签或 id 在清单中。
-- 版式：`figure`、`figure-bullets`、`figure-grid` 恰有 1 幅图；`figure-grid` 选 2–6 个子图字母；`equations-figure` 有 1–4 个公式，至多 1 幅图；`table` 版式有 `table` 字段，所引用的表有表体，且表体不是 `longtable` 或 `xltabular` 环境。
+- 版式：`figure`、`figure-bullets`、`figure-grid` 恰有 1 幅图；`figure-grid` 选 2–6 个子图字母；`equations-figure` 有 1–4 个公式，至多 1 幅图；`table` 版式有 `table` 字段，所引用的表有表体，且表体不是 `longtable` 或 `xltabular` 环境；`columns` 存在时为 `1`、`2` 或 `3`；`metrics` 存在时为不超过 3 项的列表，每项含非空字符串 `label`、`value`、`basis`（`key` 存在时为布尔值）；`highlight_rows` 存在时为非负整数列表（Touying 下不得超出表的数据行数）。
 - 命令行：`--logo` 文件存在；`--out` 不是已有的普通文件。
 
 以下情况只告警，构建继续：`meta.inventory_sha256` 与当前清单不一致；字段在所选版式中不显示，例如 `figure` 版式的 `bullets`；图含多个图片文件，只显示第一个；校徽文件不存在；论文仓库与输出目录不在同一盘符。告警写到标准输出与 `build_manifest.json`。
@@ -303,8 +306,9 @@ uv run python -B $SKILL_DIR/scripts/build_deck.py --plan slide_plan.yaml --inven
 转义用于规划的 `section`、`subsection`、`takeaway`、`bullets`、`meta` 封面字段、`meta.chapters` 的章题与成果著录文本。规则按以下顺序执行：
 
 1. 连续空白（含换行）合并为一个空格。
-2. `**词**` 渲染为 `\DefenseHighlight{词}`；未配对的 `**` 按普通字符输出。
-3. 其余字符按下表替换。
+2. `bullets` 条目若匹配 `短签｜正文`（或 `短签 :: 正文`，短签长 2–8 个字符），拆分为 `\DefenseLead{短签}正文`，两侧分别按第 3、4 步转义。
+3. `**词**` 渲染为 `\DefenseHighlight{词}`，`*词*` 渲染为 `\DefenseTerm{词}`；未配对的 `**` 或 `*` 按普通字符输出。
+4. 其余字符按下表替换。
 
 | 字符                    | 输出                 |
 | ----------------------- | -------------------- |

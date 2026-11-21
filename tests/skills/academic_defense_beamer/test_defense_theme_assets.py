@@ -27,17 +27,20 @@ THEME_FILES = {
     "generic": BEAMER_DIR / "beamerthemeGenericDefense.sty",
 }
 
-# Yanshan colors measured from the reference predefense deck (C1 design section 2.4).
+# Yanshan semantic colors aligned with the modern navy/brick-red/tint palette (visual-spec.md).
 YANSHAN_COLORS = {
     "defenseNavy": "1F296A",
     "defenseBlue": "2F5597",
-    "defenseAccent": "4472C4",
-    "defenseBoxHead": "376092",
-    "defensePaper": "002060",
-    "defenseRed": "FF0000",
+    "defenseAccent": "2F5597",
+    "defenseBoxHead": "1F296A",
+    "defensePaper": "162052",
+    "defenseRed": "B42318",
+    "defenseTint": "F2F4F9",
+    "defenseLine": "D9DCE5",
+    "defenseMuted": "5A6072",
 }
 
-# Macros and environments of the public API (parent design section 5).
+# Macros and environments of the public API (parent design section 5 + structured taste extensions).
 LAYOUT_API = (
     "DefenseSetup",
     "DefenseStage",
@@ -52,11 +55,15 @@ LAYOUT_API = (
     "DefenseSubsection",
     "DefenseTakeaway",
     "DefenseHighlight",
+    "DefenseTerm",
+    "DefenseLead",
     "DefenseBoxTitle",
     "DefenseFigure",
     "DefenseCaption",
     "DefensePaperBox",
     "DefenseCard",
+    "DefenseGridCard",
+    "DefenseKPI",
     "DefenseNote",
     "DefenseSource",
 )
@@ -241,24 +248,52 @@ def test_demo_deck_compiles(tmp_path: Path, theme: str, with_logo: bool) -> None
     if with_logo:
         Image.new("RGB", (1350, 400), (31, 41, 106)).save(work / "logo.png")
     jobname = f"demo-{theme.lower()}"
-    result = subprocess.run(
-        [
-            "xelatex",
-            "-interaction=nonstopmode",
-            "-halt-on-error",
-            f"-jobname={jobname}",
-            f"\\def\\DefenseThemeName{{{theme}}}\\input{{demo-deck.tex}}",
-        ],
-        cwd=work,
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=600,
-        check=False,
-    )
-    log = (work / f"{jobname}.log").read_text(encoding="utf-8", errors="replace")
+    cmd = [
+        "xelatex",
+        "-interaction=nonstopmode",
+        "-halt-on-error",
+        f"-jobname={jobname}",
+        f"\\def\\DefenseThemeName{{{theme}}}\\input{{demo-deck.tex}}",
+    ]
+    log = ""
+    for _ in range(2):
+        result = subprocess.run(
+            cmd,
+            cwd=work,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=600,
+            check=False,
+        )
+        log = (work / f"{jobname}.log").read_text(encoding="utf-8", errors="replace")
+        assert result.returncode == 0, log[-3000:]
 
-    assert result.returncode == 0, log[-3000:]
     frames = len(re.findall(r"^\\begin\{frame\}", _read(DEMO_DECK), flags=re.MULTILINE))
-    assert _pdf_page_count(work / f"{jobname}.pdf", log) == frames
+    pdf_path = work / f"{jobname}.pdf"
+    assert _pdf_page_count(pdf_path, log) == frames
     assert "Overfull \\vbox" not in log
+    assert "Rerun to get cross-references right" not in log
+
+    try:
+        fitz = importlib.import_module("fitz")
+    except ImportError:
+        return
+    with fitz.open(pdf_path) as document:
+        for page_index, needle in (
+            (0, "汇报人"),
+            (1, "理论基础与问题框架"),
+            (6, "示例方法一研究"),
+            (11, "示例期刊"),
+            (12, "分布差异"),
+            (14, "批评和指正"),
+        ):
+            hits = document[page_index].search_for(needle)
+            assert hits, f"missing {needle!r} on page {page_index + 1}"
+            assert document[page_index].rect.contains(hits[0]), (
+                f"{needle!r} outside viewport on page {page_index + 1}"
+            )
+        paper_pix = document[11].get_pixmap(clip=document[11].search_for("示例期刊")[0], dpi=144)
+        assert min(paper_pix.samples) < 120, "DefensePaperBox text occluded by background fill"
+        card_pix = document[12].get_pixmap(clip=document[12].search_for("分布差异")[0], dpi=144)
+        assert min(card_pix.samples) < 150, "DefenseGridCard text occluded by background fill"

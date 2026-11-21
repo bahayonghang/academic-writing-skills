@@ -1,0 +1,12 @@
+((* if frame.metrics *))
+\begingroup\noindent
+((* for m in frame.metrics *))
+\begin{minipage}[t]{((( frame.metric_width )))\linewidth}
+  \DefenseKPI{((( m.label )))}{((( m.value )))}{((( m.basis )))}
+((* if loop.last *))
+\end{minipage}\par\endgroup\vspace{0.10cm}
+((* else *))
+\end{minipage}\hspace{((( frame.metric_gap )))\linewidth}%
+((* endif *))
+((* endfor *))
+((* endif *))
