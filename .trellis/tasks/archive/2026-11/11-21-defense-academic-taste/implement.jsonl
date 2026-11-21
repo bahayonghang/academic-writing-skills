@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "技能包总索引与开发前检查清单"}
+{"file": ".trellis/spec/academic-writing-skills/defense-deck-contract.md", "reason": "academic-defense-beamer 五脚本接口、双后端与 22 个 D-* 码契约"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "双语文档镜像与 resource-manifest 同步契约"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "测试组织与 just ci 四步门禁"}
+{"file": ".trellis/tasks/11-21-defense-academic-taste/research/source-article.md", "reason": "来源答辩 PPT 案例 12 页视觉与微排版拆解"}
+{"file": ".trellis/tasks/11-21-defense-academic-taste/research/prior-art-and-gap-matrix.md", "reason": "qiaomu-meta-skill 先例检索与 G1-G12 泛化差距判定"}
