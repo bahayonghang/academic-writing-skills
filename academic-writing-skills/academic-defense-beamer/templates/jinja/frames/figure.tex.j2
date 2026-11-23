@@ -2,7 +2,12 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
+((* include "frames/_metrics.tex.j2" *))
+((* if frame.metrics *))
+\DefenseFigure[height=0.44\textheight((* if frame.figure.width *)),width=((( frame.figure.width )))\linewidth((* endif *))]{((( frame.figure.file )))}{((( frame.figure.caption )))}
+((* else *))
 \DefenseFigure((* if frame.figure.width *))[width=((( frame.figure.width )))\linewidth]((* endif *)){((( frame.figure.file )))}{((( frame.figure.caption )))}
+((* endif *))
 ((* if frame.takeaway *))
 \DefenseTakeaway{((( frame.takeaway )))}
 ((* endif *))

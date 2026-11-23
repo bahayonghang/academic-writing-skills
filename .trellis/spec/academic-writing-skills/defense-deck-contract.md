@@ -39,7 +39,8 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 - 帧 id：`cover`、`toc`、`c<k>-toc`、`c<k>-<role>[-<i>]`、`thanks`；全稿唯一。
 - 页序：封面 → 总目录（`\DefenseTocFrame{0}`）→ 第 1 章 → 第 k 章前目录（k ≥ 2）与各页 → 致谢；备用页在致谢之后，不计页数与预算。
   defense 阶段在展望页后加 `achievements`。
-- 文字字段是普通文本，渲染时逐字转义；唯一标记是 `**关键词**`（`\DefenseHighlight`）。
+- 文字字段是普通文本，渲染时逐字转义；双层强调标记为 `**关键词**`（砖红粗体：Beamer `\DefenseHighlight`、Touying `#key`，单帧上限 3 处）与 `*结构术语*`（深蓝粗体：Beamer `\DefenseTerm`、Touying `#hl`）；`bullets` 条目支持可选 `短签｜正文`（或 `短签 :: 正文`，短签 2–8 字），渲染为 Beamer `\DefenseLead{短签}正文` 与 Touying `[#tag("短签")#h(0.45em)#…]`（不传 `"navy"` 字符串参数，避免污染 `check_typst.visible_lines`）。
+- 可选结构化字段：`cards` 帧可设 `columns`（`1`、`2` 或 `3`，4 张卡默认 `2` 即 `2×2` 宫格，Beamer 用 `\DefenseGridCard`，Touying 用 `#grid` + `#title-box`，`D-CHAIN` 与 `D-DENSITY` 同时统计单列与多列卡片）；内容帧可设 `metrics`（1–3 项 `{label, value, basis, key?}`，渲染为 `\DefenseKPI` / `#kpi`，纳入可见字符与 `D-NUM-SRC`）；`table` 帧可设 `highlight_rows`（非负整数列表，Touying 透传圆括号整数元组 `mark: (…)`，不影响 `D-TAB-SRC` 方括号单元格提取，Beamer 保持 `DefenseSource` 原样）。
 - 公式：清单 `tex` 的 `\label{x}` 变为 `\tag*{(编号)}`，其余字符不变，放在 `DefenseSource` 中；
   D-EQ-SRC 去掉 `\label`/`\tag`/`\notag`/`\nonumber` 与空白后与清单逐字比较。
 - 表体：`tabular_source` 原文放在 `DefenseSource` 与 `\adjustbox` 中；D-TAB-SRC 去掉空白后逐字比较。
@@ -101,6 +102,10 @@ render_preview.py --pdf DIR/defense.pdf --out DIR/preview [--dpi 110] [--cols 4]
 | Touying：帧内容溢出续页 | D-OVERFLOW-V Major，定位到帧标记；D-NOTES-PDF 不因总页数重复报 |
 | `--deck defense.typ` 但 manifest `backend: beamer`（或反之） | check 退出 2 |
 | Touying：题注或单元格含 `~` | `defense.typ` 中为 U+00A0；D-TAB-SRC 无结果 |
+| `columns` 非 `1/2/3`、`metrics` 超 3 项或缺 `label/value/basis`、`highlight_rows` 含负整数或越界 | build 列出全部错误并退出 2 |
+| 单帧砖红关键强调（Beamer `\DefenseHighlight` / Touying `#key`）超过 3 处 | check 报 D-DENSITY Minor，不新增 D-* 码 |
+| `cards` 帧 `columns > 1`（Beamer `\DefenseGridCard` / Touying `#title-box`） | D-CHAIN 与 D-DENSITY 同时统计单列与多列卡片 |
+| Touying `table` 帧含 `highlight_rows` 输出 `mark: (0, …)` | D-TAB-SRC 方括号单元格提取不受影响，零误报 |
 
 ## 5. Good / Base / Bad Cases
 
@@ -142,4 +147,13 @@ value = re.sub(r"[ \t\n\r\f\v]+", " ", value)
 \begin{frame}{3.4 实验与结果分析}
 \begingroup\centering
 \begin{minipage}[t]{0.3\linewidth} … \end{minipage}\par\endgroup
+```
+
+```typst
+// Wrong: check_typst.visible_lines collects every string literal outside hidden lines,
+// so passing kind: "navy" leaks the configuration word "navy" into D-DENSITY character counts.
+[#tag(kind: "navy", "瓶颈问题")#h(0.45em)#"主流电解水效率受限"]
+
+// Correct: rely on the theme default (kind: "navy") and emit only slide-visible string literals.
+[#tag("瓶颈问题")#h(0.45em)#"主流电解水效率受限"]
 ```

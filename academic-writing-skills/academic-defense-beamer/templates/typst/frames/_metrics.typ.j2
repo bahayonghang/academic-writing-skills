@@ -1,0 +1,9 @@
+{% if frame.metrics %}
+#grid(
+  columns: {{ frame.metrics | length }},
+  column-gutter: 0.4cm,
+{% for m in frame.metrics %}
+  [#kpi(label: {{ m.label }}, value: {{ m.value }}, basis: {{ m.basis }}{% if m.key %}, key: true{% endif %})],
+{% endfor %}
+)
+{% endif %}

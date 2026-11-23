@@ -13,13 +13,13 @@
 | `figure-bullets`   | `intro`、`background`、`problem`、`method`、`foundation`              | `figures`（1 幅）、`bullets`、`position`（`left` 或 `top`）                    | 要点不超过 4 条              | `\DefenseSubsection`、`\DefenseFigure`、`\DefenseTakeaway` | `grid`（`left`）、`figure-box`、`points` |
 | `figure-grid`      | `experiment`                                                          | `figures`（1 幅，含 2–6 个子图）、`takeaway`                                   | 子图不超过 6 个              | `\DefenseFigure`、`\DefenseCaption`、`\DefenseTakeaway`    | `grid`、`figure-box`、`fig-caption` |
 | `equations-figure` | `method`、`foundation`                                                | `equations`（不超过 4 个）、`figures`（不超过 1 幅）、`bullets`（不超过 3 条） | 公式不超过 4 个              | `DefenseSource`、`\DefenseFigure`、`\DefenseTakeaway`      | `eq-block`、`mitex`、`figure-box` |
-| `table`            | `experiment`、`application`                                           | `table`、`takeaway`                                                            | 表体逐字复制                 | `\DefenseCaption`、`DefenseSource`、`\DefenseTakeaway`     | `fig-caption`、`result-table` |
-| `cards`            | `challenges`、`innovation`                                            | `bullets`（每条一张卡片）                                                      | 卡片不超过 5 张              | `\DefenseSubsection`、`\DefenseCard`                       | `side-card` |
+| `table`            | `experiment`、`application`                                           | `table`、`highlight_rows`（可选）、`takeaway`                                  | 表体逐字复制                 | `\DefenseCaption`、`DefenseSource`、`\DefenseTakeaway`               | `fig-caption`、`result-table` |
+| `cards`            | `challenges`、`innovation`                                            | `bullets`（每条一张卡片）、`columns`（可选）                                   | 卡片不超过 5 张              | `\DefenseSubsection`、`\DefenseCard`、`\DefenseGridCard`             | `side-card`、`title-box` |
 | `paper-summary`    | `summary`                                                             | `bullets`、`paper`                                                             | 要点不超过 4 条              | `\DefensePaperBox`、`\DefenseTakeaway`                     | `points`、`paper-box` |
 | `outlook`          | `outlook`                                                             | `bullets`                                                                      | 条目不超过 3 条              | `\DefenseSubsection`、`\DefenseBoxTitle`                   | `label-row` |
 | `thanks`           | `thanks`                                                              | `meta`                                                                         | 无                           | `\DefenseThanksFrame`                                      | `ending-slide` |
 
-除 `cover`、`toc`、`thanks` 外，每个版式的帧标题取 `section` 字段。`subsection` 字段为空时不输出小节条。`takeaway` 字段在各内容版式中都可用，渲染为页底的结论句框。
+除 `cover`、`toc`、`thanks` 外，每个版式的帧标题取 `section` 字段。`subsection` 字段为空时不输出小节条。`takeaway` 字段在各内容版式中都可用，渲染为页底的结论收束条。`bullets`、`figure`、`figure-bullets`、`figure-grid`、`equations-figure`、`table` 与 `paper-summary` 另可设可选字段 `metrics`（至多 3 项关键指标块，调用 `\DefenseKPI` 或 Touying `kpi`）。
 
 构建脚本在每个 `\begin{frame}` 前一行写帧标记。下文骨架中尖括号内的名称是规划字段的值。
 
@@ -200,6 +200,7 @@
 - 表体从 `\begin{tabular}` 到 `\end{tabular}` 逐字复制。`\adjustbox` 只缩小，不放大。
 - `\par` 放在 `DefenseSource` 环境内，使 `\centering` 生效。
 - 表体缩小后文字小于 `\scriptsize` 时，换用论文中展示同一结果的图，或在讲稿中引用该表。
+- 可选字段 `highlight_rows`（0 基数据行索引列表）在 Touying 后端传入 `result-table(mark:)` 高亮对应数据行；Beamer 后端保持 `DefenseSource` 内表体原文逐字不变。
 
 ## cards
 
@@ -214,6 +215,7 @@
 
 - `challenges` 页：卡片标签依次为「问题一」「问题二」等，卡片数等于研究章数。
 - `innovation` 页：小节条为「01　主要创新点」，卡片标签依次为「创新点 1」「创新点 2」等，卡片数等于研究章数。
+- 可选字段 `columns` 取 `1`、`2` 或 `3`：缺省时 4 张卡片默认 `2`（排成 `2×2` 宫格），其余卡片数默认 `1`。`columns` 大于 `1` 时，Beamer 用 `minipage` 并排调用 `\DefenseGridCard`，Touying 用 `#grid` 并排调用 `#title-box`。
 
 ## paper-summary
 
@@ -267,12 +269,16 @@
 | `\DefenseDefineLabel{label}{编号}`                                 | 登记论文标签对应的论文编号                                                     |
 | `\DefenseCoverFrame`、`\DefenseTocFrame{k}`、`\DefenseThanksFrame` | 输出封面、目录页和致谢页的帧内版面                                             |
 | `\DefenseSubsection{…}`                                            | 小节条                                                                         |
-| `\DefenseTakeaway{…}`                                              | 页底结论句框                                                                   |
-| `\DefenseHighlight{…}`                                             | 红色粗体强调                                                                   |
+| `\DefenseTakeaway{…}`                                              | 页底结论收束条                                                                 |
+| `\DefenseHighlight{…}`                                             | 砖红粗体关键强调（`**…**`，每页不超过 3 处）                                   |
+| `\DefenseTerm{…}`                                                  | 深蓝粗体结构术语强调（`*…*`）                                                  |
+| `\DefenseLead{…}`                                                  | 浅底色块维度短签（用于 `短签｜正文` 微排版条目）                               |
 | `\DefenseBoxTitle{…}`                                              | 填充底色的框标题                                                               |
-| `\DefenseFigure[选项]{文件}{题注}`                                 | 论文图与题注；选项追加到 `\includegraphics` 的默认选项之后                     |
+| `\DefenseFigure[选项]{文件}{题注}`                                 | 带柔和细框衬底的论文图与次级灰题注；选项追加到 `\includegraphics` 默认选项之后 |
 | `\DefenseCaption{…}`                                               | 题注行，用于子图组总题注与表题                                                 |
 | `\DefensePaperBox{…}`                                              | 「论文」框                                                                     |
-| `\DefenseCard{标签}{正文}`                                         | 带标签与箭头的卡片                                                             |
+| `\DefenseCard{标签}{正文}`                                         | 单列侧签浅底卡片                                                               |
+| `\DefenseGridCard{标签}{正文}`                                     | 多列宫格/立柱顶签卡片（`columns` 为 `2` 或 `3` 时使用）                        |
+| `\DefenseKPI{名称}{数值}{基准}`                                    | 顶部深蓝粗线的关键指标块，同时显示指标值与论文对照基准                         |
 | `\DefenseNote{要点}{说什么}{过渡}{秒数}`                           | 帧内演讲备注，写在 `\end{frame}` 前；只在备注版 `defense-notes.pdf` 中显示      |
 | `DefenseSource`                                                    | 包住逐字复制的公式与表体；环境内 `\ref`、`\eqref` 输出论文编号，引文命令不输出 |

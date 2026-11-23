@@ -123,6 +123,7 @@ ITEM_NAMES = {
 DENSITY_MINOR = 180
 DENSITY_MAJOR = 260
 TAKEAWAY_MAX = 40
+EMPHASIS_MAX = 3
 SAY_MIN = 150
 SAY_MAX = 250
 HBOX_MINOR = 5.0
@@ -184,12 +185,13 @@ SUBSECTION_RE = re.compile(r"\\DefenseSubsection(?![A-Za-z@])")
 RESEARCH_ITEM_RE = re.compile(r"研究内容\s*(\d+)")
 COLUMNS_RE = re.compile(r"\\begin\s*\{columns\}")
 TAKEAWAY_RE = re.compile(r"\\DefenseTakeaway(?![A-Za-z@])")
+HIGHLIGHT_RE = re.compile(r"\\DefenseHighlight(?![A-Za-z@])")
 PAPER_BOX_RE = re.compile(r"\\DefensePaperBox(?![A-Za-z@])")
 NOTE_CALL_RE = re.compile(r"\\DefenseNote(?![A-Za-z@])")
 HEX_LABEL_RE = re.compile(r"<([0-9A-Fa-f]*)>")
 COUNT_RES = {
     "item": re.compile(r"\\item(?![A-Za-z@])"),
-    "card": re.compile(r"\\DefenseCard(?![A-Za-z@])"),
+    "card": re.compile(r"\\Defense(?:Grid)?Card(?![A-Za-z@])"),
     "box": re.compile(r"\\DefenseBoxTitle(?![A-Za-z@])"),
     "figure": re.compile(r"\\DefenseFigure(?![A-Za-z@])"),
 }
@@ -1386,6 +1388,10 @@ def check_density(ctx: Context) -> None:
             if length > TAKEAWAY_MAX:
                 message = f"结论句 {length} 字，超过 {TAKEAWAY_MAX} 字"
                 ctx.add("D-DENSITY", "Minor", frame, message, line=frame.line_at(match.start()))
+        highlights = list(HIGHLIGHT_RE.finditer(frame.masked))
+        if len(highlights) > EMPHASIS_MAX:
+            message = f"关键强调 {len(highlights)} 处，超过 {EMPHASIS_MAX} 处"
+            ctx.add("D-DENSITY", "Minor", frame, message, line=frame.line_at(highlights[0].start()))
 
 
 def count_items(ctx: Context, frame: Frame, item: str) -> int:
@@ -1399,7 +1405,9 @@ def count_items(ctx: Context, frame: Frame, item: str) -> int:
         return check_typst.point_count(deck, frame.typst)
     if item == "equation":
         return sum(inside for _, _, inside in check_typst.equations(deck, frame.typst))
-    name = {"card": "side-card", "box": "label-row", "figure": "image"}[item]
+    if item == "card":
+        return len(typst_calls(ctx, frame, "side-card")) + len(typst_calls(ctx, frame, "title-box"))
+    name = {"box": "label-row", "figure": "image"}[item]
     return len(typst_calls(ctx, frame, name))
 
 
@@ -1420,6 +1428,17 @@ def check_density_typst(ctx: Context, frame: Frame) -> None:
             message = f"结论句 {length} 字，超过 {TAKEAWAY_MAX} 字"
             line = ctx.deck.typst.line_of(call.start)
             ctx.add("D-DENSITY", "Minor", frame, message, line=line)
+    hidden = check_typst.hidden_lines(ctx.deck.typst, frame.typst)
+    highlights = [
+        call
+        for call in typst_calls(ctx, frame, "key")
+        if ctx.deck.typst.line_of(call.start) not in hidden
+        and not ctx.deck.typst.in_region(call.start)
+    ]
+    if len(highlights) > EMPHASIS_MAX:
+        message = f"关键强调 {len(highlights)} 处，超过 {EMPHASIS_MAX} 处"
+        line = ctx.deck.typst.line_of(highlights[0].start)
+        ctx.add("D-DENSITY", "Minor", frame, message, line=line)
 
 
 def check_budget(ctx: Context) -> None:

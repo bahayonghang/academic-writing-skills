@@ -240,10 +240,13 @@ The frame sequence is: the cover `cover`; the overall TOC `toc`; the pages of ch
 | `subsection` | string           | Subsection bar; not shown when empty                                                                                                                                                        |
 | `position`   | string           | Only for `figure-bullets`: `left` (default) or `top`                                                                                                                                        |
 | `takeaway`   | string           | Takeaway sentence                                                                                                                                                                           |
-| `bullets`    | list of strings  | Bullets; the `cards` layout shows one card for each bullet, and the `outlook` layout shows one item for each bullet                                                                         |
-| `figures`    | list of mappings | Each item contains `label` and can contain `subfigures` (a list of subfigure letters) and `width` (the figure width as a fraction of the line width, greater than 0 and not greater than 1) |
-| `equations`  | list of mappings | Each item contains `label`, which is any label of the equation                                                                                                                              |
-| `table`      | string or null   | Table label                                                                                                                                                                                 |
+| `bullets`        | list of strings           | Bullets; supports optional `短签｜正文` micro-typography; `cards` shows one card per bullet and `outlook` shows one item per bullet                          |
+| `columns`        | integer, optional         | Only for `cards`: `1`, `2`, or `3`; when omitted, 4 cards default to `2` (`2×2` grid) and other counts default to `1`                                        |
+| `metrics`        | list of mappings, optional| Key metric blocks (up to 3), each with nonempty strings `label`, `value`, `basis`, and optional boolean `key`                                                |
+| `figures`        | list of mappings          | Each item contains `label` and can contain `subfigures` (a list of subfigure letters) and `width` (the figure width as a fraction of the line width, greater than 0 and not greater than 1) |
+| `equations`      | list of mappings          | Each item contains `label`, which is any label of the equation                                                                                               |
+| `table`          | string or null            | Table label                                                                                                                                                  |
+| `highlight_rows` | list of integers, optional| Only for `table`: 0-based indices of highlighted data rows (passed to `result-table(mark:)` in Touying)                                                      |
 | `paper`      | string or null   | Publication ID; shown as the “论文” (paper) box                                                                                                                                             |
 | `notes`      | mapping          | Speaker notes: `say`, `key`, `seconds` (integer), `transition`, `questions` (list of strings)                                                                                               |
 | `source`     | list of strings  | Source locations of the mapped sections and of the selected figures and tables; read-only, not rendered                                                                                     |
@@ -293,7 +296,7 @@ If any of these conditions is not true, `build_deck.py` lists all errors, exits 
 - Plan: `meta` is a mapping; `meta.stage` and `meta.theme` have valid values; `deck.backend` is `beamer` or `touying`, and with `touying` the theme is `yanshan`; `meta.chapters[].nav_label` is a string or absent; `meta.minutes` is a positive integer; `meta.title_lines` is a list; each item of `meta.chapters` is a mapping that contains `number` and `title`; each item of `meta.extra_packages` obeys the package name rule; `frames` is a nonempty list; each frame ID obeys the ID rule and is unique.
 - Frame: `role` and `layout` are in the permitted sets; the `chapter` of a TOC frame is 0 or a chapter number; `notes` is a mapping, `notes.seconds` is an integer, and `notes.questions` is a list; `bullets` is a list.
 - References: each item of `figures` is a mapping that contains `label`, and the label is in the inventory; each selected subfigure letter exists, and that subfigure has an image file; `width` is greater than 0 and not greater than 1; in layouts other than `figure-grid`, the figure has at least one image file; the labels or IDs that `equations`, `table`, and `paper` refer to are in the inventory.
-- Layouts: `figure`, `figure-bullets`, and `figure-grid` have exactly 1 figure; `figure-grid` selects 2–6 subfigure letters; `equations-figure` has 1–4 equations and 1 figure at most; the `table` layout has the `table` field, the referenced table has a table body, and the table body is not a `longtable` or `xltabular` environment.
+- Layouts: `figure`, `figure-bullets`, and `figure-grid` have exactly 1 figure; `figure-grid` selects 2–6 subfigure letters; `equations-figure` has 1–4 equations and 1 figure at most; the `table` layout has the `table` field, the referenced table has a table body, and the table body is not a `longtable` or `xltabular` environment; when present, `columns` is `1`, `2`, or `3`; when present, `metrics` has at most 3 items, each containing nonempty strings `label`, `value`, and `basis` (and `key` is a boolean when present); when present, `highlight_rows` is a list of non-negative integers (not exceeding the data row count in Touying).
 - Command line: the `--logo` file exists; `--out` is not an existing regular file.
 
 In these cases, the script only writes a warning and continues the build: `meta.inventory_sha256` does not agree with the current inventory; a field does not show in the selected layout, for example, the `figure` layout does not show `bullets`; a figure has two or more image files, and the deck shows only the first; the logo file does not exist; the thesis repository and the output directory are on different drives. The script writes the warnings to standard output and to `build_manifest.json`.
@@ -303,8 +306,9 @@ In these cases, the script only writes a warning and continues the build: `meta.
 Escaping applies to these plan fields: `section`, `subsection`, `takeaway`, `bullets`, the cover fields in `meta`, the chapter titles in `meta.chapters`, and the publication entry text. The rules apply in this order:
 
 1. A sequence of whitespace (line breaks included) becomes one space.
-2. `**词**` (word) becomes `\DefenseHighlight{词}`. An unpaired `**` stays as plain characters.
-3. The other characters change as the next table shows.
+2. When an item of `bullets` matches `短签｜正文` (or `短签 :: 正文` with a 2–8 character tag), it splits into `\DefenseLead{短签}正文`, and both sides undergo steps 3 and 4 independently.
+3. `**词**` renders as `\DefenseHighlight{词}` and `*词*` renders as `\DefenseTerm{词}`; an unpaired `**` or `*` stays as plain characters.
+4. The other characters change as the next table shows.
 
 | Character               | Output                     |
 | ----------------------- | -------------------------- |

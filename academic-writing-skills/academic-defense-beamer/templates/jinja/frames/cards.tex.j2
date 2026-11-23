@@ -2,9 +2,24 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
+((* if frame.card_columns > 1 and frame.cards *))
+\begingroup\noindent
+((* for card in frame.cards *))
+\begin{minipage}[t]{((( frame.card_width )))\linewidth}
+  \DefenseGridCard{((( card.label )))}{((( card.text )))}
+((* if loop.last *))
+\end{minipage}\par\endgroup
+((* elif loop.index % frame.card_columns == 0 *))
+\end{minipage}\par\vspace{0.14cm}\noindent
+((* else *))
+\end{minipage}\hspace{((( frame.card_gap )))\linewidth}%
+((* endif *))
+((* endfor *))
+((* else *))
 ((* for card in frame.cards *))
 \DefenseCard{((( card.label )))}{((( card.text )))}
 ((* endfor *))
+((* endif *))
 ((* if frame.takeaway *))
 \DefenseTakeaway{((( frame.takeaway )))}
 ((* endif *))

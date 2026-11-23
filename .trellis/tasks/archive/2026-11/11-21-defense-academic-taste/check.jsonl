@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/academic-writing-skills/index.md", "reason": "技能包质量检查总入口"}
+{"file": ".trellis/spec/academic-writing-skills/defense-deck-contract.md", "reason": "答辩稿跨脚本接口、转义安全与质量门回归核对"}
+{"file": ".trellis/spec/academic-writing-skills/docs-bilingual-resources.md", "reason": "公开资源双语同步与散列检查"}
+{"file": ".trellis/spec/academic-writing-skills/testing-and-tooling.md", "reason": "完整 CI 与编译跳过门禁规范"}
+{"file": ".trellis/tasks/11-21-defense-academic-taste/research/prior-art-and-gap-matrix.md", "reason": "核对泛化门禁取舍与否决边界未被越界实现"}

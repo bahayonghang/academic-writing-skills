@@ -12,12 +12,14 @@ This file specifies how to write each text field of the defense deck, the source
 ## Takeaway Sentences
 
 - Write one takeaway sentence (`takeaway`) on each content page, with 40 Chinese characters or fewer.
-- The takeaway sentence states the conclusion of the page and does not repeat the frame title.
+- The takeaway sentence states a verifiable mechanism or experimental judgment of the page, does not repeat the frame title, and avoids table-of-contents filler such as “本节介绍了……” or “本章分析了……”.
 - When you read all takeaway sentences in page order, the sentences should retell the main line of the thesis. Before the build, output the takeaway sequence with the plan outline command, and ask the user to confirm the sequence.
 
 ## Bullets and Character Counts
 
 - Each page has 5 bullets or fewer, and each bullet has 40 Chinese characters or fewer. Each layout has its own limits; see [Layout Catalog](slide-layouts.md).
+- Prefer the two-part micro-typography `维度短签｜核心短句` (or `维度短签 :: 核心短句`): a 2–8 character prefix tag (2–4 characters recommended, such as “瓶颈问题” or “关键机制”) followed by a concise verb-object or noun phrase (12–28 characters recommended), which renders automatically as a tinted badge plus aligned body text; plain bullets without a separator remain backward-compatible.
+- Avoid empty evaluative filler without comparison evidence (such as unsubstantiated “具有重要理论意义与实用价值”, “深入系统地研究了”, or “取得了显著效果”), and never leave untranslated foreign words (other than standard technical abbreviations) inside Chinese sentences. Keep concise accurate source phrasing as is rather than padding cards to hit a length target.
 - Each content page has 180 visible body characters or fewer. This value is an initial threshold of the quality gate and is not calibrated.
 - One page covers one idea. When the content is too much for one page, split the page.
 - Text fields are plain text and are escaped verbatim at build time: characters such as `$`, `\`, and `%` appear as written. Do not write LaTeX commands or `$…$` inline math in text fields; when a symbol is needed, write its Chinese name (for example, 「观测集合」), or cite the thesis equation with the `equations-figure` layout.
@@ -38,6 +40,7 @@ This file specifies how to write each text field of the defense deck, the source
 
 - Write only numbers that appear in the thesis.
 - A performance number comes with its unit and its comparison baseline. For example, use “比基线方法降低 12.3%” (12.3% lower than the baseline method) only when the thesis gives both the unit and the baseline.
+- Experiment, application, and chapter summary frames may highlight at most 3 key metric callouts in the optional `metrics` field (each with `label`, `value`, and `basis`); both the value and the comparison basis must come from the thesis text and are checked by `D-NUM-SRC`.
 - Do not convert units, and do not recalculate percentages or means.
 
 ## Equations
@@ -48,8 +51,8 @@ This file specifies how to write each text field of the defense deck, the source
 
 ## Emphasis
 
-- In a text field, `**关键词**` (a keyword between double asterisks) renders as red bold text (`\DefenseHighlight`).
-- Each page has 3 emphasized items or fewer.
+- Dual-layer restrained emphasis: in a text field, `**关键词**` renders as brick-red bold text (Beamer `\DefenseHighlight`, Touying `#key`) for core bottlenecks or breakthrough metrics, while `*结构术语*` renders as deep-navy bold text (Beamer `\DefenseTerm`, Touying `#hl`) for module names and structural concepts.
+- Each page has at most 3 brick-red key emphasis spans (`**…**`); exceeding 3 is reported by the quality gate as `D-DENSITY` Minor.
 
 ## Terms and Abbreviations
 

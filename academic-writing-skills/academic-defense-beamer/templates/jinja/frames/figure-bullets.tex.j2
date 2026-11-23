@@ -2,6 +2,7 @@
 ((* if frame.subsection *))
 \DefenseSubsection{((( frame.subsection )))}
 ((* endif *))
+((* include "frames/_metrics.tex.j2" *))
 ((* if frame.position == "top" *))
 \DefenseFigure[height=0.36\textheight((* if frame.figure.width *)),width=((( frame.figure.width )))\linewidth((* endif *))]{((( frame.figure.file )))}{((( frame.figure.caption )))}
 ((* if frame.bullets *))
