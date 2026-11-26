@@ -1,12 +1,13 @@
 """
 Literature Search Engine for Paper Audit v3.0.
 
-Provides multi-source literature search (Semantic Scholar, arXiv, Tavily, Firecrawl, Outcrawl),
+Provides multi-source literature search (Semantic Scholar, arXiv, Tavily, Firecrawl, Outcrawl,
+SpecStream),
 relevance filtering, and context building for literature-enhanced review.
 
 Usage:
     python literature_search.py --title "..." --abstract "..." [--tavily-key KEY]
-        [--firecrawl-key KEY] [--outcrawl-key KEY] [--json]
+        [--firecrawl-key KEY] [--outcrawl-key KEY] [--specstream-key KEY] [--json]
 """
 
 from __future__ import annotations
@@ -36,7 +37,7 @@ class SearchResult:
     year: int | None
     abstract: str
     url: str
-    source: str  # "semantic_scholar", "arxiv", "tavily", "firecrawl", "outcrawl"
+    source: str  # "semantic_scholar", "arxiv", "tavily", "firecrawl", "outcrawl", "specstream"
     relevance_score: float = 0.0
     citation_count: int = 0
     arxiv_id: str = ""
@@ -388,6 +389,69 @@ class OutcrawlClient:
         return results
 
 
+class SpecStreamClient:
+    """Client for the SpecStream Search API."""
+
+    BASE_URL = "https://api.specstream.ai/v1/web-search"
+
+    def __init__(self, api_key: str = ""):
+        self.api_key = api_key
+
+    def search(self, query: str, max_results: int = 10) -> list[SearchResult]:
+        """Search the web with SpecStream for papers matching query."""
+        if not self.api_key:
+            return []
+
+        params = urllib.parse.urlencode(
+            {"q": f"academic paper: {query}", "num": max(1, min(max_results, 20))}
+        )
+
+        try:
+            req = urllib.request.Request(
+                f"{self.BASE_URL}?{params}",
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": f"Bearer {self.api_key}",
+                    "User-Agent": "academic-writing-skills",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code in (401, 403):
+                print(
+                    "[literature] SpecStream authentication failed "
+                    "(check SPECSTREAM_API_KEY); skipping SpecStream results.",
+                    file=sys.stderr,
+                )
+            elif exc.code == 402:
+                print(
+                    "[literature] SpecStream balance is empty; skipping SpecStream results.",
+                    file=sys.stderr,
+                )
+            return []
+        except Exception:
+            return []
+
+        results: list[SearchResult] = []
+        for item in (data.get("data") or {}).get("sources") or []:
+            title = item.get("title", "")
+            if not title:
+                continue
+            published = str(item.get("published") or "")
+            results.append(
+                SearchResult(
+                    title=title,
+                    authors=[],
+                    year=int(published[:4]) if published[:4].isdigit() else None,
+                    abstract=(item.get("snippet") or "")[:500],
+                    url=item.get("url", ""),
+                    source="specstream",
+                )
+            )
+        return results
+
+
 # --- Core Functions ---
 
 
@@ -536,6 +600,7 @@ def search_literature(
     max_per_source: int = 10,
     firecrawl_key: str = "",
     outcrawl_key: str = "",
+    specstream_key: str = "",
 ) -> list[SearchResult]:
     """
     Search multiple sources in parallel and deduplicate results.
@@ -547,6 +612,7 @@ def search_literature(
         max_per_source: Max results per source per query.
         firecrawl_key: Optional Firecrawl API key.
         outcrawl_key: Optional Outcrawl API key.
+        specstream_key: Optional SpecStream API key.
 
     Returns:
         Deduplicated list of SearchResult.
@@ -556,6 +622,7 @@ def search_literature(
     tavily_client = TavilyClient(api_key=tavily_key) if tavily_key else None
     firecrawl_client = FirecrawlClient(api_key=firecrawl_key) if firecrawl_key else None
     outcrawl_client = OutcrawlClient(api_key=outcrawl_key) if outcrawl_key else None
+    specstream_client = SpecStreamClient(api_key=specstream_key) if specstream_key else None
 
     all_results: list[SearchResult] = []
 
@@ -580,6 +647,11 @@ def search_literature(
             return outcrawl_client.search(query, max_results=max_per_source)
         return []
 
+    def _search_specstream(query: str) -> list[SearchResult]:
+        if specstream_client:
+            return specstream_client.search(query, max_results=max_per_source)
+        return []
+
     # Run searches in parallel
     with ThreadPoolExecutor(max_workers=6) as executor:
         futures = {}
@@ -592,6 +664,8 @@ def search_literature(
                 futures[executor.submit(_search_firecrawl, query)] = f"firecrawl:{query}"
             if outcrawl_client:
                 futures[executor.submit(_search_outcrawl, query)] = f"outcrawl:{query}"
+            if specstream_client:
+                futures[executor.submit(_search_specstream, query)] = f"specstream:{query}"
 
         for future in as_completed(futures):
             try:
@@ -738,6 +812,7 @@ def build_literature_context(
     s2_key: str = "",
     firecrawl_key: str = "",
     outcrawl_key: str = "",
+    specstream_key: str = "",
 ) -> LiteratureContext:
     """
     Main entry point: build complete literature context for a paper.
@@ -774,6 +849,7 @@ def build_literature_context(
         s2_key=s2_key,
         firecrawl_key=firecrawl_key,
         outcrawl_key=outcrawl_key,
+        specstream_key=specstream_key,
     )
 
     # Step 4: Filter by relevance
@@ -846,6 +922,7 @@ def main() -> int:
     parser.add_argument("--s2-key", default="", help="Semantic Scholar API key")
     parser.add_argument("--firecrawl-key", default="", help="Firecrawl API key")
     parser.add_argument("--outcrawl-key", default="", help="Outcrawl API key")
+    parser.add_argument("--specstream-key", default="", help="SpecStream API key")
     parser.add_argument("--json", action="store_true", help="Output JSON")
     parser.add_argument("--max-results", type=int, default=20, help="Max results")
 
@@ -869,6 +946,7 @@ def main() -> int:
         s2_key=args.s2_key,
         firecrawl_key=args.firecrawl_key,
         outcrawl_key=args.outcrawl_key,
+        specstream_key=args.specstream_key,
     )
     print(f"[search] Found {len(results)} results", file=sys.stderr)
 

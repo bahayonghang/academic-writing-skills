@@ -529,6 +529,106 @@ class TestOutcrawlClient:
         assert [r.source for r in results] == ["outcrawl"]
 
 
+class TestSpecStreamClient:
+    """Tests for the SpecStream search client contract."""
+
+    def test_specstream_without_key_skips_request(self) -> None:
+        from literature_search import SpecStreamClient
+
+        with patch("literature_search.urllib.request.urlopen") as mock_urlopen:
+            assert SpecStreamClient().search("mamba forecasting") == []
+        mock_urlopen.assert_not_called()
+
+    @patch("literature_search.urllib.request.urlopen")
+    def test_specstream_search_parses_sources(self, mock_urlopen) -> None:
+        from urllib.parse import parse_qs, urlsplit
+
+        from literature_search import SpecStreamClient
+
+        body = {
+            "data": {
+                "answer": None,
+                "rows": [{"name": "Albert Gu", "page": "https://example.com/people"}],
+                "sources": [
+                    {
+                        "url": "https://arxiv.org/abs/2403.11144",
+                        "title": "Is Mamba Effective for Time Series Forecasting?",
+                        "site": "arxiv.org",
+                        "snippet": "S-Mamba and D-Mamba for long-term forecasting.",
+                        "published": "2024-03-17",
+                    },
+                    {"url": "https://example.com/untitled", "title": ""},
+                    {
+                        "url": "https://dl.acm.org/doi/10.1145/example",
+                        "title": "How to Train Your Mamba for Time Series Forecasting",
+                        "snippet": "",
+                    },
+                ],
+            }
+        }
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = json.dumps(body).encode("utf-8")
+        mock_urlopen.return_value = response
+
+        results = SpecStreamClient(api_key="ss-test").search("mamba forecasting", max_results=50)
+
+        request = mock_urlopen.call_args.args[0]
+        url = urlsplit(request.full_url)
+        assert f"{url.scheme}://{url.netloc}{url.path}" == "https://api.specstream.ai/v1/web-search"
+        assert parse_qs(url.query) == {"q": ["academic paper: mamba forecasting"], "num": ["20"]}
+        assert request.get_method() == "GET"
+        assert request.get_header("Authorization") == "Bearer ss-test"
+        assert request.get_header("User-agent") == "academic-writing-skills"
+        assert [r.source for r in results] == ["specstream", "specstream"]
+        assert results[0].url == "https://arxiv.org/abs/2403.11144"
+        assert results[0].year == 2024
+        assert results[0].abstract == "S-Mamba and D-Mamba for long-term forecasting."
+        assert results[1].year is None
+
+    @pytest.mark.parametrize(("code", "hint"), [(401, "SPECSTREAM_API_KEY"), (402, "balance")])
+    @patch("literature_search.urllib.request.urlopen")
+    def test_specstream_http_errors_return_empty(self, mock_urlopen, capsys, code, hint) -> None:
+        import urllib.error
+        from email.message import Message
+
+        from literature_search import SpecStreamClient
+
+        mock_urlopen.side_effect = urllib.error.HTTPError(
+            "https://api.specstream.ai/v1/web-search", code, "error", Message(), None
+        )
+
+        assert SpecStreamClient(api_key="ss-bad").search("mamba forecasting") == []
+        err = capsys.readouterr().err
+        assert hint in err
+        assert "ss-bad" not in err
+
+    @patch("literature_search.SpecStreamClient")
+    @patch("literature_search.SemanticScholarClient")
+    @patch("literature_search.ArxivClient")
+    def test_search_literature_uses_specstream_when_key_set(
+        self, mock_arxiv_cls, mock_s2_cls, mock_specstream_cls
+    ) -> None:
+        from literature_search import SearchResult, search_literature
+
+        mock_s2_cls.return_value.search.return_value = []
+        mock_arxiv_cls.return_value.search.return_value = []
+        mock_specstream_cls.return_value.search.return_value = [
+            SearchResult(
+                title="Is Mamba Effective for Time Series Forecasting?",
+                authors=[],
+                year=2024,
+                abstract="S-Mamba and D-Mamba for long-term forecasting.",
+                url="https://arxiv.org/abs/2403.11144",
+                source="specstream",
+            )
+        ]
+
+        results = search_literature(queries=["mamba forecasting"], specstream_key="ss-test")
+
+        mock_specstream_cls.assert_called_once_with(api_key="ss-test")
+        assert [r.source for r in results] == ["specstream"]
+
+
 # ============================================================
 # literature_compare tests
 # ============================================================
@@ -1017,6 +1117,15 @@ class TestAuditNewFlags:
         for func in (run_audit, run_deep_review):
             params = list(inspect.signature(func).parameters)
             assert params.index("outcrawl_key") > params.index("firecrawl_key")
+
+    def test_specstream_key_is_appended_after_existing_parameters(self) -> None:
+        import inspect
+
+        from audit import run_audit, run_deep_review
+
+        for func in (run_audit, run_deep_review):
+            params = list(inspect.signature(func).parameters)
+            assert params.index("specstream_key") > params.index("outcrawl_key")
 
     def test_report_generator_has_literature_context(self) -> None:
         from report_generator import AuditResult

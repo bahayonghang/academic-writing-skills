@@ -15,6 +15,7 @@
 | `TAVILY_API_KEY` not set                               | Set env var or pass `--tavily-key`; Tavily is optional — S2 + arXiv work without it                                                                  |
 | `FIRECRAWL_API_KEY` not set                            | Set env var or pass `--firecrawl-key`; Firecrawl is optional and S2 + arXiv work without it                                                          |
 | `OUTCRAWL_API_KEY` not set                             | Set env var or pass `--outcrawl-key`; Outcrawl is optional and S2 + arXiv work without it                                                            |
+| `SPECSTREAM_API_KEY` not set                           | Set env var or pass `--specstream-key`; SpecStream is optional and S2 + arXiv work without it                                                        |
 | Semantic Scholar rate limited                          | Set `S2_API_KEY` for higher limits; the client has built-in exponential backoff                                                                      |
 | Literature Grounding shows N/A                         | Run with `--literature-search` to enable automated literature verification                                                                           |
 | Scoring model (`--regression`) gives unexpected scores | Check `scripts/models/scoring_model.json`; default coefficients approximate weighted average                                                         |

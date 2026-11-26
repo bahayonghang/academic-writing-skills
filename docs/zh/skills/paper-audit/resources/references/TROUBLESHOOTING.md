@@ -15,6 +15,7 @@
 | `TAVILY_API_KEY`未设置|设置环境变量或传递`--tavily-key`; Tavilly 是可选的 — S2 + arXiv 无需它即可工作|
 | `FIRECRAWL_API_KEY`未设置|设置环境变量或传递`--firecrawl-key`; Firecrawl 是可选的，S2 + arXiv 无需它即可工作|
 | `OUTCRAWL_API_KEY`未设置|设置环境变量或传递`--outcrawl-key`; Outcrawl 是可选的，S2 + arXiv 无需它即可工作|
+| `SPECSTREAM_API_KEY`未设置|设置环境变量或传递`--specstream-key`; SpecStream 是可选的，S2 + arXiv 无需它即可工作|
 |语义学者速率有限|放`S2_API_KEY`对于更高的限制；客户端有内置的指数退避|
 |文献基础显示 N/A|运行与`--literature-search`启用自动文献验证|
 |评分模型（`--regression`) 给出意想不到的分数|查看`scripts/models/scoring_model.json`;默认系数近似加权平均值|
